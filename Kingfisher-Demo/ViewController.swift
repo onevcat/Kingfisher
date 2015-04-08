@@ -7,12 +7,16 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var imageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        imageView.kf_setImageWithURL(NSURL(string: "http://onevcat.com/content/images/2014/May/200.jpg")!, placeHolderImage: nil, options: KingfisherOptions.LowPriority | KingfisherOptions.BackgroundDecode)
+        
     }
 
     override func didReceiveMemoryWarning() {
