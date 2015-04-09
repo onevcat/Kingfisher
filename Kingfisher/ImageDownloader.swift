@@ -101,9 +101,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
         
-        let url = dataTask.originalRequest.URL
-        
-        if let callbackPairs = fetchLoads[url]?.callbacks {
+        if let url = dataTask.originalRequest.URL, callbackPairs = fetchLoads[url]?.callbacks {
             for callbackPair in callbackPairs {
                 callbackPair.progressBlock?(receivedSize: 0, totalSize: response.expectedContentLength)
             }
@@ -113,9 +111,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
 
-        let url = dataTask.originalRequest.URL
-
-        if let fetchLoad = fetchLoads[url] {
+        if let url = dataTask.originalRequest.URL, fetchLoad = fetchLoads[url] {
             fetchLoad.responsData.appendData(data)
             for callbackPair in fetchLoad.callbacks {
                 callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responsData.length), totalSize: dataTask.response!.expectedContentLength)
@@ -135,7 +131,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
-        let url = task.originalRequest.URL
+        let url = task.originalRequest.URL!
         
         if let error = error { // Error happened
             callbackWithImage(nil, error: error, imageURL: url)

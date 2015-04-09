@@ -46,15 +46,15 @@ extension String {
 }
 
 /** array of bytes, little-endian representation */
-func arrayOfBytes<T>(value:T, length:Int? = nil) -> [Byte] {
+func arrayOfBytes<T>(value:T, length:Int? = nil) -> [UInt8] {
     let totalBytes = length ?? (sizeofValue(value) * 8)
     var v = value
     
     var valuePointer = UnsafeMutablePointer<T>.alloc(1)
     valuePointer.memory = value
     
-    var bytesPointer = UnsafeMutablePointer<Byte>(valuePointer)
-    var bytes = [Byte](count: totalBytes, repeatedValue: 0)
+    var bytesPointer = UnsafeMutablePointer<UInt8>(valuePointer)
+    var bytes = [UInt8](count: totalBytes, repeatedValue: 0)
     for j in 0..<min(sizeof(T),totalBytes) {
         bytes[totalBytes - 1 - j] = (bytesPointer + j).memory
     }
@@ -67,7 +67,7 @@ func arrayOfBytes<T>(value:T, length:Int? = nil) -> [Byte] {
 
 extension Int {
     /** Array of bytes with optional padding (little-endian) */
-    public func bytes(_ totalBytes: Int = sizeof(Int)) -> [Byte] {
+    public func bytes(_ totalBytes: Int = sizeof(Int)) -> [UInt8] {
         return arrayOfBytes(self, length: totalBytes)
     }
     
@@ -76,7 +76,7 @@ extension Int {
 extension NSMutableData {
     
     /** Convenient way to append bytes */
-    internal func appendBytes(arrayOfBytes: [Byte]) {
+    internal func appendBytes(arrayOfBytes: [UInt8]) {
         self.appendBytes(arrayOfBytes, length: arrayOfBytes.count)
     }
     
@@ -95,12 +95,17 @@ class HashBase {
         var tmpMessage: NSMutableData = NSMutableData(data: self.message)
         
         // Step 1. Append Padding Bits
-        tmpMessage.appendBytes([0x80]) // append one bit (Byte with one bit) to message
+        tmpMessage.appendBytes([0x80]) // append one bit (UInt8 with one bit) to message
         
         // append "0" bit until message length in bits ≡ 448 (mod 512)
-        while tmpMessage.length % len != (len - 8) {
-            tmpMessage.appendBytes([0x00])
+        var msgLength = tmpMessage.length;
+        var counter = 0;
+        while msgLength % len != (len - 8) {
+            counter++
+            msgLength++
         }
+        var bufZeros = UnsafeMutablePointer<UInt8>(calloc(counter, sizeof(UInt8)))
+        tmpMessage.appendBytes(bufZeros, length: counter)
         
         return tmpMessage
     }
@@ -147,19 +152,19 @@ class MD5 : HashBase {
         // Step 2. Append Length a 64-bit representation of lengthInBits
         var lengthInBits = (message.length * 8)
         var lengthBytes = lengthInBits.bytes(64 / 8)
-        tmpMessage.appendBytes(reverse(lengthBytes))
+        tmpMessage.appendBytes(reverse(lengthBytes));
         
         // Process the message in successive 512-bit chunks:
         let chunkSizeBytes = 512 / 8 // 64
         var leftMessageBytes = tmpMessage.length
-        for var i = 0; i < tmpMessage.length; i = i + chunkSizeBytes, leftMessageBytes -= chunkSizeBytes {
+        for (var i = 0; i < tmpMessage.length; i = i + chunkSizeBytes, leftMessageBytes -= chunkSizeBytes) {
             let chunk = tmpMessage.subdataWithRange(NSRange(location: i, length: min(chunkSizeBytes,leftMessageBytes)))
+            let bytes = tmpMessage.bytes;
             
             // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15
             var M:[UInt32] = [UInt32](count: 16, repeatedValue: 0)
-            for x in 0..<M.count {
-                chunk.getBytes(&M[x], range:NSRange(location:x * sizeofValue(M[x]), length: sizeofValue(M[x])))
-            }
+            let range = NSRange(location:0, length: M.count * sizeof(UInt32))
+            chunk.getBytes(UnsafeMutablePointer<Void>(M), range: range)
             
             // Initialize hash value for this chunk:
             var A:UInt32 = hh[0]
@@ -207,12 +212,12 @@ class MD5 : HashBase {
             hh[3] = hh[3] &+ D
         }
         
-        var buf: NSMutableData = NSMutableData()
+        var buf: NSMutableData = NSMutableData();
         hh.map({ (item) -> () in
             var i:UInt32 = item.littleEndian
             buf.appendBytes(&i, length: sizeofValue(i))
         })
         
-        return buf.copy() as NSData
+        return buf.copy() as! NSData;
     }
 }

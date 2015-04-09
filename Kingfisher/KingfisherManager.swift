@@ -70,7 +70,7 @@ public class KingfisherManager {
                     completionHandler: completionHandler,
                     options: options)
             } else {
-                let diskTask = cache.retrieveImageForKey(key, completionHandler: { (image, cacheType) -> () in
+                let diskTask = cache.retrieveImageForKey(key, options: options, completionHandler: { (image, cacheType) -> () in
                     if image != nil {
                         completionHandler?(image: image, error: nil, imageURL: url)
                     } else {

@@ -10,7 +10,8 @@ import Foundation
 
 private let defaultCacheName = "default"
 private let cacheReverseDNS = "com.onevcat.Kingfisher.ImageCache."
-private let ioQueneName = "com.onevcat.Kingfisher.ImageCache.ioQueue"
+private let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue"
+private let processQueueName = "com.onevcat.Kingfisher.ImageCache.processQueue"
 
 private let defaultCacheInstance = ImageCache(name: defaultCacheName)
 private let defaultMaxCachePeriodInSecond: NSTimeInterval = 60 * 60 * 24 * 7 //Cache exists for 1 week
@@ -36,9 +37,11 @@ public class ImageCache {
     private let memoryCache = NSCache()
     
     //Disk
-    private let ioQueue = dispatch_queue_create(ioQueneName, DISPATCH_QUEUE_SERIAL)
+    private let ioQueue = dispatch_queue_create(ioQueueName, DISPATCH_QUEUE_SERIAL)
     private let diskCachePath: String
     private var fileManager: NSFileManager!
+    
+    private let processQueue = dispatch_queue_create(processQueueName, DISPATCH_QUEUE_CONCURRENT)
     
     public class var defaultCache: ImageCache {
         return defaultCacheInstance
@@ -132,7 +135,7 @@ public extension ImageCache {
 
 // MARK: - Get data from cache
 extension ImageCache {
-    public func retrieveImageForKey(key: String, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
+    public func retrieveImageForKey(key: String, options:KingfisherManager.Options, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
         if (completionHandler == nil) {
             return dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {}
@@ -140,20 +143,43 @@ extension ImageCache {
         
         let block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
             if let image = self.retriveImageInMemoryCaheForKey(key) {
+                
                 //Found image in memory cache.
-                completionHandler?(image, .Memory)
+                if options.shouldDecode {
+                    dispatch_async(self.processQueue, { () -> Void in
+                        let result = image.kf_decodedImage()
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            completionHandler?(result, .Memory)
+                            return
+                        })
+                    })
+                } else {
+                    completionHandler?(image, .Memory)
+                }
             } else {
                 //Begin to load image from disk
                 dispatch_async(self.ioQueue, { () -> Void in
                     
                     if let image = self.retriveImageInDiskCacheForKey(key) {
-                        self.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            if let completionHandler = completionHandler {
-                                completionHandler(image, .Disk)
-                            }
-                        })
                         
+                        if options.shouldDecode {
+                            dispatch_async(self.processQueue, { () -> Void in
+                                let result = image.kf_decodedImage()
+                                self.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
+                                
+                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                    completionHandler?(result, .Memory)
+                                    return
+                                })
+                            })
+                        } else {
+                            self.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                if let completionHandler = completionHandler {
+                                    completionHandler(image, .Disk)
+                                }
+                            })
+                        }
                     } else {
                         // No image found from either memory or disk
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -223,7 +249,7 @@ extension ImageCache {
                     options: NSDirectoryEnumerationOptions.SkipsHiddenFiles,
                     errorHandler: nil) {
                         
-                    for fileURL in fileEnumerator.allObjects as [NSURL] {
+                    for fileURL in fileEnumerator.allObjects as! [NSURL] {
                             
                         if let resourceValues = fileURL.resourceValuesForKeys(resourceKeys, error: nil) {
                             // If it is a Directory. Continue to next file URL.
@@ -242,7 +268,7 @@ extension ImageCache {
                             }
                             
                             if let fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
-                                diskCacheSize += fileSize.unsignedIntegerValue
+                                diskCacheSize += fileSize.unsignedLongValue
                                 cachedFiles[fileURL] = resourceValues
                             }
                         }
@@ -272,7 +298,7 @@ extension ImageCache {
                     for fileURL in sortedFiles {
                         if (self.fileManager.removeItemAtURL(fileURL, error: nil)) {
                             if let fileSize = cachedFiles[fileURL]?[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
-                                diskCacheSize -= fileSize.unsignedIntegerValue
+                                diskCacheSize -= fileSize.unsignedLongValue
                             }
                             
                             if diskCacheSize < targetSize {
