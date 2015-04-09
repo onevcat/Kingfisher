@@ -120,13 +120,11 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     }
     
     private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL) {
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            if let callbackPairs = self.fetchLoads[imageURL]?.callbacks {
-                for callbackPair in callbackPairs {
-                    callbackPair.completionHander?(image: image, error: error, imageURL: imageURL)
-                }
+        if let callbackPairs = self.fetchLoads[imageURL]?.callbacks {
+            for callbackPair in callbackPairs {
+                callbackPair.completionHander?(image: image, error: error, imageURL: imageURL)
             }
-        })
+        }
     }
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
