@@ -1,0 +1,6 @@
+#include "Pods-KingfisherTests-Nocilla.xcconfig"
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/Nocilla" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/Nocilla"
+OTHER_LDFLAGS = ${PODS_KINGFISHERTESTS_NOCILLA_OTHER_LDFLAGS} -ObjC
+PODS_ROOT = ${SRCROOT}
+SKIP_INSTALL = YES

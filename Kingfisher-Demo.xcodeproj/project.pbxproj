@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
 		4B82DDFC1AD7701900074995 /* ImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */; };
 		4BAFBA3D1AD671E400FB0300 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */; };
@@ -69,6 +70,9 @@
 /* Begin PBXFileReference section */
 		4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheTests.swift; sourceTree = "<group>"; };
 		4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
+		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Decode.swift"; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D0F1AD2CFA600CFC3EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -89,6 +93,7 @@
 		D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherManager.swift; sourceTree = "<group>"; };
 		D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptions.swift; sourceTree = "<group>"; };
+		D809C0611AAB7CA1AE240862 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,12 +117,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */,
+				0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9C068B80BAB8294A1732ADC5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D809C0611AAB7CA1AE240862 /* Pods-KingfisherTests.debug.xcconfig */,
+				A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +140,8 @@
 				D1ED2D361AD2D09F00CFC3EB /* Kingfisher */,
 				D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
+				9C068B80BAB8294A1732ADC5 /* Pods */,
+				EA99D30544BD22799F7A5367 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -190,6 +207,7 @@
 				D1ED2D481AD2D09F00CFC3EB /* KingfisherTests.swift */,
 				4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */,
 				D1ED2D461AD2D09F00CFC3EB /* Supporting Files */,
+				4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */,
 			);
 			path = KingfisherTests;
 			sourceTree = "<group>";
@@ -200,6 +218,14 @@
 				D1ED2D471AD2D09F00CFC3EB /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EA99D30544BD22799F7A5367 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,9 +283,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D1ED2D521AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "KingfisherTests" */;
 			buildPhases = (
+				26FE50EF2DF394A49D133472 /* Check Pods Manifest.lock */,
 				D1ED2D3B1AD2D09F00CFC3EB /* Sources */,
 				D1ED2D3C1AD2D09F00CFC3EB /* Frameworks */,
 				D1ED2D3D1AD2D09F00CFC3EB /* Resources */,
+				5A0400F84A1FF7DBA809925E /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -339,6 +367,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		26FE50EF2DF394A49D133472 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5A0400F84A1FF7DBA809925E /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D1ED2D071AD2CFA600CFC3EB /* Sources */ = {
@@ -558,7 +619,9 @@
 		};
 		D1ED2D531AD2D09F00CFC3EB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D809C0611AAB7CA1AE240862 /* Pods-KingfisherTests.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -570,13 +633,17 @@
 				INFOPLIST_FILE = KingfisherTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "KingfisherTests/KingfisherTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kingfisher-Demo.app/Kingfisher-Demo";
 			};
 			name = Debug;
 		};
 		D1ED2D541AD2D09F00CFC3EB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -584,6 +651,7 @@
 				INFOPLIST_FILE = KingfisherTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "KingfisherTests/KingfisherTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kingfisher-Demo.app/Kingfisher-Demo";
 			};
 			name = Release;
