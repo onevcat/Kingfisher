@@ -10,6 +10,8 @@
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
 		4B82DDFC1AD7701900074995 /* ImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */; };
 		4BAFBA3D1AD671E400FB0300 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
+		4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
+		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */; };
 		D1ED2D111AD2CFA600CFC3EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D101AD2CFA600CFC3EB /* AppDelegate.swift */; };
 		D1ED2D131AD2CFA600CFC3EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D121AD2CFA600CFC3EB /* ViewController.swift */; };
@@ -18,7 +20,6 @@
 		D1ED2D1B1AD2CFA600CFC3EB /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1ED2D191AD2CFA600CFC3EB /* LaunchScreen.xib */; };
 		D1ED2D3A1AD2D09F00CFC3EB /* Kingfisher.h in Headers */ = {isa = PBXBuildFile; fileRef = D1ED2D391AD2D09F00CFC3EB /* Kingfisher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
-		D1ED2D491AD2D09F00CFC3EB /* KingfisherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D481AD2D09F00CFC3EB /* KingfisherTests.swift */; };
 		D1ED2D4C1AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
 		D1ED2D4D1AD2D09F00CFC3EB /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D1ED2D5B1AD2D0F900CFC3EB /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */; };
@@ -71,6 +72,8 @@
 		4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheTests.swift; sourceTree = "<group>"; };
 		4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloaderTests.swift; sourceTree = "<group>"; };
+		4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherTestHelper.swift; sourceTree = "<group>"; };
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Decode.swift"; sourceTree = "<group>"; };
@@ -86,7 +89,6 @@
 		D1ED2D391AD2D09F00CFC3EB /* Kingfisher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kingfisher.h; sourceTree = "<group>"; };
 		D1ED2D3F1AD2D09F00CFC3EB /* KingfisherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KingfisherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D471AD2D09F00CFC3EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D1ED2D481AD2D09F00CFC3EB /* KingfisherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingfisherTests.swift; sourceTree = "<group>"; };
 		D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+MD5.swift"; sourceTree = "<group>"; };
 		D1ED2D561AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Kingfisher.swift"; sourceTree = "<group>"; };
 		D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -204,10 +206,11 @@
 		D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */ = {
 			isa = PBXGroup;
 			children = (
-				D1ED2D481AD2D09F00CFC3EB /* KingfisherTests.swift */,
+				4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */,
 				4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */,
 				D1ED2D461AD2D09F00CFC3EB /* Supporting Files */,
 				4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */,
+				4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */,
 			);
 			path = KingfisherTests;
 			sourceTree = "<group>";
@@ -431,7 +434,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B82DDFC1AD7701900074995 /* ImageCacheTests.swift in Sources */,
-				D1ED2D491AD2D09F00CFC3EB /* KingfisherTests.swift in Sources */,
+				4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */,
+				4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

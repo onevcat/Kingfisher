@@ -44,8 +44,22 @@ public class ImageDownloader: NSObject {
 
 // MARK: - Download method
 public extension ImageDownloader {
+    
     public func downloadImageWithURL(url: NSURL,
-                       retrieveImagetask: RetrieveImageTask,
+        options: KingfisherManager.Options,
+        progressBlock: ImageDownloaderProgressBlock?,
+        completionHandler: ImageDownloaderCompletionHandler?)
+    {
+        downloadImageWithURL(url,
+            retrieveImagetask: nil,
+                      options: options,
+                progressBlock: progressBlock,
+            completionHandler: completionHandler)
+    }
+    
+    
+    internal func downloadImageWithURL(url: NSURL,
+                       retrieveImagetask: RetrieveImageTask?,
                                  options: KingfisherManager.Options,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?)
@@ -61,7 +75,7 @@ public extension ImageDownloader {
             
             fetchLoad.shouldDecode = options.shouldDecode
             
-            retrieveImagetask.downloadTask = task
+            retrieveImagetask?.downloadTask = task
         }
     }
     
