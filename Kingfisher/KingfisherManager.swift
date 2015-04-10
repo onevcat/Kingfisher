@@ -36,6 +36,10 @@ public class KingfisherManager {
     
     public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool)
     
+    public static var OptionsNone: Options = {
+        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false)
+    }()
+    
     public class var sharedManager: KingfisherManager {
         return instance
     }
