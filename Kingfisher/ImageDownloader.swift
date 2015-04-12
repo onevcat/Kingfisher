@@ -26,6 +26,7 @@ public class ImageDownloader: NSObject {
     }
     
     // MARK: - Public property
+    /// The duration before the download is timeout. Default is 15 seconds.
     public var downloadTimeout: NSTimeInterval = 15.0
     
     // MARK: - Internal property
@@ -37,6 +38,7 @@ public class ImageDownloader: NSObject {
     var fetchLoads = [NSURL: ImageFetchLoad]()
     
     // MARK: - Public method
+    /// The default downloader.
     public class var defaultDownloader: ImageDownloader {
         return instance
     }
@@ -44,7 +46,13 @@ public class ImageDownloader: NSObject {
 
 // MARK: - Download method
 public extension ImageDownloader {
+    /**
+    Download an image with a url.
     
+    :param: url               Target url.
+    :param: progressBlock     Called when the download progress updated.
+    :param: completionHandler Called when the download progress finishes.
+    */
     public func downloadImageWithURL(url: NSURL,
         progressBlock: ImageDownloaderProgressBlock?,
         completionHandler: ImageDownloaderCompletionHandler?)
@@ -52,6 +60,14 @@ public extension ImageDownloader {
         downloadImageWithURL(url, options: KingfisherManager.OptionsNone, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
+    /**
+    Download an image with a url and option.
+    
+    :param: url               Target url.
+    :param: options           The options could control download behavior. See `KingfisherManager.Options`
+    :param: progressBlock     Called when the download progress updated.
+    :param: completionHandler Called when the download progress finishes.
+    */
     public func downloadImageWithURL(url: NSURL,
         options: KingfisherManager.Options,
         progressBlock: ImageDownloaderProgressBlock?,
@@ -63,7 +79,6 @@ public extension ImageDownloader {
                 progressBlock: progressBlock,
             completionHandler: completionHandler)
     }
-    
     
     internal func downloadImageWithURL(url: NSURL,
                        retrieveImagetask: RetrieveImageTask?,
@@ -168,10 +183,10 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                         }
 
                     } else {
-                        self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: WebImageError.BadData.rawValue, userInfo: nil), imageURL: url)
+                        self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: url)
                     }
                 } else {
-                    self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: WebImageError.BadData.rawValue, userInfo: nil), imageURL: url)
+                    self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: url)
                 }
                 
                 self.cleanForURL(url)

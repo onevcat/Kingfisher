@@ -26,11 +26,18 @@
 
 import Foundation
 
+/**
+*  RetrieveImageTask represents a task of image retrieving process.
+*  It contains an async task of getting image from disk and from network.
+*/
 public class RetrieveImageTask {
     
     var diskRetriveTask: RetrieveImageDiskTask?
     var downloadTask: RetrieveImageDownloadTask?
     
+    /**
+    Cancel current task. If this task does not begin or already done, do nothing.
+    */
     public func cancel() {
         if let diskRetriveTask = diskRetriveTask {
             dispatch_block_cancel(diskRetriveTask)
@@ -44,14 +51,22 @@ public class RetrieveImageTask {
 
 public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 
-public enum WebImageError: Int {
+/**
+The error code.
+
+- BadData: The downloaded data is not an image or the data is corrupted.
+*/
+public enum KingfisherError: Int {
     case BadData = 10000
 }
 
 private let instance = KingfisherManager()
 
+/**
+*  Main manager class of Kingfisher
+*/
 public class KingfisherManager {
-    
+
     public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool)
     
     public static var OptionsNone: Options = {
@@ -62,15 +77,35 @@ public class KingfisherManager {
         return instance
     }
     
+    /// Cache used by this manager
     public var cache: ImageCache
+    
+    /// Downloader used by this manager
     public var downloader: ImageDownloader
     
+    /**
+    Default init method
+    
+    :returns: A Kingfisher manager object with default cache and default downloader.
+    */
     public init() {
         cache = ImageCache.defaultCache
         downloader = ImageDownloader.defaultDownloader
     }
 
+    /**
+    Get an image with url as the key.
+    If KingfisherOptions.None is used as `options`, Kingfisher will seek the image in memory and disk first.
+    If not found, it will download the image at url and cache it.
+    These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
+    :param: url               The image url.
+    :param: options           Options controlling manager behavior.
+    :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
+    :param: completionHandler Called when the whole retriving process finished.
+    
+    :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
+    */
     public func retriveImageWithURL(url: NSURL,
                                 options: KingfisherOptions,
                           progressBlock:DownloadProgressBlock?,

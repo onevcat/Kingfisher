@@ -34,37 +34,55 @@ private let processQueueName = "com.onevcat.Kingfisher.ImageCache.processQueue"
 private let defaultCacheInstance = ImageCache(name: defaultCacheName)
 private let defaultMaxCachePeriodInSecond: NSTimeInterval = 60 * 60 * 24 * 7 //Cache exists for 1 week
 
-
 public typealias RetrieveImageDiskTask = dispatch_block_t
 
+/**
+Cache type of a cached image.
+
+- Memory: The image is cached in memory.
+- Disk:   The image is cached in disk.
+*/
 public enum CacheType {
     case Memory, Disk
 }
 
 public class ImageCache {
+
+    //Memory
+    private let memoryCache = NSCache()
     
-    public var maxCachePeriodInSecond = defaultMaxCachePeriodInSecond
+    /// The largest cache cost of memory cache. The total cost is pixel count of all cached images in memory.
     public var maxMemoryCost: UInt = 0 {
         didSet {
             self.memoryCache.totalCostLimit = Int(maxMemoryCost)
         }
     }
-    public var maxDiskCacheSize: UInt = 0
-    
-    //Memory
-    private let memoryCache = NSCache()
     
     //Disk
     private let ioQueue = dispatch_queue_create(ioQueueName, DISPATCH_QUEUE_SERIAL)
     private let diskCachePath: String
     private var fileManager: NSFileManager!
     
+    /// The longest time duration of the cache being stored in disk. Default is 1 week.
+    public var maxCachePeriodInSecond = defaultMaxCachePeriodInSecond
+    
+    /// The largest disk size can be taken for the cache. It is the total allocated size of the file in bytes. Default is 0, which means no limit.
+    public var maxDiskCacheSize: UInt = 0
+    
     private let processQueue = dispatch_queue_create(processQueueName, DISPATCH_QUEUE_CONCURRENT)
     
+    /// The default cache.
     public class var defaultCache: ImageCache {
         return defaultCacheInstance
     }
     
+    /**
+    Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.
+    
+    :param: name Name of the cache.
+    
+    :returns: The cache object.
+    */
     public init(name: String) {
         let cacheName = cacheReverseDNS + name
         memoryCache.name = cacheName
@@ -88,11 +106,26 @@ public class ImageCache {
 
 // MARK: - Store & Remove
 public extension ImageCache {
+    /**
+    Store an image to cache. It will be saved to both memory and disk. 
+    It is an async operation, if you need to do something about the stored image, use `-storeImage:forKey:toDisk:completionHandler:` 
+    instead.
     
+    :param: image The image will be stored.
+    :param: key   Key for the image.
+    */
     public func storeImage(image: UIImage, forKey key: String) {
         storeImage(image, forKey: key, toDisk: true, completionHandler: nil)
     }
     
+    /**
+    Store an image to cache. It is an async operation.
+    
+    :param: image             The image will be stored.
+    :param: key               Key for the image.
+    :param: toDisk            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
+    :param: completionHandler Called when stroe operation completes.
+    */
     public func storeImage(image: UIImage, forKey key: String, toDisk: Bool, completionHandler: (() -> ())?) {
         memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
         
@@ -126,10 +159,24 @@ public extension ImageCache {
         }
     }
     
+    /**
+    Remove the image for key for the cache. It will be opted out from both memory and disk.
+    It is an async operation, if you need to do something about the stored image, use `-removeImageForKey:fromDisk:completionHandler:` 
+    instead.
+    
+    :param: key Key for the image.
+    */
     public func removeImageForKey(key: String) {
         removeImageForKey(key, fromDisk: true, completionHandler: nil)
     }
     
+    /**
+    Remove the image for key for the cache. It is an async operation.
+    
+    :param: key               Key for the image.
+    :param: fromDisk          Whether this image should be removed from disk or not. If false, the image will be only removed from memory.
+    :param: completionHandler Called when removal operation completes.
+    */
     public func removeImageForKey(key: String, fromDisk: Bool, completionHandler: (() -> ())?) {
         memoryCache.removeObjectForKey(key)
         
@@ -153,6 +200,15 @@ public extension ImageCache {
 
 // MARK: - Get data from cache
 extension ImageCache {
+    /**
+    Get an image for a key from memory or disk.
+    
+    :param: key               Key for the image.
+    :param: options           Options of retriving image.
+    :param: completionHandler Called when getting operation completes with image result and cached type of this image. If there is no such key cached, the image will be `nil`.
+    
+    :returns: The retriving task.
+    */
     public func retrieveImageForKey(key: String, options:KingfisherManager.Options, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
         if (completionHandler == nil) {
@@ -214,10 +270,24 @@ extension ImageCache {
         return block
     }
     
+    /**
+    Get an image for a key from memory.
+    
+    :param: key Key for the image.
+    
+    :returns: The image object if it is cached, or `nil` if there is no such key in the cache.
+    */
     public func retriveImageInMemoryCaheForKey(key: String) -> UIImage? {
         return memoryCache.objectForKey(key) as? UIImage
     }
     
+    /**
+    Get an image for a key from disk.
+    
+    :param: key Key for the image.
+    
+    :returns: The image object if it is cached, or `nil` if there is no such key in the cache.
+    */
     public func retriveImageInDiskCacheForKey(key: String) -> UIImage? {
         return diskImageForKey(key)
     }
@@ -225,14 +295,25 @@ extension ImageCache {
 
 // MARK: - Clear & Clean
 extension ImageCache {
+    /**
+    Clear memory cache.
+    */
     @objc public func clearMemoryCache() {
         memoryCache.removeAllObjects()
     }
     
+    /**
+    Clear disk cache. This is an async operation.
+    */
     public func clearDiskCache() {
         clearDiskCacheWithCompletionHandler(nil)
     }
     
+    /**
+    Clear disk cache. This is an async operation.
+    
+    :param: completionHander Called after the operation completes.
+    */
     public func clearDiskCacheWithCompletionHandler(completionHander: (()->())?) {
         dispatch_async(ioQueue, { () -> Void in
             self.fileManager.removeItemAtPath(self.diskCachePath, error: nil)
@@ -246,10 +327,18 @@ extension ImageCache {
         })
     }
     
+    /**
+    Clean expired disk cache. This is an async operation.
+    */
     @objc public func cleanExpiredDiskCache() {
         cleanExpiredDiskCacheWithCompletionHander(nil)
     }
     
+    /**
+    Clean expired disk cache. This is an async operation.
+    
+    :param: completionHandler Called after the operation completes.
+    */
     public func cleanExpiredDiskCacheWithCompletionHander(completionHandler: (()->())?) {
         // Do things in cocurrent io queue
         dispatch_async(ioQueue, { () -> Void in
@@ -338,6 +427,11 @@ extension ImageCache {
         })
     }
     
+    /**
+    Clean expired disk cache when app in background. This is an async operation.
+    In most cases, you should not call this method explicitly. 
+    It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.
+    */
     @objc public func backgroundCleanExpiredDiskCache() {
         
         func endBackgroundTask(inout task: UIBackgroundTaskIdentifier) {
@@ -361,12 +455,21 @@ extension ImageCache {
 // MARK: - Check cache statue
 public extension ImageCache {
     
-    // For Objective-C compatibility, we can not use tuple
+    /**
+    *  Cache result for checking whether an image is cached for a key.
+    */
     public struct CacheCheckResult {
         public let cached: Bool
         public let cacheType: CacheType?
     }
     
+    /**
+    Check whether an image is cached for a key.
+    
+    :param: key Key for the image.
+    
+    :returns: The check result.
+    */
     public func isImageCachedForKey(key: String) -> CacheCheckResult {
         if memoryCache.objectForKey(key) != nil {
             return CacheCheckResult(cached: true, cacheType: .Memory)

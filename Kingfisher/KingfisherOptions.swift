@@ -26,6 +26,9 @@
 
 import Foundation
 
+/**
+*  Options to control Kingfisher behaviors.
+*/
 public struct KingfisherOptions : RawOptionSetType {
     typealias RawValue = UInt
     private var value: UInt = 0
@@ -36,9 +39,18 @@ public struct KingfisherOptions : RawOptionSetType {
     static func fromMask(raw: UInt) -> KingfisherOptions { return self(raw) }
     public var rawValue: UInt { return self.value }
     
+    /// None options. Kingfisher will keep its default behavior.
     public static var None: KingfisherOptions { return self(0) }
+    
+    /// Download in a low priority.
     public static var LowPriority: KingfisherOptions { return KingfisherOptions(1 << 0) }
+    
+    /// Ignore cache. Always download the image and cache it again.
     public static var ForceRefresh: KingfisherOptions { return KingfisherOptions(1 << 1) }
+    
+    /// Only cache downloaded image to memory, not cache in disk.
     public static var CacheMemoryOnly: KingfisherOptions { return KingfisherOptions(1 << 2) }
+    
+    /// Decode the image in background thread before using.
     public static var BackgroundDecode: KingfisherOptions { return KingfisherOptions(1 << 3) }
 }
