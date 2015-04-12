@@ -33,12 +33,6 @@ class ViewController: UICollectionViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         title = "Kingfisher"
-        
-        KingfisherManager.sharedManager.downloader.downloadImageWithURL(NSURL(string: "http://onevcat.com")!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
-            
-        }) { (image, error, imageURL) -> () in
-            
-        }
     }
 
     override func didReceiveMemoryWarning() {
