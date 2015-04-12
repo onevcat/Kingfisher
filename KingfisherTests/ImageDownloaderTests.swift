@@ -80,7 +80,28 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadAnImageWithMultipleCallback() {
+        let expectation = expectationWithDescription("wait for downloading image")
         
+        let group = dispatch_group_create()
+        let urlString = testKeys[0]
+        stubRequest("GET", urlString).andReturn(200).withBody(testImageData)
+
+        for _ in 0...5 {
+            dispatch_group_enter(group)
+            downloader.downloadImageWithURL(NSURL(string: urlString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+                
+                }) { (image, error, imageURL) -> () in
+                    XCTAssert(image != nil, "Download should be able to finished for url: \(imageURL).")
+                    dispatch_group_leave(group)
+                    
+            }
+        }
+
+        dispatch_group_notify(group, dispatch_get_main_queue()) { () -> Void in
+            expectation.fulfill()
+        }
+        
+        waitForExpectationsWithTimeout(1, handler: nil)
     }
     
     

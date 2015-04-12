@@ -46,6 +46,13 @@ public class ImageDownloader: NSObject {
 public extension ImageDownloader {
     
     public func downloadImageWithURL(url: NSURL,
+        progressBlock: ImageDownloaderProgressBlock?,
+        completionHandler: ImageDownloaderCompletionHandler?)
+    {
+        downloadImageWithURL(url, options: KingfisherManager.OptionsNone, progressBlock: progressBlock, completionHandler: completionHandler)
+    }
+    
+    public func downloadImageWithURL(url: NSURL,
         options: KingfisherManager.Options,
         progressBlock: ImageDownloaderProgressBlock?,
         completionHandler: ImageDownloaderCompletionHandler?)
