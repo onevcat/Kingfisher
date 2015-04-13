@@ -40,15 +40,15 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadAnImage() {
         let expectation = expectationWithDescription("wait for downloading image")
         
-        let urlString = testKeys[0]
-        stubRequest("GET", urlString).andReturn(200).withBody(testImageData)
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
 
-        let url = NSURL(string: urlString)!
-        downloader.downloadImageWithURL(url, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+        let URL = NSURL(string: URLString)!
+        downloader.downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
             return
         }) { (image, error, imageURL) -> () in
             expectation.fulfill()
-            XCTAssert(image != nil, "Download should be able to finished for url: \(imageURL)")
+            XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
         }
         
         waitForExpectationsWithTimeout(1, handler: nil)
@@ -59,14 +59,14 @@ class ImageDownloaderTests: XCTestCase {
         
         let group = dispatch_group_create()
         
-        for urlString in testKeys {
-            if let url = NSURL(string: urlString) {
+        for URLString in testKeys {
+            if let URL = NSURL(string: URLString) {
                 dispatch_group_enter(group)
-                stubRequest("GET", urlString).andReturn(200).withBody(testImageData)
-                downloader.downloadImageWithURL(url, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+                stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+                downloader.downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
                     
                 }, completionHandler: { (image, error, imageURL) -> () in
-                    XCTAssert(image != nil, "Download should be able to finished for url: \(imageURL).")
+                    XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
                     dispatch_group_leave(group)
                 })
             }
@@ -83,15 +83,15 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = expectationWithDescription("wait for downloading image")
         
         let group = dispatch_group_create()
-        let urlString = testKeys[0]
-        stubRequest("GET", urlString).andReturn(200).withBody(testImageData)
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
 
         for _ in 0...5 {
             dispatch_group_enter(group)
-            downloader.downloadImageWithURL(NSURL(string: urlString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+            downloader.downloadImageWithURL(NSURL(string: URLString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
                 
                 }) { (image, error, imageURL) -> () in
-                    XCTAssert(image != nil, "Download should be able to finished for url: \(imageURL).")
+                    XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
                     dispatch_group_leave(group)
                     
             }

@@ -347,7 +347,7 @@ extension ImageCache {
                 let resourceKeys = [NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey]
                 let expiredDate = NSDate(timeIntervalSinceNow: -self.maxCachePeriodInSecond)
                 var cachedFiles = [NSURL: [NSObject: AnyObject]]()
-                var urlsToDelete = [NSURL]()
+                var URLsToDelete = [NSURL]()
                 
                 var diskCacheSize: UInt = 0
                 
@@ -366,10 +366,10 @@ extension ImageCache {
                                 }
                             }
                             
-                            // If this file is expired, add it to urlsToDelete
+                            // If this file is expired, add it to URLsToDelete
                             if let modificationDate = resourceValues[NSURLContentModificationDateKey] as? NSDate {
                                 if modificationDate.laterDate(expiredDate) == expiredDate {
-                                    urlsToDelete.append(fileURL)
+                                    URLsToDelete.append(fileURL)
                                     continue
                                 }
                             }
@@ -383,7 +383,7 @@ extension ImageCache {
                     }
                 }
                 
-                for fileURL in urlsToDelete {
+                for fileURL in URLsToDelete {
                     self.fileManager.removeItemAtURL(fileURL, error: nil)
                 }
                 

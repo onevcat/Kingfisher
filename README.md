@@ -21,7 +21,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Cancellable processing task. You can cancel the downloading or retriving image process if it is not needed anymore.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before render it, which could improve the UI performance.
-* A category over `UIImageView` for setting image from an url directly.
+* A category over `UIImageView` for setting image from an URL directly.
 
 ## Requirements
 
@@ -142,7 +142,7 @@ imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeH
 
 #### Options
 
-Kingfisher will search in cache (both memory and disk) first with the url, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option, to let it ignore the cache.
+Kingfisher will search in cache (both memory and disk) first with the URL, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option, to let it ignore the cache.
 
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!, 
