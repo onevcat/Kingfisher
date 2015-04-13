@@ -1,9 +1,6 @@
 //
 //  String+MD5.swift
-//  WebImageDemo
-//
-//  Created by Wei Wang on 15/4/6.
-//  Copyright (c) 2015年 Wei Wang. All rights reserved.
+//  Kingfisher
 //
 // This file is stolen from HanekeSwift: https://github.com/Haneke/HanekeSwift/blob/master/Haneke/CryptoSwiftMD5.swift
 // which is a modified version of CryptoSwift:

@@ -1,6 +1,6 @@
 //
 //  UIImage+Decode.swift
-//  Kingfisher-Demo
+//  Kingfisher
 //
 //  Created by Wei Wang on 15/4/7.
 //
