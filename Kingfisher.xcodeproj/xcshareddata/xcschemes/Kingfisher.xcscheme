@@ -17,7 +17,7 @@
                BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
                BuildableName = "Kingfisher.framework"
                BlueprintName = "Kingfisher"
-               ReferencedContainer = "container:Kingfisher-Demo.xcodeproj">
+               ReferencedContainer = "container:Kingfisher.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,7 +28,26 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D1ED2D3E1AD2D09F00CFC3EB"
+               BuildableName = "KingfisherTests.xctest"
+               BlueprintName = "KingfisherTests"
+               ReferencedContainer = "container:Kingfisher.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
+            BuildableName = "Kingfisher.framework"
+            BlueprintName = "Kingfisher"
+            ReferencedContainer = "container:Kingfisher.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -45,7 +64,7 @@
             BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
             BuildableName = "Kingfisher.framework"
             BlueprintName = "Kingfisher"
-            ReferencedContainer = "container:Kingfisher-Demo.xcodeproj">
+            ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,7 +82,7 @@
             BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
             BuildableName = "Kingfisher.framework"
             BlueprintName = "Kingfisher"
-            ReferencedContainer = "container:Kingfisher-Demo.xcodeproj">
+            ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
