@@ -452,7 +452,7 @@ extension ImageCache {
 }
 
 
-// MARK: - Check cache statue
+// MARK: - Check cache status
 public extension ImageCache {
     
     /**
