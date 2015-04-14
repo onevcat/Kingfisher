@@ -216,7 +216,7 @@ extension ImageCache {
         }
         
         let block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
-            if let image = self.retrieveImageInMemoryCaheForKey(key) {
+            if let image = self.retrieveImageInMemoryCacheForKey(key) {
                 
                 //Found image in memory cache.
                 if options.shouldDecode {
@@ -277,7 +277,7 @@ extension ImageCache {
     
     :returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInMemoryCaheForKey(key: String) -> UIImage? {
+    public func retrieveImageInMemoryCacheForKey(key: String) -> UIImage? {
         return memoryCache.objectForKey(key) as? UIImage
     }
     
