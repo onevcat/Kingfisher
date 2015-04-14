@@ -113,10 +113,10 @@ public class KingfisherManager {
     {
         let task = RetrieveImageTask()
         
-        let options = (forceRefresh: options & KingfisherOptions.ForceRefresh != KingfisherOptions.None,
-                        lowPriority: options & KingfisherOptions.LowPriority != KingfisherOptions.None,
-                    cacheMemoryOnly: options & KingfisherOptions.CacheMemoryOnly != KingfisherOptions.None,
-                       shouldDecode: options & KingfisherOptions.BackgroundDecode != KingfisherOptions.None)
+        let options = (forceRefresh: (options & KingfisherOptions.ForceRefresh) != KingfisherOptions.None,
+                        lowPriority: (options & KingfisherOptions.LowPriority) != KingfisherOptions.None,
+                    cacheMemoryOnly: (options & KingfisherOptions.CacheMemoryOnly) != KingfisherOptions.None,
+                       shouldDecode: (options & KingfisherOptions.BackgroundDecode) != KingfisherOptions.None)
 
         if let key = URL.absoluteString {
             if options.forceRefresh {
