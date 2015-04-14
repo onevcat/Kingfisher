@@ -42,62 +42,62 @@ public extension UIImageView {
     */
     public func kf_setImageWithURL(URL: NSURL) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, placeHolderImage: nil, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
+        return kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     /**
     Set an image with a URL and a place holder image.
     
     :param: URL              The URL of image.
-    :param: placeHolderImage A placeholder image when retrieving the image at URL.
+    :param: placeholderImage A placeholder image when retrieving the image at URL.
     
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeHolderImage: UIImage?) -> RetrieveImageTask
+                      placeholderImage: UIImage?) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, placeHolderImage: placeHolderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
+        return kf_setImageWithURL(URL, placeholderImage: placeholderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     /**
     Set an image with a URL, a place holder image and options.
     
     :param: URL              The URL of image.
-    :param: placeHolderImage A placeholder image when retrieving the image at URL.
+    :param: placeholderImage A placeholder image when retrieving the image at URL.
     :param: options          Options which could control some behaviors. See `KingfisherOptions` for more.
     
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeHolderImage: UIImage?,
+                      placeholderImage: UIImage?,
                                options: KingfisherOptions) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: nil)
+        return kf_setImageWithURL(URL, placeholderImage: placeholderImage, options: options, progressBlock: nil, completionHandler: nil)
     }
     
     /**
     Set an image with a URL, a place holder image, options and completion handler.
     
     :param: URL               The URL of image.
-    :param: placeHolderImage  A placeholder image when retrieving the image at URL.
+    :param: placeholderImage  A placeholder image when retrieving the image at URL.
     :param: options           Options which could control some behaviors. See `KingfisherOptions` for more.
     :param: completionHandler Called when the image retrieved and set.
     
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeHolderImage: UIImage?,
+                      placeholderImage: UIImage?,
                                options: KingfisherOptions,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
+        return kf_setImageWithURL(URL, placeholderImage: placeholderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
     }
     
     /**
     Set an image with a URL, a place holder image, options, progress handler and completion handler.
     
     :param: URL               The URL of image.
-    :param: placeHolderImage  A placeholder image when retrieving the image at URL.
+    :param: placeholderImage  A placeholder image when retrieving the image at URL.
     :param: options           Options which could control some behaviors. See `KingfisherOptions` for more.
     :param: progressBlock     Called when the image downloading progress gets updated.
     :param: completionHandler Called when the image retrieved and set.
@@ -105,12 +105,12 @@ public extension UIImageView {
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeHolderImage: UIImage?,
+                      placeholderImage: UIImage?,
                                options: KingfisherOptions,
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        image = placeHolderImage
+        image = placeholderImage
         
         self.kf_setWebURL(URL)
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (recivedSize, totalSize) -> () in
