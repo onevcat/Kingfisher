@@ -32,15 +32,15 @@ import Foundation
 */
 public class RetrieveImageTask {
     
-    var diskretrieveTask: RetrieveImageDiskTask?
+    var diskRetrieveTask: RetrieveImageDiskTask?
     var downloadTask: RetrieveImageDownloadTask?
     
     /**
     Cancel current task. If this task does not begin or already done, do nothing.
     */
     public func cancel() {
-        if let diskretrieveTask = diskretrieveTask {
-            dispatch_block_cancel(diskretrieveTask)
+        if let diskRetrieveTask = diskRetrieveTask {
+            dispatch_block_cancel(diskRetrieveTask)
         }
         
         if let downloadTask = downloadTask {
@@ -139,7 +139,7 @@ public class KingfisherManager {
                             options: options)
                     }
                 })
-                task.diskretrieveTask = diskTask
+                task.diskRetrieveTask = diskTask
             }
         }
         
