@@ -2,6 +2,14 @@
   <img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher">
 </p>
 
+[![Carthage Compatibility](https://img.shields.io/badge/Carthage-✔-f2a77e.svg?style=flat)][carthage]
+[![CocoaPods Version](https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat)][cocoadocs]
+[![License](https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat)][cocoadocs]
+[![Platform](https://img.shields.io/cocoapods/p/Kingfisher.svg?style=flat)][cocoadocs]
+![love](https://img.shields.io/badge/made%20with-%3C3-orange.svg)
+[carthage]: https://github.com/Carthage/Carthage/
+[cocoadocs]: http://cocoadocs.org/docsets/Kingfisher
+
 Kingfisher is a lightweight and pure Swift implemented library for downloading and caching image from the web. This project is heavily inspired by the popular [SDWebImage](https://github.com/rs/SDWebImage). And it provides you a chance to use pure Swift alternation in your next app.
 
 ## Features
@@ -13,7 +21,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Cancellable processing task. You can cancel the downloading or retriving image process if it is not needed anymore.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before render it, which could improve the UI performance.
-* A category over `UIImageView` for setting image from an url directly.
+* A category over `UIImageView` for setting image from an URL directly.
 
 ## Requirements
 
@@ -134,7 +142,7 @@ imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeH
 
 #### Options
 
-Kingfisher will search in cache (both memory and disk) first with the url, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option, to let it ignore the cache.
+Kingfisher will search in cache (both memory and disk) first with the URL, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option, to let it ignore the cache.
 
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!, 
