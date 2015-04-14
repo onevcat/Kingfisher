@@ -216,7 +216,7 @@ extension ImageCache {
         }
         
         let block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
-            if let image = self.retriveImageInMemoryCaheForKey(key) {
+            if let image = self.retrieveImageInMemoryCaheForKey(key) {
                 
                 //Found image in memory cache.
                 if options.shouldDecode {
@@ -234,7 +234,7 @@ extension ImageCache {
                 //Begin to load image from disk
                 dispatch_async(self.ioQueue, { () -> Void in
                     
-                    if let image = self.retriveImageInDiskCacheForKey(key) {
+                    if let image = self.retrieveImageInDiskCacheForKey(key) {
                         
                         if options.shouldDecode {
                             dispatch_async(self.processQueue, { () -> Void in
@@ -277,7 +277,7 @@ extension ImageCache {
     
     :returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retriveImageInMemoryCaheForKey(key: String) -> UIImage? {
+    public func retrieveImageInMemoryCaheForKey(key: String) -> UIImage? {
         return memoryCache.objectForKey(key) as? UIImage
     }
     
@@ -288,7 +288,7 @@ extension ImageCache {
     
     :returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retriveImageInDiskCacheForKey(key: String) -> UIImage? {
+    public func retrieveImageInDiskCacheForKey(key: String) -> UIImage? {
         return diskImageForKey(key)
     }
 }
