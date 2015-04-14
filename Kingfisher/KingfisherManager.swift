@@ -32,15 +32,15 @@ import Foundation
 */
 public class RetrieveImageTask {
     
-    var diskRetriveTask: RetrieveImageDiskTask?
+    var diskRetrieveTask: RetrieveImageDiskTask?
     var downloadTask: RetrieveImageDownloadTask?
     
     /**
     Cancel current task. If this task does not begin or already done, do nothing.
     */
     public func cancel() {
-        if let diskRetriveTask = diskRetriveTask {
-            dispatch_block_cancel(diskRetriveTask)
+        if let diskRetrieveTask = diskRetrieveTask {
+            dispatch_block_cancel(diskRetrieveTask)
         }
         
         if let downloadTask = downloadTask {
@@ -106,17 +106,17 @@ public class KingfisherManager {
     
     :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
-    public func retriveImageWithURL(URL: NSURL,
+    public func retrieveImageWithURL(URL: NSURL,
                                 options: KingfisherOptions,
                           progressBlock:DownloadProgressBlock?,
                       completionHandler:CompletionHandler?) -> RetrieveImageTask
     {
         let task = RetrieveImageTask()
         
-        let options = (forceRefresh: options & KingfisherOptions.ForceRefresh != KingfisherOptions.None,
-                        lowPriority: options & KingfisherOptions.LowPriority != KingfisherOptions.None,
-                    cacheMemoryOnly: options & KingfisherOptions.CacheMemoryOnly != KingfisherOptions.None,
-                       shouldDecode: options & KingfisherOptions.BackgroundDecode != KingfisherOptions.None)
+        let options = (forceRefresh: (options & KingfisherOptions.ForceRefresh) != KingfisherOptions.None,
+                        lowPriority: (options & KingfisherOptions.LowPriority) != KingfisherOptions.None,
+                    cacheMemoryOnly: (options & KingfisherOptions.CacheMemoryOnly) != KingfisherOptions.None,
+                       shouldDecode: (options & KingfisherOptions.BackgroundDecode) != KingfisherOptions.None)
 
         if let key = URL.absoluteString {
             if options.forceRefresh {
@@ -139,7 +139,7 @@ public class KingfisherManager {
                             options: options)
                     }
                 })
-                task.diskRetriveTask = diskTask
+                task.diskRetrieveTask = diskTask
             }
         }
         
