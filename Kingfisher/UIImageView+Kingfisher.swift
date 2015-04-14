@@ -133,16 +133,16 @@ public extension UIImageView {
 }
 
 // MARK: - Associated Object
-private var lastURLkey: Void?
+private var lastURLKey: Void?
 public extension UIImageView {
     /// Get the image URL binded to this image view. You can use `kf_setImage` methods to set it.
     public var kf_webURL: NSURL? {
         get {
-            return objc_getAssociatedObject(self, &lastURLkey) as? NSURL
+            return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
         }
     }
     
     private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLkey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        objc_setAssociatedObject(self, &lastURLKey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
     }
 }
