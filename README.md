@@ -137,7 +137,7 @@ imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
 Most cases, Kingfisher is used in a reusable cell. Since the downloading process is asynchronous, the earlier image will be remained during the downloading of newer one. The placeholder version of this API could help:
 
 ```swift
-imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeHolderImage: nil)
+imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeholderImage: nil)
 ```
 
 #### Options
@@ -146,7 +146,7 @@ Kingfisher will search in cache (both memory and disk) first with the URL, if no
 
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!, 
-                         placeHolderImage: nil, 
+                         placeholderImage: nil, 
                                   options: KingfisherOptions.ForceRefresh)
 ```
 
@@ -158,7 +158,7 @@ You can get a chance during Kingfisher downloads images and when the process don
 
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
-                         placeHolderImage: nil,
+                         placeholderImage: nil,
                                   options: KingfisherOptions.None,
                             progressBlock: { (receivedSize, totalSize) -> () in
                                 println("Download Progress: \(receivedSize)/\(totalSize)")
