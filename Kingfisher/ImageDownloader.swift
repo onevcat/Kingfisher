@@ -21,7 +21,7 @@ public class ImageDownloader: NSObject {
     
     class ImageFetchLoad {
         var callbacks = [CallbackPair]()
-        var responsData = NSMutableData()
+        var responseData = NSMutableData()
         var shouldDecode = false
     }
     
@@ -148,9 +148,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
 
         if let URL = dataTask.originalRequest.URL, fetchLoad = fetchLoads[URL] {
-            fetchLoad.responsData.appendData(data)
+            fetchLoad.responseData.appendData(data)
             for callbackPair in fetchLoad.callbacks {
-                callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responsData.length), totalSize: dataTask.response!.expectedContentLength)
+                callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
             }
         }
     }
@@ -175,7 +175,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             dispatch_async(processQueue, { () -> Void in
                 
                 if let fetchLoad = self.fetchLoads[URL] {
-                    if let image = UIImage(data: fetchLoad.responsData) {
+                    if let image = UIImage(data: fetchLoad.responseData) {
                         if fetchLoad.shouldDecode {
                             self.callbackWithImage(image.kf_decodedImage(), error: nil, imageURL: URL)
                         } else {
