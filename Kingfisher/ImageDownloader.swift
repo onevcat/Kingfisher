@@ -74,14 +74,14 @@ public extension ImageDownloader {
         completionHandler: ImageDownloaderCompletionHandler?)
     {
         downloadImageWithURL(URL,
-            retrieveImagetask: nil,
+            retrieveImageTask: nil,
                       options: options,
                 progressBlock: progressBlock,
             completionHandler: completionHandler)
     }
     
     internal func downloadImageWithURL(URL: NSURL,
-                       retrieveImagetask: RetrieveImageTask?,
+                       retrieveImageTask: RetrieveImageTask?,
                                  options: KingfisherManager.Options,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?)
@@ -97,7 +97,7 @@ public extension ImageDownloader {
             
             fetchLoad.shouldDecode = options.shouldDecode
             
-            retrieveImagetask?.downloadTask = task
+            retrieveImageTask?.downloadTask = task
         }
     }
     
