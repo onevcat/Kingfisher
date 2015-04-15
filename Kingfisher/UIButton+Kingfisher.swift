@@ -68,7 +68,7 @@ public extension UIButton {
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         setImage(placeHolderImage, forState: state)
-        let task = KingfisherManager.sharedManager.retriveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
@@ -152,7 +152,7 @@ public extension UIButton {
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         setBackgroundImage(placeHolderImage, forState: state)
-        let task = KingfisherManager.sharedManager.retriveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
