@@ -153,7 +153,7 @@ public class KingfisherManager {
                         completionHandler: CompletionHandler?,
                                   options: Options)
     {
-        downloader.downloadImageWithURL(URL, retrieveImagetask: retrieveImageTask, options: options, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImageWithURL(URL, retrieveImageTask: retrieveImageTask, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
             return
         }) { (image, error, imageURL) -> () in
