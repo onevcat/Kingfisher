@@ -38,34 +38,34 @@ public extension UIButton {
     
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
-                      placeHolderImage: UIImage?) -> RetrieveImageTask
+                      placeholderImage: UIImage?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
-                      placeHolderImage: UIImage?,
+                      placeholderImage: UIImage?,
                                options: KingfisherOptions) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
-        forState state: UIControlState,
-        placeHolderImage: UIImage?,
-        options: KingfisherOptions,
-        completionHandler: CompletionHandler?) -> RetrieveImageTask
+                        forState state: UIControlState,
+                      placeholderImage: UIImage?,
+                               options: KingfisherOptions,
+                     completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
-        forState state: UIControlState,
-        placeHolderImage: UIImage?,
-        options: KingfisherOptions,
-        progressBlock: DownloadProgressBlock?,
-        completionHandler: CompletionHandler?) -> RetrieveImageTask
+                        forState state: UIControlState,
+                      placeholderImage: UIImage?,
+                               options: KingfisherOptions,
+                         progressBlock: DownloadProgressBlock?,
+                     completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         setImage(placeHolderImage, forState: state)
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
