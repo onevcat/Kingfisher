@@ -33,14 +33,14 @@ public extension UIButton {
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, forState: state, placeHolderImage: nil, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
+        return kf_setImageWithURL(URL, forState: state, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
                       placeholderImage: UIImage?) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
+        return kf_setImageWithURL(URL, forState: state, placeholderImage: placeholderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
@@ -48,7 +48,7 @@ public extension UIButton {
                       placeholderImage: UIImage?,
                                options: KingfisherOptions) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: nil)
+        return kf_setImageWithURL(URL, forState: state, placeholderImage: placeholderImage, options: options, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
@@ -57,7 +57,7 @@ public extension UIButton {
                                options: KingfisherOptions,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return kf_setImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
+        return kf_setImageWithURL(URL, forState: state, placeholderImage: placeholderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
     }
     
     public func kf_setImageWithURL(URL: NSURL,
@@ -67,7 +67,8 @@ public extension UIButton {
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        setImage(placeHolderImage, forState: state)
+        setImage(placeholderImage, forState: state)
+        kf_setWebURL(URL, forState: state)
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -117,41 +118,42 @@ public extension UIButton {
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState) -> RetrieveImageTask
     {
-        return kf_setBackgroundImageWithURL(URL, forState: state, placeHolderImage: nil, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
+        return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
-                                placeHolderImage: UIImage?) -> RetrieveImageTask
+                                placeholderImage: UIImage?) -> RetrieveImageTask
     {
-        return kf_setBackgroundImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
+        return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: placeholderImage, options: KingfisherOptions.None, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
-                                placeHolderImage: UIImage?,
+                                placeholderImage: UIImage?,
                                          options: KingfisherOptions) -> RetrieveImageTask
     {
-        return kf_setBackgroundImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: nil)
+        return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: placeholderImage, options: options, progressBlock: nil, completionHandler: nil)
     }
     
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
-                                placeHolderImage: UIImage?,
+                                placeholderImage: UIImage?,
                                          options: KingfisherOptions,
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return kf_setBackgroundImageWithURL(URL, forState: state, placeHolderImage: placeHolderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
+        return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: placeholderImage, options: options, progressBlock: nil, completionHandler: completionHandler)
     }
     
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
-                                placeHolderImage: UIImage?,
+                                placeholderImage: UIImage?,
                                          options: KingfisherOptions,
                                    progressBlock: DownloadProgressBlock?,
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        setBackgroundImage(placeHolderImage, forState: state)
+        setBackgroundImage(placeholderImage, forState: state)
+        kf_setBackgroundWebURL(URL, forState: state)
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -160,7 +162,7 @@ public extension UIButton {
             }
             }) { (image, error, imageURL) -> () in
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    if (imageURL == self.kf_webURLForState(state) && image != nil) {
+                    if (imageURL == self.kf_backgroundWebURLForState(state) && image != nil) {
                         self.setBackgroundImage(image, forState: state)
                     }
                     completionHandler?(image: image, error: error, imageURL: imageURL)
