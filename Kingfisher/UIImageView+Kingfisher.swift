@@ -112,7 +112,7 @@ public extension UIImageView {
     {
         image = placeholderImage
         
-        self.kf_setWebURL(URL)
+        kf_setWebURL(URL)
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
