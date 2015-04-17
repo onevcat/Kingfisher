@@ -35,4 +35,8 @@ var testImage: UIImage = {
 let testImageData = UIImagePNGRepresentation(testImage)
 
 let testKeys = ["http://stackoverflow.com/questions/11251340/convert-image-to-base64-string-in-ios-swift","https://onevcat.com","http://onevcat.com/content/images/2014/May/200.jpg","http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"]
+
+func == (left: UIImage, right: UIImage) -> Bool {
+    return UIImagePNGRepresentation(left) == UIImagePNGRepresentation(right)
+}
     
