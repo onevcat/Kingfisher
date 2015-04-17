@@ -47,7 +47,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.0'
+pod 'Kingfisher', '~> 1.1'
 ```
 
 Then, run the following command:
@@ -72,7 +72,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using CocoaPods, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/Kingfisher" >= 1.0
+github "onevcat/Kingfisher" >= 1.1
 ```
 
 Then, run the following command to build Kingfisher framework:
@@ -179,6 +179,8 @@ task.cancel()
 
 // The image retrieving will stop.
 ```
+
+There is a category for `UIButton` as well.
 
 ### Downloader & Cache system
 
