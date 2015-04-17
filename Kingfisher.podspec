@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/onevcat/Kingfisher"
   s.screenshots  = "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png"
 
-  s.license      = { :type => "MIT", :file => "https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE" }
+  s.license      = { :type => "MIT", :file => "LICENSE" }
 
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
   s.social_media_url   = "http://twitter.com/onevcat"
