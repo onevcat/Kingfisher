@@ -30,6 +30,9 @@ public typealias DownloadProgressBlock = ((receivedSize: Int64, totalSize: Int64
 public typealias CompletionHandler = ((image: UIImage?, error: NSError?, imageURL: NSURL) -> ())
 
 // MARK: - Set Images
+/**
+*	Set image to use from web.
+*/
 public extension UIImageView {
     /**
     Set an image with a URL.
@@ -46,7 +49,7 @@ public extension UIImageView {
     }
     
     /**
-    Set an image with a URL and a place holder image.
+    Set an image with a URL and a placeholder image.
     
     :param: URL              The URL of image.
     :param: placeholderImage A placeholder image when retrieving the image at URL.
@@ -60,7 +63,7 @@ public extension UIImageView {
     }
     
     /**
-    Set an image with a URL, a place holder image and options.
+    Set an image with a URL, a placaholder image and options.
     
     :param: URL              The URL of image.
     :param: placeholderImage A placeholder image when retrieving the image at URL.
@@ -76,7 +79,7 @@ public extension UIImageView {
     }
     
     /**
-    Set an image with a URL, a place holder image, options and completion handler.
+    Set an image with a URL, a placeholder image, options and completion handler.
     
     :param: URL               The URL of image.
     :param: placeholderImage  A placeholder image when retrieving the image at URL.
@@ -94,7 +97,7 @@ public extension UIImageView {
     }
     
     /**
-    Set an image with a URL, a place holder image, options, progress handler and completion handler.
+    Set an image with a URL, a placeholder image, options, progress handler and completion handler.
     
     :param: URL               The URL of image.
     :param: placeholderImage  A placeholder image when retrieving the image at URL.
@@ -135,7 +138,7 @@ public extension UIImageView {
 // MARK: - Associated Object
 private var lastURLkey: Void?
 public extension UIImageView {
-    /// Get the image URL binded to this image view. You can use `kf_setImage` methods to set it.
+    /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         get {
             return objc_getAssociatedObject(self, &lastURLkey) as? NSURL
