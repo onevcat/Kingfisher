@@ -53,8 +53,7 @@ class UIImageViewExtensionTests: XCTestCase {
         LSNocilla.sharedInstance().clearStubs()
         imageView = nil
         
-        KingfisherManager.sharedManager.cache.clearDiskCache()
-        KingfisherManager.sharedManager.cache.clearMemoryCache()
+        cleanDefaultCache()
         
         super.tearDown()
     }
