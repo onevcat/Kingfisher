@@ -118,6 +118,11 @@ public extension UIImageView {
         }
         
         kf_setWebURL(URL)
+        
+        let lastTask = kf_Task
+        lastTask?.cancel()
+        kf_setTask(nil)
+        
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -132,6 +137,8 @@ public extension UIImageView {
                 completionHandler?(image: image, error: error, imageURL: imageURL)
             })
         }
+        
+        kf_setTask(task)
         
         return task
     }
@@ -149,5 +156,19 @@ public extension UIImageView {
     
     private func kf_setWebURL(URL: NSURL) {
         objc_setAssociatedObject(self, &lastURLkey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+    }
+}
+
+private var lastTask: Void?
+public extension UIImageView {
+    /// Get the task binded to this image view.
+    public var kf_Task: RetrieveImageTask? {
+        get {
+            return objc_getAssociatedObject(self, &lastTask) as? RetrieveImageTask
+        }
+    }
+    
+    private func kf_setTask(task: RetrieveImageTask?) {
+        objc_setAssociatedObject(self, &lastTask, task, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
     }
 }
