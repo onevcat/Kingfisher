@@ -66,7 +66,7 @@ public class ImageCache {
     /// The longest time duration of the cache being stored in disk. Default is 1 week.
     public var maxCachePeriodInSecond = defaultMaxCachePeriodInSecond
     
-    /// The largest disk size can be taken for the cache. It is the total allocated size of the file in bytes. Default is 0, which means no limit.
+    /// The largest disk size can be taken for the cache. It is the total allocated size of cached files in bytes. Default is 0, which means no limit.
     public var maxDiskCacheSize: UInt = 0
     
     private let processQueue = dispatch_queue_create(processQueueName, DISPATCH_QUEUE_CONCURRENT)
@@ -319,9 +319,9 @@ extension ImageCache {
             self.fileManager.removeItemAtPath(self.diskCachePath, error: nil)
             self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil, error: nil)
             
-            if let handler = completionHander {
+            if let completionHander = completionHander {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    handler()
+                    completionHander()
                 })
             }
         })
@@ -423,6 +423,11 @@ extension ImageCache {
 
             } else {
                 println("Bad disk cache path. \(self.diskCachePath) is not a valid local directory path.")
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    if let completionHandler = completionHandler {
+                        completionHandler()
+                    }
+                })
             }
         })
     }
@@ -481,6 +486,59 @@ public extension ImageCache {
         }
         
         return CacheCheckResult(cached: false, cacheType: nil)
+    }
+    
+    /**
+    Calculate the disk size taken by cache. 
+    It is the total allocated size of the cached files in bytes.
+    
+    :param: completionHandler Called with the calculated size when finishes.
+    */
+    public func calculateDiskCacheSizeWithCompletionHandler(completionHandler: ((size: UInt) -> ())?) {
+        dispatch_async(ioQueue, { () -> Void in
+            if let diskCacheURL = NSURL(fileURLWithPath: self.diskCachePath) {
+                
+                let resourceKeys = [NSURLIsDirectoryKey, NSURLTotalFileAllocatedSizeKey]
+                var diskCacheSize: UInt = 0
+                
+                if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL,
+                    includingPropertiesForKeys: resourceKeys,
+                    options: NSDirectoryEnumerationOptions.SkipsHiddenFiles,
+                    errorHandler: nil) {
+                        
+                        for fileURL in fileEnumerator.allObjects as! [NSURL] {
+                            
+                            if let resourceValues = fileURL.resourceValuesForKeys(resourceKeys, error: nil) {
+                                // If it is a Directory. Continue to next file URL.
+                                if let isDirectory = resourceValues[NSURLIsDirectoryKey]?.boolValue {
+                                    if isDirectory {
+                                        continue
+                                    }
+                                }
+                                
+                                if let fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
+                                    diskCacheSize += fileSize.unsignedLongValue
+                                }
+                            }
+                            
+                        }
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    if let completionHandler = completionHandler {
+                        completionHandler(size: diskCacheSize)
+                    }
+                })
+                
+            } else {
+                println("Bad disk cache path. \(self.diskCachePath) is not a valid local directory path.")
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    if let completionHandler = completionHandler {
+                        completionHandler(size: 0)
+                    }
+                })
+            }
+        })
     }
 }
 
