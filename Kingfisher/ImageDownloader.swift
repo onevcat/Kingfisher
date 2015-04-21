@@ -44,6 +44,10 @@ public class ImageDownloader: NSObject {
     }
     
     // MARK: - Public property
+    
+    /// This closure will be applied to the image download request before it being sent. You can modify the request for some customizing purpose, like adding auth token to the header or do a url mapping.
+    public var requestModifier: (NSMutableURLRequest -> Void)?
+
     /// The duration before the download is timeout. Default is 15 seconds.
     public var downloadTimeout: NSTimeInterval = 15.0
     
@@ -108,6 +112,9 @@ public extension ImageDownloader {
             let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
             let request = NSMutableURLRequest(URL: URL, cachePolicy: .ReloadIgnoringLocalCacheData, timeoutInterval: timeout)
             request.HTTPShouldUsePipelining = true
+
+            self.requestModifier?(request)
+            
             let task = session.dataTaskWithRequest(request)
             
             task.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
@@ -183,32 +190,32 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
-        let URL = task.originalRequest.URL!
-        
-        if let error = error { // Error happened
-            callbackWithImage(nil, error: error, imageURL: URL)
-        } else { //Download finished without error
-            
-            // We are on main queue when receiving this.
-            dispatch_async(processQueue, { () -> Void in
+        if let URL = task.originalRequest.URL {
+            if let error = error { // Error happened
+                callbackWithImage(nil, error: error, imageURL: URL)
+            } else { //Download finished without error
                 
-                if let fetchLoad = self.fetchLoads[URL] {
-                    if let image = UIImage(data: fetchLoad.responseData) {
-                        if fetchLoad.shouldDecode {
-                            self.callbackWithImage(image.kf_decodedImage(), error: nil, imageURL: URL)
+                // We are on main queue when receiving this.
+                dispatch_async(processQueue, { () -> Void in
+                    
+                    if let fetchLoad = self.fetchLoads[URL] {
+                        if let image = UIImage(data: fetchLoad.responseData) {
+                            if fetchLoad.shouldDecode {
+                                self.callbackWithImage(image.kf_decodedImage(), error: nil, imageURL: URL)
+                            } else {
+                                self.callbackWithImage(image, error: nil, imageURL: URL)
+                            }
+                            
                         } else {
-                            self.callbackWithImage(image, error: nil, imageURL: URL)
+                            self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
                         }
-
                     } else {
                         self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
                     }
-                } else {
-                    self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
-                }
-                
-                self.cleanForURL(URL)
-            })
+                    
+                    self.cleanForURL(URL)
+                })
+            }
         }
     }
 
