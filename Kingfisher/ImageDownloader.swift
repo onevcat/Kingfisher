@@ -47,6 +47,9 @@ public class ImageDownloader: NSObject {
     /// The duration before the download is timeout. Default is 15 seconds.
     public var downloadTimeout: NSTimeInterval = 15.0
     
+    /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. You can use this set to specify the self-signed site.
+    public var trustHosts: Set<String>?
+    
     // MARK: - Internal property
     let barrierQueue = dispatch_queue_create(downloaderBarrierName, DISPATCH_QUEUE_CONCURRENT)
     let processQueue = dispatch_queue_create(imageProcessQueueName, DISPATCH_QUEUE_CONCURRENT)
@@ -212,4 +215,17 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         }
     }
 
+    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+
+        if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+            if let trustHosts = trustHosts where trustHosts.contains(challenge.protectionSpace.host) {
+                let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                completionHandler(.UseCredential, credential)
+                return
+            }
+        }
+        
+        completionHandler(.PerformDefaultHandling, nil)
+    }
+    
 }
