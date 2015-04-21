@@ -48,7 +48,7 @@ public class ImageDownloader: NSObject {
     public var downloadTimeout: NSTimeInterval = 15.0
     
     /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. You can use this set to specify the self-signed site.
-    public var trustHosts: Set<String>?
+    public var trustedHosts: Set<String>?
     
     // MARK: - Internal property
     let barrierQueue = dispatch_queue_create(downloaderBarrierName, DISPATCH_QUEUE_CONCURRENT)
@@ -218,7 +218,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
 
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            if let trustHosts = trustHosts where trustHosts.contains(challenge.protectionSpace.host) {
+            if let trustedHosts = trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
                 let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
                 completionHandler(.UseCredential, credential)
                 return
