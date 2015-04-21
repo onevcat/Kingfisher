@@ -28,8 +28,8 @@ import Foundation
 
 private let defaultCacheName = "default"
 private let cacheReverseDNS = "com.onevcat.Kingfisher.ImageCache."
-private let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue"
-private let processQueueName = "com.onevcat.Kingfisher.ImageCache.processQueue"
+private let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue."
+private let processQueueName = "com.onevcat.Kingfisher.ImageCache.processQueue."
 
 private let defaultCacheInstance = ImageCache(name: defaultCacheName)
 private let defaultMaxCachePeriodInSecond: NSTimeInterval = 60 * 60 * 24 * 7 //Cache exists for 1 week
@@ -59,7 +59,7 @@ public class ImageCache {
     }
     
     //Disk
-    private let ioQueue = dispatch_queue_create(ioQueueName, DISPATCH_QUEUE_SERIAL)
+    private let ioQueue: dispatch_queue_t
     private let diskCachePath: String
     private var fileManager: NSFileManager!
     
@@ -69,7 +69,7 @@ public class ImageCache {
     /// The largest disk size can be taken for the cache. It is the total allocated size of cached files in bytes. Default is 0, which means no limit.
     public var maxDiskCacheSize: UInt = 0
     
-    private let processQueue = dispatch_queue_create(processQueueName, DISPATCH_QUEUE_CONCURRENT)
+    private let processQueue: dispatch_queue_t
     
     /// The default cache.
     public class var defaultCache: ImageCache {
@@ -79,16 +79,24 @@ public class ImageCache {
     /**
     Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.
     
-    :param: name Name of the cache.
+    :param: name Name of the cache. It will be used as the memory cache name and the disk cache folder name. This value should not be an empty string.
     
     :returns: The cache object.
     */
     public init(name: String) {
+        
+        if name.isEmpty {
+            fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
+        }
+        
         let cacheName = cacheReverseDNS + name
         memoryCache.name = cacheName
         
         let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
         diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
+        
+        ioQueue = dispatch_queue_create(ioQueueName + name, DISPATCH_QUEUE_SERIAL)
+        processQueue = dispatch_queue_create(processQueueName + name, DISPATCH_QUEUE_CONCURRENT)
         
         dispatch_sync(ioQueue, { () -> Void in
             self.fileManager = NSFileManager()
