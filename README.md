@@ -14,13 +14,13 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 
 ## Features
 
-* Everything in Kingfisher goes asynchronously, not only downloading, but also caching. That means you can never worry about blocking your UI thread.
-* Multiple-layer cache. Downloaded image will be cached in both memory and disk. So there is no need to download it again and this could boost your app dramatically.
+* Everything in Kingfisher goes asynchronously, not only downloading, but also caching. That means you will never worry about blocking your UI thread.
+* Multiple-layer cache. Downloaded images will be cached in both memory and disk. So there is no need to download again and this could boost your app dramatically.
 * Cache management. You can set the max duration or size the cache could take. And the cache will also be cleaned automatically to prevent taking too much resource.
 * Modern framework. Kingfisher uses `NSURLSession` and the latest technology of GCD, which makes it a strong and swift framework. It also provides you easy APIs to use.
-* Cancellable processing task. You can cancel the downloading or retriving image process if it is not needed anymore.
+* Cancellable processing task. You can cancel the downloading or image retriving process if it is not needed anymore.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
-* Options to decompress the image in background before render it, which could improve the UI performance.
+* Options to decompress the image in background before rendering it, which could improve the UI performance.
 * A category over `UIImageView` for setting image from an URL directly.
 
 ## Requirements
@@ -75,18 +75,18 @@ To integrate Kingfisher into your Xcode project using CocoaPods, specify it in y
 github "onevcat/Kingfisher" >= 1.1
 ```
 
-Then, run the following command to build Kingfisher framework:
+Then, run the following command to build the Kingfisher framework:
 
 ```bash
 $ carthage update
 
 ```
 
-At last, you need to set up your Xcode project manually to add Kingfisher framework.
+At last, you need to set up your Xcode project manually to add the Kingfisher framework.
 
 On your application targets’ “General” settings tab, in the “Linked Frameworks and Libraries” section, drag and drop each framework you want to use from the Carthage/Build folder on disk.
 
-On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script with the following contents:
+On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script with the following content:
 
 ```
 /usr/local/bin/carthage copy-frameworks
@@ -122,7 +122,7 @@ You can find the full API documentation at [CocoaDocs](http://cocoadocs.org/docs
 
 ### UIImageView category
 
-Use Kingfisher in your project is as easy as pie. You can use the `UIImageView` category and trust Kingfisher to manage downloading and cache images.
+Use Kingfisher in your project is as easy as a pie. You can use the `UIImageView` category and trust Kingfisher to manage downloading and cache images.
 
 #### Basic
 
@@ -134,7 +134,7 @@ import Kingfisher
 imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
 ```
 
-Most cases, Kingfisher is used in a reusable cell. Since the downloading process is asynchronous, the earlier image will be remained during the downloading of newer one. The placeholder version of this API could help:
+In most cases, Kingfisher is used in a reusable cell. Since the downloading process is asynchronous, the earlier image will be remained during the downloading of newer one. The placeholder version of this API could help:
 
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeholderImage: nil)
@@ -150,11 +150,11 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                                   options: KingfisherOptions.ForceRefresh)
 ```
 
-There are also other options to control the cache level, downloading priority and etc. See [documentation](http://cocoadocs.org/docsets/Kingfisher/0.0.2/Structs/KingfisherOptions.html) for more.
+There are also other options to control the cache level, downloading priority, etc. See [documentation](http://cocoadocs.org/docsets/Kingfisher/0.0.2/Structs/KingfisherOptions.html) for more.
 
 #### Callbacks
 
-You can get a chance during Kingfisher downloads images and when the process done:
+You can get a chance during Kingfisher downloading images and when the process is done:
 
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
@@ -184,7 +184,7 @@ There is a category for `UIButton` as well.
 
 ### Downloader & Cache system
 
-Kingfisher will use the default downloader and cache if you do not specify them yourself. You can access them by using `KingfisherManager.sharedManager.downloader` and `KingfisherManager.sharedManager.cache`. You can adjust some parameters to meet your demands:
+Kingfisher will use the default downloader and cache if you do not specify them by yourself. You can access them by using `KingfisherManager.sharedManager.downloader` and `KingfisherManager.sharedManager.cache`. You can adjust some parameters to meet your demands:
 
 ```swift
 let downloader = KingfisherManager.sharedManager.downloader
@@ -199,7 +199,7 @@ cache.maxDiskCacheSize = 50 * 1024 * 1024
 cache.maxCachePeriodInSecond = 60 * 60 * 24 * 3
 ```
 
-The memory cache will be purged whenever the app switched to background or receiving a memory warning. Disk cache will be cleaned when the conditions met. You can also clear these cache manually:
+The memory cache will be purged whenever the app switched to background or receiving a memory warning. Disk cache will be cleaned when the conditions are met. You can also clear these caches manually:
 
 ```swift
 // Clear memory cache right away.
@@ -214,11 +214,11 @@ cache.cleanExpiredDiskCache()
 
 ## Future of Kingfisher
 
-I want to keep Kingfisher slim. This framework will focus on providing a simple solution of image downloading and cache. But that not means the framework will not be improved. Kingfisher is far away from perfect and necessary and useful features will be added later, to make it better.
+I want to keep Kingfisher slim. This framework will focus on providing a simple solution for image downloading and caching. But that does not mean the framework will not be improved. Kingfisher is far away from perfect, and necessary and useful features will be added later to make it better.
 
 ## About the logo
 
-The logo of Kingfisher is inspired by [Tangram (七巧板)](http://en.wikipedia.org/wiki/Tangram), a dissection puzzle consisting of seven flat shapes from China. I believe she's a kingfisher bird instead of a swift, but someone persists that she is a pigeon. I guess I should give her a name. Hi, guys, do you have any suggestion?
+The logo of Kingfisher is inspired by [Tangram (七巧板)](http://en.wikipedia.org/wiki/Tangram), a dissection puzzle consisting of seven flat shapes from China. I believe she's a kingfisher bird instead of a swift, but someone insists that she is a pigeon. I guess I should give her a name. Hi, guys, do you have any suggestion?
 
 ## Contact
 
