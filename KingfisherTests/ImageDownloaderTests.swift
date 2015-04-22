@@ -45,7 +45,7 @@ class ImageDownloaderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        downloader = ImageDownloader()
+        downloader = ImageDownloader(name: "test")
     }
     
     override func tearDown() {
