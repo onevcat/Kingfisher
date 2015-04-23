@@ -101,7 +101,7 @@ public class KingfisherManager {
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
     :param: URL               The image URL.
-    :param: optionsInfo       Options controlling manager behavior.
+    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
     :param: completionHandler Called when the whole retriving process finished.
     

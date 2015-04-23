@@ -67,7 +67,7 @@ public extension UIImageView {
     
     :param: URL              The URL of image.
     :param: placeholderImage A placeholder image when retrieving the image at URL.
-    :param: options          Options which could control some behaviors. See `KingfisherOptions` for more.
+    :param: optionsInfo      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
     :returns: A task represents the retriving process.
     */
@@ -83,7 +83,7 @@ public extension UIImageView {
     
     :param: URL               The URL of image.
     :param: placeholderImage  A placeholder image when retrieving the image at URL.
-    :param: options           Options which could control some behaviors. See `KingfisherOptions` for more.
+    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: completionHandler Called when the image retrieved and set.
     
     :returns: A task represents the retriving process.
@@ -101,7 +101,7 @@ public extension UIImageView {
     
     :param: URL               The URL of image.
     :param: placeholderImage  A placeholder image when retrieving the image at URL.
-    :param: options           Options which could control some behaviors. See `KingfisherOptions` for more.
+    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: progressBlock     Called when the image downloading progress gets updated.
     :param: completionHandler Called when the image retrieved and set.
     
