@@ -199,8 +199,8 @@
 				D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */,
 				D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */,
 				D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */,
-				D1ED2D371AD2D09F00CFC3EB /* Supporting Files */,
 				4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */,
+				D1ED2D371AD2D09F00CFC3EB /* Supporting Files */,
 			);
 			path = Kingfisher;
 			sourceTree = "<group>";
