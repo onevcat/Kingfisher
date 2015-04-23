@@ -159,9 +159,6 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectationWithDescription("wait for retriving image")
         
         self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
-            
-            // Base line is ~0.25 in iPhone 6 simulator.
-            // (Baseline setting for block measure is not available for using in Xcode 6.3 & Swift 1.2)
             self.measureBlock({ () -> Void in
                 for _ in 1 ..< 1000 {
                     self.cache.retrieveImageInDiskCacheForKey(testKeys[0])

@@ -31,9 +31,10 @@ public typealias ImageDownloaderCompletionHandler = CompletionHandler
 
 public typealias RetrieveImageDownloadTask = NSURLSessionDataTask
 
-private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barrier"
-private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Process"
-private let instance = ImageDownloader()
+private let defaultDownloaderName = "default"
+private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barrier."
+private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Process."
+private let instance = ImageDownloader(name: defaultDownloaderName)
 
 public class ImageDownloader: NSObject {
     
@@ -55,8 +56,8 @@ public class ImageDownloader: NSObject {
     public var trustedHosts: Set<String>?
     
     // MARK: - Internal property
-    let barrierQueue = dispatch_queue_create(downloaderBarrierName, DISPATCH_QUEUE_CONCURRENT)
-    let processQueue = dispatch_queue_create(imageProcessQueueName, DISPATCH_QUEUE_CONCURRENT)
+    let barrierQueue: dispatch_queue_t
+    let processQueue: dispatch_queue_t
     
     typealias CallbackPair = (progressBlock: ImageDownloaderProgressBlock?, completionHander: ImageDownloaderCompletionHandler?)
     
@@ -66,6 +67,22 @@ public class ImageDownloader: NSObject {
     /// The default downloader.
     public class var defaultDownloader: ImageDownloader {
         return instance
+    }
+    
+    /**
+    Init a downloader with name.
+    
+    :param: name The name for the downloader. It should not be empty.
+    
+    :returns: The downloader object.
+    */
+    public init(name: String) {
+        if name.isEmpty {
+            fatalError("[Kingfisher] You should specify a name for the downloader. A downloader with empty name is not permitted.")
+        }
+        
+        barrierQueue = dispatch_queue_create(downloaderBarrierName + name, DISPATCH_QUEUE_CONCURRENT)
+        processQueue = dispatch_queue_create(imageProcessQueueName + name, DISPATCH_QUEUE_CONCURRENT)
     }
 }
 
