@@ -67,7 +67,7 @@ class UIImageViewExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
         
-        imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, imageURL) -> () in
             expectation.fulfill()
@@ -92,7 +92,7 @@ class UIImageViewExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
         
-        let task = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, imageURL) -> () in
             completionBlockIsCalled = true
@@ -119,19 +119,19 @@ class UIImageViewExtensionTests: XCTestCase {
         var task2Completion = false
         var task3Completion = false
         
-        let task1 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task1 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
 
             }) { (image, error, imageURL) -> () in
                 task1Completion = true
         }
         
-        let task2 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task2 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, imageURL) -> () in
                 task2Completion = true
         }
         
-        let task3 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task3 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, imageURL) -> () in
                 task3Completion = true
