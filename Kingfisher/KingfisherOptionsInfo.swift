@@ -26,6 +26,8 @@
 
 import Foundation
 
+public typealias KingfisherOptionsInfo = [String: Any]
+
 // MARK: - Defines
 public let KingfisherOptionsInfoOptionsKey = "com.onevcat.Kingfisher.optionsInfo.options"
 public let KingfisherOptionsInfoTargetCacheKey = "com.onevcat.Kingfisher.optionsInfo.targetCache"

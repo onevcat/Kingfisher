@@ -73,7 +73,7 @@ public extension UIImageView {
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
-                           optionsInfo: [String: Any]?) -> RetrieveImageTask
+                           optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
     }
@@ -90,7 +90,7 @@ public extension UIImageView {
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
-                           optionsInfo: [String: Any]?,
+                           optionsInfo: KingfisherOptionsInfo?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: completionHandler)
@@ -109,7 +109,7 @@ public extension UIImageView {
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
-                           optionsInfo: [String: Any]?,
+                           optionsInfo: KingfisherOptionsInfo?,
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {

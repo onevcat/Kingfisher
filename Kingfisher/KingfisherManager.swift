@@ -101,18 +101,18 @@ public class KingfisherManager {
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
     :param: URL               The image URL.
-    :param: options           Options controlling manager behavior.
+    :param: optionsInfo       Options controlling manager behavior.
     :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
     :param: completionHandler Called when the whole retriving process finished.
     
     :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
     public func retrieveImageWithURL(URL: NSURL,
-                             optionsInfo: [String: Any]?,
+                             optionsInfo: KingfisherOptionsInfo?,
                            progressBlock: DownloadProgressBlock?,
                        completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        func parseOptionsInfo(optionsInfo: [String: Any]?) -> (Options, ImageCache, ImageDownloader) {
+        func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
             let options: Options
             if let optionsInOptionsInfo = optionsInfo?[KingfisherOptionsInfoOptionsKey] as? KingfisherOptions {
                 options = (forceRefresh: (optionsInOptionsInfo & KingfisherOptions.ForceRefresh) != KingfisherOptions.None,

@@ -75,7 +75,7 @@ public extension UIButton {
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
                       placeholderImage: UIImage?,
-                           optionsInfo: [String: Any]?) -> RetrieveImageTask
+                           optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, forState: state, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
     }
@@ -94,7 +94,7 @@ public extension UIButton {
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
                       placeholderImage: UIImage?,
-                           optionsInfo: [String: Any]?,
+                           optionsInfo: KingfisherOptionsInfo?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, forState: state, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: completionHandler)
@@ -115,7 +115,7 @@ public extension UIButton {
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
                       placeholderImage: UIImage?,
-                           optionsInfo: [String: Any]?,
+                           optionsInfo: KingfisherOptionsInfo?,
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
@@ -222,7 +222,7 @@ public extension UIButton {
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
                                 placeholderImage: UIImage?,
-                                     optionsInfo: [String: Any]?) -> RetrieveImageTask
+                                     optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask
     {
         return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
     }
@@ -241,7 +241,7 @@ public extension UIButton {
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
                                 placeholderImage: UIImage?,
-                                     optionsInfo: [String: Any]?,
+                                     optionsInfo: KingfisherOptionsInfo?,
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: completionHandler)
@@ -263,7 +263,7 @@ public extension UIButton {
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
                                 placeholderImage: UIImage?,
-                                     optionsInfo: [String: Any]?,
+                                     optionsInfo: KingfisherOptionsInfo?,
                                    progressBlock: DownloadProgressBlock?,
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
