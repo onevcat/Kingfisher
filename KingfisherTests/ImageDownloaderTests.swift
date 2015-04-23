@@ -122,5 +122,26 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectationsWithTimeout(1, handler: nil)
     }
     
+    func testDownloadWithModifyingRequest() {
+        let expectation = expectationWithDescription("wait for downloading image")
+
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        
+        downloader.requestModifier = {
+            (request: NSMutableURLRequest) in
+            request.URL = NSURL(string: URLString)
+        }
+        
+        let someURL = NSURL(string: "some_strange_url")!
+        downloader.downloadImageWithURL(someURL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL) -> () in
+            XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
+            XCTAssertEqual(imageURL!, NSURL(string: URLString)!, "The returned imageURL should be the replaced one")
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(1, handler: nil)
+    }
     
 }

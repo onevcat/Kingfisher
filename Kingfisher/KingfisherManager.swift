@@ -59,6 +59,7 @@ The error code.
 */
 public enum KingfisherError: Int {
     case BadData = 10000
+    case InvalidURL = 20000
 }
 
 private let instance = KingfisherManager()
