@@ -144,4 +144,25 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectationsWithTimeout(1, handler: nil)
     }
     
+    // Since we could not receive one challage, no test for trusted hosts currently.
+    // See http://stackoverflow.com/questions/27065372/why-is-a-https-nsurlsession-connection-only-challenged-once-per-domain for more.
+    func testSSLCertificateValidation() {
+        LSNocilla.sharedInstance().stop()
+        
+        let URL = NSURL(string: "https://testssl-expire.disig.sk/Expired.png")!
+        
+        let expectation = expectationWithDescription("wait for download from an invalid ssl site.")
+        
+        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
+            XCTAssertNotNil(error, "Error should not be nil")
+            XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "Error should be NSURLErrorServerCertificateUntrusted")
+            expectation.fulfill()
+            LSNocilla.sharedInstance().start()
+        })
+        
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+            LSNocilla.sharedInstance().start()
+        }
+    }
 }
