@@ -115,7 +115,7 @@ public class KingfisherManager {
     {
         func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
             let options: Options
-            if let optionsInOptionsInfo = optionsInfo?[KingfisherOptionsInfoOptionsKey] as? KingfisherOptions {
+            if let optionsInOptionsInfo = optionsInfo?[.Options] as? KingfisherOptions {
                 options = (forceRefresh: (optionsInOptionsInfo & KingfisherOptions.ForceRefresh) != KingfisherOptions.None,
                     lowPriority: (optionsInOptionsInfo & KingfisherOptions.LowPriority) != KingfisherOptions.None,
                     cacheMemoryOnly: (optionsInOptionsInfo & KingfisherOptions.CacheMemoryOnly) != KingfisherOptions.None,
@@ -127,8 +127,8 @@ public class KingfisherManager {
                     shouldDecode: false)
             }
             
-            let targetCache = optionsInfo?[KingfisherOptionsInfoTargetCacheKey] as? ImageCache ?? self.cache
-            let usedDownloader = optionsInfo?[KingfisherOptionsInfoDownloaderKey] as? ImageDownloader ?? self.downloader
+            let targetCache = optionsInfo?[.TargetCache] as? ImageCache ?? self.cache
+            let usedDownloader = optionsInfo?[.Downloader] as? ImageDownloader ?? self.downloader
             
             return (options, targetCache, usedDownloader)
         }
@@ -201,6 +201,6 @@ public extension KingfisherManager {
                            progressBlock: DownloadProgressBlock?,
                        completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return retrieveImageWithURL(URL, optionsInfo: [KingfisherOptionsInfoOptionsKey : options], progressBlock: progressBlock, completionHandler: completionHandler)
+        return retrieveImageWithURL(URL, optionsInfo: [.Options : options], progressBlock: progressBlock, completionHandler: completionHandler)
     }
 }
