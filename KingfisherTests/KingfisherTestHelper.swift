@@ -42,6 +42,12 @@ func == (left: UIImage, right: UIImage) -> Bool {
 }
 
 func cleanDefaultCache() {
-    KingfisherManager.sharedManager.cache.clearDiskCache()
-    KingfisherManager.sharedManager.cache.clearMemoryCache()
+    clearCaches([KingfisherManager.sharedManager.cache])
+}
+
+func clearCaches(caches: [ImageCache]) {
+    for c in caches {
+        c.clearDiskCache()
+        c.clearMemoryCache()
+    }
 }
