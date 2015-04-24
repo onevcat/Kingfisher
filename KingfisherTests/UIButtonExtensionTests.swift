@@ -46,6 +46,7 @@ class UIButtonExtensionTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         button = UIButton()
+        KingfisherManager.sharedManager.downloader = ImageDownloader(name: "testDownloader")
     }
     
     override func tearDown() {
@@ -65,7 +66,7 @@ class UIButtonExtensionTests: XCTestCase {
         let URL = NSURL(string: URLString)!
         
         var progressBlockIsCalled = false
-        button.kf_setImageWithURL(URL, forState: UIControlState.Highlighted, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        button.kf_setImageWithURL(URL, forState: UIControlState.Highlighted, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, imageURL) -> () in
             expectation.fulfill()
@@ -87,7 +88,7 @@ class UIButtonExtensionTests: XCTestCase {
         let URL = NSURL(string: URLString)!
         
         var progressBlockIsCalled = false
-        button.kf_setBackgroundImageWithURL(URL, forState: UIControlState.Normal, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        button.kf_setBackgroundImageWithURL(URL, forState: UIControlState.Normal, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             }) { (image, error, imageURL) -> () in
                 expectation.fulfill()

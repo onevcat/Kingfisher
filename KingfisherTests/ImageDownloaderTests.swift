@@ -122,5 +122,47 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectationsWithTimeout(1, handler: nil)
     }
     
+    func testDownloadWithModifyingRequest() {
+        let expectation = expectationWithDescription("wait for downloading image")
+
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        
+        downloader.requestModifier = {
+            (request: NSMutableURLRequest) in
+            request.URL = NSURL(string: URLString)
+        }
+        
+        let someURL = NSURL(string: "some_strange_url")!
+        downloader.downloadImageWithURL(someURL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL) -> () in
+            XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
+            XCTAssertEqual(imageURL!, NSURL(string: URLString)!, "The returned imageURL should be the replaced one")
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(1, handler: nil)
+    }
     
+    // Since we could not receive one challage, no test for trusted hosts currently.
+    // See http://stackoverflow.com/questions/27065372/why-is-a-https-nsurlsession-connection-only-challenged-once-per-domain for more.
+    func testSSLCertificateValidation() {
+        LSNocilla.sharedInstance().stop()
+        
+        let URL = NSURL(string: "https://testssl-expire.disig.sk/Expired.png")!
+        
+        let expectation = expectationWithDescription("wait for download from an invalid ssl site.")
+        
+        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
+            XCTAssertNotNil(error, "Error should not be nil")
+            XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "Error should be NSURLErrorServerCertificateUntrusted")
+            expectation.fulfill()
+            LSNocilla.sharedInstance().start()
+        })
+        
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+            LSNocilla.sharedInstance().start()
+        }
+    }
 }

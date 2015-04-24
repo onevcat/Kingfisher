@@ -96,8 +96,8 @@ public extension ImageDownloader {
     :param: completionHandler Called when the download progress finishes.
     */
     public func downloadImageWithURL(URL: NSURL,
-        progressBlock: ImageDownloaderProgressBlock?,
-        completionHandler: ImageDownloaderCompletionHandler?)
+                           progressBlock: ImageDownloaderProgressBlock?,
+                       completionHandler: ImageDownloaderCompletionHandler?)
     {
         downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: progressBlock, completionHandler: completionHandler)
     }
@@ -111,9 +111,9 @@ public extension ImageDownloader {
     :param: completionHandler Called when the download progress finishes.
     */
     public func downloadImageWithURL(URL: NSURL,
-        options: KingfisherManager.Options,
-        progressBlock: ImageDownloaderProgressBlock?,
-        completionHandler: ImageDownloaderCompletionHandler?)
+                                 options: KingfisherManager.Options,
+                           progressBlock: ImageDownloaderProgressBlock?,
+                       completionHandler: ImageDownloaderCompletionHandler?)
     {
         downloadImageWithURL(URL,
             retrieveImageTask: nil,
@@ -128,13 +128,21 @@ public extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?)
     {
-        setupProgressBlock(progressBlock, completionHandler: completionHandler, forURL: URL) {(session, fetchLoad) -> Void in
-            let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
-            let request = NSMutableURLRequest(URL: URL, cachePolicy: .ReloadIgnoringLocalCacheData, timeoutInterval: timeout)
-            request.HTTPShouldUsePipelining = true
-
-            self.requestModifier?(request)
-            
+        let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
+        
+        // We need to set the URL as the load key. So before setup progress, we need to ask the `requestModifier` for a final URL.
+        let request = NSMutableURLRequest(URL: URL, cachePolicy: .ReloadIgnoringLocalCacheData, timeoutInterval: timeout)
+        request.HTTPShouldUsePipelining = true
+        
+        self.requestModifier?(request)
+        
+        // There is a possiblility that request modifier changed the url to `nil`
+        if request.URL == nil {
+            completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidURL.rawValue, userInfo: nil), imageURL: nil)
+            return
+        }
+        
+        setupProgressBlock(progressBlock, completionHandler: completionHandler, forURL: request.URL!) {(session, fetchLoad) -> Void in
             let task = session.dataTaskWithRequest(request)
             
             task.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault

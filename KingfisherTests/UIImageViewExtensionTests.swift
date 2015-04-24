@@ -46,6 +46,7 @@ class UIImageViewExtensionTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         imageView = UIImageView()
+        KingfisherManager.sharedManager.downloader = ImageDownloader(name: "testDownloader")
     }
     
     override func tearDown() {
@@ -67,7 +68,7 @@ class UIImageViewExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
         
-        imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, imageURL) -> () in
             expectation.fulfill()
@@ -92,7 +93,7 @@ class UIImageViewExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
         
-        let task = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, imageURL) -> () in
             completionBlockIsCalled = true
@@ -119,19 +120,19 @@ class UIImageViewExtensionTests: XCTestCase {
         var task2Completion = false
         var task3Completion = false
         
-        let task1 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task1 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
 
             }) { (image, error, imageURL) -> () in
                 task1Completion = true
         }
         
-        let task2 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task2 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, imageURL) -> () in
                 task2Completion = true
         }
         
-        let task3 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, options: KingfisherOptions.None, progressBlock: { (receivedSize, totalSize) -> () in
+        let task3 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, imageURL) -> () in
                 task3Completion = true
@@ -149,4 +150,41 @@ class UIImageViewExtensionTests: XCTestCase {
         waitForExpectationsWithTimeout(0.1, handler: nil)
     }
     
+    func testImageDownalodMultipleCaches() {
+        
+        let cache1 = ImageCache(name: "cache1")
+        let cache2 = ImageCache(name: "cache2")
+        
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let URL = NSURL(string: URLString)!
+        
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache: cache1], progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL) -> () in
+            
+            XCTAssertTrue(cache1.isImageCachedForKey(URLString).cached, "This image should be cached in cache1.")
+            XCTAssertFalse(cache2.isImageCachedForKey(URLString).cached, "This image should not be cached in cache2.")
+            XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
+            
+            self.imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache: cache2], progressBlock: { (receivedSize, totalSize) -> () in
+                
+            }, completionHandler: { (image, error, imageURL) -> () in
+                XCTAssertTrue(cache1.isImageCachedForKey(URLString).cached, "This image should be cached in cache1.")
+                XCTAssertTrue(cache2.isImageCachedForKey(URLString).cached, "This image should be cached in cache2.")
+                XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
+                
+                clearCaches([cache1, cache2])
+                
+                expectation.fulfill()
+            })
+            
+        }
+        
+        waitForExpectationsWithTimeout(0.1, handler: { (error) -> Void in
+            clearCaches([cache1, cache2])
+        })
+    }
 }
