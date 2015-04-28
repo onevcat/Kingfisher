@@ -250,6 +250,13 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                             }
                             
                         } else {
+                            // If server response is 304 (Not Modified), inform the callback handler with NotModified error.
+                            // It should be handled to get an image from cache, which is response of a manager object.
+                            if let res = task.response as? NSHTTPURLResponse where res.statusCode == 304 {
+                                self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.NotModified.rawValue, userInfo: nil), imageURL: URL)
+                                return
+                            }
+                            
                             self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
                         }
                     } else {

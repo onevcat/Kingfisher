@@ -59,6 +59,7 @@ The error code.
 */
 public enum KingfisherError: Int {
     case BadData = 10000
+    case NotModified = 10001
     case InvalidURL = 20000
 }
 
@@ -190,6 +191,17 @@ public class KingfisherManager {
             progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
             return
         }) { (image, error, imageURL) -> () in
+
+            if let error = error where error.code == KingfisherError.NotModified.rawValue {
+                // Not modified. Try to find the image from cache. 
+                // (The image should be in cache. It should be ensured by the framework users.)
+                targetCache.retrieveImageForKey(key, options: options, completionHandler: { (cacheImage, cacheType) -> () in
+                    completionHandler?(image: cacheImage, error: nil, cacheType: cacheType, imageURL: URL)
+
+                })
+                return
+            }
+            
             completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
             if let image = image {
                 targetCache.storeImage(image, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
