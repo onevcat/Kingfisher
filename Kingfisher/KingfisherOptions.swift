@@ -33,12 +33,33 @@ public struct KingfisherOptions : RawOptionSetType {
     typealias RawValue = UInt
     private var value: UInt = 0
     init(_ value: UInt) { self.value = value }
+    
+    /**
+    Init an option
+    
+    :param: value Raw value of the option.
+    
+    :returns: An option represets input value.
+    */
     public init(rawValue value: UInt) { self.value = value }
+    
+    /**
+    Init a None option
+    
+    :param: nilLiteral Void.
+    
+    :returns: An option represents None.
+    */
     public init(nilLiteral: ()) { self.value = 0 }
+    
+    /// An option represents None.
     public static var allZeros: KingfisherOptions { return self(0) }
-    static func fromMask(raw: UInt) -> KingfisherOptions { return self(raw) }
+    
+    /// Raw value of the option.
     public var rawValue: UInt { return self.value }
     
+    static func fromMask(raw: UInt) -> KingfisherOptions { return self(raw) }
+
     /// None options. Kingfisher will keep its default behavior.
     public static var None: KingfisherOptions { return self(0) }
     
