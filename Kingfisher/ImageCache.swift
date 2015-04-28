@@ -26,6 +26,9 @@
 
 import Foundation
 
+public let KingfisherDidCleanDiskCacheNotification = "com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification"
+public let KingfisherDiskCacheCleanedHashKey = "com.onevcat.Kingfisher.cleanedHash"
+
 private let defaultCacheName = "default"
 private let cacheReverseDNS = "com.onevcat.Kingfisher.ImageCache."
 private let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue."
@@ -415,6 +418,9 @@ extension ImageCache {
                     
                     for fileURL in sortedFiles {
                         if (self.fileManager.removeItemAtURL(fileURL, error: nil)) {
+                            
+                            URLsToDelete.append(fileURL)
+                            
                             if let fileSize = cachedFiles[fileURL]?[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
                                 diskCacheSize -= fileSize.unsignedLongValue
                             }
@@ -427,6 +433,15 @@ extension ImageCache {
                 }
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    
+                    if URLsToDelete.count != 0 {
+                        let cleanedHashes = URLsToDelete.map({ (url) -> String in
+                            return url.lastPathComponent!
+                        })
+                        
+                        NSNotificationCenter.defaultCenter().postNotificationName(KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
+                    }
+                    
                     if let completionHandler = completionHandler {
                         completionHandler()
                     }
@@ -497,6 +512,17 @@ public extension ImageCache {
         }
         
         return CacheCheckResult(cached: false, cacheType: nil)
+    }
+    
+    /**
+    Get the hash for the key. This could be used for matching files.
+    
+    :param: key The key which is used for caching.
+    
+    :returns: Corresponding hash.
+    */
+    public func hashForKey(key: String) -> String {
+        return cacheFileNameForKey(key)
     }
     
     /**
