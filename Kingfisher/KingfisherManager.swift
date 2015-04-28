@@ -69,12 +69,17 @@ private let instance = KingfisherManager()
 */
 public class KingfisherManager {
 
+    /**
+    *	Options to control some downloader and cache behaviors.
+    */
     public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool)
     
+    /// A preset option tuple with all value set to `false`.
     public static var OptionsNone: Options = {
         return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false)
     }()
     
+    /// Shared manager used by the extensions across Kingfisher.
     public class var sharedManager: KingfisherManager {
         return instance
     }

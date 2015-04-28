@@ -46,6 +46,9 @@ public enum CacheType {
     case Memory, Disk
 }
 
+/**
+*	`ImageCache` represents both the memory and disk cache system of Kingfisher. While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create your own cache object and configure it as your need. You should use an `ImageCache` object to manipulate memory and disk cache for Kingfisher.
+*/
 public class ImageCache {
 
     //Memory

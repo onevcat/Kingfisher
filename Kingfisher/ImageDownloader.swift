@@ -26,9 +26,13 @@
 
 import Foundation
 
+/// Progress update block of downloader.
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
+
+/// Completion block of downloader.
 public typealias ImageDownloaderCompletionHandler = CompletionHandler
 
+/// Download task.
 public typealias RetrieveImageDownloadTask = NSURLSessionDataTask
 
 private let defaultDownloaderName = "default"
@@ -36,6 +40,9 @@ private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barr
 private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Process."
 private let instance = ImageDownloader(name: defaultDownloaderName)
 
+/**
+*	`ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
+*/
 public class ImageDownloader: NSObject {
     
     class ImageFetchLoad {
@@ -187,7 +194,9 @@ public extension ImageDownloader {
 
 // MARK: - NSURLSessionTaskDelegate
 extension ImageDownloader: NSURLSessionDataDelegate {
-    
+    /**
+    This method is exposed since the compiler requests. Do not call it.
+    */
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
         
         if let URL = dataTask.originalRequest.URL, callbackPairs = fetchLoads[URL]?.callbacks {
@@ -198,6 +207,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         completionHandler(NSURLSessionResponseDisposition.Allow)
     }
     
+    /**
+    This method is exposed since the compiler requests. Do not call it.
+    */
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
 
         if let URL = dataTask.originalRequest.URL, fetchLoad = fetchLoads[URL] {
@@ -216,6 +228,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         }
     }
     
+    /**
+    This method is exposed since the compiler requests. Do not call it.
+    */
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
         if let URL = task.originalRequest.URL {
@@ -247,6 +262,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         }
     }
 
+    /**
+    This method is exposed since the compiler requests. Do not call it.
+    */
     public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
 
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
