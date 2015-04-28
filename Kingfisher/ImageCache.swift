@@ -26,7 +26,18 @@
 
 import Foundation
 
+/**
+This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The `clearDiskCache` method will not trigger this notification.
+
+The `object` of this notification is the `ImageCache` object which sends the notification.
+
+A list of removed hashes (files) could be retrieved by accessing the array under `KingfisherDiskCacheCleanedHashKey` key in `userInfo` of the notification object you received. By checking the array, you could know the hash codes of files are removed.
+*/
 public let KingfisherDidCleanDiskCacheNotification = "com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification"
+
+/**
+Key for array of cleaned hashes in `userInfo` of `KingfisherDidCleanDiskCacheNotification`.
+*/
 public let KingfisherDiskCacheCleanedHashKey = "com.onevcat.Kingfisher.cleanedHash"
 
 private let defaultCacheName = "default"
