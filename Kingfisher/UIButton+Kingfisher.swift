@@ -127,12 +127,12 @@ public extension UIButton {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, imageURL, cacheType) -> () in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 if (imageURL == self.kf_webURLForState(state) && image != nil) {
                     self.setImage(image, forState: state)
                 }
-                completionHandler?(image: image, error: error, imageURL: imageURL)
+                completionHandler?(image: image, error: error, imageURL: imageURL, cacheType: cacheType)
             })
         }
         
@@ -275,12 +275,12 @@ public extension UIButton {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-            }) { (image, error, imageURL) -> () in
+            }) { (image, error, imageURL, cacheType) -> () in
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if (imageURL == self.kf_backgroundWebURLForState(state) && image != nil) {
                         self.setBackgroundImage(image, forState: state)
                     }
-                    completionHandler?(image: image, error: error, imageURL: imageURL)
+                    completionHandler?(image: image, error: error, imageURL: imageURL, cacheType: cacheType)
                 })
         }
         

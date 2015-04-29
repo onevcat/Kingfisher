@@ -153,7 +153,7 @@ public class KingfisherManager {
             } else {
                 let diskTask = targetCache.retrieveImageForKey(key, options: options, completionHandler: { (image, cacheType) -> () in
                     if image != nil {
-                        completionHandler?(image: image, error: nil, imageURL: URL)
+                        completionHandler?(image: image, error: nil, imageURL: URL, cacheType:cacheType)
                     } else {
                         self.downloadAndCacheImageWithURL(URL,
                             forKey: key,
@@ -184,8 +184,8 @@ public class KingfisherManager {
         downloader.downloadImageWithURL(URL, retrieveImageTask: retrieveImageTask, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
             return
-        }) { (image, error, imageURL) -> () in
-            completionHandler?(image: image, error: error, imageURL: URL)
+        }) { (image, error, imageURL, cacheType) -> () in
+            completionHandler?(image: image, error: error, imageURL: URL, cacheType:cacheType)
             if let image = image {
                 targetCache.storeImage(image, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
             }
