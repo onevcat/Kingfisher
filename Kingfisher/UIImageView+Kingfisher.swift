@@ -27,7 +27,7 @@
 import Foundation
 
 public typealias DownloadProgressBlock = ((receivedSize: Int64, totalSize: Int64) -> ())
-public typealias CompletionHandler = ((image: UIImage?, error: NSError?, imageURL: NSURL?, cacheType:CacheType) -> ())
+public typealias CompletionHandler = ((image: UIImage?, error: NSError?, cacheType:CacheType, imageURL: NSURL?) -> ())
 
 // MARK: - Set Images
 /**
@@ -122,12 +122,12 @@ public extension UIImageView {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-        }) { (image, error, imageURL, cacheType) -> () in
+        }) { (image, error, cacheType, imageURL) -> () in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 if (imageURL == self.kf_webURL && image != nil) {
                     self.image = image;
                 }
-                completionHandler?(image: image, error: error, imageURL: imageURL, cacheType: cacheType)
+                completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
             })
         }
         
