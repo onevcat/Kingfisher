@@ -138,7 +138,7 @@ public extension ImageDownloader {
         
         // There is a possiblility that request modifier changed the url to `nil`
         if request.URL == nil {
-            completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidURL.rawValue, userInfo: nil), imageURL: nil)
+            completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidURL.rawValue, userInfo: nil), cacheType: .None, imageURL: nil)
             return
         }
         
@@ -211,7 +211,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL) {
         if let callbackPairs = self.fetchLoads[imageURL]?.callbacks {
             for callbackPair in callbackPairs {
-                callbackPair.completionHander?(image: image, error: error, imageURL: imageURL)
+                callbackPair.completionHander?(image: image, error: error, cacheType: .None, imageURL: imageURL)
             }
         }
     }
