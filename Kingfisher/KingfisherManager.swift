@@ -69,12 +69,17 @@ private let instance = KingfisherManager()
 */
 public class KingfisherManager {
 
+    /**
+    *	Options to control some downloader and cache behaviors.
+    */
     public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool)
     
+    /// A preset option tuple with all value set to `false`.
     public static var OptionsNone: Options = {
         return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false)
     }()
     
+    /// Shared manager used by the extensions across Kingfisher.
     public class var sharedManager: KingfisherManager {
         return instance
     }
@@ -153,7 +158,7 @@ public class KingfisherManager {
             } else {
                 let diskTask = targetCache.retrieveImageForKey(key, options: options, completionHandler: { (image, cacheType) -> () in
                     if image != nil {
-                        completionHandler?(image: image, error: nil, imageURL: URL)
+                        completionHandler?(image: image, error: nil, cacheType:cacheType, imageURL: URL)
                     } else {
                         self.downloadAndCacheImageWithURL(URL,
                             forKey: key,
@@ -185,7 +190,7 @@ public class KingfisherManager {
             progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
             return
         }) { (image, error, imageURL) -> () in
-            completionHandler?(image: image, error: error, imageURL: URL)
+            completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
             if let image = image {
                 targetCache.storeImage(image, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
             }
