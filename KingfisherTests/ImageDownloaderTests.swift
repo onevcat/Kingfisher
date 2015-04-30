@@ -64,7 +64,7 @@ class ImageDownloaderTests: XCTestCase {
         let URL = NSURL(string: URLString)!
         downloader.downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
             return
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, cacheType, imageURL) -> () in
             expectation.fulfill()
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
         }
@@ -83,7 +83,7 @@ class ImageDownloaderTests: XCTestCase {
                 stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
                 downloader.downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
                     
-                }, completionHandler: { (image, error, imageURL) -> () in
+                }, completionHandler: { (image, error, cacheType, imageURL) -> () in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
                     dispatch_group_leave(group)
                 })
@@ -108,7 +108,7 @@ class ImageDownloaderTests: XCTestCase {
             dispatch_group_enter(group)
             downloader.downloadImageWithURL(NSURL(string: URLString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
                 
-                }) { (image, error, imageURL) -> () in
+                }) { (image, error, cacheType, imageURL) -> () in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
                     dispatch_group_leave(group)
                     
@@ -136,7 +136,7 @@ class ImageDownloaderTests: XCTestCase {
         let someURL = NSURL(string: "some_strange_url")!
         downloader.downloadImageWithURL(someURL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
             
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, cacheType, imageURL) -> () in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
             XCTAssertEqual(imageURL!, NSURL(string: URLString)!, "The returned imageURL should be the replaced one")
             expectation.fulfill()
@@ -153,7 +153,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let expectation = expectationWithDescription("wait for download from an invalid ssl site.")
         
-        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
+        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, cacheType, imageURL) -> () in
             XCTAssertNotNil(error, "Error should not be nil")
             XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "Error should be NSURLErrorServerCertificateUntrusted")
             expectation.fulfill()
