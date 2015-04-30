@@ -30,7 +30,7 @@ import Foundation
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 
 /// Completion block of downloader.
-public typealias ImageDownloaderCompletionHandler = CompletionHandler
+public typealias ImageDownloaderCompletionHandler = ((image: UIImage?, error: NSError?, imageURL: NSURL?) -> ())
 
 /// Download task.
 public typealias RetrieveImageDownloadTask = NSURLSessionDataTask

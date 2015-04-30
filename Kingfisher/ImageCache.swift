@@ -43,7 +43,7 @@ Cache type of a cached image.
 - Disk:   The image is cached in disk.
 */
 public enum CacheType {
-    case Memory, Disk
+    case Memory, Disk, None
 }
 
 /**
