@@ -53,6 +53,7 @@ class UIButtonExtensionTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         LSNocilla.sharedInstance().clearStubs()
         button = nil
+        
         cleanDefaultCache()
         
         super.tearDown()
@@ -68,7 +69,7 @@ class UIButtonExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
         button.kf_setImageWithURL(URL, forState: UIControlState.Highlighted, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, cacheType, imageURL) -> () in
             expectation.fulfill()
             
             XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
@@ -76,6 +77,7 @@ class UIButtonExtensionTests: XCTestCase {
             XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
             XCTAssert(self.button.imageForState(UIControlState.Highlighted)! == testImage, "Downloaded image should be already set to the image for state")
             XCTAssert(self.button.kf_webURLForState(UIControlState.Highlighted) == imageURL, "Web URL should equal to the downloaded url.")
+            XCTAssert(cacheType == .None, "cacheType should be .None since the image was just downloaded.")
         }
         waitForExpectationsWithTimeout(1, handler: nil)
     }
@@ -90,7 +92,7 @@ class UIButtonExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
         button.kf_setBackgroundImageWithURL(URL, forState: UIControlState.Normal, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
-            }) { (image, error, imageURL) -> () in
+            }) { (image, error, cacheType, imageURL) -> () in
                 expectation.fulfill()
                 
                 XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
@@ -98,6 +100,8 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
                 XCTAssert(self.button.backgroundImageForState(UIControlState.Normal)! == testImage, "Downloaded image should be already set to the image for state")
                 XCTAssert(self.button.kf_backgroundWebURLForState(UIControlState.Normal) == imageURL, "Web URL should equal to the downloaded url.")
+                XCTAssert(cacheType == .None, "cacheType should be .None since the image was just downloaded.")
+
         }
         waitForExpectationsWithTimeout(1, handler: nil)
     }

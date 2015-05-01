@@ -144,6 +144,22 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectationsWithTimeout(1, handler: nil)
     }
     
+    func testServerNotModifiedResponse() {
+        let expectation = expectationWithDescription("wait for server response 304")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(304)
+        
+        downloader.downloadImageWithURL(NSURL(string: URLString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL) -> () in
+            XCTAssertNotNil(error, "There should be an error since server returning 304 and no image downloaded.")
+            XCTAssertEqual(error!.code, KingfisherError.NotModified.rawValue, "The error should be NotModified.")
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(1, handler: nil)
+    }
+    
     // Since we could not receive one challage, no test for trusted hosts currently.
     // See http://stackoverflow.com/questions/27065372/why-is-a-https-nsurlsession-connection-only-challenged-once-per-domain for more.
     func testSSLCertificateValidation() {
@@ -155,7 +171,7 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
             XCTAssertNotNil(error, "Error should not be nil")
-            XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "Error should be NSURLErrorServerCertificateUntrusted")
+            XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "Error should be NSURLErrorServerCertificateUntrusted, but \(error)")
             expectation.fulfill()
             LSNocilla.sharedInstance().start()
         })
