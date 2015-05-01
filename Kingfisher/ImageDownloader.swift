@@ -77,6 +77,7 @@ public class ImageDownloader: NSObject {
     /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. You can use this set to specify the self-signed site.
     public var trustedHosts: Set<String>?
     
+    /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
     public weak var delegate: ImageDownloaderDelegate?
     
     // MARK: - Internal property
