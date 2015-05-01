@@ -26,6 +26,20 @@
 
 import Foundation
 
+/**
+This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The `clearDiskCache` method will not trigger this notification.
+
+The `object` of this notification is the `ImageCache` object which sends the notification.
+
+A list of removed hashes (files) could be retrieved by accessing the array under `KingfisherDiskCacheCleanedHashKey` key in `userInfo` of the notification object you received. By checking the array, you could know the hash codes of files are removed.
+*/
+public let KingfisherDidCleanDiskCacheNotification = "com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification"
+
+/**
+Key for array of cleaned hashes in `userInfo` of `KingfisherDidCleanDiskCacheNotification`.
+*/
+public let KingfisherDiskCacheCleanedHashKey = "com.onevcat.Kingfisher.cleanedHash"
+
 private let defaultCacheName = "default"
 private let cacheReverseDNS = "com.onevcat.Kingfisher.ImageCache."
 private let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue."
@@ -415,6 +429,9 @@ extension ImageCache {
                     
                     for fileURL in sortedFiles {
                         if (self.fileManager.removeItemAtURL(fileURL, error: nil)) {
+                            
+                            URLsToDelete.append(fileURL)
+                            
                             if let fileSize = cachedFiles[fileURL]?[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
                                 diskCacheSize -= fileSize.unsignedLongValue
                             }
@@ -427,6 +444,15 @@ extension ImageCache {
                 }
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    
+                    if URLsToDelete.count != 0 {
+                        let cleanedHashes = URLsToDelete.map({ (url) -> String in
+                            return url.lastPathComponent!
+                        })
+                        
+                        NSNotificationCenter.defaultCenter().postNotificationName(KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
+                    }
+                    
                     if let completionHandler = completionHandler {
                         completionHandler()
                     }
@@ -497,6 +523,17 @@ public extension ImageCache {
         }
         
         return CacheCheckResult(cached: false, cacheType: nil)
+    }
+    
+    /**
+    Get the hash for the key. This could be used for matching files.
+    
+    :param: key The key which is used for caching.
+    
+    :returns: Corresponding hash.
+    */
+    public func hashForKey(key: String) -> String {
+        return cacheFileNameForKey(key)
     }
     
     /**

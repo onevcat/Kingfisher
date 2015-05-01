@@ -66,7 +66,7 @@ public struct KingfisherOptions : RawOptionSetType {
     /// Download in a low priority.
     public static var LowPriority: KingfisherOptions { return KingfisherOptions(1 << 0) }
     
-    /// Ignore cache. Always download the image and cache it again.
+    /// Try to send request to server first. If response code is 304 (Not Modified), use the cached image. Otherwise, download the image and cache it again.
     public static var ForceRefresh: KingfisherOptions { return KingfisherOptions(1 << 1) }
     
     /// Only cache downloaded image to memory, not cache in disk.

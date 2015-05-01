@@ -34,6 +34,7 @@ private let cacheName = "com.onevcat.Kingfisher.ImageCache.test"
 class ImageCacheTests: XCTestCase {
 
     var cache: ImageCache!
+    var observer: NSObjectProtocol!
     
     override func setUp() {
         super.setUp()
@@ -46,6 +47,7 @@ class ImageCacheTests: XCTestCase {
         super.tearDown()
         cache.clearDiskCache()
         cache = nil
+        observer = nil
     }
     
     func testMaxCachePeriodInSecond() {
@@ -164,12 +166,35 @@ class ImageCacheTests: XCTestCase {
                     self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
                 }
             })
-        
             expectation.fulfill()
-            
         }
         
-        self.waitForExpectationsWithTimeout(5, handler: nil)
+        self.waitForExpectationsWithTimeout(15, handler: nil)
+    }
+    
+    func testCleanDiskCacheNotification() {
+        let expectation = expectationWithDescription("wait for retriving image")
+        
+        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+
+            self.observer = NSNotificationCenter.defaultCenter().addObserverForName(KingfisherDidCleanDiskCacheNotification, object: self.cache, queue: NSOperationQueue.mainQueue(), usingBlock: { (noti) -> Void in
+
+                XCTAssert(noti.object === self.cache, "The object of notification should be the cache object.")
+                
+                let hashes = noti.userInfo?[KingfisherDiskCacheCleanedHashKey] as! [String]
+                
+                XCTAssertEqual(1, hashes.count, "There should be one and only one file cleaned")
+                XCTAssertEqual(hashes.first!, self.cache.hashForKey(testKeys[0]), "The cleaned file should be the stored one.")
+                
+                NSNotificationCenter.defaultCenter().removeObserver(self.observer)
+                expectation.fulfill()
+            })
+            
+            self.cache.maxCachePeriodInSecond = 0
+            self.cache.cleanExpiredDiskCache()
+        }
+        
+        waitForExpectationsWithTimeout(1, handler: nil)
     }
 
     // MARK: - Helper

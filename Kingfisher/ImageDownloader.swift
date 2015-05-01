@@ -41,6 +41,21 @@ private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Proc
 private let instance = ImageDownloader(name: defaultDownloaderName)
 
 /**
+*	Protocol of `ImageDownloader`.
+*/
+@objc public protocol ImageDownloaderDelegate {
+    /**
+    Called when the `ImageDownloader` object successfully downloaded an image from specified URL.
+    
+    :param: downloader The `ImageDownloader` object finishes the downloading.
+    :param: image      Downloaded image.
+    :param: URL        URL of the original request URL.
+    :param: response   The response object of the downloading process.
+    */
+    optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: UIImage, forURL URL: NSURL, withResponse response: NSURLResponse)
+}
+
+/**
 *	`ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
 */
 public class ImageDownloader: NSObject {
@@ -61,6 +76,8 @@ public class ImageDownloader: NSObject {
     
     /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. You can use this set to specify the self-signed site.
     public var trustedHosts: Set<String>?
+    
+    public weak var delegate: ImageDownloaderDelegate?
     
     // MARK: - Internal property
     let barrierQueue: dispatch_queue_t
@@ -243,6 +260,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                     
                     if let fetchLoad = self.fetchLoads[URL] {
                         if let image = UIImage(data: fetchLoad.responseData) {
+                            
+                            self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
+                            
                             if fetchLoad.shouldDecode {
                                 self.callbackWithImage(image.kf_decodedImage(), error: nil, imageURL: URL)
                             } else {
@@ -250,6 +270,13 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                             }
                             
                         } else {
+                            // If server response is 304 (Not Modified), inform the callback handler with NotModified error.
+                            // It should be handled to get an image from cache, which is response of a manager object.
+                            if let res = task.response as? NSHTTPURLResponse where res.statusCode == 304 {
+                                self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.NotModified.rawValue, userInfo: nil), imageURL: URL)
+                                return
+                            }
+                            
                             self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
                         }
                     } else {
