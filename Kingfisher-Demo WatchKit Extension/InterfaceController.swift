@@ -12,19 +12,21 @@ import Kingfisher
 
 class InterfaceController: WKInterfaceController {
 
+    static var counter: Int = 0
+    
     @IBOutlet weak var imageView: WKInterfaceImage!
     
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
-        
+
         // Configure interface objects here.
+        InterfaceController.counter =  InterfaceController.counter + 1
+        imageView.kf_setImageWithURL(NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(InterfaceController.counter).jpg")!)
     }
 
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
-        
-        imageView.kf_setImageWithURL(NSURL(string: "http://onevcat.com/content/images/2014/May/200.jpg")!)
     }
 
     override func didDeactivate() {

@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="3737"/>
     </dependencies>
     <scenes>
-        <!--Interface Controller-->
+        <!--Kingfisher-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
+                <controller title="Kingfisher" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
                     <items>
                         <imageView width="136" height="136" alignment="left" id="qqx-yl-rXm"/>
                     </items>
@@ -26,10 +26,10 @@
             </objects>
             <point key="canvasLocation" x="432" y="474"/>
         </scene>
-        <!--Interface Controller-->
+        <!--Kingfisher-->
         <scene sceneID="ITU-Ne-cIm">
             <objects>
-                <controller id="Yjb-zT-nsD" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
+                <controller title="Kingfisher" id="Yjb-zT-nsD" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
                     <items>
                         <imageView width="136" height="136" alignment="left" id="FkW-um-dvx"/>
                     </items>
@@ -46,10 +46,10 @@
             </objects>
             <point key="canvasLocation" x="880" y="474"/>
         </scene>
-        <!--Interface Controller-->
+        <!--Kingfisher-->
         <scene sceneID="zjv-Dg-Ncy">
             <objects>
-                <controller id="aIE-iB-3Mc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
+                <controller title="Kingfisher" id="aIE-iB-3Mc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
                     <items>
                         <imageView width="136" height="136" alignment="left" id="goU-5Y-EJp"/>
                     </items>
