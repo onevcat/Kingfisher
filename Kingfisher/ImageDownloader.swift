@@ -44,6 +44,14 @@ private let instance = ImageDownloader(name: defaultDownloaderName)
 *	Protocol of `ImageDownloader`.
 */
 @objc public protocol ImageDownloaderDelegate {
+    /**
+    Called when the `ImageDownloader` object successfully downloaded an image from specified URL.
+    
+    :param: downloader The `ImageDownloader` object finishes the downloading.
+    :param: image      Downloaded image.
+    :param: URL        URL of the original request URL.
+    :param: response   The response object of the downloading process.
+    */
     optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: UIImage, forURL URL: NSURL, withResponse response: NSURLResponse)
 }
 
