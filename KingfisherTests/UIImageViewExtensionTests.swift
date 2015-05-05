@@ -175,6 +175,8 @@ class UIImageViewExtensionTests: XCTestCase {
             self.imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache: cache2], progressBlock: { (receivedSize, totalSize) -> () in
                 
             }, completionHandler: { (image, error, cacheType, imageURL) -> () in
+                
+                println("finished with error: \(error)")
                 XCTAssertTrue(cache1.isImageCachedForKey(URLString).cached, "This image should be cached in cache1.")
                 XCTAssertTrue(cache2.isImageCachedForKey(URLString).cached, "This image should be cached in cache2.")
                 XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
