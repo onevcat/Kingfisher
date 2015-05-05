@@ -3,3 +3,4 @@ machine:
     XCODE_SCHEME: Kingfisher
   xcode:
     version: "6.3.1"
+    
