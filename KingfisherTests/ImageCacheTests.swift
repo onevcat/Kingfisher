@@ -74,7 +74,7 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
             
-            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
             dispatch_after(delayTime, dispatch_get_main_queue()) {
                 
                 let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
@@ -82,7 +82,7 @@ class ImageCacheTests: XCTestCase {
                 
                 self.cache.clearDiskCacheWithCompletionHandler { () -> () in
                     
-                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
                     dispatch_after(delayTime, dispatch_get_main_queue()) {
                         let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
                         XCTAssert(files?.count == 0, "Files should be at deleted")
@@ -91,7 +91,7 @@ class ImageCacheTests: XCTestCase {
                 }
             }
         }
-        waitForExpectationsWithTimeout(5, handler:nil)
+        waitForExpectationsWithTimeout(10, handler:nil)
     }
     
     func testClearMemoryCache() {
