@@ -83,7 +83,7 @@ class ImageCacheTests: XCTestCase {
                 expectation.fulfill()
             }
         }
-        waitForExpectationsWithTimeout(1, handler:nil)
+        waitForExpectationsWithTimeout(5, handler:nil)
     }
     
     func testClearMemoryCache() {
@@ -97,7 +97,7 @@ class ImageCacheTests: XCTestCase {
             })
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testNoImageFound() {
@@ -111,7 +111,7 @@ class ImageCacheTests: XCTestCase {
             return
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testStoreImageInMemory() {
@@ -125,7 +125,7 @@ class ImageCacheTests: XCTestCase {
             return
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testStoreMultipleImages() {
@@ -141,7 +141,7 @@ class ImageCacheTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testIsImageCachedForKey() {
@@ -153,7 +153,7 @@ class ImageCacheTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testRetrivingImagePerformance() {
@@ -169,7 +169,7 @@ class ImageCacheTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(15, handler: nil)
+        self.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
     func testCleanDiskCacheNotification() {
@@ -194,7 +194,7 @@ class ImageCacheTests: XCTestCase {
             self.cache.cleanExpiredDiskCache()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
 
     // MARK: - Helper

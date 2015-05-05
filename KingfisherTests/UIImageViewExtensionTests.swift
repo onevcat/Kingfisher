@@ -82,7 +82,7 @@ class UIImageViewExtensionTests: XCTestCase {
             XCTAssert(cacheType == .None, "The cache type should be none here. This image was just downloaded.")
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testImageDownloadCancelForImageView() {
@@ -108,7 +108,7 @@ class UIImageViewExtensionTests: XCTestCase {
             XCTAssert(completionBlockIsCalled == false, "CompletionBlock should not be called since it is canceled.")
         }
         
-        waitForExpectationsWithTimeout(0.1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
 
     func testImageDownloadCacelPartialTask() {
@@ -149,7 +149,7 @@ class UIImageViewExtensionTests: XCTestCase {
             XCTAssert(task3Completion == true, "Task 3 should be completed.")
         }
         
-        waitForExpectationsWithTimeout(0.1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testImageDownalodMultipleCaches() {
@@ -188,7 +188,7 @@ class UIImageViewExtensionTests: XCTestCase {
             
         }
         
-        waitForExpectationsWithTimeout(0.1, handler: { (error) -> Void in
+        waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
             clearCaches([cache1, cache2])
         })
     }

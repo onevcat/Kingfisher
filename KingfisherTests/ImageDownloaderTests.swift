@@ -69,7 +69,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testDownloadMultipleImages() {
@@ -94,7 +94,7 @@ class ImageDownloaderTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testDownloadAnImageWithMultipleCallback() {
@@ -119,7 +119,7 @@ class ImageDownloaderTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testDownloadWithModifyingRequest() {
@@ -141,7 +141,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(imageURL!, NSURL(string: URLString)!, "The returned imageURL should be the replaced one")
             expectation.fulfill()
         }
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testServerNotModifiedResponse() {
@@ -157,7 +157,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(error!.code, KingfisherError.NotModified.rawValue, "The error should be NotModified.")
             expectation.fulfill()
         }
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     // Since we could not receive one challage, no test for trusted hosts currently.
@@ -176,7 +176,7 @@ class ImageDownloaderTests: XCTestCase {
             LSNocilla.sharedInstance().start()
         })
         
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
             LSNocilla.sharedInstance().start()
         }
