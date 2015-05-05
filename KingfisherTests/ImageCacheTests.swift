@@ -153,15 +153,17 @@ class ImageCacheTests: XCTestCase {
     }
     
     func testIsImageCachedForKey() {
-        XCTAssert(cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
-
-        let expectation = expectationWithDescription("wait for caching image")
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
-            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
-            expectation.fulfill()
-        }
+        let expectation = self.expectationWithDescription("wait for caching image")
         
-        waitForExpectationsWithTimeout(5, handler: nil)
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
+            self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+                XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
+                expectation.fulfill()
+            }
+        }
+        self.waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testRetrivingImagePerformance() {
