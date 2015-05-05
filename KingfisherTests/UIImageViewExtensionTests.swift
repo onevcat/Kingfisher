@@ -167,6 +167,7 @@ class UIImageViewExtensionTests: XCTestCase {
             
         }) { (image, error, cacheType, imageURL) -> () in
             
+            println("finished with error: \(error)")
             XCTAssertTrue(cache1.isImageCachedForKey(URLString).cached, "This image should be cached in cache1.")
             XCTAssertFalse(cache2.isImageCachedForKey(URLString).cached, "This image should not be cached in cache2.")
             XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
