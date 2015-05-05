@@ -73,14 +73,21 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
             
-            let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-            XCTAssert(files?.count == 1, "Should be 1 file at the path. Actual: \(files?.count) | \(files)")
-            
-            self.cache.clearDiskCacheWithCompletionHandler { () -> () in
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+            dispatch_after(delayTime, dispatch_get_main_queue()) {
                 
                 let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-                XCTAssert(files?.count == 0, "Files should be at deleted")
-                expectation.fulfill()
+                XCTAssert(files?.count == 1, "Should be 1 file at the path. Actual: \(files?.count) | \(files)")
+                
+                self.cache.clearDiskCacheWithCompletionHandler { () -> () in
+                    
+                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+                    dispatch_after(delayTime, dispatch_get_main_queue()) {
+                        let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
+                        XCTAssert(files?.count == 0, "Files should be at deleted")
+                        expectation.fulfill()
+                    }
+                }
             }
         }
         waitForExpectationsWithTimeout(5, handler:nil)
