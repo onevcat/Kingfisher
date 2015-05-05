@@ -169,7 +169,6 @@ class ImageCacheTests: XCTestCase {
     func testRetrivingImagePerformance() {
 
         let expectation = self.expectationWithDescription("wait for retriving image")
-        
         self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measureBlock({ () -> Void in
                 for _ in 1 ..< 1000 {
