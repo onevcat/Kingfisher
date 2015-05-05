@@ -74,7 +74,7 @@ class ImageCacheTests: XCTestCase {
         cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
             
             let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-            XCTAssert(files?.count == 1, "Should be 1 file at the path")
+            XCTAssert(files?.count == 1, "Should be 1 file at the path. Actual: \(files?.count) | \(files)")
             
             self.cache.clearDiskCacheWithCompletionHandler { () -> () in
                 
