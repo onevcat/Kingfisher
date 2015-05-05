@@ -192,10 +192,11 @@ public class KingfisherManager {
                 return
             }
             
-            completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
             if let image = image {
                 targetCache.storeImage(image, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
             }
+            
+            completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
         }
     }
 }
