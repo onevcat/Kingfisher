@@ -514,14 +514,11 @@ public extension ImageCache {
     */
     public func isImageCachedForKey(key: String) -> CacheCheckResult {
         
-        println("isImageCachedForKey? \(key)")
-        
         if memoryCache.objectForKey(key) != nil {
             return CacheCheckResult(cached: true, cacheType: .Memory)
         }
         
         let filePath = cachePathForKey(key)
-        println("filePath? \(filePath)")
         
         if fileManager.fileExistsAtPath(filePath) {
             return CacheCheckResult(cached: true, cacheType: .Disk)
