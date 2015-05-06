@@ -71,24 +71,18 @@ class ImageCacheTests: XCTestCase {
         let diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
         
         let expectation = expectationWithDescription("wait for clearing disk cache")
+        let key = testKeys[0]
         
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
-            
-            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
-            dispatch_after(delayTime, dispatch_get_main_queue()) {
-                
-                let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-                XCTAssert(files?.count == 1, "Should be 1 file at the path. Actual: \(files?.count) | \(files)")
-                
-                self.cache.clearDiskCacheWithCompletionHandler { () -> () in
-                    
-                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
-                    dispatch_after(delayTime, dispatch_get_main_queue()) {
-                        let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-                        XCTAssert(files?.count == 0, "Files should be at deleted")
-                        expectation.fulfill()
-                    }
-                }
+        cache.storeImage(testImage, forKey: key, toDisk: true) { () -> () in
+            self.cache.clearMemoryCache()
+            let cacheResult = self.cache.isImageCachedForKey(key)
+            XCTAssertTrue(cacheResult.cached, "Should be cached")
+            XCTAssert(cacheResult.cacheType == .Disk, "Should be cached in disk")
+        
+            self.cache.clearDiskCacheWithCompletionHandler { () -> () in
+                let cacheResult = self.cache.isImageCachedForKey(key)
+                XCTAssertFalse(cacheResult.cached, "Should be not cached")
+                expectation.fulfill()
             }
         }
         waitForExpectationsWithTimeout(10, handler:nil)
