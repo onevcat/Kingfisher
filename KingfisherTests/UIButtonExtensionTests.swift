@@ -79,7 +79,7 @@ class UIButtonExtensionTests: XCTestCase {
             XCTAssert(self.button.kf_webURLForState(UIControlState.Highlighted) == imageURL, "Web URL should equal to the downloaded url.")
             XCTAssert(cacheType == .None, "cacheType should be .None since the image was just downloaded.")
         }
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testDownloadAndSetBackgroundImage() {
@@ -103,6 +103,6 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssert(cacheType == .None, "cacheType should be .None since the image was just downloaded.")
 
         }
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
 }

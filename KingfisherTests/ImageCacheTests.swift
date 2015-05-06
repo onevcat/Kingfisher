@@ -45,6 +45,7 @@ class ImageCacheTests: XCTestCase {
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
+        cache.clearMemoryCache()
         cache.clearDiskCache()
         cache = nil
         observer = nil
@@ -70,20 +71,21 @@ class ImageCacheTests: XCTestCase {
         let diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
         
         let expectation = expectationWithDescription("wait for clearing disk cache")
+        let key = testKeys[0]
         
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
-            
-            let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-            XCTAssert(files?.count == 1, "Should be 1 file at the path")
-            
+        cache.storeImage(testImage, forKey: key, toDisk: true) { () -> () in
+            self.cache.clearMemoryCache()
+            let cacheResult = self.cache.isImageCachedForKey(key)
+            XCTAssertTrue(cacheResult.cached, "Should be cached")
+            XCTAssert(cacheResult.cacheType == .Disk, "Should be cached in disk")
+        
             self.cache.clearDiskCacheWithCompletionHandler { () -> () in
-                
-                let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
-                XCTAssert(files?.count == 0, "Files should be at deleted")
+                let cacheResult = self.cache.isImageCachedForKey(key)
+                XCTAssertFalse(cacheResult.cached, "Should be not cached")
                 expectation.fulfill()
             }
         }
-        waitForExpectationsWithTimeout(1, handler:nil)
+        waitForExpectationsWithTimeout(10, handler:nil)
     }
     
     func testClearMemoryCache() {
@@ -97,7 +99,7 @@ class ImageCacheTests: XCTestCase {
             })
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testNoImageFound() {
@@ -111,7 +113,7 @@ class ImageCacheTests: XCTestCase {
             return
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testStoreImageInMemory() {
@@ -125,7 +127,7 @@ class ImageCacheTests: XCTestCase {
             return
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testStoreMultipleImages() {
@@ -141,25 +143,26 @@ class ImageCacheTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testIsImageCachedForKey() {
-        XCTAssert(cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
-
-        let expectation = expectationWithDescription("wait for caching image")
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
-            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
-            expectation.fulfill()
-        }
+        let expectation = self.expectationWithDescription("wait for caching image")
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
+            self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+                XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
+                expectation.fulfill()
+            }
+        }
+        self.waitForExpectationsWithTimeout(5, handler: nil)
     }
     
     func testRetrivingImagePerformance() {
 
         let expectation = self.expectationWithDescription("wait for retriving image")
-        
         self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measureBlock({ () -> Void in
                 for _ in 1 ..< 1000 {
@@ -169,7 +172,7 @@ class ImageCacheTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(15, handler: nil)
+        self.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
     func testCleanDiskCacheNotification() {
@@ -194,7 +197,7 @@ class ImageCacheTests: XCTestCase {
             self.cache.cleanExpiredDiskCache()
         }
         
-        waitForExpectationsWithTimeout(1, handler: nil)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
 
     // MARK: - Helper
