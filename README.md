@@ -2,6 +2,7 @@
   <img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher">
 </p>
 
+[![Circle CI](https://circleci.com/gh/onevcat/Kingfisher.svg?style=svg)](https://circleci.com/gh/onevcat/Kingfisher)
 [![Carthage Compatibility](https://img.shields.io/badge/Carthage-✔-f2a77e.svg?style=flat)][carthage]
 [![CocoaPods Version](https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat)][cocoadocs]
 [![License](https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat)][cocoadocs]
