@@ -181,4 +181,27 @@ class ImageDownloaderTests: XCTestCase {
             LSNocilla.sharedInstance().start()
         }
     }
+    
+    func testDownloadResultErrorAndRetry() {
+        let expectation = expectationWithDescription("wait for downloading error")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
+        let URL = NSURL(string: URLString)!
+        
+        downloader.downloadImageWithURL(URL, progressBlock: nil) { (image, error, imageURL) -> () in
+            XCTAssertNotNil(error, "Should return with an error")
+            
+            LSNocilla.sharedInstance().clearStubs()
+            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+            
+            // Retry the download
+            self.downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
+                XCTAssertNil(error, "Download should be finished without error")
+                expectation.fulfill()
+            })
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 }

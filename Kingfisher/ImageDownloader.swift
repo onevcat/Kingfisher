@@ -240,6 +240,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL) {
         if let callbackPairs = self.fetchLoads[imageURL]?.callbacks {
+            
+            self.cleanForURL(imageURL)
+            
             for callbackPair in callbackPairs {
                 callbackPair.completionHander?(image: image, error: error, imageURL: imageURL)
             }
@@ -283,8 +286,6 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                     } else {
                         self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
                     }
-                    
-                    self.cleanForURL(URL)
                 })
             }
         }
