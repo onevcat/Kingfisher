@@ -52,16 +52,6 @@ public class RetrieveImageTask {
 
 public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 
-/**
-The error code.
-
-- BadData: The downloaded data is not an image or the data is corrupted.
-*/
-public enum KingfisherError: Int {
-    case BadData = 10000
-    case NotModified = 10001
-    case InvalidURL = 20000
-}
 
 private let instance = KingfisherManager()
 

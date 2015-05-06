@@ -40,6 +40,20 @@ private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barr
 private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Process."
 private let instance = ImageDownloader(name: defaultDownloaderName)
 
+
+/**
+The error code.
+
+- BadData: The downloaded data is not an image or the data is corrupted.
+- NotModified: The remote server responsed a 304 code. No image data downloaded.
+- InvalidURL: The URL is invalid.
+*/
+public enum KingfisherError: Int {
+    case BadData = 10000
+    case NotModified = 10001
+    case InvalidURL = 20000
+}
+
 /**
 *	Protocol of `ImageDownloader`.
 */
@@ -240,6 +254,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL) {
         if let callbackPairs = self.fetchLoads[imageURL]?.callbacks {
+            
+            self.cleanForURL(imageURL)
+            
             for callbackPair in callbackPairs {
                 callbackPair.completionHander?(image: image, error: error, imageURL: imageURL)
             }
@@ -283,8 +300,6 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                     } else {
                         self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL)
                     }
-                    
-                    self.cleanForURL(URL)
                 })
             }
         }
