@@ -26,6 +26,8 @@
 
 import WatchKit
 
+public typealias WatchImageCompletionHandler = ((error: NSError?, cacheType: CacheType, imageURL: NSURL?, cachedInWatch: Bool) -> ())
+
 public extension WKInterfaceImage {
     /**
     Set an image with a URL.
@@ -36,7 +38,7 @@ public extension WKInterfaceImage {
     
     :returns: A task represents the retriving process.
     */
-    public func kf_setImageWithURL(URL: NSURL) -> RetrieveImageTask
+    public func kf_setImageWithURL(URL: NSURL) -> RetrieveImageTask?
     {
         return kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
     }
@@ -50,9 +52,15 @@ public extension WKInterfaceImage {
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-        placeholderImage: UIImage?) -> RetrieveImageTask
+                      placeholderImage: UIImage?) -> RetrieveImageTask?
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
+    }
+    
+    public func kf_setImageWithURL(URL: NSURL,
+            placeholderImageNamed name: String?) -> RetrieveImageTask?
+    {
+        return kf_setImageWithURL(URL, placeholderImageNamed: name, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
     }
     
     /**
@@ -65,10 +73,17 @@ public extension WKInterfaceImage {
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-        placeholderImage: UIImage?,
-        optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask
+                      placeholderImage: UIImage?,
+                           optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask?
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
+    }
+    
+    public func kf_setImageWithURL(URL: NSURL,
+            placeholderImageNamed name: String?,
+                           optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask?
+    {
+        return kf_setImageWithURL(URL, placeholderImageNamed: name, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
     }
     
     /**
@@ -82,11 +97,19 @@ public extension WKInterfaceImage {
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-        placeholderImage: UIImage?,
-        optionsInfo: KingfisherOptionsInfo?,
-        completionHandler: CompletionHandler?) -> RetrieveImageTask
+                      placeholderImage: UIImage?,
+                           optionsInfo: KingfisherOptionsInfo?,
+                     completionHandler: WatchImageCompletionHandler?) -> RetrieveImageTask?
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: completionHandler)
+    }
+    
+    public func kf_setImageWithURL(URL: NSURL,
+            placeholderImageNamed name: String?,
+                           optionsInfo: KingfisherOptionsInfo?,
+                     completionHandler: WatchImageCompletionHandler?) -> RetrieveImageTask?
+    {
+        return kf_setImageWithURL(URL, placeholderImageNamed: name, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: completionHandler)
     }
     
     /**
@@ -101,27 +124,106 @@ public extension WKInterfaceImage {
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-        placeholderImage: UIImage?,
-        optionsInfo: KingfisherOptionsInfo?,
-        progressBlock: DownloadProgressBlock?,
-        completionHandler: CompletionHandler?) -> RetrieveImageTask
+                      placeholderImage: UIImage?,
+                           optionsInfo: KingfisherOptionsInfo?,
+                         progressBlock: DownloadProgressBlock?,
+                     completionHandler: WatchImageCompletionHandler?) -> RetrieveImageTask?
     {
-        setImage(placeholderImage)
+        let preSet = kf_prepareImageURL(URL, optionsInfo: optionsInfo, completionHandler: completionHandler)
+        
+        if preSet.set {
+            return nil
+        } else {
+            setImage(placeholderImage)
+            return kf_retrieveImageWithURL(URL, optionsInfo: optionsInfo, cacheInWatch: preSet.cacheInWatch, progressBlock: progressBlock, completionHandler: completionHandler)
+        }
+    }
+    
+    public func kf_setImageWithURL(URL: NSURL,
+            placeholderImageNamed name: String?,
+                           optionsInfo: KingfisherOptionsInfo?,
+                         progressBlock: DownloadProgressBlock?,
+                     completionHandler: WatchImageCompletionHandler?) -> RetrieveImageTask?
+    {
+        let preSet = kf_prepareImageURL(URL, optionsInfo: optionsInfo, completionHandler: completionHandler)
+        
+        if preSet.set {
+            return nil
+        } else {
+            setImageNamed(name)
+            return kf_retrieveImageWithURL(URL, optionsInfo: optionsInfo, cacheInWatch: preSet.cacheInWatch, progressBlock: progressBlock, completionHandler: completionHandler)
+        }
+    }
+    
+    
+    private func kf_prepareImageURL(URL: NSURL,
+                            optionsInfo: KingfisherOptionsInfo?,
+                      completionHandler: WatchImageCompletionHandler?) -> (set: Bool, cacheInWatch: Bool)
+    {
         
         kf_setWebURL(URL)
+        
+        let cacheInWatch: Bool
+        let forceRefresh: Bool
+        
+        if let options = optionsInfo?[.Options] as? KingfisherOptions {
+            cacheInWatch = ((options & KingfisherOptions.CacheInWatchApp) != KingfisherOptions.None)
+            forceRefresh = ((options & KingfisherOptions.ForceRefresh) != KingfisherOptions.None)
+        } else {
+            cacheInWatch = true
+            forceRefresh = false
+        }
+        
+        let imageKey = URL.absoluteString?.kf_MD5()
+        if imageKey == nil {
+            return (false, cacheInWatch)
+        }
+        
+        if forceRefresh {
+            WKInterfaceDevice.currentDevice().removeCachedImageWithName(imageKey!)
+        }
+        
+        if WKInterfaceDevice.currentDevice().cachedImages[imageKey!] != nil {
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.setImageNamed(imageKey!)
+                completionHandler?(error: nil, cacheType: .Watch, imageURL: URL, cachedInWatch: true)
+            })
+            
+            return (true, cacheInWatch)
+        }
+ 
+        return (false, cacheInWatch)
+    }
+    
+    private func kf_retrieveImageWithURL(URL: NSURL,
+                                 optionsInfo: KingfisherOptionsInfo?,
+                                cacheInWatch: Bool,
+                               progressBlock: DownloadProgressBlock?,
+                           completionHandler: WatchImageCompletionHandler?) -> RetrieveImageTask?
+    {
         let task = KingfisherManager.sharedManager.retrieveImageWithURL(URL, optionsInfo: optionsInfo, progressBlock: { (receivedSize, totalSize) -> () in
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-            }) { (image, error, cacheType, imageURL) -> () in
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    if (imageURL == self.kf_webURL && image != nil) {
-                        self.setImage(image)
+        }) { (image, error, cacheType, imageURL) -> () in
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                var cachedInWatch: Bool = false
+                
+                if (imageURL == self.kf_webURL && image != nil) {
+                    self.setImage(image)
+                    
+                    if cacheInWatch {
+                        if let key = URL.absoluteString?.kf_MD5() {
+                            cachedInWatch = WKInterfaceDevice.currentDevice().addCachedImage(image!, name: key)
+                        }
                     }
-                    completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
-                })
+                }
+                
+                completionHandler?(error: error, cacheType: cacheType, imageURL: imageURL, cachedInWatch: cachedInWatch)
+            })
         }
         
         return task
