@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="3737"/>
+    </dependencies>
+    <scenes>
+        <!--Kingfisher-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller title="Kingfisher" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <imageView width="136" height="136" alignment="left" id="qqx-yl-rXm"/>
+                    </items>
+                    <menu key="menu" id="f2I-Fc-a4o">
+                        <items>
+                            <menuItem title="Reload" icon="repeat" id="Bgg-54-XH4"/>
+                            <menuItem title="Clear" icon="trash" id="Zeb-O0-qjI"/>
+                        </items>
+                    </menu>
+                    <connections>
+                        <outlet property="imageView" destination="qqx-yl-rXm" id="r9Z-Hg-UvS"/>
+                        <segue destination="aIE-iB-3Mc" kind="relationship" relationship="nextPage" id="ZXG-N2-GI6"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="432" y="474"/>
+        </scene>
+        <!--Kingfisher-->
+        <scene sceneID="ITU-Ne-cIm">
+            <objects>
+                <controller title="Kingfisher" id="Yjb-zT-nsD" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <imageView width="136" height="136" alignment="left" id="FkW-um-dvx"/>
+                    </items>
+                    <menu key="menu" id="RUS-Qh-WsK">
+                        <items>
+                            <menuItem title="Reload" icon="repeat" id="N8b-bj-MA5"/>
+                            <menuItem title="Clear" icon="trash" id="wka-8B-mSJ"/>
+                        </items>
+                    </menu>
+                    <connections>
+                        <outlet property="imageView" destination="FkW-um-dvx" id="NUm-fV-CYy"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="880" y="474"/>
+        </scene>
+        <!--Kingfisher-->
+        <scene sceneID="zjv-Dg-Ncy">
+            <objects>
+                <controller title="Kingfisher" id="aIE-iB-3Mc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <imageView width="136" height="136" alignment="left" id="goU-5Y-EJp"/>
+                    </items>
+                    <menu key="menu" id="Pd8-BI-hYu">
+                        <items>
+                            <menuItem title="Reload" icon="repeat" id="QZ4-Kn-vb2"/>
+                            <menuItem title="Clear" icon="trash" id="CAy-YI-8hI"/>
+                        </items>
+                    </menu>
+                    <connections>
+                        <outlet property="imageView" destination="goU-5Y-EJp" id="1Cn-bZ-YCf"/>
+                        <segue destination="Yjb-zT-nsD" kind="relationship" relationship="nextPage" id="bpz-in-P9q"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="663" y="474"/>
+        </scene>
+    </scenes>
+</document>
