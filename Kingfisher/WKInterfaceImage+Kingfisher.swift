@@ -31,8 +31,10 @@ public typealias WatchImageCompletionHandler = ((error: NSError?, cacheType: Cac
 public extension WKInterfaceImage {
     /**
     Set an image with a URL.
+    
     It will ask for Kingfisher's manager to get the image for the URL.
-    The memory and disk will be searched first. If the manager does not find it, it will try to download the image at this URL and store it for next use.
+    
+    The device-side (Apple Watch) cache will be searched first by using the key of URL. If not found, Kingfisher will try to search it from iPhone/iPad memory and disk instead. If the manager does not find it yet, it will try to download the image at this URL and store it in iPhone/iPad for next use. You can use `KingfisherOptions.CacheInWatch` to store it in watch cache for better performance if you access this image often.
     
     :param: URL The URL of image.
     
@@ -45,6 +47,10 @@ public extension WKInterfaceImage {
     
     /**
     Set an image with a URL and a placeholder image.
+    
+    It will ask for Kingfisher's manager to get the image for the URL.
+    
+    The device-side (Apple Watch) cache will be searched first by using the key of URL. If not found, Kingfisher will try to search it from iPhone/iPad memory and disk instead. If the manager does not find it yet, it will try to download the image at this URL and store it in iPhone/iPad for next use. You can use `KingfisherOptions.CacheInWatch` to store it in watch cache for better performance if you access this image often.
     
     :param: URL              The URL of image.
     :param: placeholderImage A placeholder image when retrieving the image at URL.
@@ -211,7 +217,7 @@ extension WKInterfaceImage {
         let forceRefresh: Bool
         
         if let options = optionsInfo?[.Options] as? KingfisherOptions {
-            cacheInWatch = ((options & KingfisherOptions.CacheInWatchApp) != KingfisherOptions.None)
+            cacheInWatch = ((options & KingfisherOptions.CacheInWatch) != KingfisherOptions.None)
             forceRefresh = ((options & KingfisherOptions.ForceRefresh) != KingfisherOptions.None)
         } else {
             cacheInWatch = false

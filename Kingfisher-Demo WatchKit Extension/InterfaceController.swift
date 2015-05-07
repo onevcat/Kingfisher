@@ -40,7 +40,7 @@ class InterfaceController: WKInterfaceController {
         // Configure interface objects here.
         InterfaceController.counter =  InterfaceController.counter + 1
         
-        imageView.kf_setImageWithURL(NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(InterfaceController.counter).jpg")!, placeholderImage: nil, optionsInfo: [.Options: KingfisherOptions.CacheInWatchApp], progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf_setImageWithURL(NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(InterfaceController.counter).jpg")!, placeholderImage: nil, optionsInfo: [.Options: KingfisherOptions.CacheInWatch], progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (error, cacheType, imageURL, cachedInWatch) -> () in
             println("\(imageURL) : \(cachedInWatch)")
