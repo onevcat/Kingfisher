@@ -199,6 +199,13 @@ public extension WKInterfaceImage {
         }
     }
     
+    /**
+    Get the hash for a URL in Watch side cache.
+    
+    :param: string The absolute string of a URL.
+    
+    :returns: The hash string used when cached in Watch side cache.
+    */
     public class func kf_hashForURLString(string: String) -> String {
         return string.kf_MD5()
     }
