@@ -202,11 +202,13 @@ public extension WKInterfaceImage {
     /**
     Get the hash for a URL in Watch side cache.
     
+    You can use the returned string to check whether the corresponding image is cached in watch or not, by using `WKInterfaceDevice.currentDevice().cachedImages`
+    
     :param: string The absolute string of a URL.
     
     :returns: The hash string used when cached in Watch side cache.
     */
-    public class func kf_hashForURLString(string: String) -> String {
+    public class func kf_cacheKeyForURLString(string: String) -> String {
         return string.kf_MD5()
     }
 }
@@ -233,7 +235,7 @@ extension WKInterfaceImage {
         
         let imageKey: String
         if let URLString = URL.absoluteString {
-            imageKey = WKInterfaceImage.kf_hashForURLString(URLString)
+            imageKey = WKInterfaceImage.kf_cacheKeyForURLString(URLString)
         } else {
             return (false, cacheInWatch)
         }
@@ -276,7 +278,7 @@ extension WKInterfaceImage {
                         
                         if cacheInWatch {
                             if let URLString = URL.absoluteString {
-                                let key = WKInterfaceImage.kf_hashForURLString(URLString)
+                                let key = WKInterfaceImage.kf_cacheKeyForURLString(URLString)
                                 cachedInWatch = WKInterfaceDevice.currentDevice().addCachedImage(image!, name: key)
                             }
                         }
