@@ -26,9 +26,6 @@
 
 import Foundation
 
-public typealias DownloadProgressBlock = ((receivedSize: Int64, totalSize: Int64) -> ())
-public typealias CompletionHandler = ((image: UIImage?, error: NSError?, cacheType:CacheType, imageURL: NSURL?) -> ())
-
 // MARK: - Set Images
 /**
 *	Set image to use from web.

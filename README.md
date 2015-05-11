@@ -22,11 +22,11 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Cancellable processing task. You can cancel the downloading or image retriving process if it is not needed anymore.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
-* A category over `UIImageView` for setting image from an URL directly.
+* Categories over `UIImageView`, `UIButton` and `WKInterfaceImage` for setting image from an URL directly.
 
 ## Requirements
 
-* iOS 8.0+
+* iOS 8.0+ (iOS 8.2+ for Watch App)
 * Xcode 6.3
 
 ## Installation
@@ -48,7 +48,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.3'
+pod 'Kingfisher', '~> 1.4'
 ```
 
 Then, run the following command:
@@ -73,7 +73,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using CocoaPods, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/Kingfisher" >= 1.3
+github "onevcat/Kingfisher" >= 1.4
 ```
 
 Then, run the following command to build the Kingfisher framework:

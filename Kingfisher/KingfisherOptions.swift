@@ -74,4 +74,7 @@ public struct KingfisherOptions : RawOptionSetType {
     
     /// Decode the image in background thread before using.
     public static var BackgroundDecode: KingfisherOptions { return KingfisherOptions(1 << 3) }
+    
+    /// Cache the downloaded image to Apple Watch app. By default the downloaded image will not be cached in the watch. By containing this in options could improve performance when setting the same URL later. However, the cache size in the Watch is limited. So you will want to cache often used images only.
+    public static var CacheInWatch: KingfisherOptions { return KingfisherOptions(1 << 4) }
 }
