@@ -1,8 +1,6 @@
-<p align="center" >
-  <img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher">
-</p>
+<img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher" width="557"/>
 
-[![Circle CI](https://circleci.com/gh/onevcat/Kingfisher.svg?style=svg)](https://circleci.com/gh/onevcat/Kingfisher)
+[![CircleCI](https://img.shields.io/circleci/project/onevcat/Kingfisher.svg)](https://github.com/onevcat/Kingfisher)
 [![Carthage Compatibility](https://img.shields.io/badge/Carthage-✔-f2a77e.svg?style=flat)][carthage]
 [![CocoaPods Version](https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat)][cocoadocs]
 [![License](https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat)][cocoadocs]
@@ -19,7 +17,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Multiple-layer cache. Downloaded images will be cached in both memory and disk. So there is no need to download again and this could boost your app dramatically.
 * Cache management. You can set the max duration or size the cache could take. And the cache will also be cleaned automatically to prevent taking too much resource.
 * Modern framework. Kingfisher uses `NSURLSession` and the latest technology of GCD, which makes it a strong and swift framework. It also provides you easy APIs to use.
-* Cancellable processing task. You can cancel the downloading or image retriving process if it is not needed anymore.
+* Cancelable processing task. You can cancel the downloading or image retrieving process if it is not needed anymore.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
 * Categories over `UIImageView`, `UIButton` and `WKInterfaceImage` for setting image from an URL directly.
@@ -99,7 +97,7 @@ and add the paths to the frameworks you want to use under “Input Files”:
 $(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework
 ```
 
-For more information about how to use Carthage, pleasee see its [project page](https://github.com/Carthage/Carthage).
+For more information about how to use Carthage, please see its [project page](https://github.com/Carthage/Carthage).
 
 ### Manually
 
@@ -115,7 +113,7 @@ $ git submodule add https://github.com/onevcat/Kingfisher.git
 - In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
 - In the tab bar at the top of that window, open the "Build Phases" panel.
 - Expand the "Target Dependencies" group, and add `Kingfisher.framework`.
-- Click on the `+` button at the top left of tdemohe panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Kingfisher.framework`.
+- Click on the `+` button at the top left of "Build Phases" panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Kingfisher.framework`.
 
 ## Usage
 
