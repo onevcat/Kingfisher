@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher" width="557"/>
 
-[![CircleCI](https://img.shields.io/circleci/project/onevcat/Kingfisher.svg)](https://github.com/onevcat/Kingfisher)
+[![CircleCI](https://img.shields.io/circleci/project/onevcat/Kingfisher.svg)](https://circleci.com/gh/onevcat/Kingfisher)
 [![Carthage Compatibility](https://img.shields.io/badge/Carthage-✔-f2a77e.svg?style=flat)][carthage]
 [![CocoaPods Version](https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat)][cocoadocs]
 [![License](https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat)][cocoadocs]
