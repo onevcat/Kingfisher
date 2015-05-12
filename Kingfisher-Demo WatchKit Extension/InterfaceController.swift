@@ -32,6 +32,8 @@ class InterfaceController: WKInterfaceController {
 
     static var counter: Int = 0
     
+    var URLString: String?
+    
     @IBOutlet weak var imageView: WKInterfaceImage!
     
     override func awakeWithContext(context: AnyObject?) {
@@ -40,7 +42,8 @@ class InterfaceController: WKInterfaceController {
         // Configure interface objects here.
         InterfaceController.counter =  InterfaceController.counter + 1
         
-        imageView.kf_setImageWithURL(NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(InterfaceController.counter).jpg")!, placeholderImage: nil, optionsInfo: [.Options: KingfisherOptions.CacheInWatch], progressBlock: { (receivedSize, totalSize) -> () in
+        URLString = "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(InterfaceController.counter).jpg"
+        imageView.kf_setImageWithURL(NSURL(string: URLString!)!, placeholderImage: nil, optionsInfo: [.Options: KingfisherOptions.CacheInWatch], progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (error, cacheType, imageURL, cachedInWatch) -> () in
             println("\(imageURL) : \(cachedInWatch)")
@@ -57,4 +60,18 @@ class InterfaceController: WKInterfaceController {
         super.didDeactivate()
     }
 
+    @IBAction func reload() {
+        imageView.kf_setImageWithURL(NSURL(string: URLString!)!, placeholderImage: nil, optionsInfo: [.Options: KingfisherOptions.CacheInWatch], progressBlock: { (receivedSize, totalSize) -> () in
+            
+            }) { (error, cacheType, imageURL, cachedInWatch) -> () in
+                println("\(imageURL) : \(cachedInWatch)")
+        }
+    }
+    
+    @IBAction func clear() {
+        KingfisherManager.sharedManager.cache.clearDiskCache()
+        KingfisherManager.sharedManager.cache.clearMemoryCache()
+        WKInterfaceDevice.currentDevice().removeAllCachedImages()
+    }
+    
 }
