@@ -10,12 +10,20 @@
             <objects>
                 <controller title="Kingfisher" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <imageView width="136" height="136" alignment="left" id="qqx-yl-rXm"/>
+                        <imageView width="1" height="1" alignment="left" id="qqx-yl-rXm"/>
                     </items>
                     <menu key="menu" id="f2I-Fc-a4o">
                         <items>
-                            <menuItem title="Reload" icon="repeat" id="Bgg-54-XH4"/>
-                            <menuItem title="Clear" icon="trash" id="Zeb-O0-qjI"/>
+                            <menuItem title="Reload" icon="repeat" id="Bgg-54-XH4">
+                                <connections>
+                                    <action selector="reload" destination="AgC-eL-Hgc" id="C8e-FF-5a8"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clear" icon="trash" id="Zeb-O0-qjI">
+                                <connections>
+                                    <action selector="clear" destination="AgC-eL-Hgc" id="ZhC-NL-jtr"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                     <connections>
@@ -31,12 +39,20 @@
             <objects>
                 <controller title="Kingfisher" id="Yjb-zT-nsD" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <imageView width="136" height="136" alignment="left" id="FkW-um-dvx"/>
+                        <imageView width="1" height="1" alignment="left" id="FkW-um-dvx"/>
                     </items>
                     <menu key="menu" id="RUS-Qh-WsK">
                         <items>
-                            <menuItem title="Reload" icon="repeat" id="N8b-bj-MA5"/>
-                            <menuItem title="Clear" icon="trash" id="wka-8B-mSJ"/>
+                            <menuItem title="Reload" icon="repeat" id="N8b-bj-MA5">
+                                <connections>
+                                    <action selector="reload" destination="Yjb-zT-nsD" id="cJQ-eV-Nho"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clear" icon="trash" id="wka-8B-mSJ">
+                                <connections>
+                                    <action selector="clear" destination="Yjb-zT-nsD" id="giF-7K-4cj"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                     <connections>
@@ -51,12 +67,20 @@
             <objects>
                 <controller title="Kingfisher" id="aIE-iB-3Mc" customClass="InterfaceController" customModule="Kingfisher_Demo_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <imageView width="136" height="136" alignment="left" id="goU-5Y-EJp"/>
+                        <imageView width="1" height="1" alignment="left" id="goU-5Y-EJp"/>
                     </items>
                     <menu key="menu" id="Pd8-BI-hYu">
                         <items>
-                            <menuItem title="Reload" icon="repeat" id="QZ4-Kn-vb2"/>
-                            <menuItem title="Clear" icon="trash" id="CAy-YI-8hI"/>
+                            <menuItem title="Reload" icon="repeat" id="QZ4-Kn-vb2">
+                                <connections>
+                                    <action selector="reload" destination="aIE-iB-3Mc" id="3ue-bl-Fpd"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clear" icon="trash" id="CAy-YI-8hI">
+                                <connections>
+                                    <action selector="clear" destination="aIE-iB-3Mc" id="rda-qa-Squ"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                     <connections>

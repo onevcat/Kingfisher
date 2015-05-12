@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
+		4B3E714F1B02005900F5AAED /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3E714D1B01FEB200F5AAED /* WatchKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
 		4B6D4F651AE0A46D0084D15B /* UIImageViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F641AE0A46D0084D15B /* UIImageViewExtensionTests.swift */; };
 		4B6D4F671AE0B82A0084D15B /* UIButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F661AE0B82A0084D15B /* UIButtonExtensionTests.swift */; };
@@ -105,6 +106,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptionsInfo.swift; sourceTree = "<group>"; };
 		4B6D4F641AE0A46D0084D15B /* UIImageViewExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewExtensionTests.swift; sourceTree = "<group>"; };
 		4B6D4F661AE0B82A0084D15B /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B3E714F1B02005900F5AAED /* WatchKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +330,7 @@
 		EA99D30544BD22799F7A5367 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B3E714D1B01FEB200F5AAED /* WatchKit.framework */,
 				A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */,
 			);
 			name = Frameworks;
@@ -933,6 +937,7 @@
 				4BD352EE1AF3681800B18A40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4BD352F01AF3681800B18A40 /* Build configuration list for PBXNativeTarget "Kingfisher-Demo WatchKit Extension" */ = {
 			isa = XCConfigurationList;
@@ -941,6 +946,7 @@
 				4BD352EC1AF3681800B18A40 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D1ED2D061AD2CFA600CFC3EB /* Build configuration list for PBXProject "Kingfisher" */ = {
 			isa = XCConfigurationList;
