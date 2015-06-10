@@ -68,7 +68,7 @@ $ brew update
 $ brew install carthage
 ```
 
-To integrate Kingfisher into your Xcode project using CocoaPods, specify it in your `Cartfile`:
+To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
 github "onevcat/Kingfisher" >= 1.4
