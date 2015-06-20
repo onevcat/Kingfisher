@@ -247,7 +247,7 @@ extension ImageCache {
                 if options.shouldDecode {
                     dispatch_async(self.processQueue, { () -> Void in
                         let result = image.kf_decodedImage()
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        dispatch_async(options.queue, { () -> Void in
                             completionHandler?(result, .Memory)
                             return
                         })
@@ -266,14 +266,14 @@ extension ImageCache {
                                 let result = image.kf_decodedImage()
                                 self.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
                                 
-                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                dispatch_async(options.queue, { () -> Void in
                                     completionHandler?(result, .Memory)
                                     return
                                 })
                             })
                         } else {
                             self.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            dispatch_async(options.queue, { () -> Void in
                                 if let completionHandler = completionHandler {
                                     completionHandler(image, .Disk)
                                 }
@@ -281,7 +281,7 @@ extension ImageCache {
                         }
                     } else {
                         // No image found from either memory or disk
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        dispatch_async(options.queue, { () -> Void in
                             if let completionHandler = completionHandler {
                                 completionHandler(nil, nil)
                             }
@@ -291,7 +291,7 @@ extension ImageCache {
             }
         }
         
-        dispatch_async(dispatch_get_main_queue(), block)
+        dispatch_async(options.queue, block)
         return block
     }
     
