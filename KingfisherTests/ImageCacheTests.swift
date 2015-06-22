@@ -67,8 +67,6 @@ class ImageCacheTests: XCTestCase {
     }
     
     func testClearDiskCache() {
-        let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-        let diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
         
         let expectation = expectationWithDescription("wait for clearing disk cache")
         let key = testKeys[0]

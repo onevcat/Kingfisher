@@ -140,6 +140,10 @@ class UIImageViewExtensionTests: XCTestCase {
                 task3Completion = true
         }
         
+        // Prevent unused warning.
+        print(task2)
+        print(task3)
+        
         task1.cancel()
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
