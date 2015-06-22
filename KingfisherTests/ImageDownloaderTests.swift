@@ -171,7 +171,7 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
             XCTAssertNotNil(error, "Error should not be nil")
-            XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "Error should be NSURLErrorServerCertificateUntrusted, but \(error)")
+            XCTAssert(error?.code == NSURLErrorSecureConnectionFailed, "Error should be NSURLErrorServerCertificateUntrusted, but \(error)")
             expectation.fulfill()
             LSNocilla.sharedInstance().start()
         })

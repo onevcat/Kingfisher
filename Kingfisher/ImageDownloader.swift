@@ -61,10 +61,10 @@ public enum KingfisherError: Int {
     /**
     Called when the `ImageDownloader` object successfully downloaded an image from specified URL.
     
-    :param: downloader The `ImageDownloader` object finishes the downloading.
-    :param: image      Downloaded image.
-    :param: URL        URL of the original request URL.
-    :param: response   The response object of the downloading process.
+    - parameter downloader: The `ImageDownloader` object finishes the downloading.
+    - parameter image:      Downloaded image.
+    - parameter URL:        URL of the original request URL.
+    - parameter response:   The response object of the downloading process.
     */
     optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: UIImage, forURL URL: NSURL, withResponse response: NSURLResponse)
 }
@@ -111,9 +111,9 @@ public class ImageDownloader: NSObject {
     /**
     Init a downloader with name.
     
-    :param: name The name for the downloader. It should not be empty.
+    - parameter name: The name for the downloader. It should not be empty.
     
-    :returns: The downloader object.
+    - returns: The downloader object.
     */
     public init(name: String) {
         if name.isEmpty {
@@ -138,9 +138,9 @@ public extension ImageDownloader {
     /**
     Download an image with a URL.
     
-    :param: URL               Target URL.
-    :param: progressBlock     Called when the download progress updated.
-    :param: completionHandler Called when the download progress finishes.
+    - parameter URL:               Target URL.
+    - parameter progressBlock:     Called when the download progress updated.
+    - parameter completionHandler: Called when the download progress finishes.
     */
     public func downloadImageWithURL(URL: NSURL,
                            progressBlock: ImageDownloaderProgressBlock?,
@@ -152,10 +152,10 @@ public extension ImageDownloader {
     /**
     Download an image with a URL and option.
     
-    :param: URL               Target URL.
-    :param: options           The options could control download behavior. See `KingfisherManager.Options`
-    :param: progressBlock     Called when the download progress updated.
-    :param: completionHandler Called when the download progress finishes.
+    - parameter URL:               Target URL.
+    - parameter options:           The options could control download behavior. See `KingfisherManager.Options`
+    - parameter progressBlock:     Called when the download progress updated.
+    - parameter completionHandler: Called when the download progress finishes.
     */
     public func downloadImageWithURL(URL: NSURL,
                                  options: KingfisherManager.Options,
@@ -190,7 +190,9 @@ public extension ImageDownloader {
         }
         
         setupProgressBlock(progressBlock, completionHandler: completionHandler, forURL: request.URL!) {(session, fetchLoad) -> Void in
-            let task = session.dataTaskWithRequest(request)
+            guard let task = session.dataTaskWithRequest(request) else {
+                return
+            }
             
             task.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
             task.resume()
@@ -238,8 +240,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     This method is exposed since the compiler requests. Do not call it.
     */
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
-        
-        if let URL = dataTask.originalRequest.URL, callbackPairs = fetchLoadForKey(URL)?.callbacks {
+        if let URL = dataTask.originalRequest?.URL, callbackPairs = fetchLoadForKey(URL)?.callbacks {
             for callbackPair in callbackPairs {
                 callbackPair.progressBlock?(receivedSize: 0, totalSize: response.expectedContentLength)
             }
@@ -252,7 +253,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     */
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
 
-        if let URL = dataTask.originalRequest.URL, fetchLoad = fetchLoadForKey(URL) {
+        if let URL = dataTask.originalRequest?.URL, fetchLoad = fetchLoadForKey(URL) {
             fetchLoad.responseData.appendData(data)
             for callbackPair in fetchLoad.callbacks {
                 callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
@@ -276,7 +277,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     */
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
-        if let URL = task.originalRequest.URL {
+        if let URL = task.originalRequest?.URL {
             if let error = error { // Error happened
                 callbackWithImage(nil, error: error, imageURL: URL)
             } else { //Download finished without error
@@ -316,11 +317,11 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
 
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             if let trustedHosts = trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
-                let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!)
                 completionHandler(.UseCredential, credential)
                 return
             }

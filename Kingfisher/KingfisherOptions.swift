@@ -37,18 +37,18 @@ public struct KingfisherOptions : RawOptionSetType {
     /**
     Init an option
     
-    :param: value Raw value of the option.
+    - parameter value: Raw value of the option.
     
-    :returns: An option represets input value.
+    - returns: An option represets input value.
     */
     public init(rawValue value: UInt) { self.value = value }
     
     /**
     Init a None option
     
-    :param: nilLiteral Void.
+    - parameter nilLiteral: Void.
     
-    :returns: An option represents None.
+    - returns: An option represents None.
     */
     public init(nilLiteral: ()) { self.value = 0 }
     

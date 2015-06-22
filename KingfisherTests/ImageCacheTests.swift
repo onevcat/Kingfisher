@@ -137,7 +137,12 @@ class ImageCacheTests: XCTestCase {
             let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
             let diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
             
-            let files = NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath, error:nil)
+            let files: [AnyObject]?
+            do {
+                files = try NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath)
+            } catch _ {
+                files = nil
+            }
             XCTAssert(files?.count == 4, "All test images should be at locaitons. Expected 4, actually \(files?.count)")
             
             expectation.fulfill()
