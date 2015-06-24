@@ -17,7 +17,6 @@
 		4BAFBA3D1AD671E400FB0300 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
 		4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
-		4BD352F31AF36A0700B18A40 /* WKInterfaceImage+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD352F21AF36A0700B18A40 /* WKInterfaceImage+Kingfisher.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */; };
 		D1ED2D111AD2CFA600CFC3EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D101AD2CFA600CFC3EB /* AppDelegate.swift */; };
 		D1ED2D131AD2CFA600CFC3EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D121AD2CFA600CFC3EB /* ViewController.swift */; };
@@ -95,7 +94,6 @@
 		4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloaderTests.swift; sourceTree = "<group>"; };
 		4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherTestHelper.swift; sourceTree = "<group>"; };
-		4BD352F21AF36A0700B18A40 /* WKInterfaceImage+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKInterfaceImage+Kingfisher.swift"; sourceTree = "<group>"; };
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Decode.swift"; sourceTree = "<group>"; };
@@ -209,7 +207,6 @@
 				D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */,
 				D1ED2D561AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift */,
 				4B945B201ADBB20200D1545E /* UIButton+Kingfisher.swift */,
-				4BD352F21AF36A0700B18A40 /* WKInterfaceImage+Kingfisher.swift */,
 				D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */,
 				D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */,
 				D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */,
@@ -455,7 +452,6 @@
 				D1ED2D5C1AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift in Sources */,
 				4B945B211ADBB20200D1545E /* UIButton+Kingfisher.swift in Sources */,
 				D1ED2D5D1AD2D0F900CFC3EB /* ImageCache.swift in Sources */,
-				4BD352F31AF36A0700B18A40 /* WKInterfaceImage+Kingfisher.swift in Sources */,
 				D1ED2D5E1AD2D0F900CFC3EB /* ImageDownloader.swift in Sources */,
 				4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */,
 				D1ED2D601AD2D0F900CFC3EB /* KingfisherOptions.swift in Sources */,

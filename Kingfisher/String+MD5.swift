@@ -26,7 +26,7 @@ import Foundation
 
 extension String {
     func kf_MD5() -> String {
-        if let data = self.dataUsingEncoding(NSUTF8StringEncoding) {
+        if let data = dataUsingEncoding(NSUTF8StringEncoding) {
             let MD5Calculator = MD5(data)
             let MD5Data = MD5Calculator.calculate()
             let resultBytes = UnsafeMutablePointer<CUnsignedChar>(MD5Data.bytes)
@@ -73,7 +73,7 @@ extension NSMutableData {
     
     /** Convenient way to append bytes */
     func appendBytes(arrayOfBytes: [UInt8]) {
-        self.appendBytes(arrayOfBytes, length: arrayOfBytes.count)
+        appendBytes(arrayOfBytes, length: arrayOfBytes.count)
     }
     
 }

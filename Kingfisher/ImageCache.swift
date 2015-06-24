@@ -27,11 +27,13 @@
 import Foundation
 
 /**
-This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The `clearDiskCache` method will not trigger this notification.
+This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The manually invoking of `clearDiskCache` method will not trigger this notification.
 
 The `object` of this notification is the `ImageCache` object which sends the notification.
 
 A list of removed hashes (files) could be retrieved by accessing the array under `KingfisherDiskCacheCleanedHashKey` key in `userInfo` of the notification object you received. By checking the array, you could know the hash codes of files are removed.
+
+The main purpose of this notification is supplying a chance to maintain some necessary information on the cached files. See [this wiki](https://github.com/onevcat/Kingfisher/wiki/How-to-implement-ETag-based-304-(Not-Modified)-handling-in-Kingfisher) for a use case on it.
 */
 public let KingfisherDidCleanDiskCacheNotification = "com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification"
 
@@ -48,21 +50,21 @@ private let processQueueName = "com.onevcat.Kingfisher.ImageCache.processQueue."
 private let defaultCacheInstance = ImageCache(name: defaultCacheName)
 private let defaultMaxCachePeriodInSecond: NSTimeInterval = 60 * 60 * 24 * 7 //Cache exists for 1 week
 
+/// It represents a task of retrieving image. You can call `cancel` on it to stop the process.
 public typealias RetrieveImageDiskTask = dispatch_block_t
 
 /**
 Cache type of a cached image.
 
+- None:   The image is not cached yet when retrieving it.
 - Memory: The image is cached in memory.
 - Disk:   The image is cached in disk.
 */
 public enum CacheType {
-    case None, Memory, Disk, Watch
+    case None, Memory, Disk
 }
 
-/**
-*	`ImageCache` represents both the memory and disk cache system of Kingfisher. While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create your own cache object and configure it as your need. You should use an `ImageCache` object to manipulate memory and disk cache for Kingfisher.
-*/
+/// `ImageCache` represents both the memory and disk cache system of Kingfisher. While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create your own cache object and configure it as your need. You should use an `ImageCache` object to manipulate memory and disk cache for Kingfisher.
 public class ImageCache {
 
     //Memory
@@ -154,36 +156,31 @@ public extension ImageCache {
     public func storeImage(image: UIImage, forKey key: String, toDisk: Bool, completionHandler: (() -> ())?) {
         memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
         
+        func callHandlerInMainQueue() {
+            if let handler = completionHandler {
+                dispatch_async(dispatch_get_main_queue()) {
+                    handler()
+                }
+            }
+        }
+        
         if toDisk {
             dispatch_async(ioQueue, { () -> Void in
                 if let data = UIImagePNGRepresentation(image) {
                     if !self.fileManager.fileExistsAtPath(self.diskCachePath) {
                         do {
                             try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
-                        } catch _ {
-                        }
+                        } catch _ {}
                     }
                     
                     self.fileManager.createFileAtPath(self.cachePathForKey(key), contents: data, attributes: nil)
-                    
-                    if let handler = completionHandler {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            handler()
-                        }
-                    }
-                    
+                    callHandlerInMainQueue()
                 } else {
-                    if let handler = completionHandler {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            handler()
-                        }
-                    }
+                    callHandlerInMainQueue()
                 }
             })
         } else {
-            if let handler = completionHandler {
-                handler()
-            }
+            callHandlerInMainQueue()
         }
     }
     
@@ -208,22 +205,23 @@ public extension ImageCache {
     public func removeImageForKey(key: String, fromDisk: Bool, completionHandler: (() -> ())?) {
         memoryCache.removeObjectForKey(key)
         
+        func callHandlerInMainQueue() {
+            if let handler = completionHandler {
+                dispatch_async(dispatch_get_main_queue()) {
+                    handler()
+                }
+            }
+        }
+        
         if fromDisk {
             dispatch_async(ioQueue, { () -> Void in
                 do {
                     try self.fileManager.removeItemAtPath(self.cachePathForKey(key))
-                } catch _ {
-                }
-                if let handler = completionHandler {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        handler()
-                    }
-                }
+                } catch _ {}
+                callHandlerInMainQueue()
             })
         } else {
-            if let handler = completionHandler {
-                handler()
-            }
+            callHandlerInMainQueue()
         }
     }
     
@@ -242,7 +240,7 @@ extension ImageCache {
     */
     public func retrieveImageForKey(key: String, options:KingfisherManager.Options, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
-        if (completionHandler == nil) {
+        guard let completionHandler = completionHandler else {
             return dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {}
         }
         
@@ -254,12 +252,11 @@ extension ImageCache {
                     dispatch_async(self.processQueue, { () -> Void in
                         let result = image.kf_decodedImage()
                         dispatch_async(options.queue, { () -> Void in
-                            completionHandler?(result, .Memory)
-                            return
+                            completionHandler(result, .Memory)
                         })
                     })
                 } else {
-                    completionHandler?(image, .Memory)
+                    completionHandler(image, .Memory)
                 }
             } else {
                 //Begin to load image from disk
@@ -273,31 +270,27 @@ extension ImageCache {
                                 self.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
                                 
                                 dispatch_async(options.queue, { () -> Void in
-                                    completionHandler?(result, .Memory)
+                                    completionHandler(result, .Memory)
                                     return
                                 })
                             })
                         } else {
                             self.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
                             dispatch_async(options.queue, { () -> Void in
-                                if let completionHandler = completionHandler {
-                                    completionHandler(image, .Disk)
-                                }
+                                completionHandler(image, .Disk)
                             })
                         }
                     } else {
                         // No image found from either memory or disk
                         dispatch_async(options.queue, { () -> Void in
-                            if let completionHandler = completionHandler {
-                                completionHandler(nil, nil)
-                            }
+                            completionHandler(nil, nil)
                         })
                     }
                 })
             }
         }
         
-        dispatch_async(options.queue, block)
+        dispatch_async(dispatch_get_main_queue(), block)
         return block
     }
     

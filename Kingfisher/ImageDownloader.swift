@@ -54,9 +54,7 @@ public enum KingfisherError: Int {
     case InvalidURL = 20000
 }
 
-/**
-*	Protocol of `ImageDownloader`.
-*/
+/// Protocol of `ImageDownloader`.
 @objc public protocol ImageDownloaderDelegate {
     /**
     Called when the `ImageDownloader` object successfully downloaded an image from specified URL.
@@ -69,9 +67,7 @@ public enum KingfisherError: Int {
     optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: UIImage, forURL URL: NSURL, withResponse response: NSURLResponse)
 }
 
-/**
-*	`ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
-*/
+/// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
 public class ImageDownloader: NSObject {
     
     class ImageFetchLoad {
@@ -81,7 +77,6 @@ public class ImageDownloader: NSObject {
     }
     
     // MARK: - Public property
-    
     /// This closure will be applied to the image download request before it being sent. You can modify the request for some customizing purpose, like adding auth token to the header or do a url mapping.
     public var requestModifier: (NSMutableURLRequest -> Void)?
 
