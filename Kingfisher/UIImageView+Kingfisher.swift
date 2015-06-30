@@ -30,8 +30,7 @@ import Foundation
 /**
 *	Set image to use from web.
 */
- extension UIImageView {
-    
+ public extension UIImageView {
     
     /**
     Set an image with a URL.
@@ -113,18 +112,19 @@ import Foundation
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         var _indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
-        _indicator.center = self.center
         
-        _indicator.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin|UIViewAutoresizing.FlexibleRightMargin|UIViewAutoresizing.FlexibleBottomMargin|UIViewAutoresizing.FlexibleTopMargin
-        if (!_indicator.isAnimating ()) || (_indicator.hidden)
-        {
-            _indicator.hidden = false
-            if (_indicator.superview == nil)
+            _indicator.center = self.center
+            
+            _indicator.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin|UIViewAutoresizing.FlexibleRightMargin|UIViewAutoresizing.FlexibleBottomMargin|UIViewAutoresizing.FlexibleTopMargin
+            if (!_indicator.isAnimating ()) || (_indicator.hidden)
             {
-                self.addSubview(_indicator)
+                _indicator.hidden = false
+                if (_indicator.superview == nil)
+                {
+                    self.addSubview(_indicator)
+                }
+                _indicator.startAnimating()
             }
-            _indicator.startAnimating()
-        }
     
         image = placeholderImage
         
@@ -134,6 +134,7 @@ import Foundation
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                     _indicator.removeFromSuperview()
+
                 })
             }
         }) { (image, error, cacheType, imageURL) -> () in
@@ -142,6 +143,7 @@ import Foundation
                     self.image = image;
                 }
                 _indicator.removeFromSuperview()
+
                 completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
             })
         }
