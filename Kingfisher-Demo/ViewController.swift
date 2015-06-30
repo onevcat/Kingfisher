@@ -63,16 +63,6 @@ extension ViewController: UICollectionViewDataSource {
         }) { (image, error, cacheType, imageURL) -> () in
             println("\(indexPath.row + 1): Finished")
         }
-        cell.cellImageView.tag = indexPath.row
-        cell.cellImageView.userInteractionEnabled = true
-        var tapGesture = UITapGestureRecognizer(target: self, action: "SomeMethod:")
-        cell.cellImageView.addGestureRecognizer(tapGesture)
-    
         return cell
-    }
-    
-    func SomeMethod(recognizer:UIPanGestureRecognizer)
-    {
-        print (recognizer.view?.tag)
     }
 }
