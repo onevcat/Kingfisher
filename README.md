@@ -25,7 +25,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 ## Requirements
 
 * iOS 8.0+ (iOS 8.2+ for Watch App)
-* Xcode 6.3
+* Xcode 6.3 or above
 
 ## Installation
 
@@ -144,8 +144,8 @@ imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeh
 Kingfisher will search in cache (both memory and disk) first with the URL, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option dictionary, to let it ignore the cache.
 
 ```swift
-imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!, 
-                         placeholderImage: nil, 
+imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
+                         placeholderImage: nil,
                               optionsInfo: [.Options: KingfisherOptions.ForceRefresh])
 ```
 
@@ -154,8 +154,8 @@ There are also other options to control the cache level, downloading priority, e
 ```swift
 let myCache = ImageCache(name: "my_cache")
 
-imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!, 
-                         placeholderImage: nil, 
+imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
+                         placeholderImage: nil,
                               optionsInfo: [.TargetCache: myCache])
 ```
 
@@ -199,7 +199,7 @@ Kingfisher will use the default downloader and cache if you do not specify them 
 let downloader = KingfisherManager.sharedManager.downloader
 
 // Download process will timeout after 5 seconds. Default is 15.
-downloader.downloadTimeout = 5 
+downloader.downloadTimeout = 5
 
 // requestModifier will be called before image download request made.
 downloader.requestModifier = {
@@ -256,4 +256,3 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 ## License
 
 Kingfisher is released under the MIT license. See LICENSE for details.
-
