@@ -68,9 +68,12 @@ public class KingfisherManager {
     public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!)
     
     /// A preset option tuple with all value set to `false`.
-    public static var OptionsNone: Options = {
+    public static let OptionsNone: Options = {
         return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue())
     }()
+    
+    /// The default set of options to be used by the manager to control some downloader and cache behaviors.
+    public static var DefaultOptions: Options = OptionsNone
     
     /// Shared manager used by the extensions across Kingfisher.
     public class var sharedManager: KingfisherManager {
@@ -118,9 +121,9 @@ public class KingfisherManager {
                     lowPriority: (optionsInOptionsInfo & .LowPriority) != .None,
                     cacheMemoryOnly: (optionsInOptionsInfo & .CacheMemoryOnly) != .None,
                     shouldDecode: (optionsInOptionsInfo & .BackgroundDecode) != .None,
-                    queue: KingfisherManager.OptionsNone.queue)
+                    queue: KingfisherManager.DefaultOptions.queue)
             } else {
-                options = KingfisherManager.OptionsNone
+                options = KingfisherManager.DefaultOptions
             }
             
             let targetCache = optionsInfo?[.TargetCache] as? ImageCache ?? self.cache
