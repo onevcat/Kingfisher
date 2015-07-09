@@ -153,15 +153,20 @@ public class KingfisherManager {
                     targetCache: targetCache,
                     downloader: downloader)
             } else {
+                let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
+                    // Break retain cycle created inside diskTask closure below
+                    task.diskRetrieveTask = nil
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                }
                 let diskTask = targetCache.retrieveImageForKey(key, options: options, completionHandler: { (image, cacheType) -> () in
                     if image != nil {
-                        completionHandler?(image: image, error: nil, cacheType:cacheType, imageURL: URL)
+                        diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
                     } else {
                         self.downloadAndCacheImageWithURL(URL,
                             forKey: key,
                             retrieveImageTask: task,
                             progressBlock: progressBlock,
-                            completionHandler: completionHandler,
+                            completionHandler: diskTaskCompletionHandler,
                             options: options,
                             targetCache: targetCache,
                             downloader: downloader)
