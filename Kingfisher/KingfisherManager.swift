@@ -117,11 +117,12 @@ public class KingfisherManager {
         func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
             let options: Options
             if let optionsInOptionsInfo = optionsInfo?[.Options] as? KingfisherOptions {
+                let queue = (optionsInOptionsInfo & .BackgroundCallback) != .None ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
                 options = (forceRefresh: (optionsInOptionsInfo & .ForceRefresh) != .None,
                     lowPriority: (optionsInOptionsInfo & .LowPriority) != .None,
                     cacheMemoryOnly: (optionsInOptionsInfo & .CacheMemoryOnly) != .None,
                     shouldDecode: (optionsInOptionsInfo & .BackgroundDecode) != .None,
-                    queue: KingfisherManager.DefaultOptions.queue)
+                    queue: queue)
             } else {
                 options = KingfisherManager.DefaultOptions
             }
