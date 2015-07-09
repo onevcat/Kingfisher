@@ -80,4 +80,7 @@ public struct KingfisherOptions : RawOptionSetType {
     
     /// If set it will dispatch callbacks asynchronously to the global queue DISPATCH_QUEUE_PRIORITY_DEFAULT. Otherwise it will use the queue defined at KingfisherManager.DefaultOptions.queue
     public static var BackgroundCallback: KingfisherOptions { return KingfisherOptions(1 << 5) }
+    
+    /// Decode the image using the same scale as the main screen. Otherwise it will use the same scale as defined on the KingfisherManager.DefaultOptions.scale.
+    public static var ScreenScale: KingfisherOptions { return KingfisherOptions(1 << 6) }
 }

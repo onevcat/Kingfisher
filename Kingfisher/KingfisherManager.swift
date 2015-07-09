@@ -65,11 +65,11 @@ public class KingfisherManager {
     /**
     *	Options to control some downloader and cache behaviors.
     */
-    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!)
+    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat)
     
     /// A preset option tuple with all value set to `false`.
     public static let OptionsNone: Options = {
-        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue())
+        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0)
     }()
     
     /// The default set of options to be used by the manager to control some downloader and cache behaviors.
@@ -118,11 +118,13 @@ public class KingfisherManager {
             let options: Options
             if let optionsInOptionsInfo = optionsInfo?[.Options] as? KingfisherOptions {
                 let queue = (optionsInOptionsInfo & .BackgroundCallback) != .None ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
+                let scale = (optionsInOptionsInfo & .ScreenScale) != .None ? UIScreen.mainScreen().scale : KingfisherManager.DefaultOptions.scale
                 options = (forceRefresh: (optionsInOptionsInfo & .ForceRefresh) != .None,
                     lowPriority: (optionsInOptionsInfo & .LowPriority) != .None,
                     cacheMemoryOnly: (optionsInOptionsInfo & .CacheMemoryOnly) != .None,
                     shouldDecode: (optionsInOptionsInfo & .BackgroundDecode) != .None,
-                    queue: queue)
+                    queue: queue,
+                    scale: scale)
             } else {
                 options = KingfisherManager.DefaultOptions
             }
