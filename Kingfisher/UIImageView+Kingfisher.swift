@@ -119,14 +119,14 @@ public extension UIImageView {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-        }) { (image, error, cacheType, imageURL) -> () in
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                if (imageURL == self.kf_webURL && image != nil) {
-                    self.image = image;
-                }
-                completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
+            }, completionHandler: {[weak self] (image, error, cacheType, imageURL) -> () in
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
+                        sSelf.image = image;
+                    }
+                    completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
+                })
             })
-        }
         
         return task
     }
