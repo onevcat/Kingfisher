@@ -32,5 +32,6 @@ Pod::Spec.new do |s|
   s.source_files  = "Kingfisher/*.swift"
   s.requires_arc = true
   s.weak_framework = 'WatchKit'
-
+  s.framework = "CFNetwork"
+  
 end
