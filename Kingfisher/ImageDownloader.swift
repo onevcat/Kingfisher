@@ -74,6 +74,7 @@ public class ImageDownloader: NSObject {
         var callbacks = [CallbackPair]()
         var responseData = NSMutableData()
         var shouldDecode = false
+        var scale = KingfisherManager.DefaultOptions.scale
     }
     
     // MARK: - Public property
@@ -141,7 +142,7 @@ public extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?)
     {
-        downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: progressBlock, completionHandler: completionHandler)
+        downloadImageWithURL(URL, options: KingfisherManager.DefaultOptions, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     /**
@@ -193,6 +194,7 @@ public extension ImageDownloader {
             task.resume()
             
             fetchLoad.shouldDecode = options.shouldDecode
+            fetchLoad.scale = options.scale
             
             retrieveImageTask?.downloadTask = task
         }
@@ -281,12 +283,12 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                 dispatch_async(processQueue, { () -> Void in
                     
                     if let fetchLoad = self.fetchLoadForKey(URL) {
-                        if let image = UIImage(data: fetchLoad.responseData) {
+                        if let image = UIImage(data: fetchLoad.responseData, scale: fetchLoad.scale) {
                             
                             self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                             
                             if fetchLoad.shouldDecode {
-                                self.callbackWithImage(image.kf_decodedImage(), error: nil, imageURL: URL)
+                                self.callbackWithImage(image.kf_decodedImage(scale: fetchLoad.scale), error: nil, imageURL: URL)
                             } else {
                                 self.callbackWithImage(image, error: nil, imageURL: URL)
                             }

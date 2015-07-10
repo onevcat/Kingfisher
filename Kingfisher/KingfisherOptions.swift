@@ -51,4 +51,10 @@ public struct KingfisherOptions : OptionSetType {
     
     /// Decode the image in background thread before using.
     public static var BackgroundDecode = KingfisherOptions(rawValue: 1 << 3)
+
+    /// If set it will dispatch callbacks asynchronously to the global queue DISPATCH_QUEUE_PRIORITY_DEFAULT. Otherwise it will use the queue defined at KingfisherManager.DefaultOptions.queue
+    public static var BackgroundCallback = KingfisherOptions(rawValue: 1 << 4)
+    
+    /// Decode the image using the same scale as the main screen. Otherwise it will use the same scale as defined on the KingfisherManager.DefaultOptions.scale.
+    public static var ScreenScale = KingfisherOptions(rawValue: 1 << 5)
 }

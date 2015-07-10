@@ -250,7 +250,7 @@ extension ImageCache {
                 //Found image in memory cache.
                 if options.shouldDecode {
                     dispatch_async(self.processQueue, { () -> Void in
-                        let result = image.kf_decodedImage()
+                        let result = image.kf_decodedImage(scale: options.scale)
                         dispatch_async(options.queue, { () -> Void in
                             completionHandler(result, .Memory)
                         })
@@ -262,11 +262,11 @@ extension ImageCache {
                 //Begin to load image from disk
                 dispatch_async(self.ioQueue, { () -> Void in
                     
-                    if let image = self.retrieveImageInDiskCacheForKey(key) {
+                    if let image = self.retrieveImageInDiskCacheForKey(key, scale: options.scale) {
                         
                         if options.shouldDecode {
                             dispatch_async(self.processQueue, { () -> Void in
-                                let result = image.kf_decodedImage()
+                                let result = image.kf_decodedImage(scale: options.scale)
                                 self.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
                                 
                                 dispatch_async(options.queue, { () -> Void in
@@ -309,11 +309,12 @@ extension ImageCache {
     Get an image for a key from disk.
     
     - parameter key: Key for the image.
-    
+    - param scale: The scale factor to assume when interpreting the image data.
+
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInDiskCacheForKey(key: String) -> UIImage? {
-        return diskImageForKey(key)
+    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = KingfisherManager.DefaultOptions.scale) -> UIImage? {
+        return diskImageForKey(key, scale: scale)
     }
 }
 
@@ -593,9 +594,9 @@ public extension ImageCache {
 // MARK: - Internal Helper
 extension ImageCache {
     
-    func diskImageForKey(key: String) -> UIImage? {
+    func diskImageForKey(key: String, scale: CGFloat) -> UIImage? {
         if let data = diskImageDataForKey(key) {
-            if let image = UIImage(data: data) {
+            if let image = UIImage(data: data, scale: scale) {
                 return image
             } else {
                 return nil

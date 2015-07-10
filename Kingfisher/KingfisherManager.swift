@@ -60,12 +60,15 @@ private let instance = KingfisherManager()
 public class KingfisherManager {
 
     /// Options to control some downloader and cache behaviors.
-    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!)
+    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat)
     
-    /// A preset option tuple with all value set to `false` or default.
-    public static var OptionsNone: Options = {
-        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue())
+    /// A preset option tuple with all value set to `false`.
+    public static let OptionsNone: Options = {
+        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0)
     }()
+    
+    /// The default set of options to be used by the manager to control some downloader and cache behaviors.
+    public static var DefaultOptions: Options = OptionsNone
     
     /// Shared manager used by the extensions across Kingfisher.
     public class var sharedManager: KingfisherManager {
@@ -109,16 +112,16 @@ public class KingfisherManager {
         func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
             let options: Options
             if let optionsInOptionsInfo = optionsInfo?[.Options] as? KingfisherOptions {
-                
-                
-                
+                let queue = optionsInOptionsInfo.contains(KingfisherOptions.BackgroundCallback) ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
+                let scale = optionsInOptionsInfo.contains(KingfisherOptions.ScreenScale) ? UIScreen.mainScreen().scale : KingfisherManager.DefaultOptions.scale
                 options = (forceRefresh: optionsInOptionsInfo.contains(KingfisherOptions.ForceRefresh),
                     lowPriority: optionsInOptionsInfo.contains(KingfisherOptions.LowPriority),
                     cacheMemoryOnly: optionsInOptionsInfo.contains(KingfisherOptions.CacheMemoryOnly),
                     shouldDecode: optionsInOptionsInfo.contains(KingfisherOptions.BackgroundDecode),
-                    queue: dispatch_get_main_queue())
+                    queue: queue, scale: scale)
+
             } else {
-                options = KingfisherManager.OptionsNone
+                options = KingfisherManager.DefaultOptions
             }
             
             let targetCache = optionsInfo?[.TargetCache] as? ImageCache ?? self.cache
@@ -144,15 +147,20 @@ public class KingfisherManager {
                 targetCache: targetCache,
                 downloader: downloader)
         } else {
+            let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
+                // Break retain cycle created inside diskTask closure below
+                task.diskRetrieveTask = nil
+                completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+            }
             let diskTask = targetCache.retrieveImageForKey(URL.absoluteString, options: options, completionHandler: { (image, cacheType) -> () in
                 if image != nil {
-                    completionHandler?(image: image, error: nil, cacheType:cacheType, imageURL: URL)
+                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
                 } else {
                     self.downloadAndCacheImageWithURL(URL,
                         forKey: URL.absoluteString,
                         retrieveImageTask: task,
                         progressBlock: progressBlock,
-                        completionHandler: completionHandler,
+                        completionHandler: diskTaskCompletionHandler,
                         options: options,
                         targetCache: targetCache,
                         downloader: downloader)

@@ -28,6 +28,10 @@ import Foundation
 
 extension UIImage {
     func kf_decodedImage() -> UIImage? {
+        return self.kf_decodedImage(scale: self.scale)
+    }
+    
+    func kf_decodedImage(scale scale: CGFloat) -> UIImage? {
         let imageRef = self.CGImage
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue
@@ -36,11 +40,8 @@ extension UIImage {
         if let context = context {
             let rect = CGRectMake(0, 0, CGFloat(CGImageGetWidth(imageRef)), CGFloat(CGImageGetHeight(imageRef)))
             CGContextDrawImage(context, rect, imageRef)
-            if let decompressedImageRef = CGBitmapContextCreateImage(context) {
-                return UIImage(CGImage: decompressedImageRef)
-            } else {
-                return nil
-            }
+            let decompressedImageRef = CGBitmapContextCreateImage(context)
+            return UIImage(CGImage: decompressedImageRef!, scale: scale, orientation: self.imageOrientation)
         } else {
             return nil
         }
