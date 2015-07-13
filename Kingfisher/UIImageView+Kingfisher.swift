@@ -30,6 +30,8 @@ import Foundation
 /**
 *	Set image to use from web.
 */
+
+ private var indicator = UIActivityIndicatorView()
  public extension UIImageView {
     
     /**
@@ -105,27 +107,29 @@ import Foundation
     
     :returns: A task represents the retriving process.
     */
+    
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
                            optionsInfo: KingfisherOptionsInfo?,
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        var _indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
         
-            _indicator.center = self.center
-            
-            _indicator.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin|UIViewAutoresizing.FlexibleRightMargin|UIViewAutoresizing.FlexibleBottomMargin|UIViewAutoresizing.FlexibleTopMargin
-            if (!_indicator.isAnimating ()) || (_indicator.hidden)
+        if ( showIndicatorWhenLoading == true)
+        {
+            indicator.center = self.center
+           indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
+            indicator.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin|UIViewAutoresizing.FlexibleRightMargin|UIViewAutoresizing.FlexibleBottomMargin|UIViewAutoresizing.FlexibleTopMargin
+            if (!indicator.isAnimating ()) || (indicator.hidden)
             {
-                _indicator.hidden = false
-                if (_indicator.superview == nil)
+                indicator.hidden = false
+                if (indicator.superview == nil)
                 {
-                    self.addSubview(_indicator)
+                    self.addSubview(indicator)
                 }
-                _indicator.startAnimating()
+                indicator.startAnimating()
             }
-    
+        }
         image = placeholderImage
         
         kf_setWebURL(URL)
@@ -133,7 +137,7 @@ import Foundation
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
-                    _indicator.removeFromSuperview()
+                    indicator.hidden = true
 
                 })
             }
@@ -142,8 +146,10 @@ import Foundation
                 if (imageURL == self.kf_webURL && image != nil) {
                     self.image = image;
                 }
-                _indicator.removeFromSuperview()
-
+                if (showIndicatorWhenLoading == true)
+                {
+                    indicator.hidden = true
+                }
                 completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
             })
         }
@@ -154,11 +160,22 @@ import Foundation
 
 // MARK: - Associated Object
 private var lastURLkey: Void?
+private var showIndicatorWhenLoading: Bool?
 public extension UIImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         get {
             return objc_getAssociatedObject(self, &lastURLkey) as? NSURL
+        }
+    }
+    
+    public var kf_showIndicatorWhenLoading: Bool?
+    {
+        get{
+            return showIndicatorWhenLoading
+        }
+        set(newVal){
+            showIndicatorWhenLoading = newVal
         }
     }
     
