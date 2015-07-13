@@ -31,7 +31,6 @@ import Foundation
 *	Set image to use from web.
 */
 
- private var indicator = UIActivityIndicatorView()
  public extension UIImageView {
     
     /**
@@ -115,10 +114,11 @@ import Foundation
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         
+        var indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
         if ( showIndicatorWhenLoading == true)
         {
+            indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
             indicator.center = self.center
-           indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
             indicator.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin|UIViewAutoresizing.FlexibleRightMargin|UIViewAutoresizing.FlexibleBottomMargin|UIViewAutoresizing.FlexibleTopMargin
             if (!indicator.isAnimating ()) || (indicator.hidden)
             {
@@ -137,22 +137,21 @@ import Foundation
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
-                    indicator.hidden = true
-
+                    
                 })
             }
-        }) { (image, error, cacheType, imageURL) -> () in
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                if (imageURL == self.kf_webURL && image != nil) {
-                    self.image = image;
-                }
-                if (showIndicatorWhenLoading == true)
-                {
-                    indicator.hidden = true
-                }
-                completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
+            }, completionHandler: {[weak self] (image, error, cacheType, imageURL) -> () in
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
+                        sSelf.image = image;
+                    }
+                    if (showIndicatorWhenLoading == true)
+                    {
+                        indicator.hidden = true
+                    }
+                    completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
+                })
             })
-        }
         
         return task
     }

@@ -104,6 +104,10 @@ class HashBase {
         var bufZeros = UnsafeMutablePointer<UInt8>(calloc(counter, sizeof(UInt8)))
         tmpMessage.appendBytes(bufZeros, length: counter)
         
+        bufZeros.destroy()
+        bufZeros.dealloc(1)
+        bufZeros = nil
+        
         return tmpMessage
     }
 }
