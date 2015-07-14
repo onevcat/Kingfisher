@@ -135,7 +135,7 @@ import Foundation
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
                         sSelf.image = image;
-                        indicator?.hidden = true
+                        indicator?.stopAnimating()
                     }
 
                     completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
@@ -183,8 +183,8 @@ public extension UIImageView {
                     indicator.center = center
                     indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleBottomMargin | .FlexibleTopMargin
                     indicator.hidden = true
+                    indicator.hidesWhenStopped = true
                     
-                    println("Add indicator to image view: \(self)")
                     self.addSubview(indicator)
                     
                     kf_setIndicator(indicator)
