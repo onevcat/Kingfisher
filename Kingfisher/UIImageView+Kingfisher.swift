@@ -163,7 +163,8 @@ public extension UIImageView {
         objc_setAssociatedObject(self, &lastURLKey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
     }
     
-    /// Show an indicator
+    /// Whether show an animating indicator when the image view is loading an image or not.
+    /// Default is false.
     public var kf_showIndicatorWhenLoading: Bool {
         get {
             if let result = objc_getAssociatedObject(self, &showIndicatorWhenLoadingKey) as? NSNumber {
@@ -186,10 +187,10 @@ public extension UIImageView {
                     println("Add indicator to image view: \(self)")
                     self.addSubview(indicator)
                     
-                    kf_indicator = indicator
+                    kf_setIndicator(indicator)
                 } else {
                     kf_indicator?.removeFromSuperview()
-                    kf_indicator = nil
+                    kf_setIndicator(nil)
                 }
                 
                 objc_setAssociatedObject(self, &showIndicatorWhenLoadingKey, NSNumber(bool: newValue), UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
@@ -197,14 +198,16 @@ public extension UIImageView {
         }
     }
     
+    /// The indicator view showing when loading. This will be `nil` if `kf_showIndicatorWhenLoading` is false.
+    /// You may want to use this to set the indicator style or color when you set `kf_showIndicatorWhenLoading` to true.
     public var kf_indicator: UIActivityIndicatorView? {
         get {
             return objc_getAssociatedObject(self, &indicatorKey) as? UIActivityIndicatorView
         }
-        
-        set {
-            objc_setAssociatedObject(self, &indicatorKey, newValue, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
-        }
+    }
+    
+    private func kf_setIndicator(indicator: UIActivityIndicatorView?) {
+        objc_setAssociatedObject(self, &indicatorKey, indicator, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
     }
 }
 
