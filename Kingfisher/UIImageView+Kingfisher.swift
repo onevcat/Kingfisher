@@ -31,7 +31,7 @@ import Foundation
 *	Set image to use from web.
 */
 
- public extension UIImageView {
+public extension UIImageView {
     
     /**
     Set an image with a URL.
