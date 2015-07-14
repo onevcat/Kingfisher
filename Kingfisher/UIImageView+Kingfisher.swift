@@ -113,23 +113,14 @@ import Foundation
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        
-        var indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
-        if ( showIndicatorWhenLoading == true)
-        {
-            indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
-            indicator.center = self.center
-            indicator.autoresizingMask = UIViewAutoresizing.FlexibleLeftMargin|UIViewAutoresizing.FlexibleRightMargin|UIViewAutoresizing.FlexibleBottomMargin|UIViewAutoresizing.FlexibleTopMargin
-            if (!indicator.isAnimating ()) || (indicator.hidden)
-            {
-                indicator.hidden = false
-                if (indicator.superview == nil)
-                {
-                    self.addSubview(indicator)
-                }
-                indicator.startAnimating()
-            }
+        let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
+        var indicator: UIActivityIndicatorView? = nil
+        if showIndicatorWhenLoading {
+            indicator = kf_indicator
+            indicator?.hidden = false
+            indicator?.startAnimating()
         }
+        
         image = placeholderImage
         
         kf_setWebURL(URL)
@@ -144,12 +135,10 @@ import Foundation
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
                         sSelf.image = image;
+                        indicator?.hidden = true
                     }
-                    if (showIndicatorWhenLoading == true)
-                    {
-                        indicator.hidden = true
-                    }
-                    completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
+
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 })
             })
         
@@ -158,28 +147,64 @@ import Foundation
 }
 
 // MARK: - Associated Object
-private var lastURLkey: Void?
-private var showIndicatorWhenLoading: Bool?
+private var lastURLKey: Void?
+private var indicatorKey: Void?
+private var showIndicatorWhenLoadingKey: Void?
+
 public extension UIImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         get {
-            return objc_getAssociatedObject(self, &lastURLkey) as? NSURL
-        }
-    }
-    
-    public var kf_showIndicatorWhenLoading: Bool?
-    {
-        get{
-            return showIndicatorWhenLoading
-        }
-        set(newVal){
-            showIndicatorWhenLoading = newVal
+            return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
         }
     }
     
     private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLkey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        objc_setAssociatedObject(self, &lastURLKey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+    }
+    
+    /// Show an indicator
+    public var kf_showIndicatorWhenLoading: Bool {
+        get {
+            if let result = objc_getAssociatedObject(self, &showIndicatorWhenLoadingKey) as? NSNumber {
+                return result.boolValue
+            } else {
+                return false
+            }
+        }
+        
+        set {
+            if kf_showIndicatorWhenLoading == newValue {
+                return
+            } else {
+                if newValue {
+                    let indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
+                    indicator.center = center
+                    indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleBottomMargin | .FlexibleTopMargin
+                    indicator.hidden = true
+                    
+                    println("Add indicator to image view: \(self)")
+                    self.addSubview(indicator)
+                    
+                    kf_indicator = indicator
+                } else {
+                    kf_indicator?.removeFromSuperview()
+                    kf_indicator = nil
+                }
+                
+                objc_setAssociatedObject(self, &showIndicatorWhenLoadingKey, NSNumber(bool: newValue), UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+            }
+        }
+    }
+    
+    public var kf_indicator: UIActivityIndicatorView? {
+        get {
+            return objc_getAssociatedObject(self, &indicatorKey) as? UIActivityIndicatorView
+        }
+        
+        set {
+            objc_setAssociatedObject(self, &indicatorKey, newValue, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        }
     }
 }
 
