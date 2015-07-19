@@ -409,10 +409,6 @@ extension ImageCache {
                     }
                 }
                 
-                for fileURL in URLsToDelete {
-                    self.fileManager.removeItemAtURL(fileURL, error: nil)
-                }
-                
                 if self.maxDiskCacheSize > 0 && diskCacheSize > self.maxDiskCacheSize {
                     let targetSize = self.maxDiskCacheSize / 2
                     
@@ -442,6 +438,10 @@ extension ImageCache {
                             }
                         }
                     }
+                }
+                
+                for fileURL in URLsToDelete {
+                    self.fileManager.removeItemAtURL(fileURL, error: nil)
                 }
                 
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
