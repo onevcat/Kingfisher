@@ -228,8 +228,8 @@ extension WKInterfaceImage {
         let forceRefresh: Bool
         
         if let options = optionsInfo?[.Options] as? KingfisherOptions {
-            cacheInWatch = ((options & KingfisherOptions.CacheInWatch) != KingfisherOptions.None)
-            forceRefresh = ((options & KingfisherOptions.ForceRefresh) != KingfisherOptions.None)
+            cacheInWatch = options.contains(.CacheInWatch)
+            forceRefresh = options.contains(.ForceRefresh)
         } else {
             cacheInWatch = false
             forceRefresh = false

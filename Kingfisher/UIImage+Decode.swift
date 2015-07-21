@@ -36,10 +36,10 @@ extension UIImage {
         if let context = context {
             let rect = CGRectMake(0, 0, CGFloat(CGImageGetWidth(imageRef)), CGFloat(CGImageGetHeight(imageRef)))
             CGContextDrawImage(context, rect, imageRef)
-            let decompressedImageRef = CGBitmapContextCreateImage(context)
-            return UIImage(CGImage: decompressedImageRef)
-        } else {
-            return nil
+            if let decompressedImageRef = CGBitmapContextCreateImage(context) {
+                return UIImage(CGImage: decompressedImageRef)
+            }
         }
+        return nil
     }
 }

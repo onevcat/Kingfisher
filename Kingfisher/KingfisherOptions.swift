@@ -29,10 +29,8 @@ import Foundation
 /**
 *  Options to control Kingfisher behaviors.
 */
-public struct KingfisherOptions : RawOptionSetType {
-    typealias RawValue = UInt
-    private var value: UInt = 0
-    init(_ value: UInt) { self.value = value }
+public struct KingfisherOptions : OptionSetType {
+    public var rawValue: UInt = 0
     
     /**
     Init an option
@@ -41,40 +39,26 @@ public struct KingfisherOptions : RawOptionSetType {
     
     - returns: An option represets input value.
     */
-    public init(rawValue value: UInt) { self.value = value }
-    
-    /**
-    Init a None option
-    
-    - parameter nilLiteral: Void.
-    
-    - returns: An option represents None.
-    */
-    public init(nilLiteral: ()) { self.value = 0 }
+    public init(rawValue value: UInt) { self.rawValue = value }
     
     /// An option represents None.
-    public static var allZeros: KingfisherOptions { return self(0) }
-    
-    /// Raw value of the option.
-    public var rawValue: UInt { return self.value }
-    
-    static func fromMask(raw: UInt) -> KingfisherOptions { return self(raw) }
+    public static var allZeros = KingfisherOptions(rawValue: 0)
 
     /// None options. Kingfisher will keep its default behavior.
-    public static var None: KingfisherOptions { return self(0) }
+    public static var None = KingfisherOptions(rawValue: 0)
     
     /// Download in a low priority.
-    public static var LowPriority: KingfisherOptions { return KingfisherOptions(1 << 0) }
+    public static var LowPriority = KingfisherOptions(rawValue: 1 << 0)
     
     /// Try to send request to server first. If response code is 304 (Not Modified), use the cached image. Otherwise, download the image and cache it again.
-    public static var ForceRefresh: KingfisherOptions { return KingfisherOptions(1 << 1) }
+    public static var ForceRefresh = KingfisherOptions(rawValue: 1 << 1)
     
     /// Only cache downloaded image to memory, not cache in disk.
-    public static var CacheMemoryOnly: KingfisherOptions { return KingfisherOptions(1 << 2) }
+    public static var CacheMemoryOnly = KingfisherOptions(rawValue: 1 << 2)
     
     /// Decode the image in background thread before using.
-    public static var BackgroundDecode: KingfisherOptions { return KingfisherOptions(1 << 3) }
+    public static var BackgroundDecode = KingfisherOptions(rawValue: 1 << 3)
     
     /// Cache the downloaded image to Apple Watch app. By default the downloaded image will not be cached in the watch. By containing this in options could improve performance when setting the same URL later. However, the cache size in the Watch is limited. So you will want to cache often used images only.
-    public static var CacheInWatch: KingfisherOptions { return KingfisherOptions(1 << 4) }
+    public static var CacheInWatch = KingfisherOptions(rawValue: 1 << 4)
 }
