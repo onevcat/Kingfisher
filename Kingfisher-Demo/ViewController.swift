@@ -57,12 +57,12 @@ extension ViewController: UICollectionViewDataSource {
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! CollectionViewCell
+        cell.cellImageView.kf_showIndicatorWhenLoading = true
         cell.cellImageView.kf_setImageWithURL(NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             println("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
         }) { (image, error, cacheType, imageURL) -> () in
             println("\(indexPath.row + 1): Finished")
         }
-        
         return cell
     }
 }

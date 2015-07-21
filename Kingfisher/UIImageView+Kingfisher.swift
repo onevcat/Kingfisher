@@ -30,7 +30,9 @@ import Foundation
 /**
 *	Set image to use from web.
 */
+
 public extension UIImageView {
+    
     /**
     Set an image with a URL.
     It will ask for Kingfisher's manager to get the image for the URL.
@@ -104,12 +106,21 @@ public extension UIImageView {
     
     :returns: A task represents the retriving process.
     */
+    
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
                            optionsInfo: KingfisherOptionsInfo?,
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
+        let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
+        var indicator: UIActivityIndicatorView? = nil
+        if showIndicatorWhenLoading {
+            indicator = kf_indicator
+            indicator?.hidden = false
+            indicator?.startAnimating()
+        }
+        
         image = placeholderImage
         
         kf_setWebURL(URL)
@@ -117,14 +128,17 @@ public extension UIImageView {
             if let progressBlock = progressBlock {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    
                 })
             }
             }, completionHandler: {[weak self] (image, error, cacheType, imageURL) -> () in
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
                         sSelf.image = image;
+                        indicator?.stopAnimating()
                     }
-                    completionHandler?(image: image, error: error, cacheType:cacheType, imageURL: imageURL)
+
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 })
             })
         
@@ -133,17 +147,67 @@ public extension UIImageView {
 }
 
 // MARK: - Associated Object
-private var lastURLkey: Void?
+private var lastURLKey: Void?
+private var indicatorKey: Void?
+private var showIndicatorWhenLoadingKey: Void?
+
 public extension UIImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         get {
-            return objc_getAssociatedObject(self, &lastURLkey) as? NSURL
+            return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
         }
     }
     
     private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLkey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        objc_setAssociatedObject(self, &lastURLKey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+    }
+    
+    /// Whether show an animating indicator when the image view is loading an image or not.
+    /// Default is false.
+    public var kf_showIndicatorWhenLoading: Bool {
+        get {
+            if let result = objc_getAssociatedObject(self, &showIndicatorWhenLoadingKey) as? NSNumber {
+                return result.boolValue
+            } else {
+                return false
+            }
+        }
+        
+        set {
+            if kf_showIndicatorWhenLoading == newValue {
+                return
+            } else {
+                if newValue {
+                    let indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
+                    indicator.center = center
+                    indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleBottomMargin | .FlexibleTopMargin
+                    indicator.hidden = true
+                    indicator.hidesWhenStopped = true
+                    
+                    self.addSubview(indicator)
+                    
+                    kf_setIndicator(indicator)
+                } else {
+                    kf_indicator?.removeFromSuperview()
+                    kf_setIndicator(nil)
+                }
+                
+                objc_setAssociatedObject(self, &showIndicatorWhenLoadingKey, NSNumber(bool: newValue), UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+            }
+        }
+    }
+    
+    /// The indicator view showing when loading. This will be `nil` if `kf_showIndicatorWhenLoading` is false.
+    /// You may want to use this to set the indicator style or color when you set `kf_showIndicatorWhenLoading` to true.
+    public var kf_indicator: UIActivityIndicatorView? {
+        get {
+            return objc_getAssociatedObject(self, &indicatorKey) as? UIActivityIndicatorView
+        }
+    }
+    
+    private func kf_setIndicator(indicator: UIActivityIndicatorView?) {
+        objc_setAssociatedObject(self, &indicatorKey, indicator, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
     }
 }
 
