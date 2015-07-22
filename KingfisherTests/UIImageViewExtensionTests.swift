@@ -194,4 +194,36 @@ class UIImageViewExtensionTests: XCTestCase {
             clearCaches([cache1, cache2])
         })
     }
+    
+    func testIndicatorViewExisting() {
+        imageView.kf_showIndicatorWhenLoading = true
+        XCTAssertNotNil(imageView.kf_indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
+        
+        imageView.kf_showIndicatorWhenLoading = false
+        XCTAssertNil(imageView.kf_indicator, "The indicator view should be removed when showIndicatorWhenLoading set to false")
+    }
+    
+    func testIndicatorViewAnimating() {
+        imageView.kf_showIndicatorWhenLoading = true
+        
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let URL = NSURL(string: URLString)!
+        
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            let indicator = self.imageView.kf_indicator
+            XCTAssertNotNil(indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
+            XCTAssertTrue(indicator!.isAnimating(), "The indicator should be animating when loading")
+
+        }) { (image, error, cacheType, imageURL) -> () in
+            let indicator = self.imageView.kf_indicator
+            XCTAssertFalse(indicator!.isAnimating(), "The indicator should stop after loading")
+            expectation.fulfill()
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 }
