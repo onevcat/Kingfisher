@@ -186,10 +186,7 @@ public extension ImageDownloader {
         }
         
         setupProgressBlock(progressBlock, completionHandler: completionHandler, forURL: request.URL!) {(session, fetchLoad) -> Void in
-            guard let task = session.dataTaskWithRequest(request) else {
-                return
-            }
-            
+            let task = session.dataTaskWithRequest(request)
             task.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
             task.resume()
             
