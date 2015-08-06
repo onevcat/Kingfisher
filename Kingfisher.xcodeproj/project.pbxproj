@@ -17,6 +17,7 @@
 		4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */; };
+		D166E4CD1B73820700B129E3 /* UIImage+Normalize.swift in Sources */ = {isa = PBXBuildFile; fileRef = D166E4CC1B73820700B129E3 /* UIImage+Normalize.swift */; };
 		D1ED2D111AD2CFA600CFC3EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D101AD2CFA600CFC3EB /* AppDelegate.swift */; };
 		D1ED2D131AD2CFA600CFC3EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D121AD2CFA600CFC3EB /* ViewController.swift */; };
 		D1ED2D161AD2CFA600CFC3EB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1ED2D141AD2CFA600CFC3EB /* Main.storyboard */; };
@@ -96,6 +97,7 @@
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Decode.swift"; sourceTree = "<group>"; };
+		D166E4CC1B73820700B129E3 /* UIImage+Normalize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Normalize.swift"; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D0F1AD2CFA600CFC3EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D1ED2D101AD2CFA600CFC3EB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -206,7 +208,7 @@
 				D1ED2D561AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift */,
 				4B945B201ADBB20200D1545E /* UIButton+Kingfisher.swift */,
 				D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */,
-				9C099CCC1B727A910014D062 /* UIImage+Normalize.swift */,
+				D166E4CC1B73820700B129E3 /* UIImage+Normalize.swift */,
 				D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */,
 				D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */,
 				D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */,
@@ -446,8 +448,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9C099CCD1B727A910014D062 /* UIImage+Normalize.swift in Sources */,
 				D1ED2D5F1AD2D0F900CFC3EB /* KingfisherManager.swift in Sources */,
+				D166E4CD1B73820700B129E3 /* UIImage+Normalize.swift in Sources */,
 				D1ED2D5B1AD2D0F900CFC3EB /* String+MD5.swift in Sources */,
 				D1ED2D5C1AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift in Sources */,
 				4B945B211ADBB20200D1545E /* UIButton+Kingfisher.swift in Sources */,
