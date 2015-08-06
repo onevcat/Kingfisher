@@ -206,6 +206,7 @@
 				D1ED2D561AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift */,
 				4B945B201ADBB20200D1545E /* UIButton+Kingfisher.swift */,
 				D151E72A1AD3C48D004FD4AE /* UIImage+Decode.swift */,
+				9C099CCC1B727A910014D062 /* UIImage+Normalize.swift */,
 				D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */,
 				D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */,
 				D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */,
@@ -445,6 +446,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C099CCD1B727A910014D062 /* UIImage+Normalize.swift in Sources */,
 				D1ED2D5F1AD2D0F900CFC3EB /* KingfisherManager.swift in Sources */,
 				D1ED2D5B1AD2D0F900CFC3EB /* String+MD5.swift in Sources */,
 				D1ED2D5C1AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift in Sources */,

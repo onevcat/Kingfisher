@@ -166,7 +166,7 @@ public extension ImageCache {
         
         if toDisk {
             dispatch_async(ioQueue, { () -> Void in
-                if let data = UIImagePNGRepresentation(image) {
+                if let data = UIImagePNGRepresentation(image.kf_normalizedImage()) {
                     if !self.fileManager.fileExistsAtPath(self.diskCachePath) {
                         do {
                             try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
