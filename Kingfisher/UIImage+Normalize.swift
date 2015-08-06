@@ -29,7 +29,9 @@ import UIKit
 extension UIImage {
     
     func kf_normalizedImage() -> UIImage {
-        if imageOrientation == .Up { return self }
+        if imageOrientation == .Up {
+            return self
+        }
         
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         drawInRect(CGRect(origin: CGPointZero, size: size))
