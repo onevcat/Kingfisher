@@ -133,7 +133,7 @@ class ImageCacheTests: XCTestCase {
         
         storeMultipleImages { () -> () in
             let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-            let diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
+            let diskCachePath = (paths.first! as NSString).stringByAppendingPathComponent(cacheName)
             
             let files: [AnyObject]?
             do {

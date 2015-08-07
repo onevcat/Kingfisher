@@ -112,7 +112,7 @@ public class ImageCache {
         memoryCache.name = cacheName
         
         let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-        diskCachePath = paths.first!.stringByAppendingPathComponent(cacheName)
+        diskCachePath = (paths.first! as NSString).stringByAppendingPathComponent(cacheName)
         
         ioQueue = dispatch_queue_create(ioQueueName + name, DISPATCH_QUEUE_SERIAL)
         processQueue = dispatch_queue_create(processQueueName + name, DISPATCH_QUEUE_CONCURRENT)
@@ -613,7 +613,7 @@ extension ImageCache {
     
     func cachePathForKey(key: String) -> String {
         let fileName = cacheFileNameForKey(key)
-        return diskCachePath.stringByAppendingPathComponent(fileName)
+        return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
     }
     
     func cacheFileNameForKey(key: String) -> String {
