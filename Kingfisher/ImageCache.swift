@@ -392,8 +392,8 @@ extension ImageCache {
                         do {
                             let resourceValues = try fileURL.resourceValuesForKeys(resourceKeys)
                             // If it is a Directory. Continue to next file URL.
-                            if let isDirectory = resourceValues[NSURLIsDirectoryKey]?.boolValue {
-                                if isDirectory {
+                            if let isDirectory = resourceValues[NSURLIsDirectoryKey] as? NSNumber {
+                                if isDirectory.boolValue {
                                     continue
                                 }
                             }
