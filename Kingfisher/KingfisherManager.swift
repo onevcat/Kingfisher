@@ -178,9 +178,12 @@ public class KingfisherManager {
     }
 
     /**
-    Get an image with URL as the key.
+    Get an image with `URL.absoluteString` as the key.
     If KingfisherOptions.None is used as `options`, Kingfisher will seek the image in memory and disk first.
-    If not found, it will download the image at URL and cache it.
+    If not found, it will download the image at URL and cache it with `URL.absoluteString` value as its key.
+    
+    If you need to specify the key other than `URL.absoluteString`, please use resource version of this API with `resource.cacheKey` set to what you want.
+    
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
     :param: URL               The image URL.

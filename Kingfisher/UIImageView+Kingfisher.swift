@@ -36,7 +36,7 @@ public extension UIImageView {
     /**
     Set an image with a resource.
     It will ask for Kingfisher's manager to get the image for the `cacheKey` property in `resource`.
-    The memory and disk will be searched first. If the manager does not find it, it will try to download the image at the `resource.downloadURL` and store it with `cacheKey` for next use.
+    The memory and disk will be searched first. If the manager does not find it, it will try to download the image at the `resource.downloadURL` and store it with `resource.cacheKey` for next use.
     
     :param: resource Resource object contains information such as `cacheKey` and `downloadURL`.
     
@@ -50,7 +50,9 @@ public extension UIImageView {
     /**
     Set an image with a URL.
     It will ask for Kingfisher's manager to get the image for the URL.
-    The memory and disk will be searched first. If the manager does not find it, it will try to download the image at this URL and store it for next use.
+    The memory and disk will be searched first with `URL.absoluteString` as the cache key. If the manager does not find it, it will try to download the image at this URL and store the image with `URL.absoluteString` as cache key for next use.
+    
+    If you need to specify the key other than `URL.absoluteString`, please use resource version of these APIs with `resource.cacheKey` set to what you want.
     
     :param: URL The URL of image.
     
