@@ -30,7 +30,7 @@ public struct Resource {
     public let cacheKey: String
     public let downloadURL: NSURL
     
-    init(downloadURL: NSURL, cacheKey: String? = nil) {
+    public init(downloadURL: NSURL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
         self.cacheKey = cacheKey ?? downloadURL.absoluteString!
     }
