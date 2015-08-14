@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
+		4B2C4DF81B7D7ACD000912CA /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2C4DF71B7D7ACD000912CA /* Resource.swift */; };
 		4B3E714F1B02005900F5AAED /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3E714D1B01FEB200F5AAED /* WatchKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
 		4B6D4F651AE0A46D0084D15B /* UIImageViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F641AE0A46D0084D15B /* UIImageViewExtensionTests.swift */; };
@@ -107,6 +108,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B2C4DF71B7D7ACD000912CA /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptionsInfo.swift; sourceTree = "<group>"; };
 		4B6D4F641AE0A46D0084D15B /* UIImageViewExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewExtensionTests.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 				D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */,
 				D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */,
 				4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */,
+				4B2C4DF71B7D7ACD000912CA /* Resource.swift */,
 				D1ED2D371AD2D09F00CFC3EB /* Supporting Files */,
 			);
 			path = Kingfisher;
@@ -605,6 +608,7 @@
 				4BD352F31AF36A0700B18A40 /* WKInterfaceImage+Kingfisher.swift in Sources */,
 				D1ED2D5E1AD2D0F900CFC3EB /* ImageDownloader.swift in Sources */,
 				4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */,
+				4B2C4DF81B7D7ACD000912CA /* Resource.swift in Sources */,
 				D1ED2D601AD2D0F900CFC3EB /* KingfisherOptions.swift in Sources */,
 				D151E72B1AD3C48D004FD4AE /* UIImage+Decode.swift in Sources */,
 			);
