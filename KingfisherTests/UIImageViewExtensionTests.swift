@@ -85,6 +85,33 @@ class UIImageViewExtensionTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
     
+    func testImageDownloadWithResourceForImageView() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let URL = NSURL(string: URLString)!
+        let resource = Resource(downloadURL: URL)
+        
+        var progressBlockIsCalled = false
+        
+        imageView.kf_setImageWithResource(resource, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+            }) { (image, error, cacheType, imageURL) -> () in
+                expectation.fulfill()
+                
+                XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
+                XCTAssert(image != nil, "Downloaded image should exist.")
+                XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
+                XCTAssert(self.imageView.image! == testImage, "Downloaded image should be already set to the image property.")
+                XCTAssert(self.imageView.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
+                
+                XCTAssert(cacheType == .None, "The cache type should be none here. This image was just downloaded.")
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
     func testImageDownloadCancelForImageView() {
         let expectation = expectationWithDescription("wait for downloading image")
 
