@@ -90,24 +90,24 @@ public class KingfisherManager {
         cache = ImageCache.defaultCache
         downloader = ImageDownloader.defaultDownloader
     }
-
+    
     /**
-    Get an image with URL as the key.
+    Get an image with resource.
     If KingfisherOptions.None is used as `options`, Kingfisher will seek the image in memory and disk first.
-    If not found, it will download the image at URL and cache it.
+    If not found, it will download the image at `resource.downloadURL` and cache it with `resource.cacheKey`.
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
-    - parameter URL:               The image URL.
-    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    - parameter progressBlock:     Called every time downloaded data changed. This could be used as a progress UI.
-    - parameter completionHandler: Called when the whole retriving process finished.
+    :param: resource          Resource object contains information such as `cacheKey` and `downloadURL`.
+    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
+    :param: completionHandler Called when the whole retriving process finished.
     
     - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
-    public func retrieveImageWithURL(URL: NSURL,
-                             optionsInfo: KingfisherOptionsInfo?,
-                           progressBlock: DownloadProgressBlock?,
-                       completionHandler: CompletionHandler?) -> RetrieveImageTask
+    public func retrieveImageWithResource(resource: Resource,
+        optionsInfo: KingfisherOptionsInfo?,
+        progressBlock: DownloadProgressBlock?,
+        completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
             let options: Options
@@ -138,8 +138,8 @@ public class KingfisherManager {
         let (options, targetCache, downloader) = (parsedOptions.0, parsedOptions.1, parsedOptions.2)
         
         if options.forceRefresh {
-            downloadAndCacheImageWithURL(URL,
-                forKey: URL.absoluteString,
+            downloadAndCacheImageWithURL(resource.downloadURL,
+                forKey: resource.cacheKey,
                 retrieveImageTask: task,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
@@ -152,12 +152,12 @@ public class KingfisherManager {
                 task.diskRetrieveTask = nil
                 completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
             }
-            let diskTask = targetCache.retrieveImageForKey(URL.absoluteString, options: options, completionHandler: { (image, cacheType) -> () in
+            let diskTask = targetCache.retrieveImageForKey(resource.cacheKey, options: options, completionHandler: { (image, cacheType) -> () in
                 if image != nil {
-                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
+                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: resource.downloadURL)
                 } else {
-                    self.downloadAndCacheImageWithURL(URL,
-                        forKey: URL.absoluteString,
+                    self.downloadAndCacheImageWithURL(resource.downloadURL,
+                        forKey: resource.cacheKey,
                         retrieveImageTask: task,
                         progressBlock: progressBlock,
                         completionHandler: diskTaskCompletionHandler,
@@ -170,6 +170,30 @@ public class KingfisherManager {
         }
         
         return task
+    }
+
+    /**
+    Get an image with `URL.absoluteString` as the key.
+    If KingfisherOptions.None is used as `options`, Kingfisher will seek the image in memory and disk first.
+    If not found, it will download the image at URL and cache it with `URL.absoluteString` value as its key.
+    
+    If you need to specify the key other than `URL.absoluteString`, please use resource version of this API with `resource.cacheKey` set to what you want.
+    
+    These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
+    
+    :param: URL               The image URL.
+    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
+    :param: completionHandler Called when the whole retriving process finished.
+    
+    :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
+    */
+    public func retrieveImageWithURL(URL: NSURL,
+                             optionsInfo: KingfisherOptionsInfo?,
+                           progressBlock: DownloadProgressBlock?,
+                       completionHandler: CompletionHandler?) -> RetrieveImageTask
+    {
+        return retrieveImageWithResource(Resource(downloadURL: URL), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     func downloadAndCacheImageWithURL(URL: NSURL,
