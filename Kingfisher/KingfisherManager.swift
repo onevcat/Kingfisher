@@ -97,10 +97,10 @@ public class KingfisherManager {
     If not found, it will download the image at `resource.downloadURL` and cache it with `resource.cacheKey`.
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
-    :param: resource          Resource object contains information such as `cacheKey` and `downloadURL`.
-    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
-    :param: completionHandler Called when the whole retriving process finished.
+    - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter progressBlock:     Called every time downloaded data changed. This could be used as a progress UI.
+    - parameter completionHandler: Called when the whole retriving process finished.
     
     - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
@@ -181,12 +181,12 @@ public class KingfisherManager {
     
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
-    :param: URL               The image URL.
-    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
-    :param: completionHandler Called when the whole retriving process finished.
+    - parameter URL:               The image URL.
+    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter progressBlock:     Called every time downloaded data changed. This could be used as a progress UI.
+    - parameter completionHandler: Called when the whole retriving process finished.
     
-    :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
+    - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
     public func retrieveImageWithURL(URL: NSURL,
                              optionsInfo: KingfisherOptionsInfo?,
