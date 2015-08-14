@@ -29,17 +29,9 @@ import Foundation
 public struct Resource {
     public let cacheKey: String
     public let downloadURL: NSURL
-}
-
-extension Resource: DictionaryLiteralConvertible {
-    public typealias Key = String
-    public typealias Value = NSURL
     
-    public init(dictionaryLiteral elements: (Key, Value)...) {
-        assert(elements.count == 1, "There should be one and only one pair of cacheKey and downloadURL passed to create a Resource")
-
-        cacheKey = elements.first!.0
-        downloadURL = elements.first!.1
-        
+    init(downloadURL: NSURL, cacheKey: String? = nil) {
+        self.downloadURL = downloadURL
+        self.cacheKey = cacheKey ?? downloadURL.absoluteString!
     }
 }
