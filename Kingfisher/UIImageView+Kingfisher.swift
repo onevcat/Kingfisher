@@ -171,10 +171,10 @@ public extension UIImageView {
     :returns: A task represents the retriving process.
     */
     public func kf_setImageWithResource(resource: Resource,
-                                placeholderImage: UIImage?,
-                                     optionsInfo: KingfisherOptionsInfo?,
-                                   progressBlock: DownloadProgressBlock?,
-                               completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                placeholderImage: UIImage? = nil,
+                                     optionsInfo: KingfisherOptionsInfo? = nil,
+                                   progressBlock: DownloadProgressBlock? = nil,
+                               completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
         var indicator: UIActivityIndicatorView? = nil
@@ -221,10 +221,10 @@ public extension UIImageView {
     */
     
     public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
-                           optionsInfo: KingfisherOptionsInfo?,
-                         progressBlock: DownloadProgressBlock?,
-                     completionHandler: CompletionHandler?) -> RetrieveImageTask
+                      placeholderImage: UIImage? = nil,
+                           optionsInfo: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                     completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         return kf_setImageWithResource(Resource(downloadURL: URL),
                             placeholderImage: placeholderImage,
