@@ -31,6 +31,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   s.source_files  = "Kingfisher/*.swift"
   s.requires_arc = true
-  s.weak_framework = 'WatchKit'
+  s.framework = "CFNetwork"
 
 end
