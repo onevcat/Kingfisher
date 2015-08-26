@@ -211,7 +211,7 @@ class MD5 : HashBase {
         }
         
         let buf: NSMutableData = NSMutableData();
-        hh.map({ (item) -> () in
+        hh.forEach({ (item) -> () in
             var i:UInt32 = item.littleEndian
             buf.appendBytes(&i, length: sizeofValue(i))
         })
