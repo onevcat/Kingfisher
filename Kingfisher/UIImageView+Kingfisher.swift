@@ -40,7 +40,7 @@ public extension UIImageView {
     
     - parameter resource: Resource object contains information such as `cacheKey` and `downloadURL`.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource) -> RetrieveImageTask
     {
@@ -56,7 +56,7 @@ public extension UIImageView {
     
     - parameter URL: The URL of image.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL) -> RetrieveImageTask
     {
@@ -69,7 +69,7 @@ public extension UIImageView {
     - parameter resource:         Resource object contains information such as `cacheKey` and `downloadURL`.
     - parameter placeholderImage: A placeholder image when retrieving the image at URL.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?) -> RetrieveImageTask
@@ -83,7 +83,7 @@ public extension UIImageView {
     - parameter URL:              The URL of image.
     - parameter placeholderImage: A placeholder image when retrieving the image at URL.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?) -> RetrieveImageTask
@@ -98,7 +98,7 @@ public extension UIImageView {
     - parameter placeholderImage: A placeholder image when retrieving the image at URL.
     - parameter optionsInfo:      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?,
@@ -114,7 +114,7 @@ public extension UIImageView {
     - parameter placeholderImage: A placeholder image when retrieving the image at URL.
     - parameter optionsInfo:      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -131,7 +131,7 @@ public extension UIImageView {
     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     - parameter completionHandler: Called when the image retrieved and set.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?,
@@ -149,7 +149,7 @@ public extension UIImageView {
     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     - parameter completionHandler: Called when the image retrieved and set.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -168,7 +168,7 @@ public extension UIImageView {
     - parameter progressBlock:     Called when the image downloading progress gets updated.
     - parameter completionHandler: Called when the image retrieved and set.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?,
@@ -217,7 +217,7 @@ public extension UIImageView {
     - parameter progressBlock:     Called when the image downloading progress gets updated.
     - parameter completionHandler: Called when the image retrieved and set.
     
-    - returns: A task represents the retriving process.
+    - returns: A task represents the retrieving process.
     */
     
     public func kf_setImageWithURL(URL: NSURL,
