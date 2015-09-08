@@ -105,7 +105,7 @@ public class KingfisherManager {
     :param: resource          Resource object contains information such as `cacheKey` and `downloadURL`.
     :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
-    :param: completionHandler Called when the whole retriving process finished.
+    :param: completionHandler Called when the whole retrieving process finished.
     
     :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
@@ -189,7 +189,7 @@ public class KingfisherManager {
     :param: URL               The image URL.
     :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: progressBlock     Called every time downloaded data changed. This could be used as a progress UI.
-    :param: completionHandler Called when the whole retriving process finished.
+    :param: completionHandler Called when the whole retrieving process finished.
     
     :returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */

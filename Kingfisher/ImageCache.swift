@@ -229,10 +229,10 @@ extension ImageCache {
     Get an image for a key from memory or disk.
     
     :param: key               Key for the image.
-    :param: options           Options of retriving image.
+    :param: options           Options of retrieving image.
     :param: completionHandler Called when getting operation completes with image result and cached type of this image. If there is no such key cached, the image will be `nil`.
     
-    :returns: The retriving task.
+    :returns: The retrieving task.
     */
     public func retrieveImageForKey(key: String, options:KingfisherManager.Options, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.

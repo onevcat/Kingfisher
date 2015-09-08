@@ -38,7 +38,7 @@ public extension WKInterfaceImage {
     
     :param: URL The URL of image.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL) -> RetrieveImageTask?
     {
@@ -55,7 +55,7 @@ public extension WKInterfaceImage {
     :param: URL              The URL of image.
     :param: placeholderImage A placeholder image when retrieving the image at URL.
     
-    :returns: A task represents the retriving process.
+    :returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?) -> RetrieveImageTask?
@@ -69,7 +69,7 @@ public extension WKInterfaceImage {
     :param: URL  The URL of image.
     :param: name The name of an image in WatchKit app bundle or the device-side cache.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
             placeholderImageNamed name: String?) -> RetrieveImageTask?
@@ -84,7 +84,7 @@ public extension WKInterfaceImage {
     :param: placeholderImage A placeholder image when retrieving the image at URL.
     :param: optionsInfo      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -100,7 +100,7 @@ public extension WKInterfaceImage {
     :param: name        The name of an image in WatchKit app bundle or the device-side cache.
     :param: optionsInfo A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
             placeholderImageNamed name: String?,
@@ -117,7 +117,7 @@ public extension WKInterfaceImage {
     :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: completionHandler Called when the image retrieved and set.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -135,7 +135,7 @@ public extension WKInterfaceImage {
     :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     :param: completionHandler Called when the image retrieved and set.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
             placeholderImageNamed name: String?,
@@ -154,7 +154,7 @@ public extension WKInterfaceImage {
     :param: progressBlock     Called when the image downloading progress gets updated.
     :param: completionHandler Called when the image retrieved and set.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -181,7 +181,7 @@ public extension WKInterfaceImage {
     :param: progressBlock     Called when the image downloading progress gets updated.
     :param: completionHandler Called when the image retrieved and set.
     
-    :returns: A task represents the retriving process or `nil` if device cache is used.
+    :returns: A task represents the retrieving process or `nil` if device cache is used.
     */
     public func kf_setImageWithURL(URL: NSURL,
             placeholderImageNamed name: String?,
