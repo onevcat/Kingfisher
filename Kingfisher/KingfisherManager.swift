@@ -33,6 +33,10 @@ public typealias CompletionHandler = ((image: UIImage?, error: NSError?, cacheTy
 /// It contains an async task of getting image from disk and from network.
 public class RetrieveImageTask {
     
+    // If task is canceled before the download task started (which means the `downloadTask` is nil),
+    // the download task should not begin.
+    var cancelled: Bool = false
+    
     var diskRetrieveTask: RetrieveImageDiskTask?
     var downloadTask: RetrieveImageDownloadTask?
     
@@ -40,13 +44,18 @@ public class RetrieveImageTask {
     Cancel current task. If this task does not begin or already done, do nothing.
     */
     public func cancel() {
-        if let diskRetrieveTask = diskRetrieveTask {
-            dispatch_block_cancel(diskRetrieveTask)
-        }
+        // From Xcode 7 beta 6, the `dispatch_block_cancel` will crash at runtime.
+        // So we removed disk retrieve canceling now.
+        // See https://github.com/onevcat/Kingfisher/issues/99 for more.
+//        if let diskRetrieveTask = diskRetrieveTask {
+//            dispatch_block_cancel(diskRetrieveTask)
+//        }
         
         if let downloadTask = downloadTask {
             downloadTask.cancel()
         }
+        
+        cancelled = true
     }
 }
 

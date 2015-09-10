@@ -127,6 +127,7 @@ class UIImageViewExtensionTests: XCTestCase {
         }) { (image, error, cacheType, imageURL) -> () in
             completionBlockIsCalled = true
         }
+
         task.cancel()
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
@@ -137,8 +138,38 @@ class UIImageViewExtensionTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testImageDownloadCancelForImageViewAfterRequestStarted() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let URL = NSURL(string: URLString)!
+        
+        var progressBlockIsCalled = false
+        var completionBlockIsCalled = false
+        
+        let task = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+            }) { (image, error, cacheType, imageURL) -> () in
+                completionBlockIsCalled = true
+        }
+        
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            task.cancel()
+            stub.go()
+        }
 
-    func testImageDownloadCacelPartialTask() {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
+            expectation.fulfill()
+            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+            XCTAssert(completionBlockIsCalled == false, "CompletionBlock should not be called since it is canceled.")
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+
+    func testImageDownloadCancelPartialTask() {
         let expectation = expectationWithDescription("wait for downloading image")
         
         let URLString = testKeys[0]
@@ -172,6 +203,54 @@ class UIImageViewExtensionTests: XCTestCase {
         print(task3)
         
         task1.cancel()
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
+            expectation.fulfill()
+            XCTAssert(task1Completion == false, "Task 1 is canceled. The completion flag should be fasle.")
+            XCTAssert(task2Completion == true, "Task 2 should be completed.")
+            XCTAssert(task3Completion == true, "Task 3 should be completed.")
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testImageDownloadCancelPartialTaskAfterRequestStarted() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let URL = NSURL(string: URLString)!
+        
+        var task1Completion = false
+        var task2Completion = false
+        var task3Completion = false
+        
+        let task1 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            }) { (image, error, cacheType, imageURL) -> () in
+                task1Completion = true
+        }
+        
+        let task2 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            }) { (image, error, cacheType, imageURL) -> () in
+                task2Completion = true
+        }
+        
+        let task3 = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            }) { (image, error, cacheType, imageURL) -> () in
+                task3Completion = true
+        }
+        
+        // Prevent unused warning.
+        print(task2)
+        print(task3)
+        
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            task1.cancel()
+            stub.go()
+        }
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
             expectation.fulfill()

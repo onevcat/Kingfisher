@@ -174,6 +174,10 @@ public extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?)
     {
+        if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelled {
+            return
+        }
+        
         let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
         
         // We need to set the URL as the load key. So before setup progress, we need to ask the `requestModifier` for a final URL.
@@ -237,6 +241,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     This method is exposed since the compiler requests. Do not call it.
     */
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
+        
         completionHandler(NSURLSessionResponseDisposition.Allow)
     }
     
@@ -247,6 +252,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
 
         if let URL = dataTask.originalRequest?.URL, fetchLoad = fetchLoadForKey(URL) {
             fetchLoad.responseData.appendData(data)
+            
             for callbackPair in fetchLoad.callbacks {
                 callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
             }
