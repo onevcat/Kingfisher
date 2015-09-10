@@ -38,9 +38,9 @@ public extension UIImageView {
     It will ask for Kingfisher's manager to get the image for the `cacheKey` property in `resource`.
     The memory and disk will be searched first. If the manager does not find it, it will try to download the image at the `resource.downloadURL` and store it with `resource.cacheKey` for next use.
     
-    :param: resource Resource object contains information such as `cacheKey` and `downloadURL`.
+    - parameter resource: Resource object contains information such as `cacheKey` and `downloadURL`.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource) -> RetrieveImageTask
     {
@@ -54,9 +54,9 @@ public extension UIImageView {
     
     If you need to specify the key other than `URL.absoluteString`, please use resource version of these APIs with `resource.cacheKey` set to what you want.
     
-    :param: URL The URL of image.
+    - parameter URL: The URL of image.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL) -> RetrieveImageTask
     {
@@ -66,10 +66,10 @@ public extension UIImageView {
     /**
     Set an image with a resource and a placeholder image.
     
-    :param: resource         Resource object contains information such as `cacheKey` and `downloadURL`.
-    :param: placeholderImage A placeholder image when retrieving the image at URL.
+    - parameter resource:         Resource object contains information such as `cacheKey` and `downloadURL`.
+    - parameter placeholderImage: A placeholder image when retrieving the image at URL.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?) -> RetrieveImageTask
@@ -80,10 +80,10 @@ public extension UIImageView {
     /**
     Set an image with a URL and a placeholder image.
     
-    :param: URL              The URL of image.
-    :param: placeholderImage A placeholder image when retrieving the image at URL.
+    - parameter URL:              The URL of image.
+    - parameter placeholderImage: A placeholder image when retrieving the image at URL.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?) -> RetrieveImageTask
@@ -94,11 +94,11 @@ public extension UIImageView {
     /**
     Set an image with a resource, a placaholder image and options.
     
-    :param: resource         Resource object contains information such as `cacheKey` and `downloadURL`.
-    :param: placeholderImage A placeholder image when retrieving the image at URL.
-    :param: optionsInfo      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter resource:         Resource object contains information such as `cacheKey` and `downloadURL`.
+    - parameter placeholderImage: A placeholder image when retrieving the image at URL.
+    - parameter optionsInfo:      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?,
@@ -110,11 +110,11 @@ public extension UIImageView {
     /**
     Set an image with a URL, a placaholder image and options.
     
-    :param: URL              The URL of image.
-    :param: placeholderImage A placeholder image when retrieving the image at URL.
-    :param: optionsInfo      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter URL:              The URL of image.
+    - parameter placeholderImage: A placeholder image when retrieving the image at URL.
+    - parameter optionsInfo:      A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -126,12 +126,12 @@ public extension UIImageView {
     /**
     Set an image with a resource, a placeholder image, options and completion handler.
     
-    :param: resource          Resource object contains information such as `cacheKey` and `downloadURL`.
-    :param: placeholderImage  A placeholder image when retrieving the image at URL.
-    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    :param: completionHandler Called when the image retrieved and set.
+    - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter completionHandler: Called when the image retrieved and set.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?,
@@ -144,12 +144,12 @@ public extension UIImageView {
     /**
     Set an image with a URL, a placeholder image, options and completion handler.
     
-    :param: URL               The URL of image.
-    :param: placeholderImage  A placeholder image when retrieving the image at URL.
-    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    :param: completionHandler Called when the image retrieved and set.
+    - parameter URL:               The URL of image.
+    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter completionHandler: Called when the image retrieved and set.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
@@ -162,13 +162,13 @@ public extension UIImageView {
     /**
     Set an image with a URL, a placeholder image, options, progress handler and completion handler.
     
-    :param: resource          Resource object contains information such as `cacheKey` and `downloadURL`.
-    :param: placeholderImage  A placeholder image when retrieving the image at URL.
-    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    :param: progressBlock     Called when the image downloading progress gets updated.
-    :param: completionHandler Called when the image retrieved and set.
+    - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter progressBlock:     Called when the image downloading progress gets updated.
+    - parameter completionHandler: Called when the image retrieved and set.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: UIImage?,
@@ -211,13 +211,13 @@ public extension UIImageView {
     /**
     Set an image with a URL, a placeholder image, options, progress handler and completion handler.
     
-    :param: URL               The URL of image.
-    :param: placeholderImage  A placeholder image when retrieving the image at URL.
-    :param: optionsInfo       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    :param: progressBlock     Called when the image downloading progress gets updated.
-    :param: completionHandler Called when the image retrieved and set.
+    - parameter URL:               The URL of image.
+    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter progressBlock:     Called when the image downloading progress gets updated.
+    - parameter completionHandler: Called when the image retrieved and set.
     
-    :returns: A task represents the retrieving process.
+    - returns: A task represents the retrieving process.
     */
     
     public func kf_setImageWithURL(URL: NSURL,
@@ -248,7 +248,7 @@ public extension UIImageView {
     }
     
     private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLKey, URL, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
     /// Whether show an animating indicator when the image view is loading an image or not.
@@ -269,7 +269,7 @@ public extension UIImageView {
                 if newValue {
                     let indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
                     indicator.center = center
-                    indicator.autoresizingMask = .FlexibleLeftMargin | .FlexibleRightMargin | .FlexibleBottomMargin | .FlexibleTopMargin
+                    indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
                     indicator.hidden = true
                     indicator.hidesWhenStopped = true
                     
@@ -281,7 +281,7 @@ public extension UIImageView {
                     kf_setIndicator(nil)
                 }
                 
-                objc_setAssociatedObject(self, &showIndicatorWhenLoadingKey, NSNumber(bool: newValue), UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+                objc_setAssociatedObject(self, &showIndicatorWhenLoadingKey, NSNumber(bool: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
     }
@@ -295,13 +295,13 @@ public extension UIImageView {
     }
     
     private func kf_setIndicator(indicator: UIActivityIndicatorView?) {
-        objc_setAssociatedObject(self, &indicatorKey, indicator, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        objc_setAssociatedObject(self, &indicatorKey, indicator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 
 // MARK: - Deprecated
 public extension UIImageView {
-    @availability(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo: instead.")
+    @available(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo: instead.")
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
                                options: KingfisherOptions) -> RetrieveImageTask
@@ -309,7 +309,7 @@ public extension UIImageView {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: [.Options: options], progressBlock: nil, completionHandler: nil)
     }
     
-    @availability(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo:completionHandler: instead.")
+    @available(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo:completionHandler: instead.")
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
                                options: KingfisherOptions,
@@ -318,7 +318,7 @@ public extension UIImageView {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: [.Options: options], progressBlock: nil, completionHandler: completionHandler)
     }
     
-    @availability(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo:progressBlock:completionHandler: instead.")
+    @available(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo:progressBlock:completionHandler: instead.")
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: UIImage?,
                                options: KingfisherOptions,

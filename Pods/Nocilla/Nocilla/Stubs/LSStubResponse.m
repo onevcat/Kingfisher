@@ -1,6 +1,8 @@
 #import "LSStubResponse.h"
 
-@interface LSStubResponse ()
+@interface LSStubResponse () {
+    NSCondition *_delayLock;
+}
 @property (nonatomic, assign, readwrite) NSInteger statusCode;
 @property (nonatomic, strong) NSMutableDictionary *mutableHeaders;
 @property (nonatomic, assign) UInt64 offset;
@@ -78,4 +80,35 @@
             self.mutableHeaders,
             self.body];
 }
+
+- (NSCondition*)delayLock {
+    @synchronized(self) {
+        return _delayLock;
+    }
+}
+
+- (void)delay {
+    @synchronized(self) {
+        if(!_delayLock)
+            _delayLock = [[NSCondition alloc] init];
+    }
+}
+
+- (void)go {
+    NSCondition *condition = self.delayLock;
+    @synchronized(self) {
+        _delayLock = nil;
+    }
+    [condition lock];
+    [condition broadcast];
+    [condition unlock];
+}
+
+- (void)waitForGo {
+    NSCondition *condition = self.delayLock;
+    [condition lock];
+    [condition wait];
+    [condition unlock];
+}
+
 @end

@@ -4,4 +4,6 @@
 
 - (BOOL)matches:(NSString *)string;
 
+- (BOOL)matchesData:(NSData *)data;
+
 @end

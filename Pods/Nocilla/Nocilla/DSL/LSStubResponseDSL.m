@@ -37,4 +37,19 @@
         return self;
     };
 }
+
+- (ResponseVoidMethod)delay {
+    return ^{
+        [self.response delay];
+        return self;
+    };
+}
+
+- (ResponseVoidMethod)go {
+    return ^{
+        [self.response go];
+        return self;
+    };
+}
+
 @end

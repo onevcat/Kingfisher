@@ -87,7 +87,7 @@
 
 -(BOOL)matchesBody:(id<LSHTTPRequest>)request {
     NSData *reqBody = request.body;
-    if (!self.body || [self.body matches:[[NSString alloc] initWithData:reqBody encoding:NSUTF8StringEncoding]]) {
+    if (!self.body || [self.body matchesData:reqBody]) {
         return YES;
     }
     return NO;

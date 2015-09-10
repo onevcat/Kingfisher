@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
-#import "LSMatcher.h"
+
+@class LSMatcher;
 
 @protocol LSMatcheable <NSObject>
 

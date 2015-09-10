@@ -1,0 +1,7 @@
+language: objective-c
+os: osx
+osx_image: xcode7
+xcode_workspace: Kingfisher.xcworkspace
+xcode_scheme: Kingfisher
+
+script: xcodebuild -workspace Kingfisher.xcworkspace -scheme Kingfisher -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=latest' test
