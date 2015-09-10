@@ -26,8 +26,8 @@ static void const * ASIHTTPRequestStubResponseKey = &ASIHTTPRequestStubResponseK
     return objc_getAssociatedObject(self, ASIHTTPRequestStubResponseKey);
 }
 
-- (NSInteger)stub_responseStatusCode {
-    return self.stubResponse.statusCode;
+- (int)stub_responseStatusCode {
+    return (int)self.stubResponse.statusCode;
 }
 
 - (NSData *)stub_responseData {

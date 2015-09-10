@@ -10,6 +10,5 @@ target 'Kingfisher' do
 end
 
 target 'KingfisherTests' do
-    pod 'Nocilla'
+    pod 'Nocilla',  :git => 'https://github.com/pcantrell/Nocilla.git', :branch => 'delayed-response'
 end
-

@@ -15,4 +15,8 @@
 - (id)initWithRawResponse:(NSData *)rawResponseData;
 - (id)initDefaultResponse;
 - (void)setHeader:(NSString *)header value:(NSString *)value;
+
+- (void)delay;
+- (void)go;
+- (void)waitForGo;
 @end
