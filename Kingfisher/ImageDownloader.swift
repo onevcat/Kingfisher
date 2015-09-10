@@ -237,11 +237,6 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     This method is exposed since the compiler requests. Do not call it.
     */
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
-        if let URL = dataTask.originalRequest?.URL, callbackPairs = fetchLoadForKey(URL)?.callbacks {
-            for callbackPair in callbackPairs {
-                callbackPair.progressBlock?(receivedSize: 0, totalSize: response.expectedContentLength)
-            }
-        }
         completionHandler(NSURLSessionResponseDisposition.Allow)
     }
     
