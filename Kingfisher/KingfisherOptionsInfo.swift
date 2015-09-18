@@ -42,4 +42,5 @@ public enum KingfisherOptionsInfoKey {
     case Options
     case TargetCache
     case Downloader
+    case Transition
 }
