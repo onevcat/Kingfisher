@@ -26,6 +26,23 @@
 
 import Foundation
 
+/**
+Transition effect to use when an image loaded by `UIImageView` extension API in Kingfisher.
+You can assign an enum value with transition duration as an item in `KingfisherOptionsInfo` 
+to enable the animation transition.
+
+Apple's UIViewAnimationOptions is used under the hood.
+For custom transition, you should specified your own transition options, animations and 
+comletion handler as well.
+
+- None:           No animation transistion.
+- Fade:           Fade in the loaded image.
+- FlipFromLeft:   Flip from left transition.
+- FlipFromRight:  Flip from right transition.
+- FlipFromTop:    Flip from top transition.
+- FlipFromBottom: Flip from bottom transition.
+- Custom:         Custom transition.
+*/
 public enum ImageTransition {
     case None
     case Fade(NSTimeInterval)
