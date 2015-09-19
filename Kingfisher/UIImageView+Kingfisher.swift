@@ -184,7 +184,10 @@ public extension UIImageView {
             indicator?.startAnimating()
         }
         
-        image = placeholderImage
+        // do not remove existing image if placeholder was not set
+        if placeholderImage != nil {
+            image = placeholderImage
+        }
         
         kf_setWebURL(resource.downloadURL)
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo, progressBlock: { (receivedSize, totalSize) -> () in
