@@ -26,7 +26,7 @@
 
 import UIKit
 import XCTest
-import Kingfisher
+@testable import Kingfisher
 
 class ImageDownloaderTests: XCTestCase {
     
@@ -64,7 +64,7 @@ class ImageDownloaderTests: XCTestCase {
         let URL = NSURL(string: URLString)!
         downloader.downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
             return
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, imageURL, data) -> () in
             expectation.fulfill()
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
         }
@@ -83,7 +83,7 @@ class ImageDownloaderTests: XCTestCase {
                 stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
                 downloader.downloadImageWithURL(URL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
                     
-                }, completionHandler: { (image, error, imageURL) -> () in
+                }, completionHandler: { (image, error, imageURL, data) -> () in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
                     dispatch_group_leave(group)
                 })
@@ -108,7 +108,7 @@ class ImageDownloaderTests: XCTestCase {
             dispatch_group_enter(group)
             downloader.downloadImageWithURL(NSURL(string: URLString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
                 
-                }) { (image, error, imageURL) -> () in
+                }) { (image, error, imageURL, data) -> () in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
                     dispatch_group_leave(group)
                     
@@ -136,7 +136,7 @@ class ImageDownloaderTests: XCTestCase {
         let someURL = NSURL(string: "some_strange_url")!
         downloader.downloadImageWithURL(someURL, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
             
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, imageURL, data) -> () in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
             XCTAssertEqual(imageURL!, NSURL(string: URLString)!, "The returned imageURL should be the replaced one")
             expectation.fulfill()
@@ -152,7 +152,7 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.downloadImageWithURL(NSURL(string: URLString)!, options: KingfisherManager.OptionsNone, progressBlock: { (receivedSize, totalSize) -> () in
             
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "There should be an error since server returning 304 and no image downloaded.")
             XCTAssertEqual(error!.code, KingfisherError.NotModified.rawValue, "The error should be NotModified.")
             expectation.fulfill()
@@ -169,7 +169,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let expectation = expectationWithDescription("wait for download from an invalid ssl site.")
         
-        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
+        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "Error should not be nil")
             XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted || error?.code == NSURLErrorSecureConnectionFailed, "Error should be NSURLErrorServerCertificateUntrusted, but \(error)")
             expectation.fulfill()
@@ -189,14 +189,14 @@ class ImageDownloaderTests: XCTestCase {
         stubRequest("GET", URLString).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
         let URL = NSURL(string: URLString)!
         
-        downloader.downloadImageWithURL(URL, progressBlock: nil) { (image, error, imageURL) -> () in
+        downloader.downloadImageWithURL(URL, progressBlock: nil) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "Should return with an error")
             
             LSNocilla.sharedInstance().clearStubs()
             stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
             
             // Retry the download
-            self.downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL) -> () in
+            self.downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
                 XCTAssertNil(error, "Download should be finished without error")
                 expectation.fulfill()
             })
