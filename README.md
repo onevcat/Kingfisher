@@ -48,7 +48,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.5'
+pod 'Kingfisher', '~> 1.6'
 ```
 
 Then, run the following command:
@@ -73,7 +73,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/Kingfisher" >= 1.5
+github "onevcat/Kingfisher" >= 1.6
 ```
 
 Then, run the following command to build the Kingfisher framework:
@@ -162,7 +162,9 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                               optionsInfo: [.Options: KingfisherOptions.ForceRefresh])
 ```
 
-There are also other options to control the cache level, downloading priority, etc. Take another example, if you need to cache the downloaded image to a customized cache instead of the default one:
+There are also other options to control the cache level, downloading priority, etc. Take some other examples:
+
+If you need to cache the downloaded image to a customized cache instead of the default one:
 
 ```swift
 let myCache = ImageCache(name: "my_cache")
@@ -172,7 +174,17 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                               optionsInfo: [.TargetCache: myCache])
 ```
 
-This is useful if you want to use a specified cache for some reasons. For more information about options, please see the `KingfisherOptionsInfo` in the [documentation](http://cocoadocs.org/docsets/Kingfisher/index.html).
+This is useful if you want to use a specified cache for some reasons.
+
+And if you need to fade in the image to image view during 1 second:
+
+```
+imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
+                         placeholderImage: nil,
+                              optionsInfo: [.Transition: ImageTransition.Fade(1)])
+```
+
+For more information about options, please see the `KingfisherOptionsInfo` in the [documentation](http://cocoadocs.org/docsets/Kingfisher/index.html).
 
 #### Callbacks
 
