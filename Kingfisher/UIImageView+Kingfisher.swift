@@ -197,8 +197,21 @@ public extension UIImageView {
             }, completionHandler: {[weak self] (image, error, cacheType, imageURL) -> () in
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
-                        sSelf.image = image;
-                        indicator?.stopAnimating()
+                        if let transition = optionsInfo?[.Transition] as? ImageTransition {
+                            UIView.transitionWithView(sSelf, duration: 0.0, options: [], animations: { () -> Void in
+                                indicator?.stopAnimating()
+                                }, completion: { (finished) -> Void in
+                                    UIView.transitionWithView(sSelf, duration: transition.duration,
+                                        options: transition.animationOptions, animations:
+                                        { () -> Void in
+                                            transition.animations?(sSelf, image!)
+                                        }, completion: transition.completion)
+                            })
+                        } else {
+                            indicator?.stopAnimating()
+                            sSelf.image = image;
+                        }
+                        
                     }
                     
                     completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)

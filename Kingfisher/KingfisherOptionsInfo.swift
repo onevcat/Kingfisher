@@ -37,9 +37,11 @@ Key for KingfisherOptionsInfo
 - Options:     Key for options. The value for this key should be a KingfisherOptions.
 - TargetCache: Key for target cache. The value for this key should be an ImageCache object.Kingfisher will use this cache when handling the related operation, including trying to retrieve the cached images and store the downloaded image to it.
 - Downloader:  Key for downloader to use. The value for this key should be an ImageDownloader object. Kingfisher will use this downloader to download the images.
+- Transition:  Key for animation transition when using UIImageView.
 */
 public enum KingfisherOptionsInfoKey {
     case Options
     case TargetCache
     case Downloader
+    case Transition
 }
