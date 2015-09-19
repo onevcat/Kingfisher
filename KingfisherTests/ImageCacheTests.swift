@@ -26,7 +26,7 @@
 
 import UIKit
 import XCTest
-import Kingfisher
+@testable import Kingfisher
 
 private let cacheName = "com.onevcat.Kingfisher.ImageCache.test"
 
@@ -71,7 +71,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for clearing disk cache")
         let key = testKeys[0]
         
-        cache.storeImage(testImage, forKey: key, toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: key, toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
             let cacheResult = self.cache.isImageCachedForKey(key)
             XCTAssertTrue(cacheResult.cached, "Should be cached")
@@ -89,7 +89,7 @@ class ImageCacheTests: XCTestCase {
     func testClearMemoryCache() {
         let expectation = expectationWithDescription("wait for retrieving image")
         
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
             self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .Disk, "Should be cached in disk.")
@@ -155,7 +155,7 @@ class ImageCacheTests: XCTestCase {
         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
         dispatch_after(delayTime, dispatch_get_main_queue()) {
             XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
-            self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+            self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
                 XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
                 expectation.fulfill()
             }
@@ -166,7 +166,7 @@ class ImageCacheTests: XCTestCase {
     func testRetrievingImagePerformance() {
 
         let expectation = self.expectationWithDescription("wait for retrieving image")
-        self.cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+        self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measureBlock({ () -> Void in
                 for _ in 1 ..< 1000 {
                     self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
@@ -181,7 +181,7 @@ class ImageCacheTests: XCTestCase {
     func testCleanDiskCacheNotification() {
         let expectation = expectationWithDescription("wait for retrieving image")
         
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
 
             self.observer = NSNotificationCenter.defaultCenter().addObserverForName(KingfisherDidCleanDiskCacheNotification, object: self.cache, queue: NSOperationQueue.mainQueue(), usingBlock: { (noti) -> Void in
 
@@ -202,6 +202,18 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testImageFormat() {
+        var format: ImageFormat
+        format = testImageJEPGData.kf_imageFormat
+        XCTAssertEqual(format, ImageFormat.JPEG)
+        
+        format = testImagePNGData.kf_imageFormat
+        XCTAssertEqual(format, ImageFormat.PNG)
+        
+        format = NSData(bytes: [1,2,3,4,5,6,7,8], length: 8) .kf_imageFormat
+        XCTAssertEqual(format, ImageFormat.Unknown)
+    }
 
     // MARK: - Helper
     func storeMultipleImages(completionHandler:()->()) {
@@ -209,19 +221,19 @@ class ImageCacheTests: XCTestCase {
         let group = dispatch_group_create()
         
         dispatch_group_enter(group)
-        cache.storeImage(testImage, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             dispatch_group_leave(group)
         }
         dispatch_group_enter(group)
-        cache.storeImage(testImage, forKey: testKeys[1], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[1], toDisk: true) { () -> () in
             dispatch_group_leave(group)
         }
         dispatch_group_enter(group)
-        cache.storeImage(testImage, forKey: testKeys[2], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[2], toDisk: true) { () -> () in
             dispatch_group_leave(group)
         }
         dispatch_group_enter(group)
-        cache.storeImage(testImage, forKey: testKeys[3], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[3], toDisk: true) { () -> () in
             dispatch_group_leave(group)
         }
         

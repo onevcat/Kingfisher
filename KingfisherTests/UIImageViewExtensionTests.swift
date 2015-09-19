@@ -26,7 +26,7 @@
 
 import UIKit
 import XCTest
-import Kingfisher
+@testable import Kingfisher
 
 class UIImageViewExtensionTests: XCTestCase {
 

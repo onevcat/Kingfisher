@@ -216,7 +216,7 @@ public class KingfisherManager {
     {
         downloader.downloadImageWithURL(URL, retrieveImageTask: retrieveImageTask, options: options, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
-        }) { (image, error, imageURL) -> () in
+        }) { (image, error, imageURL, originalData) -> () in
 
             if let error = error where error.code == KingfisherError.NotModified.rawValue {
                 // Not modified. Try to find the image from cache. 
@@ -228,8 +228,8 @@ public class KingfisherManager {
                 return
             }
             
-            if let image = image {
-                targetCache.storeImage(image, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
+            if let image = image, originalData = originalData {
+                targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
             }
             
             completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)

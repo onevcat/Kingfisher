@@ -139,21 +139,27 @@ public extension ImageCache {
     instead.
     
     - parameter image: The image will be stored.
+    - parameter originalData: The original data of the image.
+                Kingfisher will use it to check the format of the image and optimize cache size on disk.
+                If `nil` is supplied, the image data will be saved as a normalized PNG file.
     - parameter key:   Key for the image.
     */
-    public func storeImage(image: UIImage, forKey key: String) {
-        storeImage(image, forKey: key, toDisk: true, completionHandler: nil)
+    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
+        storeImage(image, originalData: originalData,forKey: key, toDisk: true, completionHandler: nil)
     }
     
     /**
     Store an image to cache. It is an async operation.
     
     - parameter image:             The image will be stored.
+    - parameter originalData:      The original data of the image.
+                                   Kingfisher will use it to check the format of the image and optimize cache size on disk.
+                                   If `nil` is supplied, the image data will be saved as a normalized PNG file.
     - parameter key:               Key for the image.
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
     - parameter completionHandler: Called when stroe operation completes.
     */
-    public func storeImage(image: UIImage, forKey key: String, toDisk: Bool, completionHandler: (() -> ())?) {
+    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, toDisk: Bool, completionHandler: (() -> ())?) {
         memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
         
         func callHandlerInMainQueue() {
@@ -166,7 +172,21 @@ public extension ImageCache {
         
         if toDisk {
             dispatch_async(ioQueue, { () -> Void in
-                if let data = UIImagePNGRepresentation(image.kf_normalizedImage()) {
+                let imageFormat: ImageFormat
+                if let originalData = originalData {
+                    imageFormat = originalData.kf_imageFormat
+                } else {
+                    imageFormat = .Unknown
+                }
+                
+                let data: NSData?
+                switch imageFormat {
+                case .PNG: data = UIImagePNGRepresentation(image)
+                case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
+                case .Unknown: data = UIImagePNGRepresentation(image.kf_normalizedImage())
+                }
+                
+                if let data = data {
                     if !self.fileManager.fileExistsAtPath(self.diskCachePath) {
                         do {
                             try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
@@ -625,6 +645,32 @@ extension UIImage {
     var kf_imageCost: Int {
         return Int(size.height * size.width * scale * scale)
     }
+}
+
+private let pngHeader: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+private let jpgHeaderSOI: [UInt8] = [0xFF, 0xD8]
+private let jpgHeaderIF: [UInt8] = [0xFF, 0xE0]
+
+extension NSData {
+    var kf_imageFormat: ImageFormat {
+        var buffer = [UInt8](count: 8, repeatedValue: 0)
+        self.getBytes(&buffer, length: 8)
+        if buffer == pngHeader {
+            return .PNG
+        } else if buffer[0] == jpgHeaderSOI[0] &&
+                  buffer[1] == jpgHeaderSOI[1] &&
+                  buffer[2] == jpgHeaderIF[0] &&
+                  buffer[3] == buffer[3] & jpgHeaderIF[1]
+        {
+            return .JPEG
+        }
+        
+        return .Unknown
+    }
+}
+
+enum ImageFormat {
+    case Unknown, PNG, JPEG
 }
 
 extension Dictionary {
