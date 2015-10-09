@@ -195,7 +195,8 @@ public extension UIImageView {
                 })
             }
             }, completionHandler: {[weak self] (image, error, cacheType, imageURL) -> () in
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                dispatch_async_safely_main_queue {
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
                         if let transition = optionsInfo?[.Transition] as? ImageTransition {
                             UIView.transitionWithView(sSelf, duration: 0.0, options: [], animations: { () -> Void in
@@ -215,7 +216,7 @@ public extension UIImageView {
                     }
                     
                     completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                })
+                }
             })
         
         return task
