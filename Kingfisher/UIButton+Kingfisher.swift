@@ -201,13 +201,16 @@ public extension UIButton {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-            }) { (image, error, cacheType, imageURL) -> () in
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    if (imageURL == self.kf_webURLForState(state) && image != nil) {
-                        self.setImage(image, forState: state)
+            }) {[weak self] (image, error, cacheType, imageURL) -> () in
+                
+                dispatch_async_safely_main_queue {
+                    if let sSelf = self {
+                        if (imageURL == sSelf.kf_webURLForState(state) && image != nil) {
+                            sSelf.setImage(image, forState: state)
+                        }
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                })
+                }
         }
         
         return task
@@ -448,13 +451,15 @@ public extension UIButton {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 })
             }
-            }) { (image, error, cacheType, imageURL) -> () in
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    if (imageURL == self.kf_backgroundWebURLForState(state) && image != nil) {
-                        self.setBackgroundImage(image, forState: state)
+            }) { [weak self] (image, error, cacheType, imageURL) -> () in
+                dispatch_async_safely_main_queue {
+                    if let sSelf = self {
+                        if (imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil) {
+                            sSelf.setBackgroundImage(image, forState: state)
+                        }
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                })
+                }
         }
         
         return task

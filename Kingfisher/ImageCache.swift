@@ -261,24 +261,25 @@ extension ImageCache {
     public func retrieveImageForKey(key: String, options:KingfisherManager.Options, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
-            return dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {}
+            return nil
         }
         
-        let block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
-            if let image = self.retrieveImageInMemoryCacheForKey(key) {
-                
-                //Found image in memory cache.
-                if options.shouldDecode {
-                    dispatch_async(self.processQueue, { () -> Void in
-                        let result = image.kf_decodedImage(scale: options.scale)
-                        dispatch_async(options.queue, { () -> Void in
-                            completionHandler(result, .Memory)
-                        })
+        var block: RetrieveImageDiskTask?
+        if let image = self.retrieveImageInMemoryCacheForKey(key) {
+            
+            //Found image in memory cache.
+            if options.shouldDecode {
+                dispatch_async(self.processQueue, { () -> Void in
+                    let result = image.kf_decodedImage(scale: options.scale)
+                    dispatch_async(options.queue, { () -> Void in
+                        completionHandler(result, .Memory)
                     })
-                } else {
-                    completionHandler(image, .Memory)
-                }
+                })
             } else {
+                completionHandler(image, .Memory)
+            }
+        } else {
+            block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
                 //Begin to load image from disk
                 dispatch_async(self.ioQueue, { () -> Void in
                     
@@ -308,9 +309,9 @@ extension ImageCache {
                     }
                 })
             }
+            dispatch_async(dispatch_get_main_queue(), block!)
         }
-        
-        dispatch_async(dispatch_get_main_queue(), block)
+    
         return block
     }
     
