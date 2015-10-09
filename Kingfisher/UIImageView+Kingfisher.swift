@@ -281,7 +281,8 @@ public extension UIImageView {
             } else {
                 if newValue {
                     let indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
-                    indicator.center = center
+                    indicator.center = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))
+                    
                     indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
                     indicator.hidden = true
                     indicator.hidesWhenStopped = true
