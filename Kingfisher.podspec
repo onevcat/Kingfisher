@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   # s.osx.deployment_target = "10.7"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
-  s.source_files  = "Kingfisher/*.swift"
+  s.source_files  = ["Kingfisher/*.swift", "Kingfisher/Kingfisher.h"]
   s.public_header_files = ["Kingfisher/Kingfisher.h"]
   s.requires_arc = true
   s.framework = "CFNetwork"
