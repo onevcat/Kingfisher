@@ -159,7 +159,7 @@ Kingfisher will search in cache (both memory and disk) first with the URL, if no
 ```swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.Options: KingfisherOptions.ForceRefresh])
+                              optionsInfo: [.Options(KingfisherOptions.ForceRefresh))
 ```
 
 There are also other options to control the cache level, downloading priority, etc. Take some other examples:
@@ -171,7 +171,7 @@ let myCache = ImageCache(name: "my_cache")
 
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.TargetCache: myCache])
+                              optionsInfo: [.TargetCache(myCache))
 ```
 
 This is useful if you want to use a specified cache for some reasons.
@@ -181,7 +181,7 @@ And if you need to fade in the image to image view during 1 second:
 ```
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.Transition: ImageTransition.Fade(1)])
+                              optionsInfo: [.Transition(ImageTransition.Fade(1)))
 ```
 
 For more information about options, please see the `KingfisherOptionsInfo` in the [documentation](http://cocoadocs.org/docsets/Kingfisher/index.html).
