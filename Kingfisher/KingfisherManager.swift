@@ -45,11 +45,11 @@ public class RetrieveImageTask {
     */
     public func cancel() {
         // From Xcode 7 beta 6, the `dispatch_block_cancel` will crash at runtime.
-        // So we removed disk retrieve canceling now.
+        // It fixed in Xcode 7.1.
         // See https://github.com/onevcat/Kingfisher/issues/99 for more.
-//        if let diskRetrieveTask = diskRetrieveTask {
-//            dispatch_block_cancel(diskRetrieveTask)
-//        }
+        if let diskRetrieveTask = diskRetrieveTask {
+            dispatch_block_cancel(diskRetrieveTask)
+        }
         
         if let downloadTask = downloadTask {
             downloadTask.cancel()
