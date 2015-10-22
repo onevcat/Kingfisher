@@ -27,21 +27,43 @@
 import Foundation
 
 /**
-*	KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoKey: Any]. You can use the key-value pairs to control some behaviors of Kingfisher.
+*	KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoItem]. You can use the enum of option item with value to control some behaviors of Kingfisher.
 */
-public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoKey: Any]
+public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
 
 /**
-Key for KingfisherOptionsInfo
+Item could be added into KingfisherOptionsInfo
 
-- Options:     Key for options. The value for this key should be a KingfisherOptions.
-- TargetCache: Key for target cache. The value for this key should be an ImageCache object.Kingfisher will use this cache when handling the related operation, including trying to retrieve the cached images and store the downloaded image to it.
-- Downloader:  Key for downloader to use. The value for this key should be an ImageDownloader object. Kingfisher will use this downloader to download the images.
-- Transition:  Key for animation transition when using UIImageView.
+- Options:     Item for options. The value of this item should be a KingfisherOptions.
+- TargetCache: Item for target cache. The value of this item should be an ImageCache object. Kingfisher will use this cache when handling the related operation, including trying to retrieve the cached images and store the downloaded image to it.
+- Downloader:  Item for downloader to use. The value of this item should be an ImageDownloader object. Kingfisher will use this downloader to download the images.
+- Transition:  Item for animation transition when using UIImageView.
 */
-public enum KingfisherOptionsInfoKey {
-    case Options
-    case TargetCache
-    case Downloader
-    case Transition
+public enum KingfisherOptionsInfoItem {
+    case Options(KingfisherOptions)
+    case TargetCache(ImageCache)
+    case Downloader(ImageDownloader)
+    case Transition(ImageTransition)
+}
+
+func ==(a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
+    switch (a, b) {
+    case (.Options(_), .Options(_)): return true
+    case (.TargetCache(_), .TargetCache(_)): return true
+    case (.Downloader(_), .Downloader(_)): return true
+    case (.Transition(_), .Transition(_)): return true
+    default: return false
+    }
+}
+
+extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
+    func kf_findFirstMatch(target: Generator.Element) -> Generator.Element? {
+        
+        let index = indexOf {
+            e in
+            return e == target
+        }
+        
+        return (index != nil) ? self[index!] : nil
+    }
 }

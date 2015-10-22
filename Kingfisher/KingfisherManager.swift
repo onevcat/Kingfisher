@@ -119,24 +119,35 @@ public class KingfisherManager {
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
-            let options: Options
-            if let optionsInOptionsInfo = optionsInfo?[.Options] as? KingfisherOptions {
+            var options = KingfisherManager.DefaultOptions
+            var targetCache = self.cache
+            var targetDownloader = self.downloader
+            
+            guard let optionsInfo = optionsInfo else {
+                return (options, targetCache, targetDownloader)
+            }
+            
+            if let optionsItem = optionsInfo.kf_findFirstMatch(.Options(.None)), case .Options(let optionsInOptionsInfo) = optionsItem {
+                
                 let queue = optionsInOptionsInfo.contains(KingfisherOptions.BackgroundCallback) ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
                 let scale = optionsInOptionsInfo.contains(KingfisherOptions.ScreenScale) ? UIScreen.mainScreen().scale : KingfisherManager.DefaultOptions.scale
+                
                 options = (forceRefresh: optionsInOptionsInfo.contains(KingfisherOptions.ForceRefresh),
                     lowPriority: optionsInOptionsInfo.contains(KingfisherOptions.LowPriority),
                     cacheMemoryOnly: optionsInOptionsInfo.contains(KingfisherOptions.CacheMemoryOnly),
                     shouldDecode: optionsInOptionsInfo.contains(KingfisherOptions.BackgroundDecode),
                     queue: queue, scale: scale)
-
-            } else {
-                options = KingfisherManager.DefaultOptions
             }
             
-            let targetCache = optionsInfo?[.TargetCache] as? ImageCache ?? self.cache
-            let downloader = optionsInfo?[.Downloader] as? ImageDownloader ?? self.downloader
+            if let optionsItem = optionsInfo.kf_findFirstMatch(.TargetCache(self.cache)), case .TargetCache(let cache) = optionsItem {
+                targetCache = cache
+            }
             
-            return (options, targetCache, downloader)
+            if let optionsItem = optionsInfo.kf_findFirstMatch(.Downloader(self.downloader)), case .Downloader(let downloader) = optionsItem {
+                targetDownloader = downloader
+            }
+            
+            return (options, targetCache, targetDownloader)
         }
         
         let task = RetrieveImageTask()
@@ -245,6 +256,6 @@ public extension KingfisherManager {
                            progressBlock: DownloadProgressBlock?,
                        completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return retrieveImageWithURL(URL, optionsInfo: [.Options : options], progressBlock: progressBlock, completionHandler: completionHandler)
+        return retrieveImageWithURL(URL, optionsInfo: [.Options(options)], progressBlock: progressBlock, completionHandler: completionHandler)
     }
 }
