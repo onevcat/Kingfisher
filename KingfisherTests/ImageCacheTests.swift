@@ -211,7 +211,9 @@ class ImageCacheTests: XCTestCase {
         format = testImagePNGData.kf_imageFormat
         XCTAssertEqual(format, ImageFormat.PNG)
         
-        format = NSData(bytes: [1,2,3,4,5,6,7,8], length: 8) .kf_imageFormat
+        let raw: [UInt8] = [1,2,3,4,5,6,7,8]
+        
+        format = NSData(bytes: raw, length: 8).kf_imageFormat
         XCTAssertEqual(format, ImageFormat.Unknown)
     }
 
