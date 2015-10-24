@@ -618,11 +618,14 @@ extension ImageCache {
     
     func diskImageForKey(key: String, scale: CGFloat) -> UIImage? {
         if let data = diskImageDataForKey(key) {
-            if let image = UIImage(data: data, scale: scale) {
-                return image
-            } else {
-                return nil
+            var image: UIImage?
+            switch data.kf_imageFormat {
+            case .JPEG: image = UIImage(data: data, scale: scale)
+            case .PNG: image = UIImage(data: data, scale: scale)
+            case .GIF: image = nil
+            case .Unknown: image = nil
             }
+            return image
         } else {
             return nil
         }

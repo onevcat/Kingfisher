@@ -26,6 +26,7 @@
 
 import Foundation
 
+// MARK: - Decode
 extension UIImage {
     func kf_decodedImage() -> UIImage? {
         return self.kf_decodedImage(scale: self.scale)
@@ -47,3 +48,27 @@ extension UIImage {
         }
     }
 }
+
+// MARK: - Normalization
+extension UIImage {
+    public func kf_normalizedImage() -> UIImage {
+        if imageOrientation == .Up {
+            return self
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        drawInRect(CGRect(origin: CGPointZero, size: size))
+        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return normalizedImage;
+    }
+}
+
+// MARK: - GIF
+extension UIImage {
+    
+}
+
+
+
