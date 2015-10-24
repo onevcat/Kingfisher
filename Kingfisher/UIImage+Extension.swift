@@ -107,7 +107,7 @@ extension UIImage {
         switch data.kf_imageFormat {
         case .JPEG: image = UIImage(data: data, scale: scale)
         case .PNG: image = UIImage(data: data, scale: scale)
-        case .GIF: image = UIImage.animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
+        case .GIF: image = UIImage.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
         case .Unknown: image = nil
         }
         return image
@@ -145,11 +145,11 @@ func UIImageGIFRepresentation(image: UIImage, duration: NSTimeInterval, repeatCo
 }
 
 extension UIImage {
-    static func animatedImageWithGIFData(gifData data: NSData) -> UIImage? {
-        return animatedImageWithGIFData(gifData: data, scale: UIScreen.mainScreen().scale, duration: 0.0)
+    static func kf_animatedImageWithGIFData(gifData data: NSData) -> UIImage? {
+        return kf_animatedImageWithGIFData(gifData: data, scale: UIScreen.mainScreen().scale, duration: 0.0)
     }
     
-    static func animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval) -> UIImage? {
+    static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval) -> UIImage? {
         
         let options: NSDictionary = [kCGImageSourceShouldCache as String: NSNumber(bool: true), kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
         guard let imageSource = CGImageSourceCreateWithData(data, options) else {

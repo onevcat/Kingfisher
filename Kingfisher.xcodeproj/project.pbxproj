@@ -21,6 +21,8 @@
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
 		D11250C11BAC4B6300B986EF /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11250C01BAC4B6300B986EF /* ImageTransition.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */; };
+		D1A7B6C81BDBC9310083A684 /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6C71BDBC9310083A684 /* dancing-banana.gif */; };
+		D1A7B6CA1BDBC9C60083A684 /* ImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */; };
 		D1B1B9901BC7EB7100DE20D8 /* ThreadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B1B98F1BC7EB7100DE20D8 /* ThreadHelper.swift */; };
 		D1ED2D111AD2CFA600CFC3EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D101AD2CFA600CFC3EB /* AppDelegate.swift */; };
 		D1ED2D131AD2CFA600CFC3EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D121AD2CFA600CFC3EB /* ViewController.swift */; };
@@ -105,6 +107,8 @@
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11250C01BAC4B6300B986EF /* ImageTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTransition.swift; sourceTree = "<group>"; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
+		D1A7B6C71BDBC9310083A684 /* dancing-banana.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = "dancing-banana.gif"; path = "../../../../Desktop/dancing-banana.gif"; sourceTree = "<group>"; };
+		D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtensionTests.swift; sourceTree = "<group>"; };
 		D1B1B98F1BC7EB7100DE20D8 /* ThreadHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadHelper.swift; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D0F1AD2CFA600CFC3EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -249,6 +253,7 @@
 				4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */,
 				4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */,
 				4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */,
+				D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */,
 			);
 			path = KingfisherTests;
 			sourceTree = "<group>";
@@ -256,6 +261,7 @@
 		D1ED2D461AD2D09F00CFC3EB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D1A7B6C71BDBC9310083A684 /* dancing-banana.gif */,
 				D1ED2D471AD2D09F00CFC3EB /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -409,6 +415,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1A7B6C81BDBC9310083A684 /* dancing-banana.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +506,7 @@
 				4B6D4F651AE0A46D0084D15B /* UIImageViewExtensionTests.swift in Sources */,
 				4B5083381BD88C3E00AEA807 /* KingfisherManagerTests.swift in Sources */,
 				4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */,
+				D1A7B6CA1BDBC9C60083A684 /* ImageExtensionTests.swift in Sources */,
 				4B6D4F671AE0B82A0084D15B /* UIButtonExtensionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
