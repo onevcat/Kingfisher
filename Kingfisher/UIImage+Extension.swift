@@ -33,6 +33,11 @@ private let jpgHeaderSOI: [UInt8] = [0xFF, 0xD8]
 private let jpgHeaderIF: [UInt8] = [0xFF, 0xE0]
 private let gifHeader: [UInt8] = [0x47, 0x49, 0x46]
 
+// MARK: - Image format
+enum ImageFormat {
+    case Unknown, PNG, JPEG, GIF
+}
+
 extension NSData {
     var kf_imageFormat: ImageFormat {
         var buffer = [UInt8](count: 8, repeatedValue: 0)
@@ -54,10 +59,6 @@ extension NSData {
         
         return .Unknown
     }
-}
-
-enum ImageFormat {
-    case Unknown, PNG, JPEG, GIF
 }
 
 // MARK: - Decode
@@ -99,6 +100,7 @@ extension UIImage {
     }
 }
 
+// MARK: - Create images from data
 extension UIImage {
     static func kf_imageWithData(data: NSData, scale: CGFloat) -> UIImage? {
         var image: UIImage?
