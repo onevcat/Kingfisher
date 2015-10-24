@@ -284,7 +284,8 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                 dispatch_async(processQueue, { () -> Void in
                     
                     if let fetchLoad = self.fetchLoadForKey(URL) {
-                        if let image = UIImage(data: fetchLoad.responseData, scale: fetchLoad.scale) {
+                        
+                        if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: fetchLoad.scale) {
                             
                             self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                             
