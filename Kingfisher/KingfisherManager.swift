@@ -69,11 +69,11 @@ private let instance = KingfisherManager()
 public class KingfisherManager {
 
     /// Options to control some downloader and cache behaviors.
-    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat)
+    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat, animated: Bool)
     
     /// A preset option tuple with all value set to `false`.
     public static let OptionsNone: Options = {
-        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0)
+        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0, animated: true)
     }()
     
     /// The default set of options to be used by the manager to control some downloader and cache behaviors.
@@ -208,7 +208,7 @@ public class KingfisherManager {
             }
             
             if let image = image, originalData = originalData {
-                targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !options.cacheMemoryOnly, completionHandler: nil)
+                targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !options.cacheMemoryOnly, animated: options.animated, completionHandler: nil)
             }
             
             completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
@@ -233,6 +233,7 @@ public class KingfisherManager {
                 lowPriority: optionsInOptionsInfo.contains(KingfisherOptions.LowPriority),
                 cacheMemoryOnly: optionsInOptionsInfo.contains(KingfisherOptions.CacheMemoryOnly),
                 shouldDecode: optionsInOptionsInfo.contains(KingfisherOptions.BackgroundDecode),
+                animated: !optionsInOptionsInfo.contains(KingfisherOptions.NoAnimation),
                 queue: queue, scale: scale)
         }
         

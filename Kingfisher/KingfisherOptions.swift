@@ -57,4 +57,7 @@ public struct KingfisherOptions : OptionSetType {
     
     /// Decode the image using the same scale as the main screen. Otherwise it will use the same scale as defined on the KingfisherManager.DefaultOptions.scale.
     public static var ScreenScale = KingfisherOptions(rawValue: 1 << 5)
+    
+    /// Don't animate the image if it's source is animated
+    public static var NoAnimation = KingfisherOptions(rawValue: 1 << 6)
 }
