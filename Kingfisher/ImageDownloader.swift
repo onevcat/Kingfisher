@@ -75,6 +75,7 @@ public class ImageDownloader: NSObject {
         var responseData = NSMutableData()
         var shouldDecode = false
         var scale = KingfisherManager.DefaultOptions.scale
+        var animated = true
     }
     
     // MARK: - Public property
@@ -285,7 +286,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
                     
                     if let fetchLoad = self.fetchLoadForKey(URL) {
                         
-                        if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: fetchLoad.scale) {
+                        if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: fetchLoad.scale, animated: fetchLoad.animated) {
                             
                             self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                             
