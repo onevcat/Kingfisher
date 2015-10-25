@@ -116,32 +116,44 @@ extension UIImage {
 
 // MARK: - GIF
 func UIImageGIFRepresentation(image: UIImage) -> NSData? {
-    return UIImageGIFRepresentation(image, duration: 0.0, repeatCount: 0)
+    return UIImageGIFRepresentation(image, animated: true, duration: 0.0, repeatCount: 0)
+}
+
+func UIImageGIFRepresentation(image: UIImage, animated: Bool) -> NSData? {
+    return UIImageGIFRepresentation(image, animated, duration: 0.0, repeatCount: 0)
 }
 
 func UIImageGIFRepresentation(image: UIImage, duration: NSTimeInterval, repeatCount: Int) -> NSData? {
+    return UIImageGIFRepresentation(image, animated: true, duration, repeatCount)
+}
+
+func UIImageGIFRepresentation(image: UIImage, animated: Bool, duration: NSTimeInterval, repeatCount: Int) -> NSData? {
     guard let images = image.images else {
         return nil
     }
-
-    let frameCount = images.count
-    let gifDuration = duration <= 0.0 ? image.duration / Double(frameCount) : duration / Double(frameCount)
     
-    let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: gifDuration]]
-    let imageProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: repeatCount]]
-    
-    let data = NSMutableData()
-    
-    guard let destination = CGImageDestinationCreateWithData(data, kUTTypeGIF, frameCount, nil) else {
-        return nil
+    if animated {
+        let frameCount = images.count
+        let gifDuration = duration <= 0.0 ? image.duration / Double(frameCount) : duration / Double(frameCount)
+        
+        let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: gifDuration]]
+        let imageProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: repeatCount]]
+        
+        let data = NSMutableData()
+        
+        guard let destination = CGImageDestinationCreateWithData(data, kUTTypeGIF, frameCount, nil) else {
+            return nil
+        }
+        CGImageDestinationSetProperties(destination, imageProperties)
+        
+        for image in images {
+            CGImageDestinationAddImage(destination, image.CGImage!, frameProperties)
+        }
+        
+        return CGImageDestinationFinalize(destination) ? NSData(data: data) : nil
+    } else {
+        return UIImagePNGRepresentation(image)
     }
-    CGImageDestinationSetProperties(destination, imageProperties)
-    
-    for image in images {
-        CGImageDestinationAddImage(destination, image.CGImage!, frameProperties)
-    }
-    
-    return CGImageDestinationFinalize(destination) ? NSData(data: data) : nil
 }
 
 extension UIImage {
