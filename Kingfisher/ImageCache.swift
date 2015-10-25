@@ -161,8 +161,6 @@ public extension ImageCache {
     - parameter completionHandler: Called when store operation completes.
     */
     public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, toDisk: Bool, animated: Bool = true, completionHandler: (() -> ())?) {
-        memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
-        
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
                 dispatch_async(dispatch_get_main_queue()) {
@@ -171,21 +169,32 @@ public extension ImageCache {
             }
         }
         
+        let imageFormat: ImageFormat
+        if let originalData = originalData {
+            imageFormat = originalData.kf_imageFormat
+        } else {
+            imageFormat = .Unknown
+        }
+        
+        var animatedImage: UIImage?
+        if imageFormat == .GIF && animated {
+            animatedImage = UIImage.kf_imageWithData(originalData!, scale: 1.0)!
+            
+            // Saving animated image to memory
+            memoryCache.setObject(animatedImage!, forKey: key, cost: animatedImage!.kf_imageCost)
+        } else {
+            // Saving image to memory
+            memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
+        }
+        
         if toDisk {
             dispatch_async(ioQueue, { () -> Void in
-                let imageFormat: ImageFormat
-                if let originalData = originalData {
-                    imageFormat = originalData.kf_imageFormat
-                } else {
-                    imageFormat = .Unknown
-                }
-                
                 let data: NSData?
                 switch imageFormat {
                 case .PNG: data = UIImagePNGRepresentation(image)
                 case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
                 // Creating GIF from original data in case of NoAnimation option selected. If that option was selected and GIF was made from image passed animation would be lost.
-                case .GIF: data = animated ? UIImageGIFRepresentation(UIImage.kf_imageWithData(originalData!, scale: 1.0)!) : UIImagePNGRepresentation(image)
+                case .GIF: data = animated ? UIImageGIFRepresentation(animatedImage!) : UIImagePNGRepresentation(image)
                 case .Unknown: data = originalData
                 }
                 
