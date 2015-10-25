@@ -448,7 +448,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#\n# Set the build number to the current git commit count.\n#\ngit=`sh /etc/profile; which git`\nappBuild=`\"$git\" rev-list --all |wc -l`\n\nagvtool new-version -all $appBuild";
+			shellScript = "#\n# Set the build number to the current git commit count if on master.\n#\ngit=`sh /etc/profile; which git`\n\nbranchName=`\"$git\" rev-parse --abbrev-ref HEAD`\nif [ $branchName = \"master\" ]; then\nappBuild=`\"$git\" rev-list --all |wc -l`\nagvtool new-version -all $appBuild\nfi\n";
 		};
 		5A0400F84A1FF7DBA809925E /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -659,10 +659,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 299;
+				CURRENT_PROJECT_VERSION = 300;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 299;
+				DYLIB_CURRENT_VERSION = 300;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -685,10 +685,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 299;
+				CURRENT_PROJECT_VERSION = 300;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 299;
+				DYLIB_CURRENT_VERSION = 300;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Kingfisher/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
