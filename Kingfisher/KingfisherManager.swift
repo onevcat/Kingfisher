@@ -208,7 +208,7 @@ public class KingfisherManager {
             }
             
             if let image = image, originalData = originalData {
-                targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !options.cacheMemoryOnly, animated: options.animated, completionHandler: nil)
+                targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !options.cacheMemoryOnly, animated: options.storeAnimated, completionHandler: nil)
             }
             
             completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
