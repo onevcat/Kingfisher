@@ -183,7 +183,7 @@ public extension ImageCache {
                 switch imageFormat {
                 case .PNG: data = UIImagePNGRepresentation(image)
                 case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
-                case .GIF: data = UIImageGIFRepresentation(image)
+                case .GIF: data = UIImageGIFRepresentation(image, animated: animated)
                 case .Unknown: data = originalData
                 }
                 
