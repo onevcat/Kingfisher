@@ -280,36 +280,39 @@ extension ImageCache {
                 completionHandler(image, .Memory)
             }
         } else {
+            var sSelf: ImageCache! = self
             block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
-                //Begin to load image from disk
-                dispatch_async(self.ioQueue, { () -> Void in
-                    
-                    if let image = self.retrieveImageInDiskCacheForKey(key, scale: options.scale) {
-                        
+                
+                // Begin to load image from disk
+                dispatch_async(sSelf.ioQueue, { () -> Void in
+                    if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale) {
                         if options.shouldDecode {
-                            dispatch_async(self.processQueue, { () -> Void in
+                            dispatch_async(sSelf.processQueue, { () -> Void in
                                 let result = image.kf_decodedImage(scale: options.scale)
-                                self.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
-                                
+                                sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
+
                                 dispatch_async(options.queue, { () -> Void in
                                     completionHandler(result, .Memory)
-                                    return
+                                    sSelf = nil
                                 })
                             })
                         } else {
-                            self.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
+                            sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
                             dispatch_async(options.queue, { () -> Void in
                                 completionHandler(image, .Disk)
+                                sSelf = nil
                             })
                         }
                     } else {
                         // No image found from either memory or disk
                         dispatch_async(options.queue, { () -> Void in
                             completionHandler(nil, nil)
+                            sSelf = nil
                         })
                     }
                 })
             }
+            
             dispatch_async(dispatch_get_main_queue(), block!)
         }
     
