@@ -76,6 +76,7 @@ public class ImageDownloader: NSObject {
         var shouldDecode = false
         var scale = KingfisherManager.DefaultOptions.scale
         var animated = true
+        var storeAnimated = true
     }
     
     // MARK: - Public property
@@ -198,9 +199,10 @@ public extension ImageDownloader {
             task.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
             task.resume()
             
-            fetchLoad.shouldDecode = options.shouldDecode
-            fetchLoad.scale = options.scale
-            fetchLoad.animated = options.animated
+            fetchLoad.shouldDecode  = options.shouldDecode
+            fetchLoad.scale         = options.scale
+            fetchLoad.animated      = options.animated
+            fetchLoad.storeAnimated = options.storeAnimated
             
             retrieveImageTask?.downloadTask = task
         }
