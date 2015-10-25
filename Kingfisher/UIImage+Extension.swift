@@ -120,7 +120,7 @@ func UIImageGIFRepresentation(image: UIImage) -> NSData? {
 }
 
 func UIImageGIFRepresentation(image: UIImage, animated: Bool) -> NSData? {
-    return UIImageGIFRepresentation(image, animated, duration: 0.0, repeatCount: 0)
+    return UIImageGIFRepresentation(image, animated: animated, duration: 0.0, repeatCount: 0)
 }
 
 func UIImageGIFRepresentation(image: UIImage, duration: NSTimeInterval, repeatCount: Int) -> NSData? {
