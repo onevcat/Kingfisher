@@ -273,7 +273,7 @@ class UIImageViewExtensionTests: XCTestCase {
         stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
         let URL = NSURL(string: URLString)!
         
-        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache: cache1], progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache(cache1)], progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, cacheType, imageURL) -> () in
             
@@ -281,7 +281,7 @@ class UIImageViewExtensionTests: XCTestCase {
             XCTAssertFalse(cache2.isImageCachedForKey(URLString).cached, "This image should not be cached in cache2.")
             XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
             
-            self.imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache: cache2], progressBlock: { (receivedSize, totalSize) -> () in
+            self.imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.TargetCache(cache2)], progressBlock: { (receivedSize, totalSize) -> () in
                 
             }, completionHandler: { (image, error, cacheType, imageURL) -> () in
                 

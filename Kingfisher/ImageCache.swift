@@ -183,8 +183,8 @@ public extension ImageCache {
                 switch imageFormat {
                 case .PNG: data = UIImagePNGRepresentation(image)
                 case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
-                case .GIF: data = originalData
-                case .Unknown: data = UIImagePNGRepresentation(image.kf_normalizedImage())
+                case .GIF: data = UIImageGIFRepresentation(image)
+                case .Unknown: data = originalData
                 }
                 
                 if let data = data {
@@ -620,11 +620,7 @@ extension ImageCache {
     
     func diskImageForKey(key: String, scale: CGFloat) -> UIImage? {
         if let data = diskImageDataForKey(key) {
-            if let image = UIImage(data: data, scale: scale) {
-                return image
-            } else {
-                return nil
-            }
+            return UIImage.kf_imageWithData(data, scale: scale)
         } else {
             return nil
         }
@@ -649,38 +645,6 @@ extension UIImage {
     var kf_imageCost: Int {
         return Int(size.height * size.width * scale * scale)
     }
-}
-
-private let pngHeader: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
-private let jpgHeaderSOI: [UInt8] = [0xFF, 0xD8]
-private let jpgHeaderIF: [UInt8] = [0xFF, 0xE0]
-private let gifHeader: [UInt8] = [0x47, 0x49, 0x46]
-
-extension NSData {
-    var kf_imageFormat: ImageFormat {
-        var buffer = [UInt8](count: 8, repeatedValue: 0)
-        self.getBytes(&buffer, length: 8)
-        if buffer == pngHeader {
-            return .PNG
-        } else if buffer[0] == jpgHeaderSOI[0] &&
-                  buffer[1] == jpgHeaderSOI[1] &&
-                  buffer[2] == jpgHeaderIF[0] &&
-                  buffer[3] == buffer[3] & jpgHeaderIF[1]
-        {
-            return .JPEG
-        }else if buffer[0] == gifHeader[0] &&
-            buffer[1] == gifHeader[1] &&
-            buffer[2] == gifHeader[2]
-        {
-            return .GIF
-        }
-        
-        return .Unknown
-    }
-}
-
-enum ImageFormat {
-    case Unknown, PNG, JPEG, GIF
 }
 
 extension Dictionary {

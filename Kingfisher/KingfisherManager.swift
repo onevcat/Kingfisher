@@ -45,11 +45,11 @@ public class RetrieveImageTask {
     */
     public func cancel() {
         // From Xcode 7 beta 6, the `dispatch_block_cancel` will crash at runtime.
-        // So we removed disk retrieve canceling now.
+        // It fixed in Xcode 7.1.
         // See https://github.com/onevcat/Kingfisher/issues/99 for more.
-//        if let diskRetrieveTask = diskRetrieveTask {
-//            dispatch_block_cancel(diskRetrieveTask)
-//        }
+        if let diskRetrieveTask = diskRetrieveTask {
+            dispatch_block_cancel(diskRetrieveTask)
+        }
         
         if let downloadTask = downloadTask {
             downloadTask.cancel()
@@ -118,27 +118,6 @@ public class KingfisherManager {
         progressBlock: DownloadProgressBlock?,
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
-            let options: Options
-            if let optionsInOptionsInfo = optionsInfo?[.Options] as? KingfisherOptions {
-                let queue = optionsInOptionsInfo.contains(KingfisherOptions.BackgroundCallback) ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
-                let scale = optionsInOptionsInfo.contains(KingfisherOptions.ScreenScale) ? UIScreen.mainScreen().scale : KingfisherManager.DefaultOptions.scale
-                options = (forceRefresh: optionsInOptionsInfo.contains(KingfisherOptions.ForceRefresh),
-                    lowPriority: optionsInOptionsInfo.contains(KingfisherOptions.LowPriority),
-                    cacheMemoryOnly: optionsInOptionsInfo.contains(KingfisherOptions.CacheMemoryOnly),
-                    shouldDecode: optionsInOptionsInfo.contains(KingfisherOptions.BackgroundDecode),
-                    queue: queue, scale: scale)
-
-            } else {
-                options = KingfisherManager.DefaultOptions
-            }
-            
-            let targetCache = optionsInfo?[.TargetCache] as? ImageCache ?? self.cache
-            let downloader = optionsInfo?[.Downloader] as? ImageDownloader ?? self.downloader
-            
-            return (options, targetCache, downloader)
-        }
-        
         let task = RetrieveImageTask()
         
         // There is a bug in Swift compiler which prevents to write `let (options, targetCache) = parseOptionsInfo(optionsInfo)`
@@ -235,6 +214,38 @@ public class KingfisherManager {
             completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
         }
     }
+    
+    func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
+        var options = KingfisherManager.DefaultOptions
+        var targetCache = self.cache
+        var targetDownloader = self.downloader
+        
+        guard let optionsInfo = optionsInfo else {
+            return (options, targetCache, targetDownloader)
+        }
+        
+        if let optionsItem = optionsInfo.kf_findFirstMatch(.Options(.None)), case .Options(let optionsInOptionsInfo) = optionsItem {
+            
+            let queue = optionsInOptionsInfo.contains(KingfisherOptions.BackgroundCallback) ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
+            let scale = optionsInOptionsInfo.contains(KingfisherOptions.ScreenScale) ? UIScreen.mainScreen().scale : KingfisherManager.DefaultOptions.scale
+            
+            options = (forceRefresh: optionsInOptionsInfo.contains(KingfisherOptions.ForceRefresh),
+                lowPriority: optionsInOptionsInfo.contains(KingfisherOptions.LowPriority),
+                cacheMemoryOnly: optionsInOptionsInfo.contains(KingfisherOptions.CacheMemoryOnly),
+                shouldDecode: optionsInOptionsInfo.contains(KingfisherOptions.BackgroundDecode),
+                queue: queue, scale: scale)
+        }
+        
+        if let optionsItem = optionsInfo.kf_findFirstMatch(.TargetCache(self.cache)), case .TargetCache(let cache) = optionsItem {
+            targetCache = cache
+        }
+        
+        if let optionsItem = optionsInfo.kf_findFirstMatch(.Downloader(self.downloader)), case .Downloader(let downloader) = optionsItem {
+            targetDownloader = downloader
+        }
+        
+        return (options, targetCache, targetDownloader)
+    }
 }
 
 // MARK: - Deprecated
@@ -245,6 +256,6 @@ public extension KingfisherManager {
                            progressBlock: DownloadProgressBlock?,
                        completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return retrieveImageWithURL(URL, optionsInfo: [.Options : options], progressBlock: progressBlock, completionHandler: completionHandler)
+        return retrieveImageWithURL(URL, optionsInfo: [.Options(options)], progressBlock: progressBlock, completionHandler: completionHandler)
     }
 }

@@ -35,6 +35,8 @@ let testImageData = NSData(base64EncodedString:testImageString, options: NSDataB
 let testImagePNGData = UIImagePNGRepresentation(testImage)!
 let testImageJEPGData = UIImageJPEGRepresentation(testImage, 1.0)!
 
+var testImageGIFData = NSData(contentsOfFile: NSBundle(forClass: KingfisherManagerTests.self).pathForResource("dancing-banana", ofType: "gif")!)!
+
 let testKeys = ["http://stackoverflow.com/questions/11251340/convert-image-to-base64-string-in-ios-swift","https://onevcat.com","http://onevcat.com/content/images/2014/May/200.jpg","http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"]
 
 func == (left: UIImage, right: UIImage) -> Bool {
