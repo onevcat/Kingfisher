@@ -102,12 +102,12 @@ extension UIImage {
 
 // MARK: - Create images from data
 extension UIImage {
-    static func kf_imageWithData(data: NSData, scale: CGFloat) -> UIImage? {
+    static func kf_imageWithData(data: NSData, scale: CGFloat, animated: Bool = true) -> UIImage? {
         var image: UIImage?
         switch data.kf_imageFormat {
         case .JPEG: image = UIImage(data: data, scale: scale)
         case .PNG: image = UIImage(data: data, scale: scale)
-        case .GIF: image = UIImage.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
+        case .GIF: image = animated ? UIImage.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0) : UIImage(data: data, scale: scale)
         case .Unknown: image = nil
         }
         return image
@@ -158,7 +158,7 @@ func UIImageGIFRepresentation(image: UIImage, animated: Bool, duration: NSTimeIn
 
 extension UIImage {
     static func kf_animatedImageWithGIFData(gifData data: NSData) -> UIImage? {
-        return kf_animatedImageWithGIFData(gifData: data, scale: UIScreen.mainScreen().scale, duration: 0.0)
+        return kf_animatedImagkf_animatedImageWithGIFDataeWithGIFData(gifData: data, scale: UIScreen.mainScreen().scale, duration: 0.0)
     }
     
     static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval) -> UIImage? {
