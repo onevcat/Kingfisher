@@ -69,11 +69,11 @@ private let instance = KingfisherManager()
 public class KingfisherManager {
 
     /// Options to control some downloader and cache behaviors.
-    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat, animated: Bool)
+    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat, animated: Bool, storeAnimated: Bool)
     
     /// A preset option tuple with all value set to `false`.
     public static let OptionsNone: Options = {
-        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0, animated: true)
+        return (forceRefresh: false, lowPriority: false, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0, animated: true, storeAnimated: true)
     }()
     
     /// The default set of options to be used by the manager to control some downloader and cache behaviors.
@@ -234,6 +234,7 @@ public class KingfisherManager {
                 cacheMemoryOnly: optionsInOptionsInfo.contains(KingfisherOptions.CacheMemoryOnly),
                 shouldDecode: optionsInOptionsInfo.contains(KingfisherOptions.BackgroundDecode),
                 animated: !optionsInOptionsInfo.contains(KingfisherOptions.NoAnimation),
+                storeAnimated: !optionsInOptionsInfo.contains(KingfisherOptions.StoreWithoutAnimation),
                 queue: queue, scale: scale)
         }
         

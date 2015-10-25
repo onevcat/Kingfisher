@@ -60,4 +60,7 @@ public struct KingfisherOptions : OptionSetType {
     
     /// Don't animate the image if it's source is animated
     public static var NoAnimation = KingfisherOptions(rawValue: 1 << 6)
+    
+    /// Store the image's first frame only if it's source is animated
+    public static var StoreWithoutAnimation = KingfisherOptions(rawValue: 1 << 7)
 }
