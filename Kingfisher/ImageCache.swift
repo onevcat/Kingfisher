@@ -184,7 +184,8 @@ public extension ImageCache {
                 switch imageFormat {
                 case .PNG: data = UIImagePNGRepresentation(image)
                 case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
-                case .GIF: data = UIImageGIFRepresentation(image, animated: animated)
+                // Creating GIF from original data in case of NoAnimation option selected. If that option was selected and GIF was made from image passed animation would be lost.
+                case .GIF: data = animated ? UIImageGIFRepresentation(UIImage.kf_imageWithData(originalData!, scale: 1.0)!) : UIImagePNGRepresentation(image)
                 case .Unknown: data = originalData
                 }
                 
