@@ -304,11 +304,11 @@ extension ImageCache {
                             })
                         }
                     } else {
-                            // No image found from either memory or disk
-                            dispatch_async(options.queue, { () -> Void in
-                                completionHandler(nil, nil)
-                                sSelf = nil
-                            })
+                        // No image found from either memory or disk
+                        dispatch_async(options.queue, { () -> Void in
+                            completionHandler(nil, nil)
+                            sSelf = nil
+                        })
                     }
                 })
             }
