@@ -157,6 +157,7 @@ public extension ImageCache {
                                    If `nil` is supplied, the image data will be saved as a normalized PNG file.
     - parameter key:               Key for the image.
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
+    - parameter animated:          Store image animated or not. Only applies to GIFs.
     - parameter completionHandler: Called when store operation completes.
     */
     public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, toDisk: Bool, animated: Bool = true, completionHandler: (() -> ())?) {
