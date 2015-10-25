@@ -287,23 +287,39 @@ extension ImageCache {
                 
                 // Begin to load image from disk
                 dispatch_async(sSelf.ioQueue, { () -> Void in
-                    if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale, animated: options.animated) {
+                    if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale, animated: true) {
                         if options.shouldDecode {
                             dispatch_async(sSelf.processQueue, { () -> Void in
                                 let result = image.kf_decodedImage(scale: options.scale)
                                 sSelf.storeImage(result!, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
-
+                                
                                 dispatch_async(options.queue, { () -> Void in
                                     completionHandler(result, .Memory)
                                     sSelf = nil
                                 })
                             })
                         } else {
-                            sSelf.storeImage(image, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
-                            dispatch_async(options.queue, { () -> Void in
-                                completionHandler(image, .Disk)
-                                sSelf = nil
-                            })
+                            if !options.animated && options.storeAnimated {
+                                // TODO: Add check for non GIFs to avoid unnecessary CPU load
+                                // Saving animated image, but returning only first frame of it
+                                
+                                let imageWithoutAnimation = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale, animated: false)
+                                
+                                // Storing animated image
+                                sSelf.storeImage(image, forKey: key, toDisk: false, animated: true, completionHandler: nil)
+                                
+                                // Returning unanimated image
+                                dispatch_async(options.queue, { () -> Void in
+                                    completionHandler(imageWithoutAnimation, .Disk)
+                                    sSelf = nil
+                                })
+                            } else {
+                                sSelf.storeImage(image, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
+                                dispatch_async(options.queue, { () -> Void in
+                                    completionHandler(image, .Disk)
+                                    sSelf = nil
+                                })
+                            }
                         }
                     } else {
                         // No image found from either memory or disk
@@ -317,7 +333,7 @@ extension ImageCache {
             
             dispatch_async(dispatch_get_main_queue(), block!)
         }
-    
+        
         return block
     }
     
