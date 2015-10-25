@@ -144,8 +144,8 @@ public extension ImageCache {
                 If `nil` is supplied, the image data will be saved as a normalized PNG file.
     - parameter key:   Key for the image.
     */
-    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
-        storeImage(image, originalData: originalData,forKey: key, toDisk: true, completionHandler: nil)
+    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, animated: Bool = true) {
+        storeImage(image, originalData: originalData, forKey: key, toDisk: true, animated: animated, completionHandler: nil)
     }
     
     /**
