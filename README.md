@@ -23,6 +23,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
 * Categories over `UIImageView` and `UIButton` for setting image from an URL directly.
+* Support GIF seamlessly. You could just download and set your GIF images as the same as you do for PNG/JPEG format.
 
 ## Requirements
 
@@ -48,7 +49,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.6'
+pod 'Kingfisher', '~> 1.7'
 ```
 
 Then, run the following command:
@@ -73,7 +74,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/Kingfisher" >= 1.6
+github "onevcat/Kingfisher" >= 1.7
 ```
 
 Then, run the following command to build the Kingfisher framework:
