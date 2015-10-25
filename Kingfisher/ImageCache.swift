@@ -291,7 +291,7 @@ extension ImageCache {
                         if options.shouldDecode {
                             dispatch_async(sSelf.processQueue, { () -> Void in
                                 let result = image.kf_decodedImage(scale: options.scale)
-                                sSelf.storeImage(result!, forKey: key, toDisk: false, animated: options.animated, completionHandler: nil)
+                                sSelf.storeImage(result!, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
 
                                 dispatch_async(options.queue, { () -> Void in
                                     completionHandler(result, .Memory)
@@ -299,7 +299,7 @@ extension ImageCache {
                                 })
                             })
                         } else {
-                            sSelf.storeImage(image, forKey: key, toDisk: false, animated: options.animated, completionHandler: nil)
+                            sSelf.storeImage(image, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
                             dispatch_async(options.queue, { () -> Void in
                                 completionHandler(image, .Disk)
                                 sSelf = nil
