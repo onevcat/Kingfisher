@@ -200,6 +200,7 @@ public extension ImageDownloader {
             
             fetchLoad.shouldDecode = options.shouldDecode
             fetchLoad.scale = options.scale
+            fetchLoad.animated = options.animated
             
             retrieveImageTask?.downloadTask = task
         }
