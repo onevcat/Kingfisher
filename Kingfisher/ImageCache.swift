@@ -334,8 +334,9 @@ extension ImageCache {
     /**
     Get an image for a key from disk.
     
-    - parameter key: Key for the image.
-    - param scale: The scale factor to assume when interpreting the image data.
+    - parameter key:      Key for the image.
+    - parameter scale:    The scale factor to assume when interpreting the image data.
+    - parameter animated: Get an animated image if it is GIF.
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
