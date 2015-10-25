@@ -270,7 +270,7 @@ extension ImageCache {
         var block: RetrieveImageDiskTask?
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
             
-            //Found image in memory cache.
+            // Found image in memory cache.
             if options.shouldDecode {
                 dispatch_async(self.processQueue, { () -> Void in
                     let result = image.kf_decodedImage(scale: options.scale)
@@ -279,7 +279,15 @@ extension ImageCache {
                     })
                 })
             } else {
-                completionHandler(image, .Memory)
+                if !options.animated && options.storeAnimated {
+                    // TODO: Add check for non GIFs to avoid unnecessary CPU load
+                    
+                    let imageWithoutAnimation = UIImage(data: UIImagePNGRepresentation(image)!)
+                    
+                    completionHandler(imageWithoutAnimation, .Memory)
+                } else {
+                    completionHandler(image, .Memory)
+                }
             }
         } else {
             var sSelf: ImageCache! = self
