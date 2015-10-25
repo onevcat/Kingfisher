@@ -202,19 +202,6 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
-    
-    func testImageFormat() {
-        var format: ImageFormat
-        format = testImageJEPGData.kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.JPEG)
-        
-        format = testImagePNGData.kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.PNG)
-        
-        let raw = [1,2,3,4,5,6,7,8]
-        format = NSData(bytes: raw, length: 8) .kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.Unknown)
-    }
 
     // MARK: - Helper
     func storeMultipleImages(completionHandler:()->()) {
