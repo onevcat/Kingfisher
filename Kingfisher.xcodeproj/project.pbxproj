@@ -439,14 +439,14 @@
 		};
 		4B7440961BB4D4D00029EE1A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "#\n# Set the build number to the current git commit count if on master.\n#\ngit=`sh /etc/profile; which git`\n\nbranchName=`\"$git\" rev-parse --abbrev-ref HEAD`\nif [ $branchName = \"master\" ]; then\nappBuild=`\"$git\" rev-list --all |wc -l`\nagvtool new-version -all $appBuild\nfi\n";
 		};
