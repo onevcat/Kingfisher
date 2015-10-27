@@ -209,16 +209,20 @@ public extension UIImageView {
                                         options: transition.animationOptions, animations:
                                         { () -> Void in
                                             transition.animations?(sSelf, image!)
-                                        }, completion: transition.completion)
+                                        }, completion: {
+                                            finished in
+                                            transition.completion?(finished)
+                                            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                                        })
                             })
                         } else {
                             indicator?.stopAnimating()
                             sSelf.image = image;
+                            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                         }
-                        
+                    } else {
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
-                    
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
