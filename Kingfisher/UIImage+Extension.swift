@@ -101,12 +101,12 @@ extension UIImage {
 
 // MARK: - Create images from data
 extension UIImage {
-    static func kf_imageWithData(data: NSData, scale: CGFloat) -> UIImage? {
+    static func kf_imageWithData(data: NSData, scale: CGFloat, animated: Bool = true) -> UIImage? {
         var image: UIImage?
         switch data.kf_imageFormat {
         case .JPEG: image = UIImage(data: data, scale: scale)
         case .PNG: image = UIImage(data: data, scale: scale)
-        case .GIF: image = UIImage.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
+        case .GIF: image = animated ? UIImage.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0) : UIImage(data: data, scale: scale)
         case .Unknown: image = nil
         }
         return image
@@ -115,32 +115,44 @@ extension UIImage {
 
 // MARK: - GIF
 func UIImageGIFRepresentation(image: UIImage) -> NSData? {
-    return UIImageGIFRepresentation(image, duration: 0.0, repeatCount: 0)
+    return UIImageGIFRepresentation(image, animated: true, duration: 0.0, repeatCount: 0)
+}
+
+func UIImageGIFRepresentation(image: UIImage, animated: Bool) -> NSData? {
+    return UIImageGIFRepresentation(image, animated: animated, duration: 0.0, repeatCount: 0)
 }
 
 func UIImageGIFRepresentation(image: UIImage, duration: NSTimeInterval, repeatCount: Int) -> NSData? {
+    return UIImageGIFRepresentation(image, animated: true, duration: duration, repeatCount: repeatCount)
+}
+
+func UIImageGIFRepresentation(image: UIImage, animated: Bool, duration: NSTimeInterval, repeatCount: Int) -> NSData? {
     guard let images = image.images else {
         return nil
     }
-
-    let frameCount = images.count
-    let gifDuration = duration <= 0.0 ? image.duration / Double(frameCount) : duration / Double(frameCount)
     
-    let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: gifDuration]]
-    let imageProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: repeatCount]]
-    
-    let data = NSMutableData()
-    
-    guard let destination = CGImageDestinationCreateWithData(data, kUTTypeGIF, frameCount, nil) else {
-        return nil
+    if animated {
+        let frameCount = images.count
+        let gifDuration = duration <= 0.0 ? image.duration / Double(frameCount) : duration / Double(frameCount)
+        
+        let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: gifDuration]]
+        let imageProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: repeatCount]]
+        
+        let data = NSMutableData()
+        
+        guard let destination = CGImageDestinationCreateWithData(data, kUTTypeGIF, frameCount, nil) else {
+            return nil
+        }
+        CGImageDestinationSetProperties(destination, imageProperties)
+        
+        for image in images {
+            CGImageDestinationAddImage(destination, image.CGImage!, frameProperties)
+        }
+        
+        return CGImageDestinationFinalize(destination) ? NSData(data: data) : nil
+    } else {
+        return UIImagePNGRepresentation(image)
     }
-    CGImageDestinationSetProperties(destination, imageProperties)
-    
-    for image in images {
-        CGImageDestinationAddImage(destination, image.CGImage!, frameProperties)
-    }
-    
-    return CGImageDestinationFinalize(destination) ? NSData(data: data) : nil
 }
 
 extension UIImage {

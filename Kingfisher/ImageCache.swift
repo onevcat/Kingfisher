@@ -144,8 +144,8 @@ public extension ImageCache {
                 If `nil` is supplied, the image data will be saved as a normalized PNG file.
     - parameter key:   Key for the image.
     */
-    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
-        storeImage(image, originalData: originalData,forKey: key, toDisk: true, completionHandler: nil)
+    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, animated: Bool = true) {
+        storeImage(image, originalData: originalData, forKey: key, toDisk: true, animated: animated, completionHandler: nil)
     }
     
     /**
@@ -157,11 +157,10 @@ public extension ImageCache {
                                    If `nil` is supplied, the image data will be saved as a normalized PNG file.
     - parameter key:               Key for the image.
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
-    - parameter completionHandler: Called when stroe operation completes.
+    - parameter animated:          Store image animated or not. Only applies to GIFs.
+    - parameter completionHandler: Called when store operation completes.
     */
-    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, toDisk: Bool, completionHandler: (() -> ())?) {
-        memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
-        
+    public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String, toDisk: Bool, animated: Bool = true, completionHandler: (() -> ())?) {
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
                 dispatch_async(dispatch_get_main_queue()) {
@@ -170,20 +169,32 @@ public extension ImageCache {
             }
         }
         
+        let imageFormat: ImageFormat
+        if let originalData = originalData {
+            imageFormat = originalData.kf_imageFormat
+        } else {
+            imageFormat = .Unknown
+        }
+        
+        var animatedImage: UIImage?
+        if imageFormat == .GIF && animated {
+            animatedImage = UIImage.kf_imageWithData(originalData!, scale: 1.0)!
+            
+            // Saving animated image to memory
+            memoryCache.setObject(animatedImage!, forKey: key, cost: animatedImage!.kf_imageCost)
+        } else {
+            // Saving image to memory
+            memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
+        }
+        
         if toDisk {
             dispatch_async(ioQueue, { () -> Void in
-                let imageFormat: ImageFormat
-                if let originalData = originalData {
-                    imageFormat = originalData.kf_imageFormat
-                } else {
-                    imageFormat = .Unknown
-                }
-                
                 let data: NSData?
                 switch imageFormat {
                 case .PNG: data = UIImagePNGRepresentation(image)
                 case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
-                case .GIF: data = UIImageGIFRepresentation(image)
+                // Creating GIF from original data in case of NoAnimation option selected. If that option was selected and GIF was made from image passed animation would be lost.
+                case .GIF: data = animated ? UIImageGIFRepresentation(animatedImage!) : UIImagePNGRepresentation(image)
                 case .Unknown: data = originalData
                 }
                 
@@ -268,7 +279,7 @@ extension ImageCache {
         var block: RetrieveImageDiskTask?
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
             
-            //Found image in memory cache.
+            // Found image in memory cache.
             if options.shouldDecode {
                 dispatch_async(self.processQueue, { () -> Void in
                     let result = image.kf_decodedImage(scale: options.scale)
@@ -277,7 +288,15 @@ extension ImageCache {
                     })
                 })
             } else {
-                completionHandler(image, .Memory)
+                if !options.animated && options.storeAnimated {
+                    // TODO: Add check for non GIFs to avoid unnecessary CPU load
+                    
+                    let imageWithoutAnimation = UIImage(data: UIImagePNGRepresentation(image)!)
+                    
+                    completionHandler(imageWithoutAnimation, .Memory)
+                } else {
+                    completionHandler(image, .Memory)
+                }
             }
         } else {
             var sSelf: ImageCache! = self
@@ -285,23 +304,39 @@ extension ImageCache {
                 
                 // Begin to load image from disk
                 dispatch_async(sSelf.ioQueue, { () -> Void in
-                    if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale) {
+                    if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale, animated: true) {
                         if options.shouldDecode {
                             dispatch_async(sSelf.processQueue, { () -> Void in
                                 let result = image.kf_decodedImage(scale: options.scale)
-                                sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
-
+                                sSelf.storeImage(result!, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
+                                
                                 dispatch_async(options.queue, { () -> Void in
                                     completionHandler(result, .Memory)
                                     sSelf = nil
                                 })
                             })
                         } else {
-                            sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
-                            dispatch_async(options.queue, { () -> Void in
-                                completionHandler(image, .Disk)
-                                sSelf = nil
-                            })
+                            if !options.animated && options.storeAnimated {
+                                // TODO: Add check for non GIFs to avoid unnecessary CPU load
+                                // Saving animated image, but returning only first frame of it
+                                
+                                let imageWithoutAnimation = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale, animated: false)
+                                
+                                // Storing animated image
+                                sSelf.storeImage(image, forKey: key, toDisk: false, animated: true, completionHandler: nil)
+                                
+                                // Returning unanimated image
+                                dispatch_async(options.queue, { () -> Void in
+                                    completionHandler(imageWithoutAnimation, .Disk)
+                                    sSelf = nil
+                                })
+                            } else {
+                                sSelf.storeImage(image, forKey: key, toDisk: false, animated: options.storeAnimated, completionHandler: nil)
+                                dispatch_async(options.queue, { () -> Void in
+                                    completionHandler(image, .Disk)
+                                    sSelf = nil
+                                })
+                            }
                         }
                     } else {
                         // No image found from either memory or disk
@@ -315,7 +350,7 @@ extension ImageCache {
             
             dispatch_async(dispatch_get_main_queue(), block!)
         }
-    
+        
         return block
     }
     
@@ -333,13 +368,14 @@ extension ImageCache {
     /**
     Get an image for a key from disk.
     
-    - parameter key: Key for the image.
-    - param scale: The scale factor to assume when interpreting the image data.
+    - parameter key:      Key for the image.
+    - parameter scale:    The scale factor to assume when interpreting the image data.
+    - parameter animated: Get an animated image if it is GIF.
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = KingfisherManager.DefaultOptions.scale) -> UIImage? {
-        return diskImageForKey(key, scale: scale)
+    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = KingfisherManager.DefaultOptions.scale, animated: Bool = KingfisherManager.DefaultOptions.animated) -> UIImage? {
+        return diskImageForKey(key, scale: scale, animated: animated)
     }
 }
 
@@ -619,9 +655,9 @@ public extension ImageCache {
 // MARK: - Internal Helper
 extension ImageCache {
     
-    func diskImageForKey(key: String, scale: CGFloat) -> UIImage? {
+    func diskImageForKey(key: String, scale: CGFloat, animated: Bool = true) -> UIImage? {
         if let data = diskImageDataForKey(key) {
-            return UIImage.kf_imageWithData(data, scale: scale)
+            return UIImage.kf_imageWithData(data, scale: scale, animated: animated)
         } else {
             return nil
         }
