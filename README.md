@@ -182,7 +182,7 @@ And if you need to fade in the image to image view during 1 second:
 ```
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.Transition(ImageTransition.Fade(1)))
+                              optionsInfo: [.Transition: ImageTransition.Fade(1)])
 ```
 
 For more information about options, please see the `KingfisherOptionsInfo` in the [documentation](http://cocoadocs.org/docsets/Kingfisher/index.html).
