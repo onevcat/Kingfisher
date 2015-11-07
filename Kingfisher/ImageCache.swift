@@ -138,11 +138,12 @@ public extension ImageCache {
     It is an async operation, if you need to do something about the stored image, use `-storeImage:forKey:toDisk:completionHandler:` 
     instead.
     
-    - parameter image: The image will be stored.
+    - parameter image:        The image will be stored.
     - parameter originalData: The original data of the image.
-                Kingfisher will use it to check the format of the image and optimize cache size on disk.
-                If `nil` is supplied, the image data will be saved as a normalized PNG file.
-    - parameter key:   Key for the image.
+                              Kingfisher will use it to check the format of the image and optimize cache size on disk.
+                              If `nil` is supplied, the image data will be saved as a normalized PNG file.
+                              It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
+    - parameter key:          Key for the image.
     */
     public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
         storeImage(image, originalData: originalData,forKey: key, toDisk: true, completionHandler: nil)
@@ -154,7 +155,8 @@ public extension ImageCache {
     - parameter image:             The image will be stored.
     - parameter originalData:      The original data of the image.
                                    Kingfisher will use it to check the format of the image and optimize cache size on disk.
-                                   If `nil` is supplied, the image data will be saved as a normalized PNG file.
+                                   If `nil` is supplied, the image data will be saved as a normalized PNG file. 
+                                   It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
     - parameter key:               Key for the image.
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
     - parameter completionHandler: Called when stroe operation completes.
@@ -184,7 +186,7 @@ public extension ImageCache {
                 case .PNG: data = UIImagePNGRepresentation(image)
                 case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
                 case .GIF: data = UIImageGIFRepresentation(image)
-                case .Unknown: data = originalData
+                case .Unknown: data = originalData ?? UIImagePNGRepresentation(image.kf_normalizedImage())
                 }
                 
                 if let data = data {
