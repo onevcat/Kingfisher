@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+import Foundation
+
 func dispatch_async_safely_main_queue(block: ()->()) {
     if NSThread.isMainThread() {
         block()

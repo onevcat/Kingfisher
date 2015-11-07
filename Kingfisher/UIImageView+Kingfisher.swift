@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
+import UIKit
 
 // MARK: - Set Images
 /**
@@ -288,7 +288,12 @@ public extension UIImageView {
                 return
             } else {
                 if newValue {
-                    let indicator = UIActivityIndicatorView(activityIndicatorStyle:.Gray)
+                    #if os(tvOS)
+                        let indicatorStyle = UIActivityIndicatorViewStyle.White
+                    #else
+                        let indicatorStyle = UIActivityIndicatorViewStyle.Gray
+                    #endif
+                    let indicator = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
                     indicator.center = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))
                     
                     indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
