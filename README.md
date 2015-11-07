@@ -27,7 +27,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 
 ## Requirements
 
-* iOS 8.0+
+* iOS 8.0+ or tvOS 9.0+
 * Xcode 7.0 or above
 
 ## Installation
@@ -49,7 +49,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.7'
+pod 'Kingfisher', '~> 1.8'
 ```
 
 Then, run the following command:
@@ -74,7 +74,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/Kingfisher" >= 1.7
+github "onevcat/Kingfisher" >= 1.8
 ```
 
 Then, run the following command to build the Kingfisher framework:
