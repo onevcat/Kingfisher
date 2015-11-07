@@ -1,8 +1,8 @@
 //
-//  CollectionViewCell.swift
-//  Kingfisher-Demo
+//  Kingfisher-tvOS.h
+//  Kingfisher-tvOS
 //
-//  Created by Wei Wang on 15/4/6.
+//  Created by Wei Wang on 15/11/7.
 //
 //  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
 //
@@ -24,18 +24,14 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
+#import <UIKit/UIKit.h>
 
-class CollectionViewCell: UICollectionViewCell {
-    
-    @IBOutlet weak var cellImageView: UIImageView!
-    
-    #if os(tvOS)
-    override func awakeFromNib() {
-        super.awakeFromNib()
+//! Project version number for Kingfisher-tvOS.
+FOUNDATION_EXPORT double Kingfisher_tvOSVersionNumber;
 
-        cellImageView.adjustsImageWhenAncestorFocused = true
-        cellImageView.clipsToBounds = false
-    }
-    #endif
-}
+//! Project version string for Kingfisher-tvOS.
+FOUNDATION_EXPORT const unsigned char Kingfisher_tvOSVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <Kingfisher_tvOS/PublicHeader.h>
+
+

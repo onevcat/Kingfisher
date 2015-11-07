@@ -20,6 +20,26 @@
 		4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
 		D11250C11BAC4B6300B986EF /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11250C01BAC4B6300B986EF /* ImageTransition.swift */; };
+		D13F49C51BEDA53F00CE335D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13F49C41BEDA53F00CE335D /* AppDelegate.swift */; };
+		D13F49CA1BEDA53F00CE335D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D13F49C81BEDA53F00CE335D /* Main.storyboard */; };
+		D13F49CC1BEDA53F00CE335D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D13F49CB1BEDA53F00CE335D /* Assets.xcassets */; };
+		D13F49D91BEDA67C00CE335D /* Kingfisher-tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D13F49D81BEDA67C00CE335D /* Kingfisher-tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D13F49E91BEDA82000CE335D /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; };
+		D13F49EA1BEDA82000CE335D /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D13F49F01BEDA8B300CE335D /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */; };
+		D13F49F11BEDA8B300CE335D /* UIImageView+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D561AD2D0F900CFC3EB /* UIImageView+Kingfisher.swift */; };
+		D13F49F21BEDA8B300CE335D /* UIButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B945B201ADBB20200D1545E /* UIButton+Kingfisher.swift */; };
+		D13F49F31BEDA8B300CE335D /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */; };
+		D13F49F41BEDA8B300CE335D /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */; };
+		D13F49F51BEDA8B300CE335D /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */; };
+		D13F49F61BEDA8B300CE335D /* KingfisherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */; };
+		D13F49F71BEDA8B300CE335D /* KingfisherOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */; };
+		D13F49F81BEDA8B300CE335D /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11250C01BAC4B6300B986EF /* ImageTransition.swift */; };
+		D13F49F91BEDA8B300CE335D /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
+		D13F49FA1BEDA8B300CE335D /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2C4DF71B7D7ACD000912CA /* Resource.swift */; };
+		D13F49FB1BEDA8B300CE335D /* ThreadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B1B98F1BC7EB7100DE20D8 /* ThreadHelper.swift */; };
+		D13F49FE1BEDBB4A00CE335D /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
+		D13F49FF1BEDBB4A00CE335D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D121AD2CFA600CFC3EB /* ViewController.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */; };
 		D1A7B6CA1BDBC9C60083A684 /* ImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */; };
 		D1A7B6CC1BDBEC090083A684 /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
@@ -42,6 +62,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D13F49EB1BEDA82000CE335D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D13F49D51BEDA67C00CE335D;
+			remoteInfo = "Kingfisher-tvOS";
+		};
 		D1ED2D411AD2D09F00CFC3EB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
@@ -76,6 +103,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D13F49ED1BEDA82000CE335D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D13F49EA1BEDA82000CE335D /* Kingfisher.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1ED2D511AD2D09F00CFC3EB /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -106,6 +144,14 @@
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11250C01BAC4B6300B986EF /* ImageTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTransition.swift; sourceTree = "<group>"; };
+		D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-tvOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D13F49C41BEDA53F00CE335D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D13F49C91BEDA53F00CE335D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D13F49CB1BEDA53F00CE335D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D13F49CD1BEDA53F00CE335D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D13F49D61BEDA67C00CE335D /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D13F49D81BEDA67C00CE335D /* Kingfisher-tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kingfisher-tvOS.h"; sourceTree = "<group>"; };
+		D13F49DA1BEDA67C00CE335D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtensionTests.swift; sourceTree = "<group>"; };
 		D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "dancing-banana.gif"; sourceTree = "<group>"; };
@@ -132,6 +178,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D13F49BF1BEDA53F00CE335D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D13F49E91BEDA82000CE335D /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49D21BEDA67C00CE335D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1ED2D081AD2CFA600CFC3EB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -169,12 +230,34 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		D13F49C31BEDA53F00CE335D /* Kingfisher-tvOS-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				D13F49C41BEDA53F00CE335D /* AppDelegate.swift */,
+				D13F49C81BEDA53F00CE335D /* Main.storyboard */,
+				D13F49CB1BEDA53F00CE335D /* Assets.xcassets */,
+				D13F49CD1BEDA53F00CE335D /* Info.plist */,
+			);
+			path = "Kingfisher-tvOS-Demo";
+			sourceTree = "<group>";
+		};
+		D13F49D71BEDA67C00CE335D /* Kingfisher-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				D13F49D81BEDA67C00CE335D /* Kingfisher-tvOS.h */,
+				D13F49DA1BEDA67C00CE335D /* Info.plist */,
+			);
+			path = "Kingfisher-tvOS";
+			sourceTree = "<group>";
+		};
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
 				D1ED2D0D1AD2CFA600CFC3EB /* Kingfisher-Demo */,
+				D13F49C31BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
 				D1ED2D361AD2D09F00CFC3EB /* Kingfisher */,
 				D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */,
+				D13F49D71BEDA67C00CE335D /* Kingfisher-tvOS */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
 				9C068B80BAB8294A1732ADC5 /* Pods */,
 				EA99D30544BD22799F7A5367 /* Frameworks */,
@@ -187,6 +270,8 @@
 				D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */,
 				D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */,
 				D1ED2D3F1AD2D09F00CFC3EB /* KingfisherTests.xctest */,
+				D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */,
+				D13F49D61BEDA67C00CE335D /* Kingfisher.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -280,6 +365,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		D13F49D31BEDA67C00CE335D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D13F49D91BEDA67C00CE335D /* Kingfisher-tvOS.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1ED2D321AD2D09F00CFC3EB /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -291,6 +384,43 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */;
+			buildPhases = (
+				D13F49BE1BEDA53F00CE335D /* Sources */,
+				D13F49BF1BEDA53F00CE335D /* Frameworks */,
+				D13F49C01BEDA53F00CE335D /* Resources */,
+				D13F49ED1BEDA82000CE335D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D13F49EC1BEDA82000CE335D /* PBXTargetDependency */,
+			);
+			name = "Kingfisher-tvOS-Demo";
+			productName = "Kingfisher-tvOS-Demo";
+			productReference = D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D13F49DF1BEDA67C00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS" */;
+			buildPhases = (
+				D13F49D11BEDA67C00CE335D /* Sources */,
+				D13F49D21BEDA67C00CE335D /* Frameworks */,
+				D13F49D31BEDA67C00CE335D /* Headers */,
+				D13F49D41BEDA67C00CE335D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-tvOS";
+			productName = "Kingfisher-tvOS";
+			productReference = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D1ED2D2A1AD2CFA600CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher-Demo" */;
@@ -357,10 +487,16 @@
 		D1ED2D031AD2CFA600CFC3EB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Wei Wang";
 				TargetAttributes = {
+					D13F49C11BEDA53F00CE335D = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					D13F49D51BEDA67C00CE335D = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					D1ED2D0A1AD2CFA600CFC3EB = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -389,11 +525,29 @@
 				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D1ED2D341AD2D09F00CFC3EB /* Kingfisher */,
 				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
+				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
+				D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D13F49C01BEDA53F00CE335D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D13F49CC1BEDA53F00CE335D /* Assets.xcassets in Resources */,
+				D13F49CA1BEDA53F00CE335D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49D41BEDA67C00CE335D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1ED2D091AD2CFA600CFC3EB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -468,6 +622,35 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D13F49BE1BEDA53F00CE335D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D13F49FE1BEDBB4A00CE335D /* CollectionViewCell.swift in Sources */,
+				D13F49FF1BEDBB4A00CE335D /* ViewController.swift in Sources */,
+				D13F49C51BEDA53F00CE335D /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49D11BEDA67C00CE335D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D13F49F01BEDA8B300CE335D /* String+MD5.swift in Sources */,
+				D13F49F11BEDA8B300CE335D /* UIImageView+Kingfisher.swift in Sources */,
+				D13F49F21BEDA8B300CE335D /* UIButton+Kingfisher.swift in Sources */,
+				D13F49F31BEDA8B300CE335D /* UIImage+Extension.swift in Sources */,
+				D13F49F41BEDA8B300CE335D /* ImageCache.swift in Sources */,
+				D13F49F51BEDA8B300CE335D /* ImageDownloader.swift in Sources */,
+				D13F49F61BEDA8B300CE335D /* KingfisherManager.swift in Sources */,
+				D13F49F71BEDA8B300CE335D /* KingfisherOptions.swift in Sources */,
+				D13F49F81BEDA8B300CE335D /* ImageTransition.swift in Sources */,
+				D13F49F91BEDA8B300CE335D /* KingfisherOptionsInfo.swift in Sources */,
+				D13F49FA1BEDA8B300CE335D /* Resource.swift in Sources */,
+				D13F49FB1BEDA8B300CE335D /* ThreadHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1ED2D071AD2CFA600CFC3EB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -514,6 +697,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D13F49EC1BEDA82000CE335D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */;
+			targetProxy = D13F49EB1BEDA82000CE335D /* PBXContainerItemProxy */;
+		};
 		D1ED2D421AD2D09F00CFC3EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D1ED2D341AD2D09F00CFC3EB /* Kingfisher */;
@@ -532,6 +720,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		D13F49C81BEDA53F00CE335D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D13F49C91BEDA53F00CE335D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		D1ED2D141AD2CFA600CFC3EB /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -551,6 +747,93 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D13F49CE1BEDA53F00CE335D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-tvOS-Demo/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-tvOS-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		D13F49CF1BEDA53F00CE335D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-tvOS-Demo/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-tvOS-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		D13F49E01BEDA67C00CE335D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-tvOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-tvOS";
+				PRODUCT_NAME = Kingfisher;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		D13F49E11BEDA67C00CE335D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-tvOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-tvOS";
+				PRODUCT_NAME = Kingfisher;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		D1ED2D281AD2CFA600CFC3EB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -738,6 +1021,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D13F49CE1BEDA53F00CE335D /* Debug */,
+				D13F49CF1BEDA53F00CE335D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		D13F49DF1BEDA67C00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D13F49E01BEDA67C00CE335D /* Debug */,
+				D13F49E11BEDA67C00CE335D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		D1ED2D061AD2CFA600CFC3EB /* Build configuration list for PBXProject "Kingfisher" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
