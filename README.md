@@ -1,14 +1,23 @@
 <p align="center">
+
 <img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher" width="557"/>
+
 </p>
 
 <p align="center">
+
 <a href="https://travis-ci.org/onevcat/Kingfisher"><img src="https://img.shields.io/travis/onevcat/Kingfisher/master.svg"></a>
+
 <a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
+
 <a href="http://cocoadocs.org/docsets/Kingfisher"><img src="https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat"></a>
+
 <a href="https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat"></a>
+
 <a href="http://cocoadocs.org/docsets/Kingfisher"><img src="https://img.shields.io/cocoapods/p/Kingfisher.svg?style=flat"></a>
+
 <img src="https://img.shields.io/badge/made%20with-%3C3-orange.svg">
+
 </p>
 
 Kingfisher is a lightweight and pure Swift implemented library for downloading and caching image from the web. This project is heavily inspired by the popular [SDWebImage](https://github.com/rs/SDWebImage). And it provides you a chance to use pure Swift alternation in your next app.
@@ -38,13 +47,13 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 
 CocoaPods 0.36 adds supports for Swift and embedded frameworks. You can install it with the following command:
 
-```bash
+``` bash
 $ gem install cocoapods
 ```
 
 To integrate Kingfisher into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
-```ruby
+``` ruby
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
@@ -54,7 +63,7 @@ pod 'Kingfisher', '~> 1.8'
 
 Then, run the following command:
 
-```bash
+``` bash
 $ pod install
 ```
 
@@ -66,20 +75,20 @@ For more information about how to use CocoaPods, I suggest [this tutorial](http:
 
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager for Cocoa application. To install the carthage tool, you can use [Homebrew](http://brew.sh).
 
-```bash
+``` bash
 $ brew update
 $ brew install carthage
 ```
 
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
-```ogdl
+``` ogdl
 github "onevcat/Kingfisher" >= 1.8
 ```
 
 Then, run the following command to build the Kingfisher framework:
 
-```bash
+``` bash
 $ carthage update
 
 ```
@@ -90,13 +99,13 @@ On your application targets’ “General” settings tab, in the “Linked Fram
 
 On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script with the following content:
 
-```
+``` 
 /usr/local/bin/carthage copy-frameworks
 ```
 
 and add the paths to the frameworks you want to use under “Input Files”:
 
-```
+``` 
 $(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework
 ```
 
@@ -108,7 +117,7 @@ It is not recommended to install the framework manually, but if you prefer not t
 
 - Add Kingfisher as a [submodule](http://git-scm.com/docs/git-submodule). In your favorite terminal, `cd` into your top-level project directory, and entering the following command:
 
-```bash
+``` bash
 $ git submodule add https://github.com/onevcat/Kingfisher.git
 ```
 
@@ -130,7 +139,7 @@ Use Kingfisher in your project is as easy as a pie. You can use the `UIImageView
 
 In your source files, add the following code:
 
-```swift
+``` swift
 import Kingfisher
 
 imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
@@ -138,13 +147,13 @@ imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
 
 In most cases, Kingfisher is used in a reusable cell. Since the downloading process is asynchronous, the earlier image will be remained during the downloading of newer one. The placeholder version of this API could help:
 
-```swift
+``` swift
 imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!, placeholderImage: nil)
 ```
 
 By default, `Kingfisher` will use `absoluteString` of the URL as the key for cache. If you need another key instead of URL's `absoluteString`, there is another set of APIs accepting `Resource` as parameter:
 
-```swift
+``` swift
 let URL = NSURL(string: "http://your_image_url.png")!
 let resource = Resource(downloadURL: URL, cacheKey: "your_customized_key")
 
@@ -157,32 +166,32 @@ It will ask Kingfisher's manager to get the image for the "your_customized_key" 
 
 Kingfisher will search in cache (both memory and disk) first with the URL, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option dictionary, to let it ignore the cache.
 
-```swift
+``` swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.Options(KingfisherOptions.ForceRefresh))
+                              optionsInfo: [.Options(KingfisherOptions.ForceRefresh)])
 ```
 
 There are also other options to control the cache level, downloading priority, etc. Take some other examples:
 
 If you need to cache the downloaded image to a customized cache instead of the default one:
 
-```swift
+``` swift
 let myCache = ImageCache(name: "my_cache")
 
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.TargetCache(myCache))
+                              optionsInfo: [.TargetCache(myCache)])
 ```
 
 This is useful if you want to use a specified cache for some reasons.
 
 And if you need to fade in the image to image view during 1 second:
 
-```
+``` 
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.Transition(ImageTransition.Fade(1)))
+                              optionsInfo: [.Transition(ImageTransition.Fade(1))])
 ```
 
 For more information about options, please see the `KingfisherOptionsInfo` in the [documentation](http://cocoadocs.org/docsets/Kingfisher/index.html).
@@ -191,7 +200,7 @@ For more information about options, please see the `KingfisherOptionsInfo` in th
 
 You can get a chance during Kingfisher downloading images and when the process is done:
 
-```swift
+``` swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
                               optionsInfo: nil,
@@ -208,7 +217,7 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
 
 All `kf_setImageWithURL` methods return a `RetrieveImageTask` object. You can `cancel` the task if the images are not needed.
 
-```swift
+``` swift
 let task = imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
 task.cancel()
 
@@ -221,7 +230,7 @@ There is a category for `UIButton` as well.
 
 Kingfisher will use the default downloader and cache if you do not specify them by yourself. You can access them by using `KingfisherManager.sharedManager.downloader` and `KingfisherManager.sharedManager.cache`. You can adjust some parameters to meet your demands:
 
-```swift
+``` swift
 let downloader = KingfisherManager.sharedManager.downloader
 
 // Download process will timeout after 5 seconds. Default is 15.
@@ -239,7 +248,7 @@ downloader.requestModifier = {
 downloader.trustedHosts = Set(["your_self_signed_host"])
 ```
 
-```swift
+``` swift
 let cache = KingfisherManager.sharedManager.cache
 
 // Set max disk cache to 50 mb. Default is no limit.
@@ -256,7 +265,7 @@ cache.calculateDiskCacheSizeWithCompletionHandler { (size) -> () in
 
 The memory cache will be purged whenever the app switched to background or receiving a memory warning. Disk cache will be cleaned when the conditions are met. You can also clear these caches manually:
 
-```swift
+``` swift
 // Clear memory cache right away.
 cache.clearMemoryCache()
 
