@@ -99,4 +99,3 @@ public enum ImageTransition {
         }
     }
 }
-

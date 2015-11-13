@@ -207,7 +207,7 @@ public extension UIButton {
                 
                 dispatch_async_safely_main_queue {
                     if let sSelf = self {
-                        if (imageURL == sSelf.kf_webURLForState(state) && image != nil) {
+                        if imageURL == sSelf.kf_webURLForState(state) && image != nil {
                             sSelf.setImage(image, forState: state)
                         }
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
@@ -456,7 +456,7 @@ public extension UIButton {
             completionHandler: { [weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_main_queue {
                     if let sSelf = self {
-                        if (imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil) {
+                        if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
                             sSelf.setBackgroundImage(image, forState: state)
                         }
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
@@ -590,4 +590,3 @@ public extension UIButton {
         return kf_setBackgroundImageWithURL(URL, forState: state, placeholderImage: placeholderImage, optionsInfo: [.Options(options)], progressBlock: progressBlock, completionHandler: completionHandler)
     }
 }
-

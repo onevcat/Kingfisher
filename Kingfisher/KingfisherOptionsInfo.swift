@@ -46,7 +46,7 @@ public enum KingfisherOptionsInfoItem {
     case Transition(ImageTransition)
 }
 
-func ==(a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
+func == (a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
     switch (a, b) {
     case (.Options(_), .Options(_)): return true
     case (.TargetCache(_), .TargetCache(_)): return true

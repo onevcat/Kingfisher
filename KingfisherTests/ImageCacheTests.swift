@@ -187,7 +187,11 @@ class ImageCacheTests: XCTestCase {
 
                 XCTAssert(noti.object === self.cache, "The object of notification should be the cache object.")
                 
-                let hashes = noti.userInfo?[KingfisherDiskCacheCleanedHashKey] as! [String]
+                guard let hashes = noti.userInfo?[KingfisherDiskCacheCleanedHashKey] as? [String] else {
+                    XCTFail("The clean disk cache notification should contains Strings in key 'KingfisherDiskCacheCleanedHashKey'")
+                    expectation.fulfill()
+                    return
+                }
                 
                 XCTAssertEqual(1, hashes.count, "There should be one and only one file cleaned")
                 XCTAssertEqual(hashes.first!, self.cache.hashForKey(testKeys[0]), "The cleaned file should be the stored one.")
