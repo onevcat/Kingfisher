@@ -69,7 +69,7 @@ private let instance = KingfisherManager()
 public class KingfisherManager {
 
     /// Options to control some downloader and cache behaviors.
-    public typealias Options = (forceRefresh: Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat)
+    public typealias Options = (forceRefresh:Bool, lowPriority: Bool, cacheMemoryOnly: Bool, shouldDecode: Bool, queue: dispatch_queue_t!, scale: CGFloat)
     
     /// A preset option tuple with all value set to `false`.
     public static let OptionsNone: Options = {
