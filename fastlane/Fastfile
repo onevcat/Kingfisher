@@ -1,0 +1,46 @@
+
+fastlane_version "1.37.0"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+    
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    scan
+  end
+  
+  desc "Release new version"
+  lane :release do |options|
+      target_version = options[:version]
+      raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+      
+      ensure_git_branch
+      ensure_git_status_clean
+      scan
+      sync_build_number_to_git
+      increment_version_number(version_number: target_version)
+      version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
+      
+      git_commit_all(message: "Bump version to #{target_version}")
+      add_git_tag tag: target_version
+      
+      push_to_git_remote
+      pod_push
+  end
+
+  lane :podpush do
+    pod_push
+  end
+
+  after_all do |lane|
+    
+  end
+
+  error do |lane, exception|
+    
+  end
+end

@@ -80,5 +80,17 @@ Network Trash Folder
 Temporary Items
 .apdisk
 images/logo.sketch
-fastlane
+
+# fastlane specific
+fastlane/report.xml
+
+# deliver temporary files
+fastlane/Preview.html
+
+# snapshot generated screenshots
+fastlane/screenshots/**/*.png
+fastlane/screenshots/screenshots.html
+
+# scan temporary files
+fastlane/test_output
 test_output
