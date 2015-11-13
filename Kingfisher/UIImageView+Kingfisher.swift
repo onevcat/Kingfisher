@@ -202,7 +202,7 @@ public extension UIImageView {
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
                         
                         if let transitionItem = optionsInfo?.kf_findFirstMatch(.Transition(.None)),
-                            case .Transition(let transition) = transitionItem {
+                            case .Transition(let transition) = transitionItem where cacheType == .None {
                             
                             UIView.transitionWithView(sSelf, duration: 0.0, options: [],
                                 animations: {

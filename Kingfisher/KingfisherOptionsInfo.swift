@@ -37,7 +37,7 @@ Item could be added into KingfisherOptionsInfo
 - Options:     Item for options. The value of this item should be a KingfisherOptions.
 - TargetCache: Item for target cache. The value of this item should be an ImageCache object. Kingfisher will use this cache when handling the related operation, including trying to retrieve the cached images and store the downloaded image to it.
 - Downloader:  Item for downloader to use. The value of this item should be an ImageDownloader object. Kingfisher will use this downloader to download the images.
-- Transition:  Item for animation transition when using UIImageView.
+- Transition:  Item for animation transition when using UIImageView. Kingfisher will use the `ImageTransition` of this enum to animate the image in if it is downloaded from web. The transition will not happen when the image is retrieved from either memory or disk cache.
 */
 public enum KingfisherOptionsInfoItem {
     case Options(KingfisherOptions)
