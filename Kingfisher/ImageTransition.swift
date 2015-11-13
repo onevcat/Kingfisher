@@ -27,7 +27,7 @@
 import UIKit
 
 /**
-Transition effect to use when an image loaded by `UIImageView` extension API in Kingfisher.
+Transition effect to use when an image downloaded and set by `UIImageView` extension API in Kingfisher.
 You can assign an enum value with transition duration as an item in `KingfisherOptionsInfo` 
 to enable the animation transition.
 
