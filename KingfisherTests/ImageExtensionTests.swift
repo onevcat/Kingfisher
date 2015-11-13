@@ -32,7 +32,7 @@ class ImageExtensionTests: XCTestCase {
         format = testImageGIFData.kf_imageFormat
         XCTAssertEqual(format, ImageFormat.GIF)
         
-        let raw = [1,2,3,4,5,6,7,8]
+        let raw = [1, 2, 3, 4, 5, 6, 7, 8]
         format = NSData(bytes: raw, length: 8) .kf_imageFormat
         XCTAssertEqual(format, ImageFormat.Unknown)
     }

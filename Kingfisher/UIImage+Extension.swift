@@ -49,7 +49,7 @@ extension NSData {
             buffer[2] == jpgHeaderIF[0]
         {
             return .JPEG
-        }else if buffer[0] == gifHeader[0] &&
+        } else if buffer[0] == gifHeader[0] &&
             buffer[1] == gifHeader[1] &&
             buffer[2] == gifHeader[2]
         {
@@ -176,13 +176,10 @@ extension UIImage {
             images.append(UIImage(CGImage: imageRef, scale: scale, orientation: .Up))
         }
         
-        if (frameCount == 1) {
+        if frameCount == 1 {
             return images.first
         } else {
             return UIImage.animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
         }
     }
 }
-
-
-

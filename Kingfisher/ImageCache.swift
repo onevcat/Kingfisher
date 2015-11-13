@@ -146,7 +146,7 @@ public extension ImageCache {
     - parameter key:          Key for the image.
     */
     public func storeImage(image: UIImage, originalData: NSData? = nil, forKey key: String) {
-        storeImage(image, originalData: originalData,forKey: key, toDisk: true, completionHandler: nil)
+        storeImage(image, originalData: originalData, forKey: key, toDisk: true, completionHandler: nil)
     }
     
     /**
@@ -409,12 +409,9 @@ extension ImageCache {
                 
                 var diskCacheSize: UInt = 0
                 
-                if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL,
-                    includingPropertiesForKeys: resourceKeys,
-                    options: NSDirectoryEnumerationOptions.SkipsHiddenFiles,
-                    errorHandler: nil) {
-                        
-                    for fileURL in fileEnumerator.allObjects as! [NSURL] {
+                if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL, includingPropertiesForKeys: resourceKeys, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, errorHandler: nil),
+                                 urls = fileEnumerator.allObjects as? [NSURL] {
+                    for fileURL in urls {
                             
                         do {
                             let resourceValues = try fileURL.resourceValuesForKeys(resourceKeys)
@@ -584,13 +581,9 @@ public extension ImageCache {
             let resourceKeys = [NSURLIsDirectoryKey, NSURLTotalFileAllocatedSizeKey]
             var diskCacheSize: UInt = 0
             
-            if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL,
-                includingPropertiesForKeys: resourceKeys,
-                options: NSDirectoryEnumerationOptions.SkipsHiddenFiles,
-                errorHandler: nil) {
-                    
-                    for fileURL in fileEnumerator.allObjects as! [NSURL] {
-                        
+            if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL, includingPropertiesForKeys: resourceKeys, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, errorHandler: nil),
+                             urls = fileEnumerator.allObjects as? [NSURL] {
+                    for fileURL in urls {
                         do {
                             let resourceValues = try fileURL.resourceValuesForKeys(resourceKeys)
                             // If it is a Directory. Continue to next file URL.
@@ -651,7 +644,7 @@ extension UIImage {
 }
 
 extension Dictionary {
-    func keysSortedByValue(isOrderedBefore:(Value, Value) -> Bool) -> [Key] {
+    func keysSortedByValue(isOrderedBefore: (Value, Value) -> Bool) -> [Key] {
         var array = Array(self)
         array.sortInPlace {
             let (_, lv) = $0
@@ -664,4 +657,3 @@ extension Dictionary {
         }
     }
 }
-

@@ -4,3 +4,5 @@ disabled_rules:
   - variable_name
   - file_length
   - function_body_length
+  - opening_brace
+  - type_body_length

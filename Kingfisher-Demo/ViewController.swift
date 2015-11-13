@@ -56,6 +56,7 @@ extension ViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        // swiftlint:disable force_cast
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! CollectionViewCell
         
         cell.cellImageView.kf_showIndicatorWhenLoading = true
