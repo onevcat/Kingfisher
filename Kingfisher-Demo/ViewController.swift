@@ -62,13 +62,16 @@ extension ViewController {
         
         let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
+        
         cell.cellImageView.kf_setImageWithURL(URL, placeholderImage: nil,
                                                         optionsInfo: [.Transition(ImageTransition.Fade(1))],
-                                                      progressBlock: { (receivedSize, totalSize) -> () in
+                                                      progressBlock: { receivedSize, totalSize in
                                                           print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
-                                                      }) { (image, error, cacheType, imageURL) -> () in
+                                                      },
+                                                  completionHandler: { image, error, cacheType, imageURL in
                                                           print("\(indexPath.row + 1): Finished")
                                                       }
+            )
         return cell
     }
 }
