@@ -1,0 +1,6 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - variable_name
+  - file_length
+  - function_body_length
