@@ -79,8 +79,10 @@ public class ImageCache {
     
     //Disk
     private let ioQueue: dispatch_queue_t
-    private let diskCachePath: String
     private var fileManager: NSFileManager!
+    
+    ///The disk cache location (read only)
+    public let diskCachePath: String
     
     /// The longest time duration of the cache being stored in disk. Default is 1 week.
     public var maxCachePeriodInSecond = defaultMaxCachePeriodInSecond
@@ -99,10 +101,11 @@ public class ImageCache {
     Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.
     
     - parameter name: Name of the cache. It will be used as the memory cache name and the disk cache folder name. This value should not be an empty string.
+    - parameter path: Optional - location of cache path on disk
     
     - returns: The cache object.
     */
-    public init(name: String) {
+    public init(name: String, path:String?=nil) {
         
         if name.isEmpty {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
@@ -111,8 +114,13 @@ public class ImageCache {
         let cacheName = cacheReverseDNS + name
         memoryCache.name = cacheName
         
-        let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-        diskCachePath = (paths.first! as NSString).stringByAppendingPathComponent(cacheName)
+        if let dcp = path {
+            diskCachePath = dcp
+        }
+        else {
+            let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+            diskCachePath = (paths.first! as NSString).stringByAppendingPathComponent(cacheName)
+        }
         
         ioQueue = dispatch_queue_create(ioQueueName + name, DISPATCH_QUEUE_SERIAL)
         processQueue = dispatch_queue_create(processQueueName + name, DISPATCH_QUEUE_CONCURRENT)
@@ -627,12 +635,12 @@ extension ImageCache {
         return NSData(contentsOfFile: filePath)
     }
     
-    func cachePathForKey(key: String) -> String {
+    public func cachePathForKey(key: String) -> String {
         let fileName = cacheFileNameForKey(key)
         return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
     }
     
-    func cacheFileNameForKey(key: String) -> String {
+    public func cacheFileNameForKey(key: String) -> String {
         return key.kf_MD5()
     }
 }
