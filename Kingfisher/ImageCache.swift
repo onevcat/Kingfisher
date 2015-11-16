@@ -635,12 +635,12 @@ extension ImageCache {
         return NSData(contentsOfFile: filePath)
     }
     
-    public func cachePathForKey(key: String) -> String {
+    func cachePathForKey(key: String) -> String {
         let fileName = cacheFileNameForKey(key)
         return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
     }
     
-    public func cacheFileNameForKey(key: String) -> String {
+    func cacheFileNameForKey(key: String) -> String {
         return key.kf_MD5()
     }
 }
