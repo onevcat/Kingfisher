@@ -51,6 +51,12 @@ class ImageCacheTests: XCTestCase {
         observer = nil
     }
     
+    func testCustomCachePath() {
+        let customPath = "/path/to/image/cache"
+        let cache = ImageCache(name: "test", path: customPath)
+        XCTAssertEqual(cache.diskCachePath, customPath + "/com.onevcat.Kingfisher.ImageCache.test", "Custom disk cache path set correctly")
+    }
+    
     func testMaxCachePeriodInSecond() {
         cache.maxCachePeriodInSecond = 1
         XCTAssert(cache.maxCachePeriodInSecond == 1, "maxCachePeriodInSecond should be able to be set.")
