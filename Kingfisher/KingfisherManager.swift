@@ -225,7 +225,6 @@ public class KingfisherManager {
                 if image != nil {
                     diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
                 } else {
-                    //没有缓存则联网下载并缓存
                     self.downloadAndCacheImageWithURL(URL,
                         forKey: key,
                         retrieveImageTask: retrieveImageTask,
