@@ -46,7 +46,12 @@ public enum KingfisherOptionsInfoItem {
     case Transition(ImageTransition)
 }
 
-func == (a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
+infix operator <== {
+    associativity none
+    precedence 160
+}
+
+func <== (a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
     switch (a, b) {
     case (.Options(_), .Options(_)): return true
     case (.TargetCache(_), .TargetCache(_)): return true
@@ -61,7 +66,7 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
         
         let index = indexOf {
             e in
-            return e == target
+            return e <== target
         }
         
         return (index != nil) ? self[index!] : nil
