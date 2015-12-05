@@ -94,8 +94,8 @@ class HashBase {
         tmpMessage.appendBytes([0x80]) // append one bit (UInt8 with one bit) to message
         
         // append "0" bit until message length in bits ≡ 448 (mod 512)
-        var msgLength = tmpMessage.length;
-        var counter = 0;
+        var msgLength = tmpMessage.length
+        var counter = 0
         while msgLength % len != (len - 8) {
             counter++
             msgLength++
@@ -110,20 +110,20 @@ class HashBase {
     }
 }
 
-func rotateLeft(v:UInt32, n:UInt32) -> UInt32 {
-    return ((v << n) & 0xFFFFFFFF) | (v >> (32 - n))
+func rotateLeft(value: UInt32, bits: UInt32) -> UInt32 {
+    return ((value << bits) & 0xFFFFFFFF) | (value >> (32 - bits))
 }
 
 class MD5 : HashBase {
     
     /** specifies the per-round shift amounts */
-    private let s: [UInt32] = [7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
+    private let shifts: [UInt32] = [7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
         5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
         4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
         6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21]
     
     /** binary integer part of the sines of integers (Radians) */
-    private let k: [UInt32] = [0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
+    private let sines: [UInt32] = [0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
                                0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
                                0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
                                0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
@@ -140,18 +140,18 @@ class MD5 : HashBase {
                                0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
                                0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391]
     
-    private let h:[UInt32] = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]
+    private let hashs: [UInt32] = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]
     
     func calculate() -> NSData {
         let tmpMessage = prepare()
         
         // hash values
-        var hh = h
+        var hh = hashs
         
         // Step 2. Append Length a 64-bit representation of lengthInBits
         let lengthInBits = (message.length * 8)
         let lengthBytes = lengthInBits.bytes(64 / 8)
-        tmpMessage.appendBytes(Array(lengthBytes.reverse()));
+        tmpMessage.appendBytes(Array(lengthBytes.reverse()))
         
         // Process the message in successive 512-bit chunks:
         let chunkSizeBytes = 512 / 8 // 64
@@ -160,20 +160,20 @@ class MD5 : HashBase {
             let chunk = tmpMessage.subdataWithRange(NSRange(location: i, length: min(chunkSizeBytes, leftMessageBytes)))
             
             // break chunk into sixteen 32-bit words M[j], 0 ≤ j ≤ 15
-            var M:[UInt32] = [UInt32](count: 16, repeatedValue: 0)
+            var M: [UInt32] = [UInt32](count: 16, repeatedValue: 0)
             let range = NSRange(location:0, length: M.count * sizeof(UInt32))
             chunk.getBytes(UnsafeMutablePointer<Void>(M), range: range)
             
             // Initialize hash value for this chunk:
-            var A:UInt32 = hh[0]
-            var B:UInt32 = hh[1]
-            var C:UInt32 = hh[2]
-            var D:UInt32 = hh[3]
+            var A: UInt32 = hh[0]
+            var B: UInt32 = hh[1]
+            var C: UInt32 = hh[2]
+            var D: UInt32 = hh[3]
             
-            var dTemp:UInt32 = 0
+            var dTemp: UInt32 = 0
             
             // Main loop
-            for j in 0..<k.count {
+            for j in 0 ..< sines.count {
                 var g = 0
                 var F: UInt32 = 0
                 
@@ -200,7 +200,7 @@ class MD5 : HashBase {
                 dTemp = D
                 D = C
                 C = B
-                B = B &+ rotateLeft((A &+ F &+ k[j] &+ M[g]), n: s[j])
+                B = B &+ rotateLeft((A &+ F &+ sines[j] &+ M[g]), bits: shifts[j])
                 A = dTemp
             }
             
@@ -210,12 +210,12 @@ class MD5 : HashBase {
             hh[3] = hh[3] &+ D
         }
         
-        let buf: NSMutableData = NSMutableData();
+        let buf: NSMutableData = NSMutableData()
         hh.forEach({ (item) -> () in
             var i:UInt32 = item.littleEndian
             buf.appendBytes(&i, length: sizeofValue(i))
         })
         
-        return buf.copy() as! NSData;
+        return buf.copy() as! NSData
     }
 }

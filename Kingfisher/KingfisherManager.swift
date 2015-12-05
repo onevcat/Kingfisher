@@ -248,7 +248,7 @@ public class KingfisherManager {
             return (options, targetCache, targetDownloader)
         }
         
-        if let optionsItem = optionsInfo.kf_findFirstMatch(.Options(.None)), case .Options(let optionsInOptionsInfo) = optionsItem {
+        if let optionsItem = optionsInfo.kf_firstMatchIgnoringAssociatedValue(.Options(.None)), case .Options(let optionsInOptionsInfo) = optionsItem {
             
             let queue = optionsInOptionsInfo.contains(KingfisherOptions.BackgroundCallback) ? dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0) : KingfisherManager.DefaultOptions.queue
             let scale = optionsInOptionsInfo.contains(KingfisherOptions.ScreenScale) ? UIScreen.mainScreen().scale : KingfisherManager.DefaultOptions.scale
@@ -260,11 +260,11 @@ public class KingfisherManager {
                 queue: queue, scale: scale)
         }
         
-        if let optionsItem = optionsInfo.kf_findFirstMatch(.TargetCache(self.cache)), case .TargetCache(let cache) = optionsItem {
+        if let optionsItem = optionsInfo.kf_firstMatchIgnoringAssociatedValue(.TargetCache(self.cache)), case .TargetCache(let cache) = optionsItem {
             targetCache = cache
         }
         
-        if let optionsItem = optionsInfo.kf_findFirstMatch(.Downloader(self.downloader)), case .Downloader(let downloader) = optionsItem {
+        if let optionsItem = optionsInfo.kf_firstMatchIgnoringAssociatedValue(.Downloader(self.downloader)), case .Downloader(let downloader) = optionsItem {
             targetDownloader = downloader
         }
         

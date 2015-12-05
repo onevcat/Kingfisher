@@ -201,7 +201,7 @@ public extension UIImageView {
                 dispatch_async_safely_main_queue {
                     if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
                         
-                        if let transitionItem = optionsInfo?.kf_findFirstMatch(.Transition(.None)),
+                        if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
                             case .Transition(let transition) = transitionItem where cacheType == .None {
                             
                             UIView.transitionWithView(sSelf, duration: 0.0, options: [],
@@ -223,7 +223,7 @@ public extension UIImageView {
                             )
                         } else {
                             indicator?.stopAnimating()
-                            sSelf.image = image;
+                            sSelf.image = image
                             completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                         }
                     } else {

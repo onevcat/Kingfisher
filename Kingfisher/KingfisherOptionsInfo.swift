@@ -51,8 +51,9 @@ infix operator <== {
     precedence 160
 }
 
-func <== (a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
-    switch (a, b) {
+// This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
+func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
+    switch (lhs, rhs) {
     case (.Options(_), .Options(_)): return true
     case (.TargetCache(_), .TargetCache(_)): return true
     case (.Downloader(_), .Downloader(_)): return true
@@ -62,11 +63,12 @@ func <== (a: KingfisherOptionsInfoItem, b: KingfisherOptionsInfoItem) -> Bool {
 }
 
 extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
-    func kf_findFirstMatch(target: Generator.Element) -> Generator.Element? {
+    
+    func kf_firstMatchIgnoringAssociatedValue(target: Generator.Element) -> Generator.Element? {
         
         let index = indexOf {
-            e in
-            return e <== target
+            item in
+            return item <== target
         }
         
         return (index != nil) ? self[index!] : nil
