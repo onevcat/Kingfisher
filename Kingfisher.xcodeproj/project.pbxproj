@@ -430,7 +430,6 @@
 				D1ED2D091AD2CFA600CFC3EB /* Resources */,
 				D1ED2D511AD2D09F00CFC3EB /* Embed Frameworks */,
 				4BE2C9E61B381D42005313E5 /* Embed Watch Content */,
-				4B82F31C1BF5CFDE0089B2CE /* Swift Lint */,
 			);
 			buildRules = (
 			);
@@ -450,7 +449,7 @@
 				D1ED2D311AD2D09F00CFC3EB /* Frameworks */,
 				D1ED2D321AD2D09F00CFC3EB /* Headers */,
 				D1ED2D331AD2D09F00CFC3EB /* Resources */,
-				4B7440961BB4D4D00029EE1A /* ShellScript */,
+				D1249CF91C12B01E002C62D8 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -592,33 +591,6 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		4B7440961BB4D4D00029EE1A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "#\n# Set the build number to the current git commit count if on master.\n#\ngit=`sh /etc/profile; which git`\n\nbranchName=`\"$git\" rev-parse --abbrev-ref HEAD`\nif [ $branchName = \"master\" ]; then\nappBuild=`\"$git\" rev-list --all |wc -l`\nagvtool new-version -all $appBuild\nfi\n";
-		};
-		4B82F31C1BF5CFDE0089B2CE /* Swift Lint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Swift Lint";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
-		};
 		5A0400F84A1FF7DBA809925E /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -633,6 +605,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D1249CF91C12B01E002C62D8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
