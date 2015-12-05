@@ -259,17 +259,6 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         }
     }
     
-    private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
-        if let callbackPairs = fetchLoadForKey(imageURL)?.callbacks {
-            
-            self.cleanForURL(imageURL)
-            
-            for callbackPair in callbackPairs {
-                callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
-            }
-        }
-    }
-    
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
@@ -279,36 +268,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             if let error = error { // Error happened
                 callbackWithImage(nil, error: error, imageURL: URL, originalData: nil)
             } else { //Download finished without error
-                
-                // We are on main queue when receiving this.
-                dispatch_async(processQueue, { () -> Void in
-                    
-                    if let fetchLoad = self.fetchLoadForKey(URL) {
-                        
-                        if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: fetchLoad.scale) {
-                            
-                            self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
-                            
-                            if fetchLoad.shouldDecode {
-                                self.callbackWithImage(image.kf_decodedImage(scale: fetchLoad.scale), error: nil, imageURL: URL, originalData: fetchLoad.responseData)
-                            } else {
-                                self.callbackWithImage(image, error: nil, imageURL: URL, originalData: fetchLoad.responseData)
-                            }
-                            
-                        } else {
-                            // If server response is 304 (Not Modified), inform the callback handler with NotModified error.
-                            // It should be handled to get an image from cache, which is response of a manager object.
-                            if let res = task.response as? NSHTTPURLResponse where res.statusCode == 304 {
-                                self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.NotModified.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
-                                return
-                            }
-                            
-                            self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
-                        }
-                    } else {
-                        self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
-                    }
-                })
+                processImageForTask(task, URL: URL)
             }
         }
     }
@@ -329,4 +289,46 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         completionHandler(.PerformDefaultHandling, nil)
     }
     
+    private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
+        if let callbackPairs = fetchLoadForKey(imageURL)?.callbacks {
+            
+            self.cleanForURL(imageURL)
+            
+            for callbackPair in callbackPairs {
+                callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
+            }
+        }
+    }
+    
+    private func processImageForTask(task: NSURLSessionTask, URL: NSURL) {
+        // We are on main queue when receiving this.
+        dispatch_async(processQueue, { () -> Void in
+            
+            if let fetchLoad = self.fetchLoadForKey(URL) {
+                
+                if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: fetchLoad.scale) {
+                    
+                    self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
+                    
+                    if fetchLoad.shouldDecode {
+                        self.callbackWithImage(image.kf_decodedImage(scale: fetchLoad.scale), error: nil, imageURL: URL, originalData: fetchLoad.responseData)
+                    } else {
+                        self.callbackWithImage(image, error: nil, imageURL: URL, originalData: fetchLoad.responseData)
+                    }
+                    
+                } else {
+                    // If server response is 304 (Not Modified), inform the callback handler with NotModified error.
+                    // It should be handled to get an image from cache, which is response of a manager object.
+                    if let res = task.response as? NSHTTPURLResponse where res.statusCode == 304 {
+                        self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.NotModified.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
+                        return
+                    }
+                    
+                    self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
+                }
+            } else {
+                self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.BadData.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
+            }
+        })
+    }
 }
