@@ -144,7 +144,6 @@ public class KingfisherManager {
                 targetCache: targetCache,
                 downloader: downloader)
         }
-        
         return task
     }
 
@@ -238,6 +237,40 @@ public class KingfisherManager {
         )
         retrieveImageTask.diskRetrieveTask = diskTask
     }
+    
+    func tryToRetrieveImageFromCacheForKey(key: String,
+        withURL URL: NSURL,
+        retrieveImageTask: RetrieveImageTask,
+        progressBlock: DownloadProgressBlock?,
+        completionHandler: CompletionHandler?,
+        options: Options,
+        targetCache: ImageCache,
+        downloader: ImageDownloader)
+    {
+        let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
+            // Break retain cycle created inside diskTask closure below
+            retrieveImageTask.diskRetrieveTask = nil
+            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+        }
+        let diskTask = targetCache.retrieveImageForKey(key, options: options,
+            completionHandler: { image, cacheType in
+                if image != nil {
+                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
+                } else {
+                    self.downloadAndCacheImageWithURL(URL,
+                        forKey: key,
+                        retrieveImageTask: retrieveImageTask,
+                        progressBlock: progressBlock,
+                        completionHandler: diskTaskCompletionHandler,
+                        options: options,
+                        targetCache: targetCache,
+                        downloader: downloader)
+                }
+            }
+        )
+        retrieveImageTask.diskRetrieveTask = diskTask
+    }
+
     
     func parseOptionsInfo(optionsInfo: KingfisherOptionsInfo?) -> (Options, ImageCache, ImageDownloader) {
         var options = KingfisherManager.DefaultOptions
