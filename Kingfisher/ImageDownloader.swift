@@ -268,7 +268,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             if let error = error { // Error happened
                 callbackWithImage(nil, error: error, imageURL: URL, originalData: nil)
             } else { //Download finished without error
-                callbackWithNoErrorForTask(task, URL: URL)
+                processImageForTask(task, URL: URL)
             }
         }
     }
@@ -300,7 +300,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         }
     }
     
-    private func callbackWithNoErrorForTask(task: NSURLSessionTask, URL: NSURL) {
+    private func processImageForTask(task: NSURLSessionTask, URL: NSURL) {
         // We are on main queue when receiving this.
         dispatch_async(processQueue, { () -> Void in
             
