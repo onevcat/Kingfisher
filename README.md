@@ -83,7 +83,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ``` ogdl
-github "onevcat/Kingfisher" >= 1.8
+github "onevcat/Kingfisher" ~> 1.8
 ```
 
 Then, run the following command to build the Kingfisher framework:
