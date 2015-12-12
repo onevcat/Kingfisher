@@ -67,6 +67,11 @@ extension UIImage {
     }
     
     func kf_decodedImage(scale scale: CGFloat) -> UIImage? {
+        // prevent animated image (GIF) lose it's images
+        if images != nil {
+            return self
+        }
+
         let imageRef = self.CGImage
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue
