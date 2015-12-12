@@ -642,7 +642,9 @@ extension ImageCache {
 
 extension UIImage {
     var kf_imageCost: Int {
-        return Int(size.height * size.width * scale * scale)
+        return images == nil ?
+            Int(size.height * size.width * scale * scale) :
+            Int(size.height * size.width * scale * scale) * images!.count
     }
 }
 
