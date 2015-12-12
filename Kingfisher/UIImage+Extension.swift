@@ -91,6 +91,11 @@ extension UIImage {
 // MARK: - Normalization
 extension UIImage {
     public func kf_normalizedImage() -> UIImage {
+        // prevent animated image (GIF) lose it's images
+        if images != nil {
+            return self
+        }
+        
         if imageOrientation == .Up {
             return self
         }
