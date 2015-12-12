@@ -67,6 +67,10 @@ extension UIImage {
     }
     
     func kf_decodedImage(scale scale: CGFloat) -> UIImage? {
+        if images != nil {
+            return self
+        }
+
         let imageRef = self.CGImage
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue
