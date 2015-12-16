@@ -206,4 +206,17 @@ class ImageDownloaderTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testDownloadEmptyURL() {
+        let expectation = expectationWithDescription("wait for downloading error")
+        
+        downloader.downloadImageWithURL(NSURL(string: "")!, progressBlock: { (receivedSize, totalSize) -> () in
+            XCTFail("The progress block should not be called.")
+            }) { (image, error, imageURL, originalData) -> () in
+                XCTAssertNotNil(error, "An error should happen for empty URL")
+                XCTAssertEqual(error!.code, KingfisherError.InvalidURL.rawValue)
+                expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 }
