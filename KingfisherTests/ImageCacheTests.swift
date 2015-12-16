@@ -45,8 +45,8 @@ class ImageCacheTests: XCTestCase {
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
-        cache.clearMemoryCache()
-        cache.clearDiskCache()
+        
+        clearCaches([cache])
         cache = nil
         observer = nil
     }
@@ -158,14 +158,12 @@ class ImageCacheTests: XCTestCase {
     func testIsImageCachedForKey() {
         let expectation = self.expectationWithDescription("wait for caching image")
         
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.5 * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue()) {
-            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
-            self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
-                XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
-                expectation.fulfill()
-            }
+        XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
+        self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
+            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
+            expectation.fulfill()
         }
+
         self.waitForExpectationsWithTimeout(5, handler: nil)
     }
     
