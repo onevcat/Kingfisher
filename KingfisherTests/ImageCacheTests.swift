@@ -40,6 +40,7 @@ class ImageCacheTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         cache = ImageCache(name: "test")
+        clearCaches([cache])
     }
     
     override func tearDown() {

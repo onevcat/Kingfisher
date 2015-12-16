@@ -47,6 +47,7 @@ class UIButtonExtensionTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         button = UIButton()
         KingfisherManager.sharedManager.downloader = ImageDownloader(name: "testDownloader")
+        cleanDefaultCache()
     }
     
     override func tearDown() {
