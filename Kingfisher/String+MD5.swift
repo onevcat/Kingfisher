@@ -114,7 +114,7 @@ func rotateLeft(value: UInt32, bits: UInt32) -> UInt32 {
     return ((value << bits) & 0xFFFFFFFF) | (value >> (32 - bits))
 }
 
-class MD5 : HashBase {
+class MD5: HashBase {
     
     /** specifies the per-round shift amounts */
     private let shifts: [UInt32] = [7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
@@ -212,10 +212,10 @@ class MD5 : HashBase {
         
         let buf: NSMutableData = NSMutableData()
         hh.forEach({ (item) -> () in
-            var i:UInt32 = item.littleEndian
+            var i: UInt32 = item.littleEndian
             buf.appendBytes(&i, length: sizeofValue(i))
         })
         
-        return buf.copy() as! NSData
+        return NSData(data: buf)
     }
 }

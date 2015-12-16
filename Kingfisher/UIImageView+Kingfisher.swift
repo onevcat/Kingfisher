@@ -299,7 +299,7 @@ public extension UIImageView {
                         let indicatorStyle = UIActivityIndicatorViewStyle.Gray
                     #endif
                     let indicator = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
-                    indicator.center = CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))
+                    indicator.center = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
                     
                     indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
                     indicator.hidden = true
