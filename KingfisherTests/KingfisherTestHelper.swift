@@ -49,7 +49,7 @@ func cleanDefaultCache() {
 
 func clearCaches(caches: [ImageCache]) {
     for c in caches {
-        c.clearDiskCache()
         c.clearMemoryCache()
+        c.clearDiskCache(true)
     }
 }
