@@ -150,6 +150,8 @@ public extension ImageDownloader {
     - parameter URL:               Target URL.
     - parameter progressBlock:     Called when the download progress updated.
     - parameter completionHandler: Called when the download progress finishes.
+    
+    - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     public func downloadImageWithURL(URL: NSURL,
                            progressBlock: ImageDownloaderProgressBlock?,
@@ -165,6 +167,8 @@ public extension ImageDownloader {
     - parameter options:           The options could control download behavior. See `KingfisherManager.Options`
     - parameter progressBlock:     Called when the download progress updated.
     - parameter completionHandler: Called when the download progress finishes.
+
+    - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     public func downloadImageWithURL(URL: NSURL,
                                  options: KingfisherManager.Options,
