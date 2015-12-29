@@ -153,9 +153,9 @@ public extension ImageDownloader {
     */
     public func downloadImageWithURL(URL: NSURL,
                            progressBlock: ImageDownloaderProgressBlock?,
-                       completionHandler: ImageDownloaderCompletionHandler?)
+                       completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        downloadImageWithURL(URL, options: KingfisherManager.DefaultOptions, progressBlock: progressBlock, completionHandler: completionHandler)
+        return downloadImageWithURL(URL, options: KingfisherManager.DefaultOptions, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     /**
@@ -169,9 +169,9 @@ public extension ImageDownloader {
     public func downloadImageWithURL(URL: NSURL,
                                  options: KingfisherManager.Options,
                            progressBlock: ImageDownloaderProgressBlock?,
-                       completionHandler: ImageDownloaderCompletionHandler?)
+                       completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        downloadImageWithURL(URL,
+        return downloadImageWithURL(URL,
             retrieveImageTask: nil,
                       options: options,
                 progressBlock: progressBlock,
@@ -182,10 +182,10 @@ public extension ImageDownloader {
                        retrieveImageTask: RetrieveImageTask?,
                                  options: KingfisherManager.Options,
                            progressBlock: ImageDownloaderProgressBlock?,
-                       completionHandler: ImageDownloaderCompletionHandler?)
+                       completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
         if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelled {
-            return
+            return retrieveImageTask.downloadTask
         }
         
         let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
@@ -199,19 +199,21 @@ public extension ImageDownloader {
         // There is a possiblility that request modifier changed the url to `nil` or empty.
         if request.URL == nil || request.URL!.absoluteString.isEmpty {
             completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidURL.rawValue, userInfo: nil), imageURL: nil, originalData: nil)
-            return
+            return nil
         }
         
+        var task: RetrieveImageDownloadTask? = nil
         setupProgressBlock(progressBlock, completionHandler: completionHandler, forURL: request.URL!) {(session, fetchLoad) -> Void in
-            let task = session.dataTaskWithRequest(request)
-            task.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
-            task.resume()
+            task = session.dataTaskWithRequest(request)
+            task!.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
+            task!.resume()
             
             fetchLoad.shouldDecode = options.shouldDecode
             fetchLoad.scale = options.scale
             
             retrieveImageTask?.downloadTask = task
         }
+        return task
     }
     
     // A single key may have multiple callbacks. Only download once.

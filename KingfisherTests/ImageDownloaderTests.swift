@@ -219,4 +219,40 @@ class ImageDownloaderTests: XCTestCase {
         }
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testCancelDownloadTask() {
+        
+        let expectation = expectationWithDescription("wait for downloading")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let URL = NSURL(string: URLString)!
+        
+        var progressBlockIsCalled = false
+        var completionBlockIsCalled = false
+        
+        let downloadTask = downloader.downloadImageWithURL(URL, progressBlock: { (receivedSize, totalSize) -> () in
+                progressBlockIsCalled = true
+            }) { (image, error, imageURL, originalData) -> () in
+                XCTAssertNotNil(error)
+                XCTAssertEqual(error!.code, -999)
+                completionBlockIsCalled = true
+        }
+        
+        XCTAssertNotNil(downloadTask)
+        downloadTask!.cancel()
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
+            expectation.fulfill()
+            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testDownloadTaskNil() {
+        let downloadTask = downloader.downloadImageWithURL(NSURL(string: "")!, progressBlock: nil, completionHandler: nil)
+        XCTAssertNil(downloadTask)
+    }
 }
