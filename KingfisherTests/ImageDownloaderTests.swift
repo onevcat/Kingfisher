@@ -235,7 +235,7 @@ class ImageDownloaderTests: XCTestCase {
                 progressBlockIsCalled = true
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error)
-                XCTAssertEqual(error!.code, -999)
+                XCTAssertEqual(error!.code, NSURLErrorCancelled)
                 completionBlockIsCalled = true
         }
         
