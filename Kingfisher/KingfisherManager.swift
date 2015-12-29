@@ -35,7 +35,7 @@ public class RetrieveImageTask {
     
     // If task is canceled before the download task started (which means the `downloadTask` is nil),
     // the download task should not begin.
-    var cancelled: Bool = false
+    var cancelledBeforeDownlodStarting: Bool = false
     
     var diskRetrieveTask: RetrieveImageDiskTask?
     var downloadTask: RetrieveImageDownloadTask?
@@ -45,7 +45,7 @@ public class RetrieveImageTask {
     */
     public func cancel() {
         // From Xcode 7 beta 6, the `dispatch_block_cancel` will crash at runtime.
-        // It is fixed in Xcode 7.1.
+        // It fixed in Xcode 7.1.
         // See https://github.com/onevcat/Kingfisher/issues/99 for more.
         if let diskRetrieveTask = diskRetrieveTask {
             dispatch_block_cancel(diskRetrieveTask)
@@ -53,9 +53,9 @@ public class RetrieveImageTask {
         
         if let downloadTask = downloadTask {
             downloadTask.cancel()
+        } else {
+            cancelledBeforeDownlodStarting = true
         }
-        
-        cancelled = true
     }
 }
 

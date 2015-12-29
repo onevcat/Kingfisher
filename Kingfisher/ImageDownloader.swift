@@ -33,7 +33,14 @@ public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 public typealias ImageDownloaderCompletionHandler = ((image: UIImage?, error: NSError?, imageURL: NSURL?, originalData: NSData?) -> ())
 
 /// Download task.
-public typealias RetrieveImageDownloadTask = NSURLSessionDataTask
+public struct RetrieveImageDownloadTask {
+    let internalTask: NSURLSessionDataTask
+    weak var ownerDownloader: ImageDownloader?
+
+    public func cancel() {
+        ownerDownloader?.cancelDownloadingTask(self)
+    }
+}
 
 private let defaultDownloaderName = "default"
 private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barrier."
@@ -75,6 +82,8 @@ public class ImageDownloader: NSObject {
         var responseData = NSMutableData()
         var shouldDecode = false
         var scale = KingfisherManager.DefaultOptions.scale
+        var downloadTaskCount = 0
+        var downloadTask: RetrieveImageDownloadTask?
     }
     
     // MARK: - Public property
@@ -188,8 +197,8 @@ public extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelled {
-            return retrieveImageTask.downloadTask
+        if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelledBeforeDownlodStarting {
+            return nil
         }
         
         let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
@@ -206,40 +215,53 @@ public extension ImageDownloader {
             return nil
         }
         
-        var task: RetrieveImageDownloadTask? = nil
+        var downloadTask: RetrieveImageDownloadTask?
         setupProgressBlock(progressBlock, completionHandler: completionHandler, forURL: request.URL!) {(session, fetchLoad) -> Void in
-            task = session.dataTaskWithRequest(request)
-            task!.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
-            task!.resume()
+            if fetchLoad.downloadTask == nil {
+                let dataTask = session.dataTaskWithRequest(request)
+                
+                fetchLoad.downloadTask = RetrieveImageDownloadTask(internalTask: dataTask, ownerDownloader: self)
+                fetchLoad.shouldDecode = options.shouldDecode
+                fetchLoad.scale = options.scale
+                
+                dataTask.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
+                dataTask.resume()
+            }
             
-            fetchLoad.shouldDecode = options.shouldDecode
-            fetchLoad.scale = options.scale
+            fetchLoad.downloadTaskCount += 1
+            downloadTask = fetchLoad.downloadTask
             
-            retrieveImageTask?.downloadTask = task
+            retrieveImageTask?.downloadTask = downloadTask
         }
-        return task
+        return downloadTask
     }
     
     // A single key may have multiple callbacks. Only download once.
     internal func setupProgressBlock(progressBlock: ImageDownloaderProgressBlock?, completionHandler: ImageDownloaderCompletionHandler?, forURL URL: NSURL, started: ((NSURLSession, ImageFetchLoad) -> Void)) {
 
         dispatch_barrier_sync(barrierQueue, { () -> Void in
-
-            var create = false
-            var loadObjectForURL = self.fetchLoads[URL]
-            if  loadObjectForURL == nil {
-                create = true
-                loadObjectForURL = ImageFetchLoad()
-            }
             
+            let loadObjectForURL = self.fetchLoads[URL] ?? ImageFetchLoad()
             let callbackPair = (progressBlock: progressBlock, completionHander: completionHandler)
-            loadObjectForURL!.callbacks.append(callbackPair)
-            self.fetchLoads[URL] = loadObjectForURL!
             
-            if let session = self.session where create {
-                started(session, loadObjectForURL!)
+            loadObjectForURL.callbacks.append(callbackPair)
+            self.fetchLoads[URL] = loadObjectForURL
+            
+            if let session = self.session {
+                started(session, loadObjectForURL)
             }
         })
+    }
+    
+    func cancelDownloadingTask(task: RetrieveImageDownloadTask) {
+        dispatch_barrier_sync(barrierQueue) { () -> Void in
+            if let URL = task.internalTask.originalRequest?.URL, imageFetchLoad = self.fetchLoads[URL] {
+                imageFetchLoad.downloadTaskCount -= 1
+                if imageFetchLoad.downloadTaskCount == 0 {
+                    task.internalTask.cancel()
+                }
+            }
+        }
     }
     
     func cleanForURL(URL: NSURL) {
