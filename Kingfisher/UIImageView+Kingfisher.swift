@@ -274,6 +274,10 @@ public extension UIImageView {
 }
 
 extension UIImageView {
+    /**
+     Cancel the image download task bounded to the image view if it is running.
+     Nothing will happen if the downloading has already finished.
+     */
     public func kf_cancelDownloadTask() {
         kf_imageTask?.downloadTask?.cancel()
     }
