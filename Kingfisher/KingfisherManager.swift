@@ -37,8 +37,8 @@ public class RetrieveImageTask {
     // the download task should not begin.
     var cancelledBeforeDownlodStarting: Bool = false
     
-    var diskRetrieveTask: RetrieveImageDiskTask?
-    var downloadTask: RetrieveImageDownloadTask?
+    public var diskRetrieveTask: RetrieveImageDiskTask?
+    public var downloadTask: RetrieveImageDownloadTask?
     
     /**
     Cancel current task. If this task does not begin or already done, do nothing.
