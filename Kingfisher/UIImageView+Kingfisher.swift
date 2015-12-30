@@ -187,6 +187,7 @@ public extension UIImageView {
         image = placeholderImage
         
         kf_setWebURL(resource.downloadURL)
+        
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
@@ -199,10 +200,21 @@ public extension UIImageView {
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
                 dispatch_async_safely_main_queue {
-                    if let sSelf = self where imageURL == sSelf.kf_webURL && image != nil {
-                        
-                        if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
-                            case .Transition(let transition) = transitionItem where cacheType == .None {
+                    
+                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                        return
+                    }
+                    
+                    sSelf.kf_setImageTask(nil)
+                    
+                    guard let image = image else {
+                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                        return
+                    }
+                    
+                    if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
+                        case .Transition(let transition) = transitionItem where cacheType == .None {
                             
                             UIView.transitionWithView(sSelf, duration: 0.0, options: [],
                                 animations: {
@@ -212,7 +224,7 @@ public extension UIImageView {
                                     UIView.transitionWithView(sSelf, duration: transition.duration,
                                         options: transition.animationOptions,
                                         animations: {
-                                            transition.animations?(sSelf, image!)
+                                            transition.animations?(sSelf, image)
                                         },
                                         completion: { finished in
                                             transition.completion?(finished)
@@ -221,17 +233,16 @@ public extension UIImageView {
                                     )
                                 }
                             )
-                        } else {
-                            indicator?.stopAnimating()
-                            sSelf.image = image
-                            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                        }
                     } else {
+                        indicator?.stopAnimating()
+                        sSelf.image = image
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
                 }
             }
         )
+        
+        kf_setImageTask(task)
         
         return task
     }
@@ -262,10 +273,21 @@ public extension UIImageView {
     }
 }
 
+extension UIImageView {
+    /**
+     Cancel the image download task bounded to the image view if it is running.
+     Nothing will happen if the downloading has already finished.
+     */
+    public func kf_cancelDownloadTask() {
+        kf_imageTask?.downloadTask?.cancel()
+    }
+}
+
 // MARK: - Associated Object
 private var lastURLKey: Void?
 private var indicatorKey: Void?
 private var showIndicatorWhenLoadingKey: Void?
+private var imageTaskKey: Void?
 
 public extension UIImageView {
     /// Get the image URL binded to this image view.
@@ -326,6 +348,14 @@ public extension UIImageView {
     
     private func kf_setIndicator(indicator: UIActivityIndicatorView?) {
         objc_setAssociatedObject(self, &indicatorKey, indicator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    private var kf_imageTask: RetrieveImageTask? {
+        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+    }
+    
+    private func kf_setImageTask(task: RetrieveImageTask?) {
+        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 

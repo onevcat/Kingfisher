@@ -96,6 +96,8 @@ class UIImageViewExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
         
+        cleanDefaultCache()
+        
         imageView.kf_setImageWithResource(resource, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             }) { (image, error, cacheType, imageURL) -> () in
@@ -107,7 +109,7 @@ class UIImageViewExtensionTests: XCTestCase {
                 XCTAssert(self.imageView.image! == testImage, "Downloaded image should be already set to the image property.")
                 XCTAssert(self.imageView.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
                 
-                XCTAssert(cacheType == .None, "The cache type should be none here. This image was just downloaded.")
+                XCTAssert(cacheType == .None, "The cache type should be none here. This image was just downloaded. But now is: \(cacheType)")
         }
         
         waitForExpectationsWithTimeout(5, handler: nil)
@@ -382,6 +384,69 @@ class UIImageViewExtensionTests: XCTestCase {
         }) { (image, error, cacheType, imageURL) -> () in
             let indicator = self.imageView.kf_indicator
             XCTAssertFalse(indicator!.isAnimating(), "The indicator should stop after loading")
+            expectation.fulfill()
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testCacnelImageTask() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let URL = NSURL(string: URLString)!
+        
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+                XCTFail("Progress block should not be called.")
+            }) { (image, error, cacheType, imageURL) -> () in
+                XCTAssertNotNil(error)
+                XCTAssertEqual(error?.code, NSURLErrorCancelled)
+                
+                expectation.fulfill()
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.1)), dispatch_get_main_queue()) { () -> Void in
+            self.imageView.kf_cancelDownloadTask()
+            stub.go()
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testDownloadForMutipleURLs() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLStrings = [testKeys[0], testKeys[1]]
+        stubRequest("GET", URLStrings[0]).andReturn(200).withBody(testImageData)
+        stubRequest("GET", URLStrings[1]).andReturn(200).withBody(testImageData)
+        let URLs = URLStrings.map{NSURL(string: $0)!}
+        
+        var task1Complete = false
+        var task2Complete = false
+        
+        imageView.kf_setImageWithURL(URLs[0], placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            }) { (image, error, cacheType, imageURL) -> () in
+                task1Complete = true
+                XCTAssertNotNil(image)
+                XCTAssertEqual(imageURL, URLs[0])
+                XCTAssertNotEqual(self.imageView.image, image)
+        }
+        
+        self.imageView.kf_setImageWithURL(URLs[1], placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            }) { (image, error, cacheType, imageURL) -> () in
+                task2Complete = true
+                XCTAssertNotNil(image)
+                XCTAssertEqual(imageURL, URLs[1])
+                XCTAssertEqual(self.imageView.image, image)
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.1)), dispatch_get_main_queue()) { () -> Void in
+            XCTAssertTrue(task1Complete, "Task 1 should be completed.")
+            XCTAssertTrue(task2Complete, "Task 2 should be completed.")
+
             expectation.fulfill()
         }
         
