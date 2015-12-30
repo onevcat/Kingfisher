@@ -37,7 +37,10 @@ public class RetrieveImageTask {
     // the download task should not begin.
     var cancelledBeforeDownlodStarting: Bool = false
     
+    /// The disk retrieve task in this image task. Kingfisher will try to look up in cache first. This task represent the cache search task.
     public var diskRetrieveTask: RetrieveImageDiskTask?
+    
+    /// The network retrieve task in this image task.
     public var downloadTask: RetrieveImageDownloadTask?
     
     /**
