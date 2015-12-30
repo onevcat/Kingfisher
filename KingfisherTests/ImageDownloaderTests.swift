@@ -220,6 +220,17 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
     
+    func testDownloadTaskProperty() {
+        let task = downloader.downloadImageWithURL(NSURL(string: "1234")!, progressBlock: { (receivedSize, totalSize) -> () in
+
+            }) { (image, error, imageURL, originalData) -> () in
+        }
+        
+        XCTAssertNotNil(task, "The task should exist.")
+        XCTAssertEqual(task!.ownerDownloader, downloader, "The owner downloader should be correct")
+        XCTAssertEqual(task!.URL, NSURL(string: "1234"), "The request URL should equal.")
+    }
+    
     func testCancelDownloadTask() {
         
         let expectation = expectationWithDescription("wait for downloading")

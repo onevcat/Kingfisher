@@ -58,7 +58,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.8'
+pod 'Kingfisher', '~> 1.9'
 ```
 
 Then, run the following command:
@@ -83,7 +83,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ``` ogdl
-github "onevcat/Kingfisher" ~> 1.8
+github "onevcat/Kingfisher" ~> 1.9
 ```
 
 Then, run the following command to build the Kingfisher framework:
@@ -215,16 +215,28 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
 
 #### Cancel Task
 
-All `kf_setImageWithURL` methods return a `RetrieveImageTask` object. You can `cancel` the task if the images are not needed.
+You can `cancel` the task if the images are not needed anymore. 
+It could be useful when you use Kingfisher to set an image in a cell of table view or collection view, 
+but users scroll the view and the cells disappeared before downloading finishing.
+
+``` swift
+imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
+
+// The image retrieving will stop.
+imageView.kf_cancelDownloadTask()
+```
+
+All `kf_setImageWithURL` methods return a `RetrieveImageTask` object as well. You can also hold and manage it if you need to apply some check:
 
 ``` swift
 let task = imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
-task.cancel()
 
-// The image retrieving will stop.
+let urlShouldNotBeCancelled: URL = ...
+
+if task.downloadTask?.URL != urlShouldNotBeCancelled {
+    task.cancel()
+}
 ```
-
-There is a category for `UIButton` as well.
 
 ### Downloader & Cache system
 

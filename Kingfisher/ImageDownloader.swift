@@ -35,10 +35,20 @@ public typealias ImageDownloaderCompletionHandler = ((image: UIImage?, error: NS
 /// Download task.
 public struct RetrieveImageDownloadTask {
     let internalTask: NSURLSessionDataTask
-    weak var ownerDownloader: ImageDownloader?
+    
+    /// Downloader by which this task is intialized.
+    public private(set) weak var ownerDownloader: ImageDownloader?
 
+    /**
+     Cancel this download task. It will trigger the completion handler with an NSURLErrorCancelled error.
+     */
     public func cancel() {
         ownerDownloader?.cancelDownloadingTask(self)
+    }
+    
+    /// The original request URL of this download task.
+    public var URL: NSURL? {
+        return internalTask.originalRequest?.URL
     }
 }
 
