@@ -387,4 +387,28 @@ class UIImageViewExtensionTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testCacnelImageTask() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let URL = NSURL(string: URLString)!
+        
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+                XCTFail("Progress block should not be called.")
+            }) { (image, error, cacheType, imageURL) -> () in
+                XCTAssertNotNil(error)
+                XCTAssertEqual(error?.code, NSURLErrorCancelled)
+                
+                expectation.fulfill()
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.1)), dispatch_get_main_queue()) { () -> Void in
+            self.imageView.kf_cancelDownloadTask()
+            stub.go()
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 }
