@@ -50,6 +50,19 @@ public struct RetrieveImageDownloadTask {
     public var URL: NSURL? {
         return internalTask.originalRequest?.URL
     }
+    
+    /// The relative priority of this download task. 
+    /// It represents the `priority` property of the internal `NSURLSessionTask` of this download task.
+    /// The value for it is between 0.0~1.0. Default priority is value of 0.5.
+    /// See documentation on `priority` of `NSURLSessionTask` for more about it.
+    public var priority: Float {
+        get {
+            return internalTask.priority
+        }
+        set {
+            internalTask.priority = newValue
+        }
+    }
 }
 
 private let defaultDownloaderName = "default"
