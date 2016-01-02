@@ -264,11 +264,11 @@ public class KingfisherManager {
         }
         
         if let optionsItem = optionsInfo.kf_firstMatchIgnoringAssociatedValue(.TargetCache(self.cache)), case .TargetCache(let cache) = optionsItem {
-            targetCache = cache
+            targetCache = cache!
         }
         
         if let optionsItem = optionsInfo.kf_firstMatchIgnoringAssociatedValue(.Downloader(self.downloader)), case .Downloader(let downloader) = optionsItem {
-            targetDownloader = downloader
+            targetDownloader = downloader!
         }
         
         return (options, targetCache, targetDownloader)

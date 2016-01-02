@@ -38,12 +38,19 @@ Item could be added into KingfisherOptionsInfo
 - TargetCache: Item for target cache. The value of this item should be an ImageCache object. Kingfisher will use this cache when handling the related operation, including trying to retrieve the cached images and store the downloaded image to it.
 - Downloader:  Item for downloader to use. The value of this item should be an ImageDownloader object. Kingfisher will use this downloader to download the images.
 - Transition:  Item for animation transition when using UIImageView. Kingfisher will use the `ImageTransition` of this enum to animate the image in if it is downloaded from web. The transition will not happen when the image is retrieved from either memory or disk cache.
+- DownloadPriority: Item for image download priority. The `Float` value will be set as the priority of image download task. The value for it should be between 0.0~1.0. If this option not set, the default value (`NSURLSessionTaskPriorityDefault`) will be used.
 */
 public enum KingfisherOptionsInfoItem {
     case Options(KingfisherOptions)
-    case TargetCache(ImageCache)
-    case Downloader(ImageDownloader)
+    case TargetCache(ImageCache?)
+    case Downloader(ImageDownloader?)
     case Transition(ImageTransition)
+    case DownloadPriority(Float)
+    case ForceRefresh
+    case CacheMemoryOnly
+    case BackgroundDecode
+    case CallbackDispatchQueue(dispatch_queue_t)
+    case ScaleFactor(CGFloat)
 }
 
 infix operator <== {
@@ -58,12 +65,17 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.TargetCache(_), .TargetCache(_)): return true
     case (.Downloader(_), .Downloader(_)): return true
     case (.Transition(_), .Transition(_)): return true
+    case (.DownloadPriority(_), .DownloadPriority(_)): return true
+    case (.ForceRefresh, .ForceRefresh): return true
+    case (.CacheMemoryOnly, .CacheMemoryOnly): return true
+    case (.BackgroundDecode, .BackgroundDecode): return true
+    case (.CallbackDispatchQueue(_), .CallbackDispatchQueue(_)): return true
+    case (.ScaleFactor(_), .ScaleFactor(_)): return true
     default: return false
     }
 }
 
 extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
-    
     func kf_firstMatchIgnoringAssociatedValue(target: Generator.Element) -> Generator.Element? {
         
         let index = indexOf {
@@ -72,5 +84,25 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
         }
         
         return (index != nil) ? self[index!] : nil
+    }
+}
+
+extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
+    var targetCache: ImageCache {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.TargetCache(nil)),
+            case .TargetCache(let cache) = item
+        {
+            return cache ?? ImageCache.defaultCache
+        }
+        return ImageCache.defaultCache
+    }
+    
+    var downloader: ImageDownloader {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.Downloader(nil)),
+            case .Downloader(let downloader) = item
+        {
+            return downloader ?? ImageDownloader.defaultDownloader
+        }
+        return ImageDownloader.defaultDownloader
     }
 }

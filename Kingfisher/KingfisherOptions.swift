@@ -40,9 +40,6 @@ public struct KingfisherOptions: OptionSetType {
     /// None options. Kingfisher will keep its default behavior.
     public static let None = KingfisherOptions(rawValue: 0)
     
-    /// Download in a low priority.
-    public static let LowPriority = KingfisherOptions(rawValue: 1 << 0)
-    
     /// Try to send request to server first. If response code is 304 (Not Modified), use the cached image. Otherwise, download the image and cache it again.
     public static var ForceRefresh = KingfisherOptions(rawValue: 1 << 1)
     
@@ -57,4 +54,9 @@ public struct KingfisherOptions: OptionSetType {
     
     /// Decode the image using the same scale as the main screen. Otherwise it will use the same scale as defined on the KingfisherManager.DefaultOptions.scale.
     public static var ScreenScale = KingfisherOptions(rawValue: 1 << 5)
+    
+    // MARK: - Deprecated
+    /// Download in a low priority.
+    @available(*, deprecated=1.10, message="This will be ignored from 1.10. Use `KingfisherOptionsInfoItem.DownloadPriority` and pass it as `KingfisherOptionsInfo` instead.")
+    public static let LowPriority = KingfisherOptions(rawValue: 1 << 0)
 }
