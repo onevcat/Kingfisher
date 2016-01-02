@@ -49,7 +49,7 @@ public enum KingfisherOptionsInfoItem {
     case ForceRefresh
     case CacheMemoryOnly
     case BackgroundDecode
-    case CallbackDispatchQueue(dispatch_queue_t)
+    case CallbackDispatchQueue(dispatch_queue_t?)
     case ScaleFactor(CGFloat)
 }
 
@@ -57,6 +57,8 @@ infix operator <== {
     associativity none
     precedence 160
 }
+
+
 
 // This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
 func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
@@ -104,5 +106,53 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
             return downloader ?? ImageDownloader.defaultDownloader
         }
         return ImageDownloader.defaultDownloader
+    }
+    
+    var transition: ImageTransition {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
+            case .Transition(let transition) = item
+        {
+            return transition
+        }
+        return ImageTransition.None
+    }
+    
+    var downloadPriority: Float {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.DownloadPriority(0)),
+            case .DownloadPriority(let priority) = item
+        {
+            return priority
+        }
+        return NSURLSessionTaskPriorityDefault
+    }
+    
+    var forceRefresh: Bool {
+        return contains{ $0 <== .ForceRefresh }
+    }
+    
+    var cacheMemoryOnly: Bool {
+        return contains{ $0 <== .CacheMemoryOnly }
+    }
+    
+    var backgroundDecode: Bool {
+        return contains{ $0 <== .BackgroundDecode }
+    }
+    
+    var callbackDispatchQueue: dispatch_queue_t {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.CallbackDispatchQueue(nil)),
+            case .CallbackDispatchQueue(let queue) = item
+        {
+            return queue ?? dispatch_get_main_queue()
+        }
+        return dispatch_get_main_queue()
+    }
+    
+    var scaleFactor: CGFloat {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.ScaleFactor(0)),
+            case .ScaleFactor(let scale) = item
+        {
+            return scale
+        }
+        return UIScreen.mainScreen().scale
     }
 }
