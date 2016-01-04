@@ -58,6 +58,7 @@ extension ViewController {
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         
         // This will cancel all unfinished downloading task when the cell disappearing.
+        // swiftlint:disable force_cast
         (cell as! CollectionViewCell).cellImageView.kf_cancelDownloadTask()
     }
     
