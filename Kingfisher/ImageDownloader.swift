@@ -103,8 +103,9 @@ public class ImageDownloader: NSObject {
     class ImageFetchLoad {
         var callbacks = [CallbackPair]()
         var responseData = NSMutableData()
-        var shouldDecode = false
-        var scale = KingfisherManager.DefaultOptions.scale
+
+        var options: KingfisherOptionsInfo?
+        
         var downloadTaskCount = 0
         var downloadTask: RetrieveImageDownloadTask?
     }
@@ -189,7 +190,7 @@ public extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        return downloadImageWithURL(URL, options: KingfisherManager.DefaultOptions, progressBlock: progressBlock, completionHandler: completionHandler)
+        return downloadImageWithURL(URL, options: nil, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     /**
@@ -203,7 +204,7 @@ public extension ImageDownloader {
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     public func downloadImageWithURL(URL: NSURL,
-                                 options: KingfisherManager.Options,
+                                 options: KingfisherOptionsInfo?,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
@@ -216,7 +217,7 @@ public extension ImageDownloader {
     
     internal func downloadImageWithURL(URL: NSURL,
                        retrieveImageTask: RetrieveImageTask?,
-                                 options: KingfisherManager.Options,
+                                 options: KingfisherOptionsInfo?,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
@@ -244,10 +245,9 @@ public extension ImageDownloader {
                 let dataTask = session.dataTaskWithRequest(request)
                 
                 fetchLoad.downloadTask = RetrieveImageDownloadTask(internalTask: dataTask, ownerDownloader: self)
-                fetchLoad.shouldDecode = options.shouldDecode
-                fetchLoad.scale = options.scale
+                fetchLoad.options = options
                 
-                dataTask.priority = options.lowPriority ? NSURLSessionTaskPriorityLow : NSURLSessionTaskPriorityDefault
+                dataTask.priority = options?.downloadPriority ?? NSURLSessionTaskPriorityDefault
                 dataTask.resume()
             }
             
@@ -366,12 +366,13 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             
             if let fetchLoad = self.fetchLoadForKey(URL) {
                 
-                if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: fetchLoad.scale) {
+                let options = fetchLoad.options ?? KingfisherEmptyOptionsInfo
+                if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: options.scaleFactor) {
                     
                     self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                     
-                    if fetchLoad.shouldDecode {
-                        self.callbackWithImage(image.kf_decodedImage(scale: fetchLoad.scale), error: nil, imageURL: URL, originalData: fetchLoad.responseData)
+                    if options.backgroundDecode {
+                        self.callbackWithImage(image.kf_decodedImage(scale: options.scaleFactor), error: nil, imageURL: URL, originalData: fetchLoad.responseData)
                     } else {
                         self.callbackWithImage(image, error: nil, imageURL: URL, originalData: fetchLoad.responseData)
                     }

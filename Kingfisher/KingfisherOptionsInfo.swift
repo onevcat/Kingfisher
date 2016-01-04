@@ -30,6 +30,7 @@ import Foundation
 *	KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoItem]. You can use the enum of option item with value to control some behaviors of Kingfisher.
 */
 public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
+let KingfisherEmptyOptionsInfo = [KingfisherOptionsInfoItem]()
 
 /**
 Item could be added into KingfisherOptionsInfo
@@ -90,22 +91,22 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
 }
 
 extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
-    var targetCache: ImageCache {
+    var targetCache: ImageCache? {
         if let item = kf_firstMatchIgnoringAssociatedValue(.TargetCache(nil)),
             case .TargetCache(let cache) = item
         {
-            return cache ?? ImageCache.defaultCache
+            return cache
         }
-        return ImageCache.defaultCache
+        return nil
     }
     
-    var downloader: ImageDownloader {
+    var downloader: ImageDownloader? {
         if let item = kf_firstMatchIgnoringAssociatedValue(.Downloader(nil)),
             case .Downloader(let downloader) = item
         {
-            return downloader ?? ImageDownloader.defaultDownloader
+            return downloader
         }
-        return ImageDownloader.defaultDownloader
+        return nil
     }
     
     var transition: ImageTransition {
@@ -153,6 +154,6 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
         {
             return scale
         }
-        return UIScreen.mainScreen().scale
+        return 1.0
     }
 }

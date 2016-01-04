@@ -155,7 +155,7 @@ func UIImageGIFRepresentation(image: UIImage, duration: NSTimeInterval, repeatCo
 
 extension UIImage {
     static func kf_animatedImageWithGIFData(gifData data: NSData) -> UIImage? {
-        return kf_animatedImageWithGIFData(gifData: data, scale: UIScreen.mainScreen().scale, duration: 0.0)
+        return kf_animatedImageWithGIFData(gifData: data, scale: 1.0, duration: 0.0)
     }
     
     static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval) -> UIImage? {

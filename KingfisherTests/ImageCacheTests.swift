@@ -98,7 +98,7 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
-            self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .Disk, "Should be cached in disk.")
                 expectation.fulfill()
             })
@@ -111,7 +111,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for retrieving image")
         
         cache.clearDiskCacheWithCompletionHandler { () -> () in
-            self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image == nil, "Should not be cached in memory yet")
                 expectation.fulfill()
             })
@@ -125,7 +125,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for retrieving image")
         
         cache.storeImage(testImage, forKey: testKeys[0], toDisk: false) { () -> () in
-            self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .Memory, "Should be cached in memory.")
                 expectation.fulfill()
             })
