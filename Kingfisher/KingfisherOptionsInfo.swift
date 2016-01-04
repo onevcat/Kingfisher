@@ -42,7 +42,6 @@ Item could be added into KingfisherOptionsInfo
 - DownloadPriority: Item for image download priority. The `Float` value will be set as the priority of image download task. The value for it should be between 0.0~1.0. If this option not set, the default value (`NSURLSessionTaskPriorityDefault`) will be used.
 */
 public enum KingfisherOptionsInfoItem {
-    case Options(KingfisherOptions)
     case TargetCache(ImageCache?)
     case Downloader(ImageDownloader?)
     case Transition(ImageTransition)
@@ -64,7 +63,6 @@ infix operator <== {
 // This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
 func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
     switch (lhs, rhs) {
-    case (.Options(_), .Options(_)): return true
     case (.TargetCache(_), .TargetCache(_)): return true
     case (.Downloader(_), .Downloader(_)): return true
     case (.Transition(_), .Transition(_)): return true

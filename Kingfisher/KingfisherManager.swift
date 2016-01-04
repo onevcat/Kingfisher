@@ -220,15 +220,3 @@ public class KingfisherManager {
         retrieveImageTask.diskRetrieveTask = diskTask
     }
 }
-
-// MARK: - Deprecated
-public extension KingfisherManager {
-    @available(*, deprecated=1.2, message="Use -retrieveImageWithURL:optionsInfo:progressBlock:completionHandler: instead.")
-    public func retrieveImageWithURL(URL: NSURL,
-                                 options: KingfisherOptions,
-                           progressBlock: DownloadProgressBlock?,
-                       completionHandler: CompletionHandler?) -> RetrieveImageTask
-    {
-        return retrieveImageWithURL(URL, optionsInfo: [.Options(options)], progressBlock: progressBlock, completionHandler: completionHandler)
-    }
-}

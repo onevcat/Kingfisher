@@ -358,34 +358,3 @@ public extension UIImageView {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
-
-// MARK: - Deprecated
-public extension UIImageView {
-    @available(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo: instead.")
-    public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
-                               options: KingfisherOptions) -> RetrieveImageTask
-    {
-        return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: [.Options(options)], progressBlock: nil, completionHandler: nil)
-    }
-    
-    @available(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo:completionHandler: instead.")
-    public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
-                               options: KingfisherOptions,
-                     completionHandler: CompletionHandler?) -> RetrieveImageTask
-    {
-        return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: [.Options(options)], progressBlock: nil, completionHandler: completionHandler)
-    }
-    
-    @available(*, deprecated=1.2, message="Use -kf_setImageWithURL:placeholderImage:optionsInfo:progressBlock:completionHandler: instead.")
-    public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
-                               options: KingfisherOptions,
-                         progressBlock: DownloadProgressBlock?,
-                     completionHandler: CompletionHandler?) -> RetrieveImageTask
-    {
-        return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: [.Options(options)], progressBlock: progressBlock, completionHandler: completionHandler)
-    }
-    
-}
