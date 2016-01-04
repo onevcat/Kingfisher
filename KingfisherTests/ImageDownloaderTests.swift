@@ -236,7 +236,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = expectationWithDescription("wait for downloading")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
         let URL = NSURL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -251,7 +251,9 @@ class ImageDownloaderTests: XCTestCase {
         }
         
         XCTAssertNotNil(downloadTask)
+
         downloadTask!.cancel()
+        stub.go()
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.09)), dispatch_get_main_queue()) { () -> Void in
             expectation.fulfill()
