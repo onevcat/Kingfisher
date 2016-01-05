@@ -201,10 +201,8 @@ public extension ImageCache {
                     }
                     
                     self.fileManager.createFileAtPath(self.cachePathForKey(key), contents: data, attributes: nil)
-                    callHandlerInMainQueue()
-                } else {
-                    callHandlerInMainQueue()
                 }
+                callHandlerInMainQueue()
             })
         } else {
             callHandlerInMainQueue()
@@ -493,9 +491,7 @@ extension ImageCache {
                     NSNotificationCenter.defaultCenter().postNotificationName(KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                 }
                 
-                if let completionHandler = completionHandler {
-                    completionHandler()
-                }
+                completionHandler?()
             })
         })
     }
@@ -608,11 +604,11 @@ public extension ImageCache {
                     }
             }
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                if let completionHandler = completionHandler {
+            if let completionHandler = completionHandler {
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     completionHandler(size: diskCacheSize)
-                }
-            })
+                })
+            }
         })
     }
 }
