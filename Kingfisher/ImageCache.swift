@@ -551,7 +551,12 @@ public extension ImageCache {
         
         let filePath = cachePathForKey(key)
         
-        if fileManager.fileExistsAtPath(filePath) {
+        var diskCached = false
+        dispatch_sync(ioQueue) { () -> Void in
+            diskCached = self.fileManager.fileExistsAtPath(filePath)
+        }
+
+        if diskCached {
             return CacheCheckResult(cached: true, cacheType: .Disk)
         }
         
