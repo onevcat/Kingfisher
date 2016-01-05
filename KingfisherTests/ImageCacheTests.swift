@@ -99,7 +99,7 @@ class ImageCacheTests: XCTestCase {
         cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
             self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
-                XCTAssert(image != nil && type == .Disk, "Should be cached in disk.")
+                XCTAssert(image != nil && type == .Disk, "Should be cached in disk. But \(type)")
                 expectation.fulfill()
             })
         }
