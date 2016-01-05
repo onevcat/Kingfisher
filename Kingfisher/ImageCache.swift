@@ -452,16 +452,16 @@ extension ImageCache {
                 let targetSize = self.maxDiskCacheSize / 2
                     
                 // Sort files by last modify date. We want to clean from the oldest files.
-                let sortedFiles = cachedFiles.keysSortedByValue({ (resourceValue1, resourceValue2) -> Bool in
+                let sortedFiles = cachedFiles.keysSortedByValue {
+                    resourceValue1, resourceValue2 -> Bool in
                     
-                    if let date1 = resourceValue1[NSURLContentModificationDateKey] as? NSDate {
-                        if let date2 = resourceValue2[NSURLContentModificationDateKey] as? NSDate {
-                            return date1.compare(date2) == .OrderedAscending
-                        }
+                    if let date1 = resourceValue1[NSURLContentModificationDateKey] as? NSDate,
+                           date2 = resourceValue2[NSURLContentModificationDateKey] as? NSDate {
+                        return date1.compare(date2) == .OrderedAscending
                     }
                     // Not valid date information. This should not happen. Just in case.
                     return true
-                })
+                }
                 
                 for fileURL in sortedFiles {
                     
