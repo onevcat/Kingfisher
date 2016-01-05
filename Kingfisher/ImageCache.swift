@@ -657,15 +657,6 @@ extension UIImage {
 
 extension Dictionary {
     func keysSortedByValue(isOrderedBefore: (Value, Value) -> Bool) -> [Key] {
-        var array = Array(self)
-        array.sortInPlace {
-            let (_, lv) = $0
-            let (_, rv) = $1
-            return isOrderedBefore(lv, rv)
-        }
-        return array.map {
-            let (k, _) = $0
-            return k
-        }
+        return Array(self).sort{ isOrderedBefore($0.1, $1.1) }.map{ $0.0 }
     }
 }
