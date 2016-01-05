@@ -28,19 +28,18 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
-private let cacheName = "com.onevcat.Kingfisher.ImageCache.test"
-
-
 class ImageCacheTests: XCTestCase {
 
     var cache: ImageCache!
     var observer: NSObjectProtocol!
+    private var cacheName = "com.onevcat.Kingfisher.ImageCache.test"
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        cache = ImageCache(name: "test")
-        clearCaches([cache])
+        let uuid = NSUUID().UUIDString
+        cacheName = "test-\(uuid)"
+        cache = ImageCache(name: cacheName)
     }
     
     override func tearDown() {
@@ -140,9 +139,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for writing image")
         
         storeMultipleImages { () -> () in
-            let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-            let diskCachePath = (paths.first! as NSString).stringByAppendingPathComponent(cacheName)
-            
+            let diskCachePath = self.cache.diskCachePath
             let files: [AnyObject]?
             do {
                 files = try NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath)
