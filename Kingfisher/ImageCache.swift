@@ -361,15 +361,9 @@ extension ImageCache {
     /**
     Clear disk cache. This is could be an async or sync operation.
     Specify the way you want it by passing the `sync` parameter.
-     
-    - parameter sync: If `true`, the clear process will be performed in a sync way. Otherwise, async. Default is `false`.
     */
-    public func clearDiskCache(sync: Bool = false) {
-        if sync {
-            clearDiskCacheSync()
-        } else {
-            clearDiskCacheWithCompletionHandler(nil)
-        }
+    public func clearDiskCache() {
+        clearDiskCacheWithCompletionHandler(nil)
     }
     
     /**
@@ -379,21 +373,18 @@ extension ImageCache {
     */
     public func clearDiskCacheWithCompletionHandler(completionHander: (()->())?) {
         dispatch_async(ioQueue, { () -> Void in
-            self.clearDiskCacheSync()
+            do {
+                try self.fileManager.removeItemAtPath(self.diskCachePath)
+                try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+            } catch _ {
+            }
+            
             if let completionHander = completionHander {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     completionHander()
                 })
             }
         })
-    }
-    
-    func clearDiskCacheSync() {
-        do {
-            try self.fileManager.removeItemAtPath(self.diskCachePath)
-            try self.fileManager.createDirectoryAtPath(self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
-        } catch _ {
-        }
     }
     
     /**
