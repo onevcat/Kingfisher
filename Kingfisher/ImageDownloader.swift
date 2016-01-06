@@ -197,7 +197,7 @@ public extension ImageDownloader {
     Download an image with a URL and option.
     
     - parameter URL:               Target URL.
-    - parameter options:           The options could control download behavior. See `KingfisherManager.Options`
+    - parameter options:           The options could control download behavior. See `KingfisherOptionsInfo`.
     - parameter progressBlock:     Called when the download progress updated.
     - parameter completionHandler: Called when the download progress finishes.
 
