@@ -24,10 +24,12 @@ class ViewController: NSViewController {
         
         let ddd = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("dancing-banana", ofType: "gif")!)!
         
-        let rep = image!.representations.first as! NSBitmapImageRep
-        print(rep.valueForProperty(NSImageFrameCount))
-        let data = rep.representationUsingType(.NSGIFFileType, properties: [:])!
-        imageView.image = NSImage(data: data)
+        if let rep = image!.representations.first as? NSBitmapImageRep {
+            print(rep.valueForProperty(NSImageFrameCount))
+            let data = rep.representationUsingType(.NSGIFFileType, properties: [:])!
+            imageView.image = NSImage(data: data)
+        }
+
     }
 
     override var representedObject: AnyObject? {

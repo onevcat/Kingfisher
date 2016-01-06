@@ -24,7 +24,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
+#if os(OSX)
+import AppKit
+#else
+import UIKit
+#endif
 
 private let pngHeader: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
 private let jpgHeaderSOI: [UInt8] = [0xFF, 0xD8]
