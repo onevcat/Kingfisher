@@ -28,19 +28,18 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
-private let cacheName = "com.onevcat.Kingfisher.ImageCache.test"
-
-
 class ImageCacheTests: XCTestCase {
 
     var cache: ImageCache!
     var observer: NSObjectProtocol!
+    private var cacheName = "com.onevcat.Kingfisher.ImageCache.test"
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        cache = ImageCache(name: "test")
-        clearCaches([cache])
+        let uuid = NSUUID().UUIDString
+        cacheName = "test-\(uuid)"
+        cache = ImageCache(name: cacheName)
     }
     
     override func tearDown() {
@@ -98,8 +97,9 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
-            self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .Disk, "Should be cached in disk. But \(type)")
+
                 expectation.fulfill()
             })
         }
@@ -111,7 +111,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for retrieving image")
         
         cache.clearDiskCacheWithCompletionHandler { () -> () in
-            self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image == nil, "Should not be cached in memory yet")
                 expectation.fulfill()
             })
@@ -125,7 +125,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for retrieving image")
         
         cache.storeImage(testImage, forKey: testKeys[0], toDisk: false) { () -> () in
-            self.cache.retrieveImageForKey(testKeys[0], options: KingfisherManager.OptionsNone, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .Memory, "Should be cached in memory.")
                 expectation.fulfill()
             })
@@ -139,9 +139,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = expectationWithDescription("wait for writing image")
         
         storeMultipleImages { () -> () in
-            let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-            let diskCachePath = (paths.first! as NSString).stringByAppendingPathComponent(cacheName)
-            
+            let diskCachePath = self.cache.diskCachePath
             let files: [AnyObject]?
             do {
                 files = try NSFileManager.defaultManager().contentsOfDirectoryAtPath(diskCachePath)

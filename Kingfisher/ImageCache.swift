@@ -263,7 +263,7 @@ extension ImageCache {
     
     - returns: The retrieving task.
     */
-    public func retrieveImageForKey(key: String, options: KingfisherManager.Options, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
+    public func retrieveImageForKey(key: String, options: KingfisherOptionsInfo?, completionHandler: ((UIImage?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
             return nil
@@ -273,10 +273,10 @@ extension ImageCache {
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
             
             //Found image in memory cache.
-            if options.shouldDecode {
+            if let options = options where options.backgroundDecode {
                 dispatch_async(self.processQueue, { () -> Void in
-                    let result = image.kf_decodedImage(scale: options.scale)
-                    dispatch_async(options.queue, { () -> Void in
+                    let result = image.kf_decodedImage(scale: options.scaleFactor)
+                    dispatch_async(options.callbackDispatchQueue, { () -> Void in
                         completionHandler(result, .Memory)
                     })
                 })
@@ -286,38 +286,36 @@ extension ImageCache {
         } else {
             var sSelf: ImageCache! = self
             block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
-                
                 // Begin to load image from disk
-                dispatch_async(sSelf.ioQueue, { () -> Void in
-                    if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scale) {
-                        if options.shouldDecode {
-                            dispatch_async(sSelf.processQueue, { () -> Void in
-                                let result = image.kf_decodedImage(scale: options.scale)
-                                sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
+                let options = options ?? KingfisherEmptyOptionsInfo
+                if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scaleFactor) {
+                    if options.backgroundDecode {
+                        dispatch_async(sSelf.processQueue, { () -> Void in
+                            let result = image.kf_decodedImage(scale: options.scaleFactor)
+                            sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
 
-                                dispatch_async(options.queue, { () -> Void in
-                                    completionHandler(result, .Memory)
-                                    sSelf = nil
-                                })
-                            })
-                        } else {
-                            sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
-                            dispatch_async(options.queue, { () -> Void in
-                                completionHandler(image, .Disk)
+                            dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                                completionHandler(result, .Memory)
                                 sSelf = nil
                             })
-                        }
+                        })
                     } else {
-                        // No image found from either memory or disk
-                        dispatch_async(options.queue, { () -> Void in
-                            completionHandler(nil, nil)
+                        sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
+                        dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                            completionHandler(image, .Disk)
                             sSelf = nil
                         })
                     }
-                })
+                } else {
+                    // No image found from either memory or disk
+                    dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                        completionHandler(nil, nil)
+                        sSelf = nil
+                    })
+                }
             }
             
-            dispatch_async(dispatch_get_main_queue(), block!)
+            dispatch_async(sSelf.ioQueue, block!)
         }
     
         return block
@@ -342,7 +340,7 @@ extension ImageCache {
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = KingfisherManager.DefaultOptions.scale) -> UIImage? {
+    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = 1.0) -> UIImage? {
         return diskImageForKey(key, scale: scale)
     }
 }

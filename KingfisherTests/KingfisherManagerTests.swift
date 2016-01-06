@@ -13,6 +13,16 @@ class KingfisherManagerTests: XCTestCase {
     
     var manager: KingfisherManager!
     
+    override class func setUp() {
+        super.setUp()
+        LSNocilla.sharedInstance().start()
+    }
+    
+    override class func tearDown() {
+        super.tearDown()
+        LSNocilla.sharedInstance().stop()
+    }
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -21,57 +31,84 @@ class KingfisherManagerTests: XCTestCase {
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        cleanDefaultCache()
         manager = nil
         super.tearDown()
     }
     
-    func testParseNilOptions() {
-        let optionsInfo: KingfisherOptionsInfo? = nil
-        let result = manager.parseOptionsInfo(optionsInfo)
+    func testRetrieveImage() {
         
-        XCTAssertEqual(result.0.forceRefresh, KingfisherManager.DefaultOptions.forceRefresh)
-        XCTAssertEqual(result.0.lowPriority, KingfisherManager.DefaultOptions.lowPriority)
-        XCTAssertEqual(result.0.cacheMemoryOnly, KingfisherManager.DefaultOptions.cacheMemoryOnly)
-        XCTAssertEqual(result.0.shouldDecode, KingfisherManager.DefaultOptions.shouldDecode)
-        XCTAssertEqual(result.0.scale, KingfisherManager.DefaultOptions.scale)
+        let expectation = expectationWithDescription("wait for downloading image")
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
         
-        XCTAssertTrue(result.1 === manager.cache)
-        XCTAssertEqual(result.2, manager.downloader)
+        let URL = NSURL(string: URLString)!
+
+        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+            image, error, cacheType, imageURL in
+            XCTAssertNotNil(image)
+            XCTAssertEqual(cacheType, CacheType.None)
+            
+            self.manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+                image, error, cacheType, imageURL in
+                XCTAssertNotNil(image)
+                XCTAssertEqual(cacheType, CacheType.Memory)
+                
+                self.manager.cache.clearMemoryCache()
+                self.manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+                    image, error, cacheType, imageURL in
+                    XCTAssertNotNil(image)
+                    XCTAssertEqual(cacheType, CacheType.Disk)
+                    
+                    cleanDefaultCache()
+                    self.manager.retrieveImageWithURL(URL, optionsInfo: [.ForceRefresh], progressBlock: nil) {
+                        image, error, cacheType, imageURL in
+                        XCTAssertNotNil(image)
+                        XCTAssertEqual(cacheType, CacheType.None)
+                    
+                        expectation.fulfill()
+                    }
+                }
+            }
+        }
+
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
     
-    func testParseSingleOptions() {
-        let cache = ImageCache(name: "KingfisherManagerTests")
-        let optionsInfo: KingfisherOptionsInfo = [.Options(.ForceRefresh), .TargetCache(cache)]
-        let result = manager.parseOptionsInfo(optionsInfo)
+    func testRetrieveImageNotModified() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
         
-        XCTAssertEqual(result.0.forceRefresh, true)
-        XCTAssertEqual(result.0.lowPriority, KingfisherManager.DefaultOptions.lowPriority)
-        XCTAssertEqual(result.0.cacheMemoryOnly, KingfisherManager.DefaultOptions.cacheMemoryOnly)
-        XCTAssertEqual(result.0.shouldDecode, KingfisherManager.DefaultOptions.shouldDecode)
-        XCTAssertEqual(result.0.scale, KingfisherManager.DefaultOptions.scale)
+        let URL = NSURL(string: URLString)!
         
-        XCTAssertTrue(result.1 === cache)
-        XCTAssertTrue(result.1 !== manager.cache)
-        XCTAssertEqual(result.2, manager.downloader)
-    }
-    
-    func testParseMultipleOptions() {
-        let cache = ImageCache(name: "KingfisherManagerTests")
-        let downloader = ImageDownloader(name: "KingfisherManagerTests")
-        let optionsInfo: KingfisherOptionsInfo = [.Options([.ForceRefresh, .CacheMemoryOnly]),
-                                                  .TargetCache(cache),
-                                                  .Downloader(downloader)]
-        let result = manager.parseOptionsInfo(optionsInfo)
+        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+            image, error, cacheType, imageURL in
+            XCTAssertNotNil(image)
+            XCTAssertEqual(cacheType, CacheType.None)
+            
+            self.manager.cache.clearMemoryCache()
+            
+            LSNocilla.sharedInstance().stop()
+            LSNocilla.sharedInstance().start()
+            stubRequest("GET", URLString).andReturn(304).withBody("12345")
+            
+            var progressCalled = false
+            
+            self.manager.retrieveImageWithURL(URL, optionsInfo: [.ForceRefresh], progressBlock: {
+                _, _ in
+                progressCalled = true
+            }) {
+                image, error, cacheType, imageURL in
+                XCTAssertNotNil(image)
+                XCTAssertEqual(cacheType, CacheType.Disk)
+                
+                XCTAssertTrue(progressCalled, "The progress callback should be called at least once since network connecting happens.")
+                
+                expectation.fulfill()
+            }
+        }
         
-        XCTAssertEqual(result.0.forceRefresh, true)
-        XCTAssertEqual(result.0.lowPriority, KingfisherManager.DefaultOptions.lowPriority)
-        XCTAssertEqual(result.0.cacheMemoryOnly, true)
-        XCTAssertEqual(result.0.shouldDecode, KingfisherManager.DefaultOptions.shouldDecode)
-        XCTAssertEqual(result.0.scale, KingfisherManager.DefaultOptions.scale)
-        
-        XCTAssertTrue(result.1 === cache)
-        XCTAssertFalse(result.1 === manager.cache)
-        XCTAssertEqual(result.2, downloader)
-        XCTAssertNotEqual(result.2, manager.downloader)
+        waitForExpectationsWithTimeout(5, handler: nil)
     }
 }

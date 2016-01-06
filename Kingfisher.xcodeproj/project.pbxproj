@@ -33,7 +33,6 @@
 		D13F49F41BEDA8B300CE335D /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */; };
 		D13F49F51BEDA8B300CE335D /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */; };
 		D13F49F61BEDA8B300CE335D /* KingfisherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */; };
-		D13F49F71BEDA8B300CE335D /* KingfisherOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */; };
 		D13F49F81BEDA8B300CE335D /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11250C01BAC4B6300B986EF /* ImageTransition.swift */; };
 		D13F49F91BEDA8B300CE335D /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
 		D13F49FA1BEDA8B300CE335D /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2C4DF71B7D7ACD000912CA /* Resource.swift */; };
@@ -41,6 +40,7 @@
 		D13F49FE1BEDBB4A00CE335D /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
 		D13F49FF1BEDBB4A00CE335D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D121AD2CFA600CFC3EB /* ViewController.swift */; };
 		D151E72B1AD3C48D004FD4AE /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */; };
+		D17363CB1C3AABF80042F42E /* KingfisherOptionsInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17363CA1C3AABF80042F42E /* KingfisherOptionsInfoTests.swift */; };
 		D1A7B6CA1BDBC9C60083A684 /* ImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */; };
 		D1A7B6CC1BDBEC090083A684 /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
 		D1B1B9901BC7EB7100DE20D8 /* ThreadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B1B98F1BC7EB7100DE20D8 /* ThreadHelper.swift */; };
@@ -58,7 +58,6 @@
 		D1ED2D5D1AD2D0F900CFC3EB /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */; };
 		D1ED2D5E1AD2D0F900CFC3EB /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */; };
 		D1ED2D5F1AD2D0F900CFC3EB /* KingfisherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */; };
-		D1ED2D601AD2D0F900CFC3EB /* KingfisherOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +152,7 @@
 		D13F49D81BEDA67C00CE335D /* Kingfisher-tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kingfisher-tvOS.h"; sourceTree = "<group>"; };
 		D13F49DA1BEDA67C00CE335D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D151E72A1AD3C48D004FD4AE /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
+		D17363CA1C3AABF80042F42E /* KingfisherOptionsInfoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptionsInfoTests.swift; sourceTree = "<group>"; };
 		D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtensionTests.swift; sourceTree = "<group>"; };
 		D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "dancing-banana.gif"; sourceTree = "<group>"; };
 		D1B1B98F1BC7EB7100DE20D8 /* ThreadHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadHelper.swift; sourceTree = "<group>"; };
@@ -173,7 +173,6 @@
 		D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherManager.swift; sourceTree = "<group>"; };
-		D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptions.swift; sourceTree = "<group>"; };
 		D809C0611AAB7CA1AE240862 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -253,11 +252,11 @@
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
+				D1ED2D361AD2D09F00CFC3EB /* Kingfisher */,
+				D13F49D71BEDA67C00CE335D /* Kingfisher-tvOS */,
 				D1ED2D0D1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D13F49C31BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
-				D1ED2D361AD2D09F00CFC3EB /* Kingfisher */,
 				D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */,
-				D13F49D71BEDA67C00CE335D /* Kingfisher-tvOS */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
 				9C068B80BAB8294A1732ADC5 /* Pods */,
 				EA99D30544BD22799F7A5367 /* Frameworks */,
@@ -309,7 +308,6 @@
 				D1ED2D571AD2D0F900CFC3EB /* ImageCache.swift */,
 				D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */,
 				D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */,
-				D1ED2D5A1AD2D0F900CFC3EB /* KingfisherOptions.swift */,
 				D11250C01BAC4B6300B986EF /* ImageTransition.swift */,
 				4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */,
 				4B2C4DF71B7D7ACD000912CA /* Resource.swift */,
@@ -339,6 +337,7 @@
 				4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */,
 				4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */,
 				D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */,
+				D17363CA1C3AABF80042F42E /* KingfisherOptionsInfoTests.swift */,
 			);
 			path = KingfisherTests;
 			sourceTree = "<group>";
@@ -643,7 +642,6 @@
 				D13F49F41BEDA8B300CE335D /* ImageCache.swift in Sources */,
 				D13F49F51BEDA8B300CE335D /* ImageDownloader.swift in Sources */,
 				D13F49F61BEDA8B300CE335D /* KingfisherManager.swift in Sources */,
-				D13F49F71BEDA8B300CE335D /* KingfisherOptions.swift in Sources */,
 				D13F49F81BEDA8B300CE335D /* ImageTransition.swift in Sources */,
 				D13F49F91BEDA8B300CE335D /* KingfisherOptionsInfo.swift in Sources */,
 				D13F49FA1BEDA8B300CE335D /* Resource.swift in Sources */,
@@ -674,7 +672,6 @@
 				D1B1B9901BC7EB7100DE20D8 /* ThreadHelper.swift in Sources */,
 				4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */,
 				4B2C4DF81B7D7ACD000912CA /* Resource.swift in Sources */,
-				D1ED2D601AD2D0F900CFC3EB /* KingfisherOptions.swift in Sources */,
 				D11250C11BAC4B6300B986EF /* ImageTransition.swift in Sources */,
 				D151E72B1AD3C48D004FD4AE /* UIImage+Extension.swift in Sources */,
 			);
@@ -684,6 +681,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D17363CB1C3AABF80042F42E /* KingfisherOptionsInfoTests.swift in Sources */,
 				4B82DDFC1AD7701900074995 /* ImageCacheTests.swift in Sources */,
 				4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */,
 				4B6D4F651AE0A46D0084D15B /* UIImageViewExtensionTests.swift in Sources */,
