@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
+		4A54251331E840CB85C78FA8 /* libPods-KingfisherTests-OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
 		4B29444B1C3D01B20088C3E7 /* Kingfisher-OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B2944501C3D03430088C3E7 /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */; };
@@ -44,6 +45,7 @@
 		D10EC23E1C3D659300A4211C /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29446C1C3D05FD0088C3E7 /* Image.swift */; };
 		D10EC2411C3D6EEC00A4211C /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
 		D10EC2421C3D75BF00A4211C /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
+		D10EC2431C3D793800A4211C /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
 		D11250C11BAC4B6300B986EF /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11250C01BAC4B6300B986EF /* ImageTransition.swift */; };
 		D13F49C51BEDA53F00CE335D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13F49C41BEDA53F00CE335D /* AppDelegate.swift */; };
 		D13F49CA1BEDA53F00CE335D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D13F49C81BEDA53F00CE335D /* Main.storyboard */; };
@@ -182,6 +184,8 @@
 		4BBA04BD1AD77F7E00A5CF82 /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloaderTests.swift; sourceTree = "<group>"; };
 		4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherTestHelper.swift; sourceTree = "<group>"; };
+		50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-OSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		74477D1C4379728A8DA673FB /* Pods-KingfisherTests-OSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-OSX.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-OSX/Pods-KingfisherTests-OSX.debug.xcconfig"; sourceTree = "<group>"; };
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10EC2311C3D632300A4211C /* KingfisherTests-OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-OSX.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -219,6 +223,7 @@
 		D1ED2D581AD2D0F900CFC3EB /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		D1ED2D591AD2D0F900CFC3EB /* KingfisherManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherManager.swift; sourceTree = "<group>"; };
 		D809C0611AAB7CA1AE240862 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FE96DF45BEE5F8EBB01C7956 /* Pods-KingfisherTests-OSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-OSX.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-OSX/Pods-KingfisherTests-OSX.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +247,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */,
+				4A54251331E840CB85C78FA8 /* libPods-KingfisherTests-OSX.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +320,8 @@
 			children = (
 				D809C0611AAB7CA1AE240862 /* Pods-KingfisherTests.debug.xcconfig */,
 				A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */,
+				74477D1C4379728A8DA673FB /* Pods-KingfisherTests-OSX.debug.xcconfig */,
+				FE96DF45BEE5F8EBB01C7956 /* Pods-KingfisherTests-OSX.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -486,6 +494,7 @@
 				4B164ACE1B8D554200768EC6 /* CFNetwork.framework */,
 				4B3E714D1B01FEB200F5AAED /* WatchKit.framework */,
 				A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */,
+				50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -559,9 +568,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D10EC2391C3D632300A4211C /* Build configuration list for PBXNativeTarget "KingfisherTests-OSX" */;
 			buildPhases = (
+				9C87E2E663941F8B782F9E0C /* Check Pods Manifest.lock */,
 				D10EC22D1C3D632300A4211C /* Sources */,
 				D10EC22E1C3D632300A4211C /* Frameworks */,
 				D10EC22F1C3D632300A4211C /* Resources */,
+				320846699E0A0D16C8B63CC8 /* Embed Pods Frameworks */,
+				EAAF497C7455E9C8698B3136 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -658,6 +670,7 @@
 				D1ED2D3C1AD2D09F00CFC3EB /* Frameworks */,
 				D1ED2D3D1AD2D09F00CFC3EB /* Resources */,
 				5A0400F84A1FF7DBA809925E /* Copy Pods Resources */,
+				B1E0C2945773E44FBD8B285C /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -816,6 +829,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		320846699E0A0D16C8B63CC8 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests-OSX/Pods-KingfisherTests-OSX-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		5A0400F84A1FF7DBA809925E /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -831,6 +859,36 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		9C87E2E663941F8B782F9E0C /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		B1E0C2945773E44FBD8B285C /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D1249CF91C12B01E002C62D8 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -843,6 +901,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		EAAF497C7455E9C8698B3136 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests-OSX/Pods-KingfisherTests-OSX-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -877,6 +950,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10EC2431C3D793800A4211C /* ImageDownloaderTests.swift in Sources */,
 				D10EC23E1C3D659300A4211C /* Image.swift in Sources */,
 				D10EC23D1C3D653E00A4211C /* KingfisherTestHelper.swift in Sources */,
 				D10EC23C1C3D64D200A4211C /* ImageExtensionTests.swift in Sources */,
@@ -1111,6 +1185,7 @@
 		};
 		D10EC23A1C3D632300A4211C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 74477D1C4379728A8DA673FB /* Pods-KingfisherTests-OSX.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1122,11 +1197,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.KingfisherTests-OSX";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "KingfisherTests/KingfisherTests-Bridging-Header.h";
 			};
 			name = Debug;
 		};
 		D10EC23B1C3D632300A4211C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FE96DF45BEE5F8EBB01C7956 /* Pods-KingfisherTests-OSX.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1138,6 +1215,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.KingfisherTests-OSX";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "KingfisherTests/KingfisherTests-Bridging-Header.h";
 			};
 			name = Release;
 		};
