@@ -24,6 +24,18 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if os(OSX)
+// Not implemented for OSX yet.
+    
+import AppKit
+    
+public enum ImageTransition {
+    case None
+    var duration: NSTimeInterval {
+        return 0
+    }
+}
+#else
 import UIKit
 
 /**
@@ -99,3 +111,4 @@ public enum ImageTransition {
         }
     }
 }
+#endif
