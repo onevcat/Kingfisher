@@ -484,10 +484,8 @@ extension ImageCache {
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 
                 if URLsToDelete.count != 0 {
-                    let cleanedHashes = URLsToDelete.map({ (url) -> String in
-                        return url.lastPathComponent!
-                    })
-                    
+                    let cleanedHashes = URLsToDelete.map( {$0.lastPathComponent!} )
+
                     NSNotificationCenter.defaultCenter().postNotificationName(KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                 }
                 
