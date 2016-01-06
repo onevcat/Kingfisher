@@ -31,11 +31,7 @@ extension String {
             let MD5Data = MD5Calculator.calculate()
             let resultBytes = UnsafeMutablePointer<CUnsignedChar>(MD5Data.bytes)
             let resultEnumerator = UnsafeBufferPointer<CUnsignedChar>(start: resultBytes, count: MD5Data.length)
-            var MD5String = ""
-            for c in resultEnumerator {
-                MD5String += String(format: "%02x", c)
-            }
-            return MD5String
+            return resultEnumerator.reduce(""){ $0 + String(format: "%02x", $1) }
         } else {
             return self
         }

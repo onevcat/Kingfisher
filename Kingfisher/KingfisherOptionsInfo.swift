@@ -65,12 +65,6 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
 extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
     
     func kf_firstMatchIgnoringAssociatedValue(target: Generator.Element) -> Generator.Element? {
-        
-        let index = indexOf {
-            item in
-            return item <== target
-        }
-        
-        return (index != nil) ? self[index!] : nil
+        return indexOf { $0 <== target }.flatMap { self[$0] }
     }
 }
