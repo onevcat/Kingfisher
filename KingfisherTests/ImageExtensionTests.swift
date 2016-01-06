@@ -38,22 +38,22 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGenerateGIFImage() {
-        let image = UIImage.kf_animatedImageWithGIFData(gifData: testImageGIFData)
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData)
         XCTAssertNotNil(image, "The image should be initiated.")
-        XCTAssertEqual(image!.images!.count, 8, "There should be 8 frames.")
+        XCTAssertEqual(image!.kf_images!.count, 8, "There should be 8 frames.")
         
-        XCTAssertEqualWithAccuracy(image!.duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
+        XCTAssertEqualWithAccuracy(image!.kf_duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
     }
     
     func testGIFRepresentation() {
-        let image = UIImage.kf_animatedImageWithGIFData(gifData: testImageGIFData)!
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData)!
         let data = ImageGIFRepresentation(image)
         
         XCTAssertNotNil(data, "Data should not be nil")
         XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)
         
-        let image1 = UIImage.kf_animatedImageWithGIFData(gifData: data!)!
-        XCTAssertEqual(image1.duration, image.duration)
-        XCTAssertEqual(image1.images!.count, image.images!.count)
+        let image1 = Image.kf_animatedImageWithGIFData(gifData: data!)!
+        XCTAssertEqual(image1.kf_duration, image.kf_duration)
+        XCTAssertEqual(image1.kf_images!.count, image.kf_images!.count)
     }
 }

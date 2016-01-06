@@ -17,6 +17,9 @@ public typealias Image = UIImage
 
 import ImageIO
 
+private var imagesKey: Void?
+private var durationKey: Void?
+
 extension Image {
 #if os(OSX)
     
@@ -28,12 +31,22 @@ extension Image {
         return 1.0
     }
     
-    var kf_images: [Image]? {
-        return nil
+    private(set) var kf_images: [Image]? {
+        get {
+            return objc_getAssociatedObject(self, &imagesKey) as? [Image]
+        }
+        set {
+            objc_setAssociatedObject(self, &imagesKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
-    var kf_duration: NSTimeInterval {
-        return 0
+    private(set) var kf_duration: NSTimeInterval {
+        get {
+            return objc_getAssociatedObject(self, &durationKey) as? NSTimeInterval ?? 0.0
+        }
+        set {
+            objc_setAssociatedObject(self, &durationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 
     static func kf_imageWithCGImage(cgImage: CGImageRef, scale: CGFloat, refImage: Image?) -> Image {
@@ -62,12 +75,11 @@ extension Image {
     }
     
     static func kf_imageWithCGImage(cgImage: CGImageRef, scale: CGFloat, refImage: Image?) -> Image {
-    if let refImage = refImage {
-        return Image(CGImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
-    } else {
-        return Image(CGImage: cgImage, scale: scale, orientation: .Up)
-    }
-    
+        if let refImage = refImage {
+            return Image(CGImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
+        } else {
+            return Image(CGImage: cgImage, scale: scale, orientation: .Up)
+        }    
     }
     
     public func kf_normalizedImage() -> Image {
@@ -177,11 +189,23 @@ extension Image {
             images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
         }
         
+#if os(OSX)
+        if let image = Image(data: data) {
+            image.kf_images = images
+            image.kf_duration = gifDuration
+            return image
+        }
+        return nil
+#else
         if frameCount == 1 {
             return images.first
         } else {
             return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
         }
+#endif
+        
+
+        
     }
 }
 

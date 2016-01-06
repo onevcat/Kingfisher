@@ -39,6 +39,11 @@
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
 		D10EC2341C3D632300A4211C /* KingfisherTests_OSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10EC2331C3D632300A4211C /* KingfisherTests_OSX.swift */; };
 		D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
+		D10EC23C1C3D64D200A4211C /* ImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */; };
+		D10EC23D1C3D653E00A4211C /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
+		D10EC23E1C3D659300A4211C /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29446C1C3D05FD0088C3E7 /* Image.swift */; };
+		D10EC2411C3D6EEC00A4211C /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
+		D10EC2421C3D75BF00A4211C /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
 		D11250C11BAC4B6300B986EF /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11250C01BAC4B6300B986EF /* ImageTransition.swift */; };
 		D13F49C51BEDA53F00CE335D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13F49C41BEDA53F00CE335D /* AppDelegate.swift */; };
 		D13F49CA1BEDA53F00CE335D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D13F49C81BEDA53F00CE335D /* Main.storyboard */; };
@@ -740,6 +745,7 @@
 			files = (
 				4B29445C1C3D03880088C3E7 /* Assets.xcassets in Resources */,
 				4B29445F1C3D03880088C3E7 /* Main.storyboard in Resources */,
+				D10EC2411C3D6EEC00A4211C /* dancing-banana.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,6 +753,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10EC2421C3D75BF00A4211C /* dancing-banana.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -870,6 +877,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10EC23E1C3D659300A4211C /* Image.swift in Sources */,
+				D10EC23D1C3D653E00A4211C /* KingfisherTestHelper.swift in Sources */,
+				D10EC23C1C3D64D200A4211C /* ImageExtensionTests.swift in Sources */,
 				D10EC2341C3D632300A4211C /* KingfisherTests_OSX.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1428,6 +1438,7 @@
 				D10EC23B1C3D632300A4211C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */ = {
 			isa = XCConfigurationList;
