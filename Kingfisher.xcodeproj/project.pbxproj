@@ -521,11 +521,11 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D1ED2D341AD2D09F00CFC3EB /* Kingfisher */,
-				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
-				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
 				D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */,
+				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
+				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
+				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
 			);
 		};
 /* End PBXProject section */
