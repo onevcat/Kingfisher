@@ -10,6 +10,12 @@
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
 		4B29444B1C3D01B20088C3E7 /* Kingfisher-OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4B2944501C3D03430088C3E7 /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */; };
+		4B2944581C3D03880088C3E7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2944571C3D03880088C3E7 /* AppDelegate.swift */; };
+		4B29445A1C3D03880088C3E7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2944591C3D03880088C3E7 /* ViewController.swift */; };
+		4B29445C1C3D03880088C3E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B29445B1C3D03880088C3E7 /* Assets.xcassets */; };
+		4B29445F1C3D03880088C3E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B29445D1C3D03880088C3E7 /* Main.storyboard */; };
+		4B2944641C3D03980088C3E7 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
 		4B2C4DF81B7D7ACD000912CA /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2C4DF71B7D7ACD000912CA /* Resource.swift */; };
 		4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
 		4B5083381BD88C3E00AEA807 /* KingfisherManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */; };
@@ -132,6 +138,12 @@
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kingfisher-OSX.h"; sourceTree = "<group>"; };
 		4B29444C1C3D01B20088C3E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B2944551C3D03880088C3E7 /* Kingfisher-OSX-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-OSX-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B2944571C3D03880088C3E7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B2944591C3D03880088C3E7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B29445B1C3D03880088C3E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B29445E1C3D03880088C3E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4B2944601C3D03880088C3E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B2C4DF71B7D7ACD000912CA /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptionsInfo.swift; sourceTree = "<group>"; };
@@ -188,6 +200,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B2944521C3D03880088C3E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B2944641C3D03980088C3E7 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D13F49BF1BEDA53F00CE335D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -240,6 +260,18 @@
 			path = "Kingfisher-OSX";
 			sourceTree = "<group>";
 		};
+		4B2944561C3D03880088C3E7 /* Kingfisher-OSX-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				4B2944571C3D03880088C3E7 /* AppDelegate.swift */,
+				4B2944591C3D03880088C3E7 /* ViewController.swift */,
+				4B29445B1C3D03880088C3E7 /* Assets.xcassets */,
+				4B29445D1C3D03880088C3E7 /* Main.storyboard */,
+				4B2944601C3D03880088C3E7 /* Info.plist */,
+			);
+			path = "Kingfisher-OSX-Demo";
+			sourceTree = "<group>";
+		};
 		9C068B80BAB8294A1732ADC5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -277,6 +309,7 @@
 				4B2944491C3D01B20088C3E7 /* Kingfisher-OSX */,
 				D1ED2D0D1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D13F49C31BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
+				4B2944561C3D03880088C3E7 /* Kingfisher-OSX-Demo */,
 				D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
 				9C068B80BAB8294A1732ADC5 /* Pods */,
@@ -293,6 +326,7 @@
 				D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */,
 				D13F49D61BEDA67C00CE335D /* Kingfisher.framework */,
 				4B2944481C3D01B20088C3E7 /* Kingfisher.framework */,
+				4B2944551C3D03880088C3E7 /* Kingfisher-OSX-Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -431,6 +465,23 @@
 			productReference = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4B2944541C3D03880088C3E7 /* Kingfisher-OSX-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B2944611C3D03880088C3E7 /* Build configuration list for PBXNativeTarget "Kingfisher-OSX-Demo" */;
+			buildPhases = (
+				4B2944511C3D03880088C3E7 /* Sources */,
+				4B2944521C3D03880088C3E7 /* Frameworks */,
+				4B2944531C3D03880088C3E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-OSX-Demo";
+			productName = "Kingfisher-OSX-Demo";
+			productReference = 4B2944551C3D03880088C3E7 /* Kingfisher-OSX-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
 		D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */;
@@ -534,11 +585,14 @@
 		D1ED2D031AD2CFA600CFC3EB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0710;
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Wei Wang";
 				TargetAttributes = {
 					4B2944471C3D01B20088C3E7 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					4B2944541C3D03880088C3E7 = {
 						CreatedOnToolsVersion = 7.2;
 					};
 					D13F49C11BEDA53F00CE335D = {
@@ -577,6 +631,7 @@
 				4B2944471C3D01B20088C3E7 /* Kingfisher-OSX */,
 				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
+				4B2944541C3D03880088C3E7 /* Kingfisher-OSX-Demo */,
 				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
 			);
 		};
@@ -587,6 +642,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B2944531C3D03880088C3E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B29445C1C3D03880088C3E7 /* Assets.xcassets in Resources */,
+				4B29445F1C3D03880088C3E7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +748,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B2944501C3D03430088C3E7 /* String+MD5.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B2944511C3D03880088C3E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B29445A1C3D03880088C3E7 /* ViewController.swift in Sources */,
+				4B2944581C3D03880088C3E7 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +858,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		4B29445D1C3D03880088C3E7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B29445E1C3D03880088C3E7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		D13F49C81BEDA53F00CE335D /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -860,6 +942,40 @@
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		4B2944621C3D03880088C3E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-OSX-Demo/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4B2944631C3D03880088C3E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-OSX-Demo/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -1142,6 +1258,14 @@
 			buildConfigurations = (
 				4B29444E1C3D01B20088C3E7 /* Debug */,
 				4B29444F1C3D01B20088C3E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		4B2944611C3D03880088C3E7 /* Build configuration list for PBXNativeTarget "Kingfisher-OSX-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B2944621C3D03880088C3E7 /* Debug */,
+				4B2944631C3D03880088C3E7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
