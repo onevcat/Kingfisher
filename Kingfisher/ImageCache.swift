@@ -576,7 +576,7 @@ public extension ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    public func calculateDiskCacheSizeWithCompletionHandler(completionHandler: ((size: UInt) -> ())?) {
+    public func calculateDiskCacheSizeWithCompletionHandler(completionHandler: ((size: UInt) -> ())) {
         dispatch_async(ioQueue, { () -> Void in
             let diskCacheURL = NSURL(fileURLWithPath: self.diskCachePath)
                 
@@ -604,11 +604,9 @@ public extension ImageCache {
                     }
             }
             
-            if let completionHandler = completionHandler {
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    completionHandler(size: diskCacheSize)
-                })
-            }
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                completionHandler(size: diskCacheSize)
+            })
         })
     }
 }
