@@ -47,7 +47,7 @@ class ImageExtensionTests: XCTestCase {
     
     func testGIFRepresentation() {
         let image = UIImage.kf_animatedImageWithGIFData(gifData: testImageGIFData)!
-        let data = UIImageGIFRepresentation(image)
+        let data = ImageGIFRepresentation(image)
         
         XCTAssertNotNil(data, "Data should not be nil")
         XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)

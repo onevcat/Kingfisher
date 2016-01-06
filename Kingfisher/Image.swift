@@ -7,13 +7,15 @@
 //
 
 #if os(OSX)
-    import AppKit.NSImage
-    public typealias Image = NSImage
+import AppKit.NSImage
+public typealias Image = NSImage
 #else
-    import UIKit.UIImage
-    public typealias Image = UIImage
+import UIKit.UIImage
+import MobileCoreServices
+public typealias Image = UIImage
 #endif
 
+import ImageIO
 
 extension Image {
 #if os(OSX)
@@ -140,6 +142,47 @@ func ImageGIFRepresentation(image: Image, duration: NSTimeInterval, repeatCount:
     }
     
     return CGImageDestinationFinalize(destination) ? NSData(data: data) : nil
+}
+
+extension Image {
+    static func kf_animatedImageWithGIFData(gifData data: NSData) -> Image? {
+        return kf_animatedImageWithGIFData(gifData: data, scale: 1.0, duration: 0.0)
+    }
+    
+    static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval) -> Image? {
+        
+        let options: NSDictionary = [kCGImageSourceShouldCache as String: NSNumber(bool: true), kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
+        guard let imageSource = CGImageSourceCreateWithData(data, options) else {
+            return nil
+        }
+        
+        let frameCount = CGImageSourceGetCount(imageSource)
+        var images = [Image]()
+        
+        var gifDuration = 0.0
+        
+        for i in 0 ..< frameCount {
+            guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
+                return nil
+            }
+            
+            guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
+                gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
+                frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
+            {
+                return nil
+            }
+            
+            gifDuration += frameDuration.doubleValue
+            images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
+        }
+        
+        if frameCount == 1 {
+            return images.first
+        } else {
+            return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
+        }
+    }
 }
 
 
