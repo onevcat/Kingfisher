@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
+		4B29444B1C3D01B20088C3E7 /* Kingfisher-OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B2C4DF81B7D7ACD000912CA /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2C4DF71B7D7ACD000912CA /* Resource.swift */; };
 		4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
 		4B5083381BD88C3E00AEA807 /* KingfisherManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */; };
@@ -128,6 +129,9 @@
 
 /* Begin PBXFileReference section */
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kingfisher-OSX.h"; sourceTree = "<group>"; };
+		4B29444C1C3D01B20088C3E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B2C4DF71B7D7ACD000912CA /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptionsInfo.swift; sourceTree = "<group>"; };
@@ -177,6 +181,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4B2944441C3D01B20088C3E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D13F49BF1BEDA53F00CE335D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -220,6 +231,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B2944491C3D01B20088C3E7 /* Kingfisher-OSX */ = {
+			isa = PBXGroup;
+			children = (
+				4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */,
+				4B29444C1C3D01B20088C3E7 /* Info.plist */,
+			);
+			path = "Kingfisher-OSX";
+			sourceTree = "<group>";
+		};
 		9C068B80BAB8294A1732ADC5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +274,7 @@
 			children = (
 				D1ED2D361AD2D09F00CFC3EB /* Kingfisher */,
 				D13F49D71BEDA67C00CE335D /* Kingfisher-tvOS */,
+				4B2944491C3D01B20088C3E7 /* Kingfisher-OSX */,
 				D1ED2D0D1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D13F49C31BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
 				D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */,
@@ -271,6 +292,7 @@
 				D1ED2D3F1AD2D09F00CFC3EB /* KingfisherTests.xctest */,
 				D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */,
 				D13F49D61BEDA67C00CE335D /* Kingfisher.framework */,
+				4B2944481C3D01B20088C3E7 /* Kingfisher.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -364,6 +386,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		4B2944451C3D01B20088C3E7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B29444B1C3D01B20088C3E7 /* Kingfisher-OSX.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D13F49D31BEDA67C00CE335D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -383,6 +413,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		4B2944471C3D01B20088C3E7 /* Kingfisher-OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B29444D1C3D01B20088C3E7 /* Build configuration list for PBXNativeTarget "Kingfisher-OSX" */;
+			buildPhases = (
+				4B2944431C3D01B20088C3E7 /* Sources */,
+				4B2944441C3D01B20088C3E7 /* Frameworks */,
+				4B2944451C3D01B20088C3E7 /* Headers */,
+				4B2944461C3D01B20088C3E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-OSX";
+			productName = "Kingfisher-OSX";
+			productReference = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */;
@@ -440,9 +488,9 @@
 			productReference = D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D1ED2D341AD2D09F00CFC3EB /* Kingfisher */ = {
+		D1ED2D341AD2D09F00CFC3EB /* Kingfisher-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D1ED2D4E1AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher" */;
+			buildConfigurationList = D1ED2D4E1AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher-iOS" */;
 			buildPhases = (
 				D1ED2D301AD2D09F00CFC3EB /* Sources */,
 				D1ED2D311AD2D09F00CFC3EB /* Frameworks */,
@@ -454,7 +502,7 @@
 			);
 			dependencies = (
 			);
-			name = Kingfisher;
+			name = "Kingfisher-iOS";
 			productName = Kingfisher;
 			productReference = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */;
 			productType = "com.apple.product-type.framework";
@@ -490,6 +538,9 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Wei Wang";
 				TargetAttributes = {
+					4B2944471C3D01B20088C3E7 = {
+						CreatedOnToolsVersion = 7.2;
+					};
 					D13F49C11BEDA53F00CE335D = {
 						CreatedOnToolsVersion = 7.1;
 					};
@@ -521,8 +572,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D1ED2D341AD2D09F00CFC3EB /* Kingfisher */,
+				D1ED2D341AD2D09F00CFC3EB /* Kingfisher-iOS */,
 				D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */,
+				4B2944471C3D01B20088C3E7 /* Kingfisher-OSX */,
 				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
 				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
@@ -531,6 +583,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4B2944461C3D01B20088C3E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D13F49C01BEDA53F00CE335D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -621,6 +680,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4B2944431C3D01B20088C3E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D13F49BE1BEDA53F00CE335D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -702,7 +768,7 @@
 		};
 		D1ED2D421AD2D09F00CFC3EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D1ED2D341AD2D09F00CFC3EB /* Kingfisher */;
+			target = D1ED2D341AD2D09F00CFC3EB /* Kingfisher-iOS */;
 			targetProxy = D1ED2D411AD2D09F00CFC3EB /* PBXContainerItemProxy */;
 		};
 		D1ED2D441AD2D09F00CFC3EB /* PBXTargetDependency */ = {
@@ -712,7 +778,7 @@
 		};
 		D1ED2D4B1AD2D09F00CFC3EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D1ED2D341AD2D09F00CFC3EB /* Kingfisher */;
+			target = D1ED2D341AD2D09F00CFC3EB /* Kingfisher-iOS */;
 			targetProxy = D1ED2D4A1AD2D09F00CFC3EB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -745,6 +811,58 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4B29444E1C3D01B20088C3E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-OSX/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX";
+				PRODUCT_NAME = Kingfisher;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		4B29444F1C3D01B20088C3E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Kingfisher-OSX/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX";
+				PRODUCT_NAME = Kingfisher;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		D13F49CE1BEDA53F00CE335D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -954,7 +1072,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -976,7 +1094,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1019,6 +1137,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4B29444D1C3D01B20088C3E7 /* Build configuration list for PBXNativeTarget "Kingfisher-OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B29444E1C3D01B20088C3E7 /* Debug */,
+				4B29444F1C3D01B20088C3E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1055,7 +1181,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D1ED2D4E1AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher" */ = {
+		D1ED2D4E1AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D1ED2D4F1AD2D09F00CFC3EB /* Debug */,
