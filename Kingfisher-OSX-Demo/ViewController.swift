@@ -11,6 +11,8 @@ import Kingfisher
 
 class ViewController: NSViewController {
     
+    @IBOutlet weak var collectionView: NSCollectionView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -23,7 +25,14 @@ class ViewController: NSViewController {
         }
     }
 
-
+    @IBAction func clearCachePressed(sender: AnyObject) {
+        KingfisherManager.sharedManager.cache.clearMemoryCache()
+        KingfisherManager.sharedManager.cache.clearDiskCache()
+    }
+    
+    @IBAction func reloadPressed(sender: AnyObject) {
+        collectionView.reloadData()
+    }
 }
 
 extension ViewController: NSCollectionViewDataSource {

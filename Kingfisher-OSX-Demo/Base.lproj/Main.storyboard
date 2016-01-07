@@ -710,6 +710,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="clearCachePressed:" target="XfG-lQ-9wD" id="jak-pT-dz8"/>
+                                </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ejh-qu-qmy">
                                 <rect key="frame" x="524" y="447" width="82" height="32"/>
@@ -717,6 +720,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="reloadPressed:" target="XfG-lQ-9wD" id="kgi-1i-4tv"/>
+                                </connections>
                             </button>
                         </subviews>
                         <constraints>
@@ -730,6 +736,9 @@
                             <constraint firstItem="Ejh-qu-qmy" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="xnX-II-7iN"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="collectionView" destination="XnK-6H-mn7" id="EoA-XQ-ad2"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
