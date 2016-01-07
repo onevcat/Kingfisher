@@ -35,6 +35,7 @@
 		4B6D4F671AE0B82A0084D15B /* UIButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F661AE0B82A0084D15B /* UIButtonExtensionTests.swift */; };
 		4B82DDFC1AD7701900074995 /* ImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */; };
 		4B945B211ADBB20200D1545E /* UIButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B945B201ADBB20200D1545E /* UIButton+Kingfisher.swift */; };
+		4B9771791C3E2F9200770AB8 /* ImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */; };
 		4BAFBA3D1AD671E400FB0300 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
 		4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
@@ -941,6 +942,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B9771791C3E2F9200770AB8 /* ImageCacheTests.swift in Sources */,
 				D10EC2431C3D793800A4211C /* ImageDownloaderTests.swift in Sources */,
 				D10EC23D1C3D653E00A4211C /* KingfisherTestHelper.swift in Sources */,
 				D10EC23C1C3D64D200A4211C /* ImageExtensionTests.swift in Sources */,
