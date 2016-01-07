@@ -9,6 +9,9 @@
 #if os(OSX)
 import AppKit.NSImage
 public typealias Image = NSImage
+
+private var imagesKey: Void?
+private var durationKey: Void?
 #else
 import UIKit.UIImage
 import MobileCoreServices
@@ -16,9 +19,6 @@ public typealias Image = UIImage
 #endif
 
 import ImageIO
-
-private var imagesKey: Void?
-private var durationKey: Void?
 
 extension Image {
 #if os(OSX)
@@ -208,5 +208,3 @@ extension Image {
         
     }
 }
-
-
