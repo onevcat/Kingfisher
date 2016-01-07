@@ -500,6 +500,7 @@ extension ImageCache {
         })
     }
     
+#if !os(OSX)
     /**
     Clean expired disk cache when app in background. This is an async operation.
     In most cases, you should not call this method explicitly. 
@@ -507,7 +508,6 @@ extension ImageCache {
     */
     @objc public func backgroundCleanExpiredDiskCache() {
         
-        #if os(iOS) || os(tvOS)
         func endBackgroundTask(inout task: UIBackgroundTaskIdentifier) {
             UIApplication.sharedApplication().endBackgroundTask(task)
             task = UIBackgroundTaskInvalid
@@ -522,8 +522,8 @@ extension ImageCache {
         cleanExpiredDiskCacheWithCompletionHander { () -> () in
             endBackgroundTask(&backgroundTask!)
         }
-        #endif
     }
+#endif
 }
 
 
