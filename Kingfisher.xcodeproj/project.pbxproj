@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
 		4A54251331E840CB85C78FA8 /* libPods-KingfisherTests-OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */; };
+		4B0AA6A21C3E55FE00DBFDCA /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B0AA6A11C3E55FE00DBFDCA /* Cell.xib */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
 		4B29444B1C3D01B20088C3E7 /* Kingfisher-OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B2944501C3D03430088C3E7 /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ED2D551AD2D0F900CFC3EB /* String+MD5.swift */; };
@@ -157,6 +158,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B0AA6A11C3E55FE00DBFDCA /* Cell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B29444A1C3D01B20088C3E7 /* Kingfisher-OSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kingfisher-OSX.h"; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 				4B2944591C3D03880088C3E7 /* ViewController.swift */,
 				4B29445B1C3D03880088C3E7 /* Assets.xcassets */,
 				4B29445D1C3D03880088C3E7 /* Main.storyboard */,
+				4B0AA6A11C3E55FE00DBFDCA /* Cell.xib */,
 				4B2944601C3D03880088C3E7 /* Info.plist */,
 			);
 			path = "Kingfisher-OSX-Demo";
@@ -752,6 +755,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B29445C1C3D03880088C3E7 /* Assets.xcassets in Resources */,
+				4B0AA6A21C3E55FE00DBFDCA /* Cell.xib in Resources */,
 				4B29445F1C3D03880088C3E7 /* Main.storyboard in Resources */,
 				D10EC2411C3D6EEC00A4211C /* dancing-banana.gif in Resources */,
 			);

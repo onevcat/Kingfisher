@@ -7,29 +7,14 @@
 //
 
 import AppKit
+import Kingfisher
 
 class ViewController: NSViewController {
-
-    
-    @IBOutlet weak var imageView: NSImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
-        imageView.imageScaling = .ScaleNone
-        imageView.animates = true
-        
-        let image = NSImage(named: "dancing-banana.gif")
-        
-        let ddd = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("dancing-banana", ofType: "gif")!)!
-        
-        if let rep = image!.representations.first as? NSBitmapImageRep {
-            print(rep.valueForProperty(NSImageFrameCount))
-            let data = rep.representationUsingType(.NSGIFFileType, properties: [:])!
-            imageView.image = NSImage(data: data)
-        }
-
+        title = "Kingfisher"
     }
 
     override var representedObject: AnyObject? {
@@ -39,4 +24,28 @@ class ViewController: NSViewController {
     }
 
 
+}
+
+extension ViewController: NSCollectionViewDataSource {
+    func collectionView(collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func collectionView(collectionView: NSCollectionView, itemForRepresentedObjectAtIndexPath indexPath: NSIndexPath) -> NSCollectionViewItem {
+        let item = collectionView.makeItemWithIdentifier("Cell", forIndexPath: indexPath)
+        
+        let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
+        
+        item.imageView?.kf_showIndicatorWhenLoading = true
+        item.imageView?.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil,
+                                                   progressBlock: { receivedSize, totalSize in
+                                                    print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")
+                                                    },
+                                              completionHandler: { image, error, cacheType, imageURL in
+                                                    print("\(indexPath.item + 1): Finished")
+                                                    }
+        )
+        
+        return item
+    }
 }
