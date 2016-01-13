@@ -1,9 +1,29 @@
 language: objective-c
 os: osx
-osx_image: xcode7.1
-xcode_workspace: Kingfisher.xcworkspace
-xcode_scheme: Kingfisher
+osx_image: xcode7.2
 
-script: set -o pipefail && xcodebuild -workspace Kingfisher.xcworkspace -scheme Kingfisher -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=latest' clean test GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES | xcpretty
+env:
+  matrix:
+    - TEST_TYPE=iOS
+    - TEST_TYPE=OSX
+    
+before_install:
+- |
+    gem install xcpretty -N --no-ri --no-rdoc
+
+script:
+- |
+    if [ "$TEST_TYPE" = iOS ]; then
+      set -o pipefail
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination "platform=iOS Simulator,name=iPhone 4s" -destination "platform=iOS Simulator,name=iPhone 6 Plus" -enableCodeCoverage YES | xcpretty
+    elif [ "$TEST_TYPE" = OSX ]; then
+      set -o pipefail
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-OSX -sdk macosx -enableCodeCoverage YES | xcpretty
+    elif [ "$TEST_TYPE" = Carthage ]; then
+      carthage build --no-skip-current
+    fi
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
+- |
+    if [ "$TEST_TYPE" = iOS ] || [ "$TEST_TYPE" = OSX ] || [ "$TEST_TYPE" = tvOS ]; then
+      bash <(curl -s https://codecov.io/bash)
+    fi

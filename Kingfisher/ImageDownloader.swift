@@ -4,7 +4,7 @@
 //
 //  Created by Wei Wang on 15/4/6.
 //
-//  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,17 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if os(OSX)
+import AppKit
+#else
 import UIKit
+#endif
 
 /// Progress update block of downloader.
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 
 /// Completion block of downloader.
-public typealias ImageDownloaderCompletionHandler = ((image: UIImage?, error: NSError?, imageURL: NSURL?, originalData: NSData?) -> ())
+public typealias ImageDownloaderCompletionHandler = ((image: Image?, error: NSError?, imageURL: NSURL?, originalData: NSData?) -> ())
 
 /// Download task.
 public struct RetrieveImageDownloadTask {
@@ -94,7 +98,7 @@ public enum KingfisherError: Int {
     - parameter URL:        URL of the original request URL.
     - parameter response:   The response object of the downloading process.
     */
-    optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: UIImage, forURL URL: NSURL, withResponse response: NSURLResponse)
+    optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: Image, forURL URL: NSURL, withResponse response: NSURLResponse)
 }
 
 /// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
@@ -349,7 +353,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
         completionHandler(.PerformDefaultHandling, nil)
     }
     
-    private func callbackWithImage(image: UIImage?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
+    private func callbackWithImage(image: Image?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
         if let callbackPairs = fetchLoadForKey(imageURL)?.callbacks {
             
             self.cleanForURL(imageURL)
@@ -367,7 +371,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             if let fetchLoad = self.fetchLoadForKey(URL) {
                 
                 let options = fetchLoad.options ?? KingfisherEmptyOptionsInfo
-                if let image = UIImage.kf_imageWithData(fetchLoad.responseData, scale: options.scaleFactor) {
+                if let image = Image.kf_imageWithData(fetchLoad.responseData, scale: options.scaleFactor) {
                     
                     self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                     

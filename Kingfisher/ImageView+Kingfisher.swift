@@ -1,10 +1,10 @@
 //
-//  UIImageView+Kingfisher.swift
+//  ImageView+Kingfisher.swift
 //  Kingfisher
 //
 //  Created by Wei Wang on 15/4/6.
 //
-//  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,22 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+
+#if os(OSX)
+import AppKit
+typealias ImageView = NSImageView
+public typealias IndicatorView = NSProgressIndicator
+#else
 import UIKit
+typealias ImageView = UIImageView
+public typealias IndicatorView = UIActivityIndicatorView
+#endif
 
 // MARK: - Set Images
 /**
 *	Set image to use from web.
 */
-
-public extension UIImageView {
+public extension ImageView {
     
     /**
     Set an image with a resource.
@@ -72,7 +80,7 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
-                                placeholderImage: UIImage?) -> RetrieveImageTask
+                                placeholderImage: Image?) -> RetrieveImageTask
     {
         return kf_setImageWithResource(resource, placeholderImage: placeholderImage, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
     }
@@ -86,7 +94,7 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?) -> RetrieveImageTask
+                      placeholderImage: Image?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
     }
@@ -101,7 +109,7 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
-                                placeholderImage: UIImage?,
+                                placeholderImage: Image?,
                                      optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask
     {
         return kf_setImageWithResource(resource, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
@@ -117,7 +125,7 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
+                      placeholderImage: Image?,
                            optionsInfo: KingfisherOptionsInfo?) -> RetrieveImageTask
     {
         return kf_setImageWithURL(URL, placeholderImage: placeholderImage, optionsInfo: optionsInfo, progressBlock: nil, completionHandler: nil)
@@ -134,7 +142,7 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
-                                placeholderImage: UIImage?,
+                                placeholderImage: Image?,
                                      optionsInfo: KingfisherOptionsInfo?,
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
@@ -152,7 +160,7 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
+                      placeholderImage: Image?,
                            optionsInfo: KingfisherOptionsInfo?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
@@ -171,17 +179,17 @@ public extension UIImageView {
     - returns: A task represents the retrieving process.
     */
     public func kf_setImageWithResource(resource: Resource,
-                                placeholderImage: UIImage?,
+                                placeholderImage: Image?,
                                      optionsInfo: KingfisherOptionsInfo?,
                                    progressBlock: DownloadProgressBlock?,
                                completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
-        var indicator: UIActivityIndicatorView? = nil
+        var indicator: IndicatorView? = nil
         if showIndicatorWhenLoading {
             indicator = kf_indicator
             indicator?.hidden = false
-            indicator?.startAnimating()
+            indicator?.kf_startAnimating()
         }
         
         image = placeholderImage
@@ -212,13 +220,14 @@ public extension UIImageView {
                         completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
                     }
-                    
+
+
                     if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
                         case .Transition(let transition) = transitionItem where cacheType == .None {
-                            
+#if !os(OSX)
                             UIView.transitionWithView(sSelf, duration: 0.0, options: [],
                                 animations: {
-                                    indicator?.stopAnimating()
+                                    indicator?.kf_stopAnimating()
                                 },
                                 completion: { finished in
                                     UIView.transitionWithView(sSelf, duration: transition.duration,
@@ -233,8 +242,9 @@ public extension UIImageView {
                                     )
                                 }
                             )
+#endif
                     } else {
-                        indicator?.stopAnimating()
+                        indicator?.kf_stopAnimating()
                         sSelf.image = image
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
@@ -260,7 +270,7 @@ public extension UIImageView {
     */
     
     public func kf_setImageWithURL(URL: NSURL,
-                      placeholderImage: UIImage?,
+                      placeholderImage: Image?,
                            optionsInfo: KingfisherOptionsInfo?,
                          progressBlock: DownloadProgressBlock?,
                      completionHandler: CompletionHandler?) -> RetrieveImageTask
@@ -273,7 +283,7 @@ public extension UIImageView {
     }
 }
 
-extension UIImageView {
+extension ImageView {
     /**
      Cancel the image download task bounded to the image view if it is running.
      Nothing will happen if the downloading has already finished.
@@ -289,7 +299,7 @@ private var indicatorKey: Void?
 private var showIndicatorWhenLoadingKey: Void?
 private var imageTaskKey: Void?
 
-public extension UIImageView {
+public extension ImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
@@ -315,18 +325,24 @@ public extension UIImageView {
                 return
             } else {
                 if newValue {
-                    #if os(tvOS)
-                        let indicatorStyle = UIActivityIndicatorViewStyle.White
-                    #else
-                        let indicatorStyle = UIActivityIndicatorViewStyle.Gray
-                    #endif
+                    
+#if os(OSX)
+                    let indicator = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
+                    indicator.controlSize = .SmallControlSize
+                    indicator.style = .SpinningStyle
+#else
+    #if os(tvOS)
+                    let indicatorStyle = UIActivityIndicatorViewStyle.White
+    #else
+                    let indicatorStyle = UIActivityIndicatorViewStyle.Gray
+    #endif
                     let indicator = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
-                    indicator.center = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-                    
                     indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+#endif
+
+                    indicator.kf_center = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
                     indicator.hidden = true
-                    indicator.hidesWhenStopped = true
-                    
+
                     self.addSubview(indicator)
                     
                     kf_setIndicator(indicator)
@@ -342,11 +358,11 @@ public extension UIImageView {
     
     /// The indicator view showing when loading. This will be `nil` if `kf_showIndicatorWhenLoading` is false.
     /// You may want to use this to set the indicator style or color when you set `kf_showIndicatorWhenLoading` to true.
-    public var kf_indicator: UIActivityIndicatorView? {
-        return objc_getAssociatedObject(self, &indicatorKey) as? UIActivityIndicatorView
+    public var kf_indicator: IndicatorView? {
+        return objc_getAssociatedObject(self, &indicatorKey) as? IndicatorView
     }
     
-    private func kf_setIndicator(indicator: UIActivityIndicatorView?) {
+    private func kf_setIndicator(indicator: IndicatorView?) {
         objc_setAssociatedObject(self, &indicatorKey, indicator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
@@ -357,4 +373,46 @@ public extension UIImageView {
     private func kf_setImageTask(task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+}
+
+
+extension IndicatorView {
+    func kf_startAnimating() {
+        #if os(OSX)
+            startAnimation(nil)
+        #else
+            startAnimating()
+        #endif
+        hidden = false
+    }
+    
+    func kf_stopAnimating() {
+        #if os(OSX)
+            stopAnimation(nil)
+        #else
+            stopAnimating()
+        #endif
+        hidden = true
+    }
+    
+    #if os(OSX)
+    var kf_center: CGPoint {
+    get {
+    return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
+    }
+    set {
+    let newFrame = CGRect(x: newValue.x - frame.size.width / 2.0, y: newValue.y - frame.size.height / 2.0, width: frame.size.width, height: frame.size.height)
+    frame = newFrame
+    }
+    }
+    #else
+    var kf_center: CGPoint {
+        get {
+            return center
+        }
+        set {
+            center = newValue
+        }
+    }
+    #endif
 }

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
                BuildableName = "Kingfisher.framework"
-               BlueprintName = "Kingfisher"
+               BlueprintName = "Kingfisher-iOS"
                ReferencedContainer = "container:Kingfisher.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,7 +45,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
             BuildableName = "Kingfisher.framework"
-            BlueprintName = "Kingfisher"
+            BlueprintName = "Kingfisher-iOS"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -67,7 +67,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
             BuildableName = "Kingfisher.framework"
-            BlueprintName = "Kingfisher"
+            BlueprintName = "Kingfisher-iOS"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -85,7 +85,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D1ED2D341AD2D09F00CFC3EB"
             BuildableName = "Kingfisher.framework"
-            BlueprintName = "Kingfisher"
+            BlueprintName = "Kingfisher-iOS"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

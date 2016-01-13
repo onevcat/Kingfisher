@@ -29,6 +29,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "D13F49D51BEDA67C00CE335D"
+            BuildableName = "Kingfisher.framework"
+            BlueprintName = "Kingfisher-tvOS"
+            ReferencedContainer = "container:Kingfisher.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

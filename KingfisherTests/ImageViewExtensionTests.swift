@@ -4,7 +4,7 @@
 //
 //  Created by Wei Wang on 15/4/17.
 //
-//  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,12 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import XCTest
 @testable import Kingfisher
 
-class UIImageViewExtensionTests: XCTestCase {
+class ImageViewExtensionTests: XCTestCase {
 
-    var imageView: UIImageView!
+    var imageView: ImageView!
     
     override class func setUp() {
         super.setUp()
@@ -45,7 +44,7 @@ class UIImageViewExtensionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        imageView = UIImageView()
+        imageView = ImageView()
         KingfisherManager.sharedManager.downloader = ImageDownloader(name: "testDownloader")
         cleanDefaultCache()
     }
@@ -379,11 +378,11 @@ class UIImageViewExtensionTests: XCTestCase {
             
             let indicator = self.imageView.kf_indicator
             XCTAssertNotNil(indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
-            XCTAssertTrue(indicator!.isAnimating(), "The indicator should be animating when loading")
+            XCTAssertFalse(indicator!.hidden, "The indicator should be shown and animating when loading")
 
         }) { (image, error, cacheType, imageURL) -> () in
             let indicator = self.imageView.kf_indicator
-            XCTAssertFalse(indicator!.isAnimating(), "The indicator should stop after loading")
+            XCTAssertTrue(indicator!.hidden, "The indicator should stop and hidden after loading")
             expectation.fulfill()
         }
         
