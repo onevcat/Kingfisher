@@ -10,7 +10,8 @@ platform :ios do
 
   desc "Runs all the tests"
   lane :test do
-    scan
+    scan(scheme: "Kingfisher", clean: true)
+    scan(scheme: "Kingfisher-OSX", clean: true)
   end
   
   desc "Release new version"
@@ -20,7 +21,7 @@ platform :ios do
       
       ensure_git_branch
       ensure_git_status_clean
-      scan
+      test
       sync_build_number_to_git
       increment_version_number(version_number: target_version)
       version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
