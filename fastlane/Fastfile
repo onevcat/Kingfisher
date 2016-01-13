@@ -14,6 +14,11 @@ platform :ios do
     scan(scheme: "Kingfisher-OSX", clean: true)
   end
   
+  desc "Build for Carthage"
+  lane :carthage_lint do
+      Actions.sh("cd .. && carthage build --no-skip-current && cd fastlane")
+  end
+  
   desc "Release new version"
   lane :release do |options|
       target_version = options[:version]
@@ -21,7 +26,10 @@ platform :ios do
       
       ensure_git_branch
       ensure_git_status_clean
+      
       test
+      carthage_lint
+      
       sync_build_number_to_git
       increment_version_number(version_number: target_version)
       version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)

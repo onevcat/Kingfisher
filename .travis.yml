@@ -6,17 +6,10 @@ env:
   matrix:
     - TEST_TYPE=iOS
     - TEST_TYPE=OSX
-    - TEST_TYPE=Carthage
     
 before_install:
 - |
-  if [ "$TEST_TYPE" = iOS ] || [ "$TEST_TYPE" = OSX ] || [ "$TEST_TYPE" = tvOS ]; then
     gem install xcpretty -N --no-ri --no-rdoc
-  elif [ "$TEST_TYPE" = Carthage ]; then
-    brew update
-    brew install carthage
-    brew install swiftlint
-  fi
 
 script:
 - |
