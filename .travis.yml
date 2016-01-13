@@ -5,7 +5,7 @@ xcode_workspace: Kingfisher.xcworkspace
 xcode_scheme: Kingfisher
 
 script: 
-    - set -o pipefail && xcodebuild -workspace Kingfisher.xcworkspace -scheme Kingfisher-OSX -destination 'platform=OS X,arch=x86_64' clean test
+    - set -o pipefail && xcodebuild -workspace Kingfisher.xcworkspace -scheme Kingfisher-OSX -destination 'platform=OS X,arch=x86_64' clean test | xcpretty
     - set -o pipefail && xcodebuild -workspace Kingfisher.xcworkspace -scheme Kingfisher -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=latest' clean test GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES | xcpretty
 after_success:
     - bash <(curl -s https://codecov.io/bash)
