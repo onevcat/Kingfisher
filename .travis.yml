@@ -6,17 +6,12 @@ env:
   matrix:
     - TEST_TYPE=iOS
     - TEST_TYPE=OSX
-    - TEST_TYPE=CocoaPods
     - TEST_TYPE=Carthage
     
 before_install:
 - |
   if [ "$TEST_TYPE" = iOS ] || [ "$TEST_TYPE" = OSX ] || [ "$TEST_TYPE" = tvOS ]; then
     gem install xcpretty -N --no-ri --no-rdoc
-  elif [ "$TEST_TYPE" = CocoaPods ]; then
-    gem install cocoapods --pre --quiet --no-ri --no-rdoc
-    pod setup --silent
-    pod repo update --silent
   elif [ "$TEST_TYPE" = Carthage ]; then
     brew update
     brew install carthage
@@ -31,8 +26,6 @@ script:
     elif [ "$TEST_TYPE" = OSX ]; then
       set -o pipefail
       xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-OSX -sdk macosx -enableCodeCoverage YES | xcpretty
-    elif [ "$TEST_TYPE" = CocoaPods ]; then
-      pod lib lint Kingfisher.podspec
     elif [ "$TEST_TYPE" = Carthage ]; then
       carthage build --no-skip-current
     fi
