@@ -61,7 +61,14 @@ static LSNocilla *sharedInstace = nil;
 }
 
 - (void)addStubbedRequest:(LSStubRequest *)request {
-    [self.mutableRequests addObject:request];
+    NSUInteger index = [self.mutableRequests indexOfObject:request];
+
+    if (index == NSNotFound) {
+        [self.mutableRequests addObject:request];
+        return;
+    }
+
+    [self.mutableRequests replaceObjectAtIndex:index withObject:request];
 }
 
 - (void)clearStubs {
