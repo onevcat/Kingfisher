@@ -142,7 +142,7 @@ public class ImageCache {
 }
 
 // MARK: - Store & Remove
-public extension ImageCache {
+extension ImageCache {
     /**
     Store an image to cache. It will be saved to both memory and disk. 
     It is an async operation, if you need to do something about the stored image, use `-storeImage:forKey:toDisk:completionHandler:` 
@@ -528,7 +528,7 @@ extension ImageCache {
 
 
 // MARK: - Check cache status
-public extension ImageCache {
+extension ImageCache {
     
     /**
     *  Cache result for checking whether an image is cached for a key.

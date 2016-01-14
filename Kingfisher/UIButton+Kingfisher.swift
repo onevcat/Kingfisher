@@ -29,7 +29,7 @@ import UIKit
 /**
 *	Set image to use from web for a specified state.
 */
-public extension UIButton {
+extension UIButton {
 
     /**
     Set an image to use for a specified state with a resource.
@@ -246,7 +246,7 @@ public extension UIButton {
 }
 
 private var lastURLKey: Void?
-public extension UIButton {
+extension UIButton {
     /**
     Get the image URL binded to this button for a specified state. 
     
@@ -279,7 +279,7 @@ public extension UIButton {
 /**
 *	Set background image to use from web for a specified state.
 */
-public extension UIButton {
+extension UIButton {
     /**
     Set the background image to use for a specified state with a resource.
     It will ask for Kingfisher's manager to get the image for the `cacheKey` property in `resource` and then set it for a button state.
@@ -495,7 +495,7 @@ public extension UIButton {
 }
 
 private var lastBackgroundURLKey: Void?
-public extension UIButton {
+extension UIButton {
     /**
     Get the background image URL binded to this button for a specified state.
     

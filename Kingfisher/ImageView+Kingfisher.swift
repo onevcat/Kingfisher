@@ -39,7 +39,7 @@ public typealias IndicatorView = UIActivityIndicatorView
 /**
 *	Set image to use from web.
 */
-public extension ImageView {
+extension ImageView {
     
     /**
     Set an image with a resource.
@@ -296,7 +296,7 @@ private var indicatorKey: Void?
 private var showIndicatorWhenLoadingKey: Void?
 private var imageTaskKey: Void?
 
-public extension ImageView {
+extension ImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         return objc_getAssociatedObject(self, &lastURLKey) as? NSURL

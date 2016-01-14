@@ -180,7 +180,7 @@ public class ImageDownloader: NSObject {
 }
 
 // MARK: - Download method
-public extension ImageDownloader {
+extension ImageDownloader {
     /**
     Download an image with a URL.
     
