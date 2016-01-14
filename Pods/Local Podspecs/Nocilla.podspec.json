@@ -16,7 +16,9 @@
   },
   "platforms": {
     "ios": "4.0",
-    "osx": "10.7"
+    "osx": "10.7",
+    "tvos": "9.0",
+    "watchos": "2.0"
   },
   "source_files": "Nocilla/**/*.{h,m}",
   "public_header_files": [

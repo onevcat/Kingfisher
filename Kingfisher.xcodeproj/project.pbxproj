@@ -29,6 +29,19 @@
 		4B29446E1C3D05FD0088C3E7 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29446C1C3D05FD0088C3E7 /* Image.swift */; };
 		4B29446F1C3D05FD0088C3E7 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29446C1C3D05FD0088C3E7 /* Image.swift */; };
 		4B2C4DF81B7D7ACD000912CA /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2C4DF71B7D7ACD000912CA /* Resource.swift */; };
+		4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; };
+		4B37668A1C4790490001443F /* KingfisherManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */; };
+		4B3766961C47905F0001443F /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
+		4B3766971C47905F0001443F /* ImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B82DDFB1AD7701900074995 /* ImageCacheTests.swift */; };
+		4B3766981C47905F0001443F /* ImageViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F641AE0A46D0084D15B /* ImageViewExtensionTests.swift */; };
+		4B3766991C47905F0001443F /* UIButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F661AE0B82A0084D15B /* UIButtonExtensionTests.swift */; };
+		4B37669A1C47905F0001443F /* KingfisherManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */; };
+		4B37669B1C47905F0001443F /* ImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */; };
+		4B37669C1C47905F0001443F /* KingfisherOptionsInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17363CA1C3AABF80042F42E /* KingfisherOptionsInfoTests.swift */; };
+		4B37669D1C47929B0001443F /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
+		4B37669E1C4792BA0001443F /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1A7B6CB1BDBEC090083A684 /* dancing-banana.gif */; };
+		4B3766A01C4794460001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B37669F1C4794460001443F /* CFNetwork.framework */; };
+		4B3766A21C47944D0001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3766A11C47944D0001443F /* CFNetwork.framework */; };
 		4B412CA51AE8A2F9008D530A /* KingfisherOptionsInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */; };
 		4B5083381BD88C3E00AEA807 /* KingfisherManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */; };
 		4B6D4F651AE0A46D0084D15B /* ImageViewExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6D4F641AE0A46D0084D15B /* ImageViewExtensionTests.swift */; };
@@ -42,7 +55,7 @@
 		4BAFBA3D1AD671E400FB0300 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BAFBA3C1AD671E400FB0300 /* CollectionViewCell.swift */; };
 		4BBA04C21AD795C500A5CF82 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C11AD795C500A5CF82 /* ImageDownloaderTests.swift */; };
 		4BBA04C41AD7986100A5CF82 /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
-		D10EC2341C3D632300A4211C /* KingfisherTests_OSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10EC2331C3D632300A4211C /* KingfisherTests_OSX.swift */; };
+		B43007AC86DBFFFD1AC6EDD1 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 798E024A9311DC80470CF240 /* libPods-KingfisherTests-tvOS.a */; };
 		D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
 		D10EC23C1C3D64D200A4211C /* ImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7B6C91BDBC9C60083A684 /* ImageExtensionTests.swift */; };
 		D10EC23D1C3D653E00A4211C /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */; };
@@ -89,6 +102,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4B3766851C478F940001443F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D13F49D51BEDA67C00CE335D;
+			remoteInfo = "Kingfisher-tvOS";
+		};
 		D10EC2371C3D632300A4211C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
@@ -155,6 +175,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		026040C607726792406566BB /* Pods-KingfisherTests-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		4B0AA6A11C3E55FE00DBFDCA /* Cell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -168,6 +189,10 @@
 		4B2944601C3D03880088C3E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B29446C1C3D05FD0088C3E7 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		4B2C4DF71B7D7ACD000912CA /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B3766831C478F940001443F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B37669F1C4794460001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
+		4B3766A11C47944D0001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B412CA41AE8A2F9008D530A /* KingfisherOptionsInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherOptionsInfo.swift; sourceTree = "<group>"; };
 		4B5083371BD88C3E00AEA807 /* KingfisherManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherManagerTests.swift; sourceTree = "<group>"; };
@@ -181,10 +206,11 @@
 		4BBA04C31AD7986100A5CF82 /* KingfisherTestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherTestHelper.swift; sourceTree = "<group>"; };
 		50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-OSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74477D1C4379728A8DA673FB /* Pods-KingfisherTests-OSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-OSX.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-OSX/Pods-KingfisherTests-OSX.debug.xcconfig"; sourceTree = "<group>"; };
+		798E024A9311DC80470CF240 /* libPods-KingfisherTests-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6B5C590A36C8E84C5B16C3E /* Pods-KingfisherTests-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D10EC2311C3D632300A4211C /* KingfisherTests-OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-OSX.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D10EC2331C3D632300A4211C /* KingfisherTests_OSX.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingfisherTests_OSX.swift; sourceTree = "<group>"; };
 		D10EC2351C3D632300A4211C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D11250C01BAC4B6300B986EF /* ImageTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTransition.swift; sourceTree = "<group>"; };
 		D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-tvOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -225,6 +251,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B3766A21C47944D0001443F /* CFNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,6 +260,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B2944641C3D03980088C3E7 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B37667C1C478F940001443F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */,
+				B43007AC86DBFFFD1AC6EDD1 /* libPods-KingfisherTests-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +293,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B3766A01C4794460001443F /* CFNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +347,14 @@
 			path = "Kingfisher-OSX-Demo";
 			sourceTree = "<group>";
 		};
+		4B3766801C478F940001443F /* KingfisherTests-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				4B3766831C478F940001443F /* Info.plist */,
+			);
+			path = "KingfisherTests-tvOS";
+			sourceTree = "<group>";
+		};
 		9C068B80BAB8294A1732ADC5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,6 +362,8 @@
 				A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */,
 				74477D1C4379728A8DA673FB /* Pods-KingfisherTests-OSX.debug.xcconfig */,
 				FE96DF45BEE5F8EBB01C7956 /* Pods-KingfisherTests-OSX.release.xcconfig */,
+				B6B5C590A36C8E84C5B16C3E /* Pods-KingfisherTests-tvOS.debug.xcconfig */,
+				026040C607726792406566BB /* Pods-KingfisherTests-tvOS.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -344,6 +391,7 @@
 		D10EC22C1C3D62E800A4211C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4B3766801C478F940001443F /* KingfisherTests-tvOS */,
 				D10EC2321C3D632300A4211C /* KingfisherTests-OSX */,
 				D1ED2D451AD2D09F00CFC3EB /* KingfisherTests */,
 			);
@@ -353,7 +401,6 @@
 		D10EC2321C3D632300A4211C /* KingfisherTests-OSX */ = {
 			isa = PBXGroup;
 			children = (
-				D10EC2331C3D632300A4211C /* KingfisherTests_OSX.swift */,
 				D10EC2351C3D632300A4211C /* Info.plist */,
 			);
 			path = "KingfisherTests-OSX";
@@ -402,6 +449,7 @@
 				4B2944481C3D01B20088C3E7 /* Kingfisher.framework */,
 				4B2944551C3D03880088C3E7 /* Kingfisher-OSX-Demo.app */,
 				D10EC2311C3D632300A4211C /* KingfisherTests-OSX.xctest */,
+				4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -485,10 +533,13 @@
 		EA99D30544BD22799F7A5367 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B3766A11C47944D0001443F /* CFNetwork.framework */,
+				4B37669F1C4794460001443F /* CFNetwork.framework */,
 				4B164ACE1B8D554200768EC6 /* CFNetwork.framework */,
 				4B3E714D1B01FEB200F5AAED /* WatchKit.framework */,
 				A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */,
 				50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */,
+				798E024A9311DC80470CF240 /* libPods-KingfisherTests-tvOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -558,6 +609,27 @@
 			productName = "Kingfisher-OSX-Demo";
 			productReference = 4B2944551C3D03880088C3E7 /* Kingfisher-OSX-Demo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4B37667E1C478F940001443F /* KingfisherTests-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B3766891C478F940001443F /* Build configuration list for PBXNativeTarget "KingfisherTests-tvOS" */;
+			buildPhases = (
+				C9510BED2EE6626334E8E75D /* Check Pods Manifest.lock */,
+				4B37667B1C478F940001443F /* Sources */,
+				4B37667C1C478F940001443F /* Frameworks */,
+				4B37667D1C478F940001443F /* Resources */,
+				9D52BAAEE8D08DB05BA9EC39 /* Embed Pods Frameworks */,
+				181311C3ABFA19ADAF636D31 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B3766861C478F940001443F /* PBXTargetDependency */,
+			);
+			name = "KingfisherTests-tvOS";
+			productName = "KingfisherTests-tvOS";
+			productReference = 4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		D10EC2301C3D632300A4211C /* KingfisherTests-OSX */ = {
 			isa = PBXNativeTarget;
@@ -694,6 +766,9 @@
 					4B2944541C3D03880088C3E7 = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					4B37667E1C478F940001443F = {
+						CreatedOnToolsVersion = 7.2;
+					};
 					D10EC2301C3D632300A4211C = {
 						CreatedOnToolsVersion = 7.2;
 					};
@@ -735,6 +810,7 @@
 				4B2944541C3D03880088C3E7 /* Kingfisher-OSX-Demo */,
 				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
 				D10EC2301C3D632300A4211C /* KingfisherTests-OSX */,
+				4B37667E1C478F940001443F /* KingfisherTests-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -755,6 +831,14 @@
 				4B0AA6A21C3E55FE00DBFDCA /* Cell.xib in Resources */,
 				4B29445F1C3D03880088C3E7 /* Main.storyboard in Resources */,
 				D10EC2411C3D6EEC00A4211C /* dancing-banana.gif in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B37667D1C478F940001443F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B37669E1C4792BA0001443F /* dancing-banana.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -810,6 +894,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		181311C3ABFA19ADAF636D31 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		26FE50EF2DF394A49D133472 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -896,6 +995,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		9D52BAAEE8D08DB05BA9EC39 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		B1E0C2945773E44FBD8B285C /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -909,6 +1023,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C9510BED2EE6626334E8E75D /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		D1249CF91C12B01E002C62D8 /* ShellScript */ = {
@@ -968,17 +1097,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4B37667B1C478F940001443F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B37669D1C47929B0001443F /* KingfisherTestHelper.swift in Sources */,
+				4B3766961C47905F0001443F /* ImageDownloaderTests.swift in Sources */,
+				4B3766971C47905F0001443F /* ImageCacheTests.swift in Sources */,
+				4B3766981C47905F0001443F /* ImageViewExtensionTests.swift in Sources */,
+				4B3766991C47905F0001443F /* UIButtonExtensionTests.swift in Sources */,
+				4B37669A1C47905F0001443F /* KingfisherManagerTests.swift in Sources */,
+				4B37669B1C47905F0001443F /* ImageExtensionTests.swift in Sources */,
+				4B37669C1C47905F0001443F /* KingfisherOptionsInfoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D10EC22D1C3D632300A4211C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B37668A1C4790490001443F /* KingfisherManagerTests.swift in Sources */,
 				4B97717F1C3E4E8800770AB8 /* ImageViewExtensionTests.swift in Sources */,
 				4B97717A1C3E2FE700770AB8 /* KingfisherOptionsInfoTests.swift in Sources */,
 				4B9771791C3E2F9200770AB8 /* ImageCacheTests.swift in Sources */,
 				D10EC2431C3D793800A4211C /* ImageDownloaderTests.swift in Sources */,
 				D10EC23D1C3D653E00A4211C /* KingfisherTestHelper.swift in Sources */,
 				D10EC23C1C3D64D200A4211C /* ImageExtensionTests.swift in Sources */,
-				D10EC2341C3D632300A4211C /* KingfisherTests_OSX.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1056,6 +1200,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4B3766861C478F940001443F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */;
+			targetProxy = 4B3766851C478F940001443F /* PBXContainerItemProxy */;
+		};
 		D10EC2381C3D632300A4211C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4B2944471C3D01B20088C3E7 /* Kingfisher-OSX */;
@@ -1197,6 +1346,38 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4B3766871C478F940001443F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B6B5C590A36C8E84C5B16C3E /* Pods-KingfisherTests-tvOS.debug.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "KingfisherTests-tvOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.KingfisherTests-tvOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "KingfisherTests/KingfisherTests-Bridging-Header.h";
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		4B3766881C478F940001443F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 026040C607726792406566BB /* Pods-KingfisherTests-tvOS.release.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "KingfisherTests-tvOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.KingfisherTests-tvOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "KingfisherTests/KingfisherTests-Bridging-Header.h";
+				TVOS_DEPLOYMENT_TARGET = 9.1;
 			};
 			name = Release;
 		};
@@ -1522,6 +1703,15 @@
 			buildConfigurations = (
 				4B2944621C3D03880088C3E7 /* Debug */,
 				4B2944631C3D03880088C3E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B3766891C478F940001443F /* Build configuration list for PBXNativeTarget "KingfisherTests-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B3766871C478F940001443F /* Debug */,
+				4B3766881C478F940001443F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

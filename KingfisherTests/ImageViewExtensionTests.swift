@@ -177,7 +177,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = expectationWithDescription("wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
         let URL = NSURL(string: URLString)!
         
         var task1Completion = false
@@ -205,6 +205,9 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         task1.cancel()
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.1)), dispatch_get_main_queue()) { () -> Void in
+            stub.go()
+        }
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.2)), dispatch_get_main_queue()) { () -> Void in
             expectation.fulfill()

@@ -3,10 +3,15 @@
 
 target 'KingfisherTests' do
     platform :ios, '8.0'
-    pod 'Nocilla',  :git => 'https://github.com/pcantrell/Nocilla.git', :branch => 'delayed-response'
+    pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git'
 end
 
 target 'KingfisherTests-OSX' do
     platform :osx, '10.10'
-    pod 'Nocilla',  :git => 'https://github.com/pcantrell/Nocilla.git', :branch => 'delayed-response'
+    pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git'
+end
+
+target 'KingfisherTests-tvOS' do
+    platform :tvos, '9.0'
+    pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git'
 end
