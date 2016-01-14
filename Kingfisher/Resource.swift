@@ -26,10 +26,27 @@
 
 import Foundation
 
+/**
+ Resource is a simple combination of `downloadURL` and `cacheKey`.
+ 
+ When passed to image view set methods, Kingfisher will try to download the target 
+ image from the `downloadURL`, and then store it with the `cacheKey` as the key in cache.
+ */
 public struct Resource {
+    /// The key used in cache.
     public let cacheKey: String
+    
+    /// The target image URL.
     public let downloadURL: NSURL
     
+    /**
+     Create a resource.
+     
+     - parameter downloadURL: The target image URL.
+     - parameter cacheKey:    The cache key. If `nil`, Kingfisher will use the `absoluteString` of `downloadURL` as the key.
+     
+     - returns: A resource.
+     */
     public init(downloadURL: NSURL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
         self.cacheKey = cacheKey ?? downloadURL.absoluteString

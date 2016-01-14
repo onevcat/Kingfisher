@@ -39,7 +39,7 @@ public typealias IndicatorView = UIActivityIndicatorView
 /**
 *	Set image to use from web.
 */
-public extension ImageView {
+extension ImageView {
     
     /**
     Set an image with a resource.
@@ -238,10 +238,8 @@ public extension ImageView {
                                         completion: { finished in
                                             transition.completion?(finished)
                                             completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                                        }
-                                    )
-                                }
-                            )
+                                        })
+                                })
 #endif
                     } else {
                         indicator?.kf_stopAnimating()
@@ -249,8 +247,7 @@ public extension ImageView {
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
                 }
-            }
-        )
+            })
         
         kf_setImageTask(task)
         
@@ -299,7 +296,7 @@ private var indicatorKey: Void?
 private var showIndicatorWhenLoadingKey: Void?
 private var imageTaskKey: Void?
 
-public extension ImageView {
+extension ImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
         return objc_getAssociatedObject(self, &lastURLKey) as? NSURL

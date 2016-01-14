@@ -78,8 +78,7 @@ extension ViewController {
                                                       },
                                                   completionHandler: { image, error, cacheType, imageURL in
                                                           print("\(indexPath.row + 1): Finished")
-                                                      }
-            )
+                                                      })
         return cell
     }
 }

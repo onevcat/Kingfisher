@@ -189,8 +189,7 @@ public class KingfisherManager {
                 }
                 
                 completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
-            }
-        )
+            })
     }
     
     func tryToRetrieveImageFromCacheForKey(key: String,
@@ -219,8 +218,7 @@ public class KingfisherManager {
                         completionHandler: diskTaskCompletionHandler,
                         options: options)
                 }
-            }
-        )
+            })
         retrieveImageTask.diskRetrieveTask = diskTask
     }
 }
