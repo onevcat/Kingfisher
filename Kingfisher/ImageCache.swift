@@ -187,9 +187,9 @@ public extension ImageCache {
                 
                 let data: NSData?
                 switch imageFormat {
-                case .PNG: data = UIImagePNGRepresentation(image)
-                case .JPEG: data = UIImageJPEGRepresentation(image, 1.0)
-                case .GIF: data = UIImageGIFRepresentation(image)
+                case .PNG: data = originalData ?? UIImagePNGRepresentation(image)
+                case .JPEG: data = originalData ?? UIImageJPEGRepresentation(image, 1.0)
+                case .GIF: data = originalData ?? UIImageGIFRepresentation(image)
                 case .Unknown: data = originalData ?? UIImagePNGRepresentation(image.kf_normalizedImage())
                 }
                 
