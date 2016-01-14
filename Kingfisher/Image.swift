@@ -91,6 +91,11 @@ extension Image {
         return Image(CGImage: cgImage, size: CGSizeZero)
     }
     
+    /**
+    Normalize the image. This method does nothing in OS X.
+    
+    - returns: The image itself.
+    */
     public func kf_normalizedImage() -> Image {
         return self
     }
@@ -107,6 +112,11 @@ extension Image {
         }
     }
     
+    /**
+     Normalize the image. This method will try to redraw an image with orientation and sclae considered.
+     
+     - returns: The normalized image with orientation set to up and correct scale.
+     */
     public func kf_normalizedImage() -> Image {
         // prevent animated image (GIF) lose it's images
         if images != nil {
