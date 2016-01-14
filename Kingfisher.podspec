@@ -31,15 +31,15 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
-  s.ios.source_files  = ["Kingfisher/*.swift", "Kingfisher/Kingfisher.h"]
-  s.ios.public_header_files = ["Kingfisher/Kingfisher.h"]
+  s.ios.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher/Kingfisher.h"]
+  s.ios.public_header_files = ["Sources/Kingfisher/Kingfisher.h"]
   
-  s.osx.source_files  = ["Kingfisher/*.swift", "Kingfisher-OSX/Kingfisher-OSX.h"]
-  s.osx.exclude_files = "Kingfisher/UIButton+Kingfisher.swift"
-  s.osx.public_header_files = ["Kingfisher-OSX/Kingfisher-OSX.h"]
+  s.osx.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-OSX/Kingfisher-OSX.h"]
+  s.osx.exclude_files = "Sources/Kingfisher/UIButton+Kingfisher.swift"
+  s.osx.public_header_files = ["Sources/Kingfisher-OSX/Kingfisher-OSX.h"]
   
-  s.tvos.source_files  = ["Kingfisher/*.swift", "Kingfisher-tvOS/Kingfisher-tvOS.h"]
-  s.tvos.public_header_files = ["Kingfisher-tvOS/Kingfisher-tvOS.h"]
+  s.tvos.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-tvOS/Kingfisher-tvOS.h"]
+  s.tvos.public_header_files = ["Sources/Kingfisher-tvOS/Kingfisher-tvOS.h"]
   
   s.requires_arc = true
   s.framework = "CFNetwork"
