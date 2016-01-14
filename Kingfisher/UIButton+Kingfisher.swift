@@ -213,8 +213,7 @@ public extension UIButton {
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
                 }
-            }
-        )
+            })
         return task
     }
     
@@ -462,8 +461,7 @@ public extension UIButton {
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
                 }
-            }
-        )
+            })
         return task
     }
     

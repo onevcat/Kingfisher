@@ -70,8 +70,7 @@ extension ViewController: NSCollectionViewDataSource {
                                                     },
                                               completionHandler: { image, error, cacheType, imageURL in
                                                     print("\(indexPath.item + 1): Finished")
-                                                    }
-        )
+                                                    })
         
         return item
     }

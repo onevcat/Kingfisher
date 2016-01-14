@@ -238,10 +238,8 @@ public extension ImageView {
                                         completion: { finished in
                                             transition.completion?(finished)
                                             completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                                        }
-                                    )
-                                }
-                            )
+                                        })
+                                })
 #endif
                     } else {
                         indicator?.kf_stopAnimating()
@@ -249,8 +247,7 @@ public extension ImageView {
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
                 }
-            }
-        )
+            })
         
         kf_setImageTask(task)
         
