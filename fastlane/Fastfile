@@ -12,6 +12,7 @@ platform :ios do
   lane :test do
     scan(scheme: "Kingfisher", clean: true)
     scan(scheme: "Kingfisher-OSX", clean: true)
+    scan(scheme: "Kingfisher-tvOS", clean: true)
   end
   
   desc "Build for Carthage"
