@@ -25,10 +25,19 @@
 //  THE SOFTWARE.
 
 #if os(OSX)
-// Not implemented for OSX yet.
+// Not implemented for OSX and watchOS yet.
     
 import AppKit
     
+public enum ImageTransition {
+    case None
+    var duration: NSTimeInterval {
+        return 0
+    }
+}
+
+#elseif os(watchOS)
+import UIKit
 public enum ImageTransition {
     case None
     var duration: NSTimeInterval {
