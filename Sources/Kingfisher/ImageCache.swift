@@ -129,7 +129,7 @@ public class ImageCache {
             self.fileManager = NSFileManager()
         })
         
-#if !os(OSX)
+#if !os(OSX) && !os(watchOS)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "clearMemoryCache", name: UIApplicationDidReceiveMemoryWarningNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "cleanExpiredDiskCache", name: UIApplicationWillTerminateNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "backgroundCleanExpiredDiskCache", name: UIApplicationDidEnterBackgroundNotification, object: nil)
@@ -500,7 +500,7 @@ extension ImageCache {
         })
     }
     
-#if !os(OSX)
+#if !os(OSX) && !os(watchOS)
     /**
     Clean expired disk cache when app in background. This is an async operation.
     In most cases, you should not call this method explicitly. 

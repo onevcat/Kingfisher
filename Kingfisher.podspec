@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "8.0"
   s.tvos.deployment_target = "9.0"
   s.osx.deployment_target = "10.10"
+  s.watchos.deployment_target = "2.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
@@ -40,6 +41,10 @@ Pod::Spec.new do |s|
   
   s.tvos.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-tvOS/Kingfisher-tvOS.h"]
   s.tvos.public_header_files = ["Sources/Kingfisher-tvOS/Kingfisher-tvOS.h"]
+  
+  s.watchos.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-watchOS/Kingfisher-watchOS.h"]
+  s.watchos.exclude_files = ["Sources/Kingfisher/UIButton+Kingfisher.swift", "Sources/Kingfisher/ImageView+Kingfisher.swift"]
+  s.watchos.public_header_files = ["Sources/Kingfisher-watchOS/Kingfisher-watchOS.h"]
   
   s.requires_arc = true
   s.framework = "CFNetwork"
