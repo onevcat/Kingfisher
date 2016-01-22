@@ -5,7 +5,7 @@
 ## [1.9.3](https://github.com/onevcat/Kingfisher/releases/tag/1.9.3) (2016-01-22)
 
 #### Fix
-* Stop indicator animation when loading failed.
+* Stop indicator animation when loading failed. #215
 
 ---
 
