@@ -1,0 +1,5 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/Nocilla"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/Nocilla"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"Pods-KingfisherTests-OSX-Nocilla" -framework "CFNetwork"
+PODS_ROOT = ${SRCROOT}/Pods

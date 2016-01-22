@@ -2,19 +2,18 @@ PODS:
   - Nocilla (0.10.0)
 
 DEPENDENCIES:
-  - Nocilla (from `https://github.com/pcantrell/Nocilla.git`, branch `delayed-response`)
+  - Nocilla (from `https://github.com/onevcat/Nocilla.git`)
 
 EXTERNAL SOURCES:
   Nocilla:
-    :branch: delayed-response
-    :git: https://github.com/pcantrell/Nocilla.git
+    :git: https://github.com/onevcat/Nocilla.git
 
 CHECKOUT OPTIONS:
   Nocilla:
-    :commit: 537ee6d014f6fc1d756f0e59ae23abc566ddc24e
-    :git: https://github.com/pcantrell/Nocilla.git
+    :commit: 4e3ec2dac36ea2a6f7c57f089cfb47081fd5cd24
+    :git: https://github.com/onevcat/Nocilla.git
 
 SPEC CHECKSUMS:
-  Nocilla: ae0a2b05f3087b473624ac2b25903695df51246a
+  Nocilla: c31f714d1f0a24a983c430e99a1283908ed9c1d7
 
-COCOAPODS: 0.37.2
+COCOAPODS: 0.39.0

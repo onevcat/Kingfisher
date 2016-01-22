@@ -29,4 +29,23 @@
     return [self.data isEqualToData:data];
 }
 
+
+#pragma mark - Equality
+
+- (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+
+    if (![object isKindOfClass:[LSDataMatcher class]]) {
+        return NO;
+    }
+
+    return [self.data isEqual:((LSDataMatcher *)object).data];
+}
+
+- (NSUInteger)hash {
+    return self.data.hash;
+}
+
 @end
