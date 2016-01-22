@@ -1,8 +1,8 @@
 //
-//  Kingfisher-tvOS.h
-//  Kingfisher-tvOS
+//  Package.swift
+//  Kingfisher
 //
-//  Created by Wei Wang on 15/11/7.
+//  Created by Wei Wang on 16/1/22.
 //
 //  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
 //
@@ -24,14 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#import <UIKit/UIKit.h>
+import PackageDescription
 
-//! Project version number for Kingfisher-tvOS.
-FOUNDATION_EXPORT double Kingfisher_tvOSVersionNumber;
-
-//! Project version string for Kingfisher-tvOS.
-FOUNDATION_EXPORT const unsigned char Kingfisher_tvOSVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <Kingfisher_tvOS/PublicHeader.h>
-
-
+let package = Package(
+  name: "Kingfisher"
+)

@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if os(iOS) || os(tvOS)
+
 import UIKit
 
 /**
@@ -524,3 +526,12 @@ extension UIButton {
         objc_setAssociatedObject(self, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
+
+#elseif os(OSX)
+
+import AppKit
+extension NSButton {
+    // Not Implemented yet.
+}
+    
+#endif

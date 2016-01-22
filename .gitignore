@@ -78,3 +78,4 @@ fastlane/test_output
 test_output
 fastlane/.env
 pre-change.yml
+.build
