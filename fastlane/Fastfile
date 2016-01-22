@@ -25,7 +25,7 @@ platform :ios do
       increment_version_number(version_number: target_version)
       version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
 
-      log = extract_current_change_log(version: options[:version])
+      log = extract_current_change_log(version: target_version)
       release_log = update_change_log(log: log)
 
       git_commit_all(message: "Bump version to #{target_version}")
