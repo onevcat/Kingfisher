@@ -209,6 +209,7 @@ public extension UIImageView {
                     sSelf.kf_setImageTask(nil)
                     
                     guard let image = image else {
+                        indicator?.stopAnimating()
                         completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
                     }
