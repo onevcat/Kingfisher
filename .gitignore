@@ -77,3 +77,4 @@ fastlane/screenshots/screenshots.html
 fastlane/test_output
 test_output
 fastlane/.env
+pre-change.yml
