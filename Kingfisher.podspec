@@ -32,19 +32,11 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
-  s.ios.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher/Kingfisher.h"]
-  s.ios.public_header_files = ["Sources/Kingfisher/Kingfisher.h"]
+  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h"]
+  s.public_header_files = ["Sources/Kingfisher.h"]
   
-  s.osx.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-OSX/Kingfisher-OSX.h"]
-  s.osx.exclude_files = "Sources/Kingfisher/UIButton+Kingfisher.swift"
-  s.osx.public_header_files = ["Sources/Kingfisher-OSX/Kingfisher-OSX.h"]
-  
-  s.tvos.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-tvOS/Kingfisher-tvOS.h"]
-  s.tvos.public_header_files = ["Sources/Kingfisher-tvOS/Kingfisher-tvOS.h"]
-  
-  s.watchos.source_files  = ["Sources/Kingfisher/*.swift", "Sources/Kingfisher-watchOS/Kingfisher-watchOS.h"]
-  s.watchos.exclude_files = ["Sources/Kingfisher/UIButton+Kingfisher.swift", "Sources/Kingfisher/ImageView+Kingfisher.swift"]
-  s.watchos.public_header_files = ["Sources/Kingfisher-watchOS/Kingfisher-watchOS.h"]
+  s.osx.exclude_files = "Sources/UIButton+Kingfisher.swift"
+  s.watchos.exclude_files = ["Sources/UIButton+Kingfisher.swift", "Sources/ImageView+Kingfisher.swift"]
   
   s.requires_arc = true
   s.framework = "CFNetwork"
