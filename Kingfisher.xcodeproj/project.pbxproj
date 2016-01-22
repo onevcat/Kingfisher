@@ -465,12 +465,12 @@
 		D12E0C431C47F23500AC98AD /* KingfisherTests */ = {
 			isa = PBXGroup;
 			children = (
+				D12E0C491C47F23500AC98AD /* Info.plist */,
 				D12E0C441C47F23500AC98AD /* dancing-banana.gif */,
 				D12E0C451C47F23500AC98AD /* ImageCacheTests.swift */,
 				D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */,
 				D12E0C471C47F23500AC98AD /* ImageExtensionTests.swift */,
 				D12E0C481C47F23500AC98AD /* ImageViewExtensionTests.swift */,
-				D12E0C491C47F23500AC98AD /* Info.plist */,
 				D12E0C4A1C47F23500AC98AD /* KingfisherManagerTests.swift */,
 				D12E0C4B1C47F23500AC98AD /* KingfisherOptionsInfoTests.swift */,
 				D12E0C4C1C47F23500AC98AD /* KingfisherTestHelper.swift */,

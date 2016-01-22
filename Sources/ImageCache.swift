@@ -639,7 +639,7 @@ extension ImageCache {
     }
     
     func cacheFileNameForKey(key: String) -> String {
-        return key.kf_MD5()
+        return key.kf_MD5
     }
 }
 
