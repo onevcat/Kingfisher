@@ -1,11 +1,10 @@
 # Change Log
 
----
+-----
 
 ## [1.9.2 - IOIOIO](https://github.com/onevcat/Kingfisher/releases/tag/1.9.2) (2016-01-14)
 
 #### Fix
-
 * A potential issue causes image cache checking method not working when the image just stored.
 * Better performance and image quality when storing images with original data.
 
@@ -33,7 +32,6 @@
 ## [1.8.5 - Single Dog](https://github.com/onevcat/Kingfisher/releases/tag/1.8.5) (2015-12-16)
 
 #### Fix
-
 * Use single url session to download images.
 * Ignore and return error immediately for empty URL.
 * Internal update for testing stability and code style.
@@ -67,7 +65,6 @@
 ## [1.8.1 - Transition needs rest](https://github.com/onevcat/Kingfisher/releases/tag/1.8.1) (2015-11-13)
 
 #### Fix
-
 * Only apply transition when images are downloaded. It will not show transition animation now if images loaded from either memory or disk cache now.
 * Code style.
 

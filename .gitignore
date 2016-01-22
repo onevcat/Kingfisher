@@ -76,3 +76,4 @@ fastlane/screenshots/screenshots.html
 # scan temporary files
 fastlane/test_output
 test_output
+fastlane/.env
