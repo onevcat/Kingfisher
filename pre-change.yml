@@ -1,0 +1,5 @@
+version: 1.9.3
+name:
+add:
+fix:
+    - Stop indicator animation when loading failed. #215
