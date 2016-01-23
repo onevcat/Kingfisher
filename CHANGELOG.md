@@ -2,6 +2,23 @@
 
 -----
 
+## [2.0.0 - Kingfisher 2](https://github.com/onevcat/Kingfisher/releases/tag/2.0.0) (2016-01-23)
+
+#### Add
+* OS X support. Now Kingfisher can work seamlessly for `NSImage`. [#201](https://github.com/onevcat/Kingfisher/pull/201)
+* watchOS 2.x support. [#210](https://github.com/onevcat/Kingfisher/pull/210)
+* Swift Package Manager support. [#218](https://github.com/onevcat/Kingfisher/issues/218)
+* Unified `KingfisherOptionsInfo` API. Now all options across the framework are represented by `KingfisherOptionsInfo` with type same behavior. [#194](https://github.com/onevcat/Kingfisher/pull/194)
+* API for changing download priority of image download task after the download started. [#73](https://github.com/onevcat/Kingfisher/issues/73)
+* You can cancel image or background image downloading task now for button as well. [#205](https://github.com/onevcat/Kingfisher/issues/205)
+
+#### Fix
+* A potential thread issue when asking for cache state right after downloading finished.
+* Improve MD5 calculating speed. [#220](https://github.com/onevcat/Kingfisher/pull/220)
+* The scale was not correct when processing GIF files.
+
+---
+
 ## [1.9.3](https://github.com/onevcat/Kingfisher/releases/tag/1.9.3) (2016-01-22)
 
 #### Fix
