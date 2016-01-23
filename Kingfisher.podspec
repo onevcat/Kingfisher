@@ -27,11 +27,17 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = "8.0"
   s.tvos.deployment_target = "9.0"
-  # s.osx.deployment_target = "10.7"
+  s.osx.deployment_target = "10.10"
+  s.watchos.deployment_target = "2.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
-  s.source_files  = ["Kingfisher/*.swift", "Kingfisher/Kingfisher.h"]
-  s.public_header_files = ["Kingfisher/Kingfisher.h"]
+  
+  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h"]
+  s.public_header_files = ["Sources/Kingfisher.h"]
+  
+  s.osx.exclude_files = "Sources/UIButton+Kingfisher.swift"
+  s.watchos.exclude_files = ["Sources/UIButton+Kingfisher.swift", "Sources/ImageView+Kingfisher.swift"]
+  
   s.requires_arc = true
   s.framework = "CFNetwork"
 

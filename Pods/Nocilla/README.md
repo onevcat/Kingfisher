@@ -165,6 +165,20 @@ withBody(@"{\"name\":\"foo\"}").
 andFailWithError([NSError errorWithDomain:@"foo" code:123 userInfo:nil]);
 ```
 
+#### Replacing a request stub
+
+If you need to change the response of a single request, simply re-stub the request:
+
+```objc
+stubRequest(@"POST", @"https://api.example.com/authorize/").
+andReturn(401);
+
+// Some test expectation...
+
+stubRequest(@"POST", @"https://api.example.com/authorize/").
+andReturn(200);
+```
+
 ### Unexpected requests
 If some request is made but it wasn't stubbed, Nocilla won't let that request hit the real world. In that case your test should fail.
 At this moment Nocilla will raise an exception with a meaningful message about the error and how to solve it, including a snippet of code on how to stub the unexpected request.

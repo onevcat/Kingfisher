@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="PdN-uu-KZg">
+            <rect key="frame" x="0.0" y="0.0" width="250" height="250"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hBP-z4-OwJ">
+                    <rect key="frame" x="0.0" y="0.0" width="250" height="250"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="HWt-3p-ZUj"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="hBP-z4-OwJ" firstAttribute="top" secondItem="PdN-uu-KZg" secondAttribute="top" id="2Us-xD-juU"/>
+                <constraint firstAttribute="bottom" secondItem="hBP-z4-OwJ" secondAttribute="bottom" id="Ot4-cl-vX8"/>
+                <constraint firstItem="hBP-z4-OwJ" firstAttribute="leading" secondItem="PdN-uu-KZg" secondAttribute="leading" id="VKh-HW-KNL"/>
+                <constraint firstAttribute="trailing" secondItem="hBP-z4-OwJ" secondAttribute="trailing" id="bn6-9l-8cN"/>
+            </constraints>
+            <point key="canvasLocation" x="56" y="464"/>
+        </customView>
+        <customObject id="vgn-Ae-99c" customClass="NSCollectionViewItem">
+            <connections>
+                <outlet property="imageView" destination="hBP-z4-OwJ" id="BaO-HL-iXz"/>
+                <outlet property="view" destination="PdN-uu-KZg" id="e9G-mO-eGM"/>
+            </connections>
+        </customObject>
+    </objects>
+</document>
