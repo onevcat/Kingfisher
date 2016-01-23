@@ -79,3 +79,4 @@ test_output
 fastlane/.env
 pre-change.yml
 .build
+fastlane/README.md
