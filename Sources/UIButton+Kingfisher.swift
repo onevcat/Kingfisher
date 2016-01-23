@@ -209,6 +209,9 @@ extension UIButton {
                 
                 dispatch_async_safely_main_queue {
                     if let sSelf = self {
+                        
+                        sSelf.kf_setImageTask(nil)
+                        
                         if imageURL == sSelf.kf_webURLForState(state) && image != nil {
                             sSelf.setImage(image, forState: state)
                         }
@@ -216,6 +219,8 @@ extension UIButton {
                     }
                 }
             })
+        
+        kf_setImageTask(task)
         return task
     }
     
@@ -248,6 +253,9 @@ extension UIButton {
 }
 
 private var lastURLKey: Void?
+private var imageTaskKey: Void?
+
+// MARK: - Runtime for UIButton image
 extension UIButton {
     /**
     Get the image URL binded to this button for a specified state. 
@@ -275,6 +283,14 @@ extension UIButton {
     
     private func kf_setWebURLs(URLs: NSMutableDictionary) {
         objc_setAssociatedObject(self, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    private var kf_imageTask: RetrieveImageTask? {
+        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+    }
+    
+    private func kf_setImageTask(task: RetrieveImageTask?) {
+        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 
@@ -456,7 +472,11 @@ extension UIButton {
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_main_queue {
+                    
                     if let sSelf = self {
+                        
+                        sSelf.kf_setBackgroundImageTask(nil)
+                        
                         if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
                             sSelf.setBackgroundImage(image, forState: state)
                         }
@@ -464,6 +484,8 @@ extension UIButton {
                     }
                 }
             })
+        
+        kf_setBackgroundImageTask(task)
         return task
     }
     
@@ -497,6 +519,9 @@ extension UIButton {
 }
 
 private var lastBackgroundURLKey: Void?
+private var backgroundImageTaskKey: Void?
+    
+// MARK: - Runtime for UIButton background image
 extension UIButton {
     /**
     Get the background image URL binded to this button for a specified state.
@@ -525,8 +550,35 @@ extension UIButton {
     private func kf_setBackgroundWebURLs(URLs: NSMutableDictionary) {
         objc_setAssociatedObject(self, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+    
+    private var kf_backgroundImageTask: RetrieveImageTask? {
+        return objc_getAssociatedObject(self, &backgroundImageTaskKey) as? RetrieveImageTask
+    }
+    
+    private func kf_setBackgroundImageTask(task: RetrieveImageTask?) {
+        objc_setAssociatedObject(self, &backgroundImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
 }
 
+// MARK: - Cancel image download tasks.
+extension UIButton {
+    /**
+     Cancel the image download task bounded to the image view if it is running.
+     Nothing will happen if the downloading has already finished.
+     */
+    public func kf_cancelImageDownloadTask() {
+        kf_imageTask?.downloadTask?.cancel()
+    }
+    
+    /**
+     Cancel the background image download task bounded to the image view if it is running.
+     Nothing will happen if the downloading has already finished.
+     */
+    public func kf_cancelBackgroundImageDownloadTask() {
+        kf_backgroundImageTask?.downloadTask?.cancel()
+    }
+}
+    
 #elseif os(OSX)
 
 import AppKit
