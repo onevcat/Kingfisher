@@ -10,6 +10,8 @@
 
 <a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
 
+<a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-ready-orange.svg"></a>
+
 <a href="http://cocoadocs.org/docsets/Kingfisher"><img src="https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat"></a>
 
 <a href="https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat"></a>
@@ -31,21 +33,22 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Cancelable processing task. You can cancel the downloading process if it is not needed anymore.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
-* Categories over `UIImageView` and `UIButton` for setting image from an URL directly.
+* Categories over `UIImageView`, `NSImage` and `UIButton` for setting image from an URL directly. Use the same code across all Apple platforms.
 * Support GIF seamlessly. You could just download and set your GIF images as the same as you do for PNG/JPEG format.
 
 ## Requirements
 
-* iOS 8.0+ or tvOS 9.0+
+* iOS 8.0+, tvOS 9.0+, watchOS 2.0+ or OS X 10.10+
 * Xcode 7.0 or above
+
+If you upgrades to Kingfiser 2.x, please read the [Kingfisher 2.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-2.0-Migration-Guide) for more information.
+
 
 ## Installation
 
 ### CocoaPods
 
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
-
-CocoaPods 0.36 adds supports for Swift and embedded frameworks. You can install it with the following command:
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
 
 ``` bash
 $ gem install cocoapods
@@ -58,7 +61,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 1.9'
+pod 'Kingfisher', '~> 2.0'
 ```
 
 Then, run the following command:
@@ -83,7 +86,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ``` ogdl
-github "onevcat/Kingfisher" ~> 1.9
+github "onevcat/Kingfisher" ~> 2.0
 ```
 
 Then, run the following command to build the Kingfisher framework:
@@ -125,15 +128,15 @@ $ git submodule add https://github.com/onevcat/Kingfisher.git
 - In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
 - In the tab bar at the top of that window, open the "Build Phases" panel.
 - Expand the "Target Dependencies" group, and add `Kingfisher.framework`.
-- Click on the `+` button at the top left of "Build Phases" panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Kingfisher.framework`.
+- Click on the `+` button at the top left of "Build Phases" panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Kingfisher.framework` of the platform you need.
 
 ## Usage
 
 You can find the full API documentation at [CocoaDocs](http://cocoadocs.org/docsets/Kingfisher/).
 
-### UIImageView category
+### UIImageView and NSImageView category
 
-Use Kingfisher in your project is as easy as a pie. You can use the `UIImageView` category and trust Kingfisher to manage downloading and cache images.
+Use Kingfisher in your project is as easy as a pie. You can use the `UIImageView` or `NSImageView` category and trust Kingfisher to manage downloading and cache images.
 
 #### Basic
 
@@ -164,12 +167,12 @@ It will ask Kingfisher's manager to get the image for the "your_customized_key" 
 
 #### Options
 
-Kingfisher will search in cache (both memory and disk) first with the URL, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option dictionary, to let it ignore the cache.
+Kingfisher will search in cache (both memory and disk) first with the URL, if no image found, it will try to download and store the image in the cache. You can change this behavior by passing an option, to let it ignore the cache.
 
 ``` swift
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
-                              optionsInfo: [.Options(KingfisherOptions.ForceRefresh)])
+                              optionsInfo: [.ForceRefresh])
 ```
 
 There are also other options to control the cache level, downloading priority, etc. Take some other examples:
@@ -186,12 +189,24 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
 
 This is useful if you want to use a specified cache for some reasons.
 
-And if you need to fade in the image to image view during 1 second:
+And if you need to fade in the image to image view during 1 second (image transition only works for iOS platform now):
 
 ``` 
 imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                          placeholderImage: nil,
                               optionsInfo: [.Transition(ImageTransition.Fade(1))])
+```
+
+You are also free to combine these options to customize the behavior:
+
+```swift
+let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+let optionInfo: KingfisherOptionsInfo = [
+    .ForceRefresh,
+    .DownloadPriority(0.5),
+    .CallbackDispatchQueue(queue),
+    .Transition(ImageTransition.Fade(1))
+]
 ```
 
 For more information about options, please see the `KingfisherOptionsInfo` in the [documentation](http://cocoadocs.org/docsets/Kingfisher/index.html).
@@ -216,8 +231,7 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
 #### Cancel Task
 
 You can `cancel` the task if the images are not needed anymore. 
-It could be useful when you use Kingfisher to set an image in a cell of table view or collection view, 
-but users scroll the view and the cells disappeared before downloading finishing.
+It could be useful when you use Kingfisher to set an image in a cell of table view or collection view, but users scroll the view and the cells disappeared before downloading finishing.
 
 ``` swift
 imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
@@ -226,7 +240,7 @@ imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
 imageView.kf_cancelDownloadTask()
 ```
 
-All `kf_setImageWithURL` methods return a `RetrieveImageTask` object as well. You can also hold and manage it if you need to apply some check:
+If you need more control and want to do some check before cancelling, all `kf_setImageWithURL` methods return a `RetrieveImageTask` object as well. You can also hold and manage it, then call cancel on the task:
 
 ``` swift
 let task = imageView.kf_setImageWithURL(NSURL(string: "http://your_image_url.png")!)
@@ -303,3 +317,5 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 ## License
 
 Kingfisher is released under the MIT license. See LICENSE for details.
+
+
