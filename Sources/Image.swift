@@ -88,7 +88,7 @@ extension Image {
 extension Image {
 #if os(OSX)
     static func kf_imageWithCGImage(cgImage: CGImageRef, scale: CGFloat, refImage: Image?) -> Image {
-        return Image(CGImage: cgImage, size: CGSizeZero)
+        return Image(CGImage: cgImage, size: CGSize.zero)
     }
     
     /**
@@ -128,7 +128,7 @@ extension Image {
         }
     
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        drawInRect(CGRect(origin: CGPointZero, size: size))
+        drawInRect(CGRect(origin: CGPoint.zero, size: size))
         let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     
