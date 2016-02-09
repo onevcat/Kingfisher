@@ -129,4 +129,37 @@ class KingfisherManagerTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testRunningOnDefaultQueue() {
+        let expectation = expectationWithDescription("running on main queue")
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        
+        let URL = NSURL(string: URLString)!
+        
+        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: { _, _ in
+            XCTAssertTrue(NSThread.isMainThread())
+            }, completionHandler: { _, _, _, _ in
+                XCTAssertTrue(NSThread.isMainThread())
+                expectation.fulfill()
+        })
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testRunningOnCustomQueue() {
+        manager.completionQueue = dispatch_queue_create("com.kingfisher.testQueue", DISPATCH_QUEUE_CONCURRENT)
+        let expectation = expectationWithDescription("running on custom queue")
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        
+        let URL = NSURL(string: URLString)!
+        
+        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: { _, _ in
+            XCTAssertTrue(NSThread.isMainThread())
+            }, completionHandler: { _, _, _, _ in
+                XCTAssertEqual(String(UTF8String: dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))!, "com.kingfisher.testQueue")
+                expectation.fulfill()
+        })
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 }
