@@ -214,17 +214,23 @@ extension Image {
                 return nil
             }
             
-            guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
-                frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
-            {
-                return nil
+            if frameCount == 1 {
+                // Single frame
+                gifDuration = Double.infinity
+            } else {
+                // Animated GIF
+                guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
+                    gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
+                    frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
+                {
+                    return nil
+                }
+                gifDuration += frameDuration.doubleValue
             }
             
-            gifDuration += frameDuration.doubleValue
             images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
         }
-        
+         
 #if os(OSX)
         if let image = Image(data: data) {
             image.kf_images = images
@@ -233,11 +239,7 @@ extension Image {
         }
         return nil
 #else
-        if frameCount == 1 {
-            return images.first
-        } else {
-            return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
-        }
+        return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
 #endif
     }
 }

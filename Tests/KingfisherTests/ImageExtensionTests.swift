@@ -74,4 +74,12 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(image1.kf_duration, image.kf_duration)
         XCTAssertEqual(image1.kf_images!.count, image.kf_images!.count)
     }
+    
+    func testGenerateSingleFrameGIFImage() {
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageSingleFrameGIFData)
+        XCTAssertNotNil(image, "The image should be initiated.")
+        XCTAssertEqual(image!.kf_images!.count, 1, "There should be 8 frames.")
+        
+        XCTAssertEqual(image!.kf_duration, Double.infinity, "The image duration should be 0 since it is not animated image.")
+    }
 }
