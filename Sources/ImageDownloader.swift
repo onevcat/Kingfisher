@@ -131,7 +131,7 @@ public class ImageDownloader: NSObject {
         }
     }
     
-    private var sessionHandler: ImageDownloaderSessionHandler!
+    private var sessionHandler: ImageDownloaderSessionHandler?
     private var session: NSURLSession?
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
@@ -257,7 +257,7 @@ extension ImageDownloader {
                 dataTask.resume()
                 
                 // Hold self while the task is executing.
-                self.sessionHandler.downloadHolder = self
+                self.sessionHandler?.downloadHolder = self
             }
             
             fetchLoad.downloadTaskCount += 1
