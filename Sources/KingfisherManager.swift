@@ -169,7 +169,9 @@ public class KingfisherManager {
         let downloader = options?.downloader ?? self.downloader
         downloader.downloadImageWithURL(URL, retrieveImageTask: retrieveImageTask, options: options,
             progressBlock: { receivedSize, totalSize in
-                progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
+                })
             },
             completionHandler: { image, error, imageURL, originalData in
 
@@ -177,9 +179,10 @@ public class KingfisherManager {
                 if let error = error where error.code == KingfisherError.NotModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
-                    targetCache.retrieveImageForKey(key, options: options, completionHandler: { (cacheImage, cacheType) -> () in
-                        completionHandler?(image: cacheImage, error: nil, cacheType: cacheType, imageURL: URL)
-                        
+                    targetCache.retrieveImageForKey(key, options: options, completionHandler: {  (cacheImage, cacheType) -> () in
+                        dispatch_async_safely(options?.callbackDispatchQueue, block: { () -> () in
+                            completionHandler?(image: cacheImage, error: nil, cacheType: cacheType, imageURL: URL)
+                        })
                     })
                     return
                 }
@@ -188,7 +191,9 @@ public class KingfisherManager {
                     targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !(options?.cacheMemoryOnly ?? false), completionHandler: nil)
                 }
                 
-                completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
+                dispatch_async_safely(options?.callbackDispatchQueue, block: { () -> () in
+                    completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
+                })
             })
     }
     
@@ -202,7 +207,9 @@ public class KingfisherManager {
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             // Break retain cycle created inside diskTask closure below
             retrieveImageTask.diskRetrieveTask = nil
-            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+            dispatch_async_safely(options?.callbackDispatchQueue, block: { () -> () in
+                completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+            })
         }
         
         let targetCache = options?.targetCache ?? cache

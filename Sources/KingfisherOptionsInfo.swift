@@ -47,7 +47,7 @@ Items could be added into KingfisherOptionsInfo.
 - ForceRefresh: If set, `Kingfisher` will ignore the cache and try to fire a download task for the resource.
 - CacheMemoryOnly: If set, `Kingfisher` will only cache the value in memory but not in disk.
 - BackgroundDecode: Decode the image in background thread before using.
-- CallbackDispatchQueue: The associated value of this member will be used as the target queue of dispatch callbacks when retrieving images from cache. If not set, `Kingfisher` will use main quese for callbacks.
+- CallbackDispatchQueue: The associated value of this member will be used as the target queue of dispatch callbacks when retrieving images. If not set, `Kingfisher` will use main quese for callbacks.
 - ScaleFactor: The associated value of this member will be used as the scale factor when converting retrieved data to an image.
 */
 public enum KingfisherOptionsInfoItem {
@@ -140,13 +140,13 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
         return contains{ $0 <== .BackgroundDecode }
     }
     
-    var callbackDispatchQueue: dispatch_queue_t {
+    var callbackDispatchQueue: dispatch_queue_t? {
         if let item = kf_firstMatchIgnoringAssociatedValue(.CallbackDispatchQueue(nil)),
             case .CallbackDispatchQueue(let queue) = item
         {
-            return queue ?? dispatch_get_main_queue()
+            return queue
         }
-        return dispatch_get_main_queue()
+        return nil
     }
     
     var scaleFactor: CGFloat {

@@ -26,8 +26,12 @@
 
 import Foundation
 
-func dispatch_async_safely_main_queue(block: ()->()) {
-    if NSThread.isMainThread() {
+func dispatch_async_safely(queue: dispatch_queue_t?, block: ()->()) {
+    if let queue = queue {
+        dispatch_async(queue, { () -> Void in
+            block()
+        })
+    } else if NSThread.isMainThread() {
         block()
     } else {
         dispatch_async(dispatch_get_main_queue()) {
