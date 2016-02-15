@@ -26,7 +26,7 @@
 
 import Foundation
 
-func dispatch_async_safely_queue(queue: dispatch_queue_t?, block: ()->()) {
+func dispatch_async_safely(queue: dispatch_queue_t?, block: ()->()) {
     if let queue = queue {
         dispatch_async(queue, { () -> Void in
             block()

@@ -86,9 +86,6 @@ public class KingfisherManager {
     /// Downloader used by this manager
     public var downloader: ImageDownloader
     
-    /// The dispatch queue for `completionBlock`. If `NULL` (default), the main queue is used.
-    public var completionQueue: dispatch_queue_t?
-    
     /**
     Default init method
     
@@ -182,8 +179,8 @@ public class KingfisherManager {
                 if let error = error where error.code == KingfisherError.NotModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
-                    targetCache.retrieveImageForKey(key, options: options, completionHandler: { [unowned self] (cacheImage, cacheType) -> () in
-                        dispatch_async_safely_queue(self.completionQueue, block: { () -> () in
+                    targetCache.retrieveImageForKey(key, options: options, completionHandler: {  (cacheImage, cacheType) -> () in
+                        dispatch_async_safely(options?.callbackDispatchQueue, block: { () -> () in
                             completionHandler?(image: cacheImage, error: nil, cacheType: cacheType, imageURL: URL)
                         })
                     })
@@ -194,7 +191,7 @@ public class KingfisherManager {
                     targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !(options?.cacheMemoryOnly ?? false), completionHandler: nil)
                 }
                 
-                dispatch_async_safely_queue(self.completionQueue, block: { () -> () in
+                dispatch_async_safely(options?.callbackDispatchQueue, block: { () -> () in
                     completionHandler?(image: image, error: error, cacheType: .None, imageURL: URL)
                 })
             })
@@ -210,7 +207,7 @@ public class KingfisherManager {
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             // Break retain cycle created inside diskTask closure below
             retrieveImageTask.diskRetrieveTask = nil
-            dispatch_async_safely_queue(self.completionQueue, block: { () -> () in
+            dispatch_async_safely(options?.callbackDispatchQueue, block: { () -> () in
                 completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
             })
         }
