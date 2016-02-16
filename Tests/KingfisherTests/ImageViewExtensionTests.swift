@@ -87,7 +87,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
     
-    func testImageDownloadCompletionHandlerRunningOnCustomQueue() {
+    func testImageDownloadCompletionHandlerRunningOnMainQueue() {
         let expectation = expectationWithDescription("wait for downloading image")
         
         let URLString = testKeys[0]
@@ -98,7 +98,7 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.CallbackDispatchQueue(customQueue)], progressBlock: { (receivedSize, totalSize) -> () in
             XCTAssertTrue(NSThread.isMainThread())
         }) { (image, error, cacheType, imageURL) -> () in
-            XCTAssertEqual(String(UTF8String: dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))!, "com.kingfisher.testQueue")
+            XCTAssertTrue(NSThread.isMainThread(), "The image extension callback should be always in main queue.")
             expectation.fulfill()
         }
         
