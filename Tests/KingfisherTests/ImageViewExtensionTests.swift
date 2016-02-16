@@ -70,6 +70,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
+            XCTAssertTrue(NSThread.isMainThread())
         }) { (image, error, cacheType, imageURL) -> () in
             expectation.fulfill()
             
@@ -80,6 +81,25 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(self.imageView.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
             
             XCTAssert(cacheType == .None, "The cache type should be none here. This image was just downloaded.")
+            XCTAssertTrue(NSThread.isMainThread())
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testImageDownloadCompletionHandlerRunningOnCustomQueue() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        let URL = NSURL(string: URLString)!
+        
+        let customQueue = dispatch_queue_create("com.kingfisher.testQueue", DISPATCH_QUEUE_SERIAL)
+        imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.CallbackDispatchQueue(customQueue)], progressBlock: { (receivedSize, totalSize) -> () in
+            XCTAssertTrue(NSThread.isMainThread())
+        }) { (image, error, cacheType, imageURL) -> () in
+            XCTAssertEqual(String(UTF8String: dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL))!, "com.kingfisher.testQueue")
+            expectation.fulfill()
         }
         
         waitForExpectationsWithTimeout(5, handler: nil)

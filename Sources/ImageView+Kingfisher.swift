@@ -199,32 +199,27 @@ extension ImageView {
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        progressBlock(receivedSize: receivedSize, totalSize: totalSize)
-                        
-                    })
+                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
-                dispatch_async_safely_main_queue {
-                    
-                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                        return
-                    }
-                    
-                    sSelf.kf_setImageTask(nil)
-                    
-                    guard let image = image else {
-                        indicator?.kf_stopAnimating()
-                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
-                        return
-                    }
-
-
-                    if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
-                        case .Transition(let transition) = transitionItem where cacheType == .None {
+                guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    return
+                }
+                
+                sSelf.kf_setImageTask(nil)
+                
+                guard let image = image else {
+                    indicator?.kf_stopAnimating()
+                    completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                    return
+                }
+                
+                
+                if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
+                    case .Transition(let transition) = transitionItem where cacheType == .None {
 #if !os(OSX)
                             UIView.transitionWithView(sSelf, duration: 0.0, options: [],
                                 animations: {
@@ -239,14 +234,13 @@ extension ImageView {
                                         completion: { finished in
                                             transition.completion?(finished)
                                             completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                                        })
-                                })
+                                    })
+                            })
 #endif
-                    } else {
-                        indicator?.kf_stopAnimating()
-                        sSelf.image = image
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                    }
+                } else {
+                    indicator?.kf_stopAnimating()
+                    sSelf.image = image
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         

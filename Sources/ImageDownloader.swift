@@ -127,11 +127,12 @@ public class ImageDownloader: NSObject {
     /// Use this to set supply a configuration for the downloader. By default, NSURLSessionConfiguration.ephemeralSessionConfiguration() will be used. You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
     public var sessionConfiguration = NSURLSessionConfiguration.ephemeralSessionConfiguration() {
         didSet {
-            session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+            session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: sessionDelegationQueue)
         }
     }
     
     private var session: NSURLSession?
+    private let sessionDelegationQueue = NSOperationQueue()
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
     public weak var delegate: ImageDownloaderDelegate?
@@ -167,7 +168,8 @@ public class ImageDownloader: NSObject {
         
         super.init()
         
-        session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        sessionDelegationQueue.maxConcurrentOperationCount = 1
+        session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: sessionDelegationQueue)
     }
     
     func fetchLoadForKey(key: NSURL) -> ImageFetchLoad? {
@@ -318,7 +320,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             fetchLoad.responseData.appendData(data)
             
             for callbackPair in fetchLoad.callbacks {
-                callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
+                })
             }
         }
     }
@@ -355,11 +359,14 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     private func callbackWithImage(image: Image?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
         if let callbackPairs = fetchLoadForKey(imageURL)?.callbacks {
+            let options = fetchLoadForKey(imageURL)?.options ?? KingfisherEmptyOptionsInfo
             
             self.cleanForURL(imageURL)
             
             for callbackPair in callbackPairs {
-                callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
+                dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                    callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
+                })
             }
         }
     }
