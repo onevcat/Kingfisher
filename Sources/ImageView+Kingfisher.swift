@@ -140,6 +140,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: Image?,
@@ -158,6 +161,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: Image?,
@@ -177,6 +183,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread. 
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: Image?,
@@ -260,6 +269,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     
     public func kf_setImageWithURL(URL: NSURL,
