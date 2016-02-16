@@ -204,43 +204,44 @@ extension ImageView {
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
-                guard let sSelf = self where imageURL == sSelf.kf_webURL else {
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                    return
-                }
-                
-                sSelf.kf_setImageTask(nil)
-                
-                guard let image = image else {
-                    indicator?.kf_stopAnimating()
-                    completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
-                    return
-                }
-                
-                
-                if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
-                    case .Transition(let transition) = transitionItem where cacheType == .None {
-#if !os(OSX)
-                            UIView.transitionWithView(sSelf, duration: 0.0, options: [],
-                                animations: {
-                                    indicator?.kf_stopAnimating()
-                                },
-                                completion: { finished in
-                                    UIView.transitionWithView(sSelf, duration: transition.duration,
-                                        options: transition.animationOptions,
-                                        animations: {
-                                            transition.animations?(sSelf, image)
-                                        },
-                                        completion: { finished in
-                                            transition.completion?(finished)
-                                            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                                    })
-                            })
-#endif
-                } else {
-                    indicator?.kf_stopAnimating()
-                    sSelf.image = image
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                dispatch_async_safely_to_main_queue {
+                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                        return
+                    }
+                    
+                    sSelf.kf_setImageTask(nil)
+                    
+                    guard let image = image else {
+                        indicator?.kf_stopAnimating()
+                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                        return
+                    }
+                    
+                    if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
+                        case .Transition(let transition) = transitionItem where cacheType == .None {
+                            #if !os(OSX)
+                                UIView.transitionWithView(sSelf, duration: 0.0, options: [],
+                                    animations: {
+                                        indicator?.kf_stopAnimating()
+                                    },
+                                    completion: { finished in
+                                        UIView.transitionWithView(sSelf, duration: transition.duration,
+                                            options: transition.animationOptions,
+                                            animations: {
+                                                transition.animations?(sSelf, image)
+                                            },
+                                            completion: { finished in
+                                                transition.completion?(finished)
+                                                completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                                        })
+                                })
+                            #endif
+                    } else {
+                        indicator?.kf_stopAnimating()
+                        sSelf.image = image
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    }
                 }
             })
         

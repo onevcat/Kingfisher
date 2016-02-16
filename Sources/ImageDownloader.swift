@@ -364,7 +364,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             self.cleanForURL(imageURL)
             
             for callbackPair in callbackPairs {
-                dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                     callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
                 })
             }

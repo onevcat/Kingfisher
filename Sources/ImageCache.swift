@@ -283,12 +283,12 @@ extension ImageCache {
             if options.backgroundDecode {
                 dispatch_async(self.processQueue, { () -> Void in
                     let result = image.kf_decodedImage(scale: options.scaleFactor)
-                    dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                    dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                         completionHandler(result, .Memory)
                     })
                 })
             } else {
-                dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                     completionHandler(image, .Memory)
                 })
             }
@@ -302,21 +302,21 @@ extension ImageCache {
                             let result = image.kf_decodedImage(scale: options.scaleFactor)
                             sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
 
-                            dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                            dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                                 completionHandler(result, .Memory)
                                 sSelf = nil
                             })
                         })
                     } else {
                         sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
-                        dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                        dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                             completionHandler(image, .Disk)
                             sSelf = nil
                         })
                     }
                 } else {
                     // No image found from either memory or disk
-                    dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                    dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                         completionHandler(nil, nil)
                         sSelf = nil
                     })
