@@ -151,6 +151,8 @@ class ImageViewExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
         
+        cleanDefaultCache()
+        
         let task = imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             }) { (image, error, cacheType, imageURL) -> () in
@@ -167,7 +169,7 @@ class ImageViewExtensionTests: XCTestCase {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.2)), dispatch_get_main_queue()) { () -> Void in
             expectation.fulfill()
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should not be called since it is canceled.")
+            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
         }
         
         waitForExpectationsWithTimeout(5, handler: nil)
