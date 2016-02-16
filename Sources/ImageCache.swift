@@ -276,10 +276,11 @@ extension ImageCache {
         }
         
         var block: RetrieveImageDiskTask?
+        let options = options ?? KingfisherEmptyOptionsInfo
+        
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
-            
             //Found image in memory cache.
-            if let options = options where options.backgroundDecode {
+            if options.backgroundDecode {
                 dispatch_async(self.processQueue, { () -> Void in
                     let result = image.kf_decodedImage(scale: options.scaleFactor)
                     dispatch_async(options.callbackDispatchQueue, { () -> Void in
@@ -287,13 +288,14 @@ extension ImageCache {
                     })
                 })
             } else {
-                completionHandler(image, .Memory)
+                dispatch_async(options.callbackDispatchQueue, { () -> Void in
+                    completionHandler(image, .Memory)
+                })
             }
         } else {
             var sSelf: ImageCache! = self
             block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
                 // Begin to load image from disk
-                let options = options ?? KingfisherEmptyOptionsInfo
                 if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scaleFactor) {
                     if options.backgroundDecode {
                         dispatch_async(sSelf.processQueue, { () -> Void in
