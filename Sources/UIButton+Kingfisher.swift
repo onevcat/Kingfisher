@@ -145,6 +145,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
                                   forState state: UIControlState,
@@ -165,6 +168,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
@@ -187,6 +193,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
                                   forState state: UIControlState,
@@ -204,15 +213,16 @@ extension UIButton {
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
-                
-                if let sSelf = self {
-                    
-                    sSelf.kf_setImageTask(nil)
-                    
-                    if imageURL == sSelf.kf_webURLForState(state) && image != nil {
-                        sSelf.setImage(image, forState: state)
+                dispatch_async_safely_to_main_queue {
+                    if let sSelf = self {
+                        
+                        sSelf.kf_setImageTask(nil)
+                        
+                        if imageURL == sSelf.kf_webURLForState(state) && image != nil {
+                            sSelf.setImage(image, forState: state)
+                        }
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
@@ -231,6 +241,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithURL(URL: NSURL,
                         forState state: UIControlState,
@@ -406,6 +419,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setBackgroundImageWithResource(resource: Resource,
                                             forState state: UIControlState,
@@ -426,6 +442,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
@@ -448,6 +467,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setBackgroundImageWithResource(resource: Resource,
                                             forState state: UIControlState,
@@ -465,15 +487,16 @@ extension UIButton {
                 }
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
-                
-                if let sSelf = self {
-                    
-                    sSelf.kf_setBackgroundImageTask(nil)
-                    
-                    if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
-                        sSelf.setBackgroundImage(image, forState: state)
+                dispatch_async_safely_to_main_queue {
+                    if let sSelf = self {
+                        
+                        sSelf.kf_setBackgroundImageTask(nil)
+                        
+                        if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
+                            sSelf.setBackgroundImage(image, forState: state)
+                        }
+                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
@@ -493,6 +516,9 @@ extension UIButton {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                   forState state: UIControlState,
