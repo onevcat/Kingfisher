@@ -200,23 +200,19 @@ extension UIButton {
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        progressBlock(receivedSize: receivedSize, totalSize: totalSize)
-                    })
+                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
-                dispatch_async_safely_main_queue {
-                    if let sSelf = self {
-                        
-                        sSelf.kf_setImageTask(nil)
-                        
-                        if imageURL == sSelf.kf_webURLForState(state) && image != nil {
-                            sSelf.setImage(image, forState: state)
-                        }
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                if let sSelf = self {
+                    
+                    sSelf.kf_setImageTask(nil)
+                    
+                    if imageURL == sSelf.kf_webURLForState(state) && image != nil {
+                        sSelf.setImage(image, forState: state)
                     }
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
@@ -465,23 +461,19 @@ extension UIButton {
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        progressBlock(receivedSize: receivedSize, totalSize: totalSize)
-                    })
+                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
-                dispatch_async_safely_main_queue {
+                
+                if let sSelf = self {
                     
-                    if let sSelf = self {
-                        
-                        sSelf.kf_setBackgroundImageTask(nil)
-                        
-                        if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
-                            sSelf.setBackgroundImage(image, forState: state)
-                        }
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    sSelf.kf_setBackgroundImageTask(nil)
+                    
+                    if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
+                        sSelf.setBackgroundImage(image, forState: state)
                     }
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
