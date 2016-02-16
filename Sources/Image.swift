@@ -113,7 +113,7 @@ extension Image {
     }
     
     /**
-     Normalize the image. This method will try to redraw an image with orientation and sclae considered.
+     Normalize the image. This method will try to redraw an image with orientation and scale considered.
      
      - returns: The normalized image with orientation set to up and correct scale.
      */
