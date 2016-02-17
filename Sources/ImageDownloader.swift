@@ -127,12 +127,11 @@ public class ImageDownloader: NSObject {
     /// Use this to set supply a configuration for the downloader. By default, NSURLSessionConfiguration.ephemeralSessionConfiguration() will be used. You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
     public var sessionConfiguration = NSURLSessionConfiguration.ephemeralSessionConfiguration() {
         didSet {
-            session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: sessionDelegationQueue)
+            session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
         }
     }
     
     private var session: NSURLSession?
-    private let sessionDelegationQueue = NSOperationQueue()
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
     public weak var delegate: ImageDownloaderDelegate?
@@ -168,8 +167,7 @@ public class ImageDownloader: NSObject {
         
         super.init()
         
-        sessionDelegationQueue.maxConcurrentOperationCount = 1
-        session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: sessionDelegationQueue)
+        session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
     }
     
     func fetchLoadForKey(key: NSURL) -> ImageFetchLoad? {
