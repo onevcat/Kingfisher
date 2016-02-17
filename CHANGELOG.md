@@ -2,6 +2,15 @@
 
 -----
 
+## [2.0.3 - Holiday Issues](https://github.com/onevcat/Kingfisher/releases/tag/2.0.3) (2016-02-17)
+
+#### Fix
+* A memory leak caused by retain cycle of downloader session and its delegate. [#235](https://github.com/onevcat/Kingfisher/issues/235)
+* Now the `callbackDispatchQueue` in option should be applied to `ImageDownloader` as well. [#238](https://github.com/onevcat/Kingfisher/pull/238) and [#240](https://github.com/onevcat/Kingfisher/pull/240)
+* Fix warnings when the latest version of SwiftLint is used. [#189](https://github.com/onevcat/Kingfisher/issues/189#issuecomment-185205010)
+
+---
+
 ## [2.0.2 - Single Frame GIF](https://github.com/onevcat/Kingfisher/releases/tag/2.0.2) (2016-02-14)
 
 #### Fix
