@@ -404,47 +404,12 @@ extension ImageCache {
     - parameter completionHandler: Called after the operation completes.
     */
     public func cleanExpiredDiskCacheWithCompletionHander(completionHandler: (()->())?) {
+        
         // Do things in cocurrent io queue
         dispatch_async(ioQueue, { () -> Void in
-            let diskCacheURL = NSURL(fileURLWithPath: self.diskCachePath)
-            let resourceKeys = [NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey]
-            let expiredDate = NSDate(timeIntervalSinceNow: -self.maxCachePeriodInSecond)
-            var cachedFiles = [NSURL: [NSObject: AnyObject]]()
-            var URLsToDelete = [NSURL]()
             
-            var diskCacheSize: UInt = 0
+            var (URLsToDelete, diskCacheSize, cachedFiles) = self.travelCachedFiles(onlyForCacheSize: false)
             
-            if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL, includingPropertiesForKeys: resourceKeys, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, errorHandler: nil),
-                             urls = fileEnumerator.allObjects as? [NSURL] {
-                for fileURL in urls {
-                            
-                    do {
-                        let resourceValues = try fileURL.resourceValuesForKeys(resourceKeys)
-                        // If it is a Directory. Continue to next file URL.
-                        if let isDirectory = resourceValues[NSURLIsDirectoryKey] as? NSNumber {
-                            if isDirectory.boolValue {
-                                continue
-                            }
-                        }
-                            
-                        // If this file is expired, add it to URLsToDelete
-                        if let modificationDate = resourceValues[NSURLContentModificationDateKey] as? NSDate {
-                            if modificationDate.laterDate(expiredDate) == expiredDate {
-                                URLsToDelete.append(fileURL)
-                                continue
-                            }
-                        }
-                        
-                        if let fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
-                            diskCacheSize += fileSize.unsignedLongValue
-                            cachedFiles[fileURL] = resourceValues
-                        }
-                    } catch _ {
-                    }
-                        
-                }
-            }
-                
             for fileURL in URLsToDelete {
                 do {
                     try self.fileManager.removeItemAtURL(fileURL)
@@ -500,6 +465,53 @@ extension ImageCache {
                 completionHandler?()
             })
         })
+    }
+    
+    private func travelCachedFiles(onlyForCacheSize onlyForCacheSize: Bool) -> (URLsToDelete: [NSURL], diskCacheSize: UInt, cachedFiles: [NSURL: [NSObject: AnyObject]]) {
+        
+        let diskCacheURL = NSURL(fileURLWithPath: diskCachePath)
+        let resourceKeys = [NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey]
+        let expiredDate = NSDate(timeIntervalSinceNow: -self.maxCachePeriodInSecond)
+        
+        var cachedFiles = [NSURL: [NSObject: AnyObject]]()
+        var URLsToDelete = [NSURL]()
+        var diskCacheSize: UInt = 0
+        
+        if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL, includingPropertiesForKeys: resourceKeys, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, errorHandler: nil),
+            urls = fileEnumerator.allObjects as? [NSURL] {
+                for fileURL in urls {
+                    
+                    do {
+                        let resourceValues = try fileURL.resourceValuesForKeys(resourceKeys)
+                        // If it is a Directory. Continue to next file URL.
+                        if let isDirectory = resourceValues[NSURLIsDirectoryKey] as? NSNumber {
+                            if isDirectory.boolValue {
+                                continue
+                            }
+                        }
+                        
+                        if !onlyForCacheSize {
+                            // If this file is expired, add it to URLsToDelete
+                            if let modificationDate = resourceValues[NSURLContentModificationDateKey] as? NSDate {
+                                if modificationDate.laterDate(expiredDate) == expiredDate {
+                                    URLsToDelete.append(fileURL)
+                                    continue
+                                }
+                            }
+                        }
+                        
+                        if let fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
+                            diskCacheSize += fileSize.unsignedLongValue
+                            if !onlyForCacheSize {
+                                cachedFiles[fileURL] = resourceValues
+                            }
+                        }
+                    } catch _ {
+                    }
+                }
+        }
+        
+        return (URLsToDelete, diskCacheSize, cachedFiles)
     }
     
 #if !os(OSX) && !os(watchOS)
@@ -586,32 +598,7 @@ extension ImageCache {
     */
     public func calculateDiskCacheSizeWithCompletionHandler(completionHandler: ((size: UInt) -> ())) {
         dispatch_async(ioQueue, { () -> Void in
-            let diskCacheURL = NSURL(fileURLWithPath: self.diskCachePath)
-                
-            let resourceKeys = [NSURLIsDirectoryKey, NSURLTotalFileAllocatedSizeKey]
-            var diskCacheSize: UInt = 0
-            
-            if let fileEnumerator = self.fileManager.enumeratorAtURL(diskCacheURL, includingPropertiesForKeys: resourceKeys, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, errorHandler: nil),
-                             urls = fileEnumerator.allObjects as? [NSURL] {
-                    for fileURL in urls {
-                        do {
-                            let resourceValues = try fileURL.resourceValuesForKeys(resourceKeys)
-                            // If it is a Directory. Continue to next file URL.
-                            if let isDirectory = resourceValues[NSURLIsDirectoryKey]?.boolValue {
-                                if isDirectory {
-                                    continue
-                                }
-                            }
-                            
-                            if let fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey] as? NSNumber {
-                                diskCacheSize += fileSize.unsignedLongValue
-                            }
-                        } catch _ {
-                        }
-                        
-                    }
-            }
-            
+            let (_, diskCacheSize, _) = self.travelCachedFiles(onlyForCacheSize: true)
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 completionHandler(size: diskCacheSize)
             })
