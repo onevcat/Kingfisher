@@ -127,10 +127,11 @@ public class ImageDownloader: NSObject {
     /// Use this to set supply a configuration for the downloader. By default, NSURLSessionConfiguration.ephemeralSessionConfiguration() will be used. You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
     public var sessionConfiguration = NSURLSessionConfiguration.ephemeralSessionConfiguration() {
         didSet {
-            session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+            session = NSURLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: NSOperationQueue.mainQueue())
         }
     }
     
+    private var sessionHandler: ImageDownloaderSessionHandler?
     private var session: NSURLSession?
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
@@ -167,7 +168,8 @@ public class ImageDownloader: NSObject {
         
         super.init()
         
-        session = NSURLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        sessionHandler = ImageDownloaderSessionHandler()
+        session = NSURLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: NSOperationQueue.mainQueue())
     }
     
     func fetchLoadForKey(key: NSURL) -> ImageFetchLoad? {
@@ -253,6 +255,9 @@ extension ImageDownloader {
                 
                 dataTask.priority = options?.downloadPriority ?? NSURLSessionTaskPriorityDefault
                 dataTask.resume()
+                
+                // Hold self while the task is executing.
+                self.sessionHandler?.downloadHolder = self
             }
             
             fetchLoad.downloadTaskCount += 1
@@ -299,12 +304,24 @@ extension ImageDownloader {
     }
 }
 
-// MARK: - NSURLSessionTaskDelegate
-extension ImageDownloader: NSURLSessionDataDelegate {
+// MARK: - NSURLSessionDataDelegate
+
+// See https://github.com/onevcat/Kingfisher/issues/235
+
+/// Delegate class for `NSURLSessionTaskDelegate`.
+/// The session object will hold its delegate until it gets invalidated.
+/// If we use `ImageDownloader` as the session delegate, it will not be released.
+/// So we need an additional handler to break the retain cycle.
+class ImageDownloaderSessionHandler: NSObject, NSURLSessionDataDelegate {
+    
+    // The holder will keep downloader not released while a data task is being executed.
+    // It will be set when the task started, and reset when the task finished.
+    var downloadHolder: ImageDownloader?
+    
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
+    internal func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
         
         completionHandler(NSURLSessionResponseDisposition.Allow)
     }
@@ -312,9 +329,13 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+    internal func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
 
-        if let URL = dataTask.originalRequest?.URL, fetchLoad = fetchLoadForKey(URL) {
+        guard let downloader = downloadHolder else {
+            return
+        }
+        
+        if let URL = dataTask.originalRequest?.URL, fetchLoad = downloader.fetchLoadForKey(URL) {
             fetchLoad.responseData.appendData(data)
             
             for callbackPair in fetchLoad.callbacks {
@@ -328,7 +349,7 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    internal func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         
         if let URL = task.originalRequest?.URL {
             if let error = error { // Error happened
@@ -342,10 +363,14 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+    internal func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
 
+        guard let downloader = downloadHolder else {
+            return
+        }
+        
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            if let trustedHosts = trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
+            if let trustedHosts = downloader.trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
                 let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!)
                 completionHandler(.UseCredential, credential)
                 return
@@ -356,29 +381,43 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     }
     
     private func callbackWithImage(image: Image?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
-        if let callbackPairs = fetchLoadForKey(imageURL)?.callbacks {
-            let options = fetchLoadForKey(imageURL)?.options ?? KingfisherEmptyOptionsInfo
+        
+        guard let downloader = downloadHolder else {
+            return
+        }
+        
+        if let callbackPairs = downloader.fetchLoadForKey(imageURL)?.callbacks {
+            let options = downloader.fetchLoadForKey(imageURL)?.options ?? KingfisherEmptyOptionsInfo
             
-            self.cleanForURL(imageURL)
+            downloader.cleanForURL(imageURL)
             
             for callbackPair in callbackPairs {
                 dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
                     callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
                 })
             }
+            
+            if downloader.fetchLoads.isEmpty {
+                downloadHolder = nil
+            }
         }
     }
     
     private func processImageForTask(task: NSURLSessionTask, URL: NSURL) {
+
+        guard let downloader = downloadHolder else {
+            return
+        }
+        
         // We are on main queue when receiving this.
-        dispatch_async(processQueue, { () -> Void in
+        dispatch_async(downloader.processQueue, { () -> Void in
             
-            if let fetchLoad = self.fetchLoadForKey(URL) {
+            if let fetchLoad = downloader.fetchLoadForKey(URL) {
                 
                 let options = fetchLoad.options ?? KingfisherEmptyOptionsInfo
                 if let image = Image.kf_imageWithData(fetchLoad.responseData, scale: options.scaleFactor) {
                     
-                    self.delegate?.imageDownloader?(self, didDownloadImage: image, forURL: URL, withResponse: task.response!)
+                    downloader.delegate?.imageDownloader?(downloader, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                     
                     if options.backgroundDecode {
                         self.callbackWithImage(image.kf_decodedImage(scale: options.scaleFactor), error: nil, imageURL: URL, originalData: fetchLoad.responseData)
