@@ -15,6 +15,12 @@ platform :ios do
     scan(scheme: "Kingfisher-tvOS", clean: true)
   end
   
+  desc "Swift Lint"
+  lane :upgrade_swift_lint do
+      Actions.sh("brew update")
+      Actions.sh("brew install swiftlint")
+  end
+  
   desc "Build for Carthage"
   lane :carthage_lint do
       Actions.sh("cd .. && carthage build --no-skip-current && cd fastlane")
@@ -35,6 +41,8 @@ platform :ios do
   lane :release do |options|
       target_version = options[:version]
       raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+
+      upgrade_swift_lint
 
       ensure_git_branch
       ensure_git_status_clean
