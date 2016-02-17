@@ -318,7 +318,9 @@ extension ImageDownloader: NSURLSessionDataDelegate {
             fetchLoad.responseData.appendData(data)
             
             for callbackPair in fetchLoad.callbacks {
-                callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
+                })
             }
         }
     }
@@ -355,11 +357,14 @@ extension ImageDownloader: NSURLSessionDataDelegate {
     
     private func callbackWithImage(image: Image?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
         if let callbackPairs = fetchLoadForKey(imageURL)?.callbacks {
+            let options = fetchLoadForKey(imageURL)?.options ?? KingfisherEmptyOptionsInfo
             
             self.cleanForURL(imageURL)
             
             for callbackPair in callbackPairs {
-                callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
+                dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
+                    callbackPair.completionHander?(image: image, error: error, imageURL: imageURL, originalData: originalData)
+                })
             }
         }
     }

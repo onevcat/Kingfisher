@@ -140,6 +140,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: Image?,
@@ -158,6 +161,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithURL(URL: NSURL,
                       placeholderImage: Image?,
@@ -177,6 +183,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+     
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread. 
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
                                 placeholderImage: Image?,
@@ -199,16 +208,12 @@ extension ImageView {
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        progressBlock(receivedSize: receivedSize, totalSize: totalSize)
-                        
-                    })
+                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
-                dispatch_async_safely_main_queue {
-                    
+                dispatch_async_safely_to_main_queue {
                     guard let sSelf = self where imageURL == sSelf.kf_webURL else {
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
@@ -221,27 +226,26 @@ extension ImageView {
                         completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
                     }
-
-
+                    
                     if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
                         case .Transition(let transition) = transitionItem where cacheType == .None {
-#if !os(OSX)
-                            UIView.transitionWithView(sSelf, duration: 0.0, options: [],
-                                animations: {
-                                    indicator?.kf_stopAnimating()
-                                },
-                                completion: { finished in
-                                    UIView.transitionWithView(sSelf, duration: transition.duration,
-                                        options: transition.animationOptions,
-                                        animations: {
-                                            transition.animations?(sSelf, image)
-                                        },
-                                        completion: { finished in
-                                            transition.completion?(finished)
-                                            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                            #if !os(OSX)
+                                UIView.transitionWithView(sSelf, duration: 0.0, options: [],
+                                    animations: {
+                                        indicator?.kf_stopAnimating()
+                                    },
+                                    completion: { finished in
+                                        UIView.transitionWithView(sSelf, duration: transition.duration,
+                                            options: transition.animationOptions,
+                                            animations: {
+                                                transition.animations?(sSelf, image)
+                                            },
+                                            completion: { finished in
+                                                transition.completion?(finished)
+                                                completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                                         })
                                 })
-#endif
+                            #endif
                     } else {
                         indicator?.kf_stopAnimating()
                         sSelf.image = image
@@ -265,6 +269,9 @@ extension ImageView {
     - parameter completionHandler: Called when the image retrieved and set.
     
     - returns: A task represents the retrieving process.
+
+    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     
     public func kf_setImageWithURL(URL: NSURL,
