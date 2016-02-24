@@ -86,14 +86,18 @@ public class KingfisherManager {
     /// Downloader used by this manager
     public var downloader: ImageDownloader
     
+    /// Prefetched used by this manager
+    public var prefetcher: ImagePrefetcher
+    
     /**
     Default init method
     
-    - returns: A Kingfisher manager object with default cache and default downloader.
+    - returns: A Kingfisher manager object with default cache, default downloader, and default prefetcher.
     */
     public init() {
         cache = ImageCache.defaultCache
         downloader = ImageDownloader.defaultDownloader
+        prefetcher = ImagePrefetcher(downloader: downloader)
     }
     
     /**
@@ -159,6 +163,21 @@ public class KingfisherManager {
         return retrieveImageWithResource(Resource(downloadURL: URL), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
+    /**
+     Determine if a cached image exists for the given image, as keyed by the URL. It will return true if the
+     image is found either in memory or on disk. Essentially as long as there is a cache of the image somewhere
+     true is returned.
+     
+     - parameter url: The image URL.
+     
+     - returns: True if the image is cached, false otherwise.
+     */
+    public func cachedImageExistsforURL(url: NSURL) -> Bool {
+        let resource = Resource(downloadURL: url)
+        let result = cache.isImageCachedForKey(resource.cacheKey)
+        return result.cached
+    }
+
     func downloadAndCacheImageWithURL(URL: NSURL,
                                forKey key: String,
                         retrieveImageTask: RetrieveImageTask,
