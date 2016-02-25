@@ -98,7 +98,9 @@ public class ImagePrefetcher: NSObject {
         
         requestedCount++
         
-        KingfisherManager.sharedManager.downloader.downloadImageWithURL(urls[index], progressBlock: nil) { (image, error, imageURL, originalData) -> () in
+        let task = RetrieveImageTask()
+        let resource = Resource(downloadURL: urls[index])
+        KingfisherManager.sharedManager.downloadAndCacheImageWithURL(resource.downloadURL, forKey: resource.cacheKey, retrieveImageTask: task, progressBlock: nil, completionHandler: { image, error, cacheType, imageURL in
             self.finishedCount++
             
             if image == .None {
@@ -106,12 +108,12 @@ public class ImagePrefetcher: NSObject {
             }
             
             progressBlock?(completedURLs: self.finishedCount, allURLs: urls.count)
-
+            
             if urls.count > self.requestedCount {
                 self.startPrefetching(self.requestedCount, progressBlock: progressBlock, completionHandler: completionHandler)
             } else if self.finishedCount == self.requestedCount {
                 completionHandler?(completedURLs: self.finishedCount, skippedURLs: self.skippedCount)
             }
-        }
+        }, options: nil)
     }
 }

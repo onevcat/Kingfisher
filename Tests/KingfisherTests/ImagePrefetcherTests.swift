@@ -70,6 +70,9 @@ class ImagePrefetcherTests: XCTestCase {
         }) { (completedURLs, skippedURLs) -> () in
             expectation.fulfill()
             XCTAssertEqual(completedURLs, total, "all requests should have been completed, regardless of success")
+            KingfisherManager.sharedManager.cache.clearMemoryCache()  // Remove from the Memory cache to ensure it is on disk!
+            let cacheStatus = KingfisherManager.sharedManager.cache.isImageCachedForKey(Resource(downloadURL: urls[0]).cacheKey)
+            XCTAssertEqual(CacheType.Disk, cacheStatus.cacheType ?? CacheType.None, "prefetched images should be cached to disk")
         }
         
         waitForExpectationsWithTimeout(5, handler: nil)
