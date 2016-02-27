@@ -131,6 +131,9 @@ public class ImageDownloader: NSObject {
         }
     }
     
+    /// Whether the download requests should use pipeling or not. Default is false.
+    public var requestsUsePipeling = false
+    
     private var sessionHandler: ImageDownloaderSessionHandler?
     private var session: NSURLSession?
     
@@ -235,7 +238,7 @@ extension ImageDownloader {
         
         // We need to set the URL as the load key. So before setup progress, we need to ask the `requestModifier` for a final URL.
         let request = NSMutableURLRequest(URL: URL, cachePolicy: .ReloadIgnoringLocalCacheData, timeoutInterval: timeout)
-        request.HTTPShouldUsePipelining = true
+        request.HTTPShouldUsePipelining = requestsUsePipeling
         
         self.requestModifier?(request)
         
