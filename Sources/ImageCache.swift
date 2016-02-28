@@ -604,6 +604,18 @@ extension ImageCache {
             })
         })
     }
+    
+    /**
+    Get the cache path for the key.
+    It is useful for projects with UIWebView or anyone that needs access to the local file path
+    
+    i.e. <img src='key'>
+    */
+    public func cachePathForKey(key: String) -> String {
+        let fileName = cacheFileNameForKey(key)
+        return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
+    }
+
 }
 
 // MARK: - Internal Helper
@@ -620,11 +632,6 @@ extension ImageCache {
     func diskImageDataForKey(key: String) -> NSData? {
         let filePath = cachePathForKey(key)
         return NSData(contentsOfFile: filePath)
-    }
-    
-    func cachePathForKey(key: String) -> String {
-        let fileName = cacheFileNameForKey(key)
-        return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
     }
     
     func cacheFileNameForKey(key: String) -> String {
