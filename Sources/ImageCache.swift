@@ -607,9 +607,12 @@ extension ImageCache {
     
     /**
     Get the cache path for the key.
-    It is useful for projects with UIWebView or anyone that needs access to the local file path
+    It is useful for projects with UIWebView or anyone that needs access to the local file path.
     
-    i.e. <img src='key'>
+    i.e. `<img src='path_for_key'>`
+     
+    - Note: This method does not guarantee there is an image already cached in the path. 
+      You could use `isImageCachedForKey` method to check whether the image is cached under that key.
     */
     public func cachePathForKey(key: String) -> String {
         let fileName = cacheFileNameForKey(key)
