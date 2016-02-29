@@ -101,6 +101,37 @@ public enum KingfisherError: Int {
     optional func imageDownloader(downloader: ImageDownloader, didDownloadImage image: Image, forURL URL: NSURL, withResponse response: NSURLResponse)
 }
 
+/// Protocol indicates that an authentication challenge could be handled.
+public protocol AuthenticationChallengeResponable: class {
+    /**
+     Called when an session level authentication challenge is received.
+     This method provide a chance to handle and response to the authentication challenge before downloading could start.
+     
+     - parameter downloader:        The downloader which receives this challenge.
+     - parameter challenge:         An object that contains the request for authentication.
+     - parameter completionHandler: A handler that your delegate method must call.
+     
+     - Note: This method is a forward from `URLSession(:didReceiveChallenge:completionHandler:)`. Please refer to the document of it in `NSURLSessionDelegate`.
+     */
+    func downloder(downloader: ImageDownloader, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)
+}
+
+extension AuthenticationChallengeResponable {
+    
+    func downloder(downloader: ImageDownloader, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+    
+        if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+            if let trustedHosts = downloader.trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
+                let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!)
+                completionHandler(.UseCredential, credential)
+                return
+            }
+        }
+        
+        completionHandler(.PerformDefaultHandling, nil)
+    }
+}
+
 /// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
 public class ImageDownloader: NSObject {
     
@@ -121,7 +152,7 @@ public class ImageDownloader: NSObject {
     /// The duration before the download is timeout. Default is 15 seconds.
     public var downloadTimeout: NSTimeInterval = 15.0
     
-    /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. You can use this set to specify the self-signed site.
+    /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. You can use this set to specify the self-signed site. It only will be used if you don't specify the `authenticationChallengeResponder`. If `authenticationChallengeResponder` is set, this property will be ignored and the implemention of `authenticationChallengeResponder` will be used instead.
     public var trustedHosts: Set<String>?
     
     /// Use this to set supply a configuration for the downloader. By default, NSURLSessionConfiguration.ephemeralSessionConfiguration() will be used. You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
@@ -134,11 +165,15 @@ public class ImageDownloader: NSObject {
     /// Whether the download requests should use pipeling or not. Default is false.
     public var requestsUsePipeling = false
     
-    private var sessionHandler: ImageDownloaderSessionHandler?
+    private let sessionHandler: ImageDownloaderSessionHandler
     private var session: NSURLSession?
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
     public weak var delegate: ImageDownloaderDelegate?
+    
+    /// A responder for authentication challenge. 
+    /// Downloader will forward the received authentication challenge for the downloading session to this responder.
+    public weak var authenticationChallengeResponder: AuthenticationChallengeResponable?
     
     // MARK: - Internal property
     let barrierQueue: dispatch_queue_t
@@ -169,9 +204,13 @@ public class ImageDownloader: NSObject {
         barrierQueue = dispatch_queue_create(downloaderBarrierName + name, DISPATCH_QUEUE_CONCURRENT)
         processQueue = dispatch_queue_create(imageProcessQueueName + name, DISPATCH_QUEUE_CONCURRENT)
         
+        sessionHandler = ImageDownloaderSessionHandler()
+        
         super.init()
         
-        sessionHandler = ImageDownloaderSessionHandler()
+        // Provide a default implement for challenge responder.
+        authenticationChallengeResponder = sessionHandler
+        
         session = NSURLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: NSOperationQueue.mainQueue())
     }
     
@@ -260,7 +299,7 @@ extension ImageDownloader {
                 dataTask.resume()
                 
                 // Hold self while the task is executing.
-                self.sessionHandler?.downloadHolder = self
+                self.sessionHandler.downloadHolder = self
             }
             
             fetchLoad.downloadTaskCount += 1
@@ -315,7 +354,7 @@ extension ImageDownloader {
 /// The session object will hold its delegate until it gets invalidated.
 /// If we use `ImageDownloader` as the session delegate, it will not be released.
 /// So we need an additional handler to break the retain cycle.
-class ImageDownloaderSessionHandler: NSObject, NSURLSessionDataDelegate {
+class ImageDownloaderSessionHandler: NSObject, NSURLSessionDataDelegate, AuthenticationChallengeResponable {
     
     // The holder will keep downloader not released while a data task is being executed.
     // It will be set when the task started, and reset when the task finished.
@@ -372,15 +411,7 @@ class ImageDownloaderSessionHandler: NSObject, NSURLSessionDataDelegate {
             return
         }
         
-        if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            if let trustedHosts = downloader.trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
-                let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!)
-                completionHandler(.UseCredential, credential)
-                return
-            }
-        }
-        
-        completionHandler(.PerformDefaultHandling, nil)
+        downloader.authenticationChallengeResponder?.downloder(downloader, didReceiveChallenge: challenge, completionHandler: completionHandler)
     }
     
     private func callbackWithImage(image: Image?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
