@@ -279,18 +279,8 @@ extension ImageCache {
         let options = options ?? KingfisherEmptyOptionsInfo
         
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
-            //Found image in memory cache.
-            if options.backgroundDecode {
-                dispatch_async(self.processQueue, { () -> Void in
-                    let result = image.kf_decodedImage(scale: options.scaleFactor)
-                    dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
-                        completionHandler(result, .Memory)
-                    })
-                })
-            } else {
-                dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
-                    completionHandler(image, .Memory)
-                })
+            dispatch_async_safely_to_queue(options.callbackDispatchQueue) { () -> Void in
+                completionHandler(image, .Memory)
             }
         } else {
             var sSelf: ImageCache! = self
