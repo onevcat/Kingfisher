@@ -279,18 +279,8 @@ extension ImageCache {
         let options = options ?? KingfisherEmptyOptionsInfo
         
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
-            //Found image in memory cache.
-            if options.backgroundDecode {
-                dispatch_async(self.processQueue, { () -> Void in
-                    let result = image.kf_decodedImage(scale: options.scaleFactor)
-                    dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
-                        completionHandler(result, .Memory)
-                    })
-                })
-            } else {
-                dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
-                    completionHandler(image, .Memory)
-                })
+            dispatch_async_safely_to_queue(options.callbackDispatchQueue) { () -> Void in
+                completionHandler(image, .Memory)
             }
         } else {
             var sSelf: ImageCache! = self
@@ -619,6 +609,21 @@ extension ImageCache {
             })
         })
     }
+    
+    /**
+    Get the cache path for the key.
+    It is useful for projects with UIWebView or anyone that needs access to the local file path.
+    
+    i.e. `<img src='path_for_key'>`
+     
+    - Note: This method does not guarantee there is an image already cached in the path. 
+      You could use `isImageCachedForKey` method to check whether the image is cached under that key.
+    */
+    public func cachePathForKey(key: String) -> String {
+        let fileName = cacheFileNameForKey(key)
+        return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
+    }
+
 }
 
 // MARK: - Internal Helper
@@ -635,11 +640,6 @@ extension ImageCache {
     func diskImageDataForKey(key: String) -> NSData? {
         let filePath = cachePathForKey(key)
         return NSData(contentsOfFile: filePath)
-    }
-    
-    func cachePathForKey(key: String) -> String {
-        let fileName = cacheFileNameForKey(key)
-        return (diskCachePath as NSString).stringByAppendingPathComponent(fileName)
     }
     
     func cacheFileNameForKey(key: String) -> String {

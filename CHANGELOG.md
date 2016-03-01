@@ -2,6 +2,14 @@
 
 -----
 
+## [2.0.4 - Sorry Pipelining](https://github.com/onevcat/Kingfisher/releases/tag/2.0.4) (2016-02-27)
+
+#### Fix
+* Make pipeling support to be disabled by default since it requiring server support. You can enable it by setting `requestsUsePipeling` in `ImageDownloader`. [#253](https://github.com/onevcat/Kingfisher/pull/253)
+* Image transition now allows user interaction. [#252](https://github.com/onevcat/Kingfisher/pull/252)
+
+---
+
 ## [2.0.3 - Holiday Issues](https://github.com/onevcat/Kingfisher/releases/tag/2.0.3) (2016-02-17)
 
 #### Fix

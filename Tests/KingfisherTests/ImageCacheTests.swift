@@ -199,6 +199,20 @@ class ImageCacheTests: XCTestCase {
         XCTAssertFalse(exists)
     }
 
+    func testCachedImageIsFetchedSyncronouslyFromTheMemoryCache() {
+        cache.storeImage(testImage, forKey: testKeys[0], toDisk: false) { () -> () in
+            // do nothing
+        }
+
+        var foundImage: Image?
+
+        cache.retrieveImageForKey(testKeys[0], options: [.BackgroundDecode]) { (image, type) -> () in
+            foundImage = image
+        }
+
+        XCTAssertEqual(testImage, foundImage, "should have found the image immediately")
+    }
+
     func testIsImageCachedForKey() {
         let expectation = self.expectationWithDescription("wait for caching image")
         
