@@ -153,6 +153,52 @@ class ImageCacheTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
     
+    func testCachedFileExists() {
+        let expectation = expectationWithDescription("cache does contain image")
+        
+        let URLString = testKeys[0]
+        let URL = NSURL(string: URLString)!
+        
+        let exists = cache.cachedImageExistsforURL(URL)
+        XCTAssertFalse(exists)
+        
+        cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
+            XCTAssertNil(image, "Should not be cached yet")
+            XCTAssertEqual(type, nil)
+
+            self.cache.storeImage(testImage, forKey: URLString, toDisk: true) { () -> () in
+                self.cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
+                    XCTAssertNotNil(image, "Should be cached (memory or disk)")
+                    XCTAssertEqual(type, CacheType.Memory)
+
+                    let exists = self.cache.cachedImageExistsforURL(URL)
+                    XCTAssertTrue(exists, "Image should exist in the cache (memory or disk)")
+
+                    self.cache.clearMemoryCache()
+                    self.cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
+                        XCTAssertNotNil(image, "Should be cached (disk)")
+                        XCTAssertEqual(type, CacheType.Disk)
+                        
+                        let exists = self.cache.cachedImageExistsforURL(URL)
+                        XCTAssertTrue(exists, "Image should exist in the cache (disk)")
+                        
+                        expectation.fulfill()
+                    })
+                })
+            }
+        })
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
+    func testCachedFileDoesNotExist() {
+        let URLString = testKeys[0]
+        let URL = NSURL(string: URLString)!
+        
+        let exists = cache.cachedImageExistsforURL(URL)
+        XCTAssertFalse(exists)
+    }
+
     func testIsImageCachedForKey() {
         let expectation = self.expectationWithDescription("wait for caching image")
         

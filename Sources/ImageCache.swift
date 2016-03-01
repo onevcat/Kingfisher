@@ -553,6 +553,21 @@ extension ImageCache {
     }
     
     /**
+     Determine if a cached image exists for the given image, as keyed by the URL. It will return true if the
+     image is found either in memory or on disk. Essentially as long as there is a cache of the image somewhere
+     true is returned. A convenience method that decodes `isImageCachedForKey`.
+     
+     - parameter url: The image URL.
+     
+     - returns: True if the image is cached, false otherwise.
+     */
+    public func cachedImageExistsforURL(url: NSURL) -> Bool {
+        let resource = Resource(downloadURL: url)
+        let result = isImageCachedForKey(resource.cacheKey)
+        return result.cached
+    }
+
+    /**
     Check whether an image is cached for a key.
     
     - parameter key: Key for the image.
