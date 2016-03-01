@@ -36,8 +36,9 @@
 public typealias PrefetchProgressBlock = ((completedURLs: Int, allURLs: Int) -> ())
 
 /// Completion block of prefetcher.
-public typealias PrefetchCompletionBlock = ((completedURLs: Int, skippedURLs: Int) -> ())
+public typealias PrefetchCompletionBlock = ((cancelled: Bool, completedURLs: Int, skippedURLs: Int) -> ())
 
+private let defaultPrefetcherInstance = ImagePrefetcher()
 
 /// `ImagePrefetcher` represents a downloading manager for requesting many images via URLs and caching them.
 public class ImagePrefetcher: NSObject {
@@ -47,21 +48,27 @@ public class ImagePrefetcher: NSObject {
     private var requestedCount = 0
     private var finishedCount = 0
     
-    private var downloader: ImageDownloader
+    private var cancelCompletionHandlerCalled = false
+    
+    /// The default manager to use for downloads.
+    public lazy var manager: KingfisherManager = KingfisherManager.sharedManager
+
+    /// The default prefetcher.
+    public class var defaultPrefetcher: ImagePrefetcher {
+        return defaultPrefetcherInstance
+    }
 
     /// The maximum concurrent downloads to use when prefetching images. Default is 5.
-    var maxConcurrentDownloads = 5
-    
-    public init(downloader: ImageDownloader) {
-        self.downloader = downloader
-        super.init()
-    }
+    public var maxConcurrentDownloads = 5
     
     /**
      Download the images from `urls` and cache them. This can be useful for background downloading
      of assets that are required for later use in an app. This code will not try and update any UI
      with the results of the process, but calls the handlers with the number cached etc. Failed
      images are just skipped.
+     
+     Warning: This will cancel any existing prefetch operation in progress! Use `isPrefetching() to
+     control this in your own code as you see fit.
      
      - parameter urls:              The list of URLs to prefetch
      - parameter progressBlock:     Block to be called when progress updates. Completed and total
@@ -74,6 +81,8 @@ public class ImagePrefetcher: NSObject {
         // Clear out any existing prefetch operation first
         cancelPrefetching()
         
+        cancelCompletionHandlerCalled = false
+        
         prefetchURLs = urls
         
         guard urls.count > 0 else {
@@ -81,18 +90,34 @@ public class ImagePrefetcher: NSObject {
             return
         }
         
-        for (var i = 0; i < maxConcurrentDownloads && requestedCount < urls.count; i++) {
+        for i in (0..<urls.count) where i < maxConcurrentDownloads && requestedCount < urls.count {
             startPrefetching(i, progressBlock: progressBlock, completionHandler: completionHandler)
         }
     }
    
-    internal func cancelPrefetching() {
+    /**
+     This cancels any existing prefetching activity that might be occuring. It does not stop any currently
+     running cache operation, but prevents any further ones being started and terminates the looping. For
+     surety, be sure that the completion block on the prefetch is called after calling this if you expect
+     an operation to be running.
+     */
+    func cancelPrefetching() {
         prefetchURLs = .None
         skippedCount = 0
         requestedCount = 0
         finishedCount = 0
     }
 
+    /**
+     Checks to see if this prefetcher is already prefetching any images.
+     
+     - returns: True if there are images still to be prefetched, false otherwise.
+     */
+    func isPrefetching() -> Bool {
+        guard let urls = prefetchURLs else { return false }
+        return urls.count > 0
+    }
+    
     internal func startPrefetching(index: Int, progressBlock: PrefetchProgressBlock?, completionHandler: PrefetchCompletionBlock?) {
         guard let urls = prefetchURLs where index < (urls.count ?? 0) else { return }
         
@@ -100,20 +125,28 @@ public class ImagePrefetcher: NSObject {
         
         let task = RetrieveImageTask()
         let resource = Resource(downloadURL: urls[index])
-        KingfisherManager.sharedManager.downloadAndCacheImageWithURL(resource.downloadURL, forKey: resource.cacheKey, retrieveImageTask: task, progressBlock: nil, completionHandler: { image, error, cacheType, imageURL in
+        let total = urls.count
+        
+        manager.downloadAndCacheImageWithURL(resource.downloadURL, forKey: resource.cacheKey, retrieveImageTask: task, progressBlock: nil, completionHandler: { image, error, cacheType, imageURL in
             self.finishedCount++
             
             if image == .None {
                 self.skippedCount++
             }
             
-            progressBlock?(completedURLs: self.finishedCount, allURLs: urls.count)
+            progressBlock?(completedURLs: self.finishedCount, allURLs: total)
             
-            if urls.count > self.requestedCount {
+            // Reference the prefetchURLs rather than urls in case the request has been cancelled
+            if (self.prefetchURLs?.count ?? 0) > self.requestedCount {
                 self.startPrefetching(self.requestedCount, progressBlock: progressBlock, completionHandler: completionHandler)
             } else if self.finishedCount == self.requestedCount {
-                completionHandler?(completedURLs: self.finishedCount, skippedURLs: self.skippedCount)
+                self.prefetchURLs?.removeAll()
+                completionHandler?(cancelled: false, completedURLs: self.finishedCount, skippedURLs: self.skippedCount)
+            } else if (self.prefetchURLs == nil || self.prefetchURLs!.count == 0) && !self.cancelCompletionHandlerCalled {
+                self.cancelCompletionHandlerCalled = true
+                completionHandler?(cancelled: true, completedURLs: self.finishedCount, skippedURLs: self.skippedCount)
             }
+            
         }, options: nil)
     }
 }

@@ -86,9 +86,6 @@ public class KingfisherManager {
     /// Downloader used by this manager
     public var downloader: ImageDownloader
     
-    /// Prefetched used by this manager
-    public var prefetcher: ImagePrefetcher
-    
     /**
     Default init method
     
@@ -97,7 +94,6 @@ public class KingfisherManager {
     public init() {
         cache = ImageCache.defaultCache
         downloader = ImageDownloader.defaultDownloader
-        prefetcher = ImagePrefetcher(downloader: downloader)
     }
     
     /**
