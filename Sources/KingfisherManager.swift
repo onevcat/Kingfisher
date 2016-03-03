@@ -89,7 +89,7 @@ public class KingfisherManager {
     /**
     Default init method
     
-    - returns: A Kingfisher manager object with default cache and default downloader.
+    - returns: A Kingfisher manager object with default cache, default downloader, and default prefetcher.
     */
     public init() {
         cache = ImageCache.defaultCache
