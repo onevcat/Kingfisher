@@ -18,7 +18,10 @@
 
 <a href="http://cocoadocs.org/docsets/Kingfisher"><img src="https://img.shields.io/cocoapods/p/Kingfisher.svg?style=flat"></a>
 
+<a href="https://codebeat.co/projects/github-com-onevcat-kingfisher"><img alt="codebeat" src="https://codebeat.co/badges/30b4386d-46e5-46ee-bcc6-251158bb5ef7" /></a>
+
 <img src="https://img.shields.io/badge/made%20with-%3C3-orange.svg">
+
 
 </p>
 
