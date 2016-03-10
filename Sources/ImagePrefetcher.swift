@@ -176,8 +176,13 @@ public class ImagePrefetcher {
     /**
      Stop current downloading progress, and cancel any future prefetching activity that might be occuring.
      */
-    public func cancel() {
+    public func stop() {
         dispatch_async_safely_to_main_queue {
+            
+            if self.finished {
+                return
+            }
+            
             self.cancelled = true
             self.tasks.forEach { (_, task) -> () in
                 task.cancel()
