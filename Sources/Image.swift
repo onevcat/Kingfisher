@@ -145,8 +145,11 @@ extension Image {
 // MARK: - PNG
 func ImagePNGRepresentation(image: Image) -> NSData? {
 #if os(OSX)
-    let rep = NSBitmapImageRep(CGImage: image.CGImage)
-    return rep.representationUsingType(.NSPNGFileType, properties:[:])
+    if let cgimage = image.CGImage {
+        let rep = NSBitmapImageRep(CGImage: cgimage)
+        return rep.representationUsingType(.NSPNGFileType, properties:[:])
+    }
+    return nil
 #else
     return UIImagePNGRepresentation(image)
 #endif

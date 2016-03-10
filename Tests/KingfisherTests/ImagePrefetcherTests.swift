@@ -27,6 +27,12 @@
 import XCTest
 import Kingfisher
 
+#if os(OSX)
+    import AppKit
+#else
+    import UIKit
+#endif
+
 class ImagePrefetcherTests: XCTestCase {
     
     override class func setUp() {
@@ -118,7 +124,7 @@ class ImagePrefetcherTests: XCTestCase {
 
     func testPrefetcherCouldSkipCachedImages() {
         let expectation = expectationWithDescription("wait for prefetching images")
-        KingfisherManager.sharedManager.cache.storeImage(UIImage(), forKey: testKeys[0])
+        KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
         
         var urls = [NSURL]()
         for URLString in testKeys {
@@ -146,7 +152,7 @@ class ImagePrefetcherTests: XCTestCase {
         let expectation = expectationWithDescription("wait for prefetching images")
         
         // Store an image in cache.
-        KingfisherManager.sharedManager.cache.storeImage(UIImage(), forKey: testKeys[0])
+        KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
         
         var urls = [NSURL]()
         for URLString in testKeys {
