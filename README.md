@@ -34,6 +34,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Cache management. You can set the max duration or size the cache takes. From this, the cache will be cleaned automatically to prevent taking too many resources.
 * Modern framework. Kingfisher uses `NSURLSession` and the latest technology of GCD, which makes it a strong and swift framework. It also provides you easy APIs to use.
 * Cancelable processing task. You can cancel the downloading process if it is not needed anymore.
+* Prefetching. You can prefetch and cache the images which might soon appear in the page. It will bring your users great experience.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
 * Categories over `UIImageView`, `NSImage` and `UIButton` for setting image from an URL directly. Use the same code across all Apple platforms.
@@ -305,6 +306,29 @@ cache.clearDiskCache()
 cache.cleanExpiredDiskCache()
 ```
 
+### Prefetching
+
+You could prefetch some images and cache them before you display them on the screen. This is useful when you know a list of image resources you know they would probably be shown later. Since the prefetched images are already in the cache system, there is no need to request them again when you really need to display them in a image view. It will boost your UI and bring your users great experience.
+
+To prefetch some images, you could use the `ImagePrefetcher`:
+
+```swift
+let urls = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"].map { NSURL(string: $0)! }
+let prefetcher = ImagePrefetcher(urls: urls, optionsInfo: nil, progressBlock: nil, completionHandler: {
+    (skippedResources, failedResources, completedResources) -> () in
+    print("These resources are prefetched: \(completedResources)")
+})
+prefetcher.start()
+```
+
+You can also stop a prefetch whenever you need:
+
+```swift
+prefetcher.stop()
+```
+
+After prefetching, you could retrieve image or set the image view with other Kingfisher's methods, with the same `ImageCache` object you used for the prefetching.
+
 ## Future of Kingfisher
 
 I want to keep Kingfisher slim. This framework will focus on providing a simple solution for image downloading and caching. But that does not mean the framework will not be improved. Kingfisher is far away from perfect, and necessary and useful features will be added later to make it better.
@@ -320,5 +344,3 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 ## License
 
 Kingfisher is released under the MIT license. See LICENSE for details.
-
-
