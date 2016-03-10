@@ -65,7 +65,7 @@ public class ImagePrefetcher {
     private var failedResources = [Resource]()
     
     private var requestedCount = 0
-    private var cancelled = false
+    private var stopped = false
     
     // The created manager used for prefetch. We will use the helper method in manager.
     private let manager: KingfisherManager
@@ -148,7 +148,7 @@ public class ImagePrefetcher {
         // Since we want to handle the resources cancellation in main thread only.
         dispatch_async_safely_to_main_queue { () -> () in
             
-            guard !self.cancelled else {
+            guard !self.stopped else {
                 assertionFailure("You can not restart the same prefetcher. Try to create a new prefetcher.")
                 self.handleComplete()
                 return
@@ -183,7 +183,7 @@ public class ImagePrefetcher {
                 return
             }
             
-            self.cancelled = true
+            self.stopped = true
             self.tasks.forEach { (_, task) -> () in
                 task.cancel()
             }
@@ -211,7 +211,7 @@ public class ImagePrefetcher {
                 
                 self.reportProgress()
                 
-                if self.cancelled {
+                if self.stopped {
                     if self.tasks.isEmpty {
                         let pendingResources = self.prefetchResources[self.requestedCount..<self.prefetchResources.count]
                         self.failedResources += Array(pendingResources)
