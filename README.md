@@ -226,7 +226,7 @@ imageView.kf_setImageWithURL(NSURL(string: "your_image_url")!,
                             progressBlock: { (receivedSize, totalSize) -> () in
                                 print("Download Progress: \(receivedSize)/\(totalSize)")
                             },
-                        completionHandler: { (image, error, imageURL) -> () in
+                        completionHandler: { (image, error, cacheType, imageURL) -> () in
                             print("Downloaded and set!")
                         }
 )
