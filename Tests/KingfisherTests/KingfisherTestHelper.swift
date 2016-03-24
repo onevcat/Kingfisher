@@ -40,7 +40,7 @@ let testImageJEPGData = ImageJPEGRepresentation(testImage, 1.0)!
 let testImageGIFData = NSData(contentsOfFile: NSBundle(forClass: ImageExtensionTests.self).pathForResource("dancing-banana", ofType: "gif")!)!
 let testImageSingleFrameGIFData = NSData(contentsOfFile: NSBundle(forClass: ImageExtensionTests.self).pathForResource("single-frame", ofType: "gif")!)!
 
-let testKeys = ["http://stackoverflow.com/questions/11251340/convert-image-to-base64-string-in-ios-swift","https://onevcat.com","http://onevcat.com/content/images/2014/May/200.jpg","http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"]
+let testKeys = ["http://stackoverflow.com/questions/11251340/convert-image-to-base64-string-in-ios-swift", "https://onevcat.com", "http://onevcat.com/content/images/2014/May/200.jpg", "http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"]
 
 func == (left: Image, right: Image) -> Bool {
     return ImagePNGRepresentation(left) == ImagePNGRepresentation(right)
