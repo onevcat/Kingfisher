@@ -2,6 +2,16 @@
 
 -----
 
+## [2.2.0 - Open Source Swift](https://github.com/onevcat/Kingfisher/releases/tag/2.2.0) (2016-03-24)
+
+#### Add
+* Compatible with latest Swift 2.2 and Xcode 7.3. [#270](https://github.com/onevcat/Kingfisher/pull/270). If you need to use Kingfisher in Swift 2.1, please consider to pin to version 2.1.0.
+
+#### Fix
+* A trivial issue that a context holder should not exist when decoding images background.
+
+---
+
 ## [2.1.0 - Prefetching](https://github.com/onevcat/Kingfisher/releases/tag/2.1.0) (2016-03-10)
 
 #### Add
