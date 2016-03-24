@@ -68,7 +68,16 @@ extension ViewController {
         
         cell.cellImageView.kf_showIndicatorWhenLoading = true
         
-        let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
+        
+        var URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
+        
+        
+        //change url of first one,for fetch a gif image
+        if indexPath.row == 0
+        {
+            URL = NSURL(string: "https://media.giphy.com/media/pV6Wt4zNcOCHK/giphy.gif")!
+            
+        }
         
         
         cell.cellImageView.kf_setImageWithURL(URL, placeholderImage: nil,
@@ -80,5 +89,30 @@ extension ViewController {
                                                           print("\(indexPath.row + 1): Finished")
                                                       })
         return cell
+    }
+    
+    
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        collectionView.deselectItemAtIndexPath(indexPath, animated: true)
+        
+        
+        //if possible,click for stop animation , click again for start animation
+        
+        if indexPath.row ==  0
+        {
+            if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? CollectionViewCell
+            {
+                print("isAnimating:\(cell.cellImageView.kf_isAnimation)")
+
+                if cell.cellImageView.kf_isAnimation
+                {
+                    cell.cellImageView.kf_stopAnimation()
+                } else {
+                    cell.cellImageView.kf_startAnimation()
+                }
+                
+            }
+        }
+        
     }
 }
