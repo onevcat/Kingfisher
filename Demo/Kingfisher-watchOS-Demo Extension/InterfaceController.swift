@@ -41,7 +41,7 @@ class InterfaceController: WKInterfaceController {
         super.awakeWithContext(context)
         
         currentIndex = count
-        count++
+        count += 1
     }
     
     func refreshImage() {
