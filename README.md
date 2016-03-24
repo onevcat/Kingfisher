@@ -65,7 +65,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 2.1'
+pod 'Kingfisher', '~> 2.2'
 ```
 
 Then, run the following command:
@@ -90,7 +90,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ``` ogdl
-github "onevcat/Kingfisher" ~> 2.1
+github "onevcat/Kingfisher" ~> 2.2
 ```
 
 Then, run the following command to build the Kingfisher framework:
