@@ -43,9 +43,11 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 ## Requirements
 
 * iOS 8.0+, tvOS 9.0+, watchOS 2.0+ or OS X 10.10+
-* Xcode 7.0 or above
+* Xcode 7.3 or above
 
-If you upgrades to Kingfiser 2.x, please read the [Kingfisher 2.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-2.0-Migration-Guide) for more information.
+If you are upgrading to Kingfisher 2.x from 1.x, please read the [Kingfisher 2.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-2.0-Migration-Guide) for more information.
+
+Kingfisher is now supporting Swift 2.2. If you need to use Kingfisher in Swift 2.1, you need to pin the version to 2.1.0.
 
 
 ## Installation
