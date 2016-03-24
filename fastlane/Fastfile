@@ -18,6 +18,7 @@ platform :ios do
   desc "Swift Lint"
   lane :upgrade_swift_lint do
       Actions.sh("brew update")
+      Actions.sh("brew remove swiftlint")
       Actions.sh("brew install swiftlint")
   end
   
