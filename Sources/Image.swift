@@ -256,14 +256,14 @@ extension Image {
             case .JPEG: image = Image(data: data)
             case .PNG: image = Image(data: data)
             case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
-            case .Unknown: image = nil
+            case .Unknown: image = Image(data: data)
             }
         #else
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data, scale: scale)
             case .PNG: image = Image(data: data, scale: scale)
             case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
-            case .Unknown: image = nil
+            case .Unknown: image = Image(data: data, scale: scale)
             }
         #endif
         
