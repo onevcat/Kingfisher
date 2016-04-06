@@ -57,10 +57,10 @@ extension ImageView {
      */
     
     public func kf_setImageWithURL(URL: NSURL,
-                                   placeholderImage: Image?,
-                                   optionsInfo: KingfisherOptionsInfo?,
-                                   progressBlock: DownloadProgressBlock?,
-                                   completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                   placeholderImage: Image? = nil,
+                                   optionsInfo: KingfisherOptionsInfo? = nil,
+                                   progressBlock: DownloadProgressBlock? = nil,
+                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         return kf_setImageWithResource(Resource(downloadURL: URL),
                                        placeholderImage: placeholderImage,
@@ -85,10 +85,10 @@ extension ImageView {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     public func kf_setImageWithResource(resource: Resource,
-                                placeholderImage: Image?,
-                                     optionsInfo: KingfisherOptionsInfo?,
-                                   progressBlock: DownloadProgressBlock?,
-                               completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                placeholderImage: Image? = nil,
+                                     optionsInfo: KingfisherOptionsInfo? = nil,
+                                   progressBlock: DownloadProgressBlock? = nil,
+                               completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
         var indicator: IndicatorView? = nil

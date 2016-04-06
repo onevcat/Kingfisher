@@ -49,10 +49,10 @@ extension UIButton {
      */
     public func kf_setImageWithURL(URL: NSURL,
                                    forState state: UIControlState,
-                                            placeholderImage: UIImage?,
-                                            optionsInfo: KingfisherOptionsInfo?,
-                                            progressBlock: DownloadProgressBlock?,
-                                            completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                            placeholderImage: UIImage? = nil,
+                                            optionsInfo: KingfisherOptionsInfo? = nil,
+                                            progressBlock: DownloadProgressBlock? = nil,
+                                            completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         return kf_setImageWithResource(Resource(downloadURL: URL),
                                        forState: state,
@@ -80,10 +80,10 @@ extension UIButton {
     */
     public func kf_setImageWithResource(resource: Resource,
                                   forState state: UIControlState,
-                                placeholderImage: UIImage?,
-                                     optionsInfo: KingfisherOptionsInfo?,
-                                   progressBlock: DownloadProgressBlock?,
-                               completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                placeholderImage: UIImage? = nil,
+                                     optionsInfo: KingfisherOptionsInfo? = nil,
+                                   progressBlock: DownloadProgressBlock? = nil,
+                               completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         setImage(placeholderImage, forState: state)
         kf_setWebURL(resource.downloadURL, forState: state)
@@ -176,10 +176,10 @@ extension UIButton {
      */
     public func kf_setBackgroundImageWithURL(URL: NSURL,
                                              forState state: UIControlState,
-                                                      placeholderImage: UIImage?,
-                                                      optionsInfo: KingfisherOptionsInfo?,
-                                                      progressBlock: DownloadProgressBlock?,
-                                                      completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                                      placeholderImage: UIImage? = nil,
+                                                      optionsInfo: KingfisherOptionsInfo? = nil,
+                                                      progressBlock: DownloadProgressBlock? = nil,
+                                                      completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         return kf_setBackgroundImageWithResource(Resource(downloadURL: URL),
                                                  forState: state,
@@ -208,10 +208,10 @@ extension UIButton {
     */
     public func kf_setBackgroundImageWithResource(resource: Resource,
                                             forState state: UIControlState,
-                                          placeholderImage: UIImage?,
-                                               optionsInfo: KingfisherOptionsInfo?,
-                                             progressBlock: DownloadProgressBlock?,
-                                         completionHandler: CompletionHandler?) -> RetrieveImageTask
+                                          placeholderImage: UIImage? = nil,
+                                               optionsInfo: KingfisherOptionsInfo? = nil,
+                                             progressBlock: DownloadProgressBlock? = nil,
+                                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         setBackgroundImage(placeholderImage, forState: state)
         kf_setBackgroundWebURL(resource.downloadURL, forState: state)
