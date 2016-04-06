@@ -59,7 +59,8 @@ platform :ios do
       release_log = update_change_log(log: log)
 
       git_commit_all(message: "Bump version to #{target_version}")
-      add_git_tag tag: target_version
+    #   add_git_tag tag: target_version
+      Actions.sh("git tag -s #{target_version}")
 
       push_to_git_remote
 
