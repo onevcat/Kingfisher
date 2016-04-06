@@ -106,15 +106,6 @@ extension HashProtocol {
         return tmpMessage
     }
 }
-// func anyGenerator is renamed to AnyGenerator in Swift 2.2,
-// until then it's just dirty hack for linux (because swift >= 2.2 is available for Linux)
-private func CS_AnyGenerator<Element>(body: () -> Element?) -> AnyGenerator<Element> {
-    #if os(Linux)
-        return AnyGenerator(body: body)
-    #else
-        return AnyGenerator(body: body)
-    #endif
-}
 
 func toUInt32Array(slice: ArraySlice<UInt8>) -> Array<UInt32> {
     var result = Array<UInt32>()
@@ -132,20 +123,32 @@ func toUInt32Array(slice: ArraySlice<UInt8>) -> Array<UInt32> {
     return result
 }
 
+struct BytesGenerator: GeneratorType {
+    
+    let chunkSize: Int
+    let data: [UInt8]
+    
+    init(chunkSize: Int, data: [UInt8]) {
+        self.chunkSize = chunkSize
+        self.data = data
+    }
+    
+    var offset = 0
+    
+    mutating func next() -> ArraySlice<UInt8>? {
+        let end = min(chunkSize, data.count - offset)
+        let result = data[offset..<offset + end]
+        offset += result.count
+        return result.count > 0 ? result : nil
+    }
+}
+
 struct BytesSequence: SequenceType {
     let chunkSize: Int
     let data: [UInt8]
     
-    func generate() -> AnyGenerator<ArraySlice<UInt8>> {
-        
-        var offset: Int = 0
-        
-        return CS_AnyGenerator {
-            let end = min(self.chunkSize, self.data.count - offset)
-            let result = self.data[offset..<offset + end]
-            offset += result.count
-            return result.count > 0 ? result : nil
-        }
+    func generate() -> BytesGenerator {
+        return BytesGenerator(chunkSize: chunkSize, data: data)
     }
 }
 
