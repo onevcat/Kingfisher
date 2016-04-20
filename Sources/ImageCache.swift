@@ -513,13 +513,13 @@ extension ImageCache {
     @objc public func backgroundCleanExpiredDiskCache() {
         
         func endBackgroundTask(inout task: UIBackgroundTaskIdentifier) {
-            UIApplication.sharedApplication().endBackgroundTask(task)
+            UIApplication.kf_shareApplication()?.endBackgroundTask(task)
             task = UIBackgroundTaskInvalid
         }
         
         var backgroundTask: UIBackgroundTaskIdentifier!
         
-        backgroundTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+        backgroundTask = UIApplication.kf_shareApplication()?.beginBackgroundTaskWithExpirationHandler { () -> Void in
             endBackgroundTask(&backgroundTask!)
         }
         
@@ -660,3 +660,14 @@ extension Dictionary {
         return Array(self).sort{ isOrderedBefore($0.1, $1.1) }.map{ $0.0 }
     }
 }
+
+#if !os(OSX) && !os(watchOS)
+// MARK: - For App Extensions
+extension UIApplication {
+    public static func kf_shareApplication() -> UIApplication? {
+        let selector = NSSelectorFromString("sharedApplication")
+        guard respondsToSelector(selector) else { return nil }
+        return performSelector(selector).takeRetainedValue() as? UIApplication
+    }
+}
+#endif
