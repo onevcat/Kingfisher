@@ -511,15 +511,17 @@ extension ImageCache {
     It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.
     */
     @objc public func backgroundCleanExpiredDiskCache() {
-        
+        // if 'sharedApplication()' is unavailable, then return
+        guard let sharedApplication = UIApplication.kf_sharedApplication() else { return }
+
         func endBackgroundTask(inout task: UIBackgroundTaskIdentifier) {
-            UIApplication.sharedApplication().endBackgroundTask(task)
+            sharedApplication.endBackgroundTask(task)
             task = UIBackgroundTaskInvalid
         }
         
         var backgroundTask: UIBackgroundTaskIdentifier!
         
-        backgroundTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+        backgroundTask = sharedApplication.beginBackgroundTaskWithExpirationHandler { () -> Void in
             endBackgroundTask(&backgroundTask!)
         }
         
@@ -660,3 +662,14 @@ extension Dictionary {
         return Array(self).sort{ isOrderedBefore($0.1, $1.1) }.map{ $0.0 }
     }
 }
+
+#if !os(OSX) && !os(watchOS)
+// MARK: - For App Extensions
+extension UIApplication {
+    public static func kf_sharedApplication() -> UIApplication? {
+        let selector = NSSelectorFromString("sharedApplication")
+        guard respondsToSelector(selector) else { return nil }
+        return performSelector(selector).takeRetainedValue() as? UIApplication
+    }
+}
+#endif
