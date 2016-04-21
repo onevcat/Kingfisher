@@ -2,6 +2,14 @@
 
 -----
 
+## [2.3.0 - Warmly Welcome](https://github.com/onevcat/Kingfisher/releases/tag/2.3.0) (2016-04-21)
+
+#### Add
+* Add support for App Extension target. [#290](https://github.com/onevcat/Kingfisher/pull/290)
+* Add support for NSButton. [#287](https://github.com/onevcat/Kingfisher/pull/287)
+
+---
+
 ## [2.2.2 - Spring Bird II](https://github.com/onevcat/Kingfisher/releases/tag/2.2.2) (2016-04-06)
 
 #### Fix
