@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
 		182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
-		182FFF791CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
-		182FFF7A1CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		4A54251331E840CB85C78FA8 /* libPods-KingfisherTests-OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
@@ -1282,7 +1280,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				182FFF791CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D12E0CB31C47F92C00AC98AD /* ViewController.swift in Sources */,
 				D12E0CAE1C47F92C00AC98AD /* AppDelegate.swift in Sources */,
 			);
@@ -1308,7 +1305,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				182FFF7A1CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */,
 				D12E0C821C47F7AF00AC98AD /* ImageCacheTests.swift in Sources */,
