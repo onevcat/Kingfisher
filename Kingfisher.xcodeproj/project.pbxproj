@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0D9C68098E20AB4F19D7C313 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */; };
-		185218B41CC07F6D00BD58DE /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B31CC07F6D00BD58DE /* NSButton+Kingfisher.swift */; };
+		182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
+		182FFF791CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
+		182FFF7A1CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		4A54251331E840CB85C78FA8 /* libPods-KingfisherTests-OSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ECD18204CB0CD37B49F631 /* libPods-KingfisherTests-OSX.a */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
@@ -249,7 +251,7 @@
 
 /* Begin PBXFileReference section */
 		026040C607726792406566BB /* Pods-KingfisherTests-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		185218B31CC07F6D00BD58DE /* NSButton+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSButton+Kingfisher.swift"; sourceTree = "<group>"; };
+		182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSButton+Kingfisher.swift"; path = "Sources/NSButton+Kingfisher.swift"; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -454,7 +456,7 @@
 				D10945F41C526B6C001408EB /* String+MD5.swift */,
 				D10945F51C526B6C001408EB /* ThreadHelper.swift */,
 				D10945F61C526B6C001408EB /* UIButton+Kingfisher.swift */,
-				185218B31CC07F6D00BD58DE /* NSButton+Kingfisher.swift */,
+				182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -1267,7 +1269,7 @@
 				D109461D1C526C61001408EB /* ImageTransition.swift in Sources */,
 				D109461E1C526C61001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D109461F1C526C61001408EB /* KingfisherManager.swift in Sources */,
-				185218B41CC07F6D00BD58DE /* NSButton+Kingfisher.swift in Sources */,
+				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D10946201C526C61001408EB /* KingfisherOptionsInfo.swift in Sources */,
 				D10946211C526C61001408EB /* Resource.swift in Sources */,
 				D9638BA21C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
@@ -1280,6 +1282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				182FFF791CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D12E0CB31C47F92C00AC98AD /* ViewController.swift in Sources */,
 				D12E0CAE1C47F92C00AC98AD /* AppDelegate.swift in Sources */,
 			);
@@ -1305,6 +1308,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				182FFF7A1CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */,
 				D12E0C821C47F7AF00AC98AD /* ImageCacheTests.swift in Sources */,
