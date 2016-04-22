@@ -331,6 +331,13 @@ prefetcher.stop()
 
 After prefetching, you could retrieve image or set the image view with other Kingfisher's methods, with the same `ImageCache` object you used for the prefetching.
 
+### Animated GIF
+
+You can load animated GIF by replacing `UIImageView` with `AnimatedImageView`
+```swift
+imageView = AnimatedImageView()
+```
+
 ## Future of Kingfisher
 
 I want to keep Kingfisher slim. This framework will focus on providing a simple solution for image downloading and caching. But that does not mean the framework will not be improved. Kingfisher is far away from perfect, and necessary and useful features will be added later to make it better.

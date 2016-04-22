@@ -35,6 +35,8 @@ private var durationKey: Void?
 import UIKit.UIImage
 import MobileCoreServices
 public typealias Image = UIImage
+
+private var imageSourceKey: Void?
 #endif
 
 import ImageIO
@@ -80,6 +82,15 @@ extension Image {
     
     var kf_duration: NSTimeInterval {
         return duration
+    }
+    
+    private(set) var kf_imageSource: ImageSource? {
+        get {
+            return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
+        }
+        set {
+            objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 #endif
 }
@@ -242,7 +253,13 @@ extension Image {
         }
         return nil
 #else
+    #if os(tvOS) || os(watchOS)
         return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
+    #else
+        let image = Image(data: data)
+        image?.kf_imageSource = ImageSource(ref: imageSource)
+        return image
+    #endif
 #endif
     }
 }
@@ -296,6 +313,14 @@ extension Image {
         } else {
             return nil
         }
+    }
+}
+
+/// Reference the source image reference
+class ImageSource {
+    var imageRef: CGImageSourceRef?
+    init(ref: CGImageSourceRef) {
+        self.imageRef = ref
     }
 }
 
