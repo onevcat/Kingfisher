@@ -2,6 +2,13 @@
 
 -----
 
+## [2.3.1 - Pod Me up](https://github.com/onevcat/Kingfisher/releases/tag/2.3.1) (2016-04-22)
+
+#### Fix
+* Exclude NSButton extension from no related target. [#292](https://github.com/onevcat/Kingfisher/pull/292)
+
+---
+
 ## [2.3.0 - Warmly Welcome](https://github.com/onevcat/Kingfisher/releases/tag/2.3.0) (2016-04-21)
 
 #### Add
