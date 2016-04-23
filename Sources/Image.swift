@@ -37,6 +37,7 @@ import MobileCoreServices
 public typealias Image = UIImage
 
 private var imageSourceKey: Void?
+private var animatedImageDataKey: Void?
 #endif
 
 import ImageIO
@@ -84,14 +85,25 @@ extension Image {
         return duration
     }
     
-    private(set) var kf_imageSource: ImageSource? {
-        get {
-            return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
+    #if os(iOS)
+        private(set) var kf_imageSource: ImageSource? {
+            get {
+                return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
+            }
+            set {
+                objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            }
         }
-        set {
-            objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        
+        private(set) var kf_animatedImageData: NSData? {
+            get {
+                return objc_getAssociatedObject(self, &animatedImageDataKey) as? NSData
+            }
+            set {
+                objc_setAssociatedObject(self, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            }
         }
-    }
+    #endif
 #endif
 }
 
@@ -178,7 +190,11 @@ func ImageJPEGRepresentation(image: Image, _ compressionQuality: CGFloat) -> NSD
 
 // MARK: - GIF
 func ImageGIFRepresentation(image: Image) -> NSData? {
+#if os(iOS)
+    return image.kf_animatedImageData
+#else
     return ImageGIFRepresentation(image, duration: 0.0, repeatCount: 0)
+#endif
 }
 
 func ImageGIFRepresentation(image: Image, duration: NSTimeInterval, repeatCount: Int) -> NSData? {
@@ -206,6 +222,10 @@ func ImageGIFRepresentation(image: Image, duration: NSTimeInterval, repeatCount:
     return CGImageDestinationFinalize(destination) ? NSData(data: data) : nil
 }
 
+func ImagesCountWithImageSource(ref: CGImageSourceRef) -> Int {
+    return CGImageSourceGetCount(ref)
+}
+
 extension Image {
     static func kf_animatedImageWithGIFData(gifData data: NSData) -> Image? {
         return kf_animatedImageWithGIFData(gifData: data, scale: 1.0, duration: 0.0)
@@ -217,13 +237,19 @@ extension Image {
         guard let imageSource = CGImageSourceCreateWithData(data, options) else {
             return nil
         }
-        
+#if os(iOS)
+        let image = Image(data: data)
+        image?.kf_imageSource = ImageSource(ref: imageSource)
+        image?.kf_animatedImageData = data
+        return image
+#else
         let frameCount = CGImageSourceGetCount(imageSource)
         var images = [Image]()
-        
+            
         var gifDuration = 0.0
-        
+            
         for i in 0 ..< frameCount {
+            
             guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
                 return nil
             }
@@ -244,21 +270,13 @@ extension Image {
             
             images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
         }
-         
-#if os(OSX)
-        if let image = Image(data: data) {
-            image.kf_images = images
-            image.kf_duration = gifDuration
-            return image
-        }
-        return nil
-#else
-    #if os(tvOS) || os(watchOS)
-        return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
-    #else
+    #if os(OSX)
         let image = Image(data: data)
-        image?.kf_imageSource = ImageSource(ref: imageSource)
+        image?.kf_images = images
+        image?.kf_duration = gifDuration
         return image
+    #else
+        return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
     #endif
 #endif
     }
