@@ -89,6 +89,7 @@ public class AnimatedImageView: UIImageView {
                 reset()
             }
             setNeedsDisplay()
+            layer.setNeedsDisplay()
         }
     }
     
@@ -120,6 +121,8 @@ public class AnimatedImageView: UIImageView {
     override public func displayLayer(layer: CALayer) {
         if let currentFrame = animator?.currentFrame {
             layer.contents = currentFrame.CGImage
+        } else {
+            layer.contents = image?.CGImage
         }
     }
     
