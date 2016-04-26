@@ -314,9 +314,15 @@ extension Image {
     
     func kf_decodedImage(scale scale: CGFloat) -> Image? {
         // prevent animated image (GIF) lose it's images
-        if kf_images != nil || kf_imageSource != nil {
+#if os(iOS)
+        if kf_imageSource != nil {
             return self
         }
+#else
+        if kf_images != nil {
+            return self
+        }
+#endif
         
         let imageRef = self.CGImage
         let colorSpace = CGColorSpaceCreateDeviceRGB()
