@@ -144,34 +144,18 @@ public class ImageCache {
 // MARK: - Store & Remove
 extension ImageCache {
     /**
-    Store an image to cache. It will be saved to both memory and disk. 
-    It is an async operation, if you need to do something about the stored image, use `-storeImage:forKey:toDisk:completionHandler:` 
-    instead.
+    Store an image to cache. It will be saved to both memory and disk. It is an async operation.
     
-    - parameter image:        The image will be stored.
-    - parameter originalData: The original data of the image.
-                              Kingfisher will use it to check the format of the image and optimize cache size on disk.
-                              If `nil` is supplied, the image data will be saved as a normalized PNG file.
-                              It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
-    - parameter key:          Key for the image.
-    */
-    public func storeImage(image: Image, originalData: NSData? = nil, forKey key: String) {
-        storeImage(image, originalData: originalData, forKey: key, toDisk: true, completionHandler: nil)
-    }
-    
-    /**
-    Store an image to cache. It is an async operation.
-    
-    - parameter image:             The image will be stored.
+    - parameter image:             The image to be stored.
     - parameter originalData:      The original data of the image.
                                    Kingfisher will use it to check the format of the image and optimize cache size on disk.
                                    If `nil` is supplied, the image data will be saved as a normalized PNG file. 
                                    It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
     - parameter key:               Key for the image.
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
-    - parameter completionHandler: Called when stroe operation completes.
+    - parameter completionHandler: Called when store operation completes.
     */
-    public func storeImage(image: Image, originalData: NSData? = nil, forKey key: String, toDisk: Bool, completionHandler: (() -> ())?) {
+    public func storeImage(image: Image, originalData: NSData? = nil, forKey key: String, toDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
         memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
         
         func callHandlerInMainQueue() {
@@ -183,7 +167,7 @@ extension ImageCache {
         }
         
         if toDisk {
-            dispatch_async(ioQueue, { () -> Void in
+            dispatch_async(ioQueue, {
                 let imageFormat: ImageFormat
                 if let originalData = originalData {
                     imageFormat = originalData.kf_imageFormat
@@ -216,24 +200,14 @@ extension ImageCache {
     }
     
     /**
-    Remove the image for key for the cache. It will be opted out from both memory and disk.
-    It is an async operation, if you need to do something about the stored image, use `-removeImageForKey:fromDisk:completionHandler:` 
-    instead.
-    
-    - parameter key: Key for the image.
-    */
-    public func removeImageForKey(key: String) {
-        removeImageForKey(key, fromDisk: true, completionHandler: nil)
-    }
-    
-    /**
-    Remove the image for key for the cache. It is an async operation.
+    Remove the image for key for the cache. It will be opted out from both memory and disk. 
+    It is an async operation.
     
     - parameter key:               Key for the image.
     - parameter fromDisk:          Whether this image should be removed from disk or not. If false, the image will be only removed from memory.
     - parameter completionHandler: Called when removal operation completes.
     */
-    public func removeImageForKey(key: String, fromDisk: Bool, completionHandler: (() -> ())?) {
+    public func removeImageForKey(key: String, fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
         memoryCache.removeObjectForKey(key)
         
         func callHandlerInMainQueue() {
