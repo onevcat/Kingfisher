@@ -1,0 +1,10 @@
+comment:
+  layout: header, changes, diff
+coverage:
+  ignore:
+  - Pods
+  - Tests
+  - Demo
+  - Kingfisher-Demo
+  - KingfisherTests
+  
