@@ -85,8 +85,7 @@ extension Image {
         return duration
     }
     
-    #if os(iOS)
-        private(set) var kf_imageSource: ImageSource? {
+    private(set) var kf_imageSource: ImageSource? {
             get {
                 return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
             }
@@ -95,7 +94,7 @@ extension Image {
             }
         }
         
-        private(set) var kf_animatedImageData: NSData? {
+    private(set) var kf_animatedImageData: NSData? {
             get {
                 return objc_getAssociatedObject(self, &animatedImageDataKey) as? NSData
             }
@@ -103,7 +102,6 @@ extension Image {
                 objc_setAssociatedObject(self, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
-    #endif
 #endif
 }
 
@@ -237,17 +235,13 @@ extension Image {
         guard let imageSource = CGImageSourceCreateWithData(data, options) else {
             return nil
         }
-#if os(iOS)
-        let image = Image(data: data)
-        image?.kf_imageSource = ImageSource(ref: imageSource)
-        image?.kf_animatedImageData = data
-        return image
-#else
+        
+#if os(OSX)
         let frameCount = CGImageSourceGetCount(imageSource)
         var images = [Image]()
-            
+        
         var gifDuration = 0.0
-            
+        
         for i in 0 ..< frameCount {
             
             guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
@@ -270,14 +264,16 @@ extension Image {
             
             images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
         }
-    #if os(OSX)
+        
         let image = Image(data: data)
         image?.kf_images = images
         image?.kf_duration = gifDuration
         return image
-    #else
-        return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
-    #endif
+#else
+        let image = Image(data: data)
+        image?.kf_imageSource = ImageSource(ref: imageSource)
+        image?.kf_animatedImageData = data
+        return image
 #endif
     }
 }

@@ -135,6 +135,7 @@ extension ImageView {
                                         UIView.transitionWithView(sSelf, duration: transition.duration,
                                             options: [transition.animationOptions, .AllowUserInteraction],
                                             animations: {
+                                                // Set image property in the animation.
                                                 transition.animations?(sSelf, image)
                                             },
                                             completion: { finished in
