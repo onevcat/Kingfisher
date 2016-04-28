@@ -225,62 +225,79 @@ func ImagesCountWithImageSource(ref: CGImageSourceRef) -> Int {
 }
 
 extension Image {
-    static func kf_animatedImageWithGIFData(gifData data: NSData) -> Image? {
-        return kf_animatedImageWithGIFData(gifData: data, scale: 1.0, duration: 0.0)
+    static func kf_animatedImageWithGIFData(gifData data: NSData, preloadAll: Bool) -> Image? {
+        return kf_animatedImageWithGIFData(gifData: data, scale: 1.0, duration: 0.0, preloadAll: preloadAll)
     }
     
-    static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval) -> Image? {
+    static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval, preloadAll: Bool) -> Image? {
         
+        func decodeFromSource(imageSource: CGImageSource, options: NSDictionary) -> ([Image], NSTimeInterval)? {
+
+            let frameCount = CGImageSourceGetCount(imageSource)
+            var images = [Image]()
+            var gifDuration = 0.0
+            for i in 0 ..< frameCount {
+                
+                guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
+                    return nil
+                }
+                
+                if frameCount == 1 {
+                    // Single frame
+                    gifDuration = Double.infinity
+                } else {
+                    // Animated GIF
+                    guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
+                        gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
+                        frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
+                    {
+                        return nil
+                    }
+                    gifDuration += frameDuration.doubleValue
+                }
+                
+                images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
+            }
+            
+            return (images, gifDuration)
+        }
+        
+        // Start of kf_animatedImageWithGIFData
         let options: NSDictionary = [kCGImageSourceShouldCache as String: NSNumber(bool: true), kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
         guard let imageSource = CGImageSourceCreateWithData(data, options) else {
             return nil
         }
         
 #if os(OSX)
-        let frameCount = CGImageSourceGetCount(imageSource)
-        var images = [Image]()
-        
-        var gifDuration = 0.0
-        
-        for i in 0 ..< frameCount {
-            
-            guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
-                return nil
-            }
-            
-            if frameCount == 1 {
-                // Single frame
-                gifDuration = Double.infinity
-            } else {
-                // Animated GIF
-                guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                    gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
-                    frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
-                {
-                    return nil
-                }
-                gifDuration += frameDuration.doubleValue
-            }
-            
-            images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
+        guard let (images, gifDuration) = decodeFromSource(imageSource, options: options) else {
+            return nil
         }
-        
         let image = Image(data: data)
         image?.kf_images = images
         image?.kf_duration = gifDuration
+    
         return image
 #else
-        let image = Image(data: data)
-        image?.kf_imageSource = ImageSource(ref: imageSource)
-        image?.kf_animatedImageData = data
-        return image
+    
+        if preloadAll {
+            guard let (images, gifDuration) = decodeFromSource(imageSource, options: options) else {
+                return nil
+            }
+            return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
+        } else {
+            let image = Image(data: data)
+            image?.kf_imageSource = ImageSource(ref: imageSource)
+            image?.kf_animatedImageData = data
+            return image
+        }
 #endif
+        
     }
 }
 
 // MARK: - Create images from data
 extension Image {
-    static func kf_imageWithData(data: NSData, scale: CGFloat) -> Image? {
+    static func kf_imageWithData(data: NSData, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         var image: Image?
         #if os(OSX)
             switch data.kf_imageFormat {
@@ -293,7 +310,7 @@ extension Image {
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data, scale: scale)
             case .PNG: image = Image(data: data, scale: scale)
-            case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
+            case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .Unknown: image = Image(data: data, scale: scale)
             }
         #endif

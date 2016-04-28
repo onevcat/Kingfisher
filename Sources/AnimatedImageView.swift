@@ -144,6 +144,11 @@ public class AnimatedImageView: UIImageView {
         didMove()
     }
     
+    // This is for back compatibility that using regular UIImageView to show GIF.
+    override func shouldPreloadAllGIF() -> Bool {
+        return false
+    }
+    
     // MARK: - Private method
     /// Reset the animator.
     private func reset() {

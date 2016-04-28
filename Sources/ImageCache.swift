@@ -286,7 +286,7 @@ extension ImageCache {
             var sSelf: ImageCache! = self
             block = dispatch_block_create(DISPATCH_BLOCK_INHERIT_QOS_CLASS) {
                 // Begin to load image from disk
-                if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scaleFactor) {
+                if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData) {
                     if options.backgroundDecode {
                         dispatch_async(sSelf.processQueue, { () -> Void in
                             let result = image.kf_decodedImage(scale: options.scaleFactor)
@@ -334,12 +334,14 @@ extension ImageCache {
     Get an image for a key from disk.
     
     - parameter key: Key for the image.
-    - param scale: The scale factor to assume when interpreting the image data.
+    - parameter scale: The scale factor to assume when interpreting the image data.
+    - parameter preloadAllGIFData: Whether all GIF data should be loaded. If true, you can set the loaded image to a regular UIImageView to play 
+      the GIF animation. Otherwise, you should use `AnimatedImageView` to play it. Default is `false`
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = 1.0) -> Image? {
-        return diskImageForKey(key, scale: scale)
+    public func retrieveImageInDiskCacheForKey(key: String, scale: CGFloat = 1.0, preloadAllGIFData: Bool = false) -> Image? {
+        return diskImageForKey(key, scale: scale, preloadAllGIFData: preloadAllGIFData)
     }
 }
 
@@ -631,9 +633,9 @@ extension ImageCache {
 // MARK: - Internal Helper
 extension ImageCache {
     
-    func diskImageForKey(key: String, scale: CGFloat) -> Image? {
+    func diskImageForKey(key: String, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         if let data = diskImageDataForKey(key) {
-            return Image.kf_imageWithData(data, scale: scale)
+            return Image.kf_imageWithData(data, scale: scale, preloadAllGIFData: preloadAllGIFData)
         } else {
             return nil
         }
