@@ -56,9 +56,9 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGenerateGIFImage() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData)
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
-#if os(iOS)
+#if os(iOS) || os(tvOS)
         let count = ImagesCountWithImageSource(image!.kf_imageSource!.imageRef!)
         XCTAssertEqual(count, 8, "There should be 8 frames.")
 #else
@@ -69,25 +69,22 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGIFRepresentation() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData)!
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData, preloadAll: false)!
         let data = ImageGIFRepresentation(image)
         
         XCTAssertNotNil(data, "Data should not be nil")
         XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)
         
-        let image1 = Image.kf_animatedImageWithGIFData(gifData: data!)!
-#if os(iOS)
-        XCTAssertNotNil(image1.kf_imageSource!.imageRef, "Image source should not be nil")
-#else
-        XCTAssertEqual(image1.kf_duration, image.kf_duration)
-        XCTAssertEqual(image1.kf_images!.count, image.kf_images!.count)
-#endif
+        let allLoadImage = Image.kf_animatedImageWithGIFData(gifData: data!, preloadAll: true)!
+        let allLoadData = ImageGIFRepresentation(allLoadImage)
+        XCTAssertNotNil(allLoadData, "Data1 should not be nil")
+        XCTAssertEqual(allLoadData?.kf_imageFormat, ImageFormat.GIF)
     }
     
     func testGenerateSingleFrameGIFImage() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageSingleFrameGIFData)
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageSingleFrameGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
-#if os(iOS)
+#if os(iOS) || os(tvOS)
         let count = ImagesCountWithImageSource(image!.kf_imageSource!.imageRef!)
         XCTAssertEqual(count, 1, "There should be 1 frames.")
 #else
@@ -95,5 +92,15 @@ class ImageExtensionTests: XCTestCase {
         
         XCTAssertEqual(image!.kf_duration, Double.infinity, "The image duration should be 0 since it is not animated image.")
 #endif
+    }
+    
+    func testPreloadAllGIFData() {
+        let image = Image.kf_animatedImageWithGIFData(gifData: testImageSingleFrameGIFData, preloadAll: true)!
+        XCTAssertNotNil(image, "The image should be initiated.")
+#if os(iOS) || os(tvOS)
+        XCTAssertNil(image.kf_imageSource, "Image source should be nil")
+#endif
+        XCTAssertEqual(image.kf_duration, image.kf_duration)
+        XCTAssertEqual(image.kf_images!.count, image.kf_images!.count)
     }
 }

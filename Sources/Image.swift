@@ -188,10 +188,10 @@ func ImageJPEGRepresentation(image: Image, _ compressionQuality: CGFloat) -> NSD
 
 // MARK: - GIF
 func ImageGIFRepresentation(image: Image) -> NSData? {
-#if os(iOS)
-    return image.kf_animatedImageData
-#else
+#if os(OSX)
     return ImageGIFRepresentation(image, duration: 0.0, repeatCount: 0)
+#else
+    return image.kf_animatedImageData
 #endif
 }
 
@@ -283,11 +283,13 @@ extension Image {
             guard let (images, gifDuration) = decodeFromSource(imageSource, options: options) else {
                 return nil
             }
-            return Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
+            let image = Image.kf_animatedImageWithImages(images, duration: duration <= 0.0 ? gifDuration : duration)
+            image?.kf_animatedImageData = data
+            return image
         } else {
             let image = Image(data: data)
-            image?.kf_imageSource = ImageSource(ref: imageSource)
             image?.kf_animatedImageData = data
+            image?.kf_imageSource = ImageSource(ref: imageSource)
             return image
         }
 #endif
@@ -303,7 +305,7 @@ extension Image {
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data)
             case .PNG: image = Image(data: data)
-            case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0)
+            case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .Unknown: image = Image(data: data)
             }
         #else
