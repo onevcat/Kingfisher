@@ -102,7 +102,12 @@ extension ImageView {
         
         kf_setWebURL(resource.downloadURL)
         
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        var options = optionsInfo ?? []
+        if shouldPreloadAllGIF() {
+            options.append(.PreloadAllGIFData)
+        }
+
+        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: options,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
@@ -135,6 +140,7 @@ extension ImageView {
                                         UIView.transitionWithView(sSelf, duration: transition.duration,
                                             options: [transition.animationOptions, .AllowUserInteraction],
                                             animations: {
+                                                // Set image property in the animation.
                                                 transition.animations?(sSelf, image)
                                             },
                                             completion: { finished in
@@ -154,6 +160,12 @@ extension ImageView {
         kf_setImageTask(task)
         
         return task
+    }
+}
+
+extension ImageView {
+    func shouldPreloadAllGIF() -> Bool {
+        return true
     }
 }
 
