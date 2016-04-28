@@ -100,7 +100,11 @@ public class AnimatedImageView: UIImageView {
     }
     
     override public func isAnimating() -> Bool {
-        return !displayLink.paused
+        if displayLinkInitialized {
+            return !displayLink.paused
+        } else {
+            return super.isAnimating()
+        }
     }
     
     /// Starts the animation.
@@ -115,7 +119,9 @@ public class AnimatedImageView: UIImageView {
     /// Stops the animation.
     override public func stopAnimating() {
         super.stopAnimating()
-        displayLink.paused = true
+        if displayLinkInitialized {
+            displayLink.paused = true
+        }
     }
     
     override public func displayLayer(layer: CALayer) {
