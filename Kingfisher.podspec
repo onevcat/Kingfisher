@@ -35,8 +35,8 @@ Pod::Spec.new do |s|
   s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h"]
   s.public_header_files = ["Sources/Kingfisher.h"]
   
-  s.osx.exclude_files = "Sources/UIButton+Kingfisher.swift"
-  s.watchos.exclude_files = ["Sources/UIButton+Kingfisher.swift", "Sources/ImageView+Kingfisher.swift", "Sources/NSButton+Kingfisher.swift"]
+  s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift"]
+  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift", "Sources/ImageView+Kingfisher.swift", "Sources/NSButton+Kingfisher.swift"]
   s.ios.exclude_files = "Sources/NSButton+Kingfisher.swift"
   s.tvos.exclude_files = "Sources/NSButton+Kingfisher.swift"
   
