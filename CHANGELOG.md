@@ -2,6 +2,17 @@
 
 -----
 
+## [2.4.0 - Animate Me](https://github.com/onevcat/Kingfisher/releases/tag/2.4.0) (2016-05-04)
+
+#### Add
+* A standalone `AnimatedImageView` to reduce memory usage when parsing and displaying GIF images. See README for more about using Kingfisher for GIF images. [#300](https://github.com/onevcat/Kingfisher/pull/300)
+
+#### Fix
+* An issue which may cause iOS app crasing when switching background/foreground multiple times. [#309](https://github.com/onevcat/Kingfisher/pull/309)
+* Change license of String+MD5.swift to a more precise one. [#302](https://github.com/onevcat/Kingfisher/issues/302)
+
+---
+
 ## [2.3.1 - Pod Me up](https://github.com/onevcat/Kingfisher/releases/tag/2.3.1) (2016-04-22)
 
 #### Fix
