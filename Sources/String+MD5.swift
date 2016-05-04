@@ -2,12 +2,9 @@
 //  String+MD5.swift
 //  Kingfisher
 //
-// This file is stolen from HanekeSwift: https://github.com/Haneke/HanekeSwift/blob/master/Haneke/CryptoSwiftMD5.swift
-// which is a modified version of CryptoSwift:
-//
 // To date, adding CommonCrypto to a Swift framework is problematic. See:
 // http://stackoverflow.com/questions/25248598/importing-commoncrypto-in-a-swift-framework
-// We're using a subset of CryptoSwift as a (temporary?) alternative.
+// We're using a subset and modified version of CryptoSwift as an alternative.
 // The following is an altered source version that only includes MD5. The original software can be found at:
 // https://github.com/krzyzanowskim/CryptoSwift
 // This is the original copyright notice:
