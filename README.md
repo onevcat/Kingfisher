@@ -37,8 +37,8 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Prefetching. You can prefetch and cache the images which might soon appear in the page. It will bring your users great experience.
 * Independent components. You can use the downloader or caching system separately. Or even create your own cache based on Kingfisher's code.
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
-* Categories over `UIImageView`, `NSImage` and `UIButton` for setting image from an URL directly. Use the same code across all Apple platforms.
-* Support GIF seamlessly. You could just download and set your GIF images as the same as you do for PNG/JPEG format.
+* Categories over `UIImageView`, `NSImage` and `UIButton` for setting image from a URL directly. Use the same code across all Apple platforms.
+* Support GIF seamlessly. You could just download and set your GIF images as the same as you do for PNG/JPEG format using `AnimatedImageView`.
 
 ## Requirements
 
@@ -67,7 +67,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Kingfisher', '~> 2.3'
+pod 'Kingfisher', '~> 2.4'
 ```
 
 Then, run the following command:
@@ -92,7 +92,7 @@ $ brew install carthage
 To integrate Kingfisher into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ``` ogdl
-github "onevcat/Kingfisher" ~> 2.3
+github "onevcat/Kingfisher" ~> 2.4
 ```
 
 Then, run the following command to build the Kingfisher framework:
@@ -333,10 +333,16 @@ After prefetching, you could retrieve image or set the image view with other Kin
 
 ### Animated GIF
 
-You can load animated GIF by replacing `UIImageView` with `AnimatedImageView`
+You can load animated GIF by replacing `UIImageView` with `AnimatedImageView`, and then using the same API for a regular image view like this:
+
 ```swift
-imageView = AnimatedImageView()
+let imageView = AnimatedImageView()
+imageView.kf_setImageWithURL(NSURL(string: "your_animated_gif_image_url")!)
 ```
+
+`AnimatedImageView` will only decode some frames of your GIF image to get a smaller memory footprint. You can set the frame count you need to pre-load by setting the `framePreloadCount` property of an `AnimatedImageView` (default is 10).
+
+You can also load a GIF file by a regular `UIImageView`. However, all frames will be loaded and decoded into memory. It is probably not suitable if you are loading a large GIF image. For most cases, you may want to use `AnimatedImageView`. The GIF support in Kingfisher's `UIImageView` only fits the small files, and now is mostly serving for back compatibility.
 
 ## Future of Kingfisher
 
