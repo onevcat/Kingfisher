@@ -645,7 +645,7 @@ extension UIApplication {
     public static func kf_sharedApplication() -> UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")
         guard respondsToSelector(selector) else { return nil }
-        return performSelector(selector).takeRetainedValue() as? UIApplication
+        return performSelector(selector).takeUnretainedValue() as? UIApplication
     }
 }
 #endif
