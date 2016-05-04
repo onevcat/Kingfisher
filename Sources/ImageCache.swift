@@ -481,28 +481,35 @@ extension ImageCache {
     }
     
 #if !os(OSX) && !os(watchOS)
+    /// thanks to https://gist.github.com/yonat/26e26bbafdd3e99608c8e22c9e7a2afd
+    class DoesSomethingInBackground {
+        var backgroundTaskID: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
+        
+        func beginBackgroundTask() {
+            guard UIBackgroundTaskInvalid == backgroundTaskID else {return}
+            backgroundTaskID = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler { () -> Void in
+                self.endBackgroundTask()
+            }
+        }
+        
+        func endBackgroundTask() {
+            guard UIBackgroundTaskInvalid != backgroundTaskID else {return}
+            let id = backgroundTaskID
+            backgroundTaskID = UIBackgroundTaskInvalid
+            UIApplication.sharedApplication().endBackgroundTask(id)
+        }
+    }
     /**
-    Clean expired disk cache when app in background. This is an async operation.
-    In most cases, you should not call this method explicitly. 
-    It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.
-    */
+     Clean expired disk cache when app in background. This is an async operation.
+     In most cases, you should not call this method explicitly.
+     It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.
+     */
     @objc public func backgroundCleanExpiredDiskCache() {
-        // if 'sharedApplication()' is unavailable, then return
-        guard let sharedApplication = UIApplication.kf_sharedApplication() else { return }
-
-        func endBackgroundTask(inout task: UIBackgroundTaskIdentifier) {
-            sharedApplication.endBackgroundTask(task)
-            task = UIBackgroundTaskInvalid
-        }
+        let background = DoesSomethingInBackground()
+        background.beginBackgroundTask()
         
-        var backgroundTask: UIBackgroundTaskIdentifier!
-        
-        backgroundTask = sharedApplication.beginBackgroundTaskWithExpirationHandler { () -> Void in
-            endBackgroundTask(&backgroundTask!)
-        }
-        
-        cleanExpiredDiskCacheWithCompletionHander { () -> () in
-            endBackgroundTask(&backgroundTask!)
+        self.cleanExpiredDiskCacheWithCompletionHander { () -> () in
+            background.endBackgroundTask()
         }
     }
 #endif
@@ -638,14 +645,3 @@ extension Dictionary {
         return Array(self).sort{ isOrderedBefore($0.1, $1.1) }.map{ $0.0 }
     }
 }
-
-#if !os(OSX) && !os(watchOS)
-// MARK: - For App Extensions
-extension UIApplication {
-    public static func kf_sharedApplication() -> UIApplication? {
-        let selector = NSSelectorFromString("sharedApplication")
-        guard respondsToSelector(selector) else { return nil }
-        return performSelector(selector).takeUnretainedValue() as? UIApplication
-    }
-}
-#endif
