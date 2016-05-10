@@ -2,6 +2,13 @@
 
 -----
 
+## [2.4.1 - Force Transition](https://github.com/onevcat/Kingfisher/releases/tag/2.4.1) (2016-05-10)
+
+#### Add
+* An option (`ForceTransition`) to force image setting for an image view with transition. By default the transition will only happen when downloaded. [#317](https://github.com/onevcat/Kingfisher/pull/317)
+
+---
+
 ## [2.4.0 - Animate Me](https://github.com/onevcat/Kingfisher/releases/tag/2.4.0) (2016-05-04)
 
 #### Add
