@@ -129,8 +129,8 @@ extension ImageView {
                         return
                     }
                     
-                    if let transitionItem = optionsInfo?.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
-                        case .Transition(let transition) = transitionItem where cacheType == .None {
+                    if let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
+                        case .Transition(let transition) = transitionItem where ( options.forceTransition || cacheType == .None) {
                             #if !os(OSX)
                                 UIView.transitionWithView(sSelf, duration: 0.0, options: [],
                                     animations: {
