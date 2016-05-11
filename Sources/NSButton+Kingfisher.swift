@@ -93,18 +93,15 @@ extension NSButton {
              completionHandler: {[weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
                     guard let sSelf = self where imageURL == sSelf.kf_webURL else {
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
                     }
 
                     sSelf.kf_setImageTask(nil)
 
-                    guard let image = image else {
-                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
-                        return
+                    if image != nil {
+                        sSelf.image = image
                     }
-
-                    sSelf.image = image
+                    
                     completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
@@ -204,7 +201,6 @@ extension NSButton {
              completionHandler: {[weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
                     guard let sSelf = self where imageURL == sSelf.kf_alternateWebURL else {
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
                     }
                     

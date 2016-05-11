@@ -93,15 +93,17 @@ extension UIButton {
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
-                    if let sSelf = self {
-                        
-                        sSelf.kf_setImageTask(nil)
-                        
-                        if imageURL == sSelf.kf_webURLForState(state) && image != nil {
-                            sSelf.setImage(image, forState: state)
-                        }
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    guard let sSelf = self where imageURL == sSelf.kf_webURLForState(state) else {
+                        return
                     }
+                    
+                    sSelf.kf_setImageTask(nil)
+                    
+                    if image != nil {
+                        sSelf.setImage(image, forState: state)
+                    }
+                    
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
@@ -221,15 +223,16 @@ extension UIButton {
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
-                    if let sSelf = self {
-                        
-                        sSelf.kf_setBackgroundImageTask(nil)
-                        
-                        if imageURL == sSelf.kf_backgroundWebURLForState(state) && image != nil {
-                            sSelf.setBackgroundImage(image, forState: state)
-                        }
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    guard let sSelf = self where imageURL == sSelf.kf_backgroundWebURLForState(state) else {
+                        return
                     }
+                    
+                    sSelf.kf_setBackgroundImageTask(nil)
+                        
+                    if image != nil {
+                        sSelf.setBackgroundImage(image, forState: state)
+                    }
+                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                 }
             })
         
