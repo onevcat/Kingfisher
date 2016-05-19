@@ -113,12 +113,12 @@ public protocol AuthenticationChallengeResponable: class {
      
      - Note: This method is a forward from `URLSession(:didReceiveChallenge:completionHandler:)`. Please refer to the document of it in `NSURLSessionDelegate`.
      */
-    func downloder(downloader: ImageDownloader, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)
+    func downloader(downloader: ImageDownloader, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)
 }
 
 extension AuthenticationChallengeResponable {
     
-    func downloder(downloader: ImageDownloader, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+    func downloader(downloader: ImageDownloader, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
     
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             if let trustedHosts = downloader.trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
@@ -269,7 +269,7 @@ extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelledBeforeDownlodStarting {
+        if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelledBeforeDownloadStarting {
             return nil
         }
         
@@ -411,7 +411,7 @@ class ImageDownloaderSessionHandler: NSObject, NSURLSessionDataDelegate, Authent
             return
         }
         
-        downloader.authenticationChallengeResponder?.downloder(downloader, didReceiveChallenge: challenge, completionHandler: completionHandler)
+        downloader.authenticationChallengeResponder?.downloader(downloader, didReceiveChallenge: challenge, completionHandler: completionHandler)
     }
     
     private func callbackWithImage(image: Image?, error: NSError?, imageURL: NSURL, originalData: NSData?) {
