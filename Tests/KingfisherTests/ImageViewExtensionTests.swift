@@ -340,7 +340,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
     
-    func testImageDownalodMultipleCaches() {
+    func testImageDownloadMultipleCaches() {
         
         let cache1 = ImageCache(name: "cache1")
         let cache2 = ImageCache(name: "cache2")
