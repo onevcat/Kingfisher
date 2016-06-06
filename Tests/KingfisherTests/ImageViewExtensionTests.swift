@@ -468,7 +468,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(Double(NSEC_PER_SEC) * 0.1)), dispatch_get_main_queue()) { () -> Void in
-            XCTAssertTrue(task1Complete, "Task 1 should be completed.")
+            XCTAssertFalse(task1Complete, "Task 1 should not be completed since task 2 overrides it.")
             XCTAssertTrue(task2Complete, "Task 2 should be completed.")
 
             expectation.fulfill()
