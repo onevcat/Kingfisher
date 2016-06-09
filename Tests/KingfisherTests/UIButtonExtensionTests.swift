@@ -155,4 +155,22 @@ class UIButtonExtensionTests: XCTestCase {
         
         waitForExpectationsWithTimeout(5, handler: nil)
     }
+    
+    func testSettingNilURL() {
+        let expectation = expectationWithDescription("wait for downloading image")
+        
+        let URL: NSURL? = nil
+        button.kf_setBackgroundImageWithURL(URL, forState: UIControlState.Normal, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            XCTFail("Progress block should not be called.")
+        }) { (image, error, cacheType, imageURL) -> () in
+            XCTAssertNil(image)
+            XCTAssertNil(error)
+            XCTAssertEqual(cacheType, CacheType.None)
+            XCTAssertNil(imageURL)
+            
+            expectation.fulfill()
+        }
+        
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 }
