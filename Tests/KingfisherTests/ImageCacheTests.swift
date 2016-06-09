@@ -164,7 +164,8 @@ class ImageCacheTests: XCTestCase {
         
         cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
             XCTAssertNil(image, "Should not be cached yet")
-            XCTAssertEqual(type, nil)
+            
+            XCTAssertEqual(type, CacheType.None)
 
             self.cache.storeImage(testImage, forKey: URLString, toDisk: true) { () -> () in
                 self.cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
