@@ -95,7 +95,7 @@ extension ImageView {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask()
+            return RetrieveImageTask.emptyTask
         }
         
         let showIndicatorWhenLoading = kf_showIndicatorWhenLoading

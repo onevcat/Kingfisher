@@ -87,7 +87,7 @@ extension NSButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask()
+            return RetrieveImageTask.emptyTask
         }
         
         kf_setWebURL(resource.downloadURL)
@@ -202,7 +202,7 @@ extension NSButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask()
+            return RetrieveImageTask.emptyTask
         }
         
         kf_setAlternateWebURL(resource.downloadURL)

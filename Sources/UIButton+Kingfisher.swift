@@ -88,7 +88,7 @@ extension UIButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask()
+            return RetrieveImageTask.emptyTask
         }
         
         kf_setWebURL(resource.downloadURL, forState: state)
@@ -225,7 +225,7 @@ extension UIButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask()
+            return RetrieveImageTask.emptyTask
         }
         
         kf_setBackgroundWebURL(resource.downloadURL, forState: state)
