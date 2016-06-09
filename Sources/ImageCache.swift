@@ -243,7 +243,7 @@ extension ImageCache {
     
     - returns: The retrieving task.
     */
-    public func retrieveImageForKey(key: String, options: KingfisherOptionsInfo?, completionHandler: ((Image?, CacheType!) -> ())?) -> RetrieveImageDiskTask? {
+    public func retrieveImageForKey(key: String, options: KingfisherOptionsInfo?, completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
             return nil
@@ -281,7 +281,7 @@ extension ImageCache {
                 } else {
                     // No image found from either memory or disk
                     dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
-                        completionHandler(nil, nil)
+                        completionHandler(nil, .None)
                         sSelf = nil
                     })
                 }
