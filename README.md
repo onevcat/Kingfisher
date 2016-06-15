@@ -39,6 +39,7 @@ Kingfisher is a lightweight and pure Swift implemented library for downloading a
 * Options to decompress the image in background before rendering it, which could improve the UI performance.
 * Categories over `UIImageView`, `NSImage` and `UIButton` for setting image from a URL directly. Use the same code across all Apple platforms.
 * Support GIF seamlessly. You could just download and set your GIF images as the same as you do for PNG/JPEG format using `AnimatedImageView`.
+* You could set `Activity Indicator` for your UIImageView or NSImageView to enable the indicator during loading image from web.
 
 ## Requirements
 
