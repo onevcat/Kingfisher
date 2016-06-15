@@ -51,28 +51,27 @@ class ViewController: UICollectionViewController {
 }
 
 extension ViewController {
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
     
-    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {        
         // This will cancel all unfinished downloading task when the cell disappearing.
         // swiftlint:disable force_cast
         (cell as! CollectionViewCell).cellImageView.kf_cancelDownloadTask()
     }
     
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // swiftlint:disable force_cast
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! CollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
         
         cell.cellImageView.kf_showIndicatorWhenLoading = true
         
-        let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
+        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
         
-        cell.cellImageView.kf_setImageWithURL(URL, placeholderImage: nil,
-                                                        optionsInfo: [.Transition(ImageTransition.Fade(1))],
+        _ = cell.cellImageView.kf_setImageWithURL(url, placeholderImage: nil,
+                                                        optionsInfo: [.transition(ImageTransition.fade(1))],
                                                       progressBlock: { receivedSize, totalSize in
                                                           print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
                                                       },
