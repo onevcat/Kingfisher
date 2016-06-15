@@ -47,16 +47,16 @@ class KingfisherOptionsInfoTests: XCTestCase {
 
 #if !os(OSX)
         switch options.transition {
-        case .None: break
+        case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
         }
 #endif
         
-        XCTAssertEqual(options.downloadPriority, NSURLSessionTaskPriorityDefault)
+        XCTAssertEqual(options.downloadPriority, URLSessionTask.defaultPriority)
         XCTAssertFalse(options.forceRefresh)
         XCTAssertFalse(options.cacheMemoryOnly)
         XCTAssertFalse(options.backgroundDecode)
-        XCTAssertEqual(dispatch_queue_get_label(options.callbackDispatchQueue), dispatch_queue_get_label(dispatch_get_main_queue()))
+        XCTAssertEqual(options.callbackDispatchQueue.label, DispatchQueue.main.label)
         XCTAssertEqual(options.scaleFactor, 1.0)
     }
     
@@ -68,21 +68,21 @@ class KingfisherOptionsInfoTests: XCTestCase {
 #if os(OSX)
         let transition = ImageTransition.None
 #else
-        let transition = ImageTransition.Fade(0.5)
+        let transition = ImageTransition.fade(0.5)
 #endif
             
-        let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+        let queue = DispatchQueue.global(attributes: DispatchQueue.GlobalAttributes.qosDefault)
         
         let options: KingfisherOptionsInfo = [
-            .TargetCache(cache),
-            .Downloader(downloader),
-            .Transition(transition),
-            .DownloadPriority(0.8),
-            .ForceRefresh,
-            .CacheMemoryOnly,
-            .BackgroundDecode,
-            .CallbackDispatchQueue(queue),
-            .ScaleFactor(2.0)
+            .targetCache(cache),
+            .downloader(downloader),
+            .transition(transition),
+            .downloadPriority(0.8),
+            .forceRefresh,
+            .cacheMemoryOnly,
+            .backgroundDecode,
+            .callbackDispatchQueue(queue),
+            .scaleFactor(2.0)
         ]
         
         XCTAssertTrue(options.targetCache === cache)
@@ -90,7 +90,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
 
 #if !os(OSX)
         switch options.transition {
-        case .Fade(let duration): XCTAssertEqual(duration, 0.5)
+        case .fade(let duration): XCTAssertEqual(duration, 0.5)
         default: XCTFail()
         }
 #endif
@@ -100,7 +100,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.cacheMemoryOnly)
         XCTAssertTrue(options.backgroundDecode)
         
-        XCTAssertEqual(dispatch_queue_get_label(options.callbackDispatchQueue), dispatch_queue_get_label(queue))
+        XCTAssertEqual(options.callbackDispatchQueue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
         
     }

@@ -42,17 +42,17 @@ class ImageExtensionTests: XCTestCase {
     func testImageFormat() {
         var format: ImageFormat
         format = testImageJEPGData.kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.JPEG)
+        XCTAssertEqual(format, ImageFormat.jpeg)
         
         format = testImagePNGData.kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.PNG)
+        XCTAssertEqual(format, ImageFormat.png)
         
         format = testImageGIFData.kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.GIF)
+        XCTAssertEqual(format, ImageFormat.gif)
         
         let raw = [1, 2, 3, 4, 5, 6, 7, 8]
-        format = NSData(bytes: raw, length: 8) .kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.Unknown)
+        format = Data(bytes: UnsafePointer<UInt8>(raw), count: 8) .kf_imageFormat
+        XCTAssertEqual(format, ImageFormat.unknown)
     }
     
     func testGenerateGIFImage() {
@@ -73,12 +73,12 @@ class ImageExtensionTests: XCTestCase {
         let data = ImageGIFRepresentation(image)
         
         XCTAssertNotNil(data, "Data should not be nil")
-        XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)
+        XCTAssertEqual(data?.kf_imageFormat, ImageFormat.gif)
         
         let allLoadImage = Image.kf_animatedImageWithGIFData(gifData: data!, preloadAll: true)!
         let allLoadData = ImageGIFRepresentation(allLoadImage)
         XCTAssertNotNil(allLoadData, "Data1 should not be nil")
-        XCTAssertEqual(allLoadData?.kf_imageFormat, ImageFormat.GIF)
+        XCTAssertEqual(allLoadData?.kf_imageFormat, ImageFormat.gif)
     }
     
     func testGenerateSingleFrameGIFImage() {
