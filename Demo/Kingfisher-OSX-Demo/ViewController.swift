@@ -41,6 +41,11 @@ class ViewController: NSViewController {
         didSet {
         // Update the view, if already loaded.
         }
+        @IBAction func q(_ sender: AnyObject) {
+        }
+        @IBAction func clear(_ sender: AnyObject) {
+        }
+        @IBOutlet weak var clearCache: UIBarButtonItem!
     }
 
     @IBAction func clearCachePressed(sender: AnyObject) {

@@ -30,7 +30,7 @@
 import AppKit
     
 public enum ImageTransition {
-    case None
+    case none
     var duration: NSTimeInterval {
         return 0
     }
@@ -39,8 +39,8 @@ public enum ImageTransition {
 #elseif os(watchOS)
 import UIKit
 public enum ImageTransition {
-    case None
-    var duration: NSTimeInterval {
+    case none
+    var duration: TimeInterval {
         return 0
     }
 }
@@ -65,57 +65,57 @@ comletion handler as well.
 - Custom:         Custom transition.
 */
 public enum ImageTransition {
-    case None
-    case Fade(NSTimeInterval)
+    case none
+    case fade(TimeInterval)
 
-    case FlipFromLeft(NSTimeInterval)
-    case FlipFromRight(NSTimeInterval)
-    case FlipFromTop(NSTimeInterval)
-    case FlipFromBottom(NSTimeInterval)
+    case flipFromLeft(TimeInterval)
+    case flipFromRight(TimeInterval)
+    case flipFromTop(TimeInterval)
+    case flipFromBottom(TimeInterval)
     
-    case Custom(duration: NSTimeInterval,
+    case custom(duration: TimeInterval,
                  options: UIViewAnimationOptions,
               animations: ((UIImageView, UIImage) -> Void)?,
               completion: ((Bool) -> Void)?)
     
-    var duration: NSTimeInterval {
+    var duration: TimeInterval {
         switch self {
-        case .None:                          return 0
-        case .Fade(let duration):            return duration
+        case .none:                          return 0
+        case .fade(let duration):            return duration
             
-        case .FlipFromLeft(let duration):    return duration
-        case .FlipFromRight(let duration):   return duration
-        case .FlipFromTop(let duration):     return duration
-        case .FlipFromBottom(let duration):  return duration
+        case .flipFromLeft(let duration):    return duration
+        case .flipFromRight(let duration):   return duration
+        case .flipFromTop(let duration):     return duration
+        case .flipFromBottom(let duration):  return duration
             
-        case .Custom(let duration, _, _, _): return duration
+        case .custom(let duration, _, _, _): return duration
         }
     }
     
     var animationOptions: UIViewAnimationOptions {
         switch self {
-        case .None:                         return .TransitionNone
-        case .Fade(_):                      return .TransitionCrossDissolve
+        case .none:                         return UIViewAnimationOptions()
+        case .fade(_):                      return .transitionCrossDissolve
             
-        case .FlipFromLeft(_):              return .TransitionFlipFromLeft
-        case .FlipFromRight(_):             return .TransitionFlipFromRight
-        case .FlipFromTop(_):               return .TransitionFlipFromTop
-        case .FlipFromBottom(_):            return .TransitionFlipFromBottom
+        case .flipFromLeft(_):              return .transitionFlipFromLeft
+        case .flipFromRight(_):             return .transitionFlipFromRight
+        case .flipFromTop(_):               return .transitionFlipFromTop
+        case .flipFromBottom(_):            return .transitionFlipFromBottom
             
-        case .Custom(_, let options, _, _): return options
+        case .custom(_, let options, _, _): return options
         }
     }
     
     var animations: ((UIImageView, UIImage) -> Void)? {
         switch self {
-        case .Custom(_, _, let animations, _): return animations
+        case .custom(_, _, let animations, _): return animations
         default: return {$0.image = $1}
         }
     }
     
     var completion: ((Bool) -> Void)? {
         switch self {
-        case .Custom(_, _, _, let completion): return completion
+        case .custom(_, _, _, let completion): return completion
         default: return nil
         }
     }
