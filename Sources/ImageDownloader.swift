@@ -85,6 +85,7 @@ The error code.
 public enum KingfisherError: Int {
     case BadData = 10000
     case NotModified = 10001
+    case InvalidStatusCode = 10002
     case InvalidURL = 20000
 }
 
@@ -364,6 +365,12 @@ class ImageDownloaderSessionHandler: NSObject, NSURLSessionDataDelegate, Authent
     This method is exposed since the compiler requests. Do not call it.
     */
     internal func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
+        
+        // If server response is not 200 or 201, inform the callback handler with InvalidStatusCode error.
+        // InvalidStatusCode error has status code and localized description in userInfo.
+        if let statusCode = (response as? NSHTTPURLResponse)?.statusCode, let URL = dataTask.originalRequest?.URL where statusCode != 200 && statusCode != 201 {
+            callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidStatusCode.rawValue, userInfo: ["statusCode": statusCode, "localizedStringForStatusCode": NSHTTPURLResponse.localizedStringForStatusCode(statusCode)]), imageURL: URL, originalData: nil)
+        }
         
         completionHandler(NSURLSessionResponseDisposition.Allow)
     }
