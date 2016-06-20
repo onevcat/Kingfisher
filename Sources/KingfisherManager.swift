@@ -165,7 +165,7 @@ public class KingfisherManager {
         return retrieveImageWithResource(Resource(downloadURL: URL), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
-    func downloadAndCacheImageWithURL(_ URL: Foundation.URL,
+    @discardableResult func downloadAndCacheImageWithURL(_ URL: Foundation.URL,
                                forKey key: String,
                         retrieveImageTask: RetrieveImageTask,
                             progressBlock: DownloadProgressBlock?,
