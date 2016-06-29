@@ -8,3 +8,6 @@ disabled_rules:
   - type_body_length
   - valid_docs
   - function_parameter_count
+  - type_name
+  - force_try
+  - conditional_binding_cascade
