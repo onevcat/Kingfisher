@@ -130,14 +130,14 @@ public class ImageCache {
         })
         
 #if !os(OSX) && !os(watchOS)
-        NotificationCenter.default().addObserver(self, selector: #selector(ImageCache.clearMemoryCache), name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
-        NotificationCenter.default().addObserver(self, selector: #selector(ImageCache.cleanExpiredDiskCache), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
-        NotificationCenter.default().addObserver(self, selector: #selector(ImageCache.backgroundCleanExpiredDiskCache), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.clearMemoryCache), name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.cleanExpiredDiskCache), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.backgroundCleanExpiredDiskCache), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
 #endif
     }
     
     deinit {
-        NotificationCenter.default().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -425,7 +425,7 @@ extension ImageCache {
                         return url.lastPathComponent!
                     })
                     
-                    NotificationCenter.default().post(name: Notification.Name(rawValue: KingfisherDidCleanDiskCacheNotification), object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: KingfisherDidCleanDiskCacheNotification), object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                 }
                 
                 completionHandler?()

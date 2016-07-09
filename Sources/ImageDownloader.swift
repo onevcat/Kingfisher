@@ -156,9 +156,9 @@ public class ImageDownloader: NSObject {
     public var trustedHosts: Set<String>?
     
     /// Use this to set supply a configuration for the downloader. By default, NSURLSessionConfiguration.ephemeralSessionConfiguration() will be used. You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
-    public var sessionConfiguration = URLSessionConfiguration.ephemeral() {
+    public var sessionConfiguration = URLSessionConfiguration.ephemeral {
         didSet {
-            session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main())
+            session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main)
         }
     }
     
@@ -211,7 +211,7 @@ public class ImageDownloader: NSObject {
         // Provide a default implement for challenge responder.
         authenticationChallengeResponder = sessionHandler
         
-        session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main())
+        session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main)
     }
     
     func fetchLoadForKey(_ key: URL) -> ImageFetchLoad? {
