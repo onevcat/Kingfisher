@@ -31,7 +31,7 @@ import AppKit
     
 public enum ImageTransition {
     case none
-    var duration: NSTimeInterval {
+    var duration: TimeInterval {
         return 0
     }
 }

@@ -46,8 +46,8 @@ import ImageIO
 extension Image {
 #if os(OSX)
     
-    var CGImage: CGImageRef! {
-        return CGImageForProposedRect(nil, context: nil, hints: nil)
+    var cgImage: CGImage! {
+        return cgImage(forProposedRect: nil, context: nil, hints: nil)
     }
     
     var kf_scale: CGFloat {
@@ -63,9 +63,9 @@ extension Image {
         }
     }
     
-    private(set) var kf_duration: NSTimeInterval {
+    private(set) var kf_duration: TimeInterval {
         get {
-            return objc_getAssociatedObject(self, &durationKey) as? NSTimeInterval ?? 0.0
+            return objc_getAssociatedObject(self, &durationKey) as? TimeInterval ?? 0.0
         }
         set {
             objc_setAssociatedObject(self, &durationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -108,8 +108,8 @@ extension Image {
 // MARK: - Image Conversion
 extension Image {
 #if os(OSX)
-    static func kf_imageWithCGImage(cgImage: CGImageRef, scale: CGFloat, refImage: Image?) -> Image {
-        return Image(CGImage: cgImage, size: CGSize.zero)
+    static func kf_imageWithCGImage(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
+        return Image(cgImage: cgImage, size: CGSize.zero)
     }
     
     /**
@@ -121,7 +121,7 @@ extension Image {
         return self
     }
     
-    static func kf_animatedImageWithImages(images: [Image], duration: NSTimeInterval) -> Image? {
+    static func kf_animatedImageWithImages(images: [Image], duration: TimeInterval) -> Image? {
         return nil
     }
 #else
@@ -166,9 +166,9 @@ extension Image {
 // MARK: - PNG
 func ImagePNGRepresentation(_ image: Image) -> Data? {
 #if os(OSX)
-    if let cgimage = image.CGImage {
-        let rep = NSBitmapImageRep(CGImage: cgimage)
-        return rep.representationUsingType(.NSPNGFileType, properties:[:])
+    if let cgimage = image.cgImage {
+        let rep = NSBitmapImageRep(cgImage: cgimage)
+        return rep.representation(using: .PNG, properties: [:])
     }
     return nil
 #else
@@ -179,8 +179,8 @@ func ImagePNGRepresentation(_ image: Image) -> Data? {
 // MARK: - JPEG
 func ImageJPEGRepresentation(_ image: Image, _ compressionQuality: CGFloat) -> Data? {
 #if os(OSX)
-    let rep = NSBitmapImageRep(CGImage: image.CGImage)
-    return rep.representationUsingType(.NSJPEGFileType, properties: [NSImageCompressionFactor: compressionQuality])
+    let rep = NSBitmapImageRep(cgImage: image.cgImage)
+    return rep.representation(using:.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
 #else
     return UIImageJPEGRepresentation(image, compressionQuality)
 #endif
@@ -256,7 +256,7 @@ extension Image {
                     gifDuration += frameDuration.doubleValue
                 }
                 
-                images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
+                images.append(Image.kf_imageWithCGImage(cgImage: imageRef, scale: scale, refImage: nil))
             }
             
             return (images, gifDuration)
@@ -303,10 +303,10 @@ extension Image {
         var image: Image?
         #if os(OSX)
             switch data.kf_imageFormat {
-            case .JPEG: image = Image(data: data)
-            case .PNG: image = Image(data: data)
-            case .GIF: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
-            case .Unknown: image = Image(data: data)
+            case .jpeg: image = Image(data: data)
+            case .png: image = Image(data: data)
+            case .gif: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .unknown: image = Image(data: data)
             }
         #else
             switch data.kf_imageFormat {
@@ -348,7 +348,7 @@ extension Image {
             let rect = CGRect(x: 0, y: 0, width: (imageRef?.width)!, height: (imageRef?.height)!)
             context.draw(in: rect, image: imageRef!)
             let decompressedImageRef = context.makeImage()
-            return Image.kf_imageWithCGImage(decompressedImageRef!, scale: scale, refImage: self)
+            return Image.kf_imageWithCGImage(cgImage: decompressedImageRef!, scale: scale, refImage: self)
         } else {
             return nil
         }

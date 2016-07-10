@@ -59,7 +59,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
 
         let URL = Foundation.URL(string: URLString)!
         downloader.downloadImageWithURL(URL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -80,7 +80,7 @@ class ImageDownloaderTests: XCTestCase {
         for URLString in testKeys {
             if let URL = URL(string: URLString) {
                 group.enter()
-                stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+                _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
                 downloader.downloadImageWithURL(URL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     
                 }, completionHandler: { (image, error, imageURL, data) -> () in
@@ -102,7 +102,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let group = DispatchGroup()
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
 
         for _ in 0...5 {
             group.enter()
@@ -126,7 +126,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
 
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         downloader.requestModifier = {
             (request: NSMutableURLRequest) in
@@ -148,7 +148,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for server response 304")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(304)
+        _ = stubRequest("GET", URLString).andReturn(304)
         
         downloader.downloadImageWithURL(URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
@@ -195,7 +195,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertNotNil(error, "Should return with an error")
             
             LSNocilla.sharedInstance().clearStubs()
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
             
             // Retry the download
             self.downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
@@ -236,7 +236,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -253,7 +253,7 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertNotNil(downloadTask)
 
         downloadTask!.cancel()
-        stub.go()
+        _ = stub!.go()
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()

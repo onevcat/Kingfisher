@@ -63,14 +63,14 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
         
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
-            XCTAssertTrue(Thread.isMainThread())
+            XCTAssertTrue(Thread.isMainThread)
         }) { (image, error, cacheType, imageURL) -> () in
             expectation.fulfill()
             
@@ -81,7 +81,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(self.imageView.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
             
             XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded.")
-            XCTAssertTrue(Thread.isMainThread())
+            XCTAssertTrue(Thread.isMainThread)
         }
         
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -91,14 +91,14 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue", attributes: DispatchQueueAttributes.serial)
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { (receivedSize, totalSize) -> () in
-            XCTAssertTrue(Thread.isMainThread())
+            XCTAssertTrue(Thread.isMainThread)
         }) { (image, error, cacheType, imageURL) -> () in
-            XCTAssertTrue(Thread.isMainThread(), "The image extension callback should be always in main queue.")
+            XCTAssertTrue(Thread.isMainThread, "The image extension callback should be always in main queue.")
             expectation.fulfill()
         }
         
@@ -109,7 +109,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         let resource = Resource(downloadURL: URL)
         
@@ -117,7 +117,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         cleanDefaultCache()
         
-        imageView.kf_setImageWithResource(resource, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        _ = imageView.kf_setImageWithResource(resource, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             }) { (image, error, cacheType, imageURL) -> () in
                 expectation.fulfill()
@@ -138,7 +138,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
 
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -165,7 +165,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -183,7 +183,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             task.cancel()
-            stub.go()
+            _ = stub!.go()
         }
 
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
@@ -199,7 +199,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         var task1Completion = false
@@ -228,7 +228,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         task1.cancel()
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
-            stub.go()
+            _ = stub!.go()
         }
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
@@ -245,7 +245,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         var task1Completion = false
@@ -275,7 +275,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             task1.cancel()
-            stub.go()
+            _ = stub!.go()
         }
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
@@ -292,7 +292,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         var task1Completion = false
@@ -327,7 +327,7 @@ class ImageViewExtensionTests: XCTestCase {
             task1.cancel()
             task2.cancel()
             task3.cancel()
-            stub.go()
+            _ = stub!.go()
         }
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
@@ -351,7 +351,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.targetCache(cache1)], progressBlock: { (receivedSize, totalSize) -> () in
@@ -377,7 +377,7 @@ class ImageViewExtensionTests: XCTestCase {
             
         }
         
-        waitForExpectations(timeout: 5, handler: { (error) -> Void in
+        waitForExpectations(withTimeout: 5, handler: { (error) -> Void in
             clearCaches([cache1, cache2])
         })
     }
@@ -396,7 +396,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -418,7 +418,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -432,7 +432,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             self.imageView.kf_cancelDownloadTask()
-            stub.go()
+            _ = stub!.go()
         }
         
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -442,8 +442,8 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLStrings = [testKeys[0], testKeys[1]]
-        stubRequest("GET", URLStrings[0]).andReturn(200).withBody(testImageData)
-        stubRequest("GET", URLStrings[1]).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLStrings[0]).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLStrings[1]).andReturn(200)?.withBody(testImageData)
         let URLs = URLStrings.map{URL(string: $0)!}
         
         var task1Complete = false

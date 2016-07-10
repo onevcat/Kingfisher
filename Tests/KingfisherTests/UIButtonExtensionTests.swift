@@ -64,7 +64,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -90,7 +90,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -114,7 +114,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
 
         button.kf_setImageWithURL(URL, forState: UIControlState.highlighted, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -127,7 +127,7 @@ class UIButtonExtensionTests: XCTestCase {
         }
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             self.button.kf_cancelImageDownloadTask()
-            stub.go()
+            _ = stub!.go()
         }
 
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -137,7 +137,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let URL = Foundation.URL(string: URLString)!
         
         button.kf_setBackgroundImageWithURL(URL, forState: UIControlState(), placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -150,7 +150,7 @@ class UIButtonExtensionTests: XCTestCase {
         }
         DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             self.button.kf_cancelBackgroundImageDownloadTask()
-            stub.go()
+            _ = stub!.go()
         }
         
         waitForExpectations(withTimeout: 5, handler: nil)

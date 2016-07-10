@@ -115,6 +115,7 @@ public class KingfisherManager {
     
     - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
+    @discardableResult
     public func retrieveImageWithResource(_ resource: Resource,
         optionsInfo: KingfisherOptionsInfo?,
         progressBlock: DownloadProgressBlock?,
@@ -157,6 +158,7 @@ public class KingfisherManager {
     
     - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
+    @discardableResult
     public func retrieveImageWithURL(_ URL: Foundation.URL,
                              optionsInfo: KingfisherOptionsInfo?,
                            progressBlock: DownloadProgressBlock?,
@@ -165,7 +167,8 @@ public class KingfisherManager {
         return retrieveImageWithResource(Resource(downloadURL: URL), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
-    @discardableResult func downloadAndCacheImageWithURL(_ URL: Foundation.URL,
+    @discardableResult
+    func downloadAndCacheImageWithURL(_ URL: Foundation.URL,
                                forKey key: String,
                         retrieveImageTask: RetrieveImageTask,
                             progressBlock: DownloadProgressBlock?,

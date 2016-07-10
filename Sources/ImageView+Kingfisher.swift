@@ -55,7 +55,7 @@ extension ImageView {
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
-    
+    @discardableResult
     public func kf_setImageWithURL(_ URL: Foundation.URL?,
                                    placeholderImage: Image? = nil,
                                    optionsInfo: KingfisherOptionsInfo? = nil,
@@ -85,6 +85,7 @@ extension ImageView {
     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread. 
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
+    @discardableResult
     public func kf_setImageWithResource(_ resource: Resource?,
                                 placeholderImage: Image? = nil,
                                      optionsInfo: KingfisherOptionsInfo? = nil,
@@ -219,8 +220,8 @@ extension ImageView {
                     
 #if os(OSX)
                     let indicator = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
-                    indicator.controlSize = .SmallControlSize
-                    indicator.style = .SpinningStyle
+                    indicator.controlSize = .small
+                    indicator.style = .spinningStyle
 #else
     #if os(tvOS)
                     let indicatorStyle = UIActivityIndicatorViewStyle.white

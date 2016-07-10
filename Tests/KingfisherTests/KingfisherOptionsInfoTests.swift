@@ -66,12 +66,13 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
 #if os(OSX)
-        let transition = ImageTransition.None
+        let transition = ImageTransition.none
 #else
         let transition = ImageTransition.fade(0.5)
 #endif
             
         let queue = DispatchQueue.global(attributes: DispatchQueue.GlobalAttributes.qosDefault)
+        
         
         let options: KingfisherOptionsInfo = [
             .targetCache(cache),
@@ -82,7 +83,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .cacheMemoryOnly,
             .backgroundDecode,
             .callbackDispatchQueue(queue),
-            .scaleFactor(2.0)
+            .scaleFactor(2.0) as KingfisherOptionsInfoItem // Workaround for a bug in Swift 3 beta 2 which fails to infer the type.
         ]
         
         XCTAssertTrue(options.targetCache === cache)

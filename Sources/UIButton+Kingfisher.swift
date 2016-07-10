@@ -45,6 +45,7 @@ extension UIButton {
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
+    @discardableResult
     public func kf_setImageWithURL(_ URL: Foundation.URL?,
                                    forState state: UIControlState,
                                             placeholderImage: UIImage? = nil,
@@ -77,6 +78,7 @@ extension UIButton {
     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
+    @discardableResult
     public func kf_setImageWithResource(_ resource: Resource?,
                                   forState state: UIControlState,
                                 placeholderImage: UIImage? = nil,
@@ -181,6 +183,7 @@ extension UIButton {
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
+    @discardableResult
     public func kf_setBackgroundImageWithURL(_ URL: Foundation.URL?,
                                              forState state: UIControlState,
                                                       placeholderImage: UIImage? = nil,
@@ -214,6 +217,7 @@ extension UIButton {
     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
+    @discardableResult
     public func kf_setBackgroundImageWithResource(_ resource: Resource?,
                                             forState state: UIControlState,
                                           placeholderImage: UIImage? = nil,

@@ -234,6 +234,7 @@ extension ImageDownloader {
     
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
+    @discardableResult
     public func downloadImageWithURL(_ URL: Foundation.URL,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
@@ -251,6 +252,7 @@ extension ImageDownloader {
 
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
+    @discardableResult
     public func downloadImageWithURL(_ URL: Foundation.URL,
                                  options: KingfisherOptionsInfo?,
                            progressBlock: ImageDownloaderProgressBlock?,

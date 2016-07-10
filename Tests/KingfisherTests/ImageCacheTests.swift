@@ -141,7 +141,7 @@ class ImageCacheTests: XCTestCase {
             let diskCachePath = self.cache.diskCachePath
             let files: [AnyObject]?
             do {
-                files = try FileManager.default().contentsOfDirectory(atPath: diskCachePath)
+                files = try FileManager.default.contentsOfDirectory(atPath: diskCachePath)
             } catch _ {
                 files = nil
             }
@@ -232,7 +232,7 @@ class ImageCacheTests: XCTestCase {
         self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measure({ () -> Void in
                 for _ in 1 ..< 1000 {
-                    self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
+                    _ = self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
                 }
             })
             expectation.fulfill()
@@ -246,7 +246,7 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
 
-            self.observer = NotificationCenter.default().addObserver(forName: KingfisherDidCleanDiskCacheNotification, object: self.cache, queue: OperationQueue.main(), using: { (noti) -> Void in
+            self.observer = NotificationCenter.default.addObserver(forName: KingfisherDidCleanDiskCacheNotification, object: self.cache, queue: OperationQueue.main, using: { (noti) -> Void in
 
                 XCTAssert(noti.object === self.cache, "The object of notification should be the cache object.")
                 
@@ -259,7 +259,7 @@ class ImageCacheTests: XCTestCase {
                 XCTAssertEqual(1, hashes.count, "There should be one and only one file cleaned")
                 XCTAssertEqual(hashes.first!, self.cache.hashForKey(testKeys[0]), "The cleaned file should be the stored one.")
                 
-                NotificationCenter.default().removeObserver(self.observer)
+                NotificationCenter.default.removeObserver(self.observer)
                 expectation.fulfill()
             })
             

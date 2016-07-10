@@ -62,7 +62,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         var urls = [URL]()
         for URLString in testKeys {
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
             urls.append(URL(string: URLString)!)
         }
         
@@ -76,7 +76,7 @@ class ImagePrefetcherTests: XCTestCase {
                 XCTAssertEqual(completedResources.count, urls.count, "All resources prefetching should be completed.")
                 XCTAssertEqual(progressCalledCount, urls.count, "Progress should be called the same time of download count.")
                 for url in urls {
-                    XCTAssertTrue(KingfisherManager.sharedManager.cache.isImageCachedForKey(url.absoluteString).cached)
+                    XCTAssertTrue(KingfisherManager.sharedManager.cache.isImageCachedForKey(url.absoluteString!).cached)
                 }
         }
         
@@ -91,7 +91,7 @@ class ImagePrefetcherTests: XCTestCase {
         var urls = [URL]()
         var responses = [LSStubResponseDSL!]()
         for URLString in testKeys {
-            let response = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+            let response = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
             responses.append(response)
             urls.append(URL(string: URLString)!)
         }
@@ -113,9 +113,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         let delayTime = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
         DispatchQueue.main.after(when: delayTime) {
-            for response in responses {
-                response?.go()
-            }
+            responses.forEach { _ = $0!.go() }
         }
 
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -128,7 +126,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         var urls = [URL]()
         for URLString in testKeys {
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
             urls.append(URL(string: URLString)!)
         }
         
@@ -156,7 +154,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         var urls = [URL]()
         for URLString in testKeys {
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
             urls.append(URL(string: URLString)!)
         }
         

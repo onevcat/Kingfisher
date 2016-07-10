@@ -58,7 +58,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let expectation = self.expectation(withDescription: "wait for downloading image")
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         let URL = Foundation.URL(string: URLString)!
 
@@ -96,7 +96,7 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveImageNotModified() {
         let expectation = self.expectation(withDescription: "wait for downloading image")
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         let URL = Foundation.URL(string: URLString)!
         
@@ -109,7 +109,7 @@ class KingfisherManagerTests: XCTestCase {
             
             LSNocilla.sharedInstance().stop()
             LSNocilla.sharedInstance().start()
-            stubRequest("GET", URLString).andReturn(304).withBody("12345")
+            _ = stubRequest("GET", URLString).andReturn(304)?.withBody("12345")
             
             var progressCalled = false
             
@@ -134,16 +134,16 @@ class KingfisherManagerTests: XCTestCase {
         let progressExpectation = expectation(withDescription: "progressBlock running on main queue")
         let completionExpectation = expectation(withDescription: "completionHandler running on main queue")
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         let URL = Foundation.URL(string: URLString)!
         
         manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: { _, _ in
-            XCTAssertTrue(Thread.isMainThread())
+            XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNil(error)
-                XCTAssertTrue(Thread.isMainThread())
+                XCTAssertTrue(Thread.isMainThread)
                 completionExpectation.fulfill()
         })
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -152,7 +152,7 @@ class KingfisherManagerTests: XCTestCase {
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
         let expectation = self.expectation(withDescription: "running on main queue")
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(404)
+        _ = stubRequest("GET", URLString)?.andReturn(404)
         
         let URL = Foundation.URL(string: URLString)!
         
@@ -160,7 +160,7 @@ class KingfisherManagerTests: XCTestCase {
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
-                XCTAssertTrue(Thread.isMainThread())
+                XCTAssertTrue(Thread.isMainThread)
                 expectation.fulfill()
         })
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -170,17 +170,21 @@ class KingfisherManagerTests: XCTestCase {
         let progressExpectation = expectation(withDescription: "progressBlock running on custom queue")
         let completionExpectation = expectation(withDescription: "completionHandler running on custom queue")
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         let URL = Foundation.URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue", attributes: DispatchQueueAttributes.serial)
         manager.retrieveImageWithURL(URL, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
-            XCTAssertTrue(Thread.isMainThread())
+            XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNil(error)
-                XCTAssertEqual(String(validatingUTF8: DISPATCH_CURRENT_QUEUE_LABEL.label)!, "com.kingfisher.testQueue")
+                
+                if #available(iOS 10.0, tvOS 10.0, OSX 10.12, *) {
+                    dispatchPrecondition(condition: .onQueue(customQueue))
+                }
+                
                 completionExpectation.fulfill()
         })
         waitForExpectations(withTimeout: 5, handler: nil)
@@ -189,7 +193,7 @@ class KingfisherManagerTests: XCTestCase {
     func testErrorCompletionHandlerRunningOnCustomQueue() {
         let expectation = self.expectation(withDescription: "running on custom queue")
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(404)
+        _ = stubRequest("GET", URLString)?.andReturn(404)
         
         let URL = Foundation.URL(string: URLString)!
         
@@ -198,7 +202,9 @@ class KingfisherManagerTests: XCTestCase {
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
-                XCTAssertEqual(String(validatingUTF8: DISPATCH_CURRENT_QUEUE_LABEL.label)!, "com.kingfisher.testQueue")
+                if #available(iOS 10.0, tvOS 10.0, OSX 10.12, *) {
+                    dispatchPrecondition(condition: .onQueue(customQueue))
+                }
                 expectation.fulfill()
         })
         waitForExpectations(withTimeout: 5, handler: nil)

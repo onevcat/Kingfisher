@@ -39,7 +39,8 @@ A list of removed hashes (files) could be retrieved by accessing the array under
 
 The main purpose of this notification is supplying a chance to maintain some necessary information on the cached files. See [this wiki](https://github.com/onevcat/Kingfisher/wiki/How-to-implement-ETag-based-304-(Not-Modified)-handling-in-Kingfisher) for a use case on it.
 */
-public let KingfisherDidCleanDiskCacheNotification = "com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification"
+
+public let KingfisherDidCleanDiskCacheNotification = Notification.Name.init("com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification")
 
 /**
 Key for array of cleaned hashes in `userInfo` of `KingfisherDidCleanDiskCacheNotification`.
@@ -425,7 +426,7 @@ extension ImageCache {
                         return url.lastPathComponent!
                     })
                     
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: KingfisherDidCleanDiskCacheNotification), object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
+                    NotificationCenter.default.post(name: KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                 }
                 
                 completionHandler?()
