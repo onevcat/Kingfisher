@@ -679,7 +679,6 @@
 				4B2944441C3D01B20088C3E7 /* Frameworks */,
 				4B2944451C3D01B20088C3E7 /* Headers */,
 				4B2944461C3D01B20088C3E7 /* Resources */,
-				4B37667A1C4789C50001443F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -776,7 +775,6 @@
 				D13F49D21BEDA67C00CE335D /* Frameworks */,
 				D13F49D31BEDA67C00CE335D /* Headers */,
 				D13F49D41BEDA67C00CE335D /* Resources */,
-				4B3766791C4789BC0001443F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1127,32 +1125,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests-OSX/Pods-KingfisherTests-OSX-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		4B3766791C4789BC0001443F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
-		};
-		4B37667A1C4789C50001443F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
 		5A0400F84A1FF7DBA809925E /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
