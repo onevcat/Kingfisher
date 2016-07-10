@@ -50,6 +50,9 @@ If you are upgrading to Kingfisher 2.x from 1.x, please read the [Kingfisher 2.0
 
 Kingfisher is now supporting Swift 2.2. If you need to use Kingfisher in Swift 2.1, you need to pin the version to 2.1.0.
 
+### Swift 3
+
+Kingfisher is now supporting Swift 3 in the [swift3](https://github.com/onevcat/Kingfisher/tree/swift3) branch. It is now under development and not be official released yet. You could specify to that branch if you are working in a Swift 3 project. However, please reconsider if you want to use it in a releasing orientation product, since more breaking change would be applied later.
 
 ## Installation
 
