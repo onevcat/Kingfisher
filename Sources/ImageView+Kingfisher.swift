@@ -223,7 +223,7 @@ extension ImageView {
                     indicator.style = .SpinningStyle
 #else
     #if os(tvOS)
-                    let indicatorStyle = UIActivityIndicatorViewStyle.White
+                    let indicatorStyle = UIActivityIndicatorViewStyle.white
     #else
                     let indicatorStyle = UIActivityIndicatorViewStyle.gray
     #endif
