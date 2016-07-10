@@ -125,7 +125,7 @@ extension Image {
         return nil
     }
 #else
-    static func kf_imageWithCGImage(_ cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
+    static func kf_imageWithCGImage(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         if let refImage = refImage {
             return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
         } else {
