@@ -2,6 +2,32 @@
 
 -----
 
+## [2.4.2 - Optional Welcome](https://github.com/onevcat/Kingfisher/releases/tag/2.4.2) (2016-07-10)
+
+#### Add
+* Accept `nil` as valid URL parameter for image view's extension methods.
+
+#### Fix
+* The completion handler of image view setting method will not be called any more if `self` is released.
+* Improve empty task so some performance improvment could be achieved.
+* Remove SwiftLint since it keeps adding new rules but without a back compatible support. It makes the users confusing when using a different version of SwiftLint.
+* Removed Implicit Unwrapping of CacheType that caused crashes if the image is not cached.
+
+---
+
+## [2.4.2 - Optional Welcome](https://github.com/onevcat/Kingfisher/releases/tag/2.4.2) (2016-07-10)
+
+#### Add
+* Accept `nil` as valid URL parameter for image view's extension methods.
+
+#### Fix
+* The completion handler of image view setting method will not be called any more if `self` is released.
+* Improve empty task so some performance improvment could be achieved.
+* Remove SwiftLint since it keeps adding new rules but without a back compatible support. It makes the users confusing when using a different version of SwiftLint.
+* Removed Implicit Unwrapping of CacheType that caused crashes if the image is not cached.
+
+---
+
 ## [2.4.1 - Force Transition](https://github.com/onevcat/Kingfisher/releases/tag/2.4.1) (2016-05-10)
 
 #### Add
