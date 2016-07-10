@@ -34,7 +34,7 @@ func dispatch_async_safely_to_main_queue(_ block: ()->()) {
 // If the `queue` is the main queue, and current thread is main thread, the block 
 // will be invoked immediately instead of being dispatched.
 func dispatch_async_safely_to_queue(_ queue: DispatchQueue, _ block: ()->()) {
-    if queue === DispatchQueue.main && Thread.isMainThread() {
+    if queue === DispatchQueue.main && Thread.isMainThread {
         block()
     } else {
         queue.async {
