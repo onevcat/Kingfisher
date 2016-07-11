@@ -282,7 +282,7 @@ extension ImageDownloader {
         self.requestModifier?(request)
         
         // There is a possiblility that request modifier changed the url to `nil` or empty.
-        if request.URL == nil || request.URL!.absoluteString.isEmpty {
+        if request.URL == nil || request.URL?.absoluteString == nil || (request.URL?.absoluteString?.isEmpty)! {
             completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidURL.rawValue, userInfo: nil), imageURL: nil, originalData: nil)
             return nil
         }
