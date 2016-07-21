@@ -160,6 +160,23 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
     
+    func testServerInvalidStatusCode() {
+        let expectation = expectationWithDescription("wait for response which has invalid status code")
+        
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(404).withBody(testImageData)
+        
+        downloader.downloadImageWithURL(NSURL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL, data) -> () in
+            XCTAssertNotNil(error, "There should be an error since server returning 404")
+            XCTAssertEqual(error!.code, KingfisherError.InvalidStatusCode.rawValue, "The error should be InvalidStatusCode.")
+            XCTAssertEqual(error!.userInfo["statusCode"]! as? Int, 404, "The error should be InvalidStatusCode.")
+            expectation.fulfill()
+        }
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
+    
     // Since we could not receive one challage, no test for trusted hosts currently.
     // See http://stackoverflow.com/questions/27065372/why-is-a-https-nsurlsession-connection-only-challenged-once-per-domain for more.
     func testSSLCertificateValidation() {
