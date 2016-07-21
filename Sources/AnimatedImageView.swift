@@ -169,7 +169,7 @@ public class AnimatedImageView: UIImageView {
     
     private func didMove() {
         if autoPlayAnimatedImage && animator != nil {
-            if let _ = superview, _ = window {
+            if let _ = superview, let _ = window {
                 startAnimating()
             } else {
                 stopAnimating()
