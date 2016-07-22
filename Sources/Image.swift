@@ -125,7 +125,7 @@ extension Image {
         return nil
     }
 #else
-    static func kf_imageWithCGImage(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
+    static func kf_imageWithCGImage(_ cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         if let refImage = refImage {
             return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
         } else {
@@ -248,15 +248,15 @@ extension Image {
                 } else {
                     // Animated GIF
                     guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                        gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
-                        frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
+                        let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
+                        let frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
                     {
                         return nil
                     }
                     gifDuration += frameDuration.doubleValue
                 }
                 
-                images.append(Image.kf_imageWithCGImage(cgImage: imageRef, scale: scale, refImage: nil))
+                images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
             }
             
             return (images, gifDuration)
@@ -348,7 +348,7 @@ extension Image {
             let rect = CGRect(x: 0, y: 0, width: (imageRef?.width)!, height: (imageRef?.height)!)
             context.draw(in: rect, image: imageRef!)
             let decompressedImageRef = context.makeImage()
-            return Image.kf_imageWithCGImage(cgImage: decompressedImageRef!, scale: scale, refImage: self)
+            return Image.kf_imageWithCGImage(decompressedImageRef!, scale: scale, refImage: self)
         } else {
             return nil
         }

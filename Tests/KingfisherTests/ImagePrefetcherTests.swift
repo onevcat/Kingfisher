@@ -58,7 +58,7 @@ class ImagePrefetcherTests: XCTestCase {
     }
 
     func testPrefetchingImages() {
-        let expectation = self.expectation(withDescription: "wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         
         var urls = [URL]()
         for URLString in testKeys {
@@ -82,11 +82,11 @@ class ImagePrefetcherTests: XCTestCase {
         
         prefetcher.start()
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testCancelPrefetching() {
-        let expectation = self.expectation(withDescription: "wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         
         var urls = [URL]()
         var responses = [LSStubResponseDSL!]()
@@ -116,12 +116,12 @@ class ImagePrefetcherTests: XCTestCase {
             responses.forEach { _ = $0!.go() }
         }
 
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
 
     func testPrefetcherCouldSkipCachedImages() {
-        let expectation = self.expectation(withDescription: "wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
         
         var urls = [URL]()
@@ -143,11 +143,11 @@ class ImagePrefetcherTests: XCTestCase {
         
         prefetcher.start()
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testPrefetcherForceRefreshDownloadImages() {
-        let expectation = self.expectation(withDescription: "wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         
         // Store an image in cache.
         KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
@@ -171,11 +171,11 @@ class ImagePrefetcherTests: XCTestCase {
         
         prefetcher.start()
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testPrefetchWithWrongInitParameters() {
-        let expectation = self.expectation(withDescription: "wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         let prefetcher = ImagePrefetcher(urls: [], optionsInfo: nil, progressBlock: nil) { (skippedResources, failedResources, completedResources) -> () in
             expectation.fulfill()
             
@@ -185,6 +185,6 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         prefetcher.start()
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }

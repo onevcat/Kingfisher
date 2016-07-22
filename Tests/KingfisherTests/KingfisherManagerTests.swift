@@ -56,7 +56,7 @@ class KingfisherManagerTests: XCTestCase {
     
     func testRetrieveImage() {
         
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
@@ -90,11 +90,11 @@ class KingfisherManagerTests: XCTestCase {
             }
         }
 
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testRetrieveImageNotModified() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
@@ -127,12 +127,12 @@ class KingfisherManagerTests: XCTestCase {
             }
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {
-        let progressExpectation = expectation(withDescription: "progressBlock running on main queue")
-        let completionExpectation = expectation(withDescription: "completionHandler running on main queue")
+        let progressExpectation = expectation(description: "progressBlock running on main queue")
+        let completionExpectation = expectation(description: "completionHandler running on main queue")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
@@ -146,11 +146,11 @@ class KingfisherManagerTests: XCTestCase {
                 XCTAssertTrue(Thread.isMainThread)
                 completionExpectation.fulfill()
         })
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
-        let expectation = self.expectation(withDescription: "running on main queue")
+        let expectation = self.expectation(description: "running on main queue")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString)?.andReturn(404)
         
@@ -163,12 +163,12 @@ class KingfisherManagerTests: XCTestCase {
                 XCTAssertTrue(Thread.isMainThread)
                 expectation.fulfill()
         })
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSucessCompletionHandlerRunningOnCustomQueue() {
-        let progressExpectation = expectation(withDescription: "progressBlock running on custom queue")
-        let completionExpectation = expectation(withDescription: "completionHandler running on custom queue")
+        let progressExpectation = expectation(description: "progressBlock running on custom queue")
+        let completionExpectation = expectation(description: "completionHandler running on custom queue")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
@@ -187,11 +187,11 @@ class KingfisherManagerTests: XCTestCase {
                 
                 completionExpectation.fulfill()
         })
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testErrorCompletionHandlerRunningOnCustomQueue() {
-        let expectation = self.expectation(withDescription: "running on custom queue")
+        let expectation = self.expectation(description: "running on custom queue")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString)?.andReturn(404)
         
@@ -207,6 +207,6 @@ class KingfisherManagerTests: XCTestCase {
                 }
                 expectation.fulfill()
         })
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }

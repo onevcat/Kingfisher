@@ -61,7 +61,7 @@ class UIButtonExtensionTests: XCTestCase {
     }
 
     func testDownloadAndSetImage() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -83,11 +83,11 @@ class UIButtonExtensionTests: XCTestCase {
             XCTAssert(self.button.kf_webURLForState(UIControlState.highlighted) == imageURL, "Web URL should equal to the downloaded url.")
             XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded. But now is: \(cacheType)")
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadAndSetBackgroundImage() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -107,11 +107,11 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssert(cacheType == .none, "cacheType should be .None since the image was just downloaded.")
 
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testCacnelImageTask() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -130,11 +130,11 @@ class UIButtonExtensionTests: XCTestCase {
             _ = stub!.go()
         }
 
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testCacnelBackgroundImageTask() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -153,11 +153,11 @@ class UIButtonExtensionTests: XCTestCase {
             _ = stub!.go()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSettingNilURL() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URL: Foundation.URL? = nil
         button.kf_setBackgroundImageWithURL(URL, forState: UIControlState(), placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -171,6 +171,6 @@ class UIButtonExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }

@@ -60,7 +60,7 @@ class ImageViewExtensionTests: XCTestCase {
     }
 
     func testImageDownloadForImageView() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -84,11 +84,11 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertTrue(Thread.isMainThread)
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCompletionHandlerRunningOnMainQueue() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -102,11 +102,11 @@ class ImageViewExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadWithResourceForImageView() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -131,11 +131,11 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded. But now is: \(cacheType)")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCancelForImageView() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -158,11 +158,11 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(completionBlockIsCalled == false, "CompletionBlock should not be called since it is canceled.")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCancelForImageViewAfterRequestStarted() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -192,11 +192,11 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testImageDownloadCancelPartialTaskBeforeRequest() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -238,11 +238,11 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(task3Completion == true, "Task 3 should be completed.")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCancelPartialTaskAfterRequestStarted() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -285,11 +285,11 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(task3Completion == true, "Task 3 should be completed.")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCancelAllTasksAfterRequestStarted() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -337,7 +337,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(task3Completion == true, "Task 3 should be completed with error.")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadMultipleCaches() {
@@ -348,7 +348,7 @@ class ImageViewExtensionTests: XCTestCase {
         cache1.clearDiskCache()
         cache2.clearDiskCache()
         
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -377,7 +377,7 @@ class ImageViewExtensionTests: XCTestCase {
             
         }
         
-        waitForExpectations(withTimeout: 5, handler: { (error) -> Void in
+        waitForExpectations(timeout: 5, handler: { (error) -> Void in
             clearCaches([cache1, cache2])
         })
     }
@@ -393,7 +393,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testIndicatorViewAnimating() {
         imageView.kf_showIndicatorWhenLoading = true
         
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -411,11 +411,11 @@ class ImageViewExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testCacnelImageTask() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -435,11 +435,11 @@ class ImageViewExtensionTests: XCTestCase {
             _ = stub!.go()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadForMutipleURLs() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLStrings = [testKeys[0], testKeys[1]]
         _ = stubRequest("GET", URLStrings[0]).andReturn(200)?.withBody(testImageData)
@@ -474,11 +474,11 @@ class ImageViewExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSettingNilURL() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URL: Foundation.URL? = nil
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -492,6 +492,6 @@ class ImageViewExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }

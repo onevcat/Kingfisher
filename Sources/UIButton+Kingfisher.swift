@@ -102,7 +102,7 @@ extension UIButton {
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_webURLForState(state) else {
+                    guard let sSelf = self, imageURL == sSelf.kf_webURLForState(state) else {
                         return
                     }
                     
@@ -241,7 +241,7 @@ extension UIButton {
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_backgroundWebURLForState(state) else {
+                    guard let sSelf = self, imageURL == sSelf.kf_backgroundWebURLForState(state) else {
                         return
                     }
                     

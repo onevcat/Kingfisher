@@ -392,7 +392,7 @@ extension ImageCache {
                     resourceValue1, resourceValue2 -> Bool in
                     
                     if let date1 = resourceValue1[URLResourceKey.contentModificationDateKey] as? Date,
-                           date2 = resourceValue2[URLResourceKey.contentModificationDateKey] as? Date {
+                           let date2 = resourceValue2[URLResourceKey.contentModificationDateKey] as? Date {
                         return date1.compare(date2) == .orderedAscending
                     }
                     // Not valid date information. This should not happen. Just in case.
@@ -448,7 +448,7 @@ extension ImageCache {
             return key.rawValue
         }
         if let fileEnumerator = self.fileManager.enumerator(at: diskCacheURL, includingPropertiesForKeys: resourceKeysString, options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, errorHandler: nil),
-            urls = fileEnumerator.allObjects as? [URL] {
+            let urls = fileEnumerator.allObjects as? [URL] {
                 for fileURL in urls {
                     
                     do {
