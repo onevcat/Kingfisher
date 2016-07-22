@@ -201,7 +201,7 @@ class ImageDownloaderTests: XCTestCase {
             LSNocilla.sharedInstance().start()
         }
     }
- */
+    */
     
     func testDownloadResultErrorAndRetry() {
         let expectation = expectationWithDescription("wait for downloading error")
