@@ -123,7 +123,7 @@ extension ImageView {
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
                 dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+                    guard let sSelf = self, imageURL == sSelf.kf_webURL else {
                         return
                     }
                     
@@ -136,7 +136,7 @@ extension ImageView {
                     }
                     
                     if let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.transition(.none)),
-                        case .transition(let transition) = transitionItem where ( options.forceTransition || cacheType == .none) {
+                        case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) {
                             #if !os(OSX)
                                 UIView.transition(with: sSelf, duration: 0.0, options: [],
                                     animations: {

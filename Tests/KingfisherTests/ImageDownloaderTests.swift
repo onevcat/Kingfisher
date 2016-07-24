@@ -56,7 +56,7 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadAnImage() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -69,11 +69,11 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadMultipleImages() {
-        let expectation = self.expectation(withDescription: "wait for all downloading finish")
+        let expectation = self.expectation(description: "wait for all downloading finish")
         
         let group = DispatchGroup()
         
@@ -94,11 +94,11 @@ class ImageDownloaderTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadAnImageWithMultipleCallback() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let group = DispatchGroup()
         let URLString = testKeys[0]
@@ -119,11 +119,11 @@ class ImageDownloaderTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadWithModifyingRequest() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -141,11 +141,11 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(imageURL!, URL(string: URLString)!, "The returned imageURL should be the replaced one")
             expectation.fulfill()
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testServerNotModifiedResponse() {
-        let expectation = self.expectation(withDescription: "wait for server response 304")
+        let expectation = self.expectation(description: "wait for server response 304")
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(304)
@@ -157,7 +157,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(error!.code, KingfisherError.notModified.rawValue, "The error should be NotModified.")
             expectation.fulfill()
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     // Since we could not receive one challage, no test for trusted hosts currently.
@@ -169,7 +169,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let URL = Foundation.URL(string: "https://testssl-expire.disig.sk/Expired.png")!
         
-        let expectation = self.expectation(withDescription: "wait for download from an invalid ssl site.")
+        let expectation = self.expectation(description: "wait for download from an invalid ssl site.")
         
         downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "Error should not be nil")
@@ -178,14 +178,14 @@ class ImageDownloaderTests: XCTestCase {
             LSNocilla.sharedInstance().start()
         })
         
-        waitForExpectations(withTimeout: 20) { (error) in
+        waitForExpectations(timeout: 20) { (error) in
             XCTAssertNil(error, "\(error)")
             LSNocilla.sharedInstance().start()
         }
     }
     
     func testDownloadResultErrorAndRetry() {
-        let expectation = self.expectation(withDescription: "wait for downloading error")
+        let expectation = self.expectation(description: "wait for downloading error")
         
         let URLString = testKeys[0]
         stubRequest("GET", URLString).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
@@ -204,11 +204,11 @@ class ImageDownloaderTests: XCTestCase {
             })
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadEmptyURL() {
-        let expectation = self.expectation(withDescription: "wait for downloading error")
+        let expectation = self.expectation(description: "wait for downloading error")
         
         downloader.downloadImageWithURL(URL(string: "")!, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("The progress block should not be called.")
@@ -217,7 +217,7 @@ class ImageDownloaderTests: XCTestCase {
                 XCTAssertEqual(error!.code, KingfisherError.invalidURL.rawValue)
                 expectation.fulfill()
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadTaskProperty() {
@@ -233,7 +233,7 @@ class ImageDownloaderTests: XCTestCase {
     
     func testCancelDownloadTask() {
         
-        let expectation = self.expectation(withDescription: "wait for downloading")
+        let expectation = self.expectation(description: "wait for downloading")
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
@@ -261,7 +261,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadTaskNil() {

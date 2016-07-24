@@ -123,7 +123,7 @@ public class KingfisherManager {
     {
         let task = RetrieveImageTask()
 
-        if let optionsInfo = optionsInfo where optionsInfo.forceRefresh {
+        if let optionsInfo = optionsInfo, optionsInfo.forceRefresh {
             _ = downloadAndCacheImageWithURL(resource.downloadURL as URL,
                 forKey: resource.cacheKey,
                 retrieveImageTask: task,
@@ -183,7 +183,7 @@ public class KingfisherManager {
             completionHandler: { image, error, imageURL, originalData in
 
                 let targetCache = options?.targetCache ?? self.cache
-                if let error = error where error.code == KingfisherError.notModified.rawValue {
+                if let error = error, error.code == KingfisherError.notModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
                     targetCache.retrieveImageForKey(key, options: options, completionHandler: { (cacheImage, cacheType) -> () in
@@ -193,7 +193,7 @@ public class KingfisherManager {
                     return
                 }
                 
-                if let image = image, originalData = originalData {
+                if let image = image, let originalData = originalData {
                     targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !(options?.cacheMemoryOnly ?? false), completionHandler: nil)
                 }
 
