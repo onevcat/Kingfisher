@@ -199,7 +199,7 @@ public class ImagePrefetcher {
             retrieveImageTask: task,
             progressBlock: nil,
             completionHandler: {
-                (image, error, _, _) -> () in
+                (image, error, _, _, _) -> () in
                 
                 self.tasks.removeValue(forKey: resource.downloadURL)
                 

@@ -100,7 +100,7 @@ extension UIButton {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
-            completionHandler: {[weak self] image, error, cacheType, imageURL in
+            completionHandler: {[weak self] image, error, cacheType, _, imageURL in
                 dispatch_async_safely_to_main_queue {
                     guard let sSelf = self, imageURL == sSelf.kf_webURLForState(state) else {
                         return
@@ -239,7 +239,7 @@ extension UIButton {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
-            completionHandler: { [weak self] image, error, cacheType, imageURL in
+            completionHandler: { [weak self] image, error, cacheType, _, imageURL in
                 dispatch_async_safely_to_main_queue {
                     guard let sSelf = self, imageURL == sSelf.kf_backgroundWebURLForState(state) else {
                         return
