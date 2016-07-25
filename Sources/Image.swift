@@ -306,6 +306,7 @@ extension Image {
             case .jpeg: image = Image(data: data)
             case .png: image = Image(data: data)
             case .gif: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .webp: image = Image(data: data)
             case .unknown: image = Image(data: data)
             }
         #else
@@ -313,6 +314,7 @@ extension Image {
             case .jpeg: image = Image(data: data, scale: scale)
             case .png: image = Image(data: data, scale: scale)
             case .gif: image = Image.kf_animatedImageWithGIFData(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .webp: image = Image(data: data, scale: scale)
             case .unknown: image = Image(data: data, scale: scale)
             }
         #endif
@@ -368,16 +370,17 @@ private let pngHeader: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
 private let jpgHeaderSOI: [UInt8] = [0xFF, 0xD8]
 private let jpgHeaderIF: [UInt8] = [0xFF]
 private let gifHeader: [UInt8] = [0x47, 0x49, 0x46]
+private let webPHeader: [UInt8] = [0x87, 0x69, 0x66, 0x80]
 
 enum ImageFormat {
-    case unknown, png, jpeg, gif
+    case unknown, png, jpeg, gif, webp
 }
 
 extension Data {
     var kf_imageFormat: ImageFormat {
-        var buffer = [UInt8](repeating: 0, count: 8)
-        (self as NSData).getBytes(&buffer, length: 8)
-        if buffer == pngHeader {
+        var buffer = [UInt8](repeating: 0, count: 12)
+        (self as NSData).getBytes(&buffer, length: 12)
+        if Array(buffer[0..<8]) == pngHeader {
             return .png
         } else if buffer[0] == jpgHeaderSOI[0] &&
             buffer[1] == jpgHeaderSOI[1] &&
@@ -389,6 +392,12 @@ extension Data {
             buffer[2] == gifHeader[2]
         {
             return .gif
+        } else if buffer[8] == webPHeader[0] &&
+            buffer[9] == webPHeader[1] &&
+            buffer[10] == webPHeader[2] &&
+            buffer[11] == webPHeader[3]
+        {
+            return .webp
         }
         
         return .unknown

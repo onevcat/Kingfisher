@@ -32,8 +32,9 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
-  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h"]
-  s.public_header_files = ["Sources/Kingfisher.h"]
+  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h", "WebP/WebPImageSerialization.*"]
+  s.vendored_frameworks = ["WebP/WebP.framework"]
+  s.public_header_files = ["Sources/Kingfisher.h", "WebP/WebPImageSerialization.h"]
   
   s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift"]
   s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift", "Sources/ImageView+Kingfisher.swift", "Sources/NSButton+Kingfisher.swift"]

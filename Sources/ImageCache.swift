@@ -181,6 +181,7 @@ extension ImageCache {
                 case .png: data = originalData ?? ImagePNGRepresentation(image)
                 case .jpeg: data = originalData ?? ImageJPEGRepresentation(image, 1.0)
                 case .gif: data = originalData ?? ImageGIFRepresentation(image)
+                case .webp: data = originalData ?? ImageGIFRepresentation(image)
                 case .unknown: data = originalData ?? ImagePNGRepresentation(image.kf_normalizedImage())
                 }
                 
