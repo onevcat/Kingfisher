@@ -153,7 +153,7 @@ extension Image {
         let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     
-        return normalizedImage
+        return normalizedImage ?? self
     }
     
     static func kf_animatedImageWithImages(images: [Image], duration: NSTimeInterval) -> Image? {
@@ -168,7 +168,7 @@ func ImagePNGRepresentation(image: Image) -> NSData? {
 #if os(OSX)
     if let cgimage = image.CGImage {
         let rep = NSBitmapImageRep(CGImage: cgimage)
-        return rep.representationUsingType(.NSPNGFileType, properties:[:])
+        return rep.representationUsingType(.PNG, properties:[:])
     }
     return nil
 #else
@@ -180,7 +180,7 @@ func ImagePNGRepresentation(image: Image) -> NSData? {
 func ImageJPEGRepresentation(image: Image, _ compressionQuality: CGFloat) -> NSData? {
 #if os(OSX)
     let rep = NSBitmapImageRep(CGImage: image.CGImage)
-    return rep.representationUsingType(.NSJPEGFileType, properties: [NSImageCompressionFactor: compressionQuality])
+    return rep.representationUsingType(.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
 #else
     return UIImageJPEGRepresentation(image, compressionQuality)
 #endif
@@ -342,9 +342,8 @@ extension Image {
         let imageRef = self.CGImage
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue
-        
-        let context = CGBitmapContextCreate(nil, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), 8, 0, colorSpace, bitmapInfo)
-        if let context = context {
+
+        if let imageRef = imageRef, context = CGBitmapContextCreate(nil, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), 8, 0, colorSpace, bitmapInfo) {
             let rect = CGRect(x: 0, y: 0, width: CGImageGetWidth(imageRef), height: CGImageGetHeight(imageRef))
             CGContextDrawImage(context, rect, imageRef)
             let decompressedImageRef = CGBitmapContextCreateImage(context)
