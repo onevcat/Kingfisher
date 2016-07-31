@@ -36,15 +36,15 @@ var testImage: Image = Image(data: testImageData!)!
 
 let testImageData = Data(base64Encoded: testImageString, options: [])
 
-let testImagePNGData = ImagePNGRepresentation(testImage)!
-let testImageJEPGData = ImageJPEGRepresentation(testImage, 1.0)!
+let testImagePNGData = testImage.pngRepresentation()!
+let testImageJEPGData = testImage.jpegRepresentation(compressionQuality: 1.0)!
 let testImageGIFData = try! Data(contentsOf: URL(fileURLWithPath: Bundle(for: ImageExtensionTests.self).pathForResource("dancing-banana", ofType: "gif")!))
 let testImageSingleFrameGIFData = try! Data(contentsOf: URL(fileURLWithPath: Bundle(for: ImageExtensionTests.self).pathForResource("single-frame", ofType: "gif")!))
 
 let testKeys = ["http://stackoverflow.com/questions/11251340/convert-image-to-base64-string-in-ios-swift", "https://onevcat.com", "http://onevcat.com/content/images/2014/May/200.jpg", "http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"]
 
 func == (left: Image, right: Image) -> Bool {
-    return ImagePNGRepresentation(left) == ImagePNGRepresentation(right)
+    return left.pngRepresentation() == right.pngRepresentation()
 }
 
 func cleanDefaultCache() {

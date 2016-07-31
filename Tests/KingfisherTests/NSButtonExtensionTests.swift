@@ -61,7 +61,7 @@ class NSButtonExtensionTests: XCTestCase {
     }
 
     func testDownloadAndSetImage() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
@@ -71,7 +71,7 @@ class NSButtonExtensionTests: XCTestCase {
 
         cleanDefaultCache()
 
-        button.kf_setImageWithURL(URL: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        button.kf_setImageWithURL(url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, cacheType, imageURL) -> () in
             expectation.fulfill()
@@ -83,18 +83,18 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssert(self.button.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
             XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded. But now is: \(cacheType)")
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testDownloadAndSetAlternateImage() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
 
         var progressBlockIsCalled = false
-        button.kf_setAlternateImageWithURL(URL: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        button.kf_setAlternateImageWithURL(url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, cacheType, imageURL) -> () in
             expectation.fulfill()
@@ -107,17 +107,17 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssert(cacheType == .none, "cacheType should be .None since the image was just downloaded.")
 
         }
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testCacnelImageTask() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
 
-        button.kf_setImageWithURL(URL: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        button.kf_setImageWithURL(url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("Progress block should not be called.")
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertNotNil(error)
@@ -131,17 +131,17 @@ class NSButtonExtensionTests: XCTestCase {
             _ = stub!.go()
         }
 
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testCacnelAlternateImageTask() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
 
-        _ = button.kf_setAlternateImageWithURL(URL: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        _ = button.kf_setAlternateImageWithURL(url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("Progress block should not be called.")
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertNotNil(error)
@@ -155,14 +155,14 @@ class NSButtonExtensionTests: XCTestCase {
             _ = stub!.go()
         }
 
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSettingNilURL() {
-        let expectation = self.expectation(withDescription: "wait for downloading image")
+        let expectation = self.expectation(description: "wait for downloading image")
         
         let url: URL? = nil
-        button.kf_setAlternateImageWithURL(URL: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        button.kf_setAlternateImageWithURL(url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("Progress block should not be called.")
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertNil(image)
@@ -173,7 +173,7 @@ class NSButtonExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(withTimeout: 5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
 }

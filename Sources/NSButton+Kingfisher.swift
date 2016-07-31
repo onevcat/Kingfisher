@@ -48,14 +48,14 @@ extension NSButton {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     @discardableResult
-    public func kf_setImageWithURL(URL: URL?,
+    public func kf_setImageWithURL(_ URL: URL?,
                                    placeholderImage: Image? = nil,
                                    optionsInfo: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         let resource = URL.map { Resource(downloadURL: $0) }
-        return kf_setImageWithResource(resource: resource,
+        return kf_setImageWithResource(resource,
                                        placeholderImage: placeholderImage,
                                        optionsInfo: optionsInfo,
                                        progressBlock: progressBlock,
@@ -78,7 +78,7 @@ extension NSButton {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     @discardableResult
-    public func kf_setImageWithResource(resource: Resource?,
+    public func kf_setImageWithResource(_ resource: Resource?,
                                         placeholderImage: Image? = nil,
                                         optionsInfo: KingfisherOptionsInfo? = nil,
                                         progressBlock: DownloadProgressBlock? = nil,
@@ -91,7 +91,7 @@ extension NSButton {
             return RetrieveImageTask.emptyTask
         }
         
-        kf_setWebURL(URL: resource.downloadURL)
+        kf_setWebURL(resource.downloadURL)
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
@@ -100,11 +100,11 @@ extension NSButton {
             },
              completionHandler: {[weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+                    guard let sSelf = self, imageURL == sSelf.kf_webURL else {
                         return
                     }
 
-                    sSelf.kf_setImageTask(task: nil)
+                    sSelf.kf_setImageTask(nil)
 
                     if image != nil {
                         sSelf.image = image
@@ -114,7 +114,7 @@ extension NSButton {
                 }
             })
 
-        kf_setImageTask(task: task)
+        kf_setImageTask(task)
         return task
     }
 
@@ -127,11 +127,11 @@ private var imageTaskKey: Void?
 
 extension NSButton {
     /// Get the image URL binded to this image view.
-    public var kf_webURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
+    public var kf_webURL: URL? {
+        return objc_getAssociatedObject(self, &lastURLKey) as? URL
     }
 
-    private func kf_setWebURL(URL: NSURL) {
+    private func kf_setWebURL(_ URL: Foundation.URL) {
         objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
@@ -139,7 +139,7 @@ extension NSButton {
         return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
     
-    private func kf_setImageTask(task: RetrieveImageTask?) {
+    private func kf_setImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
@@ -164,14 +164,14 @@ extension NSButton {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     @discardableResult
-    public func kf_setAlternateImageWithURL(URL: URL?,
+    public func kf_setAlternateImageWithURL(_ URL: URL?,
                                             placeholderImage: Image? = nil,
                                             optionsInfo: KingfisherOptionsInfo? = nil,
                                             progressBlock: DownloadProgressBlock? = nil,
                                             completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         let resource = URL.map { Resource(downloadURL: $0) }
-        return kf_setAlternateImageWithResource(resource: resource,
+        return kf_setAlternateImageWithResource(resource,
                                                 placeholderImage: placeholderImage,
                                                 optionsInfo: optionsInfo,
                                                 progressBlock: progressBlock,
@@ -194,7 +194,7 @@ extension NSButton {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     @discardableResult
-    public func kf_setAlternateImageWithResource(resource: Resource?,
+    public func kf_setAlternateImageWithResource(_ resource: Resource?,
                                                  placeholderImage: Image? = nil,
                                                  optionsInfo: KingfisherOptionsInfo? = nil,
                                                  progressBlock: DownloadProgressBlock? = nil,
@@ -207,7 +207,7 @@ extension NSButton {
             return RetrieveImageTask.emptyTask
         }
         
-        kf_setAlternateWebURL(URL: resource.downloadURL)
+        kf_setAlternateWebURL(resource.downloadURL)
         let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
@@ -216,11 +216,11 @@ extension NSButton {
             },
              completionHandler: {[weak self] image, error, cacheType, imageURL in
                 dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_alternateWebURL else {
+                    guard let sSelf = self, imageURL == sSelf.kf_alternateWebURL else {
                         return
                     }
                     
-                    sSelf.kf_setAlternateImageTask(task: nil)
+                    sSelf.kf_setAlternateImageTask(nil)
                     
                     guard let image = image else {
                         completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
@@ -232,7 +232,7 @@ extension NSButton {
                 }
             })
         
-        kf_setImageTask(task: task)
+        kf_setImageTask(task)
         return task
     }
 }
@@ -246,11 +246,11 @@ extension NSButton {
      Get the alternate image URL binded to this button.
      */
 
-    public var kf_alternateWebURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastAlternateURLKey) as? NSURL
+    public var kf_alternateWebURL: URL? {
+        return objc_getAssociatedObject(self, &lastAlternateURLKey) as? URL
     }
 
-    private func kf_setAlternateWebURL(URL: NSURL) {
+    private func kf_setAlternateWebURL(_ URL: Foundation.URL) {
         objc_setAssociatedObject(self, &lastAlternateURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
@@ -258,7 +258,7 @@ extension NSButton {
         return objc_getAssociatedObject(self, &alternateImageTaskKey) as? RetrieveImageTask
     }
 
-    private func kf_setAlternateImageTask(task: RetrieveImageTask?) {
+    private func kf_setAlternateImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &alternateImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

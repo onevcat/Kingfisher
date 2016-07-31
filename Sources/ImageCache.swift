@@ -178,10 +178,10 @@ extension ImageCache {
                 
                 let data: Data?
                 switch imageFormat {
-                case .png: data = originalData ?? ImagePNGRepresentation(image)
-                case .jpeg: data = originalData ?? ImageJPEGRepresentation(image, 1.0)
-                case .gif: data = originalData ?? ImageGIFRepresentation(image)
-                case .unknown: data = originalData ?? ImagePNGRepresentation(image.kf_normalizedImage())
+                case .PNG: data = originalData ?? image.pngRepresentation()
+                case .JPEG: data = originalData ?? image.jpegRepresentation(compressionQuality: 1.0)
+                case .GIF: data = originalData ?? image.gifRepresentation()
+                case .unknown: data = originalData ?? image.kf_normalizedImage().pngRepresentation()
                 }
                 
                 if let data = data {
@@ -264,7 +264,7 @@ extension ImageCache {
                 if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async(execute: { () -> Void in
-                            let result = image.kf_decodedImage(options.scaleFactor)
+                            let result = image.kf_decodedImage(scale: options.scaleFactor)
                             sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
 
                             dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
@@ -613,7 +613,7 @@ extension ImageCache {
     
     func diskImageForKey(_ key: String, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         if let data = diskImageDataForKey(key) {
-            return Image.kf_imageWithData(data, scale: scale, preloadAllGIFData: preloadAllGIFData)
+            return Image.kf_image(data: data, scale: scale, preloadAllGIFData: preloadAllGIFData)
         } else {
             return nil
         }

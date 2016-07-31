@@ -67,8 +67,8 @@ public class AnimatedImageView: UIImageView {
                 return
             } else {
                 stopAnimating()
-                displayLink.remove(from: RunLoop.main, forMode: runLoopMode)
-                displayLink.add(to: RunLoop.main, forMode: newValue)
+                displayLink.remove(from: .main, forMode: runLoopMode)
+                displayLink.add(to: .main, forMode: newValue)
                 startAnimating()
             }
         }
@@ -85,7 +85,7 @@ public class AnimatedImageView: UIImageView {
     private lazy var displayLink: CADisplayLink = {
         self.displayLinkInitialized = true
         let displayLink = CADisplayLink(target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
-        displayLink.add(to: RunLoop.main, forMode: self.runLoopMode)
+        displayLink.add(to: .main, forMode: self.runLoopMode)
         displayLink.isPaused = true
         return displayLink
     }()
@@ -179,7 +179,7 @@ public class AnimatedImageView: UIImageView {
     
     /// Update the current frame with the displayLink duration.
     private func updateFrame() {
-        if animator?.updateCurrentFrame(displayLink.duration) ?? false {
+        if animator?.updateCurrentFrame(duration: displayLink.duration) ?? false {
             layer.setNeedsDisplay()
         }
     }
@@ -215,7 +215,7 @@ class Animator {
     private var loopCount = 0
     
     var currentFrame: UIImage? {
-        return frameAtIndex(currentFrameIndex)
+        return frameAt(index: currentFrameIndex)
     }
     
     var contentMode: UIViewContentMode = .scaleToFill
@@ -233,14 +233,14 @@ class Animator {
      
      - returns: The animator object.
      */
-    init(imageSource src: CGImageSource, contentMode mode: UIViewContentMode, size: CGSize, framePreloadCount: Int) {
-        self.imageSource = src
+    init(imageSource source: CGImageSource, contentMode mode: UIViewContentMode, size: CGSize, framePreloadCount count: Int) {
+        self.imageSource = source
         self.contentMode = mode
         self.size = size
-        self.maxFrameCount = framePreloadCount
+        self.maxFrameCount = count
     }
     
-    func frameAtIndex(_ index: Int) -> Image? {
+    func frameAt(index: Int) -> Image? {
         return animatedFrames[index].image
     }
     
@@ -249,7 +249,8 @@ class Animator {
         
         if let properties = CGImageSourceCopyProperties(imageSource, nil),
             let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
-            let loopCount = gifInfo[kCGImagePropertyGIFLoopCount as String] as? Int {
+            let loopCount = gifInfo[kCGImagePropertyGIFLoopCount as String] as? Int
+        {
             self.loopCount = loopCount
         }
         
@@ -263,10 +264,13 @@ class Animator {
             return AnimatedFrame.null()
         }
         
-        let frameDuration = imageSource.kf_GIFPropertiesAtIndex(index).flatMap { (gifInfo) -> Double? in
+        let frameDuration = imageSource.kf_GIFPropertiesAt(index: index).flatMap {
+            gifInfo -> Double? in
+            
             let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as Double?
             let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as Double?
             let duration = unclampedDelayTime ?? delayTime
+            
             /**
              http://opensource.apple.com/source/WebCore/WebCore-7600.1.25/platform/graphics/cg/ImageSourceCG.cpp
              Many annoying ads specify a 0 duration to make an image flash as quickly as
@@ -283,7 +287,7 @@ class Animator {
         let scaledImage: Image?
         
         if needsPrescaling {
-            scaledImage = image.kf_resizeToSize(size, contentMode: contentMode)
+            scaledImage = image.kf_resizeTo(size: size, contentMode: contentMode)
         } else {
             scaledImage = image
         }
@@ -294,7 +298,7 @@ class Animator {
     /**
      Updates the current frame if necessary using the frame timer and the duration of each frame in `animatedFrames`.
      */
-    func updateCurrentFrame(_ duration: CFTimeInterval) -> Bool {
+    func updateCurrentFrame(duration: CFTimeInterval) -> Bool {
         timeSinceLastFrameChange += min(maxTimeStep, duration)
         guard let frameDuration = animatedFrames[safe: currentFrameIndex]?.duration, frameDuration <= timeSinceLastFrameChange else {
             return false
@@ -316,20 +320,20 @@ class Animator {
 
 // MARK: - Resize
 extension Image {
-    func kf_resizeToSize(_ size: CGSize, contentMode: UIViewContentMode) -> Image {
+    func kf_resizeTo(size: CGSize, contentMode: UIViewContentMode) -> Image {
         switch contentMode {
         case .scaleAspectFit:
-            let newSize = self.size.kf_sizeConstrainedSize(size)
-            return kf_resizeToSize(newSize)
+            let newSize = self.size.kf_size(constrainedSize: size)
+            return kf_resizeTo(size: newSize)
         case .scaleAspectFill:
-            let newSize = self.size.kf_sizeFillingSize(size)
-            return kf_resizeToSize(newSize)
+            let newSize = self.size.kf_size(fillingSize: size)
+            return kf_resizeTo(size: newSize)
         default:
-            return kf_resizeToSize(size)
+            return kf_resizeTo(size: size)
         }
     }
     
-    private func kf_resizeToSize(_ size: CGSize) -> Image {
+    private func kf_resizeTo(size: CGSize) -> Image {
         UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
         draw(in: CGRect(origin: CGPoint.zero, size: size))
         let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -339,14 +343,14 @@ extension Image {
 }
 
 extension CGSize {
-    func kf_sizeConstrainedSize(_ size: CGSize) -> CGSize {
+    func kf_size(constrainedSize size: CGSize) -> CGSize {
         let aspectWidth = round(kf_aspectRatio * size.height)
         let aspectHeight = round(size.width / kf_aspectRatio)
         
         return aspectWidth > size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
     }
     
-    func kf_sizeFillingSize(_ size: CGSize) -> CGSize {
+    func kf_size(fillingSize size: CGSize) -> CGSize {
         let aspectWidth = round(kf_aspectRatio * size.height)
         let aspectHeight = round(size.width / kf_aspectRatio)
         
@@ -358,7 +362,7 @@ extension CGSize {
 }
 
 extension CGImageSource {
-    func kf_GIFPropertiesAtIndex(_ index: Int) -> [String: Double]? {
+    func kf_GIFPropertiesAt(index: Int) -> [String: Double]? {
         let properties = CGImageSourceCopyPropertiesAtIndex(self, index, nil) as Dictionary?
         return properties?[kCGImagePropertyGIFDictionary as String] as? [String: Double]
     }
@@ -366,7 +370,7 @@ extension CGImageSource {
 
 extension Array {
     subscript(safe index: Int) -> Element? {
-        return indices ~= index ? self[index] : .none
+        return indices ~= index ? self[index] : nil
     }
 }
 
