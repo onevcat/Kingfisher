@@ -73,7 +73,7 @@ public enum CacheType {
 public class ImageCache {
 
     //Memory
-    private let memoryCache = Cache<NSString, AnyObject>()
+    private let memoryCache = NSCache<NSString, AnyObject>()
     
     /// The largest cache cost of memory cache. The total cost is pixel count of all cached images in memory.
     public var maxMemoryCost: UInt = 0 {
@@ -123,8 +123,8 @@ public class ImageCache {
         let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first!
         diskCachePath = (dstPath as NSString).appendingPathComponent(cacheName)
         
-        ioQueue = DispatchQueue(label: ioQueueName + name, attributes: DispatchQueueAttributes.serial)
-        processQueue = DispatchQueue(label: processQueueName + name, attributes: DispatchQueueAttributes.concurrent)
+        ioQueue = DispatchQueue(label: ioQueueName + name, attributes: DispatchQueue.Attributes.concurrent)
+        processQueue = DispatchQueue(label: processQueueName + name, attributes: DispatchQueue.Attributes.concurrent)
         
         ioQueue.sync(execute: { () -> Void in
             self.fileManager = FileManager()
@@ -423,7 +423,7 @@ extension ImageCache {
                 
                 if URLsToDelete.count != 0 {
                     let cleanedHashes = URLsToDelete.map({ (url) -> String in
-                        return url.lastPathComponent!
+                        return url.lastPathComponent
                     })
                     
                     NotificationCenter.default.post(name: KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
@@ -444,10 +444,7 @@ extension ImageCache {
         var URLsToDelete = [URL]()
         var diskCacheSize: UInt = 0
         
-        let resourceKeysString = resourceKeys.map { (key) -> String in
-            return key.rawValue
-        }
-        if let fileEnumerator = self.fileManager.enumerator(at: diskCacheURL, includingPropertiesForKeys: resourceKeysString, options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, errorHandler: nil),
+        if let fileEnumerator = self.fileManager.enumerator(at: diskCacheURL, includingPropertiesForKeys: resourceKeys, options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, errorHandler: nil),
             let urls = fileEnumerator.allObjects as? [URL] {
                 for fileURL in urls {
                     
