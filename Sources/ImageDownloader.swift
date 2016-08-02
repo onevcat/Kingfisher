@@ -393,7 +393,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    internal func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+    internal func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         if let URL = task.originalRequest?.url {
             if let error = error { // Error happened
