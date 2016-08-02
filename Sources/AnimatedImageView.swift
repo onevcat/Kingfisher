@@ -107,17 +107,17 @@ public class AnimatedImageView: UIImageView {
         }
     }
     
-    override public func isAnimating() -> Bool {
+    override public var isAnimating: Bool {
         if displayLinkInitialized {
             return !displayLink.isPaused
         } else {
-            return super.isAnimating()
+            return super.isAnimating
         }
     }
     
     /// Starts the animation.
     override public func startAnimating() {
-        if self.isAnimating() {
+        if self.isAnimating {
             return
         } else {
             displayLink.isPaused = false
