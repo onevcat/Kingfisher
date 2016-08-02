@@ -121,7 +121,7 @@ extension AuthenticationChallengeResponable {
     func downloader(_ downloader: ImageDownloader, didReceiveChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
     
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            if let trustedHosts = downloader.trustedHosts where trustedHosts.contains(challenge.protectionSpace.host) {
+            if let trustedHosts = downloader.trustedHosts, trustedHosts.contains(challenge.protectionSpace.host) {
                 let credential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
                 completionHandler(.useCredential, credential)
                 return
@@ -201,8 +201,8 @@ public class ImageDownloader: NSObject {
             fatalError("[Kingfisher] You should specify a name for the downloader. A downloader with empty name is not permitted.")
         }
         
-        barrierQueue = DispatchQueue(label: downloaderBarrierName + name, attributes: DispatchQueueAttributes.concurrent)
-        processQueue = DispatchQueue(label: imageProcessQueueName + name, attributes: DispatchQueueAttributes.concurrent)
+        barrierQueue = DispatchQueue(label: downloaderBarrierName + name, attributes: [.concurrent])
+        processQueue = DispatchQueue(label: imageProcessQueueName + name, attributes: [.concurrent])
         
         sessionHandler = ImageDownloaderSessionHandler()
         
@@ -271,7 +271,7 @@ extension ImageDownloader {
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        if let retrieveImageTask = retrieveImageTask where retrieveImageTask.cancelledBeforeDownloadStarting {
+        if let retrieveImageTask = retrieveImageTask, retrieveImageTask.cancelledBeforeDownloadStarting {
             return nil
         }
         
@@ -284,7 +284,7 @@ extension ImageDownloader {
         self.requestModifier?(request)
         
         // There is a possiblility that request modifier changed the url to `nil` or empty.
-        if request.url == nil || (request.url!.absoluteString?.isEmpty)! {
+        if request.url == nil || (request.url!.absoluteString.isEmpty) {
             completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.invalidURL.rawValue, userInfo: nil), imageURL: nil, originalData: nil)
             return nil
         }
@@ -331,7 +331,7 @@ extension ImageDownloader {
     
     func cancelDownloadingTask(_ task: RetrieveImageDownloadTask) {
         barrierQueue.sync { () -> Void in
-            if let URL = task.internalTask.originalRequest?.url, imageFetchLoad = self.fetchLoads[URL] {
+            if let URL = task.internalTask.originalRequest?.url, let imageFetchLoad = self.fetchLoads[URL] {
                 imageFetchLoad.downloadTaskCount -= 1
                 if imageFetchLoad.downloadTaskCount == 0 {
                     task.internalTask.cancel()
@@ -379,7 +379,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             return
         }
         
-        if let URL = dataTask.originalRequest?.url, fetchLoad = downloader.fetchLoadForKey(URL) {
+        if let URL = dataTask.originalRequest?.url, let fetchLoad = downloader.fetchLoadForKey(URL) {
             fetchLoad.responseData.append(data)
             
             for callbackPair in fetchLoad.callbacks {
@@ -393,7 +393,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    internal func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+    internal func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         if let URL = task.originalRequest?.url {
             if let error = error { // Error happened
@@ -464,7 +464,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 } else {
                     // If server response is 304 (Not Modified), inform the callback handler with NotModified error.
                     // It should be handled to get an image from cache, which is response of a manager object.
-                    if let res = task.response as? HTTPURLResponse where res.statusCode == 304 {
+                    if let res = task.response as? HTTPURLResponse, res.statusCode == 304 {
                         self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.notModified.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
                         return
                     }

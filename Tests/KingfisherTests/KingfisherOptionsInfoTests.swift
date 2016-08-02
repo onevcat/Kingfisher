@@ -70,8 +70,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
 #else
         let transition = ImageTransition.fade(0.5)
 #endif
-            
-        let queue = DispatchQueue.global(attributes: DispatchQueue.GlobalAttributes.qosDefault)
+        let queue = DispatchQueue.global(qos: .default)
         
         
         let options: KingfisherOptionsInfo = [

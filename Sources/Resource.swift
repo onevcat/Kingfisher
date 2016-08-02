@@ -49,6 +49,6 @@ public struct Resource {
      */
     public init(downloadURL: URL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
-        self.cacheKey = cacheKey ?? downloadURL.absoluteString!
+        self.cacheKey = cacheKey ?? downloadURL.absoluteString
     }
 }

@@ -107,17 +107,17 @@ public class AnimatedImageView: UIImageView {
         }
     }
     
-    override public func isAnimating() -> Bool {
+    override public var isAnimating: Bool {
         if displayLinkInitialized {
             return !displayLink.isPaused
         } else {
-            return super.isAnimating()
+            return super.isAnimating
         }
     }
     
     /// Starts the animation.
     override public func startAnimating() {
-        if self.isAnimating() {
+        if self.isAnimating {
             return
         } else {
             displayLink.isPaused = false
@@ -169,7 +169,7 @@ public class AnimatedImageView: UIImageView {
     
     private func didMove() {
         if autoPlayAnimatedImage && animator != nil {
-            if let _ = superview, _ = window {
+            if let _ = superview, let _ = window {
                 startAnimating()
             } else {
                 stopAnimating()
@@ -248,8 +248,8 @@ class Animator {
         frameCount = CGImageSourceGetCount(imageSource)
         
         if let properties = CGImageSourceCopyProperties(imageSource, nil),
-            gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
-            loopCount = gifInfo[kCGImagePropertyGIFLoopCount as String] as? Int {
+            let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
+            let loopCount = gifInfo[kCGImagePropertyGIFLoopCount as String] as? Int {
             self.loopCount = loopCount
         }
         
@@ -296,7 +296,7 @@ class Animator {
      */
     func updateCurrentFrame(_ duration: CFTimeInterval) -> Bool {
         timeSinceLastFrameChange += min(maxTimeStep, duration)
-        guard let frameDuration = animatedFrames[safe: currentFrameIndex]?.duration where frameDuration <= timeSinceLastFrameChange else {
+        guard let frameDuration = animatedFrames[safe: currentFrameIndex]?.duration, frameDuration <= timeSinceLastFrameChange else {
             return false
         }
         
