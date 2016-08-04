@@ -233,6 +233,7 @@ extension Image {
         
         func decodeFromSource(imageSource: CGImageSource, options: NSDictionary) -> ([Image], NSTimeInterval)? {
             
+            //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary
             func frameDuration(fromGifInfo gifInfo: Dictionary<String, Double>) -> Double {
                 let gifDefaultFrameDuration = 0.100
                 
