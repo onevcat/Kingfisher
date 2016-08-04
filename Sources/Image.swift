@@ -232,7 +232,19 @@ extension Image {
     static func kf_animatedImageWithGIFData(gifData data: NSData, scale: CGFloat, duration: NSTimeInterval, preloadAll: Bool) -> Image? {
         
         func decodeFromSource(imageSource: CGImageSource, options: NSDictionary) -> ([Image], NSTimeInterval)? {
-
+            
+            func frameDuration(fromGifInfo gifInfo: Dictionary<String, Double>) -> Double {
+                let gifDefaultFrameDuration = 0.100
+                
+                let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String]
+                let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String]
+                var duration = unclampedDelayTime ?? delayTime
+                
+                guard let frameDuration = duration else { return gifDefaultFrameDuration }
+                
+                return frameDuration > 0.011 ? frameDuration : gifDefaultFrameDuration
+            }
+            
             let frameCount = CGImageSourceGetCount(imageSource)
             var images = [Image]()
             var gifDuration = 0.0
@@ -248,12 +260,11 @@ extension Image {
                 } else {
                     // Animated GIF
                     guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                        gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary,
-                        frameDuration = (gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber) else
+                        gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? Dictionary<String, Double> else
                     {
                         return nil
                     }
-                    gifDuration += frameDuration.doubleValue
+                    gifDuration += frameDuration(fromGifInfo: gifInfo)
                 }
                 
                 images.append(Image.kf_imageWithCGImage(imageRef, scale: scale, refImage: nil))
