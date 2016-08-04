@@ -234,16 +234,16 @@ extension Image {
         func decodeFromSource(imageSource: CGImageSource, options: NSDictionary) -> ([Image], NSTimeInterval)? {
             
             //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary
-            func frameDuration(fromGifInfo gifInfo: Dictionary<String, Double>) -> Double {
+            func frameDuration(fromGifInfo gifInfo: NSDictionary) -> Double {
                 let gifDefaultFrameDuration = 0.100
                 
-                let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String]
-                let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String]
+                let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber
+                let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber
                 let duration = unclampedDelayTime ?? delayTime
                 
                 guard let frameDuration = duration else { return gifDefaultFrameDuration }
                 
-                return frameDuration > 0.011 ? frameDuration : gifDefaultFrameDuration
+                return frameDuration.doubleValue > 0.011 ? frameDuration.doubleValue : gifDefaultFrameDuration
             }
             
             let frameCount = CGImageSourceGetCount(imageSource)
@@ -261,7 +261,7 @@ extension Image {
                 } else {
                     // Animated GIF
                     guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                        gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? Dictionary<String, Double> else
+                        gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary else
                     {
                         return nil
                     }
