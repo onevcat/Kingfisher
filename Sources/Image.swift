@@ -238,7 +238,7 @@ extension Image {
                 
                 let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String]
                 let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String]
-                var duration = unclampedDelayTime ?? delayTime
+                let duration = unclampedDelayTime ?? delayTime
                 
                 guard let frameDuration = duration else { return gifDefaultFrameDuration }
                 
