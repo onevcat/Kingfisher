@@ -238,7 +238,7 @@ class ImageCacheTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(20, handler: nil)
+        self.waitForExpectationsWithTimeout(30, handler: nil)
     }
     
     func testCleanDiskCacheNotification() {
