@@ -73,7 +73,17 @@ use_frameworks!
 
 pod 'Kingfisher', '~> 2.4'
 ```
+If your CocoaPods Version > 1.0.0, you needs add Target name like this:
 
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.0'
+use_frameworks!
+
+target ‘<Your Target Name>’ do
+    pod 'Kingfisher', '~> 2.4'
+end
+```
 Then, run the following command:
 
 ``` bash
