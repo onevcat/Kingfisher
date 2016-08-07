@@ -76,7 +76,7 @@ class ImagePrefetcherTests: XCTestCase {
                 XCTAssertEqual(completedResources.count, urls.count, "All resources prefetching should be completed.")
                 XCTAssertEqual(progressCalledCount, urls.count, "Progress should be called the same time of download count.")
                 for url in urls {
-                    XCTAssertTrue(KingfisherManager.sharedManager.cache.isImageCachedForKey(url.absoluteString!).cached)
+                    XCTAssertTrue(KingfisherManager.sharedManager.cache.isImageCachedForKey(url.absoluteString).cached)
                 }
         }
         
@@ -112,7 +112,8 @@ class ImagePrefetcherTests: XCTestCase {
         prefetcher.stop()
         
         let delayTime = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-        DispatchQueue.main.after(when: delayTime) {
+        
+        DispatchQueue.main.asyncAfter(deadline: delayTime) {
             responses.forEach { _ = $0!.go() }
         }
 

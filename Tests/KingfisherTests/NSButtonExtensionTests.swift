@@ -126,7 +126,7 @@ class NSButtonExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + 0.1) { 
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
             self.button.kf_cancelImageDownloadTask()
             _ = stub!.go()
         }
@@ -150,7 +150,7 @@ class NSButtonExtensionTests: XCTestCase {
             expectation.fulfill()
         }
 
-        DispatchQueue.main.after(when: DispatchTime.now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
             self.button.kf_cancelAlternateImageDownloadTask()
             _ = stub!.go()
         }

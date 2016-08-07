@@ -161,12 +161,12 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testServerInvalidStatusCode() {
-        let expectation = expectationWithDescription("wait for response which has invalid status code")
+        let expectation = self.expectation(description: "wait for response which has invalid status code")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andReturn(404).withBody(testImageData)
+        _ = stubRequest("GET", URLString).andReturn(404)?.withBody(testImageData)
         
-        downloader.downloadImageWithURL(NSURL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImageWithURL(URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "There should be an error since server returning 404")
@@ -174,7 +174,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(error!.userInfo["statusCode"]! as? Int, 404, "The error should be InvalidStatusCode.")
             expectation.fulfill()
         }
-        waitForExpectationsWithTimeout(5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     // Since we could not receive one challage, no test for trusted hosts currently.
@@ -229,12 +229,19 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadEmptyURL() {
         let expectation = self.expectation(description: "wait for downloading error")
         
-        downloader.downloadImageWithURL(URL(string: "")!, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.requestModifier = { req in
+            req.url = nil
+        }
+        
+        let url = URL(string: "http://onevcat.com")
+        downloader.downloadImageWithURL(url!, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("The progress block should not be called.")
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error, "An error should happen for empty URL")
                 XCTAssertEqual(error!.code, KingfisherError.invalidURL.rawValue)
                 expectation.fulfill()
+                
+                self.downloader.requestModifier = nil
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -274,7 +281,7 @@ class ImageDownloaderTests: XCTestCase {
         downloadTask!.cancel()
         _ = stub!.go()
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
             XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
@@ -284,7 +291,12 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskNil() {
-        let downloadTask = downloader.downloadImageWithURL(URL(string: "")!, progressBlock: nil, completionHandler: nil)
+        downloader.requestModifier = { req in
+            req.url = nil
+        }
+        let downloadTask = downloader.downloadImageWithURL(URL(string: "url")!, progressBlock: nil, completionHandler: nil)
         XCTAssertNil(downloadTask)
+        
+        downloader.requestModifier = nil
     }
 }

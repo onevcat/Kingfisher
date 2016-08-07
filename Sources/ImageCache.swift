@@ -123,7 +123,7 @@ public class ImageCache {
         let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first!
         diskCachePath = (dstPath as NSString).appendingPathComponent(cacheName)
         
-        ioQueue = DispatchQueue(label: ioQueueName + name, attributes: DispatchQueue.Attributes.concurrent)
+        ioQueue = DispatchQueue(label: ioQueueName + name)
         processQueue = DispatchQueue(label: processQueueName + name, attributes: DispatchQueue.Attributes.concurrent)
         
         ioQueue.sync(execute: { () -> Void in
@@ -330,8 +330,7 @@ extension ImageCache {
     }
 
     /**
-    Clear disk cache. This is could be an async or sync operation.
-    Specify the way you want it by passing the `sync` parameter.
+    Clear disk cache.
     */
     public func clearDiskCache() {
         clearDiskCacheWithCompletionHandler(nil)

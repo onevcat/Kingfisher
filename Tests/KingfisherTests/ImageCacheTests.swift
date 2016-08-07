@@ -231,7 +231,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for retrieving image")
         self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measure({ () -> Void in
-                for _ in 1 ..< 1000 {
+                for _ in 1 ..< 200 {
                     _ = self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
                 }
             })

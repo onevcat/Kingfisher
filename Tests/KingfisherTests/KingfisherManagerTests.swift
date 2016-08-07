@@ -174,7 +174,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let URL = Foundation.URL(string: URLString)!
         
-        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue", attributes: DispatchQueueAttributes.serial)
+        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         manager.retrieveImageWithURL(URL, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
@@ -197,7 +197,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let URL = Foundation.URL(string: URLString)!
         
-        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue", attributes: DispatchQueueAttributes.serial)
+        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         manager.retrieveImageWithURL(URL, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             //won't be called
             }, completionHandler: { _, error, _, _ in

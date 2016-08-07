@@ -37,17 +37,6 @@ class ViewController: NSViewController {
         title = "Kingfisher"
     }
 
-    override var representedObject: AnyObject? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-        @IBAction func q(_ sender: AnyObject) {
-        }
-        @IBAction func clear(_ sender: AnyObject) {
-        }
-        @IBOutlet weak var clearCache: UIBarButtonItem!
-    }
-
     @IBAction func clearCachePressed(sender: AnyObject) {
         KingfisherManager.sharedManager.cache.clearMemoryCache()
         KingfisherManager.sharedManager.cache.clearDiskCache()
@@ -59,17 +48,17 @@ class ViewController: NSViewController {
 }
 
 extension ViewController: NSCollectionViewDataSource {
-    func collectionView(collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
     
-    func collectionView(collectionView: NSCollectionView, itemForRepresentedObjectAtIndexPath indexPath: NSIndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItemWithIdentifier("Cell", forIndexPath: indexPath)
+    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+        let item = collectionView.makeItem(withIdentifier: "Cell", for: indexPath)
         
-        let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
+        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
         
         item.imageView?.kf_showIndicatorWhenLoading = true
-        item.imageView?.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil,
+        item.imageView?.kf_setImageWithURL(url, placeholderImage: nil, optionsInfo: nil,
                                                    progressBlock: { receivedSize, totalSize in
                                                     print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")
                                                     },

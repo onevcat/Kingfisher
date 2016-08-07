@@ -370,8 +370,8 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         
         // If server response is not 200,201 or 304, inform the callback handler with InvalidStatusCode error.
         // InvalidStatusCode error has userInfo which include statusCode and localizedString.
-        if let statusCode = (response as? NSHTTPURLResponse)?.statusCode, let URL = dataTask.originalRequest?.URL where statusCode != 200 && statusCode != 201 && statusCode != 304 {
-            callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidStatusCode.rawValue, userInfo: ["statusCode": statusCode, "localizedStringForStatusCode": NSHTTPURLResponse.localizedStringForStatusCode(statusCode)]), imageURL: URL, originalData: nil)
+        if let statusCode = (response as? HTTPURLResponse)?.statusCode, let URL = dataTask.originalRequest?.url, statusCode != 200 && statusCode != 201 && statusCode != 304 {
+            callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidStatusCode.rawValue, userInfo: ["statusCode": statusCode, "localizedStringForStatusCode": HTTPURLResponse.localizedString(forStatusCode: statusCode)]), imageURL: URL, originalData: nil)
         }
         
         completionHandler(Foundation.URLSession.ResponseDisposition.allow)

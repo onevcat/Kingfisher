@@ -94,7 +94,7 @@ class ImageViewExtensionTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
         
-        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue", attributes: DispatchQueueAttributes.serial)
+        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { (receivedSize, totalSize) -> () in
             XCTAssertTrue(Thread.isMainThread)
         }) { (image, error, cacheType, imageURL) -> () in
@@ -152,7 +152,7 @@ class ImageViewExtensionTests: XCTestCase {
 
         task.cancel()
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
             XCTAssert(completionBlockIsCalled == false, "CompletionBlock should not be called since it is canceled.")
@@ -181,12 +181,12 @@ class ImageViewExtensionTests: XCTestCase {
                 completionBlockIsCalled = true
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             task.cancel()
             _ = stub!.go()
         }
 
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
             XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
@@ -227,11 +227,11 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         task1.cancel()
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             _ = stub!.go()
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(task1Completion == false, "Task 1 should be not completed since it is cancelled before downloading started.")
             XCTAssert(task2Completion == true, "Task 2 should be completed.")
@@ -273,12 +273,12 @@ class ImageViewExtensionTests: XCTestCase {
                 task3Completion = true
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             task1.cancel()
             _ = stub!.go()
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(task1Completion == true, "Task 1 should be completed since task 2 and 3 are not cancelled and they are sharing the same downloading process.")
             XCTAssert(task2Completion == true, "Task 2 should be completed.")
@@ -323,14 +323,14 @@ class ImageViewExtensionTests: XCTestCase {
                 task3Completion = true
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             task1.cancel()
             task2.cancel()
             task3.cancel()
             _ = stub!.go()
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(task1Completion == true, "Task 1 should be completed with error.")
             XCTAssert(task2Completion == true, "Task 2 should be completed with error.")
@@ -430,7 +430,7 @@ class ImageViewExtensionTests: XCTestCase {
                 expectation.fulfill()
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             self.imageView.kf_cancelDownloadTask()
             _ = stub!.go()
         }
@@ -467,7 +467,7 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTAssertEqual(self.imageView.image, image)
         }
         
-        DispatchQueue.main.after(when: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
             XCTAssertFalse(task1Complete, "Task 1 should not be completed since task 2 overrides it.")
             XCTAssertTrue(task2Complete, "Task 2 should be completed.")
 
