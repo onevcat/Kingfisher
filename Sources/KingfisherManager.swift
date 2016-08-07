@@ -217,7 +217,7 @@ public class KingfisherManager {
             completionHandler: { image, cacheType in
                 if image != nil {
                     diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
-				} else if let options = options where options.cacheOnly {
+				} else if let options = options where options.onlyFromCache {
 					diskTaskCompletionHandler(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.NotCached.rawValue, userInfo: nil), cacheType:.None, imageURL: URL)
 					return
 				} else {

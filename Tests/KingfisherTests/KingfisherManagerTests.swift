@@ -157,7 +157,7 @@ class KingfisherManagerTests: XCTestCase {
 
 		let URL = NSURL(string: URLString)!
 
-		manager.retrieveImageWithURL(URL, optionsInfo: [.CacheOnly], progressBlock: nil, completionHandler: { image, error, _, _ in
+		manager.retrieveImageWithURL(URL, optionsInfo: [.OnlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
 				XCTAssertNil(image)
 				XCTAssertNotNil(error)
 				XCTAssertEqual(error!.code, KingfisherError.NotCached.rawValue)
