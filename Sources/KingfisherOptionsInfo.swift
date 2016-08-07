@@ -61,7 +61,7 @@ public enum KingfisherOptionsInfoItem {
     case ForceRefresh
     case ForceTransition
     case CacheMemoryOnly
-	case OnlyFromCache
+    case OnlyFromCache
     case BackgroundDecode
     case CallbackDispatchQueue(dispatch_queue_t?)
     case ScaleFactor(CGFloat)
@@ -83,7 +83,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.ForceRefresh, .ForceRefresh): fallthrough
     case (.ForceTransition, .ForceTransition): fallthrough
     case (.CacheMemoryOnly, .CacheMemoryOnly): fallthrough
-	case (.OnlyFromCache, .OnlyFromCache): fallthrough
+    case (.OnlyFromCache, .OnlyFromCache): fallthrough
     case (.BackgroundDecode, .BackgroundDecode): fallthrough
     case (.CallbackDispatchQueue(_), .CallbackDispatchQueue(_)): fallthrough
     case (.ScaleFactor(_), .ScaleFactor(_)): fallthrough
@@ -151,10 +151,10 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
     var cacheMemoryOnly: Bool {
         return contains{ $0 <== .CacheMemoryOnly }
     }
-
-	var onlyFromCache: Bool {
-		return contains{ $0 <== .OnlyFromCache }
-	}
+    
+    var onlyFromCache: Bool {
+        return contains{ $0 <== .OnlyFromCache }
+    }
     
     var backgroundDecode: Bool {
         return contains{ $0 <== .BackgroundDecode }

@@ -149,22 +149,22 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectationsWithTimeout(5, handler: nil)
     }
 
-	func testShouldNotDownloadImageIfCacheOnlyAndNotInCache() {
-		cleanDefaultCache()
-		let expectation = expectationWithDescription("wait for retrieving image cache")
-		let URLString = testKeys[0]
-		stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
+    func testShouldNotDownloadImageIfCacheOnlyAndNotInCache() {
+        cleanDefaultCache()
+        let expectation = expectationWithDescription("wait for retrieving image cache")
+        let URLString = testKeys[0]
+        stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
 
-		let URL = NSURL(string: URLString)!
+        let URL = NSURL(string: URLString)!
 
-		manager.retrieveImageWithURL(URL, optionsInfo: [.OnlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
-				XCTAssertNil(image)
-				XCTAssertNotNil(error)
-				XCTAssertEqual(error!.code, KingfisherError.NotCached.rawValue)
-				expectation.fulfill()
-		})
-		waitForExpectationsWithTimeout(5, handler: nil)
-	}
+        manager.retrieveImageWithURL(URL, optionsInfo: [.OnlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
+                XCTAssertNil(image)
+                XCTAssertNotNil(error)
+                XCTAssertEqual(error!.code, KingfisherError.NotCached.rawValue)
+                expectation.fulfill()
+        })
+        waitForExpectationsWithTimeout(5, handler: nil)
+    }
 
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
         let expectation = expectationWithDescription("running on main queue")
