@@ -80,14 +80,14 @@ The error code.
 
 - BadData: The downloaded data is not an image or the data is corrupted.
 - NotModified: The remote server responsed a 304 code. No image data downloaded.
-- NotCached: The image rquested is not in cache and CacheOnly is activated
+- NotCached: The image rquested is not in cache but OnlyFromCache is activated.
 - InvalidURL: The URL is invalid.
 */
 public enum KingfisherError: Int {
     case BadData = 10000
     case NotModified = 10001
     case InvalidStatusCode = 10002
-	case NotCached = 10003
+    case NotCached = 10003
     case InvalidURL = 20000
 }
 
