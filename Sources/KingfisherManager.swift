@@ -217,6 +217,9 @@ public class KingfisherManager {
             completionHandler: { image, cacheType in
                 if image != nil {
                     diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
+                } else if let options = options where options.onlyFromCache {
+                    let error = NSError(domain: KingfisherErrorDomain, code: KingfisherError.NotCached.rawValue, userInfo: nil)
+                    diskTaskCompletionHandler(image: nil, error: error, cacheType:.None, imageURL: URL)
                 } else {
                     self.downloadAndCacheImageWithURL(URL,
                         forKey: key,
@@ -225,7 +228,8 @@ public class KingfisherManager {
                         completionHandler: diskTaskCompletionHandler,
                         options: options)
                 }
-            })
+            }
+        )
         retrieveImageTask.diskRetrieveTask = diskTask
     }
 }

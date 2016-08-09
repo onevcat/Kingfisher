@@ -80,6 +80,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .DownloadPriority(0.8),
             .ForceRefresh,
             .CacheMemoryOnly,
+            .OnlyFromCache,
             .BackgroundDecode,
             .CallbackDispatchQueue(queue),
             .ScaleFactor(2.0)
@@ -98,6 +99,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
         XCTAssertTrue(options.cacheMemoryOnly)
+        XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
         
         XCTAssertEqual(dispatch_queue_get_label(options.callbackDispatchQueue), dispatch_queue_get_label(queue))
