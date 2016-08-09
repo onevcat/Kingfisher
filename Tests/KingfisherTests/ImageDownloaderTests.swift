@@ -170,7 +170,7 @@ class ImageDownloaderTests: XCTestCase {
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "There should be an error since server returning 404")
-            XCTAssertEqual(error!.code, KingfisherError.InvalidStatusCode.rawValue, "The error should be InvalidStatusCode.")
+            XCTAssertEqual(error!.code, KingfisherError.invalidStatusCode.rawValue, "The error should be InvalidStatusCode.")
             XCTAssertEqual(error!.userInfo["statusCode"]! as? Int, 404, "The error should be InvalidStatusCode.")
             expectation.fulfill()
         }

@@ -78,14 +78,17 @@ private let instance = ImageDownloader(name: defaultDownloaderName)
 /**
 The error code.
 
-- BadData: The downloaded data is not an image or the data is corrupted.
-- NotModified: The remote server responsed a 304 code. No image data downloaded.
-- InvalidURL: The URL is invalid.
+- badData: The downloaded data is not an image or the data is corrupted.
+- notModified: The remote server responsed a 304 code. No image data downloaded.
+- invalidStatusCode: The HTTP status code in response is not valid. 
+- notCached: The image rquested is not in cache but .onlyFromCache is activated.
+- invalidURL: The URL is invalid.
 */
 public enum KingfisherError: Int {
     case badData = 10000
     case notModified = 10001
-    case InvalidStatusCode = 10002
+    case invalidStatusCode = 10002
+    case notCached = 10003
     case invalidURL = 20000
 }
 
@@ -100,6 +103,28 @@ public enum KingfisherError: Int {
     - parameter response:   The response object of the downloading process.
     */
     @objc optional func imageDownloader(_ downloader: ImageDownloader, didDownloadImage image: Image, forURL URL: URL, withResponse response: URLResponse)
+    
+    
+    /**
+    Check if a received HTTP status code is valid or not. 
+    By default, a status code between 200 to 400 (not included) is considered as valid.
+    If an invalid code is received, the downloader will raise an .invalidStatusCode error.
+    It has a `userInfo` which includes this statusCode and localizedString error message.
+     
+    - parameter code: The received HTTP status code.
+    
+    - returns: Whether this HTTP status code is valid or not.
+     
+    - Note: If the default 200 to 400 valid code does not suit your need, 
+            you can implement this method to change that behavior.
+    */
+    func isValidStatusCode(code: Int) -> Bool
+}
+
+extension ImageDownloaderDelegate {
+    func isValidStatusCode(code: Int) -> Bool {
+        return (200..<400).contains(code)
+    }
 }
 
 /// Protocol indicates that an authentication challenge could be handled.
@@ -368,10 +393,10 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
     */
     internal func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         
-        // If server response is not 200,201 or 304, inform the callback handler with InvalidStatusCode error.
-        // InvalidStatusCode error has userInfo which include statusCode and localizedString.
-        if let statusCode = (response as? HTTPURLResponse)?.statusCode, let URL = dataTask.originalRequest?.url, statusCode != 200 && statusCode != 201 && statusCode != 304 {
-            callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.InvalidStatusCode.rawValue, userInfo: ["statusCode": statusCode, "localizedStringForStatusCode": HTTPURLResponse.localizedString(forStatusCode: statusCode)]), imageURL: URL, originalData: nil)
+        if let statusCode = (response as? HTTPURLResponse)?.statusCode,
+                  let URL = dataTask.originalRequest?.url, !isValidStatusCode(code: statusCode)
+        {
+            callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.invalidStatusCode.rawValue, userInfo: ["statusCode": statusCode, "localizedStringForStatusCode": HTTPURLResponse.localizedString(forStatusCode: statusCode)]), imageURL: URL, originalData: nil)
         }
         
         completionHandler(Foundation.URLSession.ResponseDisposition.allow)
@@ -482,5 +507,13 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 self.callbackWithImage(nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.badData.rawValue, userInfo: nil), imageURL: URL, originalData: nil)
             }
         })
+    }
+    
+    private func isValidStatusCode(code: Int) -> Bool {
+        if let delegate = downloadHolder?.delegate {
+            return delegate.isValidStatusCode(code: code)
+        } else {
+            return (200..<400).contains(code)
+        }
     }
 }

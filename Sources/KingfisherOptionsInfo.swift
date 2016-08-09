@@ -47,6 +47,7 @@ Items could be added into KingfisherOptionsInfo.
 - ForceRefresh: If set, `Kingfisher` will ignore the cache and try to fire a download task for the resource.
 - ForceTransition: If set, setting the image to an image view will happen with transition even when retrieved from cache. See `Transition` option for more.
 - CacheMemoryOnly: If set, `Kingfisher` will only cache the value in memory but not in disk.
+- OnlyFromCache: If set, `Kingfisher` will only try to retrieve the image from cache not from network.
 - BackgroundDecode: Decode the image in background thread before using.
 - CallbackDispatchQueue: The associated value of this member will be used as the target queue of dispatch callbacks when retrieving images from cache. If not set, `Kingfisher` will use main quese for callbacks.
 - ScaleFactor: The associated value of this member will be used as the scale factor when converting retrieved data to an image.
@@ -60,6 +61,7 @@ public enum KingfisherOptionsInfoItem {
     case forceRefresh
     case forceTransition
     case cacheMemoryOnly
+    case onlyFromCache
     case backgroundDecode
     case callbackDispatchQueue(DispatchQueue?)
     case scaleFactor(CGFloat)
@@ -81,6 +83,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.forceRefresh, .forceRefresh): fallthrough
     case (.forceTransition, .forceTransition): fallthrough
     case (.cacheMemoryOnly, .cacheMemoryOnly): fallthrough
+    case (.onlyFromCache, .onlyFromCache): fallthrough
     case (.backgroundDecode, .backgroundDecode): fallthrough
     case (.callbackDispatchQueue(_), .callbackDispatchQueue(_)): fallthrough
     case (.scaleFactor(_), .scaleFactor(_)): fallthrough
@@ -147,6 +150,10 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     
     var cacheMemoryOnly: Bool {
         return contains{ $0 <== .cacheMemoryOnly }
+    }
+    
+    var onlyFromCache: Bool {
+        return contains{ $0 <== .onlyFromCache }
     }
     
     var backgroundDecode: Bool {

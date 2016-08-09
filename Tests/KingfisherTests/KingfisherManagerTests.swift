@@ -148,7 +148,24 @@ class KingfisherManagerTests: XCTestCase {
         })
         waitForExpectations(timeout: 5, handler: nil)
     }
-    
+
+    func testShouldNotDownloadImageIfCacheOnlyAndNotInCache() {
+        cleanDefaultCache()
+        let expectation = self.expectation(description: "wait for retrieving image cache")
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+
+        let url = URL(string: URLString)!
+
+        manager.retrieveImageWithURL(url, optionsInfo: [.onlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
+                XCTAssertNil(image)
+                XCTAssertNotNil(error)
+                XCTAssertEqual(error!.code, KingfisherError.notCached.rawValue)
+                expectation.fulfill()
+        })
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
         let expectation = self.expectation(description: "running on main queue")
         let URLString = testKeys[0]

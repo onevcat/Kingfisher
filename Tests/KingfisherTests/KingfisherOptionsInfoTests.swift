@@ -80,9 +80,10 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .downloadPriority(0.8),
             .forceRefresh,
             .cacheMemoryOnly,
+            .onlyFromCache,
             .backgroundDecode,
             .callbackDispatchQueue(queue),
-            .scaleFactor(2.0) as KingfisherOptionsInfoItem // Workaround for a bug in Swift 3 beta 2 which fails to infer the type.
+            KingfisherOptionsInfoItem.scaleFactor(2.0)
         ]
         
         XCTAssertTrue(options.targetCache === cache)
@@ -98,6 +99,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
         XCTAssertTrue(options.cacheMemoryOnly)
+        XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
         
         XCTAssertEqual(options.callbackDispatchQueue.label, queue.label)
