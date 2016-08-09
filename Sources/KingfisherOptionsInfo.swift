@@ -47,6 +47,7 @@ Items could be added into KingfisherOptionsInfo.
 - ForceRefresh: If set, `Kingfisher` will ignore the cache and try to fire a download task for the resource.
 - ForceTransition: If set, setting the image to an image view will happen with transition even when retrieved from cache. See `Transition` option for more.
 - CacheMemoryOnly: If set, `Kingfisher` will only cache the value in memory but not in disk.
+- OnlyFromCache: If set, `Kingfisher` will only try to retrieve the image from cache not from network.
 - BackgroundDecode: Decode the image in background thread before using.
 - CallbackDispatchQueue: The associated value of this member will be used as the target queue of dispatch callbacks when retrieving images from cache. If not set, `Kingfisher` will use main quese for callbacks.
 - ScaleFactor: The associated value of this member will be used as the scale factor when converting retrieved data to an image.
@@ -60,6 +61,7 @@ public enum KingfisherOptionsInfoItem {
     case ForceRefresh
     case ForceTransition
     case CacheMemoryOnly
+    case OnlyFromCache
     case BackgroundDecode
     case CallbackDispatchQueue(dispatch_queue_t?)
     case ScaleFactor(CGFloat)
@@ -81,6 +83,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.ForceRefresh, .ForceRefresh): fallthrough
     case (.ForceTransition, .ForceTransition): fallthrough
     case (.CacheMemoryOnly, .CacheMemoryOnly): fallthrough
+    case (.OnlyFromCache, .OnlyFromCache): fallthrough
     case (.BackgroundDecode, .BackgroundDecode): fallthrough
     case (.CallbackDispatchQueue(_), .CallbackDispatchQueue(_)): fallthrough
     case (.ScaleFactor(_), .ScaleFactor(_)): fallthrough
@@ -147,6 +150,10 @@ extension CollectionType where Generator.Element == KingfisherOptionsInfoItem {
     
     var cacheMemoryOnly: Bool {
         return contains{ $0 <== .CacheMemoryOnly }
+    }
+    
+    var onlyFromCache: Bool {
+        return contains{ $0 <== .OnlyFromCache }
     }
     
     var backgroundDecode: Bool {
