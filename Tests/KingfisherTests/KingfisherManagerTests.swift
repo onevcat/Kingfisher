@@ -198,7 +198,7 @@ class KingfisherManagerTests: XCTestCase {
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNil(error)
                 
-                if #available(iOS 10.0, tvOS 10.0, OSX 10.12, *) {
+                if #available(iOS 10.0, tvOS 10.0, macOS 10.12, *) {
                     dispatchPrecondition(condition: .onQueue(customQueue))
                 }
                 
@@ -219,7 +219,7 @@ class KingfisherManagerTests: XCTestCase {
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
-                if #available(iOS 10.0, tvOS 10.0, OSX 10.12, *) {
+                if #available(iOS 10.0, tvOS 10.0, macOS 10.12, *) {
                     dispatchPrecondition(condition: .onQueue(customQueue))
                 }
                 expectation.fulfill()

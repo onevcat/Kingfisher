@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 
-#if os(OSX)
+#if os(macOS)
 import AppKit.NSImage
 public typealias Image = NSImage
 
@@ -44,7 +44,7 @@ import ImageIO
 
 // MARK: - Image Properties
 extension Image {
-#if os(OSX)
+#if os(macOS)
     var cgImage: CGImage! {
         return cgImage(forProposedRect: nil, context: nil, hints: nil)
     }
@@ -106,7 +106,7 @@ extension Image {
 
 // MARK: - Image Conversion
 extension Image {
-#if os(OSX)
+#if os(macOS)
     static func kf_image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         return Image(cgImage: cgImage, size: CGSize.zero)
     }
@@ -164,7 +164,7 @@ extension Image {
 extension Image {
     // MARK: - PNG
     func pngRepresentation() -> Data? {
-        #if os(OSX)
+        #if os(macOS)
             if let cgimage = cgImage {
                 let rep = NSBitmapImageRep(cgImage: cgimage)
                 return rep.representation(using: .PNG, properties: [:])
@@ -177,7 +177,7 @@ extension Image {
     
     // MARK: - JPEG
     func jpegRepresentation(compressionQuality: CGFloat) -> Data? {
-        #if os(OSX)
+        #if os(macOS)
             let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using:.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
         #else
@@ -186,7 +186,7 @@ extension Image {
     }
     
     func gifRepresentation() -> Data? {
-        #if os(OSX)
+        #if os(macOS)
             return gifRepresentation(duration: 0.0, repeatCount: 0)
         #else
             return kf_animatedImageData
@@ -275,7 +275,7 @@ extension Image {
             return nil
         }
         
-#if os(OSX)
+#if os(macOS)
         guard let (images, gifDuration) = decode(fromSource: imageSource, options: options) else {
             return nil
         }
@@ -308,7 +308,7 @@ extension Image {
 extension Image {
     static func kf_image(data: Data, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         var image: Image?
-        #if os(OSX)
+        #if os(macOS)
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data)
             case .PNG: image = Image(data: data)

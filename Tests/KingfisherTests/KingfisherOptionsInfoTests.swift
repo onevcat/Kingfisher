@@ -45,7 +45,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertNil(options.targetCache)
         XCTAssertNil(options.downloader)
 
-#if !os(OSX)
+#if !os(macOS)
         switch options.transition {
         case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
@@ -65,7 +65,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
-#if os(OSX)
+#if os(macOS)
         let transition = ImageTransition.none
 #else
         let transition = ImageTransition.fade(0.5)
@@ -89,7 +89,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.targetCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
-#if !os(OSX)
+#if !os(macOS)
         switch options.transition {
         case .fade(let duration): XCTAssertEqual(duration, 0.5)
         default: XCTFail()

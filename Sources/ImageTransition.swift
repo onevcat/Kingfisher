@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
-// Not implemented for OSX and watchOS yet.
+#if os(macOS)
+// Not implemented for macOS and watchOS yet.
     
 import AppKit
     

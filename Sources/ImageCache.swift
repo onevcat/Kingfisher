@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
 import AppKit
 #else
 import UIKit
@@ -130,7 +130,7 @@ public class ImageCache {
             self.fileManager = FileManager()
         })
         
-#if !os(OSX) && !os(watchOS)
+#if !os(macOS) && !os(watchOS)
         NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.clearMemoryCache), name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.cleanExpiredDiskCache), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.backgroundCleanExpiredDiskCache), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
@@ -480,7 +480,7 @@ extension ImageCache {
         return (URLsToDelete, diskCacheSize, cachedFiles)
     }
     
-#if !os(OSX) && !os(watchOS)
+#if !os(macOS) && !os(watchOS)
     /**
     Clean expired disk cache when app in background. This is an async operation.
     In most cases, you should not call this method explicitly. 
@@ -639,7 +639,7 @@ extension Dictionary {
     }
 }
 
-#if !os(OSX) && !os(watchOS)
+#if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
 extension UIApplication {
     public static func kf_sharedApplication() -> UIApplication? {

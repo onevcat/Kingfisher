@@ -27,7 +27,7 @@
 import XCTest
 import Kingfisher
 
-#if os(OSX)
+#if os(macOS)
     import AppKit
 #else
     import UIKit

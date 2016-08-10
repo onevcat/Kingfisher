@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B2944471C3D01B20088C3E7"
                BuildableName = "Kingfisher.framework"
-               BlueprintName = "Kingfisher-OSX"
+               BlueprintName = "Kingfisher-macOS"
                ReferencedContainer = "container:Kingfisher.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,8 +34,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D10EC2301C3D632300A4211C"
-               BuildableName = "KingfisherTests-OSX.xctest"
-               BlueprintName = "KingfisherTests-OSX"
+               BuildableName = "KingfisherTests-macOS.xctest"
+               BlueprintName = "KingfisherTests-macOS"
                ReferencedContainer = "container:Kingfisher.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -45,7 +45,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B2944471C3D01B20088C3E7"
             BuildableName = "Kingfisher.framework"
-            BlueprintName = "Kingfisher-OSX"
+            BlueprintName = "Kingfisher-macOS"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -67,7 +67,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B2944471C3D01B20088C3E7"
             BuildableName = "Kingfisher.framework"
-            BlueprintName = "Kingfisher-OSX"
+            BlueprintName = "Kingfisher-macOS"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -85,7 +85,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B2944471C3D01B20088C3E7"
             BuildableName = "Kingfisher.framework"
-            BlueprintName = "Kingfisher-OSX"
+            BlueprintName = "Kingfisher-macOS"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

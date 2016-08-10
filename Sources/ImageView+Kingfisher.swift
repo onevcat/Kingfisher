@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 
-#if os(OSX)
+#if os(macOS)
 import AppKit
 typealias ImageView = NSImageView
 public typealias IndicatorView = NSProgressIndicator
@@ -137,7 +137,7 @@ extension ImageView {
                     
                     if let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.transition(.none)),
                         case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) {
-                            #if !os(OSX)
+                            #if !os(macOS)
                                 UIView.transition(with: sSelf, duration: 0.0, options: [],
                                     animations: {
                                         indicator?.kf_stopAnimating()
@@ -218,7 +218,7 @@ extension ImageView {
             } else {
                 if newValue {
                     
-#if os(OSX)
+#if os(macOS)
                     let indicator = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
                     indicator.controlSize = .small
                     indicator.style = .spinningStyle
@@ -270,7 +270,7 @@ extension ImageView {
 
 extension IndicatorView {
     func kf_startAnimating() {
-        #if os(OSX)
+        #if os(macOS)
             startAnimation(nil)
         #else
             startAnimating()
@@ -279,7 +279,7 @@ extension IndicatorView {
     }
     
     func kf_stopAnimating() {
-        #if os(OSX)
+        #if os(macOS)
             stopAnimation(nil)
         #else
             stopAnimating()
@@ -287,7 +287,7 @@ extension IndicatorView {
         isHidden = true
     }
     
-    #if os(OSX)
+    #if os(macOS)
     var kf_center: CGPoint {
     get {
     return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )

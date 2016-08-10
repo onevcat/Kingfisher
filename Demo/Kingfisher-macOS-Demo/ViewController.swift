@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Kingfisher-OSX-Demo
+//  Kingfisher-macOS-Demo
 //
 //  Created by Wei Wang on 16/1/6.
 //
