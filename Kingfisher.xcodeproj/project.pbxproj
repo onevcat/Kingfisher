@@ -717,7 +717,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B3766891C478F940001443F /* Build configuration list for PBXNativeTarget "KingfisherTests-tvOS" */;
 			buildPhases = (
-				A5A13E4B02EADA5851C42A76 /* 📦 Check Pods Manifest.lock */,
+				A5A13E4B02EADA5851C42A76 /* [CP] Check Pods Manifest.lock */,
 				47A2E7E48EEB2B4ECBA002DE /* [CP] Check Pods Manifest.lock */,
 				4B37667B1C478F940001443F /* Sources */,
 				4B37667C1C478F940001443F /* Frameworks */,
@@ -741,7 +741,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D10EC2391C3D632300A4211C /* Build configuration list for PBXNativeTarget "KingfisherTests-macOS" */;
 			buildPhases = (
-				875B3E20755E971898C499A3 /* 📦 Check Pods Manifest.lock */,
+				875B3E20755E971898C499A3 /* [CP] Check Pods Manifest.lock */,
 				1A7245D94CDE1E4D171C8E3B /* [CP] Check Pods Manifest.lock */,
 				D10EC22D1C3D632300A4211C /* Sources */,
 				D10EC22E1C3D632300A4211C /* Frameworks */,
@@ -896,7 +896,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D1ED2D521AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "KingfisherTests" */;
 			buildPhases = (
-				3ACF82069FA33E2B17A8BF34 /* 📦 Check Pods Manifest.lock */,
+				3ACF82069FA33E2B17A8BF34 /* [CP] Check Pods Manifest.lock */,
 				9336000264DA10AF6BEC0C4C /* [CP] Check Pods Manifest.lock */,
 				D1ED2D3B1AD2D09F00CFC3EB /* Sources */,
 				D1ED2D3C1AD2D09F00CFC3EB /* Frameworks */,
@@ -1177,14 +1177,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3ACF82069FA33E2B17A8BF34 /* 📦 Check Pods Manifest.lock */ = {
+		3ACF82069FA33E2B17A8BF34 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1252,14 +1252,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		875B3E20755E971898C499A3 /* 📦 Check Pods Manifest.lock */ = {
+		875B3E20755E971898C499A3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1312,14 +1312,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A5A13E4B02EADA5851C42A76 /* 📦 Check Pods Manifest.lock */ = {
+		A5A13E4B02EADA5851C42A76 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
