@@ -57,7 +57,7 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGenerateGIFImage() {
-        let image = Image.kf_animatedImage(gifData: testImageGIFData, preloadAll: false)
+        let image = Image.kf_animated(with: testImageGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf_imageSource!.imageRef!)
@@ -70,20 +70,20 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGIFRepresentation() {
-        let image = Image.kf_animatedImage(gifData: testImageGIFData, preloadAll: false)!
+        let image = Image.kf_animated(with: testImageGIFData, preloadAll: false)!
         let data = image.gifRepresentation()
         
         XCTAssertNotNil(data, "Data should not be nil")
         XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)
         
-        let allLoadImage = Image.kf_animatedImage(gifData: data!, preloadAll: true)!
+        let allLoadImage = Image.kf_animated(with: data!, preloadAll: true)!
         let allLoadData = allLoadImage.gifRepresentation()
         XCTAssertNotNil(allLoadData, "Data1 should not be nil")
         XCTAssertEqual(allLoadData?.kf_imageFormat, ImageFormat.GIF)
     }
     
     func testGenerateSingleFrameGIFImage() {
-        let image = Image.kf_animatedImage(gifData: testImageSingleFrameGIFData, preloadAll: false)
+        let image = Image.kf_animated(with: testImageSingleFrameGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf_imageSource!.imageRef!)
@@ -96,7 +96,7 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testPreloadAllGIFData() {
-        let image = Image.kf_animatedImage(gifData: testImageSingleFrameGIFData, preloadAll: true)!
+        let image = Image.kf_animated(with: testImageSingleFrameGIFData, preloadAll: true)!
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         XCTAssertNil(image.kf_imageSource, "Image source should be nil")

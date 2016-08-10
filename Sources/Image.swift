@@ -116,7 +116,7 @@ extension Image {
     
     - returns: The image itself.
     */
-    public func kf_normalizedImage() -> Image {
+    public func kf_normalized() -> Image {
         return self
     }
     
@@ -137,7 +137,7 @@ extension Image {
      
      - returns: The normalized image with orientation set to up and correct scale.
      */
-    public func kf_normalizedImage() -> Image {
+    public func kf_normalized() -> Image {
         // prevent animated image (GIF) lose it's images
         if images != nil {
             return self
@@ -155,7 +155,7 @@ extension Image {
         return normalizedImage!
     }
     
-    static func kf_animatedImage(images: [Image], duration: TimeInterval) -> Image? {
+    static func kf_animated(with images: [Image], forDuration duration: TimeInterval) -> Image? {
         return Image.animatedImage(with: images, duration: duration)
     }
 #endif
@@ -215,21 +215,21 @@ extension Image {
             CGImageDestinationAddImage(destination, image.cgImage!, frameProperties)
         }
         
-        return CGImageDestinationFinalize(destination) ? (NSData(data: data as Data) as Data) : nil
+        return CGImageDestinationFinalize(destination) ? data.copy() as? Data : nil
     }
 }
 
 extension Image {
-    static func kf_animatedImage(gifData data: Data, preloadAll: Bool) -> Image? {
-        return kf_animatedImage(gifData: data, scale: 1.0, duration: 0.0, preloadAll: preloadAll)
+    static func kf_animated(with data: Data, preloadAll: Bool) -> Image? {
+        return kf_animated(with: data, scale: 1.0, duration: 0.0, preloadAll: preloadAll)
     }
     
-    static func kf_animatedImage(gifData data: Data, scale: CGFloat, duration: TimeInterval, preloadAll: Bool) -> Image? {
+    static func kf_animated(with data: Data, scale: CGFloat, duration: TimeInterval, preloadAll: Bool) -> Image? {
         
-        func decode(fromSource imageSource: CGImageSource, options: NSDictionary) -> ([Image], TimeInterval)? {
+        func decode(from imageSource: CGImageSource, for options: NSDictionary) -> ([Image], TimeInterval)? {
 
             //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary
-            func frameDuration(fromGifInfo gifInfo: NSDictionary) -> Double {
+            func frameDuration(from gifInfo: NSDictionary) -> Double {
                 let gifDefaultFrameDuration = 0.100
                 
                 let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber
@@ -260,7 +260,7 @@ extension Image {
                     {
                         return nil
                     }
-                    gifDuration += frameDuration(fromGifInfo: gifInfo)
+                    gifDuration += frameDuration(from: gifInfo)
                 }
                 
                 images.append(Image.kf_image(cgImage: imageRef, scale: scale, refImage: nil))
@@ -270,13 +270,13 @@ extension Image {
         }
         
         // Start of kf_animatedImageWithGIFData
-        let options: NSDictionary = [kCGImageSourceShouldCache as String: NSNumber(value: true), kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
+        let options: NSDictionary = [kCGImageSourceShouldCache as String: true, kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
         guard let imageSource = CGImageSourceCreateWithData(data, options) else {
             return nil
         }
         
 #if os(macOS)
-        guard let (images, gifDuration) = decode(fromSource: imageSource, options: options) else {
+        guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
             return nil
         }
         let image = Image(data: data)
@@ -287,10 +287,10 @@ extension Image {
 #else
     
         if preloadAll {
-            guard let (images, gifDuration) = decode(fromSource: imageSource, options: options) else {
+            guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
                 return nil
             }
-            let image = Image.kf_animatedImage(images: images, duration: duration <= 0.0 ? gifDuration : duration)
+            let image = Image.kf_animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
             image?.kf_animatedImageData = data
             return image
         } else {
@@ -312,14 +312,14 @@ extension Image {
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data)
             case .PNG: image = Image(data: data)
-            case .GIF: image = Image.kf_animatedImage(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .GIF: image = Image.kf_animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .unknown: image = Image(data: data)
             }
         #else
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data, scale: scale)
             case .PNG: image = Image(data: data, scale: scale)
-            case .GIF: image = Image.kf_animatedImage(gifData: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .GIF: image = Image.kf_animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .unknown: image = Image(data: data, scale: scale)
             }
         #endif
@@ -330,11 +330,11 @@ extension Image {
 
 // MARK: - Decode
 extension Image {
-    func kf_decodedImage() -> Image? {
-        return self.kf_decodedImage(scale: kf_scale)
+    func kf_decoded() -> Image? {
+        return self.kf_decoded(scale: kf_scale)
     }
     
-    func kf_decodedImage(scale: CGFloat) -> Image? {
+    func kf_decoded(scale: CGFloat) -> Image? {
         // prevent animated image (GIF) lose it's images
 #if os(iOS)
         if kf_imageSource != nil {

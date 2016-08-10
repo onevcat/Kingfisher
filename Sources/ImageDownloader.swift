@@ -488,7 +488,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                     downloader.delegate?.imageDownloader?(downloader, didDownloadImage: image, forURL: URL, withResponse: task.response!)
                     
                     if options.backgroundDecode {
-                        self.callbackWithImage(image.kf_decodedImage(scale: options.scaleFactor), error: nil, imageURL: URL, originalData: fetchLoad.responseData as Data)
+                        self.callbackWithImage(image.kf_decoded(scale: options.scaleFactor), error: nil, imageURL: URL, originalData: fetchLoad.responseData as Data)
                     } else {
                         self.callbackWithImage(image, error: nil, imageURL: URL, originalData: fetchLoad.responseData as Data)
                     }
