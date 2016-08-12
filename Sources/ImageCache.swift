@@ -30,17 +30,18 @@ import AppKit
 import UIKit
 #endif
 
-/**
-This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The manually invoking of `clearDiskCache` method will not trigger this notification.
-
-The `object` of this notification is the `ImageCache` object which sends the notification.
-
-A list of removed hashes (files) could be retrieved by accessing the array under `KingfisherDiskCacheCleanedHashKey` key in `userInfo` of the notification object you received. By checking the array, you could know the hash codes of files are removed.
-
-The main purpose of this notification is supplying a chance to maintain some necessary information on the cached files. See [this wiki](https://github.com/onevcat/Kingfisher/wiki/How-to-implement-ETag-based-304-(Not-Modified)-handling-in-Kingfisher) for a use case on it.
-*/
-
-public let KingfisherDidCleanDiskCacheNotification = Notification.Name.init("com.onevcat.Kingfisher.KingfisherDidCleanDiskCacheNotification")
+public extension Notification.Name {
+    /**
+     This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The manually invoking of `clearDiskCache` method will not trigger this notification.
+     
+     The `object` of this notification is the `ImageCache` object which sends the notification.
+     
+     A list of removed hashes (files) could be retrieved by accessing the array under `KingfisherDiskCacheCleanedHashKey` key in `userInfo` of the notification object you received. By checking the array, you could know the hash codes of files are removed.
+     
+     The main purpose of this notification is supplying a chance to maintain some necessary information on the cached files. See [this wiki](https://github.com/onevcat/Kingfisher/wiki/How-to-implement-ETag-based-304-(Not-Modified)-handling-in-Kingfisher) for a use case on it.
+     */
+    public static var KingfisherDidCleanDiskCache = Notification.Name.init("com.onevcat.Kingfisher.KingfisherDidCleanDiskCache")
+}
 
 /**
 Key for array of cleaned hashes in `userInfo` of `KingfisherDidCleanDiskCacheNotification`.
@@ -98,7 +99,7 @@ public class ImageCache {
     private let processQueue: DispatchQueue
     
     /// The default cache.
-    public class var defaultCache: ImageCache {
+    public class var `default`: ImageCache {
         return defaultCacheInstance
     }
     
@@ -120,20 +121,18 @@ public class ImageCache {
         let cacheName = cacheReverseDNS + name
         memoryCache.name = cacheName
         
-        let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first!
+        let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
         diskCachePath = (dstPath as NSString).appendingPathComponent(cacheName)
         
         ioQueue = DispatchQueue(label: ioQueueName + name)
-        processQueue = DispatchQueue(label: processQueueName + name, attributes: DispatchQueue.Attributes.concurrent)
+        processQueue = DispatchQueue(label: processQueueName + name, attributes: .concurrent)
         
-        ioQueue.sync(execute: { () -> Void in
-            self.fileManager = FileManager()
-        })
+        ioQueue.sync { fileManager = FileManager() }
         
 #if !os(macOS) && !os(watchOS)
-        NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.clearMemoryCache), name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.cleanExpiredDiskCache), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ImageCache.backgroundCleanExpiredDiskCache), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(clearMemoryCache), name: .UIApplicationDidReceiveMemoryWarning, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(cleanExpiredDiskCache_), name: .UIApplicationWillTerminate, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(backgroundCleanExpiredDiskCache), name: .UIApplicationDidEnterBackground, object: nil)
 #endif
     }
     
@@ -169,12 +168,7 @@ extension ImageCache {
         
         if toDisk {
             ioQueue.async(execute: {
-                let imageFormat: ImageFormat
-                if let originalData = originalData {
-                    imageFormat = originalData.kf_imageFormat
-                } else {
-                    imageFormat = .unknown
-                }
+                let imageFormat = originalData?.kf_imageFormat ?? .unknown
                 
                 let data: Data?
                 switch imageFormat {
@@ -332,8 +326,8 @@ extension ImageCache {
     /**
     Clear disk cache.
     */
-    public func clearDiskCache() {
-        clearDiskCacheWithCompletionHandler(nil)
+    private func clearDiskCache_() {
+        clearDiskCache(with: nil)
     }
     
     /**
@@ -341,7 +335,7 @@ extension ImageCache {
     
     - parameter completionHander: Called after the operation completes.
     */
-    public func clearDiskCacheWithCompletionHandler(_ completionHander: (()->())?) {
+    public func clearDiskCache(with completionHander: (()->())? = nil) {
         ioQueue.async(execute: { () -> Void in
             do {
                 try self.fileManager.removeItem(atPath: self.diskCachePath)
@@ -360,8 +354,8 @@ extension ImageCache {
     /**
     Clean expired disk cache. This is an async operation.
     */
-    @objc public func cleanExpiredDiskCache() {
-        cleanExpiredDiskCacheWithCompletionHander(nil)
+    @objc private func cleanExpiredDiskCache_() {
+        cleanExpiredDiskCache(with: nil)
     }
     
     /**
@@ -369,7 +363,7 @@ extension ImageCache {
     
     - parameter completionHandler: Called after the operation completes.
     */
-    public func cleanExpiredDiskCacheWithCompletionHander(_ completionHandler: (()->())?) {
+    public func cleanExpiredDiskCache(with completionHandler: (()->())? = nil) {
         
         // Do things in cocurrent io queue
         ioQueue.async(execute: { () -> Void in
@@ -390,10 +384,12 @@ extension ImageCache {
                 let sortedFiles = cachedFiles.keysSortedByValue {
                     resourceValue1, resourceValue2 -> Bool in
                     
-                    if let date1 = resourceValue1[URLResourceKey.contentModificationDateKey] as? Date,
-                           let date2 = resourceValue2[URLResourceKey.contentModificationDateKey] as? Date {
+                    if let date1 = resourceValue1.contentModificationDate,
+                       let date2 = resourceValue2.contentModificationDate
+                    {
                         return date1.compare(date2) == .orderedAscending
                     }
+                    
                     // Not valid date information. This should not happen. Just in case.
                     return true
                 }
@@ -408,8 +404,8 @@ extension ImageCache {
                         
                     URLsToDelete.append(fileURL)
                     
-                    if let fileSize = cachedFiles[fileURL]?[URLResourceKey.totalFileAllocatedSizeKey] as? NSNumber {
-                        diskCacheSize -= fileSize.uintValue
+                    if let fileSize = cachedFiles[fileURL]?.totalFileAllocatedSize {
+                        diskCacheSize -= UInt(fileSize)
                     }
                     
                     if diskCacheSize < targetSize {
@@ -425,7 +421,7 @@ extension ImageCache {
                         return url.lastPathComponent
                     })
                     
-                    NotificationCenter.default.post(name: KingfisherDidCleanDiskCacheNotification, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
+                    NotificationCenter.default.post(name: .KingfisherDidCleanDiskCache, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                 }
                 
                 completionHandler?()
@@ -433,41 +429,39 @@ extension ImageCache {
         })
     }
     
-    private func travelCachedFiles(onlyForCacheSize: Bool) -> (URLsToDelete: [URL], diskCacheSize: UInt, cachedFiles: [URL: [NSObject: AnyObject]]) {
+    private func travelCachedFiles(onlyForCacheSize: Bool) -> (URLsToDelete: [URL], diskCacheSize: UInt, cachedFiles: [URL: URLResourceValues]) {
         
         let diskCacheURL = URL(fileURLWithPath: diskCachePath)
-        let resourceKeys = [URLResourceKey.isDirectoryKey, URLResourceKey.contentModificationDateKey, URLResourceKey.totalFileAllocatedSizeKey]
-        let expiredDate = Date(timeIntervalSinceNow: -self.maxCachePeriodInSecond)
+        let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentModificationDateKey, .totalFileAllocatedSizeKey]
+        let expiredDate = Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
         
-        var cachedFiles = [URL: [NSObject: AnyObject]]()
+        var cachedFiles = [URL: URLResourceValues]()
         var URLsToDelete = [URL]()
         var diskCacheSize: UInt = 0
         
-        if let fileEnumerator = self.fileManager.enumerator(at: diskCacheURL, includingPropertiesForKeys: resourceKeys, options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, errorHandler: nil),
+        if let fileEnumerator = self.fileManager.enumerator(at: diskCacheURL, includingPropertiesForKeys: Array(resourceKeys), options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles, errorHandler: nil),
             let urls = fileEnumerator.allObjects as? [URL] {
                 for fileURL in urls {
                     
                     do {
-                        let resourceValues = try (fileURL as NSURL).resourceValues(forKeys: resourceKeys)
+                        let resourceValues = try fileURL.resourceValues(forKeys: resourceKeys)
                         // If it is a Directory. Continue to next file URL.
-                        if let isDirectory = resourceValues[URLResourceKey.isDirectoryKey] as? NSNumber {
-                            if isDirectory.boolValue {
-                                continue
-                            }
+                        if resourceValues.isDirectory == true {
+                            continue
                         }
                         
                         if !onlyForCacheSize {
                             // If this file is expired, add it to URLsToDelete
-                            if let modificationDate = resourceValues[URLResourceKey.contentModificationDateKey] as? Date {
+                            if let modificationDate = resourceValues.contentModificationDate {
                                 if (modificationDate as NSDate).laterDate(expiredDate) == expiredDate {
                                     URLsToDelete.append(fileURL)
                                     continue
                                 }
                             }
                         }
-                        
-                        if let fileSize = resourceValues[URLResourceKey.totalFileAllocatedSizeKey] as? NSNumber {
-                            diskCacheSize += fileSize.uintValue
+
+                        if let fileSize = resourceValues.totalFileAllocatedSize {
+                            diskCacheSize += UInt(fileSize)
                             if !onlyForCacheSize {
                                 cachedFiles[fileURL] = resourceValues
                             }
@@ -488,7 +482,7 @@ extension ImageCache {
     */
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
-        guard let sharedApplication = UIApplication.kf_sharedApplication() else { return }
+        guard let sharedApplication = UIApplication.kf_shared else { return }
 
         func endBackgroundTask(_ task: inout UIBackgroundTaskIdentifier) {
             sharedApplication.endBackgroundTask(task)
@@ -496,12 +490,11 @@ extension ImageCache {
         }
         
         var backgroundTask: UIBackgroundTaskIdentifier!
-        
-        backgroundTask = sharedApplication.beginBackgroundTask { () -> Void in
+        backgroundTask = sharedApplication.beginBackgroundTask {
             endBackgroundTask(&backgroundTask!)
         }
         
-        cleanExpiredDiskCacheWithCompletionHander { () -> () in
+        cleanExpiredDiskCache {
             endBackgroundTask(&backgroundTask!)
         }
     }
@@ -529,7 +522,7 @@ extension ImageCache {
      
      - returns: True if the image is cached, false otherwise.
      */
-    public func cachedImageExistsforURL(_ url: URL) -> Bool {
+    public func cachedImageExists(for url: URL) -> Bool {
         let resource = Resource(downloadURL: url)
         let result = isImageCachedForKey(resource.cacheKey)
         return result.cached
@@ -642,7 +635,7 @@ extension Dictionary {
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
 extension UIApplication {
-    public static func kf_sharedApplication() -> UIApplication? {
+    public static var kf_shared: UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")
         guard responds(to: selector) else { return nil }
         return perform(selector).takeUnretainedValue() as? UIApplication

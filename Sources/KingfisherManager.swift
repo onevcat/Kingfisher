@@ -94,7 +94,7 @@ public class KingfisherManager {
     - returns: A Kingfisher manager object with default cache, default downloader, and default prefetcher.
     */
     public convenience init() {
-        self.init(downloader: ImageDownloader.defaultDownloader, cache: ImageCache.defaultCache)
+        self.init(downloader: ImageDownloader.defaultDownloader, cache: ImageCache.default)
     }
     
     init(downloader: ImageDownloader, cache: ImageCache) {

@@ -82,7 +82,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertTrue(cacheResult.cached, "Should be cached")
             XCTAssert(cacheResult.cacheType == .disk, "Should be cached in disk")
         
-            self.cache.clearDiskCacheWithCompletionHandler { () -> () in
+            self.cache.clearDiskCache {
                 let cacheResult = self.cache.isImageCachedForKey(key)
                 XCTAssertFalse(cacheResult.cached, "Should be not cached")
                 expectation.fulfill()
@@ -109,7 +109,7 @@ class ImageCacheTests: XCTestCase {
     func testNoImageFound() {
         let expectation = self.expectation(description: "wait for retrieving image")
         
-        cache.clearDiskCacheWithCompletionHandler { () -> () in
+        cache.clearDiskCache {
             self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image == nil, "Should not be cached in memory yet")
                 expectation.fulfill()
@@ -159,7 +159,7 @@ class ImageCacheTests: XCTestCase {
         let URLString = testKeys[0]
         let URL = Foundation.URL(string: URLString)!
         
-        let exists = cache.cachedImageExistsforURL(URL)
+        let exists = cache.cachedImageExists(for: URL)
         XCTAssertFalse(exists)
         
         cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
@@ -172,7 +172,7 @@ class ImageCacheTests: XCTestCase {
                     XCTAssertNotNil(image, "Should be cached (memory or disk)")
                     XCTAssertEqual(type, CacheType.memory)
 
-                    let exists = self.cache.cachedImageExistsforURL(URL)
+                    let exists = self.cache.cachedImageExists(for: URL)
                     XCTAssertTrue(exists, "Image should exist in the cache (memory or disk)")
 
                     self.cache.clearMemoryCache()
@@ -180,7 +180,7 @@ class ImageCacheTests: XCTestCase {
                         XCTAssertNotNil(image, "Should be cached (disk)")
                         XCTAssertEqual(type, CacheType.disk)
                         
-                        let exists = self.cache.cachedImageExistsforURL(URL)
+                        let exists = self.cache.cachedImageExists(for: URL)
                         XCTAssertTrue(exists, "Image should exist in the cache (disk)")
                         
                         expectation.fulfill()
@@ -196,7 +196,7 @@ class ImageCacheTests: XCTestCase {
         let URLString = testKeys[0]
         let URL = Foundation.URL(string: URLString)!
         
-        let exists = cache.cachedImageExistsforURL(URL)
+        let exists = cache.cachedImageExists(for: URL)
         XCTAssertFalse(exists)
     }
 
@@ -246,7 +246,7 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
 
-            self.observer = NotificationCenter.default.addObserver(forName: KingfisherDidCleanDiskCacheNotification, object: self.cache, queue: OperationQueue.main, using: { (noti) -> Void in
+            self.observer = NotificationCenter.default.addObserver(forName: .KingfisherDidCleanDiskCache, object: self.cache, queue: OperationQueue.main, using: { (noti) -> Void in
 
                 XCTAssert(noti.object === self.cache, "The object of notification should be the cache object.")
                 
