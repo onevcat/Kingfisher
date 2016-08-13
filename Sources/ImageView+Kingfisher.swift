@@ -44,7 +44,7 @@ extension ImageView {
     /**
      Set an image with a URL, a placeholder image, options, progress handler and completion handler.
      
-     - parameter URL:               The URL of image.
+     - parameter url:               The URL of image.
      - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
      - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
@@ -56,13 +56,13 @@ extension ImageView {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     @discardableResult
-    public func kf_setImageWithURL(_ URL: URL?,
+    public func kf_setImageWithURL(_ url: URL?,
                                    placeholderImage: Image? = nil,
                                    optionsInfo: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        let resource = URL.map { ImageResource(downloadURL: $0) }
+        let resource = url.map { ImageResource(downloadURL: $0) }
         return kf_setImageWithResource(resource,
                                        placeholderImage: placeholderImage,
                                        optionsInfo: optionsInfo,
@@ -96,7 +96,7 @@ extension ImageView {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            return .emptyTask
         }
         
         let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
@@ -107,7 +107,7 @@ extension ImageView {
             indicator?.kf_startAnimating()
         }
         
-        kf_setWebURL(resource.downloadURL as URL)
+        kf_setWebURL(resource.downloadURL)
         
         var options = optionsInfo ?? []
         if shouldPreloadAllGIF() {
@@ -135,31 +135,32 @@ extension ImageView {
                         return
                     }
                     
-                    if let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.transition(.none)),
-                        case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) {
-                            #if !os(macOS)
-                                UIView.transition(with: sSelf, duration: 0.0, options: [],
-                                    animations: {
-                                        indicator?.kf_stopAnimating()
-                                    },
-                                    completion: { finished in
-                                        UIView.transition(with: sSelf, duration: transition.duration,
-                                            options: [transition.animationOptions, .allowUserInteraction],
-                                            animations: {
-                                                // Set image property in the animation.
-                                                transition.animations?(sSelf, image)
-                                            },
-                                            completion: { finished in
-                                                transition.completion?(finished)
-                                                completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                                        })
-                                })
-                            #endif
-                    } else {
+                    guard let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.transition(.none)),
+                        case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) else
+                    {
                         indicator?.kf_stopAnimating()
                         sSelf.image = image
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                        return
                     }
+                    
+                    #if !os(macOS)
+                    UIView.transition(with: sSelf, duration: 0.0, options: [],
+                        animations: { indicator?.kf_stopAnimating() },
+                        completion: { _ in
+                            UIView.transition(with: sSelf, duration: transition.duration,
+                                options: [transition.animationOptions, .allowUserInteraction],
+                                animations: {
+                                    // Set image property in the animation.
+                                    transition.animations?(sSelf, image)
+                                },
+                                completion: { finished in
+                                    transition.completion?(finished)
+                                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                                }
+                            )
+                    })
+                    #endif
                 }
             })
         
@@ -197,8 +198,8 @@ extension ImageView {
         return objc_getAssociatedObject(self, &lastURLKey) as? URL
     }
     
-    private func kf_setWebURL(_ URL: Foundation.URL) {
-        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private func kf_setWebURL(_ url: URL) {
+        objc_setAssociatedObject(self, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
     /// Whether show an animating indicator when the image view is loading an image or not.

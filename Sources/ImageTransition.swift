@@ -56,13 +56,13 @@ Apple's UIViewAnimationOptions is used under the hood.
 For custom transition, you should specified your own transition options, animations and 
 comletion handler as well.
 
-- None:           No animation transistion.
-- Fade:           Fade in the loaded image.
-- FlipFromLeft:   Flip from left transition.
-- FlipFromRight:  Flip from right transition.
-- FlipFromTop:    Flip from top transition.
-- FlipFromBottom: Flip from bottom transition.
-- Custom:         Custom transition.
+- none:           No animation transistion.
+- fade:           Fade in the loaded image.
+- flipFromLeft:   Flip from left transition.
+- flipFromRight:  Flip from right transition.
+- flipFromTop:    Flip from top transition.
+- flipFromBottom: Flip from bottom transition.
+- custom:         Custom transition.
 */
 public enum ImageTransition {
     case none
@@ -94,7 +94,7 @@ public enum ImageTransition {
     
     var animationOptions: UIViewAnimationOptions {
         switch self {
-        case .none:                         return UIViewAnimationOptions()
+        case .none:                         return []
         case .fade(_):                      return .transitionCrossDissolve
             
         case .flipFromLeft(_):              return .transitionFlipFromLeft
