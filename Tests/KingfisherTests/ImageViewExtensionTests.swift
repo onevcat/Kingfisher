@@ -111,7 +111,7 @@ class ImageViewExtensionTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let URL = Foundation.URL(string: URLString)!
-        let resource = Resource(downloadURL: URL)
+        let resource = ImageResource(downloadURL: URL)
         
         var progressBlockIsCalled = false
         

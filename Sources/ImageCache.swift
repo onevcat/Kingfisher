@@ -248,7 +248,7 @@ extension ImageCache {
         let options = options ?? KingfisherEmptyOptionsInfo
         
         if let image = self.retrieveImageInMemoryCacheForKey(key) {
-            dispatch_async_safely_to_queue(options.callbackDispatchQueue) { () -> Void in
+            options.callbackDispatchQueue.safeAsync {
                 completionHandler(image, .memory)
             }
         } else {
@@ -261,24 +261,24 @@ extension ImageCache {
                             let result = image.kf_decoded(scale: options.scaleFactor)
                             sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
 
-                            dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
+                            options.callbackDispatchQueue.safeAsync {
                                 completionHandler(result, .memory)
                                 sSelf = nil
-                            })
+                            }
                         })
                     } else {
                         sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
-                        dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
+                        options.callbackDispatchQueue.safeAsync {
                             completionHandler(image, .disk)
                             sSelf = nil
-                        })
+                        }
                     }
                 } else {
                     // No image found from either memory or disk
-                    dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
+                    options.callbackDispatchQueue.safeAsync {
                         completionHandler(nil, .none)
                         sSelf = nil
-                    })
+                    }
                 }
             })
             
@@ -523,7 +523,7 @@ extension ImageCache {
      - returns: True if the image is cached, false otherwise.
      */
     public func cachedImageExists(for url: URL) -> Bool {
-        let resource = Resource(downloadURL: url)
+        let resource = ImageResource(downloadURL: url)
         let result = isImageCachedForKey(resource.cacheKey)
         return result.cached
     }

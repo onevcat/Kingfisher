@@ -53,7 +53,7 @@ extension UIButton {
                                             progressBlock: DownloadProgressBlock? = nil,
                                             completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        let resource = URL.map { Resource(downloadURL: $0) }
+        let resource = URL.map { ImageResource(downloadURL: $0) }
         return kf_setImageWithResource(resource,
                                        forState: state,
                                        placeholderImage: placeholderImage,
@@ -101,7 +101,7 @@ extension UIButton {
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
-                dispatch_async_safely_to_main_queue {
+                DispatchQueue.main.safeAsync {
                     guard let sSelf = self, imageURL == sSelf.kf_webURLForState(state) else {
                         return
                     }
@@ -191,7 +191,7 @@ extension UIButton {
                                                       progressBlock: DownloadProgressBlock? = nil,
                                                       completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        let resource = URL.map { Resource(downloadURL: $0) }
+        let resource = URL.map { ImageResource(downloadURL: $0) }
         return kf_setBackgroundImageWithResource(resource,
                                                  forState: state,
                                                  placeholderImage: placeholderImage,
@@ -229,7 +229,7 @@ extension UIButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            return .emptyTask
         }
         
         kf_setBackgroundWebURL(resource.downloadURL as URL, forState: state)
@@ -240,7 +240,7 @@ extension UIButton {
                 }
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
-                dispatch_async_safely_to_main_queue {
+                DispatchQueue.main.safeAsync {
                     guard let sSelf = self, imageURL == sSelf.kf_backgroundWebURLForState(state) else {
                         return
                     }

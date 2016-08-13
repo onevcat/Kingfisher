@@ -159,12 +159,12 @@ public class KingfisherManager {
     - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
     */
     @discardableResult
-    public func retrieveImageWithURL(_ URL: Foundation.URL,
+    public func retrieveImageWithURL(_ URL: URL,
                              optionsInfo: KingfisherOptionsInfo?,
                            progressBlock: DownloadProgressBlock?,
                        completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
-        return retrieveImageWithResource(Resource(downloadURL: URL), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
+        return retrieveImageWithResource(ImageResource(downloadURL: URL), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     @discardableResult

@@ -97,7 +97,7 @@ public class ImagePrefetcher {
                    progressBlock: PrefetcherProgressBlock? = nil,
                completionHandler: PrefetcherCompletionHandler? = nil)
     {
-        let resources = urls.map { Resource(downloadURL: $0) }
+        let resources: [Resource] = urls.map { ImageResource(downloadURL: $0) }
         self.init(resources: resources, optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
@@ -146,7 +146,7 @@ public class ImagePrefetcher {
     public func start()
     {
         // Since we want to handle the resources cancellation in main thread only.
-        dispatch_async_safely_to_main_queue { () -> () in
+        DispatchQueue.main.safeAsync {
             
             guard !self.stopped else {
                 assertionFailure("You can not restart the same prefetcher. Try to create a new prefetcher.")
@@ -167,7 +167,7 @@ public class ImagePrefetcher {
             
             let initialConcurentDownloads = min(self.prefetchResources.count, self.maxConcurrentDownloads)
             for i in 0 ..< initialConcurentDownloads {
-                self.startPrefetchingResource(self.prefetchResources[i])
+                self.startPrefetching(self.prefetchResources[i])
             }
         }
     }
@@ -177,7 +177,7 @@ public class ImagePrefetcher {
      Stop current downloading progress, and cancel any future prefetching activity that might be occuring.
      */
     public func stop() {
-        dispatch_async_safely_to_main_queue {
+        DispatchQueue.main.safeAsync {
             
             if self.finished {
                 return
@@ -190,7 +190,7 @@ public class ImagePrefetcher {
         }
     }
     
-    func downloadAndCacheResource(_ resource: Resource) {
+    func downloadAndCache(_ resource: Resource) {
 
         let task = RetrieveImageTask()
         let downloadTask = manager.downloadAndCacheImageWithURL(
@@ -228,24 +228,24 @@ public class ImagePrefetcher {
         }
     }
     
-    func appendCachedResource(_ resource: Resource) {
+    func append(cached resource: Resource) {
         skippedResources.append(resource)
  
         reportProgress()
         reportCompletionOrStartNext()
     }
     
-    func startPrefetchingResource(_ resource: Resource)
+    func startPrefetching(_ resource: Resource)
     {
         requestedCount += 1
         if optionsInfo.forceRefresh {
-            downloadAndCacheResource(resource)
+            downloadAndCache(resource)
         } else {
             let alreadyInCache = manager.cache.isImageCachedForKey(resource.cacheKey).cached
             if alreadyInCache {
-                appendCachedResource(resource)
+                append(cached: resource)
             } else {
-                downloadAndCacheResource(resource)
+                downloadAndCache(resource)
             }
         }
     }
@@ -259,7 +259,7 @@ public class ImagePrefetcher {
             handleComplete()
         } else {
             if requestedCount < prefetchResources.count {
-                startPrefetchingResource(prefetchResources[requestedCount])
+                startPrefetching(prefetchResources[requestedCount])
             }
         }
     }

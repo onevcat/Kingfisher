@@ -445,9 +445,9 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             downloader.clean(for: url)
             
             for callbackPair in callbackPairs {
-                dispatch_async_safely_to_queue(options.callbackDispatchQueue, { () -> Void in
+                options.callbackDispatchQueue.safeAsync {
                     callbackPair.completionHander?(image: image, error: error, url: url, originalData: originalData)
-                })
+                }
             }
             
             if downloader.fetchLoads.isEmpty {

@@ -56,13 +56,13 @@ extension ImageView {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     @discardableResult
-    public func kf_setImageWithURL(_ URL: Foundation.URL?,
+    public func kf_setImageWithURL(_ URL: URL?,
                                    placeholderImage: Image? = nil,
                                    optionsInfo: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        let resource = URL.map { Resource(downloadURL: $0) }
+        let resource = URL.map { ImageResource(downloadURL: $0) }
         return kf_setImageWithResource(resource,
                                        placeholderImage: placeholderImage,
                                        optionsInfo: optionsInfo,
@@ -122,7 +122,7 @@ extension ImageView {
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
-                dispatch_async_safely_to_main_queue {
+                DispatchQueue.main.safeAsync {
                     guard let sSelf = self, imageURL == sSelf.kf_webURL else {
                         return
                     }
