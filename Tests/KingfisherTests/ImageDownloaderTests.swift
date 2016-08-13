@@ -129,7 +129,7 @@ class ImageDownloaderTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         downloader.requestModifier = {
-            (request: NSMutableURLRequest) in
+            request in
             request.url = URL(string: URLString)
         }
         
@@ -179,7 +179,6 @@ class ImageDownloaderTests: XCTestCase {
     
     // Since we could not receive one challage, no test for trusted hosts currently.
     // See http://stackoverflow.com/questions/27065372/why-is-a-https-nsurlsession-connection-only-challenged-once-per-domain for more.
-    /* Temporarily disables since the target site is offline. See https://github.com/onevcat/Kingfisher/issues/365
     func testSSLCertificateValidation() {
         LSNocilla.sharedInstance().stop()
         
@@ -201,7 +200,7 @@ class ImageDownloaderTests: XCTestCase {
             LSNocilla.sharedInstance().start()
         }
     }
-    */
+ 
     
     func testDownloadResultErrorAndRetry() {
         let expectation = self.expectation(description: "wait for downloading error")
@@ -254,7 +253,7 @@ class ImageDownloaderTests: XCTestCase {
         
         XCTAssertNotNil(task, "The task should exist.")
         XCTAssertEqual(task!.ownerDownloader, downloader, "The owner downloader should be correct")
-        XCTAssertEqual(task!.URL, URL(string: "1234"), "The request URL should equal.")
+        XCTAssertEqual(task!.url, URL(string: "1234"), "The request URL should equal.")
     }
     
     func testCancelDownloadTask() {
