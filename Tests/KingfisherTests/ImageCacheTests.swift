@@ -96,7 +96,7 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
-            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImage(forKey: testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .disk, "Should be cached in disk. But \(type)")
 
                 expectation.fulfill()
@@ -110,7 +110,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for retrieving image")
         
         cache.clearDiskCache {
-            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImage(forKey: testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image == nil, "Should not be cached in memory yet")
                 expectation.fulfill()
             })
@@ -124,7 +124,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for retrieving image")
         
         cache.storeImage(testImage, forKey: testKeys[0], toDisk: false) { () -> () in
-            self.cache.retrieveImageForKey(testKeys[0], options: nil, completionHandler: { (image, type) -> () in
+            self.cache.retrieveImage(forKey: testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .memory, "Should be cached in memory.")
                 expectation.fulfill()
             })
@@ -162,21 +162,21 @@ class ImageCacheTests: XCTestCase {
         let exists = cache.cachedImageExists(for: URL)
         XCTAssertFalse(exists)
         
-        cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
+        cache.retrieveImage(forKey: URLString, options: nil, completionHandler: { (image, type) -> () in
             XCTAssertNil(image, "Should not be cached yet")
             
-            XCTAssertEqual(type, CacheType.none)
+            XCTAssertEqual(type, .none)
 
             self.cache.storeImage(testImage, forKey: URLString, toDisk: true) { () -> () in
-                self.cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
+                self.cache.retrieveImage(forKey: URLString, options: nil, completionHandler: { (image, type) -> () in
                     XCTAssertNotNil(image, "Should be cached (memory or disk)")
-                    XCTAssertEqual(type, CacheType.memory)
+                    XCTAssertEqual(type, .memory)
 
                     let exists = self.cache.cachedImageExists(for: URL)
                     XCTAssertTrue(exists, "Image should exist in the cache (memory or disk)")
 
                     self.cache.clearMemoryCache()
-                    self.cache.retrieveImageForKey(URLString, options: nil, completionHandler: { (image, type) -> () in
+                    self.cache.retrieveImage(forKey: URLString, options: nil, completionHandler: { (image, type) -> () in
                         XCTAssertNotNil(image, "Should be cached (disk)")
                         XCTAssertEqual(type, CacheType.disk)
                         
@@ -207,7 +207,7 @@ class ImageCacheTests: XCTestCase {
 
         var foundImage: Image?
 
-        cache.retrieveImageForKey(testKeys[0], options: [.backgroundDecode]) { (image, type) -> () in
+        cache.retrieveImage(forKey: testKeys[0], options: [.backgroundDecode]) { (image, type) -> () in
             foundImage = image
         }
 

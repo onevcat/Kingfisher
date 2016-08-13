@@ -61,8 +61,8 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
 
-        let URL = Foundation.URL(string: URLString)!
-        downloader.downloadImageWithURL(URL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let url = URL(string: URLString)!
+        downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             return
         }) { (image, error, imageURL, data) -> () in
             expectation.fulfill()
@@ -78,10 +78,10 @@ class ImageDownloaderTests: XCTestCase {
         let group = DispatchGroup()
         
         for URLString in testKeys {
-            if let URL = URL(string: URLString) {
+            if let url = URL(string: URLString) {
                 group.enter()
                 _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-                downloader.downloadImageWithURL(URL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+                downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     
                 }, completionHandler: { (image, error, imageURL, data) -> () in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
@@ -106,7 +106,7 @@ class ImageDownloaderTests: XCTestCase {
 
         for _ in 0...5 {
             group.enter()
-            downloader.downloadImageWithURL(URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                 
                 }) { (image, error, imageURL, data) -> () in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
@@ -134,7 +134,7 @@ class ImageDownloaderTests: XCTestCase {
         }
         
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImageWithURL(someURL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: someURL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
@@ -150,7 +150,7 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(304)
         
-        downloader.downloadImageWithURL(URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "There should be an error since server returning 304 and no image downloaded.")
@@ -166,7 +166,7 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(404)?.withBody(testImageData)
         
-        downloader.downloadImageWithURL(URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "There should be an error since server returning 404")
@@ -184,11 +184,11 @@ class ImageDownloaderTests: XCTestCase {
         
         let downloader = ImageDownloader(name: "ssl.test")
         
-        let URL = Foundation.URL(string: "https://testssl-expire.disig.sk/Expired.png")!
+        let url = URL(string: "https://testssl-expire.disig.sk/Expired.png")!
         
         let expectation = self.expectation(description: "wait for download from an invalid ssl site.")
         
-        downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
+        downloader.downloadImage(with: url, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "Error should not be nil")
             XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted || error?.code == NSURLErrorSecureConnectionFailed, "Error should be NSURLErrorServerCertificateUntrusted, but \(error)")
             expectation.fulfill()
@@ -207,16 +207,16 @@ class ImageDownloaderTests: XCTestCase {
         
         let URLString = testKeys[0]
         stubRequest("GET", URLString).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
-        downloader.downloadImageWithURL(URL, progressBlock: nil) { (image, error, imageURL, data) -> () in
+        downloader.downloadImage(with: url, progressBlock: nil) { (image, error, imageURL, data) -> () in
             XCTAssertNotNil(error, "Should return with an error")
             
             LSNocilla.sharedInstance().clearStubs()
             _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
             
             // Retry the download
-            self.downloader.downloadImageWithURL(URL, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
+            self.downloader.downloadImage(with: url, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
                 XCTAssertNil(error, "Download should be finished without error")
                 expectation.fulfill()
             })
@@ -233,7 +233,7 @@ class ImageDownloaderTests: XCTestCase {
         }
         
         let url = URL(string: "http://onevcat.com")
-        downloader.downloadImageWithURL(url!, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url!, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("The progress block should not be called.")
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error, "An error should happen for empty URL")
@@ -246,7 +246,7 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskProperty() {
-        let task = downloader.downloadImageWithURL(URL(string: "1234")!, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = downloader.downloadImage(with: URL(string: "1234")!, progressBlock: { (receivedSize, totalSize) -> () in
 
             }) { (image, error, imageURL, originalData) -> () in
         }
@@ -267,7 +267,7 @@ class ImageDownloaderTests: XCTestCase {
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
         
-        let downloadTask = downloader.downloadImageWithURL(URL, progressBlock: { (receivedSize, totalSize) -> () in
+        let downloadTask = downloader.downloadImage(with: URL, progressBlock: { (receivedSize, totalSize) -> () in
                 progressBlockIsCalled = true
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error)
@@ -293,7 +293,7 @@ class ImageDownloaderTests: XCTestCase {
         downloader.requestModifier = { req in
             req.url = nil
         }
-        let downloadTask = downloader.downloadImageWithURL(URL(string: "url")!, progressBlock: nil, completionHandler: nil)
+        let downloadTask = downloader.downloadImage(with: URL(string: "url")!, progressBlock: nil, completionHandler: nil)
         XCTAssertNil(downloadTask)
         
         downloader.requestModifier = nil

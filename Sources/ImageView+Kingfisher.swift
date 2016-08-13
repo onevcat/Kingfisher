@@ -114,7 +114,7 @@ extension ImageView {
             options.append(.preloadAllGIFData)
         }
 
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: options,
+        let task = KingfisherManager.shared.retrieveImageWithResource(resource, optionsInfo: options,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)

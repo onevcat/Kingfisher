@@ -92,7 +92,7 @@ extension NSButton {
         }
         
         kf_setWebURL(resource.downloadURL)
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
@@ -204,11 +204,11 @@ extension NSButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            return .emptyTask
         }
         
         kf_setAlternateWebURL(resource.downloadURL)
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)

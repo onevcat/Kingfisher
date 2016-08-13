@@ -258,11 +258,11 @@ extension ImageDownloader {
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     @discardableResult
-    public func downloadImageWithURL(_ url: URL,
+    public func downloadImage(with url: URL,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        return downloadImageWithURL(url, options: nil, progressBlock: progressBlock, completionHandler: completionHandler)
+        return downloadImage(with: url, options: nil, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     /**
@@ -276,23 +276,23 @@ extension ImageDownloader {
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     @discardableResult
-    public func downloadImageWithURL(_ url: URL,
+    public func downloadImage(with url: URL,
                                  options: KingfisherOptionsInfo?,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
-        return downloadImageWithURL(url,
-            retrieveImageTask: nil,
-                      options: options,
-                progressBlock: progressBlock,
-            completionHandler: completionHandler)
+        return downloadImage(with: url,
+                retrieveImageTask: nil,
+                          options: options,
+                    progressBlock: progressBlock,
+                completionHandler: completionHandler)
     }
     
-    func downloadImageWithURL(_ url: URL,
-                       retrieveImageTask: RetrieveImageTask?,
-                                 options: KingfisherOptionsInfo?,
-                           progressBlock: ImageDownloaderProgressBlock?,
-                       completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
+    func downloadImage(with url: URL,
+              retrieveImageTask: RetrieveImageTask?,
+                        options: KingfisherOptionsInfo?,
+                  progressBlock: ImageDownloaderProgressBlock?,
+              completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
         if let retrieveImageTask = retrieveImageTask, retrieveImageTask.cancelledBeforeDownloadStarting {
             return nil

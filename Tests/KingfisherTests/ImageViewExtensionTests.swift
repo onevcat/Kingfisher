@@ -45,7 +45,7 @@ class ImageViewExtensionTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         imageView = ImageView()
-        KingfisherManager.sharedManager.downloader = ImageDownloader(name: "testDownloader")
+        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
         cleanDefaultCache()
     }
     
@@ -360,7 +360,7 @@ class ImageViewExtensionTests: XCTestCase {
             
             XCTAssertTrue(cache1.isImageCachedForKey(URLString).cached, "This image should be cached in cache1.")
             XCTAssertFalse(cache2.isImageCachedForKey(URLString).cached, "This image should not be cached in cache2.")
-            XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
+            XCTAssertFalse(KingfisherManager.shared.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
             
             self.imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [.targetCache(cache2)], progressBlock: { (receivedSize, totalSize) -> () in
                 
@@ -368,7 +368,7 @@ class ImageViewExtensionTests: XCTestCase {
                 
                 XCTAssertTrue(cache1.isImageCachedForKey(URLString).cached, "This image should be cached in cache1.")
                 XCTAssertTrue(cache2.isImageCachedForKey(URLString).cached, "This image should be cached in cache2.")
-                XCTAssertFalse(KingfisherManager.sharedManager.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
+                XCTAssertFalse(KingfisherManager.shared.cache.isImageCachedForKey(URLString).cached, "This image should not be cached in default cache.")
                 
                 clearCaches([cache1, cache2])
                 

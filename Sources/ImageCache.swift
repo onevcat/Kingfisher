@@ -202,7 +202,7 @@ extension ImageCache {
     - parameter fromDisk:          Whether this image should be removed from disk or not. If false, the image will be only removed from memory.
     - parameter completionHandler: Called when removal operation completes.
     */
-    public func removeImageForKey(_ key: String, fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
+    public func removeImage(forKey key: String, fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
         memoryCache.removeObject(forKey: key)
         
         func callHandlerInMainQueue() {
@@ -214,12 +214,12 @@ extension ImageCache {
         }
         
         if fromDisk {
-            ioQueue.async(execute: { () -> Void in
+            ioQueue.async{
                 do {
                     try self.fileManager.removeItem(atPath: self.cachePathForKey(key))
                 } catch _ {}
                 callHandlerInMainQueue()
-            })
+            }
         } else {
             callHandlerInMainQueue()
         }
@@ -238,7 +238,7 @@ extension ImageCache {
     
     - returns: The retrieving task.
     */
-    @discardableResult public func retrieveImageForKey(_ key: String, options: KingfisherOptionsInfo?, completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask? {
+    @discardableResult public func retrieveImage(forKey key: String, options: KingfisherOptionsInfo?, completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask? {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
             return nil
@@ -247,7 +247,7 @@ extension ImageCache {
         var block: RetrieveImageDiskTask?
         let options = options ?? KingfisherEmptyOptionsInfo
         
-        if let image = self.retrieveImageInMemoryCacheForKey(key) {
+        if let image = self.retrieveImageInMemoryCache(forKey: key) {
             options.callbackDispatchQueue.safeAsync {
                 completionHandler(image, .memory)
             }
@@ -295,7 +295,7 @@ extension ImageCache {
     
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInMemoryCacheForKey(_ key: String) -> Image? {
+    public func retrieveImageInMemoryCache(forKey key: String) -> Image? {
         return memoryCache.object(forKey: key) as? Image
     }
     

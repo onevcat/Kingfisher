@@ -76,7 +76,7 @@ class ImagePrefetcherTests: XCTestCase {
                 XCTAssertEqual(completedResources.count, urls.count, "All resources prefetching should be completed.")
                 XCTAssertEqual(progressCalledCount, urls.count, "Progress should be called the same time of download count.")
                 for url in urls {
-                    XCTAssertTrue(KingfisherManager.sharedManager.cache.isImageCachedForKey(url.absoluteString).cached)
+                    XCTAssertTrue(KingfisherManager.shared.cache.isImageCachedForKey(url.absoluteString).cached)
                 }
         }
         
@@ -123,7 +123,7 @@ class ImagePrefetcherTests: XCTestCase {
 
     func testPrefetcherCouldSkipCachedImages() {
         let expectation = self.expectation(description: "wait for prefetching images")
-        KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
+        KingfisherManager.shared.cache.storeImage(Image(), forKey: testKeys[0])
         
         var urls = [URL]()
         for URLString in testKeys {
@@ -151,7 +151,7 @@ class ImagePrefetcherTests: XCTestCase {
         let expectation = self.expectation(description: "wait for prefetching images")
         
         // Store an image in cache.
-        KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
+        KingfisherManager.shared.cache.storeImage(Image(), forKey: testKeys[0])
         
         var urls = [URL]()
         for URLString in testKeys {

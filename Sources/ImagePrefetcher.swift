@@ -193,8 +193,8 @@ public class ImagePrefetcher {
     func downloadAndCache(_ resource: Resource) {
 
         let task = RetrieveImageTask()
-        let downloadTask = manager.downloadAndCacheImageWithURL(
-            resource.downloadURL,
+        let downloadTask = manager.downloadAndCacheImage(
+            with: resource.downloadURL,
             forKey: resource.cacheKey,
             retrieveImageTask: task,
             progressBlock: nil,

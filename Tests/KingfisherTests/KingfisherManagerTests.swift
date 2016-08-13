@@ -60,26 +60,26 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
 
-        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
             image, error, cacheType, imageURL in
             XCTAssertNotNil(image)
-            XCTAssertEqual(cacheType, CacheType.none)
+            XCTAssertEqual(cacheType, .none)
             
-            self.manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+            self.manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
                 image, error, cacheType, imageURL in
                 XCTAssertNotNil(image)
-                XCTAssertEqual(cacheType, CacheType.memory)
+                XCTAssertEqual(cacheType, .memory)
                 
                 self.manager.cache.clearMemoryCache()
-                self.manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+                self.manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
                     image, error, cacheType, imageURL in
                     XCTAssertNotNil(image)
-                    XCTAssertEqual(cacheType, CacheType.disk)
+                    XCTAssertEqual(cacheType, .disk)
                     
                     cleanDefaultCache()
-                    self.manager.retrieveImageWithURL(URL, optionsInfo: [.forceRefresh], progressBlock: nil) {
+                    self.manager.retrieveImage(with: url, optionsInfo: [.forceRefresh], progressBlock: nil) {
                         image, error, cacheType, imageURL in
                         XCTAssertNotNil(image)
                         XCTAssertEqual(cacheType, CacheType.none)
@@ -98,9 +98,9 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
-        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: nil) {
+        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
             image, error, cacheType, imageURL in
             XCTAssertNotNil(image)
             XCTAssertEqual(cacheType, CacheType.none)
@@ -113,7 +113,7 @@ class KingfisherManagerTests: XCTestCase {
             
             var progressCalled = false
             
-            self.manager.retrieveImageWithURL(URL, optionsInfo: [.forceRefresh], progressBlock: {
+            self.manager.retrieveImage(with: url, optionsInfo: [.forceRefresh], progressBlock: {
                 _, _ in
                 progressCalled = true
             }) {
@@ -136,9 +136,9 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
-        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: { _, _ in
+        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
             }, completionHandler: { _, error, _, _ in
@@ -157,7 +157,7 @@ class KingfisherManagerTests: XCTestCase {
 
         let url = URL(string: URLString)!
 
-        manager.retrieveImageWithURL(url, optionsInfo: [.onlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
+        manager.retrieveImage(with: url, optionsInfo: [.onlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
                 XCTAssertNil(image)
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error!.code, KingfisherError.notCached.rawValue)
@@ -171,9 +171,9 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString)?.andReturn(404)
         
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
-        manager.retrieveImageWithURL(URL, optionsInfo: nil, progressBlock: { _, _ in
+        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: { _, _ in
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
@@ -189,10 +189,10 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        let URL = Foundation.URL(string: URLString)!
+        let url = Foundation.URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        manager.retrieveImageWithURL(URL, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
+        manager.retrieveImage(with: url, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
             }, completionHandler: { _, error, _, _ in
@@ -212,10 +212,10 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString)?.andReturn(404)
         
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        manager.retrieveImageWithURL(URL, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
+        manager.retrieveImage(with: url, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
