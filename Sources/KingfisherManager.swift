@@ -127,8 +127,9 @@ public class KingfisherManager {
                 completionHandler: completionHandler,
                 options: optionsInfo)
         } else {
-            tryToRetrieveImageFromCacheForKey(resource.cacheKey,
-                withURL: resource.downloadURL,
+            tryToRetrieveImageFromCache(
+                forKey: resource.cacheKey,
+                with: resource.downloadURL,
                 retrieveImageTask: task,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
@@ -138,31 +139,6 @@ public class KingfisherManager {
         return task
     }
 
-    /**
-    Get an image with `URL.absoluteString` as the key.
-    If KingfisherOptions.None is used as `options`, Kingfisher will seek the image in memory and disk first.
-    If not found, it will download the image at URL and cache it with `URL.absoluteString` value as its key.
-    
-    If you need to specify the key other than `URL.absoluteString`, please use resource version of this API with `resource.cacheKey` set to what you want.
-    
-    These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
-    
-    - parameter URL:               The image URL.
-    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    - parameter progressBlock:     Called every time downloaded data changed. This could be used as a progress UI.
-    - parameter completionHandler: Called when the whole retrieving process finished.
-    
-    - returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
-    */
-    @discardableResult
-    public func retrieveImage(with url: URL,
-                             optionsInfo: KingfisherOptionsInfo?,
-                           progressBlock: DownloadProgressBlock?,
-                       completionHandler: CompletionHandler?) -> RetrieveImageTask
-    {
-        return retrieveImage(with: ImageResource(downloadURL: url), optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
-    }
-    
     @discardableResult
     func downloadAndCacheImage(with url: URL,
                              forKey key: String,
@@ -198,12 +174,12 @@ public class KingfisherManager {
             })
     }
     
-    func tryToRetrieveImageFromCacheForKey(_ key: String,
-                                   withURL URL: Foundation.URL,
-                             retrieveImageTask: RetrieveImageTask,
-                                 progressBlock: DownloadProgressBlock?,
-                             completionHandler: CompletionHandler?,
-                                       options: KingfisherOptionsInfo?)
+    func tryToRetrieveImageFromCache(forKey key: String,
+                                       with url: URL,
+                              retrieveImageTask: RetrieveImageTask,
+                                  progressBlock: DownloadProgressBlock?,
+                              completionHandler: CompletionHandler?,
+                                        options: KingfisherOptionsInfo?)
     {
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             // Break retain cycle created inside diskTask closure below
@@ -215,13 +191,13 @@ public class KingfisherManager {
         let diskTask = targetCache.retrieveImage(forKey: key, options: options,
             completionHandler: { image, cacheType in
                 if image != nil {
-                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: URL)
+                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: url)
                 } else if let options = options, options.onlyFromCache {
                     let error = NSError(domain: KingfisherErrorDomain, code: KingfisherError.notCached.rawValue, userInfo: nil)
-                    diskTaskCompletionHandler(image: nil, error: error, cacheType:.none, imageURL: URL)
+                    diskTaskCompletionHandler(image: nil, error: error, cacheType:.none, imageURL: url)
                 } else {
                     self.downloadAndCacheImage(
-                        with: URL,
+                        with: url,
                         forKey: key,
                         retrieveImageTask: retrieveImageTask,
                         progressBlock: progressBlock,
