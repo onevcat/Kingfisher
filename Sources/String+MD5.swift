@@ -23,8 +23,13 @@ import Foundation
 
 extension String {
     var kf_MD5: String {
-        if let data = data(using: String.Encoding.utf8) {
-            let MD5Calculator = MD5(Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>((data as NSData).bytes), count: data.count)))
+        if let data = data(using: .utf8) {
+            
+            let message = data.withUnsafeBytes { bytes -> [UInt8] in
+                return Array(UnsafeBufferPointer(start: bytes, count: data.count))
+            }
+            
+            let MD5Calculator = MD5(message)
             let MD5Data = MD5Calculator.calculate()
 
             let MD5String = NSMutableString()
@@ -120,7 +125,7 @@ func toUInt32Array(_ slice: ArraySlice<UInt8>) -> Array<UInt32> {
     return result
 }
 
-struct BytesGenerator: IteratorProtocol {
+struct BytesIterator: IteratorProtocol {
     
     let chunkSize: Int
     let data: [UInt8]
@@ -144,8 +149,8 @@ struct BytesSequence: Sequence {
     let chunkSize: Int
     let data: [UInt8]
     
-    func makeIterator() -> BytesGenerator {
-        return BytesGenerator(chunkSize: chunkSize, data: data)
+    func makeIterator() -> BytesIterator {
+        return BytesIterator(chunkSize: chunkSize, data: data)
     }
 }
 

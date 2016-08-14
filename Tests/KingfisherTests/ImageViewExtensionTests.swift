@@ -110,8 +110,8 @@ class ImageViewExtensionTests: XCTestCase {
         
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-        let URL = Foundation.URL(string: URLString)!
-        let resource = ImageResource(downloadURL: URL)
+        let url = URL(string: URLString)!
+        let resource = ImageResource(downloadURL: url)
         
         var progressBlockIsCalled = false
         
@@ -166,7 +166,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
-        let url = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
@@ -246,7 +246,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
-        let url = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
         var task1Completion = false
         var task2Completion = false

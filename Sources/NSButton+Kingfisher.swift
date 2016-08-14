@@ -58,7 +58,7 @@ extension NSButton {
         
         guard let resource = resource else {
             completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            return .emptyTask
         }
         
         kf_setWebURL(resource.downloadURL)
@@ -101,8 +101,8 @@ extension NSButton {
         return objc_getAssociatedObject(self, &lastURLKey) as? URL
     }
 
-    private func kf_setWebURL(_ URL: Foundation.URL) {
-        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private func kf_setWebURL(_ url: URL) {
+        objc_setAssociatedObject(self, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
     private var kf_imageTask: RetrieveImageTask? {
@@ -190,8 +190,8 @@ extension NSButton {
         return objc_getAssociatedObject(self, &lastAlternateURLKey) as? URL
     }
 
-    private func kf_setAlternateWebURL(_ URL: Foundation.URL) {
-        objc_setAssociatedObject(self, &lastAlternateURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private func kf_setAlternateWebURL(_ url: URL) {
+        objc_setAssociatedObject(self, &lastAlternateURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
     private var kf_alternateImageTask: RetrieveImageTask? {

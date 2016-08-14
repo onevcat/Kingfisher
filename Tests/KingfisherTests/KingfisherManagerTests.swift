@@ -189,7 +189,7 @@ class KingfisherManagerTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        let url = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         manager.retrieveImage(with: url, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in

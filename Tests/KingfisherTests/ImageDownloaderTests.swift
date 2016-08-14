@@ -262,12 +262,12 @@ class ImageDownloaderTests: XCTestCase {
         
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
-        let URL = Foundation.URL(string: URLString)!
+        let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
         
-        let downloadTask = downloader.downloadImage(with: URL, progressBlock: { (receivedSize, totalSize) -> () in
+        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
                 progressBlockIsCalled = true
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error)
