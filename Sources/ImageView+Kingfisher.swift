@@ -272,31 +272,31 @@ extension ImageView {
 extension IndicatorView {
     func kf_startAnimating() {
         #if os(macOS)
-            startAnimation(nil)
+        startAnimation(nil)
         #else
-            startAnimating()
+        startAnimating()
         #endif
         isHidden = false
     }
     
     func kf_stopAnimating() {
         #if os(macOS)
-            stopAnimation(nil)
+        stopAnimation(nil)
         #else
-            stopAnimating()
+        stopAnimating()
         #endif
         isHidden = true
     }
     
     #if os(macOS)
     var kf_center: CGPoint {
-    get {
-    return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
-    }
-    set {
-    let newFrame = CGRect(x: newValue.x - frame.size.width / 2.0, y: newValue.y - frame.size.height / 2.0, width: frame.size.width, height: frame.size.height)
-    frame = newFrame
-    }
+        get {
+            return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
+        }
+        set {
+            let newFrame = CGRect(x: newValue.x - frame.size.width / 2.0, y: newValue.y - frame.size.height / 2.0, width: frame.size.width, height: frame.size.height)
+            frame = newFrame
+        }
     }
     #else
     var kf_center: CGPoint {
