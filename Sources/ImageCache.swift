@@ -518,12 +518,12 @@ extension ImageCache {
      image is found either in memory or on disk. Essentially as long as there is a cache of the image somewhere
      true is returned. A convenience method that decodes `isImageCachedForKey`.
      
-     - parameter url: The image URL.
+     - parameter resource: The target resource. 
+       `cacheKey` property of this resource will be used to check whether this image be cached or not.
      
      - returns: True if the image is cached, false otherwise.
      */
-    public func cachedImageExists(for url: URL) -> Bool {
-        let resource = ImageResource(downloadURL: url)
+    public func cachedImageExists(for resource: Resource) -> Bool {
         let result = isImageCachedForKey(resource.cacheKey)
         return result.cached
     }

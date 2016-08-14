@@ -42,37 +42,7 @@ public typealias IndicatorView = UIActivityIndicatorView
 extension ImageView {
 
     /**
-     Set an image with a URL, a placeholder image, options, progress handler and completion handler.
-     
-     - parameter url:               The URL of image.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-     
-     - returns: A task represents the retrieving process.
-     
-     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     */
-    @discardableResult
-    public func kf_setImageWithURL(_ url: URL?,
-                                   placeholderImage: Image? = nil,
-                                   optionsInfo: KingfisherOptionsInfo? = nil,
-                                   progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
-    {
-        let resource = url.map { ImageResource(downloadURL: $0) }
-        return kf_setImageWithResource(resource,
-                                       placeholderImage: placeholderImage,
-                                       optionsInfo: optionsInfo,
-                                       progressBlock: progressBlock,
-                                       completionHandler: completionHandler)
-    }
-    
-    
-    /**
-    Set an image with a URL, a placeholder image, options, progress handler and completion handler.
+    Set an image with a resource, a placeholder image, options, progress handler and completion handler.
     
     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
@@ -86,11 +56,11 @@ extension ImageView {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
     */
     @discardableResult
-    public func kf_setImageWithResource(_ resource: Resource?,
-                                placeholderImage: Image? = nil,
-                                     optionsInfo: KingfisherOptionsInfo? = nil,
-                                   progressBlock: DownloadProgressBlock? = nil,
-                               completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+    public func kf_setImage(with resource: Resource?,
+                         placeholderImage: Image? = nil,
+                              optionsInfo: KingfisherOptionsInfo? = nil,
+                            progressBlock: DownloadProgressBlock? = nil,
+                        completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         image = placeholderImage
         
@@ -114,7 +84,7 @@ extension ImageView {
             options.append(.preloadAllGIFData)
         }
 
-        let task = KingfisherManager.shared.retrieveImageWithResource(resource, optionsInfo: options,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: options,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)

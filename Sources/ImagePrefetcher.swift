@@ -97,7 +97,7 @@ public class ImagePrefetcher {
                    progressBlock: PrefetcherProgressBlock? = nil,
                completionHandler: PrefetcherCompletionHandler? = nil)
     {
-        let resources: [Resource] = urls.map { ImageResource(downloadURL: $0) }
+        let resources: [Resource] = urls.map { $0 }
         self.init(resources: resources, optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     

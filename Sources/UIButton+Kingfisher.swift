@@ -94,7 +94,7 @@ extension UIButton {
         }
         
         kf_setWebURL(resource.downloadURL as URL, forState: state)
-        let task = KingfisherManager.shared.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
@@ -233,7 +233,7 @@ extension UIButton {
         }
         
         kf_setBackgroundWebURL(resource.downloadURL as URL, forState: state)
-        let task = KingfisherManager.shared.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)

@@ -60,3 +60,8 @@ public struct ImageResource: Resource {
         self.cacheKey = cacheKey ?? downloadURL.absoluteString
     }
 }
+
+extension URL: Resource {
+    public var cacheKey: String { return absoluteString }
+    public var downloadURL: URL { return self }
+}
