@@ -68,10 +68,12 @@ public enum KingfisherOptionsInfoItem {
     case preloadAllGIFData
 }
 
-infix operator <== {
-    associativity none
-    precedence 160
+precedencegroup ItemComparisonPrecedence {
+    associativity: none
+    higherThan: LogicalConjunctionPrecedence
 }
+
+infix operator <== : ItemComparisonPrecedence
 
 // This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
 func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {

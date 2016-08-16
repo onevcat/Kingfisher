@@ -57,7 +57,7 @@ extension NSButton {
         image = placeholderImage
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
+            completionHandler?(nil, nil, .none, nil)
             return .emptyTask
         }
         
@@ -65,7 +65,7 @@ extension NSButton {
         let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
              completionHandler: {[weak self] image, error, cacheType, imageURL in
@@ -80,7 +80,7 @@ extension NSButton {
                         sSelf.image = image
                     }
                     
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
 
@@ -101,15 +101,15 @@ extension NSButton {
         return objc_getAssociatedObject(self, &lastURLKey) as? URL
     }
 
-    private func kf_setWebURL(_ url: URL) {
+    fileprivate func kf_setWebURL(_ url: URL) {
         objc_setAssociatedObject(self, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
-    private var kf_imageTask: RetrieveImageTask? {
+    fileprivate var kf_imageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
     
-    private func kf_setImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func kf_setImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
@@ -143,7 +143,7 @@ extension NSButton {
         alternateImage = placeholderImage
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
+            completionHandler?(nil, nil, .none, nil)
             return .emptyTask
         }
         
@@ -151,7 +151,7 @@ extension NSButton {
         let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
              completionHandler: {[weak self] image, error, cacheType, imageURL in
@@ -163,12 +163,12 @@ extension NSButton {
                     sSelf.kf_setAlternateImageTask(nil)
                     
                     guard let image = image else {
-                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                        completionHandler?(nil, error, cacheType, imageURL)
                         return
                     }
                     
                     sSelf.alternateImage = image
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
@@ -190,15 +190,15 @@ extension NSButton {
         return objc_getAssociatedObject(self, &lastAlternateURLKey) as? URL
     }
 
-    private func kf_setAlternateWebURL(_ url: URL) {
+    fileprivate func kf_setAlternateWebURL(_ url: URL) {
         objc_setAssociatedObject(self, &lastAlternateURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
-    private var kf_alternateImageTask: RetrieveImageTask? {
+    fileprivate var kf_alternateImageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &alternateImageTaskKey) as? RetrieveImageTask
     }
 
-    private func kf_setAlternateImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func kf_setAlternateImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &alternateImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

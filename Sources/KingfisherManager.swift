@@ -30,8 +30,8 @@ import AppKit
 import UIKit
 #endif
 
-public typealias DownloadProgressBlock = ((receivedSize: Int64, totalSize: Int64) -> ())
-public typealias CompletionHandler = ((image: Image?, error: NSError?, cacheType: CacheType, imageURL: URL?) -> ())
+public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: Int64) -> ())
+public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> ())
 
 /// RetrieveImageTask represents a task of image retrieving process.
 /// It contains an async task of getting image from disk and from network.
@@ -150,7 +150,7 @@ public class KingfisherManager {
         let downloader = options?.downloader ?? self.downloader
         return downloader.downloadImage(with: url, retrieveImageTask: retrieveImageTask, options: options,
             progressBlock: { receivedSize, totalSize in
-                progressBlock?(receivedSize: receivedSize, totalSize: totalSize)
+                progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { image, error, imageURL, originalData in
 
@@ -159,8 +159,7 @@ public class KingfisherManager {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
                     targetCache.retrieveImage(forKey: key, options: options, completionHandler: { (cacheImage, cacheType) -> () in
-                        completionHandler?(image: cacheImage, error: nil, cacheType: cacheType, imageURL: url)
-                        
+                        completionHandler?(cacheImage, nil, cacheType, url)
                     })
                     return
                 }
@@ -169,7 +168,7 @@ public class KingfisherManager {
                     targetCache.storeImage(image, originalData: originalData, forKey: key, toDisk: !(options?.cacheMemoryOnly ?? false), completionHandler: nil)
                 }
 
-                completionHandler?(image: image, error: error, cacheType: .none, imageURL: url)
+                completionHandler?(image, error, .none, url)
 
             })
     }
@@ -184,17 +183,17 @@ public class KingfisherManager {
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             // Break retain cycle created inside diskTask closure below
             retrieveImageTask.diskRetrieveTask = nil
-            completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+            completionHandler?(image, error, cacheType, imageURL)
         }
         
         let targetCache = options?.targetCache ?? cache
         let diskTask = targetCache.retrieveImage(forKey: key, options: options,
             completionHandler: { image, cacheType in
                 if image != nil {
-                    diskTaskCompletionHandler(image: image, error: nil, cacheType:cacheType, imageURL: url)
+                    diskTaskCompletionHandler(image, nil, cacheType, url)
                 } else if let options = options, options.onlyFromCache {
                     let error = NSError(domain: KingfisherErrorDomain, code: KingfisherError.notCached.rawValue, userInfo: nil)
-                    diskTaskCompletionHandler(image: nil, error: error, cacheType:.none, imageURL: url)
+                    diskTaskCompletionHandler(nil, error, .none, url)
                 } else {
                     self.downloadAndCacheImage(
                         with: url,

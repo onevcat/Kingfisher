@@ -37,7 +37,8 @@ class InterfaceController: WKInterfaceController {
     
     var currentIndex: Int?
     
-    override func awake(withContext context: AnyObject?) {
+    
+    override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
         currentIndex = count

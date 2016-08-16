@@ -51,8 +51,9 @@ class ImageExtensionTests: XCTestCase {
         format = testImageGIFData.kf_imageFormat
         XCTAssertEqual(format, ImageFormat.GIF)
         
-        let raw = [1, 2, 3, 4, 5, 6, 7, 8]
-        format = Data(bytes: UnsafePointer<UInt8>(raw), count: 8) .kf_imageFormat
+        let raw: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8]
+        
+        format = Data(bytes: raw) .kf_imageFormat
         XCTAssertEqual(format, ImageFormat.unknown)
     }
     

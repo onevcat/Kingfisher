@@ -196,17 +196,17 @@ struct AnimatedFrame {
 // MARK: - Animator
 class Animator {
     // MARK: Private property
-    private let size: CGSize
-    private let maxFrameCount: Int
-    private let imageSource: CGImageSource
+    fileprivate let size: CGSize
+    fileprivate let maxFrameCount: Int
+    fileprivate let imageSource: CGImageSource
     
-    private var animatedFrames = [AnimatedFrame]()
-    private let maxTimeStep: TimeInterval = 1.0
-    private var frameCount = 0
-    private var currentFrameIndex = 0
-    private var currentPreloadIndex = 0
-    private var timeSinceLastFrameChange: TimeInterval = 0.0
-    private var needsPrescaling = true
+    fileprivate var animatedFrames = [AnimatedFrame]()
+    fileprivate let maxTimeStep: TimeInterval = 1.0
+    fileprivate var frameCount = 0
+    fileprivate var currentFrameIndex = 0
+    fileprivate var currentPreloadIndex = 0
+    fileprivate var timeSinceLastFrameChange: TimeInterval = 0.0
+    fileprivate var needsPrescaling = true
     
     /// Loop count of animatd image.
     private var loopCount = 0
@@ -263,7 +263,7 @@ class Animator {
             
             let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as Double?
             let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as Double?
-            let duration = unclampedDelayTime ?? delayTime
+            let duration = unclampedDelayTime ?? delayTime ?? 0.0
             
             /**
              http://opensource.apple.com/source/WebCore/WebCore-7600.1.25/platform/graphics/cg/ImageSourceCG.cpp
@@ -358,7 +358,7 @@ extension CGSize {
 extension CGImageSource {
     func kf_GIFProperties(at index: Int) -> [String: Double]? {
         let properties = CGImageSourceCopyPropertiesAtIndex(self, index, nil) as Dictionary?
-        return properties?[kCGImagePropertyGIFDictionary as String] as? [String: Double]
+        return properties?[kCGImagePropertyGIFDictionary] as? [String: Double]
     }
 }
 

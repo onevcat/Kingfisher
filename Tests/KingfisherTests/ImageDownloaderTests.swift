@@ -29,7 +29,7 @@ import XCTest
 @testable import Kingfisher
 
 class ImageDownloaderTests: XCTestCase {
-    
+
     var downloader: ImageDownloader!
 
     override class func setUp() {

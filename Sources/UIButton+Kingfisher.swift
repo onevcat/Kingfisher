@@ -56,7 +56,7 @@ extension UIButton {
         setImage(placeholderImage, for: state)
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
+            completionHandler?(nil, nil, .none, nil)
             return .emptyTask
         }
         
@@ -64,7 +64,7 @@ extension UIButton {
         let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
@@ -79,7 +79,7 @@ extension UIButton {
                         sSelf.setImage(image, for: state)
                     }
                     
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
@@ -104,11 +104,11 @@ extension UIButton {
         return kf_webURLs[NSNumber(value:state.rawValue)] as? URL
     }
     
-    private func kf_setWebURL(_ url: URL, for state: UIControlState) {
+    fileprivate func kf_setWebURL(_ url: URL, for state: UIControlState) {
         kf_webURLs[NSNumber(value:state.rawValue)] = url
     }
     
-    private var kf_webURLs: NSMutableDictionary {
+    fileprivate var kf_webURLs: NSMutableDictionary {
         var dictionary = objc_getAssociatedObject(self, &lastURLKey) as? NSMutableDictionary
         if dictionary == nil {
             dictionary = NSMutableDictionary()
@@ -117,15 +117,15 @@ extension UIButton {
         return dictionary!
     }
     
-    private func kf_setWebURLs(_ URLs: NSMutableDictionary) {
+    fileprivate func kf_setWebURLs(_ URLs: NSMutableDictionary) {
         objc_setAssociatedObject(self, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    private var kf_imageTask: RetrieveImageTask? {
+    fileprivate var kf_imageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
     
-    private func kf_setImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func kf_setImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
@@ -161,7 +161,7 @@ extension UIButton {
         setBackgroundImage(placeholderImage, for: state)
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
+            completionHandler?(nil, nil, .none, nil)
             return .emptyTask
         }
         
@@ -169,7 +169,7 @@ extension UIButton {
         let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
             completionHandler: { [weak self] image, error, cacheType, imageURL in
@@ -183,7 +183,7 @@ extension UIButton {
                     if image != nil {
                         sSelf.setBackgroundImage(image, for: state)
                     }
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
@@ -208,11 +208,11 @@ extension UIButton {
         return kf_backgroundWebURLs[NSNumber(value:state.rawValue)] as? URL
     }
     
-    private func kf_setBackgroundWebURL(_ url: URL, for state: UIControlState) {
+    fileprivate func kf_setBackgroundWebURL(_ url: URL, for state: UIControlState) {
         kf_backgroundWebURLs[NSNumber(value:state.rawValue)] = url
     }
     
-    private var kf_backgroundWebURLs: NSMutableDictionary {
+    fileprivate var kf_backgroundWebURLs: NSMutableDictionary {
         var dictionary = objc_getAssociatedObject(self, &lastBackgroundURLKey) as? NSMutableDictionary
         if dictionary == nil {
             dictionary = NSMutableDictionary()
@@ -221,15 +221,15 @@ extension UIButton {
         return dictionary!
     }
     
-    private func kf_setBackgroundWebURLs(_ URLs: NSMutableDictionary) {
+    fileprivate func kf_setBackgroundWebURLs(_ URLs: NSMutableDictionary) {
         objc_setAssociatedObject(self, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    private var kf_backgroundImageTask: RetrieveImageTask? {
+    fileprivate var kf_backgroundImageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &backgroundImageTaskKey) as? RetrieveImageTask
     }
     
-    private func kf_setBackgroundImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func kf_setBackgroundImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &backgroundImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

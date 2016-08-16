@@ -74,7 +74,7 @@ public enum CacheType {
 public class ImageCache {
 
     //Memory
-    private let memoryCache = NSCache<NSString, AnyObject>()
+    fileprivate let memoryCache = NSCache<NSString, AnyObject>()
     
     /// The largest cache cost of memory cache. The total cost is pixel count of all cached images in memory.
     public var maxMemoryCost: UInt = 0 {
@@ -84,8 +84,8 @@ public class ImageCache {
     }
     
     //Disk
-    private let ioQueue: DispatchQueue
-    private var fileManager: FileManager!
+    fileprivate let ioQueue: DispatchQueue
+    fileprivate var fileManager: FileManager!
     
     ///The disk cache location.
     public let diskCachePath: String
@@ -96,7 +96,7 @@ public class ImageCache {
     /// The largest disk size can be taken for the cache. It is the total allocated size of cached files in bytes. Default is 0, which means no limit.
     public var maxDiskCacheSize: UInt = 0
     
-    private let processQueue: DispatchQueue
+    fileprivate let processQueue: DispatchQueue
     
     /// The default cache.
     public class var `default`: ImageCache {
@@ -156,7 +156,7 @@ extension ImageCache {
     - parameter completionHandler: Called when store operation completes.
     */
     public func storeImage(_ image: Image, originalData: Data? = nil, forKey key: String, toDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
-        memoryCache.setObject(image, forKey: key, cost: image.kf_imageCost)
+        memoryCache.setObject(image, forKey: key as NSString, cost: image.kf_imageCost)
         
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
@@ -203,7 +203,7 @@ extension ImageCache {
     - parameter completionHandler: Called when removal operation completes.
     */
     public func removeImage(forKey key: String, fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
-        memoryCache.removeObject(forKey: key)
+        memoryCache.removeObject(forKey: key as NSString)
         
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
@@ -296,7 +296,7 @@ extension ImageCache {
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
     public func retrieveImageInMemoryCache(forKey key: String) -> Image? {
-        return memoryCache.object(forKey: key) as? Image
+        return memoryCache.object(forKey: key as NSString) as? Image
     }
     
     /**
@@ -354,7 +354,7 @@ extension ImageCache {
     /**
     Clean expired disk cache. This is an async operation.
     */
-    @objc private func cleanExpiredDiskCache_() {
+    @objc fileprivate func cleanExpiredDiskCache_() {
         cleanExpiredDiskCache(with: nil)
     }
     
@@ -429,7 +429,7 @@ extension ImageCache {
         })
     }
     
-    private func travelCachedFiles(onlyForCacheSize: Bool) -> (URLsToDelete: [URL], diskCacheSize: UInt, cachedFiles: [URL: URLResourceValues]) {
+    fileprivate func travelCachedFiles(onlyForCacheSize: Bool) -> (URLsToDelete: [URL], diskCacheSize: UInt, cachedFiles: [URL: URLResourceValues]) {
         
         let diskCacheURL = URL(fileURLWithPath: diskCachePath)
         let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentModificationDateKey, .totalFileAllocatedSizeKey]
@@ -537,7 +537,7 @@ extension ImageCache {
     */
     public func isImageCachedForKey(_ key: String) -> CacheCheckResult {
         
-        if memoryCache.object(forKey: key) != nil {
+        if memoryCache.object(forKey: key as NSString) != nil {
             return CacheCheckResult(cached: true, cacheType: .memory)
         }
         
@@ -572,11 +572,11 @@ extension ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    public func calculateDiskCacheSizeWithCompletionHandler(_ completionHandler: ((size: UInt) -> ())) {
+    public func calculateDiskCacheSizeWithCompletionHandler(_ completionHandler: ((_ size: UInt) -> ())) {
         ioQueue.async(execute: { () -> Void in
             let (_, diskCacheSize, _) = self.travelCachedFiles(onlyForCacheSize: true)
             DispatchQueue.main.async(execute: { () -> Void in
-                completionHandler(size: diskCacheSize)
+                completionHandler(diskCacheSize)
             })
         })
     }

@@ -76,7 +76,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for clearing disk cache")
         let key = testKeys[0]
         
-        cache.storeImage(testImage, originalData: testImageData, forKey: key, toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: key, toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
             let cacheResult = self.cache.isImageCachedForKey(key)
             XCTAssertTrue(cacheResult.cached, "Should be cached")
@@ -94,7 +94,7 @@ class ImageCacheTests: XCTestCase {
     func testClearMemoryCache() {
         let expectation = self.expectation(description: "wait for retrieving image")
         
-        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
             self.cache.retrieveImage(forKey: testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .disk, "Should be cached in disk. But \(type)")
@@ -139,7 +139,7 @@ class ImageCacheTests: XCTestCase {
         
         storeMultipleImages { () -> () in
             let diskCachePath = self.cache.diskCachePath
-            let files: [AnyObject]?
+            let files: [String]?
             do {
                 files = try FileManager.default.contentsOfDirectory(atPath: diskCachePath)
             } catch _ {
@@ -218,7 +218,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for caching image")
         
         XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
-        self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
+        self.cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
             XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
             expectation.fulfill()
         }
@@ -229,7 +229,7 @@ class ImageCacheTests: XCTestCase {
     func testRetrievingImagePerformance() {
 
         let expectation = self.expectation(description: "wait for retrieving image")
-        self.cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
+        self.cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measure({ () -> Void in
                 for _ in 1 ..< 200 {
                     _ = self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
@@ -244,11 +244,13 @@ class ImageCacheTests: XCTestCase {
     func testCleanDiskCacheNotification() {
         let expectation = self.expectation(description: "wait for retrieving image")
         
-        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
 
             self.observer = NotificationCenter.default.addObserver(forName: .KingfisherDidCleanDiskCache, object: self.cache, queue: OperationQueue.main, using: { (noti) -> Void in
 
-                XCTAssert(noti.object === self.cache, "The object of notification should be the cache object.")
+                let receivedCache = noti.object as? ImageCache
+                XCTAssertNotNil(receivedCache)
+                XCTAssert(receivedCache === self.cache, "The object of notification should be the cache object.")
                 
                 guard let hashes = (noti as NSNotification).userInfo?[KingfisherDiskCacheCleanedHashKey] as? [String] else {
                     XCTFail("The clean disk cache notification should contains Strings in key 'KingfisherDiskCacheCleanedHashKey'")
@@ -271,24 +273,24 @@ class ImageCacheTests: XCTestCase {
     }
 
     // MARK: - Helper
-    func storeMultipleImages(_ completionHandler:()->()) {
+    func storeMultipleImages(_ completionHandler:@escaping ()->()) {
         
         let group = DispatchGroup()
         
         group.enter()
-        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
             group.leave()
         }
         group.enter()
-        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[1], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[1], toDisk: true) { () -> () in
             group.leave()
         }
         group.enter()
-        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[2], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[2], toDisk: true) { () -> () in
             group.leave()
         }
         group.enter()
-        cache.storeImage(testImage, originalData: testImageData, forKey: testKeys[3], toDisk: true) { () -> () in
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[3], toDisk: true) { () -> () in
             group.leave()
         }
         

@@ -53,7 +53,7 @@ extension Image {
         return 1.0
     }
     
-    private(set) var kf_images: [Image]? {
+    fileprivate(set) var kf_images: [Image]? {
         get {
             return objc_getAssociatedObject(self, &imagesKey) as? [Image]
         }
@@ -62,7 +62,7 @@ extension Image {
         }
     }
     
-    private(set) var kf_duration: TimeInterval {
+    fileprivate(set) var kf_duration: TimeInterval {
         get {
             return objc_getAssociatedObject(self, &durationKey) as? TimeInterval ?? 0.0
         }
@@ -84,7 +84,7 @@ extension Image {
         return duration
     }
     
-    private(set) var kf_imageSource: ImageSource? {
+    fileprivate(set) var kf_imageSource: ImageSource? {
             get {
                 return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
             }
@@ -93,7 +93,7 @@ extension Image {
             }
         }
         
-    private(set) var kf_animatedImageData: Data? {
+    fileprivate(set) var kf_animatedImageData: Data? {
             get {
                 return objc_getAssociatedObject(self, &animatedImageDataKey) as? Data
             }
@@ -209,10 +209,10 @@ extension Image {
         guard let destination = CGImageDestinationCreateWithData(data, kUTTypeGIF, frameCount, nil) else {
             return nil
         }
-        CGImageDestinationSetProperties(destination, imageProperties)
+        CGImageDestinationSetProperties(destination, imageProperties as CFDictionary)
         
         for image in images {
-            CGImageDestinationAddImage(destination, image.cgImage!, frameProperties)
+            CGImageDestinationAddImage(destination, image.cgImage!, frameProperties as CFDictionary)
         }
         
         return CGImageDestinationFinalize(destination) ? data.copy() as? Data : nil
@@ -271,7 +271,7 @@ extension Image {
         
         // Start of kf_animatedImageWithGIFData
         let options: NSDictionary = [kCGImageSourceShouldCache as String: true, kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
-        guard let imageSource = CGImageSourceCreateWithData(data, options) else {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, options) else {
             return nil
         }
         
@@ -353,7 +353,7 @@ extension Image {
         let context = CGContext(data: nil, width: (imageRef?.width)!, height: (imageRef?.height)!, bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo)
         if let context = context {
             let rect = CGRect(x: 0, y: 0, width: (imageRef?.width)!, height: (imageRef?.height)!)
-            context.draw(in: rect, image: imageRef!)
+            context.draw(imageRef!, in: rect)
             let decompressedImageRef = context.makeImage()
             return Image.kf_image(cgImage: decompressedImageRef!, scale: scale, refImage: self)
         } else {

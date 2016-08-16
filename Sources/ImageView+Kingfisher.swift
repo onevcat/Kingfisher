@@ -65,7 +65,7 @@ extension ImageView {
         image = placeholderImage
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .none, imageURL: nil)
+            completionHandler?(nil, nil, .none, nil)
             return .emptyTask
         }
         
@@ -87,7 +87,7 @@ extension ImageView {
         let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: options,
             progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
             completionHandler: {[weak self] image, error, cacheType, imageURL in
@@ -101,7 +101,7 @@ extension ImageView {
                     
                     guard let image = image else {
                         indicator?.kf_stopAnimating()
-                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                        completionHandler?(nil, error, cacheType, imageURL)
                         return
                     }
                     
@@ -110,7 +110,7 @@ extension ImageView {
                     {
                         indicator?.kf_stopAnimating()
                         sSelf.image = image
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                        completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
                     
@@ -126,7 +126,7 @@ extension ImageView {
                                 },
                                 completion: { finished in
                                     transition.completion?(finished)
-                                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                                    completionHandler?(image, error, cacheType, imageURL)
                                 }
                             )
                     })
@@ -168,7 +168,7 @@ extension ImageView {
         return objc_getAssociatedObject(self, &lastURLKey) as? URL
     }
     
-    private func kf_setWebURL(_ url: URL) {
+    fileprivate func kf_setWebURL(_ url: URL) {
         objc_setAssociatedObject(self, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
@@ -225,15 +225,15 @@ extension ImageView {
         return objc_getAssociatedObject(self, &indicatorKey) as? IndicatorView
     }
     
-    private func kf_setIndicator(_ indicator: IndicatorView?) {
+    fileprivate func kf_setIndicator(_ indicator: IndicatorView?) {
         objc_setAssociatedObject(self, &indicatorKey, indicator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    private var kf_imageTask: RetrieveImageTask? {
+    fileprivate var kf_imageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
     
-    private func kf_setImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func kf_setImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

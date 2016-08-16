@@ -58,6 +58,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let expectation = self.expectation(description: "wait for downloading image")
         let URLString = testKeys[0]
+        
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         let url = URL(string: URLString)!
@@ -109,7 +110,7 @@ class KingfisherManagerTests: XCTestCase {
             
             LSNocilla.sharedInstance().stop()
             LSNocilla.sharedInstance().start()
-            _ = stubRequest("GET", URLString).andReturn(304)?.withBody("12345")
+            _ = stubRequest("GET", URLString).andReturn(304)?.withBody("12345" as NSString)
             
             var progressCalled = false
             
@@ -169,7 +170,7 @@ class KingfisherManagerTests: XCTestCase {
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
         let expectation = self.expectation(description: "running on main queue")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString)?.andReturn(404)
+        _ = stubRequest("GET", URLString).andReturn(404)
         
         let url = URL(string: URLString)!
         
@@ -210,7 +211,7 @@ class KingfisherManagerTests: XCTestCase {
     func testErrorCompletionHandlerRunningOnCustomQueue() {
         let expectation = self.expectation(description: "running on custom queue")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString)?.andReturn(404)
+        _ = stubRequest("GET", URLString).andReturn(404)
         
         let url = URL(string: URLString)!
         
