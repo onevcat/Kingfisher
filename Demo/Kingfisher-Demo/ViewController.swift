@@ -41,8 +41,8 @@ class ViewController: UICollectionViewController {
     }
 
     @IBAction func clearCache(sender: AnyObject) {
-        KingfisherManager.sharedManager.cache.clearMemoryCache()
-        KingfisherManager.sharedManager.cache.clearDiskCache()
+        KingfisherManager.shared.cache.clearMemoryCache()
+        KingfisherManager.shared.cache.clearDiskCache()
     }
     
     @IBAction func reload(sender: AnyObject) {
@@ -67,8 +67,7 @@ extension ViewController {
         
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
-        
-        _ = cell.cellImageView.kf_setImageWithURL(url, placeholderImage: nil,
+        _ = cell.cellImageView.kf_setImage(with: url, placeholderImage: nil,
                                                         optionsInfo: [.transition(ImageTransition.fade(1))],
                                                       progressBlock: { receivedSize, totalSize in
                                                           print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
