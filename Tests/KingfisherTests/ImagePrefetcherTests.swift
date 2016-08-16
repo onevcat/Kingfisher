@@ -62,7 +62,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         var urls = [URL]()
         for URLString in testKeys {
-            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
             urls.append(URL(string: URLString)!)
         }
         
@@ -91,7 +91,7 @@ class ImagePrefetcherTests: XCTestCase {
         var urls = [URL]()
         var responses = [LSStubResponseDSL!]()
         for URLString in testKeys {
-            let response = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+            let response = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
             responses.append(response)
             urls.append(URL(string: URLString)!)
         }
@@ -127,7 +127,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         var urls = [URL]()
         for URLString in testKeys {
-            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
             urls.append(URL(string: URLString)!)
         }
         
@@ -155,7 +155,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         var urls = [URL]()
         for URLString in testKeys {
-            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
             urls.append(URL(string: URLString)!)
         }
         

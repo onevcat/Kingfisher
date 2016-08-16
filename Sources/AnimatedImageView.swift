@@ -206,7 +206,7 @@ class Animator {
     private var currentFrameIndex = 0
     private var currentPreloadIndex = 0
     private var timeSinceLastFrameChange: TimeInterval = 0.0
-    private var needsPrescaling = true
+    fileprivate var needsPrescaling = true
     
     /// Loop count of animatd image.
     private var loopCount = 0
@@ -274,7 +274,11 @@ class Animator {
              
              See also: http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser.
              */
-            return duration > 0.011 ? duration : 0.100
+            if let duration = duration {
+                return duration > 0.011 ? duration : 0.100
+            } else {
+                return nil
+            }
         }
         
         let image = Image(cgImage: imageRef)
@@ -358,7 +362,7 @@ extension CGSize {
 extension CGImageSource {
     func kf_GIFProperties(at index: Int) -> [String: Double]? {
         let properties = CGImageSourceCopyPropertiesAtIndex(self, index, nil) as Dictionary?
-        return properties?[kCGImagePropertyGIFDictionary as String] as? [String: Double]
+        return properties?[kCGImagePropertyGIFDictionary] as? [String: Double]
     }
 }
 

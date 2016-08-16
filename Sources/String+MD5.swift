@@ -46,15 +46,16 @@ extension String {
 
 /** array of bytes, little-endian representation */
 func arrayOfBytes<T>(_ value: T, length: Int? = nil) -> [UInt8] {
-    let totalBytes = length ?? (sizeofValue(value) * 8)
-    
+    let totalBytes = length ?? (MemoryLayout<T>.size * 8)
+
     let valuePointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
     valuePointer.pointee = value
-    
-    let bytesPointer = UnsafeMutablePointer<UInt8>(valuePointer)
-    var bytes = [UInt8](repeating: 0, count: totalBytes)
-    for j in 0..<min(sizeof(T.self), totalBytes) {
-        bytes[totalBytes - 1 - j] = (bytesPointer + j).pointee
+
+    let bytesPointer = UnsafeMutableRawPointer(valuePointer)
+    var bytes = Array<UInt8>(repeating: 0, count: totalBytes)
+
+    for j in 0..<min(MemoryLayout<T>.size, totalBytes) {
+        bytes[totalBytes - 1 - j] = bytesPointer.load(fromByteOffset: j, as: UInt8.self)
     }
     
     valuePointer.deinitialize()
@@ -65,7 +66,7 @@ func arrayOfBytes<T>(_ value: T, length: Int? = nil) -> [UInt8] {
 
 extension Int {
     /** Array of bytes with optional padding (little-endian) */
-    func bytes(_ totalBytes: Int = sizeof(Int.self)) -> [UInt8] {
+    func bytes(_ totalBytes: Int = MemoryLayout<Int>.size) -> [UInt8] {
         return arrayOfBytes(self, length: totalBytes)
     }
     
@@ -113,7 +114,7 @@ func toUInt32Array(_ slice: ArraySlice<UInt8>) -> Array<UInt32> {
     var result = Array<UInt32>()
     result.reserveCapacity(16)
     
-    for idx in stride(from: slice.startIndex, to: slice.endIndex, by: sizeof(UInt32.self)) {
+    for idx in stride(from: slice.startIndex, to: slice.endIndex, by: MemoryLayout<UInt32>.size) {
         let d0 = UInt32(slice[idx.advanced(by: 3)]) << 24
         let d1 = UInt32(slice[idx.advanced(by: 2)]) << 16
         let d2 = UInt32(slice[idx.advanced(by: 1)]) << 8

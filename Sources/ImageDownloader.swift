@@ -34,7 +34,7 @@ import UIKit
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 
 /// Completion block of downloader.
-public typealias ImageDownloaderCompletionHandler = ((image: Image?, error: NSError?, url: URL?, originalData: Data?) -> ())
+public typealias ImageDownloaderCompletionHandler = ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> ())
 
 /// Download task.
 public struct RetrieveImageDownloadTask {
@@ -191,8 +191,8 @@ public class ImageDownloader: NSObject {
     /// Whether the download requests should use pipeling or not. Default is false.
     public var requestsUsePipeling = false
     
-    private let sessionHandler: ImageDownloaderSessionHandler
-    private var session: URLSession?
+    fileprivate let sessionHandler: ImageDownloaderSessionHandler
+    fileprivate var session: URLSession?
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
     public weak var delegate: ImageDownloaderDelegate?
@@ -308,7 +308,7 @@ extension ImageDownloader {
         
         // There is a possiblility that request modifier changed the url to `nil` or empty.
         guard let url = request.url, !url.absoluteString.isEmpty else {
-            completionHandler?(image: nil, error: NSError(domain: KingfisherErrorDomain, code: KingfisherError.invalidURL.rawValue, userInfo: nil), url: nil, originalData: nil)
+            completionHandler?(nil, NSError(domain: KingfisherErrorDomain, code: KingfisherError.invalidURL.rawValue, userInfo: nil), nil, nil)
             return nil
         }
         
@@ -324,7 +324,7 @@ extension ImageDownloader {
                 dataTask.resume()
                 
                 // Hold self while the task is executing.
-                sessionHandler.downloadHolder = self
+                self.sessionHandler.downloadHolder = self
             }
             
             fetchLoad.downloadTaskCount += 1
@@ -336,7 +336,7 @@ extension ImageDownloader {
     }
     
     // A single key may have multiple callbacks. Only download once.
-    func setup(progressBlock: ImageDownloaderProgressBlock?, with completionHandler: ImageDownloaderCompletionHandler?, for url: URL, started: (@noescape (URLSession, ImageFetchLoad) -> Void)) {
+    func setup(progressBlock: ImageDownloaderProgressBlock?, with completionHandler: ImageDownloaderCompletionHandler?, for url: URL, started: ( (URLSession, ImageFetchLoad) -> Void)) {
 
         barrierQueue.sync(flags: .barrier) {
             let loadObjectForURL = fetchLoads[url] ?? ImageFetchLoad()
@@ -382,8 +382,8 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
     // The holder will keep downloader not released while a data task is being executed.
     // It will be set when the task started, and reset when the task finished.
     var downloadHolder: ImageDownloader?
-    
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         
         if let statusCode = (response as? HTTPURLResponse)?.statusCode,
                   let url = dataTask.originalRequest?.url, !isValidStatusCode(code: statusCode)
@@ -405,7 +405,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             
             for callbackPair in fetchLoad.callbacks {
                 DispatchQueue.main.async(execute: { () -> Void in
-                    callbackPair.progressBlock?(receivedSize: Int64(fetchLoad.responseData.length), totalSize: dataTask.response!.expectedContentLength)
+                    callbackPair.progressBlock?(Int64(fetchLoad.responseData.length), dataTask.response!.expectedContentLength)
                 })
             }
         }
@@ -415,7 +415,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         
         if let url = task.originalRequest?.url {
             if let error = error { // Error happened
-                callback(with: nil, error: error, url: url, originalData: nil)
+                callback(with: nil, error: error as NSError?, url: url, originalData: nil)
             } else { //Download finished without error
                 processImage(for: task, url: url)
             }
@@ -446,7 +446,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             
             for callbackPair in callbackPairs {
                 options.callbackDispatchQueue.safeAsync {
-                    callbackPair.completionHander?(image: image, error: error, url: url, originalData: originalData)
+                    callbackPair.completionHander?(image, error, url, originalData)
                 }
             }
             

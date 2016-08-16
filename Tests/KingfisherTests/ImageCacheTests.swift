@@ -31,7 +31,7 @@ class ImageCacheTests: XCTestCase {
 
     var cache: ImageCache!
     var observer: NSObjectProtocol!
-    private var cacheName = "com.onevcat.Kingfisher.ImageCache.test"
+    fileprivate var cacheName = "com.onevcat.Kingfisher.ImageCache.test"
     
     override func setUp() {
         super.setUp()
@@ -271,7 +271,7 @@ class ImageCacheTests: XCTestCase {
     }
 
     // MARK: - Helper
-    func storeMultipleImages(_ completionHandler:()->()) {
+    func storeMultipleImages(_ completionHandler:@escaping ()->()) {
         
         let group = DispatchGroup()
         

@@ -59,7 +59,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
 
         let url = URL(string: URLString)!
         downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -80,7 +80,7 @@ class ImageDownloaderTests: XCTestCase {
         for URLString in testKeys {
             if let url = URL(string: URLString) {
                 group.enter()
-                _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+                _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
                 downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     
                 }, completionHandler: { (image, error, imageURL, data) -> () in
@@ -102,7 +102,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let group = DispatchGroup()
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
 
         for _ in 0...5 {
             group.enter()
@@ -126,7 +126,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         
         downloader.requestModifier = {
             request in
@@ -148,7 +148,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for server response 304")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(304)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(304)
         
         downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
@@ -164,7 +164,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for response which has invalid status code")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(404)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(404)?.withBody(testImageData)
         
         downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
@@ -206,7 +206,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading error")
         
         let URLString = testKeys[0]
-        stubRequest("GET", URLString).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
+        stubRequest("GET", URLString as LSMatcheable!).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
         let url = URL(string: URLString)!
         
         downloader.downloadImage(with: url, progressBlock: nil) { (image, error, imageURL, data) -> () in
@@ -261,7 +261,7 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false

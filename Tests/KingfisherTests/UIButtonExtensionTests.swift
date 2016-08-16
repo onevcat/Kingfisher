@@ -64,7 +64,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -90,7 +90,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = Foundation.URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -114,7 +114,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
 
         button.kf_setImage(with: url, for: UIControlState.highlighted, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -137,7 +137,7 @@ class UIButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         button.kf_setBackgroundImage(with: url, for: UIControlState(), placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in

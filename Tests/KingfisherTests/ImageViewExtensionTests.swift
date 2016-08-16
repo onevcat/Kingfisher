@@ -63,7 +63,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -91,7 +91,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
@@ -109,7 +109,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         let resource = ImageResource(downloadURL: url)
         
@@ -138,7 +138,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
 
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -165,7 +165,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
@@ -199,7 +199,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         var task1Completion = false
@@ -245,7 +245,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         var task1Completion = false
@@ -292,7 +292,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         var task1Completion = false
@@ -351,7 +351,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
         imageView.kf_setImage(with: url, placeholderImage: nil, optionsInfo: [.targetCache(cache1)], progressBlock: { (receivedSize, totalSize) -> () in
@@ -396,7 +396,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
         imageView.kf_setImage(with: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -418,7 +418,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let stub = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
         imageView.kf_setImage(with: url, placeholderImage: nil, optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -442,8 +442,8 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let URLStrings = [testKeys[0], testKeys[1]]
-        _ = stubRequest("GET", URLStrings[0]).andReturn(200)?.withBody(testImageData)
-        _ = stubRequest("GET", URLStrings[1]).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLStrings[0] as LSMatcheable!).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLStrings[1] as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         let URLs = URLStrings.map{URL(string: $0)!}
         
         var task1Complete = false

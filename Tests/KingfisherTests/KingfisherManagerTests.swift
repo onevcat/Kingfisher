@@ -58,7 +58,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let expectation = self.expectation(description: "wait for downloading image")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         
         let url = URL(string: URLString)!
 
@@ -96,7 +96,7 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveImageNotModified() {
         let expectation = self.expectation(description: "wait for downloading image")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         
         let url = URL(string: URLString)!
         
@@ -134,7 +134,7 @@ class KingfisherManagerTests: XCTestCase {
         let progressExpectation = expectation(description: "progressBlock running on main queue")
         let completionExpectation = expectation(description: "completionHandler running on main queue")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         
         let url = URL(string: URLString)!
         
@@ -153,7 +153,7 @@ class KingfisherManagerTests: XCTestCase {
         cleanDefaultCache()
         let expectation = self.expectation(description: "wait for retrieving image cache")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
 
         let url = URL(string: URLString)!
 
@@ -169,7 +169,7 @@ class KingfisherManagerTests: XCTestCase {
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
         let expectation = self.expectation(description: "running on main queue")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString)?.andReturn(404)
+        _ = stubRequest("GET", URLString as LSMatcheable!)?.andReturn(404)
         
         let url = URL(string: URLString)!
         
@@ -187,7 +187,7 @@ class KingfisherManagerTests: XCTestCase {
         let progressExpectation = expectation(description: "progressBlock running on custom queue")
         let completionExpectation = expectation(description: "completionHandler running on custom queue")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        _ = stubRequest("GET", URLString as LSMatcheable!).andReturn(200)?.withBody(testImageData)
         
         let url = URL(string: URLString)!
         
@@ -210,7 +210,7 @@ class KingfisherManagerTests: XCTestCase {
     func testErrorCompletionHandlerRunningOnCustomQueue() {
         let expectation = self.expectation(description: "running on custom queue")
         let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString)?.andReturn(404)
+        _ = stubRequest("GET", URLString as LSMatcheable!)?.andReturn(404)
         
         let url = URL(string: URLString)!
         
