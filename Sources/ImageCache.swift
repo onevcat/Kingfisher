@@ -390,8 +390,8 @@ extension ImageCache {
                 let sortedFiles = cachedFiles.keysSortedByValue {
                     resourceValue1, resourceValue2 -> Bool in
                     
-                    if let date1 = resourceValue1[NSURLContentModificationDateKey] as? NSDate,
-                           date2 = resourceValue2[NSURLContentModificationDateKey] as? NSDate {
+                    if let date1 = resourceValue1[NSURLContentAccessDateKey] as? NSDate,
+                           date2 = resourceValue2[NSURLContentAccessDateKey] as? NSDate {
                         return date1.compare(date2) == .OrderedAscending
                     }
                     // Not valid date information. This should not happen. Just in case.
@@ -436,7 +436,7 @@ extension ImageCache {
     private func travelCachedFiles(onlyForCacheSize onlyForCacheSize: Bool) -> (URLsToDelete: [NSURL], diskCacheSize: UInt, cachedFiles: [NSURL: [NSObject: AnyObject]]) {
         
         let diskCacheURL = NSURL(fileURLWithPath: diskCachePath)
-        let resourceKeys = [NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey]
+        let resourceKeys = [NSURLIsDirectoryKey, NSURLContentAccessDateKey, NSURLTotalFileAllocatedSizeKey]
         let expiredDate = NSDate(timeIntervalSinceNow: -self.maxCachePeriodInSecond)
         
         var cachedFiles = [NSURL: [NSObject: AnyObject]]()
@@ -458,8 +458,8 @@ extension ImageCache {
                         
                         if !onlyForCacheSize {
                             // If this file is expired, add it to URLsToDelete
-                            if let modificationDate = resourceValues[NSURLContentModificationDateKey] as? NSDate {
-                                if modificationDate.laterDate(expiredDate) == expiredDate {
+                            if let lastAccessDate = resourceValues[NSURLContentAccessDateKey] as? NSDate {
+                                if lastAccessDate.laterDate(expiredDate) == expiredDate {
                                     URLsToDelete.append(fileURL)
                                     continue
                                 }
