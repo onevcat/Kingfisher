@@ -384,8 +384,8 @@ extension ImageCache {
                 let sortedFiles = cachedFiles.keysSortedByValue {
                     resourceValue1, resourceValue2 -> Bool in
                     
-                    if let date1 = resourceValue1.contentModificationDate,
-                       let date2 = resourceValue2.contentModificationDate
+                    if let date1 = resourceValue1.contentAccessDate,
+                       let date2 = resourceValue2.contentAccessDate
                     {
                         return date1.compare(date2) == .orderedAscending
                     }
@@ -432,7 +432,7 @@ extension ImageCache {
     fileprivate func travelCachedFiles(onlyForCacheSize: Bool) -> (URLsToDelete: [URL], diskCacheSize: UInt, cachedFiles: [URL: URLResourceValues]) {
         
         let diskCacheURL = URL(fileURLWithPath: diskCachePath)
-        let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentModificationDateKey, .totalFileAllocatedSizeKey]
+        let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentAccessDateKey, .totalFileAllocatedSizeKey]
         let expiredDate = Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
         
         var cachedFiles = [URL: URLResourceValues]()
@@ -452,8 +452,8 @@ extension ImageCache {
                         
                         if !onlyForCacheSize {
                             // If this file is expired, add it to URLsToDelete
-                            if let modificationDate = resourceValues.contentModificationDate {
-                                if (modificationDate as NSDate).laterDate(expiredDate) == expiredDate {
+                            if let lastAccessData = resourceValues.contentAccessDate {
+                                if (lastAccessData as NSDate).laterDate(expiredDate) == expiredDate {
                                     URLsToDelete.append(fileURL)
                                     continue
                                 }
