@@ -8,12 +8,12 @@
 
 import Foundation
 
-enum ImageProcessItem {
+public enum ImageProcessItem {
     case image(Image)
     case data(Data)
 }
 
-protocol ImageProcessor {
+public protocol ImageProcessor {
     func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image?
 }
 
@@ -38,8 +38,8 @@ struct GeneralProcessor: ImageProcessor {
     }
 }
 
-struct DefaultProcessor: ImageProcessor {
-    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+public struct DefaultProcessor: ImageProcessor {
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image
@@ -49,11 +49,11 @@ struct DefaultProcessor: ImageProcessor {
     }
 }
 
-struct RoundCornerImageProcessor: ImageProcessor {
+public struct RoundCornerImageProcessor: ImageProcessor {
     
-    let cornerRadius: Float
+    public let cornerRadius: Float
     
-    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image
@@ -64,6 +64,6 @@ struct RoundCornerImageProcessor: ImageProcessor {
 }
 
 infix operator |>: DefaultPrecedence
-func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
+public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
     return left.append(another: right)
 }

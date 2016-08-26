@@ -31,7 +31,9 @@ import XCTest
 class ImageDownloaderTests: XCTestCase {
 
     var downloader: ImageDownloader!
-
+    var modifier = URLModifier()
+    
+    
     override class func setUp() {
         super.setUp()
         LSNocilla.sharedInstance().start()
@@ -128,10 +130,8 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        downloader.requestModifier = {
-            request in
-            request.url = URL(string: URLString)
-        }
+        modifier.url = URL(string: URLString)
+        downloader.delegate = modifier
         
         let someURL = URL(string: "some_strange_url")!
         downloader.downloadImage(with: someURL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -139,6 +139,7 @@ class ImageDownloaderTests: XCTestCase {
         }) { (image, error, imageURL, data) -> () in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
             XCTAssertEqual(imageURL!, URL(string: URLString)!, "The returned imageURL should be the replaced one")
+            self.downloader.delegate = nil
             expectation.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
@@ -228,9 +229,8 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadEmptyURL() {
         let expectation = self.expectation(description: "wait for downloading error")
         
-        downloader.requestModifier = { req in
-            req.url = nil
-        }
+        modifier.url = nil
+        downloader.delegate = modifier
         
         let url = URL(string: "http://onevcat.com")
         downloader.downloadImage(with: url!, progressBlock: { (receivedSize, totalSize) -> () in
@@ -238,9 +238,8 @@ class ImageDownloaderTests: XCTestCase {
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error, "An error should happen for empty URL")
                 XCTAssertEqual(error!.code, KingfisherError.invalidURL.rawValue)
+                self.downloader.delegate = nil
                 expectation.fulfill()
-                
-                self.downloader.requestModifier = nil
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -290,12 +289,20 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskNil() {
-        downloader.requestModifier = { req in
-            req.url = nil
-        }
+        modifier.url = nil
+        downloader.delegate = modifier
         let downloadTask = downloader.downloadImage(with: URL(string: "url")!, progressBlock: nil, completionHandler: nil)
         XCTAssertNil(downloadTask)
         
-        downloader.requestModifier = nil
+        downloader.delegate = nil
+    }
+}
+
+class URLModifier: ImageDownloaderDelegate {
+    var url: URL? = nil
+    func urlRequest(for imageDownloader: ImageDownloader, byModifying originalRequest: URLRequest) -> URLRequest? {
+        var r = originalRequest
+        r.url = url
+        return r
     }
 }

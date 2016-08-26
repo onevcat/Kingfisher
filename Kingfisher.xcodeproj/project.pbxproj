@@ -482,6 +482,7 @@
 		D10EC22A1C3D62D200A4211C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
 				4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */,
 				D10945EA1C526B6C001408EB /* Image.swift */,
 				D10945EB1C526B6C001408EB /* ImageCache.swift */,
@@ -609,7 +610,6 @@
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
-				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
 				D10EC22A1C3D62D200A4211C /* Sources */,
 				D10EC22C1C3D62E800A4211C /* Tests */,
 				D10EC22B1C3D62DE00A4211C /* Demo */,
