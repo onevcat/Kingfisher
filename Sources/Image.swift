@@ -328,6 +328,42 @@ extension Image {
     }
 }
 
+extension Image {
+    func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image? {
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
+        
+        #if os(macOS)
+            let output = NSImage(size: rect.size)
+            output.lockFocus()
+            
+            NSGraphicsContext.current()?.imageInterpolation = .high
+            let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+            path.windingRule = .evenOddWindingRule
+            path.addClip()
+            draw(in: rect)
+            output.unlockFocus()
+        #else
+            UIGraphicsBeginImageContextWithOptions(rect.size, false, scale)
+            
+            guard let context = UIGraphicsGetCurrentContext() else {
+                return nil
+            }
+            
+            let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
+            context.addPath(path)
+            context.clip()
+            
+            draw(in: rect)
+            
+            let output = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+
+        #endif
+        
+        return output
+    }
+}
+
 // MARK: - Decode
 extension Image {
     func kf_decoded() -> Image? {

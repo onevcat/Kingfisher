@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 public enum ImageProcessItem {
     case image(Image)
@@ -51,12 +52,20 @@ public struct DefaultProcessor: ImageProcessor {
 
 public struct RoundCornerImageProcessor: ImageProcessor {
     
-    public let cornerRadius: Float
+    public let cornerRadius: CGFloat
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image
+            let targetSize: CGSize
+            #if os(macOS)
+                targetSize = image.representations.reduce(CGSize.zero, { size, rep in
+                    return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
+                })
+            #else
+                targetSize = image.size
+            #endif
+            return image.kf_image(withRoundRadius: cornerRadius, fit: targetSize, scale: options.scaleFactor)
         case .data(let data):
             return (DefaultProcessor() |> self).process(item: .data(data), options: options)
         }

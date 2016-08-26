@@ -172,9 +172,9 @@ extension ImageCache {
                 
                 let data: Data?
                 switch imageFormat {
-                case .PNG: data = originalData ?? image.pngRepresentation()
-                case .JPEG: data = originalData ?? image.jpegRepresentation(compressionQuality: 1.0)
-                case .GIF: data = originalData ?? image.gifRepresentation()
+                case .PNG: data = image.pngRepresentation()
+                case .JPEG: data = image.jpegRepresentation(compressionQuality: 1.0)
+                case .GIF: data = image.gifRepresentation()
                 case .unknown: data = originalData ?? image.kf_normalized().pngRepresentation()
                 }
                 
