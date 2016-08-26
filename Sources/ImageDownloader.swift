@@ -170,6 +170,7 @@ public class ImageDownloader: NSObject {
     // MARK: - Public property
     /// This closure will be applied to the image download request before it being sent. 
     /// You can modify the request for some customizing purpose, like adding auth token to the header, do basic HTTP auth or something like url mapping.
+    
     public var requestModifier: ((inout URLRequest) -> Void)?
 
     /// The duration before the download is timeout. Default is 15 seconds.
@@ -474,8 +475,9 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
 
             let options = fetchLoad.options ?? KingfisherEmptyOptionsInfo
             let data = fetchLoad.responseData as Data
-            if let image = Image.kf_image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData) {
-                
+            
+            if let image = DefaultProcessor().process(item: .data(data), options: options) {
+    
                 downloader.delegate?.imageDownloader?(downloader, didDownload: image, for: url, with: task.response)
                 
                 if options.backgroundDecode {

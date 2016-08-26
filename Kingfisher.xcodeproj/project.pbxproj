@@ -12,6 +12,10 @@
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
 		4B2944641C3D03980088C3E7 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
+		4B2B8E4A1D70128200FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
+		4B2B8E4B1D70140F00FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
+		4B2B8E4C1D70141000FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
+		4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
 		4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; };
 		4B3766A01C4794460001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B37669F1C4794460001443F /* CFNetwork.framework */; };
 		4B3766A21C47944D0001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3766A11C47944D0001443F /* CFNetwork.framework */; };
@@ -262,6 +266,7 @@
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B2B8E491D70128200FC4749 /* ImageProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageProcessor.swift; path = Sources/ImageProcessor.swift; sourceTree = "<group>"; };
 		4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B37669F1C4794460001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3766A11C47944D0001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
@@ -604,6 +609,7 @@
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
+				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
 				D10EC22A1C3D62D200A4211C /* Sources */,
 				D10EC22C1C3D62E800A4211C /* Tests */,
 				D10EC22B1C3D62DE00A4211C /* Demo */,
@@ -1388,6 +1394,7 @@
 				D109461B1C526C61001408EB /* ImageCache.swift in Sources */,
 				D109461C1C526C61001408EB /* ImageDownloader.swift in Sources */,
 				D109461D1C526C61001408EB /* ImageTransition.swift in Sources */,
+				4B2B8E4C1D70141000FC4749 /* ImageProcessor.swift in Sources */,
 				D109461E1C526C61001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D109461F1C526C61001408EB /* KingfisherManager.swift in Sources */,
 				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
@@ -1460,6 +1467,7 @@
 				4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				D109460F1C526C0D001408EB /* ImageCache.swift in Sources */,
 				D10946101C526C0D001408EB /* ImageDownloader.swift in Sources */,
+				4B2B8E4B1D70140F00FC4749 /* ImageProcessor.swift in Sources */,
 				D10946111C526C0D001408EB /* ImageTransition.swift in Sources */,
 				D10946121C526C0D001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D10946131C526C0D001408EB /* KingfisherManager.swift in Sources */,
@@ -1477,6 +1485,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D109462D1C526CF5001408EB /* ImageTransition.swift in Sources */,
+				4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */,
 				D10946251C526CE8001408EB /* Image.swift in Sources */,
 				D10946261C526CE8001408EB /* ImageCache.swift in Sources */,
 				D9638BA31C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
@@ -1516,6 +1525,7 @@
 				4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				D10945F81C526B86001408EB /* ImageCache.swift in Sources */,
 				D10945F91C526B86001408EB /* ImageDownloader.swift in Sources */,
+				4B2B8E4A1D70128200FC4749 /* ImageProcessor.swift in Sources */,
 				D10945FA1C526B86001408EB /* ImageTransition.swift in Sources */,
 				D10945FB1C526B86001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D10945FC1C526B86001408EB /* KingfisherManager.swift in Sources */,
