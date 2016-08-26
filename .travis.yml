@@ -7,7 +7,10 @@ env:
     - TEST_TYPE=iOS
     - TEST_TYPE=macOS
     - TEST_TYPE=tvOS
-
+-before_install:
+ - |
+    gem install xcpretty -N --no-ri --no-rdoc
+ 
 script:
 - |
     if [ "$TEST_TYPE" = iOS ]; then
@@ -25,4 +28,5 @@ after_success:
     if [ "$TEST_TYPE" = iOS ] || [ "$TEST_TYPE" = macOS ] || [ "$TEST_TYPE" = tvOS ]; then
       bash <(curl -s https://codecov.io/bash)
     fi
-    sleep 5
+    sleep 10
+    
