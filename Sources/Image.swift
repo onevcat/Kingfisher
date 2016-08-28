@@ -168,7 +168,11 @@ func ImagePNGRepresentation(image: Image) -> NSData? {
 #if os(OSX)
     if let cgimage = image.CGImage {
         let rep = NSBitmapImageRep(CGImage: cgimage)
+        #if swift(>=2.3)
         return rep.representationUsingType(.PNG, properties:[:])
+        #else
+        return rep.representationUsingType(.NSPNGFileType, properties:[:])
+        #endif
     }
     return nil
 #else
@@ -180,7 +184,11 @@ func ImagePNGRepresentation(image: Image) -> NSData? {
 func ImageJPEGRepresentation(image: Image, _ compressionQuality: CGFloat) -> NSData? {
 #if os(OSX)
     let rep = NSBitmapImageRep(CGImage: image.CGImage)
-    return rep.representationUsingType(.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
+    #if swift(>=2.3)
+        return rep.representationUsingType(.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
+    #else
+        return rep.representationUsingType(.NSJPEGFileType, properties: [NSImageCompressionFactor: compressionQuality])
+    #endif
 #else
     return UIImageJPEGRepresentation(image, compressionQuality)
 #endif
