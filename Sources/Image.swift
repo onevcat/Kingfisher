@@ -43,6 +43,10 @@ private var animatedImageDataKey: Void?
 import ImageIO
 import CoreGraphics
 
+#if os(iOS) || os(macOS) || os(tvOS)
+import Accelerate
+#endif
+
 // MARK: - Image Properties
 extension Image {
 #if os(macOS)
@@ -489,6 +493,107 @@ extension CGSize {
     
     private var kf_aspectRatio: CGFloat {
         return height == 0.0 ? 1.0 : width / height
+    }
+}
+
+extension Image {
+    func kf_blurred(withRadius radius: CGFloat, blurScaling: CGFloat = 1.0) -> Image {
+        #if os(watchOS)
+        return self
+        #else
+        guard let imageRef = cgImage else {
+            assertionFailure("[Kingfisher] Blur only works for CG-based image.")
+            return self
+        }
+        
+        // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
+        // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
+        // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
+        let s = max(radius, 2.0)
+        // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
+        var targetRadius = floor((Double(s * 3.0) * sqrt(2 * M_PI) / 4.0 + 0.5))
+
+        if targetRadius.isEven {
+            targetRadius += 1
+        }
+        
+        let iterations: Int
+        if radius < 0.5 {
+            iterations = 1
+        } else if radius < 1.5 {
+            iterations = 2
+        } else {
+            iterations = 3
+        }
+            
+        let w = Int(kf_size.width * blurScaling)
+        let h = Int(kf_size.height * blurScaling)
+        let rowBytes = Int(CGFloat(imageRef.bytesPerRow) * blurScaling)
+        
+        let inDataPointer = malloc(rowBytes * Int(h))
+        defer {
+            free(inDataPointer)
+        }
+        
+        guard let context = CGContext(data: inDataPointer,
+                                      width: w,
+                                      height: h,
+                                      bitsPerComponent: imageRef.bitsPerComponent,
+                                      bytesPerRow: rowBytes,
+                                      space: imageRef.colorSpace!,
+                                      bitmapInfo: imageRef.bitmapInfo.rawValue) else
+        {
+            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
+            return self
+        }
+        
+        context.draw(imageRef, in: CGRect(x: 0, y: 0, width: w, height: h))
+        
+        
+        var inBuffer = vImage_Buffer(data: inDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
+        
+        let outDataPointer = malloc(rowBytes * Int(h))
+        defer {
+            free(outDataPointer)
+        }
+            
+        var outBuffer = vImage_Buffer(data: outDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
+        
+        for _ in 0 ..< iterations {
+            vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer, nil, 0, 0, UInt32(targetRadius), UInt32(targetRadius), nil, vImage_Flags(kvImageEdgeExtend))
+            (inBuffer, outBuffer) = (outBuffer, inBuffer)
+        }
+
+        guard let outContext = CGContext(data: inDataPointer,
+                                         width: w,
+                                         height: h,
+                                         bitsPerComponent: imageRef.bitsPerComponent,
+                                         bytesPerRow: rowBytes,
+                                         space: imageRef.colorSpace!,
+                                         bitmapInfo: imageRef.bitmapInfo.rawValue) else
+        {
+            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
+            return self
+        }
+        
+        #if os(macOS)
+        let result = outContext.makeImage().flatMap { Image(cgImage: $0, size: size) }
+        #else
+        let result = outContext.makeImage().flatMap { Image(cgImage: $0) }
+        #endif
+        guard let blurredImage = result else {
+            assertionFailure("Can not make an resized image within context.")
+            return self
+        }
+        
+        return blurredImage
+        #endif
+    }
+}
+
+extension Double {
+    var isEven: Bool {
+        return truncatingRemainder(dividingBy: 2.0) == 0
     }
 }
 

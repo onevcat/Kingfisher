@@ -83,6 +83,26 @@ public struct ResizingImageProcessor: ImageProcessor {
     }
 }
 
+public struct BlurImageProcessor: ImageProcessor {
+    public let blurRadius: CGFloat
+    public let blurScaling: CGFloat
+    
+    public init(blurRadius: CGFloat, blurScaling: CGFloat = 1.0) {
+        self.blurRadius = blurRadius
+        self.blurScaling = blurScaling
+    }
+    
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            let radius = blurRadius * options.scaleFactor
+            return image.kf_blurred(withRadius: radius)
+        case .data(_):
+            return (DefaultProcessor() |> self).process(item: item, options: options)
+        }
+    }
+}
+
 infix operator |>: DefaultPrecedence
 public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
     return left.append(another: right)
