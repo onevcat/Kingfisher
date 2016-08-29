@@ -103,7 +103,26 @@ public struct BlurImageProcessor: ImageProcessor {
     }
 }
 
-infix operator |>: DefaultPrecedence
+public struct TintImageProcessor: ImageProcessor {
+    public let tint: Color
+    public let fraction: CGFloat
+    
+    public init(tint: Color, fraction: CGFloat = 0.5) {
+        self.tint = tint
+        self.fraction = fraction
+    }
+    
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf_tinted(with: tint, fraction: fraction)
+        case .data(_):
+            return (DefaultProcessor() |> self).process(item: item, options: options)
+        }
+    }
+}
+
+infix operator |>: AdditionPrecedence
 public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
     return left.append(another: right)
 }

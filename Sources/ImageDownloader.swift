@@ -166,7 +166,7 @@ extension ImageDownloaderDelegate {
     }
     
     public func imageProcessor(for downloader: ImageDownloader, with task: URLSessionTask) -> ImageProcessor {
-        return DefaultProcessor()
+        return TintImageProcessor(tint: .blue)
     }
 }
 
