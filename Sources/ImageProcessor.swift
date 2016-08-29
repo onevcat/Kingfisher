@@ -20,7 +20,7 @@ public protocol ImageProcessor {
 
 typealias ProcessorImp = ((ImageProcessItem, KingfisherOptionsInfo) -> Image?)
 
-extension ImageProcessor {
+public extension ImageProcessor {
     func append(another: ImageProcessor) -> ImageProcessor {
         return GeneralProcessor { item, options in
             if let image = self.process(item: item, options: options) {
@@ -32,7 +32,7 @@ extension ImageProcessor {
     }
 }
 
-struct GeneralProcessor: ImageProcessor {
+fileprivate struct GeneralProcessor: ImageProcessor {
     let p: ProcessorImp
     func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         return p(item, options)
@@ -53,19 +53,30 @@ public struct DefaultProcessor: ImageProcessor {
 public struct RoundCornerImageProcessor: ImageProcessor {
     
     public let cornerRadius: CGFloat
+    public let targetSize: CGSize?
+    
+    public init(cornerRadius: CGFloat, targetSize: CGSize? = nil) {
+        self.cornerRadius = cornerRadius
+        self.targetSize = targetSize
+    }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            let targetSize: CGSize
-            #if os(macOS)
-                targetSize = image.representations.reduce(CGSize.zero, { size, rep in
+            let size: CGSize
+            if let targetSize = targetSize {
+                size = targetSize
+            } else {
+                #if os(macOS)
+                size = image.representations.reduce(CGSize.zero, { size, rep in
                     return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
                 })
-            #else
-                targetSize = image.size
-            #endif
-            return image.kf_image(withRoundRadius: cornerRadius, fit: targetSize, scale: options.scaleFactor)
+                #else
+                size = image.size
+                #endif
+            }
+            
+            return image.kf_image(withRoundRadius: cornerRadius, fit: size, scale: options.scaleFactor)
         case .data(let data):
             return (DefaultProcessor() |> self).process(item: .data(data), options: options)
         }
