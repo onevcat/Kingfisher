@@ -501,9 +501,27 @@ extension Image {
         #if os(watchOS)
         return self
         #else
-        guard let imageRef = cgImage else {
+        guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Blur only works for CG-based image.")
             return self
+        }
+            
+            
+        let imageRef: CGImage
+        if !cgImage.isARGB8888 {
+            // Convert to ARGB if it isn't
+            guard let context = CGContext.createARGBContext(from: cgImage) else {
+                assertionFailure("[Kingfisher] Failed to create CG context when converting non ARGB image.")
+                return self
+            }
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+            guard let r = context.makeImage() else {
+                assertionFailure("[Kingfisher] Failed to create CG image when converting non ARGB image.")
+                return self
+            }
+            imageRef = r
+        } else {
+            imageRef = cgImage
         }
         
         // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
@@ -588,6 +606,42 @@ extension Image {
         
         return blurredImage
         #endif
+    }
+}
+
+extension CGImage {
+    var isARGB8888: Bool {
+        return bitsPerPixel == 32 && bitsPerComponent == 8 && bitmapInfo.contains(.alphaInfoMask)
+    }
+
+}
+
+extension CGContext {
+    static func createARGBContext(from imageRef: CGImage) -> CGContext? {
+        
+        let w = imageRef.width
+        let h = imageRef.height
+        let bytesPerRow = w * 4
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
+        let data = malloc(bytesPerRow * h)
+        defer {
+            free(data)
+        }
+        
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
+    
+        // Create the bitmap context. We want pre-multiplied ARGB, 8-bits
+        // per component. Regardless of what the source image format is
+        // (CMYK, Grayscale, and so on) it will be converted over to the format
+        // specified here.
+        return CGContext(data: data,
+                         width: w,
+                         height: h,
+                         bitsPerComponent: imageRef.bitsPerComponent,
+                         bytesPerRow: bytesPerRow,
+                         space: colorSpace,
+                         bitmapInfo: bitmapInfo.rawValue)
     }
 }
 
