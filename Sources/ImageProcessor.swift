@@ -122,6 +122,29 @@ public struct TintImageProcessor: ImageProcessor {
     }
 }
 
+public struct ColorAdjustProcesoor: ImageProcessor {
+    public let brightness: CGFloat
+    public let contrast: CGFloat
+    public let saturation: CGFloat
+    public let inputEV: CGFloat
+    
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf_adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
+        case .data(_):
+            return (DefaultProcessor() |> self).process(item: item, options: options)
+        }
+    }
+}
+
+public struct BlackWhiteProcessor: ImageProcessor {
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        return ColorAdjustProcesoor(brightness: 0.0, contrast: 1.0, saturation: 0.0, inputEV: 0.7)
+            .process(item: item, options: options)
+    }
+}
+
 infix operator |>: AdditionPrecedence
 public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
     return left.append(another: right)

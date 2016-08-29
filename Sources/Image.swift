@@ -47,6 +47,9 @@ import CoreGraphics
 
 #if os(iOS) || os(macOS) || os(tvOS)
 import Accelerate
+import CoreImage
+    
+private let ciContext = CIContext(options: nil)
 #endif
 
 // MARK: - Image Properties
@@ -452,7 +455,6 @@ extension Image {
                 return self
             }
             
-            
             let imageRef: CGImage
             if !cgImage.isARGB8888 {
                 // Convert to ARGB if it isn't
@@ -585,6 +587,37 @@ extension Image {
             let tintedImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
             return tintedImage ?? self
+        #endif
+    }
+    
+    func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
+        #if os(watchOS)
+        return self
+        #else
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] B&W only works for CG-based image.")
+            return self
+        }
+        let input = CIImage(cgImage: cgImage)
+        
+        let paramsColor = [kCIInputBrightnessKey: brightness,
+                             kCIInputContrastKey: contrast,
+                           kCIInputSaturationKey: saturation]
+            
+        let blackAndWhite = input.applyingFilter("CIColorControls", withInputParameters: paramsColor)
+        let paramsExposure = [kCIInputEVKey: inputEV]
+        let output = blackAndWhite.applyingFilter("CIExposureAdjust", withInputParameters: paramsExposure)
+        
+        guard let result = ciContext.createCGImage(output, from: output.extent) else {
+            assertionFailure("Can not make an B&W image within context.")
+            return self
+        }
+            
+        #if os(macOS)
+        return Image(cgImage: result, size: .zero)
+        #else
+        return Image(cgImage: result)
+        #endif
         #endif
     }
 }
