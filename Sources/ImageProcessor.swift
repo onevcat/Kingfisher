@@ -63,22 +63,22 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            let size: CGSize
-            if let targetSize = targetSize {
-                size = targetSize
-            } else {
-                #if os(macOS)
-                size = image.representations.reduce(CGSize.zero, { size, rep in
-                    return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
-                })
-                #else
-                size = image.size
-                #endif
-            }
-            
+            let size = targetSize ?? image.kf_size
             return image.kf_image(withRoundRadius: cornerRadius, fit: size, scale: options.scaleFactor)
-        case .data(let data):
-            return (DefaultProcessor() |> self).process(item: .data(data), options: options)
+        case .data(_):
+            return (DefaultProcessor() |> self).process(item: item, options: options)
+        }
+    }
+}
+
+public struct ResizingImageProcessor: ImageProcessor {
+    public let targetSize: CGSize
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf_resize(to: targetSize)
+        case .data(_):
+            return (DefaultProcessor() |> self).process(item: item, options: options)
         }
     }
 }

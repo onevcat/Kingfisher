@@ -26,13 +26,13 @@
 
 
 #if os(macOS)
-import AppKit.NSImage
+import AppKit
 public typealias Image = NSImage
 
 private var imagesKey: Void?
 private var durationKey: Void?
 #else
-import UIKit.UIImage
+import UIKit
 import MobileCoreServices
 public typealias Image = UIImage
 
@@ -41,6 +41,7 @@ private var animatedImageDataKey: Void?
 #endif
 
 import ImageIO
+import CoreGraphics
 
 // MARK: - Image Properties
 extension Image {
@@ -71,6 +72,12 @@ extension Image {
         }
     }
     
+    var kf_size: CGSize {
+        return representations.reduce(CGSize.zero, { size, rep in
+            return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
+        })
+    }
+    
 #else
     var kf_scale: CGFloat {
         return scale
@@ -85,22 +92,26 @@ extension Image {
     }
     
     fileprivate(set) var kf_imageSource: ImageSource? {
-            get {
-                return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
-            }
-            set {
-                objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
+        get {
+            return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
         }
+        set {
+            objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
         
     fileprivate(set) var kf_animatedImageData: Data? {
-            get {
-                return objc_getAssociatedObject(self, &animatedImageDataKey) as? Data
-            }
-            set {
-                objc_setAssociatedObject(self, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
+        get {
+            return objc_getAssociatedObject(self, &animatedImageDataKey) as? Data
         }
+        set {
+            objc_setAssociatedObject(self, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    var kf_size: CGSize {
+        return size
+    }
 #endif
 }
 
@@ -397,6 +408,90 @@ extension Image {
         }
     }
 }
+
+// MARK: - Resize
+extension Image {
+#if os(iOS) || os(tvOS)
+    func kf_resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
+        switch contentMode {
+        case .scaleAspectFit:
+            let newSize = self.size.kf_constrained(size)
+            return kf_resize(to: newSize)
+        case .scaleAspectFill:
+            let newSize = self.size.kf_filling(size)
+            return kf_resize(to: newSize)
+        default:
+            return kf_resize(to: size)
+        }
+    }
+#endif
+    
+    func kf_resize(to size: CGSize) -> Image {
+        
+        guard let imageRef = cgImage else {
+            assertionFailure("[Kingfisher] Resizing only works for CG-based image.")
+            return self
+        }
+        
+        guard kf_size.width >= size.width && kf_size.height >= size.height && size.width > 0 && size.height > 0 else {
+            print("[Kingfisher] Invalid resizing target size: \(size). The size should be smaller than original size and larger than 0")
+            return self
+        }
+        
+        let bitsPerComponent = imageRef.bitsPerComponent
+        let bytesPerRow = imageRef.bytesPerRow
+        let colorSpace = imageRef.colorSpace
+        let bitmapInfo = imageRef.bitmapInfo
+        
+        guard let context = CGContext(data: nil,
+                                      width: Int(size.width),
+                                      height: Int(size.height),
+                                      bitsPerComponent: bitsPerComponent,
+                                      bytesPerRow: bytesPerRow,
+                                      space: colorSpace!,
+                                      bitmapInfo: bitmapInfo.rawValue) else
+        {
+            assertionFailure("[Kingfisher] Failed to create CG context for resizing image.")
+            return self
+        }
+        
+        context.interpolationQuality = .high
+        context.draw(imageRef, in: CGRect(origin: CGPoint.zero, size: size))
+        
+        #if os(macOS)
+        let result = context.makeImage().flatMap { Image(cgImage: $0, size: size) }
+        #else
+        let result = context.makeImage().flatMap { Image(cgImage: $0) }
+        #endif
+        guard let scaledImage = result else {
+            assertionFailure("Can not make an resized image within context.")
+            return self
+        }
+        
+        return scaledImage
+    }
+}
+
+extension CGSize {
+    func kf_constrained(_ size: CGSize) -> CGSize {
+        let aspectWidth = round(kf_aspectRatio * size.height)
+        let aspectHeight = round(size.width / kf_aspectRatio)
+        
+        return aspectWidth > size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
+    }
+    
+    func kf_filling(_ size: CGSize) -> CGSize {
+        let aspectWidth = round(kf_aspectRatio * size.height)
+        let aspectHeight = round(size.width / kf_aspectRatio)
+        
+        return aspectWidth < size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
+    }
+    
+    private var kf_aspectRatio: CGFloat {
+        return height == 0.0 ? 1.0 : width / height
+    }
+}
+
 
 /// Reference the source image reference
 class ImageSource {

@@ -281,7 +281,7 @@ class Animator {
         let scaledImage: Image?
         
         if needsPrescaling {
-            scaledImage = image.kf_resize(to: size, forMode: contentMode)
+            scaledImage = image.kf_resize(to: size, for: contentMode)
         } else {
             scaledImage = image
         }
@@ -309,49 +309,6 @@ class Animator {
             currentPreloadIndex = currentPreloadIndex % frameCount
         }
         return true
-    }
-}
-
-// MARK: - Resize
-extension Image {
-    func kf_resize(to size: CGSize, forMode contentMode: UIViewContentMode) -> Image {
-        switch contentMode {
-        case .scaleAspectFit:
-            let newSize = self.size.kf_constrained(size)
-            return kf_resize(to: newSize)
-        case .scaleAspectFill:
-            let newSize = self.size.kf_filling(size)
-            return kf_resize(to: newSize)
-        default:
-            return kf_resize(to: size)
-        }
-    }
-    
-    private func kf_resize(to size: CGSize) -> Image {
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        draw(in: CGRect(origin: CGPoint.zero, size: size))
-        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return resizedImage ?? self
-    }
-}
-
-extension CGSize {
-    func kf_constrained(_ size: CGSize) -> CGSize {
-        let aspectWidth = round(kf_aspectRatio * size.height)
-        let aspectHeight = round(size.width / kf_aspectRatio)
-        
-        return aspectWidth > size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
-    }
-    
-    func kf_filling(_ size: CGSize) -> CGSize {
-        let aspectWidth = round(kf_aspectRatio * size.height)
-        let aspectHeight = round(size.width / kf_aspectRatio)
-        
-        return aspectWidth < size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
-    }
-    private var kf_aspectRatio: CGFloat {
-        return height == 0.0 ? 1.0 : width / height
     }
 }
 
