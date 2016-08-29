@@ -329,8 +329,7 @@ extension ImageCache {
     }
 
     /**
-    Clear disk cache. This is could be an async or sync operation.
-    Specify the way you want it by passing the `sync` parameter.
+    Clear disk cache.
     */
     public func clearDiskCache() {
         clearDiskCacheWithCompletionHandler(nil)

@@ -219,7 +219,12 @@ extension ImageView {
                     
 #if os(OSX)
                     let indicator = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
+    
+                    #if swift(>=2.3)
+                    indicator.controlSize = .Small
+                    #else
                     indicator.controlSize = .SmallControlSize
+                    #endif
                     indicator.style = .SpinningStyle
 #else
     #if os(tvOS)

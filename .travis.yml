@@ -1,6 +1,6 @@
 language: objective-c
 os: osx
-osx_image: xcode7.3
+osx_image: xcode8
 
 env:
   matrix:
@@ -25,4 +25,5 @@ after_success:
     if [ "$TEST_TYPE" = iOS ] || [ "$TEST_TYPE" = OSX ] || [ "$TEST_TYPE" = tvOS ]; then
       bash <(curl -s https://codecov.io/bash)
     fi
-    sleep 5
+    sleep 10
+    

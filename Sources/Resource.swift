@@ -49,6 +49,10 @@ public struct Resource {
      */
     public init(downloadURL: NSURL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
+        #if swift(>=2.3)
+        self.cacheKey = cacheKey ?? downloadURL.absoluteString!
+        #else
         self.cacheKey = cacheKey ?? downloadURL.absoluteString
+        #endif
     }
 }
