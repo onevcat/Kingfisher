@@ -124,7 +124,7 @@ public let KingfisherErrorStatusCodeKey = "statusCode"
 }
 
 /// Protocol indicates that an authentication challenge could be handled.
-public protocol AuthenticationChallengeResponable: class {
+public protocol AuthenticationChallengeResponsable: class {
     /**
      Called when an session level authentication challenge is received.
      This method provide a chance to handle and response to the authentication challenge before downloading could start.
@@ -138,7 +138,7 @@ public protocol AuthenticationChallengeResponable: class {
     func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
 
-extension AuthenticationChallengeResponable {
+extension AuthenticationChallengeResponsable {
     
     func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
     
@@ -199,7 +199,7 @@ public class ImageDownloader: NSObject {
     
     /// A responder for authentication challenge. 
     /// Downloader will forward the received authentication challenge for the downloading session to this responder.
-    public weak var authenticationChallengeResponder: AuthenticationChallengeResponable?
+    public weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
     
     // MARK: - Internal property
     let barrierQueue: DispatchQueue
@@ -377,7 +377,7 @@ extension ImageDownloader {
 /// If we use `ImageDownloader` as the session delegate, it will not be released.
 /// So we need an additional handler to break the retain cycle.
 // See https://github.com/onevcat/Kingfisher/issues/235
-class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, AuthenticationChallengeResponable {
+class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, AuthenticationChallengeResponsable {
     
     // The holder will keep downloader not released while a data task is being executed.
     // It will be set when the task started, and reset when the task finished.
