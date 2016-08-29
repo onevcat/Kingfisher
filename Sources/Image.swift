@@ -386,16 +386,16 @@ extension Image {
     
     #if os(iOS) || os(tvOS)
     func kf_resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
-    switch contentMode {
-    case .scaleAspectFit:
-    let newSize = self.size.kf_constrained(size)
-    return kf_resize(to: newSize)
-    case .scaleAspectFill:
-    let newSize = self.size.kf_filling(size)
-    return kf_resize(to: newSize)
-    default:
-    return kf_resize(to: size)
-    }
+        switch contentMode {
+        case .scaleAspectFit:
+            let newSize = self.size.kf_constrained(size)
+            return kf_resize(to: newSize)
+        case .scaleAspectFill:
+            let newSize = self.size.kf_filling(size)
+            return kf_resize(to: newSize)
+        default:
+            return kf_resize(to: size)
+        }
     }
     #endif
     
