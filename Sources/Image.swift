@@ -55,7 +55,7 @@ private let ciContext = CIContext(options: nil)
 // MARK: - Image Properties
 extension Image {
 #if os(macOS)
-    var cgImage: CGImage! {
+    var cgImage: CGImage? {
         return cgImage(forProposedRect: nil, context: nil, hints: nil)
     }
     
@@ -199,6 +199,9 @@ extension Image {
     // MARK: - JPEG
     func jpegRepresentation(compressionQuality: CGFloat) -> Data? {
         #if os(macOS)
+            guard let cgImage = cgImage else {
+                return nil
+            }
             let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using:.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
         #else
@@ -402,7 +405,7 @@ extension Image {
     // MARK: - Resize
     func kf_resize(to size: CGSize) -> Image {
         
-        guard let imageRef = cgImage else {
+        guard let cgImage = cgImage?.fixed else {
             assertionFailure("[Kingfisher] Resizing only works for CG-based image.")
             return self
         }
@@ -412,11 +415,11 @@ extension Image {
             return self
         }
         
-        let bitsPerComponent = imageRef.bitsPerComponent
-        let bytesPerRow = imageRef.bytesPerRow
-        let colorSpace = imageRef.colorSpace
-        let bitmapInfo = imageRef.bitmapInfo
-        
+        let bitsPerComponent = cgImage.bitsPerComponent
+        let bytesPerRow = cgImage.bytesPerRow
+        let colorSpace = cgImage.colorSpace
+        let bitmapInfo = cgImage.bitmapInfo.fixed
+
         guard let context = CGContext(data: nil,
                                       width: Int(size.width),
                                       height: Int(size.height),
@@ -429,8 +432,7 @@ extension Image {
             return self
         }
         
-        context.interpolationQuality = .high
-        context.draw(imageRef, in: CGRect(origin: CGPoint.zero, size: size))
+        context.draw(cgImage, in: CGRect(origin: CGPoint.zero, size: size))
         
         #if os(macOS)
             let result = context.makeImage().flatMap { Image(cgImage: $0, size: size) }
@@ -438,7 +440,7 @@ extension Image {
             let result = context.makeImage().flatMap { Image(cgImage: $0) }
         #endif
         guard let scaledImage = result else {
-            assertionFailure("Can not make an resized image within context.")
+            assertionFailure("[Kingfisher] Can not make an resized image within context.")
             return self
         }
         
@@ -450,26 +452,9 @@ extension Image {
         #if os(watchOS)
             return self
         #else
-            guard let cgImage = cgImage else {
+            guard let cgImage = cgImage?.fixed else {
                 assertionFailure("[Kingfisher] Blur only works for CG-based image.")
                 return self
-            }
-            
-            let imageRef: CGImage
-            if !cgImage.isARGB8888 {
-                // Convert to ARGB if it isn't
-                guard let context = CGContext.createARGBContext(from: cgImage) else {
-                    assertionFailure("[Kingfisher] Failed to create CG context when converting non ARGB image.")
-                    return self
-                }
-                context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
-                guard let r = context.makeImage() else {
-                    assertionFailure("[Kingfisher] Failed to create CG image when converting non ARGB image.")
-                    return self
-                }
-                imageRef = r
-            } else {
-                imageRef = cgImage
             }
             
             // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
@@ -494,26 +479,27 @@ extension Image {
             
             let w = Int(kf_size.width)
             let h = Int(kf_size.height)
-            let rowBytes = Int(CGFloat(imageRef.bytesPerRow))
+            let rowBytes = Int(CGFloat(cgImage.bytesPerRow))
             
             let inDataPointer = malloc(rowBytes * Int(h))
             defer {
                 free(inDataPointer)
             }
             
+            let bitmapInfo = cgImage.bitmapInfo.fixed
             guard let context = CGContext(data: inDataPointer,
                                           width: w,
                                           height: h,
-                                          bitsPerComponent: imageRef.bitsPerComponent,
+                                          bitsPerComponent: cgImage.bitsPerComponent,
                                           bytesPerRow: rowBytes,
-                                          space: imageRef.colorSpace!,
-                                          bitmapInfo: imageRef.bitmapInfo.rawValue) else
+                                          space: cgImage.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
+                                          bitmapInfo: bitmapInfo.rawValue) else
             {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
                 return self
             }
             
-            context.draw(imageRef, in: CGRect(x: 0, y: 0, width: w, height: h))
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
             
             
             var inBuffer = vImage_Buffer(data: inDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
@@ -533,22 +519,22 @@ extension Image {
             guard let outContext = CGContext(data: inDataPointer,
                                              width: w,
                                              height: h,
-                                             bitsPerComponent: imageRef.bitsPerComponent,
+                                             bitsPerComponent: cgImage.bitsPerComponent,
                                              bytesPerRow: rowBytes,
-                                             space: imageRef.colorSpace!,
-                                             bitmapInfo: imageRef.bitmapInfo.rawValue) else
+                                             space: cgImage.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
+                                             bitmapInfo: cgImage.bitmapInfo.rawValue) else
             {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
                 return self
             }
             
             #if os(macOS)
-                let result = outContext.makeImage().flatMap { Image(cgImage: $0, size: size) }
+                let result = outContext.makeImage().flatMap { Image(cgImage: $0, size: kf_size) }
             #else
                 let result = outContext.makeImage().flatMap { Image(cgImage: $0) }
             #endif
             guard let blurredImage = result else {
-                assertionFailure("Can not make an resized image within context.")
+                assertionFailure("[Kingfisher] Can not make an resized image within context.")
                 return self
             }
             
@@ -574,7 +560,7 @@ extension Image {
             
             return output
         #else
-            UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+            UIGraphicsBeginImageContextWithOptions(size, false, scale)
 
             color.set()
             UIRectFill(rect)
@@ -590,6 +576,46 @@ extension Image {
         #endif
     }
     
+    // MARK: - Tint
+    func kf_tinted(with color: Color) -> Image {
+        #if os(watchOS)
+            return self
+        #else
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
+            return self
+        }
+    
+            
+        let colorFilter = CIFilter(name: "CIConstantColorGenerator")!
+        colorFilter.setValue(CIColor(color: color), forKey: kCIInputColorKey)
+        
+        let colorImage = colorFilter.outputImage
+            
+        let input = CIImage(cgImage: cgImage)
+        let filter = CIFilter(name: "CISourceOverCompositing")!
+        filter.setValue(colorImage, forKey: kCIInputImageKey)
+        filter.setValue(input, forKey: kCIInputBackgroundImageKey)
+        
+        guard let output = filter.outputImage?.cropping(to: input.extent) else {
+            assertionFailure("[Kingfisher] Tint filter failed to create output image.")
+            return self
+        }
+            
+        guard let result = ciContext.createCGImage(output, from: output.extent) else {
+            assertionFailure("[Kingfisher] Can not make an tint image within context.")
+            return self
+        }
+            
+        #if os(macOS)
+            return Image(cgImage: result, size: .zero)
+        #else
+            return Image(cgImage: result)
+        #endif
+        #endif
+    }
+    
+    // MARK: - Color Control
     func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
         #if os(watchOS)
         return self
@@ -640,14 +666,17 @@ extension Image {
         }
 #endif
         
-        let imageRef = self.cgImage
+        guard let imageRef = self.cgImage else {
+            assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
+            return nil
+        }
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue).rawValue
+        let bitmapInfo = imageRef.bitmapInfo.fixed
         
-        let context = CGContext(data: nil, width: (imageRef?.width)!, height: (imageRef?.height)!, bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo)
+        let context = CGContext(data: nil, width: imageRef.width, height: imageRef.height, bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
         if let context = context {
-            let rect = CGRect(x: 0, y: 0, width: (imageRef?.width)!, height: (imageRef?.height)!)
-            context.draw(imageRef!, in: rect)
+            let rect = CGRect(x: 0, y: 0, width: imageRef.width, height: imageRef.height)
+            context.draw(imageRef, in: rect)
             let decompressedImageRef = context.makeImage()
             return Image.kf_image(cgImage: decompressedImageRef!, scale: scale, refImage: self)
         } else {
@@ -725,6 +754,36 @@ extension CGImage {
         return bitsPerPixel == 32 && bitsPerComponent == 8 && bitmapInfo.contains(.alphaInfoMask)
     }
     
+    var fixed: CGImage {
+        if isARGB8888 { return self }
+
+        // Convert to ARGB if it isn't
+        guard let context = CGContext.createARGBContext(from: self) else {
+            assertionFailure("[Kingfisher] Failed to create CG context when converting non ARGB image.")
+            return self
+        }
+        context.draw(self, in: CGRect(x: 0, y: 0, width: width, height: height))
+        guard let r = context.makeImage() else {
+            assertionFailure("[Kingfisher] Failed to create CG image when converting non ARGB image.")
+            return self
+        }
+        return r
+    }
+}
+
+extension CGBitmapInfo {
+    var fixed: CGBitmapInfo {
+        var fixed = self
+        let alpha = (rawValue & CGBitmapInfo.alphaInfoMask.rawValue)
+        if alpha == CGImageAlphaInfo.none.rawValue {
+            fixed.remove(.alphaInfoMask)
+            fixed = CGBitmapInfo(rawValue: fixed.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue)
+        } else if !(alpha == CGImageAlphaInfo.noneSkipFirst.rawValue) || !(alpha == CGImageAlphaInfo.noneSkipLast.rawValue) {
+            fixed.remove(.alphaInfoMask)
+            fixed = CGBitmapInfo(rawValue: fixed.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)
+        }
+        return fixed
+    }
 }
 
 extension CGContext {
@@ -740,7 +799,7 @@ extension CGContext {
             free(data)
         }
         
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
+        let bitmapInfo = imageRef.bitmapInfo.fixed
         
         // Create the bitmap context. We want pre-multiplied ARGB, 8-bits
         // per component. Regardless of what the source image format is
