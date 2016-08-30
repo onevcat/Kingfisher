@@ -40,6 +40,7 @@ fileprivate struct GeneralProcessor: ImageProcessor {
 }
 
 public struct DefaultProcessor: ImageProcessor {
+    public init() {}
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
@@ -73,6 +74,9 @@ public struct RoundCornerImageProcessor: ImageProcessor {
 
 public struct ResizingImageProcessor: ImageProcessor {
     public let targetSize: CGSize
+    public init(targetSize: CGSize) {
+        self.targetSize = targetSize
+    }
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
@@ -85,11 +89,9 @@ public struct ResizingImageProcessor: ImageProcessor {
 
 public struct BlurImageProcessor: ImageProcessor {
     public let blurRadius: CGFloat
-    public let blurScaling: CGFloat
-    
-    public init(blurRadius: CGFloat, blurScaling: CGFloat = 1.0) {
+
+    public init(blurRadius: CGFloat) {
         self.blurRadius = blurRadius
-        self.blurScaling = blurScaling
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
@@ -103,30 +105,37 @@ public struct BlurImageProcessor: ImageProcessor {
     }
 }
 
-public struct TintImageProcessor: ImageProcessor {
-    public let tint: Color
+public struct OverlayImageProcessor: ImageProcessor {
+    public let overlay: Color
     public let fraction: CGFloat
     
-    public init(tint: Color, fraction: CGFloat = 0.5) {
-        self.tint = tint
+    public init(overlay: Color, fraction: CGFloat = 0.5) {
+        self.overlay = overlay
         self.fraction = fraction
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf_tinted(with: tint, fraction: fraction)
+            return image.kf_overlaying(with: overlay, fraction: fraction)
         case .data(_):
             return (DefaultProcessor() |> self).process(item: item, options: options)
         }
     }
 }
 
-public struct ColorAdjustProcesoor: ImageProcessor {
+public struct ColorControlsProcessor: ImageProcessor {
     public let brightness: CGFloat
     public let contrast: CGFloat
     public let saturation: CGFloat
     public let inputEV: CGFloat
+    
+    public init(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) {
+        self.brightness = brightness
+        self.contrast = contrast
+        self.saturation = saturation
+        self.inputEV = inputEV
+    }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
@@ -139,8 +148,9 @@ public struct ColorAdjustProcesoor: ImageProcessor {
 }
 
 public struct BlackWhiteProcessor: ImageProcessor {
+    public init() {}
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
-        return ColorAdjustProcesoor(brightness: 0.0, contrast: 1.0, saturation: 0.0, inputEV: 0.7)
+        return ColorControlsProcessor(brightness: 0.0, contrast: 1.0, saturation: 0.0, inputEV: 0.7)
             .process(item: item, options: options)
     }
 }

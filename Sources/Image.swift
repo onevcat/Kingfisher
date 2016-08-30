@@ -446,7 +446,7 @@ extension Image {
     }
     
     // MARK: - Blur
-    func kf_blurred(withRadius radius: CGFloat, blurScaling: CGFloat = 1.0) -> Image {
+    func kf_blurred(withRadius radius: CGFloat) -> Image {
         #if os(watchOS)
             return self
         #else
@@ -492,9 +492,9 @@ extension Image {
                 iterations = 3
             }
             
-            let w = Int(kf_size.width * blurScaling)
-            let h = Int(kf_size.height * blurScaling)
-            let rowBytes = Int(CGFloat(imageRef.bytesPerRow) * blurScaling)
+            let w = Int(kf_size.width)
+            let h = Int(kf_size.height)
+            let rowBytes = Int(CGFloat(imageRef.bytesPerRow))
             
             let inDataPointer = malloc(rowBytes * Int(h))
             defer {
@@ -556,8 +556,8 @@ extension Image {
         #endif
     }
     
-    // MARK: - Tint
-    func kf_tinted(with color: Color, fraction: CGFloat) -> Image {
+    // MARK: - Overlay
+    func kf_overlaying(with color: Color, fraction: CGFloat) -> Image {
 
         let rect = CGRect(x: 0, y: 0, width: kf_size.width, height: kf_size.height)
         
