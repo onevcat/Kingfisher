@@ -433,7 +433,7 @@ extension Image {
         #if os(watchOS)
             return self
         #else
-            guard let cgImage = cgImage?.fixed else {
+            guard let cgImage = cgImage else {
                 assertionFailure("[Kingfisher] Blur only works for CG-based image.")
                 return self
             }
@@ -461,13 +461,15 @@ extension Image {
             let w = Int(kf_size.width)
             let h = Int(kf_size.height)
             let rowBytes = Int(CGFloat(cgImage.bytesPerRow))
-            
-            let inDataPointer = malloc(rowBytes * Int(h))
+
+            let inDataPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: rowBytes * Int(h))
+            inDataPointer.initialize(to: 0)
             defer {
-                free(inDataPointer)
+                inDataPointer.deinitialize()
+                inDataPointer.deallocate(capacity: rowBytes * Int(h))
             }
             
-            let bitmapInfo = cgImage.bitmapInfo
+            let bitmapInfo = cgImage.bitmapInfo.fixed
             guard let context = CGContext(data: inDataPointer,
                                           width: w,
                                           height: h,
@@ -485,9 +487,11 @@ extension Image {
             
             var inBuffer = vImage_Buffer(data: inDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
             
-            let outDataPointer = malloc(rowBytes * Int(h))
+            let outDataPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: rowBytes * Int(h))
+            outDataPointer.initialize(to: 0)
             defer {
-                free(outDataPointer)
+                outDataPointer.deinitialize()
+                outDataPointer.deallocate(capacity: rowBytes * Int(h))
             }
             
             var outBuffer = vImage_Buffer(data: outDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
@@ -503,7 +507,7 @@ extension Image {
                                              bitsPerComponent: cgImage.bitsPerComponent,
                                              bytesPerRow: rowBytes,
                                              space: cgImage.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
-                                             bitmapInfo: cgImage.bitmapInfo.rawValue) else
+                                             bitmapInfo: bitmapInfo.rawValue) else
             {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
                 return self
@@ -768,7 +772,18 @@ extension CGBitmapInfo {
 #if os(macOS)
 extension Image {
     func draw(cgImage: CGImage, to size: CGSize, draw: ()->()) -> Image {
-        guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(size.width), pixelsHigh: Int(size.height), bitsPerSample: cgImage.bitsPerComponent, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: NSCalibratedRGBColorSpace, bytesPerRow: 0, bitsPerPixel: 0) else {
+        guard let rep = NSBitmapImageRep(
+            bitmapDataPlanes: nil,
+            pixelsWide: Int(size.width),
+            pixelsHigh: Int(size.height),
+            bitsPerSample: cgImage.bitsPerComponent,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: NSCalibratedRGBColorSpace,
+            bytesPerRow: 0,
+            bitsPerPixel: 0) else
+        {
             assertionFailure("[Kingfisher] Image representation cannot be created.")
             return self
         }
