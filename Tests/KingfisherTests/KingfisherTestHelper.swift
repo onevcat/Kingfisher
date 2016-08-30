@@ -82,7 +82,9 @@ extension Image {
             let byte2 = dataPtr2[index]
             let delta = UInt8(abs(Int(byte1) - Int(byte2)))
             
-            guard delta <= tolerance else { return false }
+            guard delta <= tolerance else {
+                return false
+            }
         }
         
         return true
@@ -126,11 +128,38 @@ extension Image {
         context.draw(cgImage, in: CGRect(origin: CGPoint.zero, size: size))
         
         #if os(macOS)
-        return context.makeImage().flatMap { Image(cgImage: $0, size: size) }
+        return context.makeImage().flatMap { Image(cgImage: $0, size: kf_size) }
         #else
         return context.makeImage().flatMap { Image(cgImage: $0) }
         #endif
     }
 }
 
+extension Image {
+    convenience init(fileName: String) {
+        let data = Data(fileName: fileName)
+        self.init(data: data)!
+    }
+    
+    @discardableResult
+    func write(_ name: String) -> String {
+        let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).last!
+        let p = ((path) as NSString).appendingPathComponent(name)
+        print(p)
+        try! pngRepresentation()?.write(to: URL(fileURLWithPath: p))
+        return p
+    }
+}
 
+extension Data {
+    
+    init(fileName: String) {
+        let comp = fileName.components(separatedBy: ".")
+        guard comp.count == 2 else { fatalError() }
+        self.init(named: comp[0], type: comp[1])
+    }
+    
+    init(named name: String, type: String) {
+        try! self.init(contentsOf: URL(fileURLWithPath: Bundle(for: ImageExtensionTests.self).path(forResource: name, ofType: type)!))
+    }
+}

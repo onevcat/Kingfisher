@@ -124,6 +124,22 @@ public struct OverlayImageProcessor: ImageProcessor {
     }
 }
 
+public struct TintImageProcessor: ImageProcessor {
+    public let tint: Color
+    public init(tint: Color) {
+        self.tint = tint
+    }
+    
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf_tinted(with: tint)
+        case .data(_):
+            return (DefaultProcessor() |> self).process(item: item, options: options)
+        }
+    }
+}
+
 public struct ColorControlsProcessor: ImageProcessor {
     public let brightness: CGFloat
     public let contrast: CGFloat
