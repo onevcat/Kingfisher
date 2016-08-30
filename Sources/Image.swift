@@ -353,24 +353,27 @@ extension Image {
 // MARK: - Image Transforming
 extension Image {
     // MARK: - Round Corner
-    func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image? {
+    func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
         #if os(macOS)
-            let output = NSImage(size: rect.size)
-            output.lockFocus()
+            guard let cgImage = cgImage else {
+                assertionFailure("[Kingfisher] Round corder image only works for CG-based image.")
+                return self
+            }
             
-            NSGraphicsContext.current()?.imageInterpolation = .high
-            let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
-            path.windingRule = .evenOddWindingRule
-            path.addClip()
-            draw(in: rect)
-            output.unlockFocus()
+            return draw(cgImage: cgImage, to: size, draw: { 
+                let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+                path.windingRule = .evenOddWindingRule
+                path.addClip()
+                draw(in: rect)
+            })
         #else
             UIGraphicsBeginImageContextWithOptions(rect.size, false, scale)
             
             guard let context = UIGraphicsGetCurrentContext() else {
-                return nil
+                assertionFailure("[Kingfisher] Failed to create CG context for round corner image.")
+                return self
             }
             
             let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
@@ -379,12 +382,11 @@ extension Image {
             
             draw(in: rect)
             
-            let output = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
+            let output = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
 
+            return output ?? self
         #endif
-        
-        return output
     }
     
     #if os(iOS) || os(tvOS)
@@ -405,46 +407,25 @@ extension Image {
     // MARK: - Resize
     func kf_resize(to size: CGSize) -> Image {
         
-        guard let cgImage = cgImage?.fixed else {
-            assertionFailure("[Kingfisher] Resizing only works for CG-based image.")
-            return self
-        }
-        
-        guard kf_size.width >= size.width && kf_size.height >= size.height && size.width > 0 && size.height > 0 else {
-            print("[Kingfisher] Invalid resizing target size: \(size). The size should be smaller than original size and larger than 0")
-            return self
-        }
-        
-        let bitsPerComponent = cgImage.bitsPerComponent
-        let bytesPerRow = cgImage.bytesPerRow
-        let colorSpace = cgImage.colorSpace
-        let bitmapInfo = cgImage.bitmapInfo.fixed
-
-        guard let context = CGContext(data: nil,
-                                      width: Int(size.width),
-                                      height: Int(size.height),
-                                      bitsPerComponent: bitsPerComponent,
-                                      bytesPerRow: bytesPerRow,
-                                      space: colorSpace!,
-                                      bitmapInfo: bitmapInfo.rawValue) else
-        {
-            assertionFailure("[Kingfisher] Failed to create CG context for resizing image.")
-            return self
-        }
-        
-        context.draw(cgImage, in: CGRect(origin: CGPoint.zero, size: size))
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
         #if os(macOS)
-            let result = context.makeImage().flatMap { Image(cgImage: $0, size: size) }
+            guard let cgImage = cgImage?.fixed else {
+                assertionFailure("[Kingfisher] Resize only works for CG-based image.")
+                return self
+            }
+            
+            return draw(cgImage: cgImage, to: rect.size, draw: {
+                draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
+            })
         #else
-            let result = context.makeImage().flatMap { Image(cgImage: $0) }
+            UIGraphicsBeginImageContextWithOptions(size, false, scale)
+            draw(in: rect)
+            
+            let output = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            return output ?? self
         #endif
-        guard let scaledImage = result else {
-            assertionFailure("[Kingfisher] Can not make an resized image within context.")
-            return self
-        }
-        
-        return scaledImage
     }
     
     // MARK: - Blur
@@ -486,7 +467,7 @@ extension Image {
                 free(inDataPointer)
             }
             
-            let bitmapInfo = cgImage.bitmapInfo.fixed
+            let bitmapInfo = cgImage.bitmapInfo
             guard let context = CGContext(data: inDataPointer,
                                           width: w,
                                           height: h,
@@ -548,17 +529,16 @@ extension Image {
         let rect = CGRect(x: 0, y: 0, width: kf_size.width, height: kf_size.height)
         
         #if os(macOS)
-            let output = NSImage(size: rect.size)
-            output.lockFocus()
+            guard let cgImage = cgImage?.fixed else {
+                assertionFailure("[Kingfisher] Resize only works for CG-based image.")
+                return self
+            }
             
-            NSGraphicsContext.current()?.imageInterpolation = .high
-            draw(in: rect)
-            color.withAlphaComponent(1 - fraction).set()
-            NSRectFillUsingOperation(rect, .sourceAtop)
-            
-            output.unlockFocus()
-            
-            return output
+            return draw(cgImage: cgImage, to: rect.size, draw: { 
+                draw(in: rect)
+                color.withAlphaComponent(1 - fraction).set()
+                NSRectFillUsingOperation(rect, .sourceAtop)
+            })
         #else
             UIGraphicsBeginImageContextWithOptions(size, false, scale)
 
@@ -586,7 +566,6 @@ extension Image {
             return self
         }
     
-            
         let colorFilter = CIFilter(name: "CIConstantColorGenerator")!
         colorFilter.setValue(CIColor(color: color), forKey: kCIInputColorKey)
         
@@ -785,6 +764,28 @@ extension CGBitmapInfo {
         return fixed
     }
 }
+
+#if os(macOS)
+extension Image {
+    func draw(cgImage: CGImage, to size: CGSize, draw: ()->()) -> Image {
+        guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(size.width), pixelsHigh: Int(size.height), bitsPerSample: cgImage.bitsPerComponent, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: NSCalibratedRGBColorSpace, bytesPerRow: 0, bitsPerPixel: 0) else {
+            assertionFailure("[Kingfisher] Image representation cannot be created.")
+            return self
+        }
+        rep.size = size
+        
+        NSGraphicsContext.saveGraphicsState()
+        let context = NSGraphicsContext(bitmapImageRep: rep)
+        NSGraphicsContext.setCurrent(context)
+        draw()
+        NSGraphicsContext.restoreGraphicsState()
+        
+        let outputImage = Image(size: size)
+        outputImage.addRepresentation(rep)
+        return outputImage
+    }
+}
+#endif
 
 extension CGContext {
     static func createARGBContext(from imageRef: CGImage) -> CGContext? {

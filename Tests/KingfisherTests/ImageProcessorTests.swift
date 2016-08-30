@@ -67,6 +67,11 @@ class ImageProcessorTests: XCTestCase {
         checkProcessor(p, with: "resize-120")
     }
     
+    func testBlurProcessor() {
+        let p = BlurImageProcessor(blurRadius: 10)
+        checkProcessor(p, with: "blur-10")
+    }
+    
     func testOverlayProcessor() {
         let p1 = OverlayImageProcessor(overlay: .red)
         checkProcessor(p1, with: "overlay-red")
@@ -74,13 +79,13 @@ class ImageProcessorTests: XCTestCase {
         let p2 = OverlayImageProcessor(overlay: .red, fraction: 0.7)
         checkProcessor(p2, with: "overlay-red-07")
     }
-    
+
     func testTintProcessor() {
         let color = Color.yellow.withAlphaComponent(0.2)
         let p = TintImageProcessor(tint: color)
         checkProcessor(p, with: "tint-yellow-02")
     }
-    
+
     func testColorControlProcessor() {
         let p = ColorControlsProcessor(brightness: 0, contrast: 1.1, saturation: 1.2, inputEV: 0.7)
         checkProcessor(p, with: "color-control-b00-c11-s12-ev07")
@@ -90,7 +95,7 @@ class ImageProcessorTests: XCTestCase {
         let p = BlackWhiteProcessor()
         checkProcessor(p, with: "b&w")
     }
-    
+
     func testCompositionProcessor() {
         let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
         checkProcessor(p, with: "blur-4-round-corner-60")
@@ -138,17 +143,16 @@ extension ImageProcessorTests {
     }
 }
 
-/*
+
 extension ImageProcessorTests {
     //Helper Writer
-    func testWrite() {
+    func _testWrite() {
         
-        let p = ResizingImageProcessor(targetSize: CGSize(width: 300, height: 300))
-        let suffix = "resize-300-mac"
+        let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
+        let suffix = "blur-4-round-corner-60-mac"
         let resultImages = imageData.flatMap { p.process(item: .data($0), options: []) }
         for i in 0..<resultImages.count {
             resultImages[i].write(imageNames[i].replacingOccurrences(of: ".", with: "-\(suffix)."))
         }
     }
 }
-*/
