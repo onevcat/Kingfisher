@@ -30,10 +30,13 @@ import Kingfisher
 class ImageProcessorTests: XCTestCase {
     
     let imageNames = ["kingfisher.jpg", "onevcat.jpg", "unicorn.png"]
+    var nonPNGIamgeNames: [String] {
+        return imageNames.filter { !$0.contains(".png") }
+    }
     
-    lazy var imageData: [Data] = {
-        self.imageNames.map { Data(fileName: $0) }
-    }()
+    func imageData(noAlpha: Bool = false) -> [Data] {
+        return noAlpha ? nonPNGIamgeNames.map { Data(fileName: $0) } : imageNames.map { Data(fileName: $0) }
+    }
     
     override func setUp() {
         super.setUp()
@@ -56,12 +59,12 @@ class ImageProcessorTests: XCTestCase {
         let p = RoundCornerImageProcessor(cornerRadius: 40)
         checkProcessor(p, with: "round-corner-40")
     }
-    
+
     func testRoundCornerWithResizingProcessor() {
         let p = RoundCornerImageProcessor(cornerRadius: 60, targetSize: CGSize(width: 100, height: 100))
         checkProcessor(p, with: "round-corner-60-resize-100")
     }
- 
+
     func testResizingProcessor() {
         let p = ResizingImageProcessor(targetSize: CGSize(width: 120, height: 120))
         checkProcessor(p, with: "resize-120")
@@ -69,7 +72,8 @@ class ImageProcessorTests: XCTestCase {
     
     func testBlurProcessor() {
         let p = BlurImageProcessor(blurRadius: 10)
-        checkProcessor(p, with: "blur-10")
+        // Alpha convolving would vary due to context. So we do not test blur for PNGs. (But it should work)
+        checkProcessor(p, with: "blur-10", noAlpha: true)
     }
     
     func testOverlayProcessor() {
@@ -98,21 +102,24 @@ class ImageProcessorTests: XCTestCase {
 
     func testCompositionProcessor() {
         let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
-        checkProcessor(p, with: "blur-4-round-corner-60")
+        // Alpha convolving would vary due to context. So we do not test blur for PNGs. (But it should work)
+        checkProcessor(p, with: "blur-4-round-corner-60", noAlpha: true)
     }
 }
 
 extension ImageProcessorTests {
     
-    func checkProcessor(_ p: ImageProcessor, with suffix: String) {
+    func checkProcessor(_ p: ImageProcessor, with suffix: String, noAlpha: Bool = false) {
         
         let specifiedSuffix = getSuffix(with: suffix)
         
-        let targetImages = imageNames
+        let filteredImageNames = noAlpha ? nonPNGIamgeNames : imageNames
+        
+        let targetImages = filteredImageNames
             .map { $0.replacingOccurrences(of: ".", with: "-\(specifiedSuffix).") }
             .map { Image(fileName: $0) }
         
-        let resultImages = imageData.flatMap { p.process(item: .data($0), options: []) }
+        let resultImages = imageData(noAlpha: noAlpha).flatMap { p.process(item: .data($0), options: []) }
         
         checkImagesEqual(targetImages: targetImages, resultImages: resultImages, for: specifiedSuffix)
     }
@@ -150,7 +157,7 @@ extension ImageProcessorTests {
         
         let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
         let suffix = "blur-4-round-corner-60-mac"
-        let resultImages = imageData.flatMap { p.process(item: .data($0), options: []) }
+        let resultImages = imageData().flatMap { p.process(item: .data($0), options: []) }
         for i in 0..<resultImages.count {
             resultImages[i].write(imageNames[i].replacingOccurrences(of: ".", with: "-\(suffix)."))
         }
