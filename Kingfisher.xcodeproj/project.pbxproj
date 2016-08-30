@@ -26,6 +26,9 @@
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
 		4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF33A1D5B02F8003387C2 /* Cell.xib */; };
 		4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF33C1D5B02F8003387C2 /* ViewController.swift */; };
+		4BF806D71D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */; };
+		4BF806D81D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */; };
+		4BF806D91D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */; };
 		B8BBB7092D89EAC97D6ED888 /* libPods-KingfisherTests-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0268A213AE27BC6133BC5E0F /* libPods-KingfisherTests-macOS.a */; };
 		D10945F71C526B86001408EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10945EA1C526B6C001408EB /* Image.swift */; };
 		D10945F81C526B86001408EB /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10945EB1C526B6C001408EB /* ImageCache.swift */; };
@@ -279,6 +282,7 @@
 		4BCCF33B1D5B02F8003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BCCF33C1D5B02F8003387C2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4BCCF3441D5B0457003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessorTests.swift; sourceTree = "<group>"; };
 		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		9D0E767B01589AA8BE21FFA6 /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -540,6 +544,7 @@
 				D12E0C4A1C47F23500AC98AD /* KingfisherManagerTests.swift */,
 				D12E0C4B1C47F23500AC98AD /* KingfisherOptionsInfoTests.swift */,
 				D12E0C4C1C47F23500AC98AD /* KingfisherTestHelper.swift */,
+				4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */,
 				D12E0C4D1C47F23500AC98AD /* KingfisherTests-Bridging-Header.h */,
 				D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */,
 				185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */,
@@ -1419,6 +1424,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF806D81D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */,
 				D12E0C761C47F71700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				D12E0C6E1C47F6FE00AC98AD /* ImageCacheTests.swift in Sources */,
 				D12E0C6F1C47F6FE00AC98AD /* ImageDownloaderTests.swift in Sources */,
@@ -1436,6 +1442,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF806D91D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */,
 				D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */,
 				D12E0C821C47F7AF00AC98AD /* ImageCacheTests.swift in Sources */,
@@ -1542,6 +1549,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF806D71D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */,
 				D12E0C571C47F23500AC98AD /* KingfisherTestHelper.swift in Sources */,
 				D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */,
 				D12E0C561C47F23500AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
