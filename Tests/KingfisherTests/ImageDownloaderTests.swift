@@ -131,15 +131,13 @@ class ImageDownloaderTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         modifier.url = URL(string: URLString)
-        downloader.delegate = modifier
         
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImage(with: someURL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
             XCTAssertEqual(imageURL!, URL(string: URLString)!, "The returned imageURL should be the replaced one")
-            self.downloader.delegate = nil
             expectation.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
@@ -230,10 +228,9 @@ class ImageDownloaderTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading error")
         
         modifier.url = nil
-        downloader.delegate = modifier
         
         let url = URL(string: "http://onevcat.com")
-        downloader.downloadImage(with: url!, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url!, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("The progress block should not be called.")
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error, "An error should happen for empty URL")
@@ -290,18 +287,17 @@ class ImageDownloaderTests: XCTestCase {
     
     func testDownloadTaskNil() {
         modifier.url = nil
-        downloader.delegate = modifier
-        let downloadTask = downloader.downloadImage(with: URL(string: "url")!, progressBlock: nil, completionHandler: nil)
+        let downloadTask = downloader.downloadImage(with: URL(string: "url")!, options: [.requestModifier(modifier)], progressBlock: nil, completionHandler: nil)
         XCTAssertNil(downloadTask)
         
         downloader.delegate = nil
     }
 }
 
-class URLModifier: ImageDownloaderDelegate {
+class URLModifier: ImageDownloadRequestModifier {
     var url: URL? = nil
-    func urlRequest(for imageDownloader: ImageDownloader, byModifying originalRequest: URLRequest) -> URLRequest? {
-        var r = originalRequest
+    func modified(for request: URLRequest) -> URLRequest? {
+        var r = request
         r.url = url
         return r
     }
