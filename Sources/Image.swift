@@ -497,7 +497,7 @@ extension Image {
             }
             
             #if os(macOS)
-                let result = outContext.makeImage().flatMap { Image(cgImage: $0, size: kf_size) }
+                let result = outContext.makeImage().flatMap { kf_fixedForRetinaPixel(cgImage: $0, to: kf_size) }
             #else
                 let result = outContext.makeImage().flatMap { Image(cgImage: $0) }
             #endif
@@ -733,6 +733,18 @@ extension Image {
         
         #endif
     }
+    
+    #if os(macOS)
+    func kf_fixedForRetinaPixel(cgImage: CGImage, to size: CGSize) -> Image {
+        
+        let image = Image(cgImage: cgImage, size: self.size)
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
+        
+        return draw(cgImage: cgImage, to: kf_size) {
+            image.draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
+        }
+    }
+    #endif
 }
 
 
