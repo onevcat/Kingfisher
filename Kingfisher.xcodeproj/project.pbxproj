@@ -19,6 +19,9 @@
 		4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; };
 		4B3766A01C4794460001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B37669F1C4794460001443F /* CFNetwork.framework */; };
 		4B3766A21C47944D0001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3766A11C47944D0001443F /* CFNetwork.framework */; };
+		4B6313F41D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
+		4B6313F51D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
+		4B6313F61D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
 		4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
@@ -463,6 +466,7 @@
 		4B37669F1C4794460001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3766A11C47944D0001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
+		4B6313F31D766BEF0078E017 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = Sources/Filter.swift; sourceTree = "<group>"; };
 		4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimatedImageView.swift; path = Sources/AnimatedImageView.swift; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -889,6 +893,7 @@
 			isa = PBXGroup;
 			children = (
 				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
+				4B6313F31D766BEF0078E017 /* Filter.swift */,
 				4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */,
 				D10945EA1C526B6C001408EB /* Image.swift */,
 				D10945EB1C526B6C001408EB /* ImageCache.swift */,
@@ -1994,6 +1999,7 @@
 				4B2B8E4C1D70141000FC4749 /* ImageProcessor.swift in Sources */,
 				D109461E1C526C61001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D109461F1C526C61001408EB /* KingfisherManager.swift in Sources */,
+				4B6313F61D766BEF0078E017 /* Filter.swift in Sources */,
 				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D10946201C526C61001408EB /* KingfisherOptionsInfo.swift in Sources */,
 				D10946211C526C61001408EB /* Resource.swift in Sources */,
@@ -2063,6 +2069,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D109460E1C526C0D001408EB /* Image.swift in Sources */,
+				4B6313F51D766BEF0078E017 /* Filter.swift in Sources */,
 				4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				D109460F1C526C0D001408EB /* ImageCache.swift in Sources */,
 				D10946101C526C0D001408EB /* ImageDownloader.swift in Sources */,
@@ -2121,6 +2128,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10945F71C526B86001408EB /* Image.swift in Sources */,
+				4B6313F41D766BEF0078E017 /* Filter.swift in Sources */,
 				4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				D10945F81C526B86001408EB /* ImageCache.swift in Sources */,
 				D10945F91C526B86001408EB /* ImageDownloader.swift in Sources */,
