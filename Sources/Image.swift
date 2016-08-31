@@ -157,20 +157,13 @@ extension Image {
      */
     public func kf_normalized() -> Image {
         // prevent animated image (GIF) lose it's images
-        if images != nil {
-            return self
+        guard images == nil else { return self }
+        // No need to do anything if already up
+        guard imageOrientation != .up else { return self }
+    
+        return draw(cgImage: nil, to: size) {
+            draw(in: CGRect(origin: CGPoint.zero, size: size))
         }
-    
-        if imageOrientation == .up {
-            return self
-        }
-    
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        draw(in: CGRect(origin: CGPoint.zero, size: size))
-        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-    
-        return normalizedImage!
     }
     
     static func kf_animated(with images: [Image], forDuration duration: TimeInterval) -> Image? {
@@ -360,30 +353,25 @@ extension Image {
                 return self
             }
             
-            return draw(cgImage: cgImage, to: size, draw: { 
+            return draw(cgImage: cgImage, to: size) {
                 let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
                 path.windingRule = .evenOddWindingRule
                 path.addClip()
                 draw(in: rect)
-            })
-        #else
-            UIGraphicsBeginImageContextWithOptions(rect.size, false, scale)
-            
-            guard let context = UIGraphicsGetCurrentContext() else {
-                assertionFailure("[Kingfisher] Failed to create CG context for round corner image.")
-                return self
             }
+        #else
             
-            let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
-            context.addPath(path)
-            context.clip()
-            
-            draw(in: rect)
-            
-            let output = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-
-            return output ?? self
+            return draw(cgImage: nil, to: size) {
+                guard let context = UIGraphicsGetCurrentContext() else {
+                    assertionFailure("[Kingfisher] Failed to create CG context for image.")
+                    return
+                }
+                let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
+                context.addPath(path)
+                context.clip()
+                
+                draw(in: rect)
+            }
         #endif
     }
     
@@ -413,16 +401,13 @@ extension Image {
                 return self
             }
             
-            return draw(cgImage: cgImage, to: rect.size, draw: {
+            return draw(cgImage: cgImage, to: size, draw: {
                 draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
             })
         #else
-            UIGraphicsBeginImageContextWithOptions(size, false, scale)
-            draw(in: rect)
-            
-            let output = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return output ?? self
+            return draw(cgImage: nil, to: size) {
+                draw(in: rect)
+            }
         #endif
     }
     
@@ -542,19 +527,15 @@ extension Image {
                 NSRectFillUsingOperation(rect, .sourceAtop)
             })
         #else
-            UIGraphicsBeginImageContextWithOptions(size, false, scale)
-
-            color.set()
-            UIRectFill(rect)
-            draw(in: rect, blendMode: .destinationIn, alpha: 1.0)
-            
-            if fraction > 0 {
-                draw(in: rect, blendMode: .sourceAtop, alpha: fraction)
+            return draw(cgImage: nil, to: size) {
+                color.set()
+                UIRectFill(rect)
+                draw(in: rect, blendMode: .destinationIn, alpha: 1.0)
+                
+                if fraction > 0 {
+                    draw(in: rect, blendMode: .sourceAtop, alpha: fraction)
+                }
             }
-            
-            let tintedImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return tintedImage ?? self
         #endif
     }
     
@@ -586,13 +567,9 @@ extension Image {
     func kf_decoded(scale: CGFloat) -> Image? {
         // prevent animated image (GIF) lose it's images
 #if os(iOS)
-        if kf_imageSource != nil {
-            return self
-        }
+        if kf_imageSource != nil { return self }
 #else
-        if kf_images != nil {
-            return self
-        }
+        if kf_images != nil { return self }
 #endif
         
         guard let imageRef = self.cgImage else {
@@ -715,14 +692,16 @@ extension CGBitmapInfo {
     }
 }
 
-#if os(macOS)
+
 extension Image {
-    func draw(cgImage: CGImage, to size: CGSize, draw: ()->()) -> Image {
+    
+    func draw(cgImage: CGImage?, to size: CGSize, draw: ()->()) -> Image {
+        #if os(macOS)
         guard let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil,
             pixelsWide: Int(size.width),
             pixelsHigh: Int(size.height),
-            bitsPerSample: cgImage.bitsPerComponent,
+            bitsPerSample: cgImage?.bitsPerComponent ?? 8,
             samplesPerPixel: 4,
             hasAlpha: true,
             isPlanar: false,
@@ -736,6 +715,7 @@ extension Image {
         rep.size = size
         
         NSGraphicsContext.saveGraphicsState()
+        
         let context = NSGraphicsContext(bitmapImageRep: rep)
         NSGraphicsContext.setCurrent(context)
         draw()
@@ -744,9 +724,17 @@ extension Image {
         let outputImage = Image(size: size)
         outputImage.addRepresentation(rep)
         return outputImage
+        #else
+            
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        draw()
+        return UIGraphicsGetImageFromCurrentImageContext() ?? self
+        
+        #endif
     }
 }
-#endif
+
 
 extension CGContext {
     static func createARGBContext(from imageRef: CGImage) -> CGContext? {
