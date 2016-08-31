@@ -12,9 +12,16 @@
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
 		4B2944641C3D03980088C3E7 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
+		4B2B8E4A1D70128200FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
+		4B2B8E4B1D70140F00FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
+		4B2B8E4C1D70141000FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
+		4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
 		4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; };
 		4B3766A01C4794460001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B37669F1C4794460001443F /* CFNetwork.framework */; };
 		4B3766A21C47944D0001443F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B3766A11C47944D0001443F /* CFNetwork.framework */; };
+		4B6313F41D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
+		4B6313F51D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
+		4B6313F61D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
 		4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
@@ -22,6 +29,198 @@
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
 		4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF33A1D5B02F8003387C2 /* Cell.xib */; };
 		4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF33C1D5B02F8003387C2 /* ViewController.swift */; };
+		4BE3BD0A1D756A77000BFA17 /* kingfisher-b&w-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC11D756A77000BFA17 /* kingfisher-b&w-mac.jpg */; };
+		4BE3BD0B1D756A77000BFA17 /* kingfisher-b&w-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC11D756A77000BFA17 /* kingfisher-b&w-mac.jpg */; };
+		4BE3BD0C1D756A77000BFA17 /* kingfisher-b&w-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC11D756A77000BFA17 /* kingfisher-b&w-mac.jpg */; };
+		4BE3BD0D1D756A77000BFA17 /* kingfisher-b&w.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC21D756A77000BFA17 /* kingfisher-b&w.jpg */; };
+		4BE3BD0E1D756A77000BFA17 /* kingfisher-b&w.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC21D756A77000BFA17 /* kingfisher-b&w.jpg */; };
+		4BE3BD0F1D756A77000BFA17 /* kingfisher-b&w.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC21D756A77000BFA17 /* kingfisher-b&w.jpg */; };
+		4BE3BD101D756A77000BFA17 /* onevcat-b&w-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC31D756A77000BFA17 /* onevcat-b&w-mac.jpg */; };
+		4BE3BD111D756A77000BFA17 /* onevcat-b&w-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC31D756A77000BFA17 /* onevcat-b&w-mac.jpg */; };
+		4BE3BD121D756A77000BFA17 /* onevcat-b&w-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC31D756A77000BFA17 /* onevcat-b&w-mac.jpg */; };
+		4BE3BD131D756A77000BFA17 /* onevcat-b&w.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC41D756A77000BFA17 /* onevcat-b&w.jpg */; };
+		4BE3BD141D756A77000BFA17 /* onevcat-b&w.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC41D756A77000BFA17 /* onevcat-b&w.jpg */; };
+		4BE3BD151D756A77000BFA17 /* onevcat-b&w.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC41D756A77000BFA17 /* onevcat-b&w.jpg */; };
+		4BE3BD161D756A77000BFA17 /* unicorn-b&w-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC51D756A77000BFA17 /* unicorn-b&w-mac.png */; };
+		4BE3BD171D756A77000BFA17 /* unicorn-b&w-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC51D756A77000BFA17 /* unicorn-b&w-mac.png */; };
+		4BE3BD181D756A77000BFA17 /* unicorn-b&w-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC51D756A77000BFA17 /* unicorn-b&w-mac.png */; };
+		4BE3BD191D756A77000BFA17 /* unicorn-b&w.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC61D756A77000BFA17 /* unicorn-b&w.png */; };
+		4BE3BD1A1D756A77000BFA17 /* unicorn-b&w.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC61D756A77000BFA17 /* unicorn-b&w.png */; };
+		4BE3BD1B1D756A77000BFA17 /* unicorn-b&w.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC61D756A77000BFA17 /* unicorn-b&w.png */; };
+		4BE3BD1C1D756A77000BFA17 /* kingfisher-blur-10-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC81D756A77000BFA17 /* kingfisher-blur-10-mac.jpg */; };
+		4BE3BD1D1D756A77000BFA17 /* kingfisher-blur-10-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC81D756A77000BFA17 /* kingfisher-blur-10-mac.jpg */; };
+		4BE3BD1E1D756A77000BFA17 /* kingfisher-blur-10-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC81D756A77000BFA17 /* kingfisher-blur-10-mac.jpg */; };
+		4BE3BD1F1D756A77000BFA17 /* kingfisher-blur-10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC91D756A77000BFA17 /* kingfisher-blur-10.jpg */; };
+		4BE3BD201D756A77000BFA17 /* kingfisher-blur-10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC91D756A77000BFA17 /* kingfisher-blur-10.jpg */; };
+		4BE3BD211D756A77000BFA17 /* kingfisher-blur-10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCC91D756A77000BFA17 /* kingfisher-blur-10.jpg */; };
+		4BE3BD221D756A77000BFA17 /* onevcat-blur-10-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCA1D756A77000BFA17 /* onevcat-blur-10-mac.jpg */; };
+		4BE3BD231D756A77000BFA17 /* onevcat-blur-10-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCA1D756A77000BFA17 /* onevcat-blur-10-mac.jpg */; };
+		4BE3BD241D756A77000BFA17 /* onevcat-blur-10-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCA1D756A77000BFA17 /* onevcat-blur-10-mac.jpg */; };
+		4BE3BD251D756A77000BFA17 /* onevcat-blur-10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCB1D756A77000BFA17 /* onevcat-blur-10.jpg */; };
+		4BE3BD261D756A77000BFA17 /* onevcat-blur-10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCB1D756A77000BFA17 /* onevcat-blur-10.jpg */; };
+		4BE3BD271D756A77000BFA17 /* onevcat-blur-10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCB1D756A77000BFA17 /* onevcat-blur-10.jpg */; };
+		4BE3BD281D756A77000BFA17 /* unicorn-blur-10-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCC1D756A77000BFA17 /* unicorn-blur-10-mac.png */; };
+		4BE3BD291D756A77000BFA17 /* unicorn-blur-10-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCC1D756A77000BFA17 /* unicorn-blur-10-mac.png */; };
+		4BE3BD2A1D756A77000BFA17 /* unicorn-blur-10-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCC1D756A77000BFA17 /* unicorn-blur-10-mac.png */; };
+		4BE3BD2B1D756A77000BFA17 /* unicorn-blur-10.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCD1D756A77000BFA17 /* unicorn-blur-10.png */; };
+		4BE3BD2C1D756A77000BFA17 /* unicorn-blur-10.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCD1D756A77000BFA17 /* unicorn-blur-10.png */; };
+		4BE3BD2D1D756A77000BFA17 /* unicorn-blur-10.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCD1D756A77000BFA17 /* unicorn-blur-10.png */; };
+		4BE3BD2E1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCF1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg */; };
+		4BE3BD2F1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCF1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg */; };
+		4BE3BD301D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCCF1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg */; };
+		4BE3BD311D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD01D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg */; };
+		4BE3BD321D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD01D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg */; };
+		4BE3BD331D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD01D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg */; };
+		4BE3BD341D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD11D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg */; };
+		4BE3BD351D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD11D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg */; };
+		4BE3BD361D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD11D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg */; };
+		4BE3BD371D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD21D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg */; };
+		4BE3BD381D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD21D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg */; };
+		4BE3BD391D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD21D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg */; };
+		4BE3BD3A1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD31D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png */; };
+		4BE3BD3B1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD31D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png */; };
+		4BE3BD3C1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD31D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png */; };
+		4BE3BD3D1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD41D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png */; };
+		4BE3BD3E1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD41D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png */; };
+		4BE3BD3F1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD41D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png */; };
+		4BE3BD401D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD61D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg */; };
+		4BE3BD411D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD61D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg */; };
+		4BE3BD421D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD61D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg */; };
+		4BE3BD431D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD71D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg */; };
+		4BE3BD441D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD71D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg */; };
+		4BE3BD451D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD71D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg */; };
+		4BE3BD461D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD81D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg */; };
+		4BE3BD471D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD81D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg */; };
+		4BE3BD481D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD81D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg */; };
+		4BE3BD491D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD91D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg */; };
+		4BE3BD4A1D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD91D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg */; };
+		4BE3BD4B1D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCD91D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg */; };
+		4BE3BD4C1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCDA1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png */; };
+		4BE3BD4D1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCDA1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png */; };
+		4BE3BD4E1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCDA1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png */; };
+		4BE3BD4F1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCDB1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png */; };
+		4BE3BD501D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCDB1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png */; };
+		4BE3BD511D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCDB1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png */; };
+		4BE3BD761D756A77000BFA17 /* kingfisher-resize-120-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEA1D756A77000BFA17 /* kingfisher-resize-120-mac.jpg */; };
+		4BE3BD771D756A77000BFA17 /* kingfisher-resize-120-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEA1D756A77000BFA17 /* kingfisher-resize-120-mac.jpg */; };
+		4BE3BD781D756A77000BFA17 /* kingfisher-resize-120-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEA1D756A77000BFA17 /* kingfisher-resize-120-mac.jpg */; };
+		4BE3BD791D756A77000BFA17 /* kingfisher-resize-120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEB1D756A77000BFA17 /* kingfisher-resize-120.jpg */; };
+		4BE3BD7A1D756A77000BFA17 /* kingfisher-resize-120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEB1D756A77000BFA17 /* kingfisher-resize-120.jpg */; };
+		4BE3BD7B1D756A77000BFA17 /* kingfisher-resize-120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEB1D756A77000BFA17 /* kingfisher-resize-120.jpg */; };
+		4BE3BD821D756A77000BFA17 /* onevcat-resize-120-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEE1D756A77000BFA17 /* onevcat-resize-120-mac.jpg */; };
+		4BE3BD831D756A77000BFA17 /* onevcat-resize-120-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEE1D756A77000BFA17 /* onevcat-resize-120-mac.jpg */; };
+		4BE3BD841D756A77000BFA17 /* onevcat-resize-120-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEE1D756A77000BFA17 /* onevcat-resize-120-mac.jpg */; };
+		4BE3BD851D756A77000BFA17 /* onevcat-resize-120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEF1D756A77000BFA17 /* onevcat-resize-120.jpg */; };
+		4BE3BD861D756A77000BFA17 /* onevcat-resize-120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEF1D756A77000BFA17 /* onevcat-resize-120.jpg */; };
+		4BE3BD871D756A77000BFA17 /* onevcat-resize-120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCEF1D756A77000BFA17 /* onevcat-resize-120.jpg */; };
+		4BE3BD8E1D756A77000BFA17 /* unicorn-resize-120-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF21D756A77000BFA17 /* unicorn-resize-120-mac.png */; };
+		4BE3BD8F1D756A77000BFA17 /* unicorn-resize-120-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF21D756A77000BFA17 /* unicorn-resize-120-mac.png */; };
+		4BE3BD901D756A77000BFA17 /* unicorn-resize-120-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF21D756A77000BFA17 /* unicorn-resize-120-mac.png */; };
+		4BE3BD911D756A77000BFA17 /* unicorn-resize-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF31D756A77000BFA17 /* unicorn-resize-120.png */; };
+		4BE3BD921D756A77000BFA17 /* unicorn-resize-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF31D756A77000BFA17 /* unicorn-resize-120.png */; };
+		4BE3BD931D756A77000BFA17 /* unicorn-resize-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF31D756A77000BFA17 /* unicorn-resize-120.png */; };
+		4BE3BD9A1D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF71D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg */; };
+		4BE3BD9B1D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF71D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg */; };
+		4BE3BD9C1D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF71D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg */; };
+		4BE3BD9D1D756A77000BFA17 /* kingfisher-round-corner-40.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF81D756A77000BFA17 /* kingfisher-round-corner-40.jpg */; };
+		4BE3BD9E1D756A77000BFA17 /* kingfisher-round-corner-40.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF81D756A77000BFA17 /* kingfisher-round-corner-40.jpg */; };
+		4BE3BD9F1D756A77000BFA17 /* kingfisher-round-corner-40.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF81D756A77000BFA17 /* kingfisher-round-corner-40.jpg */; };
+		4BE3BDA01D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF91D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg */; };
+		4BE3BDA11D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF91D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg */; };
+		4BE3BDA21D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCF91D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg */; };
+		4BE3BDA31D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFA1D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg */; };
+		4BE3BDA41D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFA1D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg */; };
+		4BE3BDA51D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFA1D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg */; };
+		4BE3BDA61D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFB1D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg */; };
+		4BE3BDA71D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFB1D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg */; };
+		4BE3BDA81D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFB1D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg */; };
+		4BE3BDA91D756A77000BFA17 /* onevcat-round-corner-40.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFC1D756A77000BFA17 /* onevcat-round-corner-40.jpg */; };
+		4BE3BDAA1D756A77000BFA17 /* onevcat-round-corner-40.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFC1D756A77000BFA17 /* onevcat-round-corner-40.jpg */; };
+		4BE3BDAB1D756A77000BFA17 /* onevcat-round-corner-40.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFC1D756A77000BFA17 /* onevcat-round-corner-40.jpg */; };
+		4BE3BDAC1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg */; };
+		4BE3BDAD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg */; };
+		4BE3BDAE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg */; };
+		4BE3BDAF1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg */; };
+		4BE3BDB01D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg */; };
+		4BE3BDB11D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg */; };
+		4BE3BDB21D756A77000BFA17 /* unicorn-round-corner-40-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFF1D756A77000BFA17 /* unicorn-round-corner-40-mac.png */; };
+		4BE3BDB31D756A77000BFA17 /* unicorn-round-corner-40-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFF1D756A77000BFA17 /* unicorn-round-corner-40-mac.png */; };
+		4BE3BDB41D756A77000BFA17 /* unicorn-round-corner-40-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BCFF1D756A77000BFA17 /* unicorn-round-corner-40-mac.png */; };
+		4BE3BDB51D756A77000BFA17 /* unicorn-round-corner-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD001D756A77000BFA17 /* unicorn-round-corner-40.png */; };
+		4BE3BDB61D756A77000BFA17 /* unicorn-round-corner-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD001D756A77000BFA17 /* unicorn-round-corner-40.png */; };
+		4BE3BDB71D756A77000BFA17 /* unicorn-round-corner-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD001D756A77000BFA17 /* unicorn-round-corner-40.png */; };
+		4BE3BDB81D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD011D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png */; };
+		4BE3BDB91D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD011D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png */; };
+		4BE3BDBA1D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD011D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png */; };
+		4BE3BDBB1D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD021D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png */; };
+		4BE3BDBC1D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD021D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png */; };
+		4BE3BDBD1D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD021D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png */; };
+		4BE3BDBE1D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD041D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg */; };
+		4BE3BDBF1D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD041D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg */; };
+		4BE3BDC01D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD041D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg */; };
+		4BE3BDC11D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD051D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg */; };
+		4BE3BDC21D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD051D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg */; };
+		4BE3BDC31D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD051D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg */; };
+		4BE3BDC41D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD061D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg */; };
+		4BE3BDC51D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD061D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg */; };
+		4BE3BDC61D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD061D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg */; };
+		4BE3BDC71D756A77000BFA17 /* onevcat-tint-yellow-02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD071D756A77000BFA17 /* onevcat-tint-yellow-02.jpg */; };
+		4BE3BDC81D756A77000BFA17 /* onevcat-tint-yellow-02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD071D756A77000BFA17 /* onevcat-tint-yellow-02.jpg */; };
+		4BE3BDC91D756A77000BFA17 /* onevcat-tint-yellow-02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD071D756A77000BFA17 /* onevcat-tint-yellow-02.jpg */; };
+		4BE3BDCA1D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD081D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png */; };
+		4BE3BDCB1D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD081D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png */; };
+		4BE3BDCC1D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD081D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png */; };
+		4BE3BDCD1D756A77000BFA17 /* unicorn-tint-yellow-02.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD091D756A77000BFA17 /* unicorn-tint-yellow-02.png */; };
+		4BE3BDCE1D756A77000BFA17 /* unicorn-tint-yellow-02.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD091D756A77000BFA17 /* unicorn-tint-yellow-02.png */; };
+		4BE3BDCF1D756A77000BFA17 /* unicorn-tint-yellow-02.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BD091D756A77000BFA17 /* unicorn-tint-yellow-02.png */; };
+		4BE3BDE81D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDC1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg */; };
+		4BE3BDE91D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDC1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg */; };
+		4BE3BDEA1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDC1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg */; };
+		4BE3BDEB1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDD1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg */; };
+		4BE3BDEC1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDD1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg */; };
+		4BE3BDED1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDD1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg */; };
+		4BE3BDEE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg */; };
+		4BE3BDEF1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg */; };
+		4BE3BDF01D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg */; };
+		4BE3BDF11D757B84000BFA17 /* kingfisher-overlay-red.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDF1D757B84000BFA17 /* kingfisher-overlay-red.jpg */; };
+		4BE3BDF21D757B84000BFA17 /* kingfisher-overlay-red.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDF1D757B84000BFA17 /* kingfisher-overlay-red.jpg */; };
+		4BE3BDF31D757B84000BFA17 /* kingfisher-overlay-red.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDDF1D757B84000BFA17 /* kingfisher-overlay-red.jpg */; };
+		4BE3BDF41D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE01D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg */; };
+		4BE3BDF51D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE01D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg */; };
+		4BE3BDF61D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE01D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg */; };
+		4BE3BDF71D757B84000BFA17 /* onevcat-overlay-red-07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE11D757B84000BFA17 /* onevcat-overlay-red-07.jpg */; };
+		4BE3BDF81D757B84000BFA17 /* onevcat-overlay-red-07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE11D757B84000BFA17 /* onevcat-overlay-red-07.jpg */; };
+		4BE3BDF91D757B84000BFA17 /* onevcat-overlay-red-07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE11D757B84000BFA17 /* onevcat-overlay-red-07.jpg */; };
+		4BE3BDFA1D757B84000BFA17 /* onevcat-overlay-red-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE21D757B84000BFA17 /* onevcat-overlay-red-mac.jpg */; };
+		4BE3BDFB1D757B84000BFA17 /* onevcat-overlay-red-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE21D757B84000BFA17 /* onevcat-overlay-red-mac.jpg */; };
+		4BE3BDFC1D757B84000BFA17 /* onevcat-overlay-red-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE21D757B84000BFA17 /* onevcat-overlay-red-mac.jpg */; };
+		4BE3BDFD1D757B84000BFA17 /* onevcat-overlay-red.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE31D757B84000BFA17 /* onevcat-overlay-red.jpg */; };
+		4BE3BDFE1D757B84000BFA17 /* onevcat-overlay-red.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE31D757B84000BFA17 /* onevcat-overlay-red.jpg */; };
+		4BE3BDFF1D757B84000BFA17 /* onevcat-overlay-red.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE31D757B84000BFA17 /* onevcat-overlay-red.jpg */; };
+		4BE3BE001D757B84000BFA17 /* unicorn-overlay-red-07-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE41D757B84000BFA17 /* unicorn-overlay-red-07-mac.png */; };
+		4BE3BE011D757B84000BFA17 /* unicorn-overlay-red-07-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE41D757B84000BFA17 /* unicorn-overlay-red-07-mac.png */; };
+		4BE3BE021D757B84000BFA17 /* unicorn-overlay-red-07-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE41D757B84000BFA17 /* unicorn-overlay-red-07-mac.png */; };
+		4BE3BE031D757B84000BFA17 /* unicorn-overlay-red-07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE51D757B84000BFA17 /* unicorn-overlay-red-07.png */; };
+		4BE3BE041D757B84000BFA17 /* unicorn-overlay-red-07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE51D757B84000BFA17 /* unicorn-overlay-red-07.png */; };
+		4BE3BE051D757B84000BFA17 /* unicorn-overlay-red-07.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE51D757B84000BFA17 /* unicorn-overlay-red-07.png */; };
+		4BE3BE061D757B84000BFA17 /* unicorn-overlay-red-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE61D757B84000BFA17 /* unicorn-overlay-red-mac.png */; };
+		4BE3BE071D757B84000BFA17 /* unicorn-overlay-red-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE61D757B84000BFA17 /* unicorn-overlay-red-mac.png */; };
+		4BE3BE081D757B84000BFA17 /* unicorn-overlay-red-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE61D757B84000BFA17 /* unicorn-overlay-red-mac.png */; };
+		4BE3BE091D757B84000BFA17 /* unicorn-overlay-red.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE71D757B84000BFA17 /* unicorn-overlay-red.png */; };
+		4BE3BE0A1D757B84000BFA17 /* unicorn-overlay-red.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE71D757B84000BFA17 /* unicorn-overlay-red.png */; };
+		4BE3BE0B1D757B84000BFA17 /* unicorn-overlay-red.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3BDE71D757B84000BFA17 /* unicorn-overlay-red.png */; };
+		4BF806D71D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */; };
+		4BF806D81D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */; };
+		4BF806D91D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */; };
+		4BF806E01D75411B00C8DB13 /* kingfisher.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DD1D75411B00C8DB13 /* kingfisher.jpg */; };
+		4BF806E11D75411B00C8DB13 /* kingfisher.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DD1D75411B00C8DB13 /* kingfisher.jpg */; };
+		4BF806E21D75411B00C8DB13 /* kingfisher.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DD1D75411B00C8DB13 /* kingfisher.jpg */; };
+		4BF806E31D75411B00C8DB13 /* onevcat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DE1D75411B00C8DB13 /* onevcat.jpg */; };
+		4BF806E41D75411B00C8DB13 /* onevcat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DE1D75411B00C8DB13 /* onevcat.jpg */; };
+		4BF806E51D75411B00C8DB13 /* onevcat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DE1D75411B00C8DB13 /* onevcat.jpg */; };
+		4BF806E61D75411B00C8DB13 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DF1D75411B00C8DB13 /* unicorn.png */; };
+		4BF806E71D75411B00C8DB13 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DF1D75411B00C8DB13 /* unicorn.png */; };
+		4BF806E81D75411B00C8DB13 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BF806DF1D75411B00C8DB13 /* unicorn.png */; };
 		B8BBB7092D89EAC97D6ED888 /* libPods-KingfisherTests-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0268A213AE27BC6133BC5E0F /* libPods-KingfisherTests-macOS.a */; };
 		D10945F71C526B86001408EB /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10945EA1C526B6C001408EB /* Image.swift */; };
 		D10945F81C526B86001408EB /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10945EB1C526B6C001408EB /* ImageCache.swift */; };
@@ -262,10 +461,12 @@
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B2B8E491D70128200FC4749 /* ImageProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageProcessor.swift; path = Sources/ImageProcessor.swift; sourceTree = "<group>"; };
 		4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B37669F1C4794460001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3766A11C47944D0001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
+		4B6313F31D766BEF0078E017 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = Sources/Filter.swift; sourceTree = "<group>"; };
 		4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimatedImageView.swift; path = Sources/AnimatedImageView.swift; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -274,6 +475,70 @@
 		4BCCF33B1D5B02F8003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BCCF33C1D5B02F8003387C2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4BCCF3441D5B0457003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BE3BCC11D756A77000BFA17 /* kingfisher-b&w-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-b&w-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCC21D756A77000BFA17 /* kingfisher-b&w.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-b&w.jpg"; sourceTree = "<group>"; };
+		4BE3BCC31D756A77000BFA17 /* onevcat-b&w-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-b&w-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCC41D756A77000BFA17 /* onevcat-b&w.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-b&w.jpg"; sourceTree = "<group>"; };
+		4BE3BCC51D756A77000BFA17 /* unicorn-b&w-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-b&w-mac.png"; sourceTree = "<group>"; };
+		4BE3BCC61D756A77000BFA17 /* unicorn-b&w.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-b&w.png"; sourceTree = "<group>"; };
+		4BE3BCC81D756A77000BFA17 /* kingfisher-blur-10-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-blur-10-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCC91D756A77000BFA17 /* kingfisher-blur-10.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-blur-10.jpg"; sourceTree = "<group>"; };
+		4BE3BCCA1D756A77000BFA17 /* onevcat-blur-10-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-blur-10-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCCB1D756A77000BFA17 /* onevcat-blur-10.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-blur-10.jpg"; sourceTree = "<group>"; };
+		4BE3BCCC1D756A77000BFA17 /* unicorn-blur-10-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-blur-10-mac.png"; sourceTree = "<group>"; };
+		4BE3BCCD1D756A77000BFA17 /* unicorn-blur-10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-blur-10.png"; sourceTree = "<group>"; };
+		4BE3BCCF1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-color-control-b00-c11-s12-ev07-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCD01D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-color-control-b00-c11-s12-ev07.jpg"; sourceTree = "<group>"; };
+		4BE3BCD11D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-color-control-b00-c11-s12-ev07-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCD21D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-color-control-b00-c11-s12-ev07.jpg"; sourceTree = "<group>"; };
+		4BE3BCD31D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-color-control-b00-c11-s12-ev07-mac.png"; sourceTree = "<group>"; };
+		4BE3BCD41D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-color-control-b00-c11-s12-ev07.png"; sourceTree = "<group>"; };
+		4BE3BCD61D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-blur-4-round-corner-60-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCD71D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-blur-4-round-corner-60.jpg"; sourceTree = "<group>"; };
+		4BE3BCD81D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-blur-4-round-corner-60-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCD91D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-blur-4-round-corner-60.jpg"; sourceTree = "<group>"; };
+		4BE3BCDA1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-blur-4-round-corner-60-mac.png"; sourceTree = "<group>"; };
+		4BE3BCDB1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-blur-4-round-corner-60.png"; sourceTree = "<group>"; };
+		4BE3BCEA1D756A77000BFA17 /* kingfisher-resize-120-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-resize-120-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCEB1D756A77000BFA17 /* kingfisher-resize-120.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-resize-120.jpg"; sourceTree = "<group>"; };
+		4BE3BCEE1D756A77000BFA17 /* onevcat-resize-120-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-resize-120-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCEF1D756A77000BFA17 /* onevcat-resize-120.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-resize-120.jpg"; sourceTree = "<group>"; };
+		4BE3BCF21D756A77000BFA17 /* unicorn-resize-120-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-resize-120-mac.png"; sourceTree = "<group>"; };
+		4BE3BCF31D756A77000BFA17 /* unicorn-resize-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-resize-120.png"; sourceTree = "<group>"; };
+		4BE3BCF71D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCF81D756A77000BFA17 /* kingfisher-round-corner-40.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40.jpg"; sourceTree = "<group>"; };
+		4BE3BCF91D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-60-resize-100-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCFA1D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-60-resize-100.jpg"; sourceTree = "<group>"; };
+		4BE3BCFB1D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-40-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCFC1D756A77000BFA17 /* onevcat-round-corner-40.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-40.jpg"; sourceTree = "<group>"; };
+		4BE3BCFD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-60-resize-100-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BCFE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-60-resize-100.jpg"; sourceTree = "<group>"; };
+		4BE3BCFF1D756A77000BFA17 /* unicorn-round-corner-40-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-40-mac.png"; sourceTree = "<group>"; };
+		4BE3BD001D756A77000BFA17 /* unicorn-round-corner-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-40.png"; sourceTree = "<group>"; };
+		4BE3BD011D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-60-resize-100-mac.png"; sourceTree = "<group>"; };
+		4BE3BD021D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-60-resize-100.png"; sourceTree = "<group>"; };
+		4BE3BD041D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-tint-yellow-02-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BD051D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-tint-yellow-02.jpg"; sourceTree = "<group>"; };
+		4BE3BD061D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-tint-yellow-02-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BD071D756A77000BFA17 /* onevcat-tint-yellow-02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-tint-yellow-02.jpg"; sourceTree = "<group>"; };
+		4BE3BD081D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-tint-yellow-02-mac.png"; sourceTree = "<group>"; };
+		4BE3BD091D756A77000BFA17 /* unicorn-tint-yellow-02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-tint-yellow-02.png"; sourceTree = "<group>"; };
+		4BE3BDDC1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-overlay-red-07-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BDDD1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-overlay-red-07.jpg"; sourceTree = "<group>"; };
+		4BE3BDDE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-overlay-red-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BDDF1D757B84000BFA17 /* kingfisher-overlay-red.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-overlay-red.jpg"; sourceTree = "<group>"; };
+		4BE3BDE01D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-overlay-red-07-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BDE11D757B84000BFA17 /* onevcat-overlay-red-07.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-overlay-red-07.jpg"; sourceTree = "<group>"; };
+		4BE3BDE21D757B84000BFA17 /* onevcat-overlay-red-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-overlay-red-mac.jpg"; sourceTree = "<group>"; };
+		4BE3BDE31D757B84000BFA17 /* onevcat-overlay-red.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-overlay-red.jpg"; sourceTree = "<group>"; };
+		4BE3BDE41D757B84000BFA17 /* unicorn-overlay-red-07-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-overlay-red-07-mac.png"; sourceTree = "<group>"; };
+		4BE3BDE51D757B84000BFA17 /* unicorn-overlay-red-07.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-overlay-red-07.png"; sourceTree = "<group>"; };
+		4BE3BDE61D757B84000BFA17 /* unicorn-overlay-red-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-overlay-red-mac.png"; sourceTree = "<group>"; };
+		4BE3BDE71D757B84000BFA17 /* unicorn-overlay-red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-overlay-red.png"; sourceTree = "<group>"; };
+		4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessorTests.swift; sourceTree = "<group>"; };
+		4BF806DD1D75411B00C8DB13 /* kingfisher.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = kingfisher.jpg; sourceTree = "<group>"; };
+		4BF806DE1D75411B00C8DB13 /* onevcat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = onevcat.jpg; sourceTree = "<group>"; };
+		4BF806DF1D75411B00C8DB13 /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unicorn.png; sourceTree = "<group>"; };
 		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		9D0E767B01589AA8BE21FFA6 /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -461,6 +726,156 @@
 			path = "Tests/KingfisherTests-macOS";
 			sourceTree = "<group>";
 		};
+		4BE3BCBF1D756A77000BFA17 /* Modified */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCC01D756A77000BFA17 /* B&W */,
+				4BE3BCC71D756A77000BFA17 /* Blur */,
+				4BE3BCCE1D756A77000BFA17 /* ColorControl */,
+				4BE3BCD51D756A77000BFA17 /* Composition */,
+				4BE3BCDC1D756A77000BFA17 /* Overlay */,
+				4BE3BCE91D756A77000BFA17 /* Resize */,
+				4BE3BCF61D756A77000BFA17 /* RoundCorner */,
+				4BE3BD031D756A77000BFA17 /* Tint */,
+			);
+			path = Modified;
+			sourceTree = "<group>";
+		};
+		4BE3BCC01D756A77000BFA17 /* B&W */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCC11D756A77000BFA17 /* kingfisher-b&w-mac.jpg */,
+				4BE3BCC21D756A77000BFA17 /* kingfisher-b&w.jpg */,
+				4BE3BCC31D756A77000BFA17 /* onevcat-b&w-mac.jpg */,
+				4BE3BCC41D756A77000BFA17 /* onevcat-b&w.jpg */,
+				4BE3BCC51D756A77000BFA17 /* unicorn-b&w-mac.png */,
+				4BE3BCC61D756A77000BFA17 /* unicorn-b&w.png */,
+			);
+			path = "B&W";
+			sourceTree = "<group>";
+		};
+		4BE3BCC71D756A77000BFA17 /* Blur */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCC81D756A77000BFA17 /* kingfisher-blur-10-mac.jpg */,
+				4BE3BCC91D756A77000BFA17 /* kingfisher-blur-10.jpg */,
+				4BE3BCCA1D756A77000BFA17 /* onevcat-blur-10-mac.jpg */,
+				4BE3BCCB1D756A77000BFA17 /* onevcat-blur-10.jpg */,
+				4BE3BCCC1D756A77000BFA17 /* unicorn-blur-10-mac.png */,
+				4BE3BCCD1D756A77000BFA17 /* unicorn-blur-10.png */,
+			);
+			path = Blur;
+			sourceTree = "<group>";
+		};
+		4BE3BCCE1D756A77000BFA17 /* ColorControl */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCCF1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg */,
+				4BE3BCD01D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg */,
+				4BE3BCD11D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg */,
+				4BE3BCD21D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg */,
+				4BE3BCD31D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png */,
+				4BE3BCD41D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png */,
+			);
+			path = ColorControl;
+			sourceTree = "<group>";
+		};
+		4BE3BCD51D756A77000BFA17 /* Composition */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCD61D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg */,
+				4BE3BCD71D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg */,
+				4BE3BCD81D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg */,
+				4BE3BCD91D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg */,
+				4BE3BCDA1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png */,
+				4BE3BCDB1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png */,
+			);
+			path = Composition;
+			sourceTree = "<group>";
+		};
+		4BE3BCDC1D756A77000BFA17 /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BDDC1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg */,
+				4BE3BDDD1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg */,
+				4BE3BDDE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg */,
+				4BE3BDDF1D757B84000BFA17 /* kingfisher-overlay-red.jpg */,
+				4BE3BDE01D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg */,
+				4BE3BDE11D757B84000BFA17 /* onevcat-overlay-red-07.jpg */,
+				4BE3BDE21D757B84000BFA17 /* onevcat-overlay-red-mac.jpg */,
+				4BE3BDE31D757B84000BFA17 /* onevcat-overlay-red.jpg */,
+				4BE3BDE41D757B84000BFA17 /* unicorn-overlay-red-07-mac.png */,
+				4BE3BDE51D757B84000BFA17 /* unicorn-overlay-red-07.png */,
+				4BE3BDE61D757B84000BFA17 /* unicorn-overlay-red-mac.png */,
+				4BE3BDE71D757B84000BFA17 /* unicorn-overlay-red.png */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
+		4BE3BCE91D756A77000BFA17 /* Resize */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCEA1D756A77000BFA17 /* kingfisher-resize-120-mac.jpg */,
+				4BE3BCEB1D756A77000BFA17 /* kingfisher-resize-120.jpg */,
+				4BE3BCEE1D756A77000BFA17 /* onevcat-resize-120-mac.jpg */,
+				4BE3BCEF1D756A77000BFA17 /* onevcat-resize-120.jpg */,
+				4BE3BCF21D756A77000BFA17 /* unicorn-resize-120-mac.png */,
+				4BE3BCF31D756A77000BFA17 /* unicorn-resize-120.png */,
+			);
+			path = Resize;
+			sourceTree = "<group>";
+		};
+		4BE3BCF61D756A77000BFA17 /* RoundCorner */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCF71D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg */,
+				4BE3BCF81D756A77000BFA17 /* kingfisher-round-corner-40.jpg */,
+				4BE3BCF91D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg */,
+				4BE3BCFA1D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg */,
+				4BE3BCFB1D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg */,
+				4BE3BCFC1D756A77000BFA17 /* onevcat-round-corner-40.jpg */,
+				4BE3BCFD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg */,
+				4BE3BCFE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg */,
+				4BE3BCFF1D756A77000BFA17 /* unicorn-round-corner-40-mac.png */,
+				4BE3BD001D756A77000BFA17 /* unicorn-round-corner-40.png */,
+				4BE3BD011D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png */,
+				4BE3BD021D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png */,
+			);
+			path = RoundCorner;
+			sourceTree = "<group>";
+		};
+		4BE3BD031D756A77000BFA17 /* Tint */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BD041D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg */,
+				4BE3BD051D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg */,
+				4BE3BD061D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg */,
+				4BE3BD071D756A77000BFA17 /* onevcat-tint-yellow-02.jpg */,
+				4BE3BD081D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png */,
+				4BE3BD091D756A77000BFA17 /* unicorn-tint-yellow-02.png */,
+			);
+			path = Tint;
+			sourceTree = "<group>";
+		};
+		4BF806DA1D75411B00C8DB13 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3BCBF1D756A77000BFA17 /* Modified */,
+				4BF806DC1D75411B00C8DB13 /* Original */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4BF806DC1D75411B00C8DB13 /* Original */ = {
+			isa = PBXGroup;
+			children = (
+				4BF806DD1D75411B00C8DB13 /* kingfisher.jpg */,
+				4BF806DE1D75411B00C8DB13 /* onevcat.jpg */,
+				4BF806DF1D75411B00C8DB13 /* unicorn.png */,
+			);
+			path = Original;
+			sourceTree = "<group>";
+		};
 		7C9E3F3AA655241E5FF95378 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -477,6 +892,8 @@
 		D10EC22A1C3D62D200A4211C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
+				4B6313F31D766BEF0078E017 /* Filter.swift */,
 				4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */,
 				D10945EA1C526B6C001408EB /* Image.swift */,
 				D10945EB1C526B6C001408EB /* ImageCache.swift */,
@@ -522,6 +939,7 @@
 		D12E0C431C47F23500AC98AD /* KingfisherTests */ = {
 			isa = PBXGroup;
 			children = (
+				4BF806DA1D75411B00C8DB13 /* Resources */,
 				D12E0C491C47F23500AC98AD /* Info.plist */,
 				D12E0C441C47F23500AC98AD /* dancing-banana.gif */,
 				D1D2C3291C70A3230018F2F9 /* single-frame.gif */,
@@ -534,6 +952,7 @@
 				D12E0C4A1C47F23500AC98AD /* KingfisherManagerTests.swift */,
 				D12E0C4B1C47F23500AC98AD /* KingfisherOptionsInfoTests.swift */,
 				D12E0C4C1C47F23500AC98AD /* KingfisherTestHelper.swift */,
+				4BF806D61D752D4900C8DB13 /* ImageProcessorTests.swift */,
 				D12E0C4D1C47F23500AC98AD /* KingfisherTests-Bridging-Header.h */,
 				D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */,
 				185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */,
@@ -1024,8 +1443,71 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BE3BD441D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg in Resources */,
+				4BE3BE071D757B84000BFA17 /* unicorn-overlay-red-mac.png in Resources */,
+				4BE3BD861D756A77000BFA17 /* onevcat-resize-120.jpg in Resources */,
+				4BE3BDBC1D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png in Resources */,
+				4BE3BD321D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */,
+				4BE3BDEF1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg in Resources */,
+				4BE3BE041D757B84000BFA17 /* unicorn-overlay-red-07.png in Resources */,
+				4BE3BDB61D756A77000BFA17 /* unicorn-round-corner-40.png in Resources */,
+				4BE3BD411D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
+				4BE3BDC81D756A77000BFA17 /* onevcat-tint-yellow-02.jpg in Resources */,
+				4BF806E11D75411B00C8DB13 /* kingfisher.jpg in Resources */,
+				4BE3BD141D756A77000BFA17 /* onevcat-b&w.jpg in Resources */,
+				4BE3BDAD1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */,
 				D1D2C32B1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				4BE3BD501D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png in Resources */,
+				4BE3BD471D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
+				4BE3BD4A1D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg in Resources */,
+				4BE3BD2F1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BE3BDB31D756A77000BFA17 /* unicorn-round-corner-40-mac.png in Resources */,
+				4BE3BDAA1D756A77000BFA17 /* onevcat-round-corner-40.jpg in Resources */,
+				4BE3BDB91D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png in Resources */,
+				4BE3BD9E1D756A77000BFA17 /* kingfisher-round-corner-40.jpg in Resources */,
+				4BF806E41D75411B00C8DB13 /* onevcat.jpg in Resources */,
+				4BE3BDA41D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg in Resources */,
+				4BE3BD171D756A77000BFA17 /* unicorn-b&w-mac.png in Resources */,
+				4BF806E71D75411B00C8DB13 /* unicorn.png in Resources */,
+				4BE3BD8F1D756A77000BFA17 /* unicorn-resize-120-mac.png in Resources */,
+				4BE3BDA11D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg in Resources */,
+				4BE3BDF51D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg in Resources */,
+				4BE3BD3E1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png in Resources */,
+				4BE3BD291D756A77000BFA17 /* unicorn-blur-10-mac.png in Resources */,
+				4BE3BDC21D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg in Resources */,
+				4BE3BD831D756A77000BFA17 /* onevcat-resize-120-mac.jpg in Resources */,
+				4BE3BD1A1D756A77000BFA17 /* unicorn-b&w.png in Resources */,
+				4BE3BDB01D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg in Resources */,
+				4BE3BD771D756A77000BFA17 /* kingfisher-resize-120-mac.jpg in Resources */,
+				4BE3BD201D756A77000BFA17 /* kingfisher-blur-10.jpg in Resources */,
+				4BE3BD921D756A77000BFA17 /* unicorn-resize-120.png in Resources */,
+				4BE3BD111D756A77000BFA17 /* onevcat-b&w-mac.jpg in Resources */,
+				4BE3BDEC1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg in Resources */,
+				4BE3BD351D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BE3BE0A1D757B84000BFA17 /* unicorn-overlay-red.png in Resources */,
+				4BE3BDBF1D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg in Resources */,
+				4BE3BD4D1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				D12E0C751C47F70600AC98AD /* dancing-banana.gif in Resources */,
+				4BE3BDC51D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				4BE3BD7A1D756A77000BFA17 /* kingfisher-resize-120.jpg in Resources */,
+				4BE3BD3B1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
+				4BE3BDFE1D757B84000BFA17 /* onevcat-overlay-red.jpg in Resources */,
+				4BE3BE011D757B84000BFA17 /* unicorn-overlay-red-07-mac.png in Resources */,
+				4BE3BD1D1D756A77000BFA17 /* kingfisher-blur-10-mac.jpg in Resources */,
+				4BE3BDCE1D756A77000BFA17 /* unicorn-tint-yellow-02.png in Resources */,
+				4BE3BDFB1D757B84000BFA17 /* onevcat-overlay-red-mac.jpg in Resources */,
+				4BE3BD0E1D756A77000BFA17 /* kingfisher-b&w.jpg in Resources */,
+				4BE3BDE91D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
+				4BE3BD261D756A77000BFA17 /* onevcat-blur-10.jpg in Resources */,
+				4BE3BDA71D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg in Resources */,
+				4BE3BDCB1D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png in Resources */,
+				4BE3BD231D756A77000BFA17 /* onevcat-blur-10-mac.jpg in Resources */,
+				4BE3BD381D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg in Resources */,
+				4BE3BDF81D757B84000BFA17 /* onevcat-overlay-red-07.jpg in Resources */,
+				4BE3BD9B1D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg in Resources */,
+				4BE3BD2C1D756A77000BFA17 /* unicorn-blur-10.png in Resources */,
+				4BE3BD0B1D756A77000BFA17 /* kingfisher-b&w-mac.jpg in Resources */,
+				4BE3BDF21D757B84000BFA17 /* kingfisher-overlay-red.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1033,8 +1515,71 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BE3BD451D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg in Resources */,
+				4BE3BE081D757B84000BFA17 /* unicorn-overlay-red-mac.png in Resources */,
+				4BE3BD871D756A77000BFA17 /* onevcat-resize-120.jpg in Resources */,
+				4BE3BDBD1D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png in Resources */,
+				4BE3BD331D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */,
+				4BE3BDF01D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg in Resources */,
+				4BE3BE051D757B84000BFA17 /* unicorn-overlay-red-07.png in Resources */,
+				4BE3BDB71D756A77000BFA17 /* unicorn-round-corner-40.png in Resources */,
+				4BE3BD421D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
+				4BE3BDC91D756A77000BFA17 /* onevcat-tint-yellow-02.jpg in Resources */,
+				4BF806E21D75411B00C8DB13 /* kingfisher.jpg in Resources */,
+				4BE3BD151D756A77000BFA17 /* onevcat-b&w.jpg in Resources */,
+				4BE3BDAE1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */,
 				D1D2C32C1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				4BE3BD511D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png in Resources */,
+				4BE3BD481D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
+				4BE3BD4B1D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg in Resources */,
+				4BE3BD301D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BE3BDB41D756A77000BFA17 /* unicorn-round-corner-40-mac.png in Resources */,
+				4BE3BDAB1D756A77000BFA17 /* onevcat-round-corner-40.jpg in Resources */,
+				4BE3BDBA1D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png in Resources */,
+				4BE3BD9F1D756A77000BFA17 /* kingfisher-round-corner-40.jpg in Resources */,
+				4BF806E51D75411B00C8DB13 /* onevcat.jpg in Resources */,
+				4BE3BDA51D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg in Resources */,
+				4BE3BD181D756A77000BFA17 /* unicorn-b&w-mac.png in Resources */,
+				4BF806E81D75411B00C8DB13 /* unicorn.png in Resources */,
+				4BE3BD901D756A77000BFA17 /* unicorn-resize-120-mac.png in Resources */,
+				4BE3BDA21D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg in Resources */,
+				4BE3BDF61D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg in Resources */,
+				4BE3BD3F1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png in Resources */,
+				4BE3BD2A1D756A77000BFA17 /* unicorn-blur-10-mac.png in Resources */,
+				4BE3BDC31D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg in Resources */,
+				4BE3BD841D756A77000BFA17 /* onevcat-resize-120-mac.jpg in Resources */,
+				4BE3BD1B1D756A77000BFA17 /* unicorn-b&w.png in Resources */,
+				4BE3BDB11D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg in Resources */,
+				4BE3BD781D756A77000BFA17 /* kingfisher-resize-120-mac.jpg in Resources */,
+				4BE3BD211D756A77000BFA17 /* kingfisher-blur-10.jpg in Resources */,
+				4BE3BD931D756A77000BFA17 /* unicorn-resize-120.png in Resources */,
+				4BE3BD121D756A77000BFA17 /* onevcat-b&w-mac.jpg in Resources */,
+				4BE3BDED1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg in Resources */,
+				4BE3BD361D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BE3BE0B1D757B84000BFA17 /* unicorn-overlay-red.png in Resources */,
+				4BE3BDC01D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg in Resources */,
+				4BE3BD4E1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				D12E0C8A1C47F7C000AC98AD /* dancing-banana.gif in Resources */,
+				4BE3BDC61D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				4BE3BD7B1D756A77000BFA17 /* kingfisher-resize-120.jpg in Resources */,
+				4BE3BD3C1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
+				4BE3BDFF1D757B84000BFA17 /* onevcat-overlay-red.jpg in Resources */,
+				4BE3BE021D757B84000BFA17 /* unicorn-overlay-red-07-mac.png in Resources */,
+				4BE3BD1E1D756A77000BFA17 /* kingfisher-blur-10-mac.jpg in Resources */,
+				4BE3BDCF1D756A77000BFA17 /* unicorn-tint-yellow-02.png in Resources */,
+				4BE3BDFC1D757B84000BFA17 /* onevcat-overlay-red-mac.jpg in Resources */,
+				4BE3BD0F1D756A77000BFA17 /* kingfisher-b&w.jpg in Resources */,
+				4BE3BDEA1D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
+				4BE3BD271D756A77000BFA17 /* onevcat-blur-10.jpg in Resources */,
+				4BE3BDA81D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg in Resources */,
+				4BE3BDCC1D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png in Resources */,
+				4BE3BD241D756A77000BFA17 /* onevcat-blur-10-mac.jpg in Resources */,
+				4BE3BD391D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg in Resources */,
+				4BE3BDF91D757B84000BFA17 /* onevcat-overlay-red-07.jpg in Resources */,
+				4BE3BD9C1D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg in Resources */,
+				4BE3BD2D1D756A77000BFA17 /* unicorn-blur-10.png in Resources */,
+				4BE3BD0C1D756A77000BFA17 /* kingfisher-b&w-mac.jpg in Resources */,
+				4BE3BDF31D757B84000BFA17 /* kingfisher-overlay-red.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,8 +1644,71 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BE3BD431D756A77000BFA17 /* kingfisher-blur-4-round-corner-60.jpg in Resources */,
+				4BE3BE061D757B84000BFA17 /* unicorn-overlay-red-mac.png in Resources */,
+				4BE3BD851D756A77000BFA17 /* onevcat-resize-120.jpg in Resources */,
+				4BE3BDBB1D756A77000BFA17 /* unicorn-round-corner-60-resize-100.png in Resources */,
+				4BE3BD311D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */,
+				4BE3BDEE1D757B84000BFA17 /* kingfisher-overlay-red-mac.jpg in Resources */,
+				4BE3BE031D757B84000BFA17 /* unicorn-overlay-red-07.png in Resources */,
+				4BE3BDB51D756A77000BFA17 /* unicorn-round-corner-40.png in Resources */,
+				4BE3BD401D756A77000BFA17 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
+				4BE3BDC71D756A77000BFA17 /* onevcat-tint-yellow-02.jpg in Resources */,
+				4BF806E01D75411B00C8DB13 /* kingfisher.jpg in Resources */,
+				4BE3BD131D756A77000BFA17 /* onevcat-b&w.jpg in Resources */,
+				4BE3BDAC1D756A77000BFA17 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */,
 				D1D2C32A1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				4BE3BD4F1D756A77000BFA17 /* unicorn-blur-4-round-corner-60.png in Resources */,
+				4BE3BD461D756A77000BFA17 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
+				4BE3BD491D756A77000BFA17 /* onevcat-blur-4-round-corner-60.jpg in Resources */,
+				4BE3BD2E1D756A77000BFA17 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BE3BDB21D756A77000BFA17 /* unicorn-round-corner-40-mac.png in Resources */,
+				4BE3BDA91D756A77000BFA17 /* onevcat-round-corner-40.jpg in Resources */,
+				4BE3BDB81D756A77000BFA17 /* unicorn-round-corner-60-resize-100-mac.png in Resources */,
+				4BE3BD9D1D756A77000BFA17 /* kingfisher-round-corner-40.jpg in Resources */,
+				4BF806E31D75411B00C8DB13 /* onevcat.jpg in Resources */,
+				4BE3BDA31D756A77000BFA17 /* kingfisher-round-corner-60-resize-100.jpg in Resources */,
+				4BE3BD161D756A77000BFA17 /* unicorn-b&w-mac.png in Resources */,
+				4BF806E61D75411B00C8DB13 /* unicorn.png in Resources */,
+				4BE3BD8E1D756A77000BFA17 /* unicorn-resize-120-mac.png in Resources */,
+				4BE3BDA01D756A77000BFA17 /* kingfisher-round-corner-60-resize-100-mac.jpg in Resources */,
+				4BE3BDF41D757B84000BFA17 /* onevcat-overlay-red-07-mac.jpg in Resources */,
+				4BE3BD3D1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07.png in Resources */,
+				4BE3BD281D756A77000BFA17 /* unicorn-blur-10-mac.png in Resources */,
+				4BE3BDC11D756A77000BFA17 /* kingfisher-tint-yellow-02.jpg in Resources */,
+				4BE3BD821D756A77000BFA17 /* onevcat-resize-120-mac.jpg in Resources */,
+				4BE3BD191D756A77000BFA17 /* unicorn-b&w.png in Resources */,
+				4BE3BDAF1D756A77000BFA17 /* onevcat-round-corner-60-resize-100.jpg in Resources */,
+				4BE3BD761D756A77000BFA17 /* kingfisher-resize-120-mac.jpg in Resources */,
+				4BE3BD1F1D756A77000BFA17 /* kingfisher-blur-10.jpg in Resources */,
+				4BE3BD911D756A77000BFA17 /* unicorn-resize-120.png in Resources */,
+				4BE3BD101D756A77000BFA17 /* onevcat-b&w-mac.jpg in Resources */,
+				4BE3BDEB1D757B84000BFA17 /* kingfisher-overlay-red-07.jpg in Resources */,
+				4BE3BD341D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BE3BE091D757B84000BFA17 /* unicorn-overlay-red.png in Resources */,
+				4BE3BDBE1D756A77000BFA17 /* kingfisher-tint-yellow-02-mac.jpg in Resources */,
+				4BE3BD4C1D756A77000BFA17 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				D12E0C4F1C47F23500AC98AD /* dancing-banana.gif in Resources */,
+				4BE3BDC41D756A77000BFA17 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				4BE3BD791D756A77000BFA17 /* kingfisher-resize-120.jpg in Resources */,
+				4BE3BD3A1D756A77000BFA17 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
+				4BE3BDFD1D757B84000BFA17 /* onevcat-overlay-red.jpg in Resources */,
+				4BE3BE001D757B84000BFA17 /* unicorn-overlay-red-07-mac.png in Resources */,
+				4BE3BD1C1D756A77000BFA17 /* kingfisher-blur-10-mac.jpg in Resources */,
+				4BE3BDCD1D756A77000BFA17 /* unicorn-tint-yellow-02.png in Resources */,
+				4BE3BDFA1D757B84000BFA17 /* onevcat-overlay-red-mac.jpg in Resources */,
+				4BE3BD0D1D756A77000BFA17 /* kingfisher-b&w.jpg in Resources */,
+				4BE3BDE81D757B84000BFA17 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
+				4BE3BD251D756A77000BFA17 /* onevcat-blur-10.jpg in Resources */,
+				4BE3BDA61D756A77000BFA17 /* onevcat-round-corner-40-mac.jpg in Resources */,
+				4BE3BDCA1D756A77000BFA17 /* unicorn-tint-yellow-02-mac.png in Resources */,
+				4BE3BD221D756A77000BFA17 /* onevcat-blur-10-mac.jpg in Resources */,
+				4BE3BD371D756A77000BFA17 /* onevcat-color-control-b00-c11-s12-ev07.jpg in Resources */,
+				4BE3BDF71D757B84000BFA17 /* onevcat-overlay-red-07.jpg in Resources */,
+				4BE3BD9A1D756A77000BFA17 /* kingfisher-round-corner-40-mac.jpg in Resources */,
+				4BE3BD2B1D756A77000BFA17 /* unicorn-blur-10.png in Resources */,
+				4BE3BD0A1D756A77000BFA17 /* kingfisher-b&w-mac.jpg in Resources */,
+				4BE3BDF11D757B84000BFA17 /* kingfisher-overlay-red.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1388,8 +1996,10 @@
 				D109461B1C526C61001408EB /* ImageCache.swift in Sources */,
 				D109461C1C526C61001408EB /* ImageDownloader.swift in Sources */,
 				D109461D1C526C61001408EB /* ImageTransition.swift in Sources */,
+				4B2B8E4C1D70141000FC4749 /* ImageProcessor.swift in Sources */,
 				D109461E1C526C61001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D109461F1C526C61001408EB /* KingfisherManager.swift in Sources */,
+				4B6313F61D766BEF0078E017 /* Filter.swift in Sources */,
 				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D10946201C526C61001408EB /* KingfisherOptionsInfo.swift in Sources */,
 				D10946211C526C61001408EB /* Resource.swift in Sources */,
@@ -1412,6 +2022,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF806D81D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */,
 				D12E0C761C47F71700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				D12E0C6E1C47F6FE00AC98AD /* ImageCacheTests.swift in Sources */,
 				D12E0C6F1C47F6FE00AC98AD /* ImageDownloaderTests.swift in Sources */,
@@ -1429,6 +2040,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF806D91D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */,
 				D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */,
 				D12E0C821C47F7AF00AC98AD /* ImageCacheTests.swift in Sources */,
@@ -1457,9 +2069,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D109460E1C526C0D001408EB /* Image.swift in Sources */,
+				4B6313F51D766BEF0078E017 /* Filter.swift in Sources */,
 				4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				D109460F1C526C0D001408EB /* ImageCache.swift in Sources */,
 				D10946101C526C0D001408EB /* ImageDownloader.swift in Sources */,
+				4B2B8E4B1D70140F00FC4749 /* ImageProcessor.swift in Sources */,
 				D10946111C526C0D001408EB /* ImageTransition.swift in Sources */,
 				D10946121C526C0D001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D10946131C526C0D001408EB /* KingfisherManager.swift in Sources */,
@@ -1477,6 +2091,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D109462D1C526CF5001408EB /* ImageTransition.swift in Sources */,
+				4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */,
 				D10946251C526CE8001408EB /* Image.swift in Sources */,
 				D10946261C526CE8001408EB /* ImageCache.swift in Sources */,
 				D9638BA31C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
@@ -1513,9 +2128,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10945F71C526B86001408EB /* Image.swift in Sources */,
+				4B6313F41D766BEF0078E017 /* Filter.swift in Sources */,
 				4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				D10945F81C526B86001408EB /* ImageCache.swift in Sources */,
 				D10945F91C526B86001408EB /* ImageDownloader.swift in Sources */,
+				4B2B8E4A1D70128200FC4749 /* ImageProcessor.swift in Sources */,
 				D10945FA1C526B86001408EB /* ImageTransition.swift in Sources */,
 				D10945FB1C526B86001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D10945FC1C526B86001408EB /* KingfisherManager.swift in Sources */,
@@ -1532,6 +2149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF806D71D752D4900C8DB13 /* ImageProcessorTests.swift in Sources */,
 				D12E0C571C47F23500AC98AD /* KingfisherTestHelper.swift in Sources */,
 				D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */,
 				D12E0C561C47F23500AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
