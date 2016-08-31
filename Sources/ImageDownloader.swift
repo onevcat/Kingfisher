@@ -135,21 +135,6 @@ public protocol ImageDownloaderDelegate: class {
             you can implement this method to change that behavior.
     */
     func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool
-    
-    /**
-     This method will be called after the downloading finishes, but before the data be converted to image.
-     If a cache is connected to the downloader (it happenes when you are using KingfisherManager or the image extension methods), 
-     the converted image will also be sent to cache and image view.
-     
-     The returned processor will be used to convert downloaded data to images. If the image delegate is `nil` or you do not implement this method, 
-     a `DefaultProcessor` will be used, which could process PNG, JPG and GIF images.
-     
-     - parameter downloader: The `ImageDownloader` object finishes the downloading.
-     - parameter task: The downloading task, from which you can get the downloading information including request and response.
-     
-     - returns: An instance that conforms to `ImageProcessor`. It will be used to process the downloaded data to an image.
-     */
-    func imageProcessor(for downloader: ImageDownloader, with task: URLSessionTask) -> ImageProcessor
 }
 
 extension ImageDownloaderDelegate {
@@ -157,10 +142,6 @@ extension ImageDownloaderDelegate {
     
     public func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool {
         return (200..<400).contains(code)
-    }
-    
-    public func imageProcessor(for downloader: ImageDownloader, with task: URLSessionTask) -> ImageProcessor {
-        return DefaultProcessor()
     }
 }
 
@@ -529,8 +510,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             let options = fetchLoad.options ?? KingfisherEmptyOptionsInfo
             let data = fetchLoad.responseData as Data
             
-            let processer = (downloader.delegate ?? downloader).imageProcessor(for: downloader, with: task)
-            if let image = processer.process(item: .data(data), options: options) {
+            if let image = options.processor.process(item: .data(data), options: options) {
     
                 downloader.delegate?.imageDownloader(downloader, didDownload: image, for: url, with: task.response)
                 

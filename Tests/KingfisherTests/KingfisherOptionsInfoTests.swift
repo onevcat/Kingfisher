@@ -73,6 +73,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
         
         let options: KingfisherOptionsInfo = [
             .targetCache(cache),
@@ -85,7 +86,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .backgroundDecode,
             .callbackDispatchQueue(queue),
             KingfisherOptionsInfoItem.scaleFactor(2.0),
-            .requestModifier(testModifier)
+            .requestModifier(testModifier),
+            .processor(processor)
         ]
         
         XCTAssertTrue(options.targetCache === cache)
@@ -107,6 +109,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.callbackDispatchQueue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
         XCTAssertTrue(options.modifier is TestModifier)
+        XCTAssertEqual(options.processor.identifier, processor.identifier)
     }
 }
 
