@@ -74,7 +74,6 @@ private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barr
 private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Process."
 private let instance = ImageDownloader(name: defaultDownloaderName)
 
-
 /**
 The error code.
 
@@ -95,6 +94,18 @@ public enum KingfisherError: Int {
 }
 
 public let KingfisherErrorStatusCodeKey = "statusCode"
+
+public protocol ImageDownloadRequestModifier {
+    func modified(for request: URLRequest) -> URLRequest?
+}
+
+struct NoModifier: ImageDownloadRequestModifier {
+    static let `default` = NoModifier()
+    private init() {}
+    func modified(for request: URLRequest) -> URLRequest? {
+        return request
+    }
+}
 
 /// Protocol of `ImageDownloader`.
 public protocol ImageDownloaderDelegate: class {
@@ -126,19 +137,6 @@ public protocol ImageDownloaderDelegate: class {
     func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool
     
     /**
-     This method will be called before the download request sent. It's the last chance you can modify the request.
-     You can modify the request for some customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
-     
-     - parameter downloader: The `ImageDownloader` object which will send the request.
-     - parameter originalRequest: The original request which generated based on the image downloader. You can change the request based on this and return a new one.
-     
-     - returns: The new request which should be sent.
-     
-     - Note: If `nil` is returned, downloader will not start to send the request and callback handler will be invoked with a `downloadCanelledBeforeStarting` error.
-     */
-    func urlRequest(for downloader: ImageDownloader, byModifying originalRequest: URLRequest) -> URLRequest?
-    
-    /**
      This method will be called after the downloading finishes, but before the data be converted to image.
      If a cache is connected to the downloader (it happenes when you are using KingfisherManager or the image extension methods), 
      the converted image will also be sent to cache and image view.
@@ -159,10 +157,6 @@ extension ImageDownloaderDelegate {
     
     public func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool {
         return (200..<400).contains(code)
-    }
-    
-    public func urlRequest(for imageDownloader: ImageDownloader, byModifying originalRequest: URLRequest) -> URLRequest? {
-        return originalRequest
     }
     
     public func imageProcessor(for downloader: ImageDownloader, with task: URLSessionTask) -> ImageProcessor {
@@ -352,8 +346,8 @@ extension ImageDownloader {
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: timeout)
         request.httpShouldUsePipelining = requestsUsePipeling
 
-        if let delegate = delegate {
-            guard let r = delegate.urlRequest(for: self, byModifying: request) else {
+        if let modifier = options?.modifier {
+            guard let r = modifier.modified(for: request) else {
                 completionHandler?(nil, NSError(domain: KingfisherErrorDomain, code: KingfisherError.downloadCanelledBeforeStarting.rawValue, userInfo: nil), nil, nil)
                 return nil
             }
