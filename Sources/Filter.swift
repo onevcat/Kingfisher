@@ -116,7 +116,7 @@ public extension Image {
         }
         
         #if os(macOS)
-            return Image(cgImage: result, size: .zero)
+            return kf_fixedForRetinaPixel(cgImage: result, to: kf_size)
         #else
             return Image(cgImage: result)
         #endif
