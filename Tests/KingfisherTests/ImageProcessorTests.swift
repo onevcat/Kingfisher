@@ -57,21 +57,25 @@ class ImageProcessorTests: XCTestCase {
     
     func testRoundCornerProcessor() {
         let p = RoundCornerImageProcessor(cornerRadius: 40)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.RoundCornerImageProcessor(40.0)")
         checkProcessor(p, with: "round-corner-40")
     }
 
     func testRoundCornerWithResizingProcessor() {
         let p = RoundCornerImageProcessor(cornerRadius: 60, targetSize: CGSize(width: 100, height: 100))
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.RoundCornerImageProcessor(60.0_(100.0, 100.0))")
         checkProcessor(p, with: "round-corner-60-resize-100")
     }
 
     func testResizingProcessor() {
         let p = ResizingImageProcessor(targetSize: CGSize(width: 120, height: 120))
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.ResizingImageProcessor((120.0, 120.0))")
         checkProcessor(p, with: "resize-120")
     }
     
     func testBlurProcessor() {
         let p = BlurImageProcessor(blurRadius: 10)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlurImageProcessor(10.0)")
         // Alpha convolving would vary due to context. So we do not test blur for PNGs.
         // See results in Resource folder.
         checkProcessor(p, with: "blur-10", noAlpha: true)
@@ -79,30 +83,36 @@ class ImageProcessorTests: XCTestCase {
     
     func testOverlayProcessor() {
         let p1 = OverlayImageProcessor(overlay: .red)
+        XCTAssertEqual(p1.identifier, "com.onevcat.Kingfisher.OverlayImageProcessor(#ff0000ff_0.5)")
         checkProcessor(p1, with: "overlay-red")
         
         let p2 = OverlayImageProcessor(overlay: .red, fraction: 0.7)
+        XCTAssertEqual(p2.identifier, "com.onevcat.Kingfisher.OverlayImageProcessor(#ff0000ff_0.7)")
         checkProcessor(p2, with: "overlay-red-07")
     }
 
     func testTintProcessor() {
         let color = Color.yellow.withAlphaComponent(0.2)
         let p = TintImageProcessor(tint: color)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.TintImageProcessor(#ffff0033)")
         checkProcessor(p, with: "tint-yellow-02")
     }
 
     func testColorControlProcessor() {
         let p = ColorControlsProcessor(brightness: 0, contrast: 1.1, saturation: 1.2, inputEV: 0.7)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.ColorControlsProcessor(0.0_1.1_1.2_0.7)")
         checkProcessor(p, with: "color-control-b00-c11-s12-ev07")
     }
     
     func testBlackWhiteProcessor() {
         let p = BlackWhiteProcessor()
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlackWhiteProcessor")
         checkProcessor(p, with: "b&w")
     }
 
     func testCompositionProcessor() {
         let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlurImageProcessor(4.0)|>com.onevcat.Kingfisher.RoundCornerImageProcessor(60.0)")
         // Alpha convolving would vary due to context. So we do not test blur for PNGs.
         // See results in Resource folder.
         checkProcessor(p, with: "blur-4-round-corner-60", noAlpha: true)
