@@ -67,6 +67,7 @@ public enum KingfisherOptionsInfoItem {
     case scaleFactor(CGFloat)
     case preloadAllGIFData
     case requestModifier(ImageDownloadRequestModifier)
+    case processor(ImageProcessor)
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -91,7 +92,8 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.callbackDispatchQueue(_), .callbackDispatchQueue(_)): fallthrough
     case (.scaleFactor(_), .scaleFactor(_)): fallthrough
     case (.preloadAllGIFData, .preloadAllGIFData): fallthrough
-    case (.requestModifier(_), .requestModifier(_)): return true
+    case (.requestModifier(_), .requestModifier(_)): fallthrough
+    case (.processor(_), .processor(_)): return true
     default: return false
     }
 }
@@ -192,5 +194,14 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
             return modifier
         }
         return NoModifier.default
+    }
+    
+    var processor: ImageProcessor {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.processor(DefaultProcessor.default)),
+            case .processor(let processor) = item
+        {
+            return processor
+        }
+        return DefaultProcessor.default
     }
 }

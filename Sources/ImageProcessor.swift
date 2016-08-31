@@ -63,6 +63,9 @@ fileprivate struct GeneralProcessor: ImageProcessor {
 }
 
 public struct DefaultProcessor: ImageProcessor {
+    
+    public static let `default` = DefaultProcessor()
+    
     public let identifier = ""
     public init() {}
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
