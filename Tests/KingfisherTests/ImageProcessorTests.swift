@@ -72,7 +72,8 @@ class ImageProcessorTests: XCTestCase {
     
     func testBlurProcessor() {
         let p = BlurImageProcessor(blurRadius: 10)
-        // Alpha convolving would vary due to context. So we do not test blur for PNGs. (But it should work)
+        // Alpha convolving would vary due to context. So we do not test blur for PNGs.
+        // See results in Resource folder.
         checkProcessor(p, with: "blur-10", noAlpha: true)
     }
     
@@ -102,7 +103,8 @@ class ImageProcessorTests: XCTestCase {
 
     func testCompositionProcessor() {
         let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
-        // Alpha convolving would vary due to context. So we do not test blur for PNGs. (But it should work)
+        // Alpha convolving would vary due to context. So we do not test blur for PNGs.
+        // See results in Resource folder.
         checkProcessor(p, with: "blur-4-round-corner-60", noAlpha: true)
     }
 }
