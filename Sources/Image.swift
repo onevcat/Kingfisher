@@ -344,7 +344,7 @@ extension Image {
 // MARK: - Image Transforming
 extension Image {
     // MARK: - Round Corner
-    func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
+    public func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
         #if os(macOS)
@@ -391,7 +391,7 @@ extension Image {
     #endif
     
     // MARK: - Resize
-    func kf_resize(to size: CGSize) -> Image {
+    public func kf_resize(to size: CGSize) -> Image {
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
@@ -412,7 +412,7 @@ extension Image {
     }
     
     // MARK: - Blur
-    func kf_blurred(withRadius radius: CGFloat) -> Image {
+    public func kf_blurred(withRadius radius: CGFloat) -> Image {
         #if os(watchOS)
             return self
         #else
@@ -511,7 +511,7 @@ extension Image {
     }
     
     // MARK: - Overlay
-    func kf_overlaying(with color: Color, fraction: CGFloat) -> Image {
+    public func kf_overlaying(with color: Color, fraction: CGFloat) -> Image {
 
         let rect = CGRect(x: 0, y: 0, width: kf_size.width, height: kf_size.height)
         
@@ -540,7 +540,7 @@ extension Image {
     }
     
     // MARK: - Tint
-    func kf_tinted(with color: Color) -> Image {
+    public func kf_tinted(with color: Color) -> Image {
         #if os(watchOS)
         return self
         #else
@@ -549,7 +549,7 @@ extension Image {
     }
     
     // MARK: - Color Control
-    func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
+    public func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
         #if os(watchOS)
         return self
         #else
