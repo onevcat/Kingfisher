@@ -2,7 +2,7 @@
 //  ImageProcessorTests.swift
 //  Kingfisher
 //
-//  Created by WANG WEI on 2016/08/30.
+//  Created by Wei Wang on 2016/08/30.
 //
 //  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
 //
