@@ -31,7 +31,9 @@ import XCTest
 class ImageDownloaderTests: XCTestCase {
 
     var downloader: ImageDownloader!
-
+    var modifier = URLModifier()
+    
+    
     override class func setUp() {
         super.setUp()
         LSNocilla.sharedInstance().start()
@@ -128,13 +130,10 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
-        downloader.requestModifier = {
-            request in
-            request.url = URL(string: URLString)
-        }
+        modifier.url = URL(string: URLString)
         
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImage(with: someURL, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, imageURL, data) -> () in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL).")
@@ -228,19 +227,16 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadEmptyURL() {
         let expectation = self.expectation(description: "wait for downloading error")
         
-        downloader.requestModifier = { req in
-            req.url = nil
-        }
+        modifier.url = nil
         
         let url = URL(string: "http://onevcat.com")
-        downloader.downloadImage(with: url!, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url!, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("The progress block should not be called.")
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error, "An error should happen for empty URL")
                 XCTAssertEqual(error!.code, KingfisherError.invalidURL.rawValue)
+                self.downloader.delegate = nil
                 expectation.fulfill()
-                
-                self.downloader.requestModifier = nil
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -290,12 +286,39 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskNil() {
-        downloader.requestModifier = { req in
-            req.url = nil
-        }
-        let downloadTask = downloader.downloadImage(with: URL(string: "url")!, progressBlock: nil, completionHandler: nil)
+        modifier.url = nil
+        let downloadTask = downloader.downloadImage(with: URL(string: "url")!, options: [.requestModifier(modifier)], progressBlock: nil, completionHandler: nil)
         XCTAssertNil(downloadTask)
         
-        downloader.requestModifier = nil
+        downloader.delegate = nil
+    }
+    
+    func testDownloadWithProcessor() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        
+        let url = URL(string: URLString)!
+        let p = RoundCornerImageProcessor(cornerRadius: 40)
+        downloader.downloadImage(with: url, options: [.processor(p)], progressBlock: { (receivedSize, totalSize) -> () in
+            return
+        }) { (image, error, imageURL, data) -> () in
+            expectation.fulfill()
+            XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
+            XCTAssert(image != testImage, "The processed image should not equal to the original one.")
+            XCTAssertEqual(NSData(data: data!), testImageData, "But the original data should equal each other.")
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+}
+
+class URLModifier: ImageDownloadRequestModifier {
+    var url: URL? = nil
+    func modified(for request: URLRequest) -> URLRequest? {
+        var r = request
+        r.url = url
+        return r
     }
 }
