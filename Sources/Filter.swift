@@ -21,8 +21,8 @@ public struct Filter {
     
     let transform: Transformer
     
-    public static var tint: (Color) -> Filter = { color in
-        
+    public static var tint: (Color) -> Filter = {
+        color in
         Filter { input in
             let colorFilter = CIFilter(name: "CIConstantColorGenerator")!
             colorFilter.setValue(CIColor(color: color), forKey: kCIInputColorKey)
