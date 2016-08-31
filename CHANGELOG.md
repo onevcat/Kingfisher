@@ -2,6 +2,13 @@
 
 -----
 
+## [2.5.0 - Swift 2.3](https://github.com/onevcat/Kingfisher/releases/tag/2.5.0) (2016-08-29)
+
+#### Add
+* Support for Swift 2.3
+
+---
+
 ## [2.4.3 - Longer Cache](https://github.com/onevcat/Kingfisher/releases/tag/2.4.3) (2016-08-17)
 
 #### Fix
