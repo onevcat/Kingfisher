@@ -95,6 +95,7 @@ public enum KingfisherError: Int {
 
 public let KingfisherErrorStatusCodeKey = "statusCode"
 
+/// Request modifier of image downloader.
 public protocol ImageDownloadRequestModifier {
     func modified(for request: URLRequest) -> URLRequest?
 }

@@ -70,7 +70,10 @@ public enum CacheType {
     case none, memory, disk
 }
 
-/// `ImageCache` represents both the memory and disk cache system of Kingfisher. While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create your own cache object and configure it as your need. You should use an `ImageCache` object to manipulate memory and disk cache for Kingfisher.
+/// `ImageCache` represents both the memory and disk cache system of Kingfisher. 
+/// While a default image cache object will be used if you prefer the extension methods of Kingfisher, 
+/// you can create your own cache object and configure it as your need. You should use an `ImageCache` 
+/// object to manipulate memory and disk cache for Kingfisher.
 public class ImageCache {
 
     //Memory
@@ -93,7 +96,8 @@ public class ImageCache {
     /// The longest time duration of the cache being stored in disk. Default is 1 week.
     public var maxCachePeriodInSecond = defaultMaxCachePeriodInSecond
     
-    /// The largest disk size can be taken for the cache. It is the total allocated size of cached files in bytes. Default is 0, which means no limit.
+    /// The largest disk size can be taken for the cache. It is the total allocated size of cached files in bytes. 
+    /// Default is 0, which means no limit.
     public var maxDiskCacheSize: UInt = 0
     
     fileprivate let processQueue: DispatchQueue
@@ -106,9 +110,11 @@ public class ImageCache {
     /**
     Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.
     
-    - parameter name: Name of the cache. It will be used as the memory cache name and the disk cache folder name appending to the cache path. This value should not be an empty string.
+    - parameter name: Name of the cache. It will be used as the memory cache name and the disk cache folder name 
+                      appending to the cache path. This value should not be an empty string.
     - parameter path: Optional - Location of cache path on disk. If `nil` is passed (the default value), 
-                      the cache folder in of your app will be used. If you want to cache some user generating images, you could pass the Documentation path here.
+                      the cache folder in of your app will be used. If you want to cache some user generating images, 
+                      you could pass the Documentation path here.
     
     - returns: The cache object.
     */
@@ -130,9 +136,12 @@ public class ImageCache {
         ioQueue.sync { fileManager = FileManager() }
         
 #if !os(macOS) && !os(watchOS)
-        NotificationCenter.default.addObserver(self, selector: #selector(clearMemoryCache), name: .UIApplicationDidReceiveMemoryWarning, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(cleanExpiredDiskCache_), name: .UIApplicationWillTerminate, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(backgroundCleanExpiredDiskCache), name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(clearMemoryCache), name: .UIApplicationDidReceiveMemoryWarning, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(cleanExpiredDiskCache_), name: .UIApplicationWillTerminate, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(backgroundCleanExpiredDiskCache), name: .UIApplicationDidEnterBackground, object: nil)
 #endif
     }
     
@@ -149,13 +158,21 @@ extension ImageCache {
     - parameter image:             The image to be stored.
     - parameter originalData:      The original data of the image.
                                    Kingfisher will use it to check the format of the image and optimize cache size on disk.
-                                   If `nil` is supplied, the image data will be saved as a normalized PNG file. 
+                                   If `nil` is supplied, the image data will be saved as a normalized PNG file.
                                    It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
     - parameter key:               Key for the image.
+    - parameter identifier:        The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
+                                   This identifier will be used to generate a corresponding key for the combination of `key` and processor.
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
     - parameter completionHandler: Called when store operation completes.
     */
-    public func storeImage(_ image: Image, originalData: Data? = nil, forKey key: String, processorIdentifier identifier: String = "", toDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
+    public func storeImage(_ image: Image,
+                           originalData: Data? = nil,
+                           forKey key: String,
+                           processorIdentifier identifier: String = "",
+                           toDisk: Bool = true,
+                           completionHandler: (() -> Void)? = nil)
+    {
         
         let computedKey = key.computedKey(with: identifier)
         memoryCache.setObject(image, forKey: computedKey as NSString, cost: image.kf_imageCost)
@@ -201,10 +218,16 @@ extension ImageCache {
     It is an async operation.
     
     - parameter key:               Key for the image.
+    - parameter identifier:        The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
+                                   This identifier will be used to generate a corresponding key for the combination of `key` and processor.
     - parameter fromDisk:          Whether this image should be removed from disk or not. If false, the image will be only removed from memory.
     - parameter completionHandler: Called when removal operation completes.
     */
-    public func removeImage(forKey key: String, processorIdentifier identifier: String = "", fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
+    public func removeImage(forKey key: String,
+                            processorIdentifier identifier: String = "",
+                            fromDisk: Bool = true,
+                            completionHandler: (() -> Void)? = nil)
+    {
         let computedKey = key.computedKey(with: identifier)
         memoryCache.removeObject(forKey: computedKey as NSString)
         
@@ -236,12 +259,17 @@ extension ImageCache {
     Get an image for a key from memory or disk.
     
     - parameter key:               Key for the image.
-    - parameter options:           Options of retrieving image.
-    - parameter completionHandler: Called when getting operation completes with image result and cached type of this image. If there is no such key cached, the image will be `nil`.
+    - parameter options:           Options of retrieving image. If you need to retrieve an image which was 
+                                   stored with a specified `ImageProcessor`, pass the processor in the option too.
+    - parameter completionHandler: Called when getting operation completes with image result and cached type of 
+                                   this image. If there is no such key cached, the image will be `nil`.
     
     - returns: The retrieving task.
     */
-    @discardableResult public func retrieveImage(forKey key: String, options: KingfisherOptionsInfo?, completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask? {
+    @discardableResult public func retrieveImage(forKey key: String,
+                                                 options: KingfisherOptionsInfo?,
+                                                 completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask?
+    {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
             return nil
@@ -295,8 +323,9 @@ extension ImageCache {
     /**
     Get an image for a key from memory.
     
-    - parameter key: Key for the image.
-    
+    - parameter key:        Key for the image.
+    - parameter identifier: The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
+                            This identifier will be used to generate a corresponding key for the combination of `key` and processor.
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
     public func retrieveImageInMemoryCache(forKey key: String, processIdentifier identifier: String = "") -> Image? {
@@ -307,10 +336,12 @@ extension ImageCache {
     /**
     Get an image for a key from disk.
     
-    - parameter key: Key for the image.
-    - parameter scale: The scale factor to assume when interpreting the image data.
+    - parameter key:               Key for the image.
+    - parameter identifier:        The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
+                                   This identifier will be used to generate a corresponding key for the combination of `key` and processor.
+    - parameter scale:             The scale factor to assume when interpreting the image data.
     - parameter preloadAllGIFData: Whether all GIF data should be loaded. If true, you can set the loaded image to a regular UIImageView to play 
-      the GIF animation. Otherwise, you should use `AnimatedImageView` to play it. Default is `false`
+                                   the GIF animation. Otherwise, you should use `AnimatedImageView` to play it. Default is `false`
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */

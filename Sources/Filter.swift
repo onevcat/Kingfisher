@@ -32,15 +32,31 @@ import Accelerate
 // Reuse the same CI Context for all CI drawing.
 private let ciContext = CIContext(options: nil)
 
+/// Transformer method which will be used in to provide a `Filter`.
 public typealias Transformer = (CIImage) -> CIImage?
+
+/// Supply a filter to create an `ImageProcessor`.
 public protocol CIImageProcessor: ImageProcessor {
     var filter: Filter { get }
 }
 
+extension CIImageProcessor {
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf_apply(filter)
+        case .data(let data):
+            return Image.kf_image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
+        }
+    }
+}
+
+/// Wrapper for a `Transformer` of CIImage filters.
 public struct Filter {
     
     let transform: Transformer
-    
+
+    /// Tint filter which will apply a tint color to images.
     public static var tint: (Color) -> Filter = {
         color in
         Filter { input in
@@ -56,6 +72,8 @@ public struct Filter {
     }
     
     public typealias ColorElement = (CGFloat, CGFloat, CGFloat, CGFloat)
+    
+    /// Color control filter which will apply color control change to images.
     public static var colorControl: (ColorElement) -> Filter = {
         brightness, contrast, saturation, inputEV in
         Filter { input in
@@ -71,21 +89,16 @@ public struct Filter {
     }
 }
 
-
-
-extension CIImageProcessor {
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
-        switch item {
-        case .image(let image):
-            return image.kf_apply(filter)
-        case .data(let data):
-            return Image.kf_image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
-        }
-    }
-}
-
-extension Image {
-    func kf_apply(_ filter: Filter) -> Image {
+public extension Image {
+    
+    /// Apply a `Filter` containing `CIImage` transformer to `self`.
+    ///
+    /// - parameter filter: The filter used to transform `self`.
+    ///
+    /// - returns: A transformed image by input `Filter`.
+    ///
+    /// - Note: Only CG-based images are supported. If any error happens during transforming, `self` will be returned.
+    public func kf_apply(_ filter: Filter) -> Image {
         
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
