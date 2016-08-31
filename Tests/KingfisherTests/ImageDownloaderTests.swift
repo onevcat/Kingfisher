@@ -292,6 +292,26 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.delegate = nil
     }
+    
+    func testDownloadWithProcessor() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        
+        let url = URL(string: URLString)!
+        let p = RoundCornerImageProcessor(cornerRadius: 40)
+        downloader.downloadImage(with: url, options: [.processor(p)], progressBlock: { (receivedSize, totalSize) -> () in
+            return
+        }) { (image, error, imageURL, data) -> () in
+            expectation.fulfill()
+            XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
+            XCTAssert(image != testImage, "The processed image should not equal to the original one.")
+            XCTAssertEqual(NSData(data: data!), testImageData, "But the original data should equal each other.")
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 }
 
 class URLModifier: ImageDownloadRequestModifier {

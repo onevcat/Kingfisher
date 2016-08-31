@@ -155,8 +155,10 @@ extension ImageCache {
     - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
     - parameter completionHandler: Called when store operation completes.
     */
-    public func storeImage(_ image: Image, originalData: Data? = nil, forKey key: String, toDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
-        memoryCache.setObject(image, forKey: key as NSString, cost: image.kf_imageCost)
+    public func storeImage(_ image: Image, originalData: Data? = nil, forKey key: String, processorIdentifier identifier: String = "", toDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
+        
+        let computedKey = key.computedKey(with: identifier)
+        memoryCache.setObject(image, forKey: computedKey as NSString, cost: image.kf_imageCost)
         
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
@@ -185,7 +187,7 @@ extension ImageCache {
                         } catch _ {}
                     }
                     
-                    self.fileManager.createFile(atPath: self.cachePathForKey(key), contents: data, attributes: nil)
+                    self.fileManager.createFile(atPath: self.cachePathForKey(computedKey), contents: data, attributes: nil)
                 }
                 callHandlerInMainQueue()
             })
@@ -202,8 +204,9 @@ extension ImageCache {
     - parameter fromDisk:          Whether this image should be removed from disk or not. If false, the image will be only removed from memory.
     - parameter completionHandler: Called when removal operation completes.
     */
-    public func removeImage(forKey key: String, fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
-        memoryCache.removeObject(forKey: key as NSString)
+    public func removeImage(forKey key: String, processorIdentifier identifier: String = "", fromDisk: Bool = true, completionHandler: (() -> Void)? = nil) {
+        let computedKey = key.computedKey(with: identifier)
+        memoryCache.removeObject(forKey: computedKey as NSString)
         
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
@@ -216,7 +219,7 @@ extension ImageCache {
         if fromDisk {
             ioQueue.async{
                 do {
-                    try self.fileManager.removeItem(atPath: self.cachePathForKey(key))
+                    try self.fileManager.removeItem(atPath: self.cachePathForKey(computedKey))
                 } catch _ {}
                 callHandlerInMainQueue()
             }
@@ -246,8 +249,9 @@ extension ImageCache {
         
         var block: RetrieveImageDiskTask?
         let options = options ?? KingfisherEmptyOptionsInfo
+        let computedKey = key.computedKey(with: options.processor.identifier)
         
-        if let image = self.retrieveImageInMemoryCache(forKey: key) {
+        if let image = self.retrieveImageInMemoryCache(forKey: computedKey) {
             options.callbackDispatchQueue.safeAsync {
                 completionHandler(image, .memory)
             }
@@ -255,11 +259,11 @@ extension ImageCache {
             var sSelf: ImageCache! = self
             block = DispatchWorkItem(block: {
                 // Begin to load image from disk
-                if let image = sSelf.retrieveImageInDiskCacheForKey(key, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData) {
+                if let image = sSelf.retrieveImageInDiskCacheForKey(computedKey, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async(execute: { () -> Void in
                             let result = image.kf_decoded(scale: options.scaleFactor)
-                            sSelf.storeImage(result!, forKey: key, toDisk: false, completionHandler: nil)
+                            sSelf.storeImage(result!, forKey: computedKey, toDisk: false, completionHandler: nil)
 
                             options.callbackDispatchQueue.safeAsync {
                                 completionHandler(result, .memory)
@@ -267,7 +271,7 @@ extension ImageCache {
                             }
                         })
                     } else {
-                        sSelf.storeImage(image, forKey: key, toDisk: false, completionHandler: nil)
+                        sSelf.storeImage(image, forKey: computedKey, toDisk: false, completionHandler: nil)
                         options.callbackDispatchQueue.safeAsync {
                             completionHandler(image, .disk)
                             sSelf = nil
@@ -295,8 +299,9 @@ extension ImageCache {
     
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInMemoryCache(forKey key: String) -> Image? {
-        return memoryCache.object(forKey: key as NSString) as? Image
+    public func retrieveImageInMemoryCache(forKey key: String, processIdentifier identifier: String = "") -> Image? {
+        let computedKey = key.computedKey(with: identifier)
+        return memoryCache.object(forKey: computedKey as NSString) as? Image
     }
     
     /**
@@ -309,8 +314,9 @@ extension ImageCache {
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInDiskCacheForKey(_ key: String, scale: CGFloat = 1.0, preloadAllGIFData: Bool = false) -> Image? {
-        return diskImageForKey(key, scale: scale, preloadAllGIFData: preloadAllGIFData)
+    public func retrieveImageInDiskCacheForKey(_ key: String, processIdentifier identifier: String = "", scale: CGFloat = 1.0, preloadAllGIFData: Bool = false) -> Image? {
+        let computedKey = key.computedKey(with: identifier)
+        return diskImageForKey(computedKey, scale: scale, preloadAllGIFData: preloadAllGIFData)
     }
 }
 
@@ -642,3 +648,13 @@ extension UIApplication {
     }
 }
 #endif
+
+extension String {
+    func computedKey(with identifier: String) -> String {
+        if identifier.isEmpty {
+            return self
+        } else {
+            return appending("@\(identifier)")
+        }
+    }
+}

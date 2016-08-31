@@ -271,7 +271,41 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testCannotRetrieveCacheWithProcessorIdentifier() {
+        let expectation = self.expectation(description: "wait for retrieving image")
+        let p = RoundCornerImageProcessor(cornerRadius: 40)
+        
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
+            
+            self.cache.retrieveImage(forKey: testKeys[0], options: [.processor(p)], completionHandler: { (image, type) -> () in
+                
+                XCTAssert(image == nil, "The image with prosossor should not be cached yet.")
+                
+                expectation.fulfill()
+            })
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 
+    func testRetrieveCacheWithProcessorIdentifier() {
+        let expectation = self.expectation(description: "wait for retrieving image")
+        let p = RoundCornerImageProcessor(cornerRadius: 40)
+        
+        cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], processorIdentifier: p.identifier,toDisk: true) { () -> () in
+            
+            self.cache.retrieveImage(forKey: testKeys[0], options: [.processor(p)], completionHandler: { (image, type) -> () in
+                
+                XCTAssert(image != nil, "The image with prosossor should already be cached.")
+                
+                expectation.fulfill()
+            })
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
     // MARK: - Helper
     func storeMultipleImages(_ completionHandler:@escaping ()->()) {
         
