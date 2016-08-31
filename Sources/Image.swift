@@ -45,11 +45,9 @@ private var animatedImageDataKey: Void?
 import ImageIO
 import CoreGraphics
 
-#if os(iOS) || os(macOS) || os(tvOS)
+#if !os(watchOS)
 import Accelerate
 import CoreImage
-    
-private let ciContext = CIContext(options: nil)
 #endif
 
 // MARK: - Image Properties
@@ -563,38 +561,9 @@ extension Image {
     // MARK: - Tint
     func kf_tinted(with color: Color) -> Image {
         #if os(watchOS)
-            return self
+        return self
         #else
-        guard let cgImage = cgImage else {
-            assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
-            return self
-        }
-    
-        let colorFilter = CIFilter(name: "CIConstantColorGenerator")!
-        colorFilter.setValue(CIColor(color: color), forKey: kCIInputColorKey)
-        
-        let colorImage = colorFilter.outputImage
-            
-        let input = CIImage(cgImage: cgImage)
-        let filter = CIFilter(name: "CISourceOverCompositing")!
-        filter.setValue(colorImage, forKey: kCIInputImageKey)
-        filter.setValue(input, forKey: kCIInputBackgroundImageKey)
-        
-        guard let output = filter.outputImage?.cropping(to: input.extent) else {
-            assertionFailure("[Kingfisher] Tint filter failed to create output image.")
-            return self
-        }
-            
-        guard let result = ciContext.createCGImage(output, from: output.extent) else {
-            assertionFailure("[Kingfisher] Can not make an tint image within context.")
-            return self
-        }
-            
-        #if os(macOS)
-            return Image(cgImage: result, size: .zero)
-        #else
-            return Image(cgImage: result)
-        #endif
+        return kf_apply(.tint(color))
         #endif
     }
     
@@ -603,30 +572,7 @@ extension Image {
         #if os(watchOS)
         return self
         #else
-        guard let cgImage = cgImage else {
-            assertionFailure("[Kingfisher] B&W only works for CG-based image.")
-            return self
-        }
-        let input = CIImage(cgImage: cgImage)
-        
-        let paramsColor = [kCIInputBrightnessKey: brightness,
-                             kCIInputContrastKey: contrast,
-                           kCIInputSaturationKey: saturation]
-            
-        let blackAndWhite = input.applyingFilter("CIColorControls", withInputParameters: paramsColor)
-        let paramsExposure = [kCIInputEVKey: inputEV]
-        let output = blackAndWhite.applyingFilter("CIExposureAdjust", withInputParameters: paramsExposure)
-        
-        guard let result = ciContext.createCGImage(output, from: output.extent) else {
-            assertionFailure("Can not make an B&W image within context.")
-            return self
-        }
-            
-        #if os(macOS)
-        return Image(cgImage: result, size: .zero)
-        #else
-        return Image(cgImage: result)
-        #endif
+        return kf_apply(.colorControl(brightness, contrast, saturation, inputEV))
         #endif
     }
 }
