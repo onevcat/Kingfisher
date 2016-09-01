@@ -58,7 +58,7 @@ extension ViewController: NSCollectionViewDataSource {
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
         
         item.imageView?.kf_showIndicatorWhenLoading = true
-        item.imageView?.kf_setImage(with: url, placeholderImage: nil, optionsInfo: nil,
+        item.imageView?.kf_setImage(with: url, placeholder: nil, optionsInfo: nil,
                                                    progressBlock: { receivedSize, totalSize in
                                                     print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")
                                                     },

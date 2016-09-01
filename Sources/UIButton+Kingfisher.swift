@@ -35,7 +35,7 @@ extension UIButton {
     
     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
     - parameter state:             The state that uses the specified image.
-    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+    - parameter placeholder:       A placeholder image when retrieving the image at URL.
     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     - parameter progressBlock:     Called when the image downloading progress gets updated.
     - parameter completionHandler: Called when the image retrieved and set.
@@ -48,12 +48,12 @@ extension UIButton {
     @discardableResult
     public func kf_setImage(with resource: Resource?,
                                 for state: UIControlState,
-                         placeholderImage: UIImage? = nil,
+                              placeholder: UIImage? = nil,
                               optionsInfo: KingfisherOptionsInfo? = nil,
                             progressBlock: DownloadProgressBlock? = nil,
                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        setImage(placeholderImage, for: state)
+        setImage(placeholder, for: state)
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
@@ -140,7 +140,7 @@ extension UIButton {
     
     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
     - parameter state:             The state that uses the specified image.
-    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+    - parameter placeholder:       A placeholder image when retrieving the image at URL.
     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     - parameter progressBlock:     Called when the image downloading progress gets updated.
     - parameter completionHandler: Called when the image retrieved and set.
@@ -153,12 +153,12 @@ extension UIButton {
     @discardableResult
     public func kf_setBackgroundImage(with resource: Resource?,
                                           for state: UIControlState,
-                                   placeholderImage: UIImage? = nil,
+                                        placeholder: UIImage? = nil,
                                         optionsInfo: KingfisherOptionsInfo? = nil,
                                       progressBlock: DownloadProgressBlock? = nil,
                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        setBackgroundImage(placeholderImage, for: state)
+        setBackgroundImage(placeholder, for: state)
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
