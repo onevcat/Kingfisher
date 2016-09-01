@@ -67,14 +67,16 @@ extension ViewController {
         
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
-        _ = cell.cellImageView.kf_setImage(with: url, placeholderImage: nil,
-                                                        optionsInfo: [.transition(ImageTransition.fade(1))],
-                                                      progressBlock: { receivedSize, totalSize in
-                                                          print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
-                                                      },
-                                                  completionHandler: { image, error, cacheType, imageURL in
-                                                          print("\(indexPath.row + 1): Finished")
-                                                      })
+        
+        _ = cell.cellImageView.kf_setImage(with: url,
+                                           placeholder: nil,
+                                           optionsInfo: [.transition(ImageTransition.fade(1))],
+                                           progressBlock: { receivedSize, totalSize in
+                                                print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
+                                           },
+                                           completionHandler: { image, error, cacheType, imageURL in
+                                                print("\(indexPath.row + 1): Finished")
+        })
         return cell
     }
 }

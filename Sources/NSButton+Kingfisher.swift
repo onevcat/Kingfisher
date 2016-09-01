@@ -37,7 +37,7 @@ extension NSButton {
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
 
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
      - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
@@ -49,12 +49,12 @@ extension NSButton {
      */
     @discardableResult
     public func kf_setImage(with resource: Resource?,
-                         placeholderImage: Image? = nil,
+                              placeholder: Image? = nil,
                               optionsInfo: KingfisherOptionsInfo? = nil,
                             progressBlock: DownloadProgressBlock? = nil,
                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        image = placeholderImage
+        image = placeholder
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
@@ -123,7 +123,7 @@ extension NSButton {
      Set an alternateImage with a resource, a placeholder image, options, progress handler and completion handler.
 
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
      - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
@@ -135,12 +135,12 @@ extension NSButton {
      */
     @discardableResult
     public func kf_setAlternateImage(with resource: Resource?,
-                                  placeholderImage: Image? = nil,
+                                       placeholder: Image? = nil,
                                        optionsInfo: KingfisherOptionsInfo? = nil,
                                      progressBlock: DownloadProgressBlock? = nil,
                                  completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        alternateImage = placeholderImage
+        alternateImage = placeholder
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
