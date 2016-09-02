@@ -609,7 +609,7 @@ extension ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    public func calculateDiskCacheSizeWithCompletionHandler(_ completionHandler: ((_ size: UInt) -> ())) {
+    public func calculateDiskCacheSize(completionHandler: ((_ size: UInt) -> ())) {
         ioQueue.async(execute: { () -> Void in
             let (_, diskCacheSize, _) = self.travelCachedFiles(onlyForCacheSize: true)
             DispatchQueue.main.async(execute: { () -> Void in
