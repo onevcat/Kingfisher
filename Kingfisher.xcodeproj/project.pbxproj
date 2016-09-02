@@ -862,6 +862,51 @@
 			path = Tint;
 			sourceTree = "<group>";
 		};
+		4BF39F3C1D796B950035ECC8 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				D10945EA1C526B6C001408EB /* Image.swift */,
+				D10945EB1C526B6C001408EB /* ImageCache.swift */,
+				D10945EC1C526B6C001408EB /* ImageDownloader.swift */,
+				D9638B9F1C7DBA660046523D /* ImagePrefetcher.swift */,
+				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
+				4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */,
+				D10945ED1C526B6C001408EB /* ImageTransition.swift */,
+				D10945F11C526B6C001408EB /* KingfisherManager.swift */,
+				D10945F21C526B6C001408EB /* KingfisherOptionsInfo.swift */,
+				4B6313F31D766BEF0078E017 /* Filter.swift */,
+				D10945F31C526B6C001408EB /* Resource.swift */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		4BF39F3D1D796BB50035ECC8 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D10945EE1C526B6C001408EB /* ImageView+Kingfisher.swift */,
+				D10945F61C526B6C001408EB /* UIButton+Kingfisher.swift */,
+				182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		4BF39F3E1D796BC90035ECC8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		4BF39F3F1D796BDD0035ECC8 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D10945F41C526B6C001408EB /* String+MD5.swift */,
+				D10945F51C526B6C001408EB /* ThreadHelper.swift */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
 		4BF806DA1D75411B00C8DB13 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -897,25 +942,12 @@
 		D10EC22A1C3D62D200A4211C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
-				4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */,
-				4B6313F31D766BEF0078E017 /* Filter.swift */,
-				4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */,
-				D10945EA1C526B6C001408EB /* Image.swift */,
-				D10945EB1C526B6C001408EB /* ImageCache.swift */,
-				D10945EC1C526B6C001408EB /* ImageDownloader.swift */,
-				D9638B9F1C7DBA660046523D /* ImagePrefetcher.swift */,
-				D10945ED1C526B6C001408EB /* ImageTransition.swift */,
-				D10945EE1C526B6C001408EB /* ImageView+Kingfisher.swift */,
+				4BF39F3C1D796B950035ECC8 /* Core */,
+				4BF39F3D1D796BB50035ECC8 /* Extensions */,
+				4BF39F3F1D796BDD0035ECC8 /* Helpers */,
+				4BF39F3E1D796BC90035ECC8 /* Views */,
 				D10945EF1C526B6C001408EB /* Info.plist */,
 				D10945F01C526B6C001408EB /* Kingfisher.h */,
-				D10945F11C526B6C001408EB /* KingfisherManager.swift */,
-				D10945F21C526B6C001408EB /* KingfisherOptionsInfo.swift */,
-				D10945F31C526B6C001408EB /* Resource.swift */,
-				D10945F41C526B6C001408EB /* String+MD5.swift */,
-				D10945F51C526B6C001408EB /* ThreadHelper.swift */,
-				D10945F61C526B6C001408EB /* UIButton+Kingfisher.swift */,
-				182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
