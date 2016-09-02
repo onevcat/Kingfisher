@@ -60,18 +60,18 @@ public class ImagePrefetcher {
     
     private var tasks = [URL: RetrieveImageDownloadTask]()
     
+    private var pendingResources: ArraySlice<Resource>
     private var skippedResources = [Resource]()
     private var completedResources = [Resource]()
     private var failedResources = [Resource]()
     
-    private var requestedCount = 0
     private var stopped = false
     
     // The created manager used for prefetch. We will use the helper method in manager.
     private let manager: KingfisherManager
     
     private var finished: Bool {
-        return failedResources.count + skippedResources.count + completedResources.count == prefetchResources.count
+        return failedResources.count + skippedResources.count + completedResources.count == prefetchResources.count && self.tasks.isEmpty
     }
     
     /**
@@ -125,6 +125,7 @@ public class ImagePrefetcher {
         completionHandler: PrefetcherCompletionHandler? = nil)
     {
         prefetchResources = resources
+        pendingResources = ArraySlice(resources)
         
         // We want all callbacks from main queue, so we ignore the call back queue in options
         let optionsInfoWithoutQueue = optionsInfo?.kf_removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
@@ -166,8 +167,10 @@ public class ImagePrefetcher {
             }
             
             let initialConcurentDownloads = min(self.prefetchResources.count, self.maxConcurrentDownloads)
-            for i in 0 ..< initialConcurentDownloads {
-                self.startPrefetching(self.prefetchResources[i])
+            for _ in 0 ..< initialConcurentDownloads {
+                if let resource = self.pendingResources.popFirst() {
+                    self.startPrefetching(resource)
+                }
             }
         }
     }
@@ -192,35 +195,31 @@ public class ImagePrefetcher {
     
     func downloadAndCache(_ resource: Resource) {
 
-        let task = RetrieveImageTask()
+        let downloadTaskCompletionHandler: CompletionHandler = { (image, error, _, _) -> () in
+            self.tasks.removeValue(forKey: resource.downloadURL)
+            if let _ = error {
+                self.failedResources.append(resource)
+            } else {
+                self.completedResources.append(resource)
+            }
+            
+            self.reportProgress()
+            if self.stopped {
+                if self.tasks.isEmpty {
+                    self.failedResources.append(contentsOf: self.pendingResources)
+                    self.handleComplete()
+                }
+            } else {
+                self.reportCompletionOrStartNext()
+            }
+        }
+        
         let downloadTask = manager.downloadAndCacheImage(
             with: resource.downloadURL,
             forKey: resource.cacheKey,
-            retrieveImageTask: task,
+            retrieveImageTask: RetrieveImageTask(),
             progressBlock: nil,
-            completionHandler: {
-                (image, error, _, _) -> () in
-                
-                self.tasks.removeValue(forKey: resource.downloadURL)
-                
-                if let _ = error {
-                    self.failedResources.append(resource)
-                } else {
-                    self.completedResources.append(resource)
-                }
-                
-                self.reportProgress()
-                
-                if self.stopped {
-                    if self.tasks.isEmpty {
-                        let pendingResources = self.prefetchResources[self.requestedCount..<self.prefetchResources.count]
-                        self.failedResources += Array(pendingResources)
-                        self.handleComplete()
-                    }
-                } else {
-                    self.reportCompletionOrStartNext()
-                }
-            },
+            completionHandler: downloadTaskCompletionHandler,
             options: optionsInfo)
         
         if let downloadTask = downloadTask {
@@ -237,7 +236,6 @@ public class ImagePrefetcher {
     
     func startPrefetching(_ resource: Resource)
     {
-        requestedCount += 1
         if optionsInfo.forceRefresh {
             downloadAndCache(resource)
         } else {
@@ -255,12 +253,11 @@ public class ImagePrefetcher {
     }
     
     func reportCompletionOrStartNext() {
-        if finished {
-            handleComplete()
+        if let resource = pendingResources.popFirst() {
+            startPrefetching(resource)
         } else {
-            if requestedCount < prefetchResources.count {
-                startPrefetching(prefetchResources[requestedCount])
-            }
+            guard self.tasks.isEmpty else { return }
+            handleComplete()
         }
     }
     
