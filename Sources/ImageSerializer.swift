@@ -26,6 +26,8 @@
 
 import Foundation
 
+/// An `CacheSerializer` would be used to convert some data to an image object for 
+/// retrieving from disk cache or vice versa for storing to disk cache.
 public protocol CacheSerializer {
     func data(with image: Image, original: Data?) -> Data?
     func image(with data: Data, options: KingfisherOptionsInfo?) -> Image?
