@@ -78,12 +78,12 @@ class ImageCacheTests: XCTestCase {
         
         cache.storeImage(testImage, originalData: testImageData as? Data, forKey: key, toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
-            let cacheResult = self.cache.isImageCachedForKey(key)
+            let cacheResult = self.cache.isImageCached(forKey: key)
             XCTAssertTrue(cacheResult.cached, "Should be cached")
             XCTAssert(cacheResult.cacheType == .disk, "Should be cached in disk")
         
             self.cache.clearDiskCache {
-                let cacheResult = self.cache.isImageCachedForKey(key)
+                let cacheResult = self.cache.isImageCached(forKey: key)
                 XCTAssertFalse(cacheResult.cached, "Should be not cached")
                 expectation.fulfill()
             }
@@ -217,9 +217,9 @@ class ImageCacheTests: XCTestCase {
     func testIsImageCachedForKey() {
         let expectation = self.expectation(description: "wait for caching image")
         
-        XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == false, "This image should not be cached yet.")
+        XCTAssert(self.cache.isImageCached(forKey: testKeys[0]).cached == false, "This image should not be cached yet.")
         self.cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
-            XCTAssert(self.cache.isImageCachedForKey(testKeys[0]).cached == true, "This image should be already cached.")
+            XCTAssert(self.cache.isImageCached(forKey: testKeys[0]).cached == true, "This image should be already cached.")
             expectation.fulfill()
         }
 
@@ -232,7 +232,7 @@ class ImageCacheTests: XCTestCase {
         self.cache.storeImage(testImage, originalData: testImageData as? Data, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measure({ () -> Void in
                 for _ in 1 ..< 200 {
-                    _ = self.cache.retrieveImageInDiskCacheForKey(testKeys[0])
+                    _ = self.cache.retrieveImageInDiskCache(forKey: testKeys[0])
                 }
             })
             expectation.fulfill()
@@ -259,7 +259,7 @@ class ImageCacheTests: XCTestCase {
                 }
                 
                 XCTAssertEqual(1, hashes.count, "There should be one and only one file cleaned")
-                XCTAssertEqual(hashes.first!, self.cache.hashForKey(testKeys[0]), "The cleaned file should be the stored one.")
+                XCTAssertEqual(hashes.first!, self.cache.hash(forKey: testKeys[0]), "The cleaned file should be the stored one.")
                 
                 NotificationCenter.default.removeObserver(self.observer)
                 expectation.fulfill()

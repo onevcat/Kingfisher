@@ -170,6 +170,7 @@ extension ImageCache {
                            originalData: Data? = nil,
                            forKey key: String,
                            processorIdentifier identifier: String = "",
+                           cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
                            toDisk: Bool = true,
                            completionHandler: (() -> Void)? = nil)
     {
@@ -187,24 +188,15 @@ extension ImageCache {
         
         if toDisk {
             ioQueue.async(execute: {
-                let imageFormat = originalData?.kf_imageFormat ?? .unknown
                 
-                let data: Data?
-                switch imageFormat {
-                case .PNG: data = image.pngRepresentation()
-                case .JPEG: data = image.jpegRepresentation(compressionQuality: 1.0)
-                case .GIF: data = image.gifRepresentation()
-                case .unknown: data = originalData ?? image.kf_normalized().pngRepresentation()
-                }
-                
-                if let data = data {
+                if let data = serializer.data(with: image, original: originalData) {
                     if !self.fileManager.fileExists(atPath: self.diskCachePath) {
                         do {
                             try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
                         } catch _ {}
                     }
                     
-                    self.fileManager.createFile(atPath: self.cachePathForKey(computedKey), contents: data, attributes: nil)
+                    self.fileManager.createFile(atPath: self.cachePath(forKey: computedKey), contents: data, attributes: nil)
                 }
                 callHandlerInMainQueue()
             })
@@ -242,7 +234,7 @@ extension ImageCache {
         if fromDisk {
             ioQueue.async{
                 do {
-                    try self.fileManager.removeItem(atPath: self.cachePathForKey(computedKey))
+                    try self.fileManager.removeItem(atPath: self.cachePath(forKey: computedKey))
                 } catch _ {}
                 callHandlerInMainQueue()
             }
@@ -277,9 +269,8 @@ extension ImageCache {
         
         var block: RetrieveImageDiskTask?
         let options = options ?? KingfisherEmptyOptionsInfo
-        let computedKey = key.computedKey(with: options.processor.identifier)
         
-        if let image = self.retrieveImageInMemoryCache(forKey: computedKey) {
+        if let image = self.retrieveImageInMemoryCache(forKey: key, options: options) {
             options.callbackDispatchQueue.safeAsync {
                 completionHandler(image, .memory)
             }
@@ -287,19 +278,32 @@ extension ImageCache {
             var sSelf: ImageCache! = self
             block = DispatchWorkItem(block: {
                 // Begin to load image from disk
-                if let image = sSelf.retrieveImageInDiskCacheForKey(computedKey, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData) {
+                if let image = sSelf.retrieveImageInDiskCache(forKey: key, options: options) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async(execute: { () -> Void in
                             let result = image.kf_decoded(scale: options.scaleFactor)
-                            sSelf.storeImage(result!, forKey: computedKey, toDisk: false, completionHandler: nil)
-
+                            
+                            sSelf.storeImage(result!,
+                                             forKey: key,
+                                             processorIdentifier: options.processor.identifier,
+                                             cacheSerializer: options.cacheSerializer,
+                                             toDisk: false,
+                                             completionHandler: nil
+                            )
+                            
                             options.callbackDispatchQueue.safeAsync {
                                 completionHandler(result, .memory)
                                 sSelf = nil
                             }
                         })
                     } else {
-                        sSelf.storeImage(image, forKey: computedKey, toDisk: false, completionHandler: nil)
+                        sSelf.storeImage(image,
+                                         forKey: key,
+                                         processorIdentifier: options.processor.identifier,
+                                         cacheSerializer: options.cacheSerializer,
+                                         toDisk: false,
+                                         completionHandler: nil
+                        )
                         options.callbackDispatchQueue.safeAsync {
                             completionHandler(image, .disk)
                             sSelf = nil
@@ -320,34 +324,34 @@ extension ImageCache {
         return block
     }
     
+    // TODO: Doc
     /**
     Get an image for a key from memory.
     
     - parameter key:        Key for the image.
-    - parameter identifier: The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
                             This identifier will be used to generate a corresponding key for the combination of `key` and processor.
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInMemoryCache(forKey key: String, processIdentifier identifier: String = "") -> Image? {
-        let computedKey = key.computedKey(with: identifier)
+    public func retrieveImageInMemoryCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
+        let computedKey = key.computedKey(with: (options ?? KingfisherEmptyOptionsInfo).processor.identifier)
         return memoryCache.object(forKey: computedKey as NSString) as? Image
     }
     
+    // TODO: Doc
     /**
     Get an image for a key from disk.
     
-    - parameter key:               Key for the image.
-    - parameter identifier:        The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
-                                   This identifier will be used to generate a corresponding key for the combination of `key` and processor.
-    - parameter scale:             The scale factor to assume when interpreting the image data.
-    - parameter preloadAllGIFData: Whether all GIF data should be loaded. If true, you can set the loaded image to a regular UIImageView to play 
-                                   the GIF animation. Otherwise, you should use `AnimatedImageView` to play it. Default is `false`
+    - parameter key: Key for the image.
+    - parameter options:
 
     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
     */
-    public func retrieveImageInDiskCacheForKey(_ key: String, processIdentifier identifier: String = "", scale: CGFloat = 1.0, preloadAllGIFData: Bool = false) -> Image? {
-        let computedKey = key.computedKey(with: identifier)
-        return diskImageForKey(computedKey, scale: scale, preloadAllGIFData: preloadAllGIFData)
+    public func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
+        
+        let options = options ?? KingfisherEmptyOptionsInfo
+        let computedKey = key.computedKey(with: options.processor.identifier)
+        
+        return diskImage(forKey: computedKey, serializer: options.cacheSerializer, options: options)
     }
 }
 
@@ -561,7 +565,7 @@ extension ImageCache {
      - returns: True if the image is cached, false otherwise.
      */
     public func cachedImageExists(for resource: Resource) -> Bool {
-        let result = isImageCachedForKey(resource.cacheKey)
+        let result = isImageCached(forKey: resource.cacheKey)
         return result.cached
     }
 
@@ -572,13 +576,13 @@ extension ImageCache {
     
     - returns: The check result.
     */
-    public func isImageCachedForKey(_ key: String) -> CacheCheckResult {
+    public func isImageCached(forKey key: String) -> CacheCheckResult {
         
         if memoryCache.object(forKey: key as NSString) != nil {
             return CacheCheckResult(cached: true, cacheType: .memory)
         }
         
-        let filePath = cachePathForKey(key)
+        let filePath = cachePath(forKey: key)
         
         var diskCached = false
         ioQueue.sync { () -> Void in
@@ -599,8 +603,8 @@ extension ImageCache {
     
     - returns: Corresponding hash.
     */
-    public func hashForKey(_ key: String) -> String {
-        return cacheFileNameForKey(key)
+    public func hash(forKey key: String) -> String {
+        return cacheFileName(forKey: key)
     }
     
     /**
@@ -625,10 +629,10 @@ extension ImageCache {
     i.e. `<img src='path_for_key'>`
      
     - Note: This method does not guarantee there is an image already cached in the path. 
-      You could use `isImageCachedForKey` method to check whether the image is cached under that key.
+      You could use `isImageCached(forKey:)` method to check whether the image is cached under that key.
     */
-    public func cachePathForKey(_ key: String) -> String {
-        let fileName = cacheFileNameForKey(key)
+    public func cachePath(forKey key: String) -> String {
+        let fileName = cacheFileName(forKey: key)
         return (diskCachePath as NSString).appendingPathComponent(fileName)
     }
 
@@ -637,20 +641,20 @@ extension ImageCache {
 // MARK: - Internal Helper
 extension ImageCache {
     
-    func diskImageForKey(_ key: String, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
-        if let data = diskImageDataForKey(key) {
-            return Image.kf_image(data: data, scale: scale, preloadAllGIFData: preloadAllGIFData)
+    func diskImage(forKey key: String, serializer: CacheSerializer, options: KingfisherOptionsInfo) -> Image? {
+        if let data = diskImageData(forKey: key) {
+            return serializer.image(with: data, options: options)
         } else {
             return nil
         }
     }
     
-    func diskImageDataForKey(_ key: String) -> Data? {
-        let filePath = cachePathForKey(key)
+    func diskImageData(forKey key: String) -> Data? {
+        let filePath = cachePath(forKey: key)
         return (try? Data(contentsOf: URL(fileURLWithPath: filePath)))
     }
     
-    func cacheFileNameForKey(_ key: String) -> String {
+    func cacheFileName(forKey key: String) -> String {
         return key.kf_MD5
     }
 }

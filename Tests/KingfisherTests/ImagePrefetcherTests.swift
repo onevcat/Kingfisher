@@ -76,7 +76,7 @@ class ImagePrefetcherTests: XCTestCase {
                 XCTAssertEqual(completedResources.count, urls.count, "All resources prefetching should be completed.")
                 XCTAssertEqual(progressCalledCount, urls.count, "Progress should be called the same time of download count.")
                 for url in urls {
-                    XCTAssertTrue(KingfisherManager.shared.cache.isImageCachedForKey(url.absoluteString).cached)
+                    XCTAssertTrue(KingfisherManager.shared.cache.isImageCached(forKey: url.absoluteString).cached)
                 }
         }
         
