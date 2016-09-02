@@ -94,17 +94,17 @@ fileprivate struct GeneralProcessor: ImageProcessor {
 
 /// The default processor. It convert the input data to a valid image.
 /// Images of .PNG, .JPEG and .GIF format are supported.
-/// If an image is given, `DefaultProcessor` will do nothing on it and just return that image.
-public struct DefaultProcessor: ImageProcessor {
+/// If an image is given, `DefaultImageProcessor` will do nothing on it and just return that image.
+public struct DefaultImageProcessor: ImageProcessor {
     
-    /// A default `DefaultProcessor` could be used across.
-    public static let `default` = DefaultProcessor()
+    /// A default `DefaultImageProcessor` could be used across.
+    public static let `default` = DefaultImageProcessor()
     
     public let identifier = ""
     
-    /// Initialize a `DefaultProcessor`
+    /// Initialize a `DefaultImageProcessor`
     ///
-    /// - returns: An initialized `DefaultProcessor`.
+    /// - returns: An initialized `DefaultImageProcessor`.
     public init() {}
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
@@ -152,7 +152,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
             let size = targetSize ?? image.kf_size
             return image.kf_image(withRoundRadius: cornerRadius, fit: size, scale: options.scaleFactor)
         case .data(_):
-            return (DefaultProcessor() |> self).process(item: item, options: options)
+            return (DefaultImageProcessor() |> self).process(item: item, options: options)
         }
     }
 }
@@ -179,7 +179,7 @@ public struct ResizingImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf_resize(to: targetSize)
         case .data(_):
-            return (DefaultProcessor() |> self).process(item: item, options: options)
+            return (DefaultImageProcessor() |> self).process(item: item, options: options)
         }
     }
 }
@@ -208,7 +208,7 @@ public struct BlurImageProcessor: ImageProcessor {
             let radius = blurRadius * options.scaleFactor
             return image.kf_blurred(withRadius: radius)
         case .data(_):
-            return (DefaultProcessor() |> self).process(item: item, options: options)
+            return (DefaultImageProcessor() |> self).process(item: item, options: options)
         }
     }
 }
@@ -242,7 +242,7 @@ public struct OverlayImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf_overlaying(with: overlay, fraction: fraction)
         case .data(_):
-            return (DefaultProcessor() |> self).process(item: item, options: options)
+            return (DefaultImageProcessor() |> self).process(item: item, options: options)
         }
     }
 }
@@ -270,7 +270,7 @@ public struct TintImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf_tinted(with: tint)
         case .data(_):
-            return (DefaultProcessor() |> self).process(item: item, options: options)
+            return (DefaultImageProcessor() |> self).process(item: item, options: options)
         }
     }
 }
@@ -314,7 +314,7 @@ public struct ColorControlsProcessor: ImageProcessor {
         case .image(let image):
             return image.kf_adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
         case .data(_):
-            return (DefaultProcessor() |> self).process(item: item, options: options)
+            return (DefaultImageProcessor() |> self).process(item: item, options: options)
         }
     }
 }

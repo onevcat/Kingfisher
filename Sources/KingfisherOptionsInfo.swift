@@ -99,7 +99,7 @@ public enum KingfisherOptionsInfoItem {
     /// Processor for processing when the downloading finishes, a processor will convert the downloaded data to an image
     /// and/or apply some filter on it. If a cache is connected to the downloader (it happenes when you are using
     /// KingfisherManager or the image extension methods), the converted image will also be sent to cache as well as the
-    /// image view. `DefaultProcessor.default` will be used by default.
+    /// image view. `DefaultImageProcessor.default` will be used by default.
     case processor(ImageProcessor)
 }
 
@@ -230,11 +230,11 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var processor: ImageProcessor {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.processor(DefaultProcessor.default)),
+        if let item = kf_firstMatchIgnoringAssociatedValue(.processor(DefaultImageProcessor.default)),
             case .processor(let processor) = item
         {
             return processor
         }
-        return DefaultProcessor.default
+        return DefaultImageProcessor.default
     }
 }
