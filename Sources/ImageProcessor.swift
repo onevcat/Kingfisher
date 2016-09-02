@@ -37,7 +37,7 @@ public enum ImageProcessItem {
     case data(Data)
 }
 
-/// An `ImageProcessor` could be used to convert some downloaded data to an image.
+/// An `ImageProcessor` would be used to convert some downloaded data to an image.
 public protocol ImageProcessor {
     /// Identifier of the processor. It will be used to identify the processor when 
     /// caching and retriving an image. You might want to make sure that processors with
