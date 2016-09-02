@@ -44,11 +44,11 @@ public enum KingfisherOptionsInfoItem {
     /// The associated value of this member should be an ImageCache object. Kingfisher will use the specified
     /// cache object when handling related operations, including trying to retrieve the cached images and store
     /// the downloaded image to it.
-    case targetCache(ImageCache?)
+    case targetCache(ImageCache)
     
     /// The associated value of this member should be an ImageDownloader object. Kingfisher will use this
     /// downloader to download the images.
-    case downloader(ImageDownloader?)
+    case downloader(ImageDownloader)
     
     /// Member for animation transition when using UIImageView. Kingfisher will use the `ImageTransition` of
     /// this enum to animate the image in if it is downloaded from web. The transition will not happen when the
@@ -101,6 +101,8 @@ public enum KingfisherOptionsInfoItem {
     /// KingfisherManager or the image extension methods), the converted image will also be sent to cache as well as the
     /// image view. `DefaultImageProcessor.default` will be used by default.
     case processor(ImageProcessor)
+    
+    case cacheSerializer(CacheSerializer)
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -113,20 +115,21 @@ infix operator <== : ItemComparisonPrecedence
 // This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
 func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
     switch (lhs, rhs) {
-    case (.targetCache(_), .targetCache(_)): fallthrough
-    case (.downloader(_), .downloader(_)): fallthrough
-    case (.transition(_), .transition(_)): fallthrough
-    case (.downloadPriority(_), .downloadPriority(_)): fallthrough
-    case (.forceRefresh, .forceRefresh): fallthrough
-    case (.forceTransition, .forceTransition): fallthrough
-    case (.cacheMemoryOnly, .cacheMemoryOnly): fallthrough
-    case (.onlyFromCache, .onlyFromCache): fallthrough
-    case (.backgroundDecode, .backgroundDecode): fallthrough
-    case (.callbackDispatchQueue(_), .callbackDispatchQueue(_)): fallthrough
-    case (.scaleFactor(_), .scaleFactor(_)): fallthrough
-    case (.preloadAllGIFData, .preloadAllGIFData): fallthrough
-    case (.requestModifier(_), .requestModifier(_)): fallthrough
+    case (.targetCache(_), .targetCache(_)): return true
+    case (.downloader(_), .downloader(_)): return true
+    case (.transition(_), .transition(_)): return true
+    case (.downloadPriority(_), .downloadPriority(_)): return true
+    case (.forceRefresh, .forceRefresh): return true
+    case (.forceTransition, .forceTransition): return true
+    case (.cacheMemoryOnly, .cacheMemoryOnly): return true
+    case (.onlyFromCache, .onlyFromCache): return true
+    case (.backgroundDecode, .backgroundDecode): return true
+    case (.callbackDispatchQueue(_), .callbackDispatchQueue(_)): return true
+    case (.scaleFactor(_), .scaleFactor(_)): return true
+    case (.preloadAllGIFData, .preloadAllGIFData): return true
+    case (.requestModifier(_), .requestModifier(_)): return true
     case (.processor(_), .processor(_)): return true
+    case (.cacheSerializer(_), .cacheSerializer(_)): return true
     default: return false
     }
 }
@@ -142,22 +145,22 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
 }
 
 extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-    var targetCache: ImageCache? {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.targetCache(nil)),
+    var targetCache: ImageCache {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.targetCache(.default)),
             case .targetCache(let cache) = item
         {
             return cache
         }
-        return nil
+        return ImageCache.default
     }
     
-    var downloader: ImageDownloader? {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.downloader(nil)),
+    var downloader: ImageDownloader {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.downloader(.default)),
             case .downloader(let downloader) = item
         {
             return downloader
         }
-        return nil
+        return ImageDownloader.default
     }
     
     var transition: ImageTransition {
@@ -236,5 +239,14 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
             return processor
         }
         return DefaultImageProcessor.default
+    }
+    
+    var cacheSerializer: CacheSerializer {
+        if let item = kf_firstMatchIgnoringAssociatedValue(.cacheSerializer(DefaultCacheSerializer.default)),
+            case .cacheSerializer(let cacheSerializer) = item
+        {
+            return cacheSerializer
+        }
+        return DefaultCacheSerializer.default
     }
 }

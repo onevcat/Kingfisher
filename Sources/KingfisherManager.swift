@@ -147,14 +147,15 @@ public class KingfisherManager {
                       completionHandler: CompletionHandler?,
                                 options: KingfisherOptionsInfo?) -> RetrieveImageDownloadTask?
     {
-        let downloader = options?.downloader ?? self.downloader
+        let options = options ?? KingfisherEmptyOptionsInfo
+        let downloader = options.downloader
         return downloader.downloadImage(with: url, retrieveImageTask: retrieveImageTask, options: options,
             progressBlock: { receivedSize, totalSize in
                 progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { image, error, imageURL, originalData in
 
-                let targetCache = options?.targetCache ?? self.cache
+                let targetCache = options.targetCache
                 if let error = error, error.code == KingfisherError.notModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
@@ -168,8 +169,9 @@ public class KingfisherManager {
                     targetCache.storeImage(image,
                                            originalData: originalData,
                                            forKey: key,
-                                           processorIdentifier:options?.processor.identifier ?? "" ,
-                                           toDisk: !(options?.cacheMemoryOnly ?? false),
+                                           processorIdentifier:options.processor.identifier,
+                                           cacheSerializer: options.cacheSerializer,
+                                           toDisk: !options.cacheMemoryOnly,
                                            completionHandler: nil)
                 }
 

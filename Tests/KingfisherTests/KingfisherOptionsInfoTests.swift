@@ -42,8 +42,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
     
     func testEmptyOptionsShouldParseCorrectly() {
         let options = KingfisherEmptyOptionsInfo
-        XCTAssertNil(options.targetCache)
-        XCTAssertNil(options.downloader)
+        XCTAssertTrue(options.targetCache === ImageCache.default)
+        XCTAssertTrue(options.downloader === ImageDownloader.default)
 
 #if !os(macOS)
         switch options.transition {
