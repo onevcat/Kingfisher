@@ -194,7 +194,7 @@ extension ImageCache {
                         } catch _ {}
                     }
                     
-                    self.fileManager.createFile(atPath: self.cachePath(forKey: computedKey), contents: data, attributes: nil)
+                    self.fileManager.createFile(atPath: self.cachePath(forComputedKey: computedKey), contents: data, attributes: nil)
                 }
                 callHandlerInMainQueue()
             }
@@ -214,9 +214,9 @@ extension ImageCache {
     - parameter completionHandler: Called when removal operation completes.
     */
     open func removeImage(forKey key: String,
-                            processorIdentifier identifier: String = "",
-                            fromDisk: Bool = true,
-                            completionHandler: (() -> Void)? = nil)
+                          processorIdentifier identifier: String = "",
+                          fromDisk: Bool = true,
+                          completionHandler: (() -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
         memoryCache.removeObject(forKey: computedKey as NSString)
@@ -232,7 +232,7 @@ extension ImageCache {
         if fromDisk {
             ioQueue.async{
                 do {
-                    try self.fileManager.removeItem(atPath: self.cachePath(forKey: computedKey))
+                    try self.fileManager.removeItem(atPath: self.cachePath(forComputedKey: computedKey))
                 } catch _ {}
                 callHandlerInMainQueue()
             }
@@ -351,7 +351,7 @@ extension ImageCache {
         let options = options ?? KingfisherEmptyOptionsInfo
         let computedKey = key.computedKey(with: options.processor.identifier)
         
-        return diskImage(forKey: computedKey, serializer: options.cacheSerializer, options: options)
+        return diskImage(forComputedKey: computedKey, serializer: options.cacheSerializer, options: options)
     }
 }
 
@@ -548,34 +548,21 @@ extension ImageCache {
     }
     
     /**
-     Determine if a cached image exists for the given image, as keyed by the URL. It will return true if the
-     image is found either in memory or on disk. Essentially as long as there is a cache of the image somewhere
-     true is returned. A convenience method that decodes `isImageCachedForKey`.
-     
-     - parameter resource: The target resource. 
-       `cacheKey` property of this resource will be used to check whether this image be cached or not.
-     
-     - returns: True if the image is cached, false otherwise.
-     */
-    open func cachedImageExists(for resource: Resource) -> Bool {
-        let result = isImageCached(forKey: resource.cacheKey)
-        return result.cached
-    }
-
-    /**
     Check whether an image is cached for a key.
     
     - parameter key: Key for the image.
     
     - returns: The check result.
     */
-    open func isImageCached(forKey key: String) -> CacheCheckResult {
+    open func isImageCached(forKey key: String, processorIdentifier identifier: String = "") -> CacheCheckResult {
         
-        if memoryCache.object(forKey: key as NSString) != nil {
+        let computedKey = key.computedKey(with: identifier)
+        
+        if memoryCache.object(forKey: computedKey as NSString) != nil {
             return CacheCheckResult(cached: true, cacheType: .memory)
         }
         
-        let filePath = cachePath(forKey: key)
+        let filePath = cachePath(forComputedKey: computedKey)
         
         var diskCached = false
         ioQueue.sync {
@@ -592,12 +579,14 @@ extension ImageCache {
     /**
     Get the hash for the key. This could be used for matching files.
     
-    - parameter key: The key which is used for caching.
+    - parameter key:        The key which is used for caching.
+    - parameter identifier: The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
     
-    - returns: Corresponding hash.
+     - returns: Corresponding hash.
     */
-    open func hash(forKey key: String) -> String {
-        return cacheFileName(forKey: key)
+    open func hash(forKey key: String, processorIdentifier identifier: String = "") -> String {
+        let computedKey = key.computedKey(with: identifier)
+        return cacheFileName(forComputedKey: computedKey)
     }
     
     /**
@@ -625,30 +614,34 @@ extension ImageCache {
       that the image should be.
       You could use `isImageCached(forKey:)` method to check whether the image is cached under that key.
     */
-    open func cachePath(forKey key: String) -> String {
-        let fileName = cacheFileName(forKey: key)
-        return (diskCachePath as NSString).appendingPathComponent(fileName)
+    open func cachePath(forKey key: String, processorIdentifier identifier: String = "") -> String {
+        let computedKey = key.computedKey(with: identifier)
+        return cachePath(forComputedKey: computedKey)
     }
 
+    func cachePath(forComputedKey key: String) -> String {
+        let fileName = cacheFileName(forComputedKey: key)
+        return (diskCachePath as NSString).appendingPathComponent(fileName)
+    }
 }
 
 // MARK: - Internal Helper
 extension ImageCache {
     
-    func diskImage(forKey key: String, serializer: CacheSerializer, options: KingfisherOptionsInfo) -> Image? {
-        if let data = diskImageData(forKey: key) {
+    func diskImage(forComputedKey key: String, serializer: CacheSerializer, options: KingfisherOptionsInfo) -> Image? {
+        if let data = diskImageData(forComputedKey: key) {
             return serializer.image(with: data, options: options)
         } else {
             return nil
         }
     }
     
-    func diskImageData(forKey key: String) -> Data? {
-        let filePath = cachePath(forKey: key)
+    func diskImageData(forComputedKey key: String) -> Data? {
+        let filePath = cachePath(forComputedKey: key)
         return (try? Data(contentsOf: URL(fileURLWithPath: filePath)))
     }
     
-    func cacheFileName(forKey key: String) -> String {
+    func cacheFileName(forComputedKey key: String) -> String {
         return key.kf_MD5
     }
 }
