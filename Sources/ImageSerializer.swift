@@ -27,7 +27,7 @@
 import Foundation
 
 /// An `CacheSerializer` would be used to convert some data to an image object for 
-/// retrieving from disk cache or vice versa for storing to disk cache.
+/// retrieving from disk cache and vice versa for storing to disk cache.
 public protocol CacheSerializer {
     
     /// Get the serialized data from a provided image

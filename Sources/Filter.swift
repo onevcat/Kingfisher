@@ -56,6 +56,10 @@ public struct Filter {
     
     let transform: Transformer
 
+    public init(tranform: Transformer) {
+        self.transform = tranform
+    }
+    
     /// Tint filter which will apply a tint color to images.
     public static var tint: (Color) -> Filter = {
         color in
