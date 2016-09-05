@@ -1,8 +1,8 @@
 //
-//  InterfaceController.swift
-//  Kingfisher-watchOS-Demo Extension
+//  RequrstModifier.swift
+//  Kingfisher
 //
-//  Created by Wei Wang on 16/1/19.
+//  Created by Wei Wang on 2016/09/05.
 //
 //  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
 //
@@ -24,43 +24,30 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
-import WatchKit
 import Foundation
-import Kingfisher
 
-var count = 0
+/// Request modifier of image downloader.
+public protocol ImageDownloadRequestModifier {
+    func modified(for request: URLRequest) -> URLRequest?
+}
 
-class InterfaceController: WKInterfaceController {
+struct NoModifier: ImageDownloadRequestModifier {
+    static let `default` = NoModifier()
+    private init() {}
+    func modified(for request: URLRequest) -> URLRequest? {
+        return request
+    }
+}
+
+public struct AnyModifier: ImageDownloadRequestModifier {
     
-    @IBOutlet var interfaceImage: WKInterfaceImage!
+    let block: (URLRequest) -> URLRequest?
     
-    var currentIndex: Int?
-    
-    
-    override func awake(withContext context: Any?) {
-        super.awake(withContext: context)
-        
-        currentIndex = count
-        count += 1
+    public func modified(for request: URLRequest) -> URLRequest? {
+        return block(request)
     }
     
-    func refreshImage() {
-        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(currentIndex! + 1).jpg")!
-        _ = KingfisherManager.shared.retrieveImage(with: url, options: nil, progressBlock: nil) { (image, error, cacheType, imageURL) -> () in
-            self.interfaceImage.setImage(image)
-        }
+    public init(modify: @escaping (URLRequest) -> URLRequest? ) {
+        block = modify
     }
-
-    override func willActivate() {
-        // This method is called when watch view controller is about to be visible to user
-        super.willActivate()
-        refreshImage()
-    }
-
-    override func didDeactivate() {
-        // This method is called when watch view controller is no longer visible
-        super.didDeactivate()
-    }
-
 }

@@ -69,57 +69,32 @@ public struct RetrieveImageDownloadTask {
     }
 }
 
-private let defaultDownloaderName = "default"
-private let downloaderBarrierName = "com.onevcat.Kingfisher.ImageDownloader.Barrier."
-private let imageProcessQueueName = "com.onevcat.Kingfisher.ImageDownloader.Process."
-private let instance = ImageDownloader(name: defaultDownloaderName)
-
-/**
-The error code.
-
-- badData: The downloaded data is not an image or the data is corrupted.
-- notModified: The remote server responsed a 304 code. No image data downloaded.
-- invalidStatusCode: The HTTP status code in response is not valid. 
-- notCached: The image rquested is not in cache but .onlyFromCache is activated.
-- invalidURL: The URL is invalid.
-- downloadCanelledBeforeStarting: The downloading task is cancelled before started.
-*/
+///The code of errors which `ImageDownloader` might encountered.
 public enum KingfisherError: Int {
+    
+    /// badData: The downloaded data is not an image or the data is corrupted.
     case badData = 10000
+    
+    /// notModified: The remote server responsed a 304 code. No image data downloaded.
     case notModified = 10001
+    
+    /// The HTTP status code in response is not valid. If an invalid
+    /// code error received, you could check the value under `KingfisherErrorStatusCodeKey` 
+    /// in `userInfo` to see the code.
     case invalidStatusCode = 10002
+    
+    /// notCached: The image rquested is not in cache but .onlyFromCache is activated.
     case notCached = 10003
+    
+    /// The URL is invalid.
     case invalidURL = 20000
+    
+    /// The downloading task is cancelled before started.
     case downloadCanelledBeforeStarting = 30000
 }
 
+/// Key will be used in the `userInfo` of `.invalidStatusCode`
 public let KingfisherErrorStatusCodeKey = "statusCode"
-
-/// Request modifier of image downloader.
-public protocol ImageDownloadRequestModifier {
-    func modified(for request: URLRequest) -> URLRequest?
-}
-
-struct NoModifier: ImageDownloadRequestModifier {
-    static let `default` = NoModifier()
-    private init() {}
-    func modified(for request: URLRequest) -> URLRequest? {
-        return request
-    }
-}
-
-public struct AnyModifier: ImageDownloadRequestModifier {
-    
-    let block: (URLRequest) -> URLRequest?
-    
-    public func modified(for request: URLRequest) -> URLRequest? {
-        return block(request)
-    }
-
-    public init(modify: @escaping (URLRequest) -> URLRequest? ) {
-        block = modify
-    }
-}
 
 /// Protocol of `ImageDownloader`.
 public protocol ImageDownloaderDelegate: class {
@@ -128,7 +103,7 @@ public protocol ImageDownloaderDelegate: class {
     
     - parameter downloader: The `ImageDownloader` object finishes the downloading.
     - parameter image:      Downloaded image.
-    - parameter URL:        URL of the original request URL.
+    - parameter url:        URL of the original request URL.
     - parameter response:   The response object of the downloading process.
     */
     func imageDownloader(_ downloader: ImageDownloader, didDownload image: Image, for url: URL, with response: URLResponse?)
@@ -136,7 +111,7 @@ public protocol ImageDownloaderDelegate: class {
     
     /**
     Check if a received HTTP status code is valid or not. 
-    By default, a status code between 200 to 400 (not included) is considered as valid.
+    By default, a status code between 200 to 400 (excluded) is considered as valid.
     If an invalid code is received, the downloader will raise an .invalidStatusCode error.
     It has a `userInfo` which includes this statusCode and localizedString error message.
      
@@ -171,12 +146,12 @@ public protocol AuthenticationChallengeResponsable: class {
      
      - Note: This method is a forward from `URLSession(:didReceiveChallenge:completionHandler:)`. Please refer to the document of it in `NSURLSessionDelegate`.
      */
-    func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+    func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
 
 extension AuthenticationChallengeResponsable {
     
-    func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
     
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             if let trustedHosts = downloader.trustedHosts, trustedHosts.contains(challenge.protectionSpace.host) {
@@ -191,7 +166,7 @@ extension AuthenticationChallengeResponsable {
 }
 
 /// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
-public class ImageDownloader: NSObject {
+open class ImageDownloader: NSObject {
     
     class ImageFetchLoad {
         var callbacks = [CallbackPair]()
@@ -207,36 +182,36 @@ public class ImageDownloader: NSObject {
     /// This closure will be applied to the image download request before it being sent. 
     /// You can modify the request for some customizing purpose, like adding auth token to the header, do basic HTTP auth or something like url mapping.
     @available(*, unavailable, message: "`requestModifier` is removed. Use 'urlRequest(for:byModifying:)' from the 'ImageDownloaderDelegate' instead")
-    public var requestModifier: ((inout URLRequest) -> Void)?
+    open var requestModifier: ((inout URLRequest) -> Void)?
 
     /// The duration before the download is timeout. Default is 15 seconds.
-    public var downloadTimeout: TimeInterval = 15.0
+    open var downloadTimeout: TimeInterval = 15.0
     
     /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this set will be ignored. 
     /// You can use this set to specify the self-signed site. It only will be used if you don't specify the `authenticationChallengeResponder`. 
     /// If `authenticationChallengeResponder` is set, this property will be ignored and the implemention of `authenticationChallengeResponder` will be used instead.
-    public var trustedHosts: Set<String>?
+    open var trustedHosts: Set<String>?
     
     /// Use this to set supply a configuration for the downloader. By default, NSURLSessionConfiguration.ephemeralSessionConfiguration() will be used. 
     /// You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
-    public var sessionConfiguration = URLSessionConfiguration.ephemeral {
+    open var sessionConfiguration = URLSessionConfiguration.ephemeral {
         didSet {
             session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main)
         }
     }
     
     /// Whether the download requests should use pipeling or not. Default is false.
-    public var requestsUsePipeling = false
+    open var requestsUsePipeling = false
     
     fileprivate let sessionHandler: ImageDownloaderSessionHandler
     fileprivate var session: URLSession?
     
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
-    public weak var delegate: ImageDownloaderDelegate?
+    open weak var delegate: ImageDownloaderDelegate?
     
     /// A responder for authentication challenge. 
     /// Downloader will forward the received authentication challenge for the downloading session to this responder.
-    public weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
+    open weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
     
     // MARK: - Internal property
     let barrierQueue: DispatchQueue
@@ -248,9 +223,7 @@ public class ImageDownloader: NSObject {
     
     // MARK: - Public method
     /// The default downloader.
-    public class var `default`: ImageDownloader {
-        return instance
-    }
+    public static let `default` = ImageDownloader(name: "default")
     
     /**
     Init a downloader with name.
@@ -264,8 +237,8 @@ public class ImageDownloader: NSObject {
             fatalError("[Kingfisher] You should specify a name for the downloader. A downloader with empty name is not permitted.")
         }
         
-        barrierQueue = DispatchQueue(label: downloaderBarrierName + name, attributes: .concurrent)
-        processQueue = DispatchQueue(label: imageProcessQueueName + name, attributes: .concurrent)
+        barrierQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Barrier.\(name)", attributes: .concurrent)
+        processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process.\(name)", attributes: .concurrent)
         
         sessionHandler = ImageDownloaderSessionHandler()
         
@@ -295,7 +268,7 @@ extension ImageDownloader {
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     @discardableResult
-    public func downloadImage(with url: URL,
+    open func downloadImage(with url: URL,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
@@ -313,7 +286,7 @@ extension ImageDownloader {
     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
     */
     @discardableResult
-    public func downloadImage(with url: URL,
+    open func downloadImage(with url: URL,
                                  options: KingfisherOptionsInfo?,
                            progressBlock: ImageDownloaderProgressBlock?,
                        completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
@@ -476,7 +449,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
     /**
     This method is exposed since the compiler requests. Do not call it.
     */
-    internal func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         guard let downloader = downloadHolder else {
             return
         }

@@ -82,7 +82,7 @@ public class ImagePrefetcher {
      The images already cached will be skipped without downloading again.
      
      - parameter urls:              The URLs which should be prefetched.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called every time an resource is downloaded, skipped or cancelled.
      - parameter completionHandler: Called when the whole prefetching process finished.
      
@@ -93,12 +93,12 @@ public class ImagePrefetcher {
      Both the progress and completion block will be invoked in main thread. The `CallbackDispatchQueue` in `optionsInfo` will be ignored in this method.
      */
     public convenience init(urls: [URL],
-                     optionsInfo: KingfisherOptionsInfo? = nil,
+                         options: KingfisherOptionsInfo? = nil,
                    progressBlock: PrefetcherProgressBlock? = nil,
                completionHandler: PrefetcherCompletionHandler? = nil)
     {
         let resources: [Resource] = urls.map { $0 }
-        self.init(resources: resources, optionsInfo: optionsInfo, progressBlock: progressBlock, completionHandler: completionHandler)
+        self.init(resources: resources, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
     }
     
     /**
@@ -109,7 +109,7 @@ public class ImagePrefetcher {
      The images already cached will be skipped without downloading again.
      
      - parameter resources:         The resources which should be prefetched. See `Resource` type for more.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called every time an resource is downloaded, skipped or cancelled.
      - parameter completionHandler: Called when the whole prefetching process finished.
      
@@ -120,7 +120,7 @@ public class ImagePrefetcher {
      Both the progress and completion block will be invoked in main thread. The `CallbackDispatchQueue` in `optionsInfo` will be ignored in this method.
      */
     public init(resources: [Resource],
-              optionsInfo: KingfisherOptionsInfo? = nil,
+                  options: KingfisherOptionsInfo? = nil,
             progressBlock: PrefetcherProgressBlock? = nil,
         completionHandler: PrefetcherCompletionHandler? = nil)
     {
@@ -128,7 +128,7 @@ public class ImagePrefetcher {
         pendingResources = ArraySlice(resources)
         
         // We want all callbacks from main queue, so we ignore the call back queue in options
-        let optionsInfoWithoutQueue = optionsInfo?.kf_removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
+        let optionsInfoWithoutQueue = options?.kf_removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
         self.optionsInfo = optionsInfoWithoutQueue ?? KingfisherEmptyOptionsInfo
         
         let cache = self.optionsInfo.targetCache
@@ -182,9 +182,7 @@ public class ImagePrefetcher {
     public func stop() {
         DispatchQueue.main.safeAsync {
             
-            if self.finished {
-                return
-            }
+            if self.finished { return }
             
             self.stopped = true
             self.tasks.forEach { (_, task) -> () in
@@ -256,7 +254,7 @@ public class ImagePrefetcher {
         if let resource = pendingResources.popFirst() {
             startPrefetching(resource)
         } else {
-            guard self.tasks.isEmpty else { return }
+            guard tasks.isEmpty else { return }
             handleComplete()
         }
     }

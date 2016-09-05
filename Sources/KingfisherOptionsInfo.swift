@@ -102,6 +102,9 @@ public enum KingfisherOptionsInfoItem {
     /// image view. `DefaultImageProcessor.default` will be used by default.
     case processor(ImageProcessor)
     
+    /// Supply an `CacheSerializer` to convert some data to an image object for
+    /// retrieving from disk cache or vice versa for storing to disk cache.
+    /// `DefaultCacheSerializer.default` will be used by default.
     case cacheSerializer(CacheSerializer)
 }
 

@@ -75,12 +75,8 @@ public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 /// You can use this class to retrieve an image via a specified URL from web or cache.
 public class KingfisherManager {
     
-    private static let instance = KingfisherManager()
-    
     /// Shared manager used by the extensions across Kingfisher.
-    public class var shared: KingfisherManager {
-        return instance
-    }
+    public static let shared = KingfisherManager()
     
     /// Cache used by this manager
     public var cache: ImageCache
@@ -104,7 +100,7 @@ public class KingfisherManager {
     These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
     
     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
     - parameter progressBlock:     Called every time downloaded data changed. This could be used as a progress UI.
     - parameter completionHandler: Called when the whole retrieving process finished.
     
@@ -112,20 +108,20 @@ public class KingfisherManager {
     */
     @discardableResult
     public func retrieveImage(with resource: Resource,
-        optionsInfo: KingfisherOptionsInfo?,
+        options: KingfisherOptionsInfo?,
         progressBlock: DownloadProgressBlock?,
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         let task = RetrieveImageTask()
 
-        if let optionsInfo = optionsInfo, optionsInfo.forceRefresh {
+        if let options = options, options.forceRefresh {
             _ = downloadAndCacheImage(
                 with: resource.downloadURL,
                 forKey: resource.cacheKey,
                 retrieveImageTask: task,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
-                options: optionsInfo)
+                options: options)
         } else {
             tryToRetrieveImageFromCache(
                 forKey: resource.cacheKey,
@@ -133,7 +129,7 @@ public class KingfisherManager {
                 retrieveImageTask: task,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
-                options: optionsInfo)
+                options: options)
         }
         
         return task
@@ -166,13 +162,13 @@ public class KingfisherManager {
                 }
                 
                 if let image = image, let originalData = originalData {
-                    targetCache.storeImage(image,
-                                           originalData: originalData,
-                                           forKey: key,
-                                           processorIdentifier:options.processor.identifier,
-                                           cacheSerializer: options.cacheSerializer,
-                                           toDisk: !options.cacheMemoryOnly,
-                                           completionHandler: nil)
+                    targetCache.store(image,
+                                      original: originalData,
+                                      forKey: key,
+                                      processorIdentifier:options.processor.identifier,
+                                      cacheSerializer: options.cacheSerializer,
+                                      toDisk: !options.cacheMemoryOnly,
+                                      completionHandler: nil)
                 }
 
                 completionHandler?(image, error, .none, url)
