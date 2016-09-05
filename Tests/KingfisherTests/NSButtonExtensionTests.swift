@@ -118,7 +118,7 @@ class NSButtonExtensionTests: XCTestCase {
         let url = URL(string: URLString)!
 
         button.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
-            XCTFail("Progress block should not be called.")
+            
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertNotNil(error)
             XCTAssertEqual(error?.code, NSURLErrorCancelled)
