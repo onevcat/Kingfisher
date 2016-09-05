@@ -421,14 +421,16 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         guard let downloader = downloadHolder else {
             return
         }
-        
+
         if let url = dataTask.originalRequest?.url, let fetchLoad = downloader.fetchLoad(for: url) {
             fetchLoad.responseData.append(data)
             
-            for callbackPair in fetchLoad.callbacks {
-                DispatchQueue.main.async(execute: { () -> Void in
-                    callbackPair.progressBlock?(Int64(fetchLoad.responseData.length), dataTask.response!.expectedContentLength)
-                })
+            if let expectedLength = dataTask.response?.expectedContentLength {
+                for callbackPair in fetchLoad.callbacks {
+                    DispatchQueue.main.async {
+                        callbackPair.progressBlock?(Int64(fetchLoad.responseData.length), expectedLength)
+                    }
+                }
             }
         }
     }
