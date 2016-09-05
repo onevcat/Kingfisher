@@ -70,13 +70,14 @@ extension ViewController {
         
         _ = cell.cellImageView.kf_setImage(with: url,
                                            placeholder: nil,
-                                           optionsInfo: [.transition(ImageTransition.fade(1))],
+                                           options: [.transition(ImageTransition.fade(1))],
                                            progressBlock: { receivedSize, totalSize in
                                                 print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
                                            },
                                            completionHandler: { image, error, cacheType, imageURL in
                                                 print("\(indexPath.row + 1): Finished")
         })
+        
         return cell
     }
 }

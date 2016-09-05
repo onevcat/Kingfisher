@@ -63,24 +63,24 @@ class KingfisherManagerTests: XCTestCase {
         
         let url = URL(string: URLString)!
 
-        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
+        manager.retrieveImage(with: url, options: nil, progressBlock: nil) {
             image, error, cacheType, imageURL in
             XCTAssertNotNil(image)
             XCTAssertEqual(cacheType, .none)
             
-            self.manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
+            self.manager.retrieveImage(with: url, options: nil, progressBlock: nil) {
                 image, error, cacheType, imageURL in
                 XCTAssertNotNil(image)
                 XCTAssertEqual(cacheType, .memory)
                 
                 self.manager.cache.clearMemoryCache()
-                self.manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
+                self.manager.retrieveImage(with: url, options: nil, progressBlock: nil) {
                     image, error, cacheType, imageURL in
                     XCTAssertNotNil(image)
                     XCTAssertEqual(cacheType, .disk)
                     
                     cleanDefaultCache()
-                    self.manager.retrieveImage(with: url, optionsInfo: [.forceRefresh], progressBlock: nil) {
+                    self.manager.retrieveImage(with: url, options: [.forceRefresh], progressBlock: nil) {
                         image, error, cacheType, imageURL in
                         XCTAssertNotNil(image)
                         XCTAssertEqual(cacheType, CacheType.none)
@@ -104,31 +104,31 @@ class KingfisherManagerTests: XCTestCase {
         let url = URL(string: URLString)!
         
         let p = RoundCornerImageProcessor(cornerRadius: 20)
-        manager.retrieveImage(with: url, optionsInfo: [.processor(p)], progressBlock: nil) {
+        manager.retrieveImage(with: url, options: [.processor(p)], progressBlock: nil) {
             image, error, cacheType, imageURL in
             XCTAssertNotNil(image)
             XCTAssertEqual(cacheType, .none)
             
-            self.manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
+            self.manager.retrieveImage(with: url, options: nil, progressBlock: nil) {
                 image, error, cacheType, imageURL in
                 
                 XCTAssertNotNil(image)
                 XCTAssertEqual(cacheType, .none, "Need a processor to get correct image. Cannot get from cache, need download again.")
                 
-                self.manager.retrieveImage(with: url, optionsInfo: [.processor(p)], progressBlock: nil) {
+                self.manager.retrieveImage(with: url, options: [.processor(p)], progressBlock: nil) {
                     image, error, cacheType, imageURL in
                 
                     XCTAssertNotNil(image)
                     XCTAssertEqual(cacheType, .memory)
                     
                     self.manager.cache.clearMemoryCache()
-                    self.manager.retrieveImage(with: url, optionsInfo: [.processor(p)], progressBlock: nil) {
+                    self.manager.retrieveImage(with: url, options: [.processor(p)], progressBlock: nil) {
                         image, error, cacheType, imageURL in
                         XCTAssertNotNil(image)
                         XCTAssertEqual(cacheType, .disk)
                         
                         cleanDefaultCache()
-                        self.manager.retrieveImage(with: url, optionsInfo: [.processor(p), .forceRefresh], progressBlock: nil) {
+                        self.manager.retrieveImage(with: url, options: [.processor(p), .forceRefresh], progressBlock: nil) {
                             image, error, cacheType, imageURL in
                             XCTAssertNotNil(image)
                             XCTAssertEqual(cacheType, CacheType.none)
@@ -150,7 +150,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let url = URL(string: URLString)!
         
-        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: nil) {
+        manager.retrieveImage(with: url, options: nil, progressBlock: nil) {
             image, error, cacheType, imageURL in
             XCTAssertNotNil(image)
             XCTAssertEqual(cacheType, CacheType.none)
@@ -163,7 +163,7 @@ class KingfisherManagerTests: XCTestCase {
             
             var progressCalled = false
             
-            self.manager.retrieveImage(with: url, optionsInfo: [.forceRefresh], progressBlock: {
+            self.manager.retrieveImage(with: url, options: [.forceRefresh], progressBlock: {
                 _, _ in
                 progressCalled = true
             }) {
@@ -188,7 +188,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let url = URL(string: URLString)!
         
-        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: { _, _ in
+        manager.retrieveImage(with: url, options: nil, progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
             }, completionHandler: { _, error, _, _ in
@@ -207,7 +207,7 @@ class KingfisherManagerTests: XCTestCase {
 
         let url = URL(string: URLString)!
 
-        manager.retrieveImage(with: url, optionsInfo: [.onlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
+        manager.retrieveImage(with: url, options: [.onlyFromCache], progressBlock: nil, completionHandler: { image, error, _, _ in
                 XCTAssertNil(image)
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error!.code, KingfisherError.notCached.rawValue)
@@ -223,7 +223,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let url = URL(string: URLString)!
         
-        manager.retrieveImage(with: url, optionsInfo: nil, progressBlock: { _, _ in
+        manager.retrieveImage(with: url, options: nil, progressBlock: { _, _ in
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
@@ -242,7 +242,7 @@ class KingfisherManagerTests: XCTestCase {
         let url = URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        manager.retrieveImage(with: url, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
+        manager.retrieveImage(with: url, options: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
             }, completionHandler: { _, error, _, _ in
@@ -265,7 +265,7 @@ class KingfisherManagerTests: XCTestCase {
         let url = URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        manager.retrieveImage(with: url, optionsInfo: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
+        manager.retrieveImage(with: url, options: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             //won't be called
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)

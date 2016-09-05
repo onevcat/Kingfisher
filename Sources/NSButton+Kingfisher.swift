@@ -38,7 +38,7 @@ extension NSButton {
 
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
      - parameter placeholder:       A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
 
@@ -50,7 +50,7 @@ extension NSButton {
     @discardableResult
     public func kf_setImage(with resource: Resource?,
                               placeholder: Image? = nil,
-                              optionsInfo: KingfisherOptionsInfo? = nil,
+                                  options: KingfisherOptionsInfo? = nil,
                             progressBlock: DownloadProgressBlock? = nil,
                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
@@ -62,7 +62,7 @@ extension NSButton {
         }
         
         kf_setWebURL(resource.downloadURL)
-        let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, options: options,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
@@ -124,7 +124,7 @@ extension NSButton {
 
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
      - parameter placeholder:       A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
 
@@ -136,7 +136,7 @@ extension NSButton {
     @discardableResult
     public func kf_setAlternateImage(with resource: Resource?,
                                        placeholder: Image? = nil,
-                                       optionsInfo: KingfisherOptionsInfo? = nil,
+                                           options: KingfisherOptionsInfo? = nil,
                                      progressBlock: DownloadProgressBlock? = nil,
                                  completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
@@ -148,7 +148,7 @@ extension NSButton {
         }
         
         kf_setAlternateWebURL(resource.downloadURL)
-        let task = KingfisherManager.shared.retrieveImage(with: resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, options: options,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)

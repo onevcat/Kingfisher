@@ -41,7 +41,12 @@ public enum ImageProcessItem {
 public protocol ImageProcessor {
     /// Identifier of the processor. It will be used to identify the processor when 
     /// caching and retriving an image. You might want to make sure that processors with
-    /// same properties/functionality have the same identifiers.
+    /// same properties/functionality have the same identifiers, so correct processed images
+    /// could be retrived with proper key.
+    /// 
+    /// - Note: Do not supply an empty string for a customized processor, which is already taken by
+    /// the `DefaultImageProcessor`. It is recommended to use a reverse domain name notation
+    /// string of your own for the identifier.
     var identifier: String { get }
     
     /// Process an input `ImageProcessItem` item to an image for this processor.
