@@ -269,8 +269,8 @@ extension ImageDownloader {
     */
     @discardableResult
     open func downloadImage(with url: URL,
-                           progressBlock: ImageDownloaderProgressBlock?,
-                       completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
+                       progressBlock: ImageDownloaderProgressBlock?,
+                   completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
         return downloadImage(with: url, options: nil, progressBlock: progressBlock, completionHandler: completionHandler)
     }
@@ -287,9 +287,9 @@ extension ImageDownloader {
     */
     @discardableResult
     open func downloadImage(with url: URL,
-                                 options: KingfisherOptionsInfo?,
-                           progressBlock: ImageDownloaderProgressBlock?,
-                       completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
+                             options: KingfisherOptionsInfo?,
+                       progressBlock: ImageDownloaderProgressBlock?,
+                   completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
         return downloadImage(with: url,
                 retrieveImageTask: nil,
