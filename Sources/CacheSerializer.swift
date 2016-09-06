@@ -1,5 +1,5 @@
 //
-//  ImageSerializer.swift
+//  CacheSerializer.swift
 //  Kingfisher
 //
 //  Created by Wei Wang on 2016/09/02.

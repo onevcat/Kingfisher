@@ -136,7 +136,7 @@ open class ImageCache {
         NotificationCenter.default.addObserver(
             self, selector: #selector(clearMemoryCache), name: .UIApplicationDidReceiveMemoryWarning, object: nil)
         NotificationCenter.default.addObserver(
-            self, selector: #selector(cleanExpiredDiskCache_), name: .UIApplicationWillTerminate, object: nil)
+            self, selector: #selector(cleanExpiredDiskCache), name: .UIApplicationWillTerminate, object: nil)
         NotificationCenter.default.addObserver(
             self, selector: #selector(backgroundCleanExpiredDiskCache), name: .UIApplicationDidEnterBackground, object: nil)
 #endif
@@ -256,9 +256,10 @@ extension ImageCache {
     
     - returns: The retrieving task.
     */
-    @discardableResult public func retrieveImage(forKey key: String,
-                                                 options: KingfisherOptionsInfo?,
-                                                 completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask?
+    @discardableResult
+    open func retrieveImage(forKey key: String,
+                               options: KingfisherOptionsInfo?,
+                     completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask?
     {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
@@ -363,29 +364,22 @@ extension ImageCache {
     @objc public func clearMemoryCache() {
         memoryCache.removeAllObjects()
     }
-
-    /**
-    Clear disk cache.
-    */
-    private func clearDiskCache_() {
-        clearDiskCache(with: nil)
-    }
     
     /**
     Clear disk cache. This is an async operation.
     
     - parameter completionHander: Called after the operation completes.
     */
-    open func clearDiskCache(with completionHander: (()->())? = nil) {
+    open func clearDiskCache(completion handler: (()->())? = nil) {
         ioQueue.async {
             do {
                 try self.fileManager.removeItem(atPath: self.diskCachePath)
                 try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
             } catch _ { }
             
-            if let completionHander = completionHander {
+            if let handler = handler {
                 DispatchQueue.main.async {
-                    completionHander()
+                    handler()
                 }
             }
         }
@@ -394,8 +388,8 @@ extension ImageCache {
     /**
     Clean expired disk cache. This is an async operation.
     */
-    @objc fileprivate func cleanExpiredDiskCache_() {
-        cleanExpiredDiskCache(with: nil)
+    @objc fileprivate func cleanExpiredDiskCache() {
+        cleanExpiredDiskCache(completion: nil)
     }
     
     /**
@@ -403,7 +397,7 @@ extension ImageCache {
     
     - parameter completionHandler: Called after the operation completes.
     */
-    open func cleanExpiredDiskCache(with completionHandler: (()->())? = nil) {
+    open func cleanExpiredDiskCache(completion handler: (()->())? = nil) {
         
         // Do things in cocurrent io queue
         ioQueue.async {
@@ -458,7 +452,7 @@ extension ImageCache {
                     NotificationCenter.default.post(name: .KingfisherDidCleanDiskCache, object: self, userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                 }
                 
-                completionHandler?()
+                handler?()
             }
         }
     }
@@ -595,11 +589,11 @@ extension ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    open func calculateDiskCacheSize(completionHandler: ((_ size: UInt) -> ())) {
+    open func calculateDiskCacheSize(completion handler: ((_ size: UInt) -> ())) {
         ioQueue.async {
             let (_, diskCacheSize, _) = self.travelCachedFiles(onlyForCacheSize: true)
             DispatchQueue.main.async {
-                completionHandler(diskCacheSize)
+                handler(diskCacheSize)
             }
         }
     }
