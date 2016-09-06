@@ -140,7 +140,7 @@ extension UIButton {
     }
     
     private var kf_webURLs: NSMutableDictionary {
-        var dictionary = objc_getAssociatedObject(self, &lastURLKey) as? NSMutableDictionary
+        var dictionary:NSMutableDictionary? = getAssociatedObject(self, associativeKey: &lastURLKey)
         if dictionary == nil {
             dictionary = NSMutableDictionary()
             kf_setWebURLs(dictionary!)
@@ -149,15 +149,15 @@ extension UIButton {
     }
     
     private func kf_setWebURLs(URLs: NSMutableDictionary) {
-        objc_setAssociatedObject(self, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: URLs, associativeKey: &lastURLKey)
     }
     
     private var kf_imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+        return getAssociatedObject(self, associativeKey: &imageTaskKey)
     }
     
     private func kf_setImageTask(task: RetrieveImageTask?) {
-        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: task, associativeKey: &imageTaskKey)
     }
 }
 
@@ -276,7 +276,7 @@ extension UIButton {
     }
     
     private var kf_backgroundWebURLs: NSMutableDictionary {
-        var dictionary = objc_getAssociatedObject(self, &lastBackgroundURLKey) as? NSMutableDictionary
+        var dictionary:NSMutableDictionary? = getAssociatedObject(self, associativeKey: &lastBackgroundURLKey)
         if dictionary == nil {
             dictionary = NSMutableDictionary()
             kf_setBackgroundWebURLs(dictionary!)
@@ -285,15 +285,15 @@ extension UIButton {
     }
     
     private func kf_setBackgroundWebURLs(URLs: NSMutableDictionary) {
-        objc_setAssociatedObject(self, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: URLs, associativeKey: &lastBackgroundURLKey)
     }
     
     private var kf_backgroundImageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(self, &backgroundImageTaskKey) as? RetrieveImageTask
+        return getAssociatedObject(self, associativeKey: &backgroundImageTaskKey)
     }
     
     private func kf_setBackgroundImageTask(task: RetrieveImageTask?) {
-        objc_setAssociatedObject(self, &backgroundImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: task, associativeKey: &backgroundImageTaskKey)
     }
 }
 
