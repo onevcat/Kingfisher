@@ -259,23 +259,6 @@ open class ImageDownloader: NSObject {
 // MARK: - Download method
 extension ImageDownloader {
     /**
-    Download an image with a URL.
-    
-    - parameter url:               Target URL.
-    - parameter progressBlock:     Called when the download progress updated.
-    - parameter completionHandler: Called when the download progress finishes.
-    
-    - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
-    */
-    @discardableResult
-    open func downloadImage(with url: URL,
-                       progressBlock: ImageDownloaderProgressBlock?,
-                   completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
-    {
-        return downloadImage(with: url, options: nil, progressBlock: progressBlock, completionHandler: completionHandler)
-    }
-    
-    /**
     Download an image with a URL and option.
     
     - parameter url:               Target URL.
@@ -287,9 +270,9 @@ extension ImageDownloader {
     */
     @discardableResult
     open func downloadImage(with url: URL,
-                             options: KingfisherOptionsInfo?,
-                       progressBlock: ImageDownloaderProgressBlock?,
-                   completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
+                             options: KingfisherOptionsInfo? = nil,
+                       progressBlock: ImageDownloaderProgressBlock? = nil,
+                   completionHandler: ImageDownloaderCompletionHandler? = nil) -> RetrieveImageDownloadTask?
     {
         return downloadImage(with: url,
                 retrieveImageTask: nil,

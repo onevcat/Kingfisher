@@ -57,7 +57,7 @@ extension UIButton {
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
-            return .emptyTask
+            return .empty
         }
         
         kf_setWebURL(resource.downloadURL, for: state)
@@ -162,7 +162,7 @@ extension UIButton {
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
-            return .emptyTask
+            return .empty
         }
         
         kf_setBackgroundWebURL(resource.downloadURL, for: state)

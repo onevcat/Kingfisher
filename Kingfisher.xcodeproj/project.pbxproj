@@ -24,10 +24,10 @@
 		4B6313F61D766BEF0078E017 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6313F31D766BEF0078E017 /* Filter.swift */; };
 		4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
-		4BB24C3D1D79215A00CD5F9C /* ImageSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */; };
-		4BB24C3E1D79215A00CD5F9C /* ImageSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */; };
-		4BB24C3F1D79215A00CD5F9C /* ImageSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */; };
-		4BB24C401D79215A00CD5F9C /* ImageSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */; };
+		4BB24C3D1D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
+		4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
+		4BB24C3F1D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
+		4BB24C401D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
 		4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3371D5B02F8003387C2 /* Assets.xcassets */; };
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
@@ -476,7 +476,7 @@
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B6313F31D766BEF0078E017 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = Sources/Filter.swift; sourceTree = "<group>"; };
 		4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimatedImageView.swift; path = Sources/AnimatedImageView.swift; sourceTree = "<group>"; };
-		4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageSerializer.swift; path = Sources/ImageSerializer.swift; sourceTree = "<group>"; };
+		4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CacheSerializer.swift; path = Sources/CacheSerializer.swift; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4BCCF3391D5B02F8003387C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -875,7 +875,7 @@
 				D10945EC1C526B6C001408EB /* ImageDownloader.swift */,
 				D9638B9F1C7DBA660046523D /* ImagePrefetcher.swift */,
 				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
-				4BB24C3C1D79215A00CD5F9C /* ImageSerializer.swift */,
+				4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */,
 				4BFBEE7C1D7D0C3600699FD3 /* RequrstModifier.swift */,
 				D10945ED1C526B6C001408EB /* ImageTransition.swift */,
 				D10945F11C526B6C001408EB /* KingfisherManager.swift */,
@@ -2048,7 +2048,7 @@
 				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D10946201C526C61001408EB /* KingfisherOptionsInfo.swift in Sources */,
 				D10946211C526C61001408EB /* Resource.swift in Sources */,
-				4BB24C3F1D79215A00CD5F9C /* ImageSerializer.swift in Sources */,
+				4BB24C3F1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D9638BA21C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
 				D10946221C526C61001408EB /* String+MD5.swift in Sources */,
 				D10946231C526C61001408EB /* ThreadHelper.swift in Sources */,
@@ -2128,7 +2128,7 @@
 				D9638BA11C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
 				D10946151C526C0D001408EB /* Resource.swift in Sources */,
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
-				4BB24C3E1D79215A00CD5F9C /* ImageSerializer.swift in Sources */,
+				4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D10946171C526C0D001408EB /* ThreadHelper.swift in Sources */,
 				D10946181C526C0D001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
@@ -2143,7 +2143,7 @@
 				D10946251C526CE8001408EB /* Image.swift in Sources */,
 				D10946261C526CE8001408EB /* ImageCache.swift in Sources */,
 				D9638BA31C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
-				4BB24C401D79215A00CD5F9C /* ImageSerializer.swift in Sources */,
+				4BB24C401D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				4BFBEE801D7D0C3600699FD3 /* RequrstModifier.swift in Sources */,
 				D10946271C526CE8001408EB /* ImageDownloader.swift in Sources */,
 				D10946281C526CE8001408EB /* KingfisherManager.swift in Sources */,
@@ -2191,7 +2191,7 @@
 				D9638BA01C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
 				D10945FE1C526B86001408EB /* Resource.swift in Sources */,
 				D10945FF1C526B86001408EB /* String+MD5.swift in Sources */,
-				4BB24C3D1D79215A00CD5F9C /* ImageSerializer.swift in Sources */,
+				4BB24C3D1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D10946001C526B86001408EB /* ThreadHelper.swift in Sources */,
 				D10946011C526B86001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);

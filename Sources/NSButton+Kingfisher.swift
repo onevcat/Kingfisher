@@ -58,7 +58,7 @@ extension NSButton {
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
-            return .emptyTask
+            return .empty
         }
         
         kf_setWebURL(resource.downloadURL)
@@ -144,7 +144,7 @@ extension NSButton {
         
         guard let resource = resource else {
             completionHandler?(nil, nil, .none, nil)
-            return .emptyTask
+            return .empty
         }
         
         kf_setAlternateWebURL(resource.downloadURL)
