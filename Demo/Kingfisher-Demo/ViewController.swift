@@ -65,7 +65,11 @@ extension ViewController {
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! CollectionViewCell
         
-        cell.cellImageView.kf_showIndicatorWhenLoading = true
+        if let loaderPath = NSBundle.mainBundle().pathForResource("loader", ofType: "gif") {
+            if let loaderData = NSData(contentsOfFile: loaderPath) {
+                cell.cellImageView?.kf_indicatorType = .image(imageData: loaderData)
+            }
+        }
         
         let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         

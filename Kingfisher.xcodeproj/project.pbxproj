@@ -22,6 +22,8 @@
 		CD2C73541D7F040B00A1D819 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C73531D7F040B00A1D819 /* Indicator.swift */; };
 		CD2C73551D7F040B00A1D819 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C73531D7F040B00A1D819 /* Indicator.swift */; };
 		CD2C73561D7F040B00A1D819 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C73531D7F040B00A1D819 /* Indicator.swift */; };
+		CD2C736B1D80231E00A1D819 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = CD2C736A1D80231E00A1D819 /* loader.gif */; };
+		CD2C736D1D80234F00A1D819 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = CD2C736C1D80234F00A1D819 /* loader.gif */; };
 		CD4593971D7EAB9900FD570E /* WrappedAssociatedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */; };
 		CD4593981D7EAB9900FD570E /* WrappedAssociatedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */; };
 		CD4593991D7EAB9900FD570E /* WrappedAssociatedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */; };
@@ -275,6 +277,8 @@
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6B5C590A36C8E84C5B16C3E /* Pods-KingfisherTests-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		CD2C73531D7F040B00A1D819 /* Indicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Indicator.swift; path = Sources/Indicator.swift; sourceTree = "<group>"; };
+		CD2C736A1D80231E00A1D819 /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = loader.gif; path = images/loader.gif; sourceTree = SOURCE_ROOT; };
+		CD2C736C1D80234F00A1D819 /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = loader.gif; path = images/loader.gif; sourceTree = SOURCE_ROOT; };
 		CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WrappedAssociatedObjects.swift; path = Sources/WrappedAssociatedObjects.swift; sourceTree = "<group>"; };
 		D10945EA1C526B6C001408EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Image.swift; path = Sources/Image.swift; sourceTree = "<group>"; };
 		D10945EB1C526B6C001408EB /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageCache.swift; path = Sources/ImageCache.swift; sourceTree = "<group>"; };
@@ -539,6 +543,7 @@
 		D12E0C8B1C47F91800AC98AD /* Kingfisher-Demo */ = {
 			isa = PBXGroup;
 			children = (
+				CD2C736C1D80234F00A1D819 /* loader.gif */,
 				D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */,
 				D12E0C8D1C47F91800AC98AD /* LaunchScreen.xib */,
 				D12E0C8F1C47F91800AC98AD /* Main.storyboard */,
@@ -566,6 +571,7 @@
 		D12E0CA61C47F92C00AC98AD /* Kingfisher-OSX-Demo */ = {
 			isa = PBXGroup;
 			children = (
+				CD2C736A1D80231E00A1D819 /* loader.gif */,
 				D12E0CA71C47F92C00AC98AD /* AppDelegate.swift */,
 				D12E0CA81C47F92C00AC98AD /* Assets.xcassets */,
 				D12E0CA91C47F92C00AC98AD /* Main.storyboard */,
@@ -1002,6 +1008,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D12E0CAF1C47F92C00AC98AD /* Assets.xcassets in Resources */,
+				CD2C736B1D80231E00A1D819 /* loader.gif in Resources */,
 				D12E0CB11C47F92C00AC98AD /* Cell.xib in Resources */,
 				D12E0CB01C47F92C00AC98AD /* Main.storyboard in Resources */,
 			);
@@ -1070,6 +1077,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D12E0C991C47F91800AC98AD /* Images.xcassets in Resources */,
+				CD2C736D1D80234F00A1D819 /* loader.gif in Resources */,
 				D12E0C961C47F91800AC98AD /* LaunchScreen.xib in Resources */,
 				D12E0C971C47F91800AC98AD /* Main.storyboard in Resources */,
 			);
