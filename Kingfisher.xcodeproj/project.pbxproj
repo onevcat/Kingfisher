@@ -19,6 +19,9 @@
 		4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		B43007AC86DBFFFD1AC6EDD1 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 798E024A9311DC80470CF240 /* libPods-KingfisherTests-tvOS.a */; };
+		CD2C73541D7F040B00A1D819 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C73531D7F040B00A1D819 /* Indicator.swift */; };
+		CD2C73551D7F040B00A1D819 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C73531D7F040B00A1D819 /* Indicator.swift */; };
+		CD2C73561D7F040B00A1D819 /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2C73531D7F040B00A1D819 /* Indicator.swift */; };
 		CD4593971D7EAB9900FD570E /* WrappedAssociatedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */; };
 		CD4593981D7EAB9900FD570E /* WrappedAssociatedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */; };
 		CD4593991D7EAB9900FD570E /* WrappedAssociatedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */; };
@@ -271,6 +274,7 @@
 		A8D69912DD16C2942EB1F40E /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9E621E297FEFAD35D39C34E /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6B5C590A36C8E84C5B16C3E /* Pods-KingfisherTests-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		CD2C73531D7F040B00A1D819 /* Indicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Indicator.swift; path = Sources/Indicator.swift; sourceTree = "<group>"; };
 		CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WrappedAssociatedObjects.swift; path = Sources/WrappedAssociatedObjects.swift; sourceTree = "<group>"; };
 		D10945EA1C526B6C001408EB /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Image.swift; path = Sources/Image.swift; sourceTree = "<group>"; };
 		D10945EB1C526B6C001408EB /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageCache.swift; path = Sources/ImageCache.swift; sourceTree = "<group>"; };
@@ -465,6 +469,7 @@
 				D10945F61C526B6C001408EB /* UIButton+Kingfisher.swift */,
 				182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */,
 				CD4593961D7EAB9900FD570E /* WrappedAssociatedObjects.swift */,
+				CD2C73531D7F040B00A1D819 /* Indicator.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -1232,6 +1237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D109461A1C526C61001408EB /* Image.swift in Sources */,
+				CD2C73561D7F040B00A1D819 /* Indicator.swift in Sources */,
 				D109461B1C526C61001408EB /* ImageCache.swift in Sources */,
 				D109461C1C526C61001408EB /* ImageDownloader.swift in Sources */,
 				D109461D1C526C61001408EB /* ImageTransition.swift in Sources */,
@@ -1315,6 +1321,7 @@
 				D10946151C526C0D001408EB /* Resource.swift in Sources */,
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
 				D10946171C526C0D001408EB /* ThreadHelper.swift in Sources */,
+				CD2C73551D7F040B00A1D819 /* Indicator.swift in Sources */,
 				D10946181C526C0D001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1373,6 +1380,7 @@
 				D10945FE1C526B86001408EB /* Resource.swift in Sources */,
 				D10945FF1C526B86001408EB /* String+MD5.swift in Sources */,
 				D10946001C526B86001408EB /* ThreadHelper.swift in Sources */,
+				CD2C73541D7F040B00A1D819 /* Indicator.swift in Sources */,
 				D10946011C526B86001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

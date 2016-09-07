@@ -28,11 +28,9 @@
 #if os(OSX)
 import AppKit
 typealias ImageView = NSImageView
-public typealias IndicatorView = NSProgressIndicator
 #else
 import UIKit
 typealias ImageView = UIImageView
-public typealias IndicatorView = UIActivityIndicatorView
 #endif
 
 // MARK: - Set Images
@@ -98,13 +96,8 @@ extension ImageView {
             return RetrieveImageTask.emptyTask
         }
         
-        let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
-        var indicator: IndicatorView? = nil
-        if showIndicatorWhenLoading {
-            indicator = kf_indicator
-            indicator?.hidden = false
-            indicator?.kf_startAnimating()
-        }
+        let maybeIndicator = kf_indicator
+        maybeIndicator?.startAnimatingView()
         
         kf_setWebURL(resource.downloadURL)
         
@@ -129,7 +122,7 @@ extension ImageView {
                     sSelf.kf_setImageTask(nil)
                     
                     guard let image = image else {
-                        indicator?.kf_stopAnimating()
+                        maybeIndicator?.stopAnimatingView()
                         completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
                         return
                     }
@@ -139,7 +132,7 @@ extension ImageView {
                             #if !os(OSX)
                                 UIView.transitionWithView(sSelf, duration: 0.0, options: [],
                                     animations: {
-                                        indicator?.kf_stopAnimating()
+                                        maybeIndicator?.stopAnimatingView()
                                     },
                                     completion: { finished in
                                         UIView.transitionWithView(sSelf, duration: transition.duration,
@@ -155,7 +148,7 @@ extension ImageView {
                                 })
                             #endif
                     } else {
-                        indicator?.kf_stopAnimating()
+                        maybeIndicator?.stopAnimatingView()
                         sSelf.image = image
                         completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
                     }
@@ -184,10 +177,22 @@ extension ImageView {
     }
 }
 
+/**
+ Enum for the types of indicators that the user can choose from.
+ */
+extension ImageView {
+    public enum IndicatorType {
+        case none // no indicator
+        case custom(indicator: Indicator) // user custom indicator
+        case activity // activity indicator
+        case image(imageData: NSData) // supports gif
+    }
+}
+
 // MARK: - Associated Object
 private var lastURLKey: Void?
 private var indicatorKey: Void?
-private var showIndicatorWhenLoadingKey: Void?
+private var indicatorTypeKey: Void?
 private var imageTaskKey: Void?
 
 extension ImageView {
@@ -199,69 +204,62 @@ extension ImageView {
     private func kf_setWebURL(URL: NSURL) {
         setAssociatedObject(self, value: URL, associativeKey: &lastURLKey)
     }
-    
-    /// Whether show an animating indicator when the image view is loading an image or not.
-    /// Default is false.
-    public var kf_showIndicatorWhenLoading: Bool {
+
+
+    /// Holds which indicator type is going to be used.
+    /// Default is .none
+    public var kf_indicatorType: IndicatorType {
         get {
-            if let result:NSNumber = getAssociatedObject(self, associativeKey: &showIndicatorWhenLoadingKey) {
-                return result.boolValue
-            } else {
-                return false
-            }
+            let indicator: IndicatorType? = getAssociatedObject(self, associativeKey: &indicatorTypeKey)
+            return indicator ?? .none
         }
         
         set {
-            if kf_showIndicatorWhenLoading == newValue {
-                return
-            } else {
-                if newValue {
-                    
-#if os(OSX)
-                    let indicator = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
-    
-                    #if swift(>=2.3)
-                    indicator.controlSize = .Small
-                    #else
-                    indicator.controlSize = .SmallControlSize
-                    #endif
-                    indicator.style = .SpinningStyle
-#else
-    #if os(tvOS)
-                    let indicatorStyle = UIActivityIndicatorViewStyle.White
-    #else
-                    let indicatorStyle = UIActivityIndicatorViewStyle.Gray
-    #endif
-                    let indicator = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
-                    indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
-#endif
-
-                    indicator.kf_center = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-                    indicator.hidden = true
-
-                    self.addSubview(indicator)
-                    
-                    kf_setIndicator(indicator)
-                } else {
-                    kf_indicator?.removeFromSuperview()
-                    kf_setIndicator(nil)
-                }
-                
-                setAssociatedObject(self, value:NSNumber(bool: newValue), associativeKey: &showIndicatorWhenLoadingKey)
+            switch newValue {
+            case .none:
+                kf_indicator = nil
+            case .activity:
+                kf_indicator = ActivityIndicator()
+            case .image(let data):
+                kf_indicator = ImageIndicator(imageData: data)
+            case .custom(let indicator):
+                kf_indicator = indicator
             }
+
+            setAssociatedObject(self, value: newValue, associativeKey: &indicatorTypeKey)
         }
     }
-    
-    /// The indicator view showing when loading. This will be `nil` if `kf_showIndicatorWhenLoading` is false.
-    /// You may want to use this to set the indicator style or color when you set `kf_showIndicatorWhenLoading` to true.
-    public var kf_indicator: IndicatorView? {
-        return getAssociatedObject(self, associativeKey: &indicatorKey)
+
+    /// `kf_indicator` holds any type that conforms to the protocol `Indicator`.
+    /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
+    /// Everything will be `nil` if `kf_indicatorType` is .none.
+    public private(set) var kf_indicator: Indicator? {
+        get {
+            let indicator: (Indicator?)? = getAssociatedObject(self, associativeKey: &indicatorKey)
+            return indicator ?? nil
+        }
+
+        set {
+            // Remove previous
+            if let previousIndicator = kf_indicator {
+                previousIndicator.view.removeFromSuperview()
+            }
+
+            // Add new
+            if var newIndicator = newValue {
+                newIndicator.view.frame = self.frame
+                newIndicator.viewCenter = CGPoint(x: bounds.midX, y: bounds.midY)
+                newIndicator.view.hidden = true
+                self.addSubview(newIndicator.view)
+            }
+
+            // Save in associated object
+            setAssociatedObject(self,
+                                value: newValue,
+                                associativeKey: &indicatorKey)
+        }
     }
-    
-    private func kf_setIndicator(indicator: IndicatorView?) {
-        setAssociatedObject(self, value: indicator, associativeKey: &indicatorKey)
-    }
-    
+
     private var kf_imageTask: RetrieveImageTask? {
         return getAssociatedObject(self, associativeKey: &imageTaskKey)
     }
@@ -269,46 +267,4 @@ extension ImageView {
     private func kf_setImageTask(task: RetrieveImageTask?) {
         setAssociatedObject(self, value: task, associativeKey: &imageTaskKey)
     }
-}
-
-
-extension IndicatorView {
-    func kf_startAnimating() {
-        #if os(OSX)
-            startAnimation(nil)
-        #else
-            startAnimating()
-        #endif
-        hidden = false
-    }
-    
-    func kf_stopAnimating() {
-        #if os(OSX)
-            stopAnimation(nil)
-        #else
-            stopAnimating()
-        #endif
-        hidden = true
-    }
-    
-    #if os(OSX)
-    var kf_center: CGPoint {
-    get {
-    return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
-    }
-    set {
-    let newFrame = CGRect(x: newValue.x - frame.size.width / 2.0, y: newValue.y - frame.size.height / 2.0, width: frame.size.width, height: frame.size.height)
-    frame = newFrame
-    }
-    }
-    #else
-    var kf_center: CGPoint {
-        get {
-            return center
-        }
-        set {
-            center = newValue
-        }
-    }
-    #endif
 }
