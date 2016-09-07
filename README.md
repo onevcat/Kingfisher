@@ -61,7 +61,7 @@ If you are upgrading to Kingfisher 3.x from an earlier version, please read the 
 
 Check [wiki page](https://github.com/onevcat/Kingfisher/wiki) of Kingfisher.
 
-* Follow the [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Install-Kingfisher) to integrate Kingfisher to your project.
+* Follow the [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) to integrate Kingfisher to your project.
 * Curious about what Kingfisher could do and how would it look like when used in your project? See our [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet) page, in which some useful code snippet are listed. There you can learn how to use Kingfisher in your project better.
 * At last, please also remember to check the full [API Reference](http://cocoadocs.org/docsets/Kingfisher/) whenever you need to know more about Kingfisher.
 
