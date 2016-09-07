@@ -56,7 +56,7 @@ public struct Filter {
     
     let transform: Transformer
 
-    public init(tranform: Transformer) {
+    public init(tranform: @escaping Transformer) {
         self.transform = tranform
     }
     
