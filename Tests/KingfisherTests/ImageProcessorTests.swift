@@ -111,7 +111,7 @@ class ImageProcessorTests: XCTestCase {
     }
 
     func testCompositionProcessor() {
-        let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
+        let p = BlurImageProcessor(blurRadius: 4) >> RoundCornerImageProcessor(cornerRadius: 60)
         XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlurImageProcessor(4.0)|>com.onevcat.Kingfisher.RoundCornerImageProcessor(60.0)")
         // Alpha convolving would vary due to context. So we do not test blur for PNGs.
         // See results in Resource folder.
@@ -167,7 +167,7 @@ extension ImageProcessorTests {
     //Helper Writer
     func _testWrite() {
         
-        let p = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(cornerRadius: 60)
+        let p = BlurImageProcessor(blurRadius: 4) >> RoundCornerImageProcessor(cornerRadius: 60)
         let suffix = "blur-4-round-corner-60-mac"
         let resultImages = imageData().flatMap { p.process(item: .data($0), options: []) }
         for i in 0..<resultImages.count {
