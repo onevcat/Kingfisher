@@ -42,6 +42,10 @@ private var animatedImageDataKey: Void?
 
 import ImageIO
 
+public struct ImageOption {
+    public static var customCreateImageFromData: ((NSData, scale: CGFloat, preloadAllGIFData: Bool) -> Image?)?
+}
+
 // MARK: - Image Properties
 extension Image {
 #if os(OSX)
@@ -320,6 +324,9 @@ extension Image {
 // MARK: - Create images from data
 extension Image {
     static func kf_imageWithData(data: NSData, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
+        if let customCreateImageFromData = ImageOption.customCreateImageFromData {
+            return customCreateImageFromData(data, scale: scale, preloadAllGIFData: preloadAllGIFData)
+        }
         var image: Image?
         #if os(OSX)
             switch data.kf_imageFormat {
