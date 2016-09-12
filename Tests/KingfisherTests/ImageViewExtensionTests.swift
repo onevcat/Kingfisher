@@ -383,15 +383,15 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testIndicatorViewExisting() {
-        imageView.kf_indicatorType = .activity
-        XCTAssertNotNil(imageView.kf_indicator, "The indicator should exist when indicatorType is different than .none")
+        imageView.kf_indicatorType = .Activity
+        XCTAssertNotNil(imageView.kf_indicator, "The indicator should exist when indicatorType is different than .None")
 
-        imageView.kf_indicatorType = .none
-        XCTAssertNil(imageView.kf_indicator, "The indicator should be removed when indicatorType is .none")
+        imageView.kf_indicatorType = .None
+        XCTAssertNil(imageView.kf_indicator, "The indicator should be removed when indicatorType is .None")
     }
     
     func testIndicatorViewAnimating() {
-        imageView.kf_indicatorType = .activity
+        imageView.kf_indicatorType = .Activity
         
         let expectation = expectationWithDescription("wait for downloading image")
         
