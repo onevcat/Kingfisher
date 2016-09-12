@@ -182,16 +182,21 @@ extension ImageView {
  */
 extension ImageView {
     public enum IndicatorType {
-        case none // no indicator
-        case custom(indicator: Indicator) // user custom indicator
-        case activity // activity indicator
-        case image(imageData: NSData) // supports gif
+        /// No indicator.
+        case None
+        /// Use system activity indicator.
+        case Activity
+        /// Use an image as indicator. GIF is supported.
+        case Image(imageData: NSData)
+        /// Use a custom indicator, which conforms to the `Indicator` protocol.
+        case Custom(indicator: Indicator)
     }
 }
 
 // MARK: - Associated Object
 private var lastURLKey: Void?
 private var indicatorKey: Void?
+private var showIndicatorWhenLoadingKey: Void?
 private var indicatorTypeKey: Void?
 private var imageTaskKey: Void?
 
@@ -205,24 +210,46 @@ extension ImageView {
         setAssociatedObject(self, value: URL, associativeKey: &lastURLKey)
     }
 
+    
+    /// Whether show an animating activity indicator when the image view is loading an image or not.
+    /// Default is false.
+    public var kf_showIndicatorWhenLoading: Bool {
+        get {
+            switch kf_indicatorType {
+            case .None:
+                return false
+            case .Activity: fallthrough
+            case .Image(_): fallthrough
+            case .Custom(_): return true
+            }
+        }
+        
+        set {
+            if kf_showIndicatorWhenLoading == newValue {
+                return
+            } else {
+                kf_indicatorType = .Activity
+            }
+        }
+    }
 
     /// Holds which indicator type is going to be used.
-    /// Default is .none
+    /// Default is .None
     public var kf_indicatorType: IndicatorType {
         get {
             let indicator: IndicatorType? = getAssociatedObject(self, associativeKey: &indicatorTypeKey)
-            return indicator ?? .none
+            return indicator ?? .None
         }
         
         set {
             switch newValue {
-            case .none:
+            case .None:
                 kf_indicator = nil
-            case .activity:
+            case .Activity:
                 kf_indicator = ActivityIndicator()
-            case .image(let data):
+            case .Image(let data):
                 kf_indicator = ImageIndicator(imageData: data)
-            case .custom(let indicator):
+            case .Custom(let indicator):
                 kf_indicator = indicator
             }
 
@@ -232,7 +259,7 @@ extension ImageView {
 
     /// `kf_indicator` holds any type that conforms to the protocol `Indicator`.
     /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
-    /// Everything will be `nil` if `kf_indicatorType` is .none.
+    /// Everything will be `nil` if `kf_indicatorType` is .None.
     public private(set) var kf_indicator: Indicator? {
         get {
             let indicator: (Indicator?)? = getAssociatedObject(self, associativeKey: &indicatorKey)

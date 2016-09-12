@@ -64,16 +64,10 @@ extension ViewController {
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! CollectionViewCell
-        
-        if let loaderPath = NSBundle.mainBundle().pathForResource("loader", ofType: "gif") {
-            if let loaderData = NSData(contentsOfFile: loaderPath) {
-                cell.cellImageView?.kf_indicatorType = .image(imageData: loaderData)
-            }
-        }
-        
+                
         let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
-        
+        cell.cellImageView.kf_showIndicatorWhenLoading = true
         cell.cellImageView.kf_setImageWithURL(URL, placeholderImage: nil,
                                                         optionsInfo: [.Transition(ImageTransition.Fade(1))],
                                                       progressBlock: { receivedSize, totalSize in
