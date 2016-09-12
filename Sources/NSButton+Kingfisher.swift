@@ -127,19 +127,19 @@ private var imageTaskKey: Void?
 extension NSButton {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
-        return getAssociatedObject(self, associativeKey: &lastURLKey)
+        return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
     }
 
     private func kf_setWebURL(URL: NSURL) {
-        setAssociatedObject(self, value: URL, associativeKey: &lastURLKey)
+        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
     private var kf_imageTask: RetrieveImageTask? {
-        return getAssociatedObject(self, associativeKey: &imageTaskKey)
+        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
 
     private func kf_setImageTask(task: RetrieveImageTask?) {
-        setAssociatedObject(self, value: task, associativeKey: &imageTaskKey)
+        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 
@@ -245,19 +245,19 @@ extension NSButton {
      */
 
     public var kf_alternateWebURL: NSURL? {
-        return getAssociatedObject(self, associativeKey: &lastAlternateURLKey)
+        return objc_getAssociatedObject(self, &lastAlternateURLKey) as? NSURL
     }
 
     private func kf_setAlternateWebURL(URL: NSURL) {
-        setAssociatedObject(self, value: URL, associativeKey: &lastAlternateURLKey)
+        objc_setAssociatedObject(self, &lastAlternateURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
     private var kf_alternateImageTask: RetrieveImageTask? {
-        return getAssociatedObject(self, associativeKey: &alternateImageTaskKey)
+        return objc_getAssociatedObject(self, &alternateImageTaskKey) as? RetrieveImageTask
     }
 
     private func kf_setAlternateImageTask(task: RetrieveImageTask?) {
-        setAssociatedObject(self, value: task, associativeKey: &alternateImageTaskKey)
+        objc_setAssociatedObject(self, &alternateImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 
