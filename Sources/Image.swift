@@ -56,19 +56,19 @@ extension Image {
     
     private(set) var kf_images: [Image]? {
         get {
-            return getAssociatedObject(self, associativeKey: &imagesKey)
+            return objc_getAssociatedObject(self, &imagesKey) as? [Image]
         }
         set {
-            setAssociatedObject(self, value: newValue, associativeKey: &imagesKey)
+            objc_setAssociatedObject(self, &imagesKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
     private(set) var kf_duration: NSTimeInterval {
         get {
-            return getAssociatedObject(self, associativeKey: &durationKey) ?? 0.0
+            return objc_getAssociatedObject(self, &durationKey) as? NSTimeInterval ?? 0.0
         }
         set {
-            setAssociatedObject(self, value: newValue, associativeKey: &durationKey)
+            objc_setAssociatedObject(self, &durationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -87,19 +87,19 @@ extension Image {
     
     private(set) var kf_imageSource: ImageSource? {
             get {
-                return getAssociatedObject(self, associativeKey: &imageSourceKey)
+                return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
             }
             set {
-                setAssociatedObject(self, value: newValue, associativeKey: &imageSourceKey)
+                objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
         
     private(set) var kf_animatedImageData: NSData? {
             get {
-                return getAssociatedObject(self, associativeKey: &animatedImageDataKey)
+                return objc_getAssociatedObject(self, &animatedImageDataKey) as? NSData
             }
             set {
-                setAssociatedObject(self, value: newValue, associativeKey: &animatedImageDataKey)
+                objc_setAssociatedObject(self, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
 #endif

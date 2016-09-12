@@ -196,18 +196,17 @@ extension ImageView {
 // MARK: - Associated Object
 private var lastURLKey: Void?
 private var indicatorKey: Void?
-private var showIndicatorWhenLoadingKey: Void?
 private var indicatorTypeKey: Void?
 private var imageTaskKey: Void?
 
 extension ImageView {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
-        return getAssociatedObject(self, associativeKey: &lastURLKey)
+        return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
     }
     
     private func kf_setWebURL(URL: NSURL) {
-        setAssociatedObject(self, value: URL, associativeKey: &lastURLKey)
+        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
     
@@ -237,7 +236,7 @@ extension ImageView {
     /// Default is .None
     public var kf_indicatorType: IndicatorType {
         get {
-            let indicator: IndicatorType? = getAssociatedObject(self, associativeKey: &indicatorTypeKey)
+            let indicator = (objc_getAssociatedObject(self, &indicatorTypeKey) as? Box<IndicatorType?>)?.value
             return indicator ?? .None
         }
         
@@ -253,7 +252,7 @@ extension ImageView {
                 kf_indicator = indicator
             }
 
-            setAssociatedObject(self, value: newValue, associativeKey: &indicatorTypeKey)
+            objc_setAssociatedObject(self, &indicatorTypeKey, Box(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 
@@ -262,8 +261,7 @@ extension ImageView {
     /// Everything will be `nil` if `kf_indicatorType` is .None.
     public private(set) var kf_indicator: Indicator? {
         get {
-            let indicator: (Indicator?)? = getAssociatedObject(self, associativeKey: &indicatorKey)
-            return indicator ?? nil
+            return (objc_getAssociatedObject(self, &indicatorKey) as? Box<Indicator?>)?.value
         }
 
         set {
@@ -281,17 +279,15 @@ extension ImageView {
             }
 
             // Save in associated object
-            setAssociatedObject(self,
-                                value: newValue,
-                                associativeKey: &indicatorKey)
+            objc_setAssociatedObject(self, &indicatorKey, Box(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 
     private var kf_imageTask: RetrieveImageTask? {
-        return getAssociatedObject(self, associativeKey: &imageTaskKey)
+        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
     
     private func kf_setImageTask(task: RetrieveImageTask?) {
-        setAssociatedObject(self, value: task, associativeKey: &imageTaskKey)
+        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
