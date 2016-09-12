@@ -61,9 +61,14 @@ extension ViewController: NSCollectionViewDataSource {
     func collectionView(collectionView: NSCollectionView, itemForRepresentedObjectAtIndexPath indexPath: NSIndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItemWithIdentifier("Cell", forIndexPath: indexPath)
         
+        if let loaderPath = NSBundle.mainBundle().pathForResource("loader", ofType: "gif") {
+            if let loaderData = NSData(contentsOfFile: loaderPath) {
+                item.imageView?.kf_indicatorType = .image(imageData: loaderData)
+            }
+        }
+        
         let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
         
-        item.imageView?.kf_showIndicatorWhenLoading = true
         item.imageView?.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil,
                                                    progressBlock: { receivedSize, totalSize in
                                                     print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")

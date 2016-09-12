@@ -127,19 +127,19 @@ private var imageTaskKey: Void?
 extension NSButton {
     /// Get the image URL binded to this image view.
     public var kf_webURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
+        return getAssociatedObject(self, associativeKey: &lastURLKey)
     }
 
     private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: URL, associativeKey: &lastURLKey)
     }
 
     private var kf_imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+        return getAssociatedObject(self, associativeKey: &imageTaskKey)
     }
-    
+
     private func kf_setImageTask(task: RetrieveImageTask?) {
-        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: task, associativeKey: &imageTaskKey)
     }
 }
 
@@ -245,19 +245,19 @@ extension NSButton {
      */
 
     public var kf_alternateWebURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastAlternateURLKey) as? NSURL
+        return getAssociatedObject(self, associativeKey: &lastAlternateURLKey)
     }
 
     private func kf_setAlternateWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastAlternateURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: URL, associativeKey: &lastAlternateURLKey)
     }
 
     private var kf_alternateImageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(self, &alternateImageTaskKey) as? RetrieveImageTask
+        return getAssociatedObject(self, associativeKey: &alternateImageTaskKey)
     }
 
     private func kf_setAlternateImageTask(task: RetrieveImageTask?) {
-        objc_setAssociatedObject(self, &alternateImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setAssociatedObject(self, value: task, associativeKey: &alternateImageTaskKey)
     }
 }
 
