@@ -383,15 +383,17 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testIndicatorViewExisting() {
-        imageView.kf_showIndicatorWhenLoading = true
-        XCTAssertNotNil(imageView.kf_indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
-        
-        imageView.kf_showIndicatorWhenLoading = false
-        XCTAssertNil(imageView.kf_indicator, "The indicator view should be removed when showIndicatorWhenLoading set to false")
+        imageView.kf_indicatorType = .activity
+        XCTAssertNotNil(imageView.kf_indicator, "The indicator should exist when indicatorType is different than .none")
+        XCTAssertTrue(imageView.kf_indicator is ActivityIndicator)
+
+
+        imageView.kf_indicatorType = .none
+        XCTAssertNil(imageView.kf_indicator, "The indicator should be removed when indicatorType is .none")
     }
     
-    func testIndicatorViewAnimating() {
-        imageView.kf_showIndicatorWhenLoading = true
+    func testActivityIndicatorViewAnimating() {
+        imageView.kf_indicatorType = .activity
         
         let expectation = self.expectation(description: "wait for downloading image")
         
@@ -403,11 +405,40 @@ class ImageViewExtensionTests: XCTestCase {
             
             let indicator = self.imageView.kf_indicator
             XCTAssertNotNil(indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
-            XCTAssertFalse(indicator!.isHidden, "The indicator should be shown and animating when loading")
+            XCTAssertFalse(indicator!.view.isHidden, "The indicator should be shown and animating when loading")
 
         }) { (image, error, cacheType, imageURL) -> () in
             let indicator = self.imageView.kf_indicator
-            XCTAssertTrue(indicator!.isHidden, "The indicator should stop and hidden after loading")
+            XCTAssertTrue(indicator!.view.isHidden, "The indicator should stop and hidden after loading")
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testCanUseImageIndicatorViewAnimating() {
+        
+        imageView.kf_indicatorType = .image(imageData: testImageData as! Data)
+        XCTAssertTrue(imageView.kf_indicator is ImageIndicator)
+        let image = (imageView.kf_indicator?.view as? ImageView)?.image
+        XCTAssertNotNil(image)
+        XCTAssertTrue(image!.renderEqual(to: testImage))
+        
+        let expectation = self.expectation(description: "wait for downloading image")
+        
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        let url = URL(string: URLString)!
+        
+        imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            
+            let indicator = self.imageView.kf_indicator
+            XCTAssertNotNil(indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
+            XCTAssertFalse(indicator!.view.isHidden, "The indicator should be shown and animating when loading")
+            
+        }) { (image, error, cacheType, imageURL) -> () in
+            let indicator = self.imageView.kf_indicator
+            XCTAssertTrue(indicator!.view.isHidden, "The indicator should stop and hidden after loading")
             expectation.fulfill()
         }
         
