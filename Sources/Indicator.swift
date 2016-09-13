@@ -24,13 +24,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
     import AppKit
 #else
     import UIKit
 #endif
 
-#if os(OSX)
+#if os(macOS)
     public typealias IndicatorView = NSView
 #else
     public typealias IndicatorView = UIView
@@ -46,7 +46,7 @@ public protocol Indicator {
 }
 
 extension Indicator {
-    #if os(OSX)
+    #if os(macOS)
     public var viewCenter: CGPoint {
         get {
             let frame = view.frame
@@ -77,7 +77,7 @@ extension Indicator {
 // Displays a NSProgressIndicator / UIActivityIndicatorView
 struct ActivityIndicator: Indicator {
 
-    #if os(OSX)
+    #if os(macOS)
     private let activityIndicatorView: NSProgressIndicator
     #else
     private let activityIndicatorView: UIActivityIndicatorView
@@ -88,7 +88,7 @@ struct ActivityIndicator: Indicator {
     }
 
     func startAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             activityIndicatorView.startAnimation(nil)
         #else
             activityIndicatorView.startAnimating()
@@ -97,7 +97,7 @@ struct ActivityIndicator: Indicator {
     }
 
     func stopAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             activityIndicatorView.stopAnimation(nil)
         #else
             activityIndicatorView.stopAnimating()
@@ -106,7 +106,7 @@ struct ActivityIndicator: Indicator {
     }
 
     init() {
-        #if os(OSX)
+        #if os(macOS)
             activityIndicatorView = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
             activityIndicatorView.controlSize = .small
             activityIndicatorView.style = .spinningStyle
@@ -146,8 +146,8 @@ struct ImageIndicator: Indicator {
         animatedImageIndicatorView = ImageView()
         animatedImageIndicatorView.image = image
         
-        #if os(OSX)
-            // Need for gif to animate on OSX
+        #if os(macOS)
+            // Need for gif to animate on macOS
             self.animatedImageIndicatorView.imageScaling = .scaleNone
             self.animatedImageIndicatorView.canDrawSubviewsIntoLayer = true
         #else
@@ -161,7 +161,7 @@ struct ImageIndicator: Indicator {
     }
 
     func startAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             animatedImageIndicatorView.animates = true
         #else
             animatedImageIndicatorView.startAnimating()
@@ -170,7 +170,7 @@ struct ImageIndicator: Indicator {
     }
 
     func stopAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             animatedImageIndicatorView.animates = false
         #else
             animatedImageIndicatorView.stopAnimating()
