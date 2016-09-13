@@ -182,7 +182,7 @@ extension ImageView {
     }
     
     /// Holds which indicator type is going to be used.
-    /// Default is .None
+    /// Default is .none, means no indicator will be shown.
     public var kf_indicatorType: IndicatorType {
         get {
             let indicator = (objc_getAssociatedObject(self, &indicatorTypeKey) as? Box<IndicatorType?>)?.value
@@ -205,9 +205,9 @@ extension ImageView {
         }
     }
     
-    /// `kf_indicator` holds any type that conforms to the protocol `Indicator`.
+    /// Holds any type that conforms to the protocol `Indicator`.
     /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
-    /// Everything will be `nil` if `kf_indicatorType` is .None.
+    /// It will be `nil` if `kf_indicatorType` is `.none`.
     public private(set) var kf_indicator: Indicator? {
         get {
             return (objc_getAssociatedObject(self, &indicatorKey) as? Box<Indicator?>)?.value
@@ -221,7 +221,7 @@ extension ImageView {
             
             // Add new
             if var newIndicator = newValue {
-                newIndicator.view.frame = self.frame
+                newIndicator.view.frame = frame
                 newIndicator.viewCenter = CGPoint(x: bounds.midX, y: bounds.midY)
                 newIndicator.view.isHidden = true
                 self.addSubview(newIndicator.view)
