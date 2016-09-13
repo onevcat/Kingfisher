@@ -2,6 +2,13 @@
 
 -----
 
+## [2.6.0 - Indicator Customization](https://github.com/onevcat/Kingfisher/releases/tag/2.6.0) (2016-09-12)
+
+#### Add
+* Support for different types of indicators, including gif images. [#425](https://github.com/onevcat/Kingfisher/pull/425)
+
+---
+
 ## [2.5.1 - Prefetcher Trap](https://github.com/onevcat/Kingfisher/releases/tag/2.5.1) (2016-09-06)
 
 #### Fix
