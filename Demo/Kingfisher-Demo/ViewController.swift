@@ -62,11 +62,9 @@ extension ViewController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
-        
-        cell.cellImageView.kf_showIndicatorWhenLoading = true
-        
+    
+        cell.cellImageView.kf_indicatorType = .activity
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
-        
         
         _ = cell.cellImageView.kf_setImage(with: url,
                                            placeholder: nil,

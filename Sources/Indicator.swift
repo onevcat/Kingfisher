@@ -93,7 +93,7 @@ struct ActivityIndicator: Indicator {
         #else
             activityIndicatorView.startAnimating()
         #endif
-        activityIndicatorView.hidden = false
+        activityIndicatorView.isHidden = false
     }
 
     func stopAnimatingView() {
@@ -102,27 +102,22 @@ struct ActivityIndicator: Indicator {
         #else
             activityIndicatorView.stopAnimating()
         #endif
-        activityIndicatorView.hidden = true
+        activityIndicatorView.isHidden = true
     }
 
     init() {
         #if os(OSX)
             activityIndicatorView = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
-
-            #if swift(>=2.3)
-                activityIndicatorView.controlSize = .Small
-            #else
-                activityIndicatorView.controlSize = .SmallControlSize
-            #endif
-            activityIndicatorView.style = .SpinningStyle
+            activityIndicatorView.controlSize = .small
+            activityIndicatorView.style = .spinningStyle
         #else
             #if os(tvOS)
-                let indicatorStyle = UIActivityIndicatorViewStyle.White
+                let indicatorStyle = UIActivityIndicatorViewStyle.white
             #else
-                let indicatorStyle = UIActivityIndicatorViewStyle.Gray
+                let indicatorStyle = UIActivityIndicatorViewStyle.gray
             #endif
             activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
-            activityIndicatorView.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+            activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleTopMargin]
         #endif
     }
 }
@@ -136,23 +131,32 @@ struct ImageIndicator: Indicator {
         return animatedImageIndicatorView
     }
 
-    init(imageData data: NSData) {
+    init?(imageData data: Data, processor: ImageProcessor = DefaultImageProcessor.default, options: KingfisherOptionsInfo = KingfisherEmptyOptionsInfo) {
 
-        let image = Image.kf_imageWithData(data, scale: 1.0, preloadAllGIFData: true)
+        var options = options
+        // Use normal image view to show gif, so we need to preload all gif data.
+        if !options.preloadAllGIFData {
+            options.append(.preloadAllGIFData)
+        }
+        
+        guard let image = processor.process(item: .data(data), options: options) else {
+            return nil
+        }
+
         animatedImageIndicatorView = ImageView()
         animatedImageIndicatorView.image = image
         
         #if os(OSX)
             // Need for gif to animate on OSX
-            self.animatedImageIndicatorView.imageScaling = .ScaleNone
+            self.animatedImageIndicatorView.imageScaling = .scaleNone
             self.animatedImageIndicatorView.canDrawSubviewsIntoLayer = true
         #else
-            animatedImageIndicatorView.contentMode = .Center
+            animatedImageIndicatorView.contentMode = .center
             
-            animatedImageIndicatorView.autoresizingMask = [.FlexibleLeftMargin,
-                                                           .FlexibleRightMargin,
-                                                           .FlexibleBottomMargin,
-                                                           .FlexibleTopMargin]
+            animatedImageIndicatorView.autoresizingMask = [.flexibleLeftMargin,
+                                                           .flexibleRightMargin,
+                                                           .flexibleBottomMargin,
+                                                           .flexibleTopMargin]
         #endif
     }
 
@@ -162,7 +166,7 @@ struct ImageIndicator: Indicator {
         #else
             animatedImageIndicatorView.startAnimating()
         #endif
-        animatedImageIndicatorView.hidden = false
+        animatedImageIndicatorView.isHidden = false
     }
 
     func stopAnimatingView() {
@@ -171,6 +175,6 @@ struct ImageIndicator: Indicator {
         #else
             animatedImageIndicatorView.stopAnimating()
         #endif
-        animatedImageIndicatorView.hidden = true
+        animatedImageIndicatorView.isHidden = true
     }
 }
