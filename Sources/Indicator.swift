@@ -47,7 +47,7 @@ public protocol Indicator {
 
 extension Indicator {
     #if os(OSX)
-    var viewCenter: CGPoint {
+    public var viewCenter: CGPoint {
         get {
             let frame = view.frame
             return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
@@ -62,7 +62,7 @@ extension Indicator {
         }
     }
     #else
-    var viewCenter: CGPoint {
+    public var viewCenter: CGPoint {
         get {
             return view.center
         }
