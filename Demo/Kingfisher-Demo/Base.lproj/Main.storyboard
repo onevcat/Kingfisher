@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="peg-r0-mlo">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11129.15" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="peg-r0-mlo">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11103.10"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -10,10 +11,9 @@
             <objects>
                 <collectionViewController id="IdS-po-MDe" customClass="ViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="cQA-0g-Ig3">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="46n-QC-xKN">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -22,22 +22,16 @@
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionViewCell" id="jYH-ix-b6K" customClass="CollectionViewCell" customModule="Kingfisher_Demo" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="250" height="250"/>
+                                <frame key="frameInset" minX="62.5" minY="74" width="250" height="250"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="250" height="250"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5wL-TX-hML">
-                                            <rect key="frame" x="0.0" y="0.0" width="250" height="250"/>
-                                            <animations/>
-                                        </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5wL-TX-hML"/>
                                     </subviews>
-                                    <animations/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
-                                <animations/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="5wL-TX-hML" secondAttribute="bottom" id="6Fx-JY-GDB"/>
                                     <constraint firstAttribute="trailing" secondItem="5wL-TX-hML" secondAttribute="trailing" id="Fev-Dq-rlR"/>
@@ -57,12 +51,12 @@
                     <navigationItem key="navigationItem" id="tBW-1C-FRK">
                         <barButtonItem key="leftBarButtonItem" title="Clear Cache" id="5vP-RF-3ee">
                             <connections>
-                                <action selector="clearCache:" destination="IdS-po-MDe" id="sjm-lk-eGI"/>
+                                <action selector="clearCacheWithSender:" destination="IdS-po-MDe" id="xgS-yx-T7L"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Reload" id="FbL-Yi-uUn">
                             <connections>
-                                <action selector="reload:" destination="IdS-po-MDe" id="fTQ-Jo-Q55"/>
+                                <action selector="reloadWithSender:" destination="IdS-po-MDe" id="5Zc-RG-ddG"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -79,7 +73,6 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ese-eO-cur">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

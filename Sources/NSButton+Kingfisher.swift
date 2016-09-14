@@ -34,41 +34,11 @@ import AppKit
 extension NSButton {
 
     /**
-     Set an image with a URL, a placeholder image, options, progress handler and completion handler.
-
-     - parameter URL:               The URL of image.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-
-     - returns: A task represents the retrieving process.
-
-     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     */
-
-    public func kf_setImageWithURL(URL: NSURL?,
-                                   placeholderImage: Image? = nil,
-                                   optionsInfo: KingfisherOptionsInfo? = nil,
-                                   progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
-    {
-        let resource = URL.map { Resource(downloadURL: $0) }
-        return kf_setImageWithResource(resource,
-                                       placeholderImage: placeholderImage,
-                                       optionsInfo: optionsInfo,
-                                       progressBlock: progressBlock,
-                                       completionHandler: completionHandler)
-    }
-
-
-    /**
-     Set an image with a URL, a placeholder image, options, progress handler and completion handler.
+     Set an image with a resource, a placeholder image, options, progress handler and completion handler.
 
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
 
@@ -77,29 +47,30 @@ extension NSButton {
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
-    public func kf_setImageWithResource(resource: Resource?,
-                                        placeholderImage: Image? = nil,
-                                        optionsInfo: KingfisherOptionsInfo? = nil,
-                                        progressBlock: DownloadProgressBlock? = nil,
-                                        completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+    @discardableResult
+    public func kf_setImage(with resource: Resource?,
+                              placeholder: Image? = nil,
+                                  options: KingfisherOptionsInfo? = nil,
+                            progressBlock: DownloadProgressBlock? = nil,
+                        completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        image = placeholderImage
+        image = placeholder
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            completionHandler?(nil, nil, .none, nil)
+            return .empty
         }
         
         kf_setWebURL(resource.downloadURL)
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, options: options,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
              completionHandler: {[weak self] image, error, cacheType, imageURL in
-                dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+                DispatchQueue.main.safeAsync {
+                    guard let sSelf = self, imageURL == sSelf.kf_webURL else {
                         return
                     }
 
@@ -109,7 +80,7 @@ extension NSButton {
                         sSelf.image = image
                     }
                     
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
 
@@ -126,19 +97,19 @@ private var imageTaskKey: Void?
 
 extension NSButton {
     /// Get the image URL binded to this image view.
-    public var kf_webURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
+    public var kf_webURL: URL? {
+        return objc_getAssociatedObject(self, &lastURLKey) as? URL
     }
 
-    private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    fileprivate func kf_setWebURL(_ url: URL) {
+        objc_setAssociatedObject(self, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
-    private var kf_imageTask: RetrieveImageTask? {
+    fileprivate var kf_imageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
     }
-
-    private func kf_setImageTask(task: RetrieveImageTask?) {
+    
+    fileprivate func kf_setImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
@@ -149,41 +120,11 @@ extension NSButton {
 extension NSButton {
 
     /**
-     Set an alternateImage with a URL, a placeholder image, options, progress handler and completion handler.
-
-     - parameter URL:               The URL of image.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-
-     - returns: A task represents the retrieving process.
-
-     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     */
-
-    public func kf_setAlternateImageWithURL(URL: NSURL?,
-                                            placeholderImage: Image? = nil,
-                                            optionsInfo: KingfisherOptionsInfo? = nil,
-                                            progressBlock: DownloadProgressBlock? = nil,
-                                            completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
-    {
-        let resource = URL.map { Resource(downloadURL: $0) }
-        return kf_setAlternateImageWithResource(resource,
-                                                placeholderImage: placeholderImage,
-                                                optionsInfo: optionsInfo,
-                                                progressBlock: progressBlock,
-                                                completionHandler: completionHandler)
-    }
-
-
-    /**
-     Set an alternateImage with a URL, a placeholder image, options, progress handler and completion handler.
+     Set an alternateImage with a resource, a placeholder image, options, progress handler and completion handler.
 
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
 
@@ -192,41 +133,42 @@ extension NSButton {
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
-    public func kf_setAlternateImageWithResource(resource: Resource?,
-                                                 placeholderImage: Image? = nil,
-                                                 optionsInfo: KingfisherOptionsInfo? = nil,
-                                                 progressBlock: DownloadProgressBlock? = nil,
-                                                 completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+    @discardableResult
+    public func kf_setAlternateImage(with resource: Resource?,
+                                       placeholder: Image? = nil,
+                                           options: KingfisherOptionsInfo? = nil,
+                                     progressBlock: DownloadProgressBlock? = nil,
+                                 completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        alternateImage = placeholderImage
+        alternateImage = placeholder
         
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            completionHandler?(nil, nil, .none, nil)
+            return .empty
         }
         
         kf_setAlternateWebURL(resource.downloadURL)
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: optionsInfo,
+        let task = KingfisherManager.shared.retrieveImage(with: resource, options: options,
              progressBlock: { receivedSize, totalSize in
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
              completionHandler: {[weak self] image, error, cacheType, imageURL in
-                dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_alternateWebURL else {
+                DispatchQueue.main.safeAsync {
+                    guard let sSelf = self, imageURL == sSelf.kf_alternateWebURL else {
                         return
                     }
                     
                     sSelf.kf_setAlternateImageTask(nil)
                     
                     guard let image = image else {
-                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                        completionHandler?(nil, error, cacheType, imageURL)
                         return
                     }
                     
                     sSelf.alternateImage = image
-                    completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
@@ -244,19 +186,19 @@ extension NSButton {
      Get the alternate image URL binded to this button.
      */
 
-    public var kf_alternateWebURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastAlternateURLKey) as? NSURL
+    public var kf_alternateWebURL: URL? {
+        return objc_getAssociatedObject(self, &lastAlternateURLKey) as? URL
     }
 
-    private func kf_setAlternateWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastAlternateURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    fileprivate func kf_setAlternateWebURL(_ url: URL) {
+        objc_setAssociatedObject(self, &lastAlternateURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
-    private var kf_alternateImageTask: RetrieveImageTask? {
+    fileprivate var kf_alternateImageTask: RetrieveImageTask? {
         return objc_getAssociatedObject(self, &alternateImageTaskKey) as? RetrieveImageTask
     }
 
-    private func kf_setAlternateImageTask(task: RetrieveImageTask?) {
+    fileprivate func kf_setAlternateImageTask(_ task: RetrieveImageTask?) {
         objc_setAssociatedObject(self, &alternateImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
