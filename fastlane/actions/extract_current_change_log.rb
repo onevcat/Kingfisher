@@ -11,7 +11,7 @@ module Fastlane
         title = "#{version}"
         title = title + " - #{data["name"]}" if (data["name"] and not data["name"].empty?)
 
-        return {:title => title, :version => version, :add => data["add"], :fix => data["fix"]}
+        return {:title => title, :version => version, :add => data["add"], :fix => data["fix"], :remove => data["remove"]}
       end
 
       #####################################################
