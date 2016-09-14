@@ -27,12 +27,14 @@
 
 #if os(macOS)
 import AppKit
-public typealias ImageView = NSImageView
 #else
 import UIKit
-public typealias ImageView = UIImageView
 #endif
 
+// MARK: - Extension methods.
+/**
+ *	Set image to use from web.
+ */
 extension Kingfisher where Base: ImageView {
     /**
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
@@ -50,10 +52,10 @@ extension Kingfisher where Base: ImageView {
      */
     @discardableResult
     public func setImage(with resource: Resource?,
-                            placeholder: Image? = nil,
-                            options: KingfisherOptionsInfo? = nil,
-                            progressBlock: DownloadProgressBlock? = nil,
-                            completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+                         placeholder: Image? = nil,
+                         options: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         base.image = placeholder
         
@@ -215,9 +217,9 @@ extension Kingfisher where Base: ImageView {
 }
 
 
-// MARK: - Back compatible
+// MARK: - Deprecated. Only for back compatibility.
 /**
-*	Set image to use from web.
+*	Set image to use from web. Deprecated. Use `kf` namespacing instead.
 */
 extension ImageView {
     /**

@@ -27,17 +27,11 @@
 
 #if os(macOS)
 import AppKit
-public typealias Image = NSImage
-public typealias Color = NSColor
-
 private var imagesKey: Void?
 private var durationKey: Void?
 #else
 import UIKit
 import MobileCoreServices
-public typealias Image = UIImage
-public typealias Color = UIColor
-    
 private var imageSourceKey: Void?
 private var animatedImageDataKey: Void?
 #endif

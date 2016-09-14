@@ -8,6 +8,20 @@
 
 import Foundation
 
+#if os(macOS)
+    import AppKit
+    public typealias Image = NSImage
+    public typealias Color = NSColor
+    public typealias ImageView = NSImageView
+    typealias Button = NSButton
+#else
+    import UIKit
+    public typealias Image = UIImage
+    public typealias Color = UIColor
+    public typealias ImageView = UIImageView
+    typealias Button = UIButton
+#endif
+
 public struct Kingfisher<Base> {
     public let base: Base
     public init(_ base: Base) {
@@ -32,3 +46,4 @@ public extension KingfisherCompatible {
 
 extension ImageView: KingfisherCompatible { }
 extension Image: KingfisherCompatible { }
+extension Button: KingfisherCompatible { }
