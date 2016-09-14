@@ -67,10 +67,10 @@ public struct DefaultCacheSerializer: CacheSerializer {
         
         let data: Data?
         switch imageFormat {
-        case .PNG: data = image.pngRepresentation()
-        case .JPEG: data = image.jpegRepresentation(compressionQuality: 1.0)
-        case .GIF: data = image.gifRepresentation()
-        case .unknown: data = original ?? image.kf_normalized().pngRepresentation()
+        case .PNG: data = image.kf.pngRepresentation()
+        case .JPEG: data = image.kf.jpegRepresentation(compressionQuality: 1.0)
+        case .GIF: data = image.kf.gifRepresentation()
+        case .unknown: data = original ?? image.kf.normalized.kf.pngRepresentation()
         }
         
         return data
@@ -80,6 +80,6 @@ public struct DefaultCacheSerializer: CacheSerializer {
         let scale = (options ?? KingfisherEmptyOptionsInfo).scaleFactor
         let preloadAllGIFData = (options ?? KingfisherEmptyOptionsInfo).preloadAllGIFData
         
-        return Image.kf_image(data: data, scale: scale, preloadAllGIFData: preloadAllGIFData)
+        return Kingfisher<Image>.image(data: data, scale: scale, preloadAllGIFData: preloadAllGIFData)
     }
 }

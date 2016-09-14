@@ -174,7 +174,7 @@ extension ImageCache {
     {
         
         let computedKey = key.computedKey(with: identifier)
-        memoryCache.setObject(image, forKey: computedKey as NSString, cost: image.kf_imageCost)
+        memoryCache.setObject(image, forKey: computedKey as NSString, cost: image.kf.imageCost)
 
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
@@ -280,7 +280,7 @@ extension ImageCache {
                 if let image = sSelf.retrieveImageInDiskCache(forKey: key, options: options) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async {
-                            let result = image.kf_decoded(scale: options.scaleFactor)
+                            let result = image.kf.decoded(scale: options.scaleFactor)
                             
                             sSelf.store(result,
                                         forKey: key,
@@ -640,11 +640,11 @@ extension ImageCache {
     }
 }
 
-extension Image {
-    var kf_imageCost: Int {
-        return kf_images == nil ?
-            Int(size.height * size.width * kf_scale * kf_scale) :
-            Int(size.height * size.width * kf_scale * kf_scale) * kf_images!.count
+extension Kingfisher where Base: Image {
+    var imageCost: Int {
+        return images == nil ?
+            Int(size.height * size.width * scale * scale) :
+            Int(size.height * size.width * scale * scale) * images!.count
     }
 }
 
