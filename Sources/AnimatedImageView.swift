@@ -159,7 +159,7 @@ public class AnimatedImageView: UIImageView {
     /// Reset the animator.
     private func reset() {
         animator = nil
-        if let imageSource = image?.kf_imageSource?.imageRef {
+        if let imageSource = image?.kf.imageSource?.imageRef {
             animator = Animator(imageSource: imageSource, contentMode: contentMode, size: bounds.size, framePreloadCount: framePreloadCount)
             animator?.needsPrescaling = needsPrescaling
             animator?.prepareFrames()
@@ -281,7 +281,7 @@ class Animator {
         let scaledImage: Image?
         
         if needsPrescaling {
-            scaledImage = image.kf_resize(to: size, for: contentMode)
+            scaledImage = image.kf.resize(to: size, for: contentMode)
         } else {
             scaledImage = image
         }

@@ -45,103 +45,107 @@ import CoreImage
 #endif
 
 // MARK: - Image Properties
-extension Image {
-#if os(macOS)
+extension Kingfisher where Base: Image {
+    #if os(macOS)
     var cgImage: CGImage? {
-        return cgImage(forProposedRect: nil, context: nil, hints: nil)
+        return base.cgImage(forProposedRect: nil, context: nil, hints: nil)
     }
     
-    var kf_scale: CGFloat {
+    var scale: CGFloat {
         return 1.0
     }
     
-    fileprivate(set) var kf_images: [Image]? {
+    fileprivate(set) var images: [Image]? {
         get {
-            return objc_getAssociatedObject(self, &imagesKey) as? [Image]
+            return objc_getAssociatedObject(base, &imagesKey) as? [Image]
         }
         set {
-            objc_setAssociatedObject(self, &imagesKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(base, &imagesKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
-    fileprivate(set) var kf_duration: TimeInterval {
+    fileprivate(set) var duration: TimeInterval {
         get {
-            return objc_getAssociatedObject(self, &durationKey) as? TimeInterval ?? 0.0
+            return objc_getAssociatedObject(base, &durationKey) as? TimeInterval ?? 0.0
         }
         set {
-            objc_setAssociatedObject(self, &durationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(base, &durationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
-    var kf_size: CGSize {
-        return representations.reduce(CGSize.zero, { size, rep in
+    var size: CGSize {
+        return base.representations.reduce(CGSize.zero, { size, rep in
             return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
         })
     }
     
-#else
-    var kf_scale: CGFloat {
-        return scale
+    #else
+    var cgImage: CGImage? {
+        return base.cgImage
     }
     
-    var kf_images: [Image]? {
-        return images
+    var scale: CGFloat {
+    return base.scale
     }
     
-    var kf_duration: TimeInterval {
-        return duration
+    var images: [Image]? {
+    return base.images
     }
     
-    fileprivate(set) var kf_imageSource: ImageSource? {
+    var duration: TimeInterval {
+    return base.duration
+    }
+    
+    fileprivate(set) var imageSource: ImageSource? {
         get {
-            return objc_getAssociatedObject(self, &imageSourceKey) as? ImageSource
+            return objc_getAssociatedObject(base, &imageSourceKey) as? ImageSource
         }
         set {
-            objc_setAssociatedObject(self, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-        
-    fileprivate(set) var kf_animatedImageData: Data? {
-        get {
-            return objc_getAssociatedObject(self, &animatedImageDataKey) as? Data
-        }
-        set {
-            objc_setAssociatedObject(self, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(base, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
-    var kf_size: CGSize {
-        return size
+    fileprivate(set) var animatedImageData: Data? {
+    get {
+        return objc_getAssociatedObject(base, &animatedImageDataKey) as? Data
     }
-#endif
+    set {
+        objc_setAssociatedObject(base, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    }
+    
+    var size: CGSize {
+        return base.size
+    }
+    #endif
 }
 
 // MARK: - Image Conversion
-extension Image {
-#if os(macOS)
-    static func kf_image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
+extension Kingfisher where Base: Image {
+    #if os(macOS)
+    static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         return Image(cgImage: cgImage, size: CGSize.zero)
     }
     
     /**
-    Normalize the image. This method does nothing in OS X.
-    
-    - returns: The image itself.
-    */
-    public func kf_normalized() -> Image {
-        return self
+     Normalize the image. This method does nothing in OS X.
+     
+     - returns: The image itself.
+     */
+    public var normalized: Image {
+        return base
     }
     
-    static func kf_animated(with images: [Image], forDuration forDurationduration: TimeInterval) -> Image? {
+    static func animated(with images: [Image], forDuration forDurationduration: TimeInterval) -> Image? {
         return nil
     }
-#else
-    static func kf_image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
-        if let refImage = refImage {
-            return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
-        } else {
-            return Image(cgImage: cgImage, scale: scale, orientation: .up)
-        }
+    #else
+    static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
+    if let refImage = refImage {
+        return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
+    } else {
+        return Image(cgImage: cgImage, scale: scale, orientation: .up)
+    }
     }
     
     /**
@@ -149,25 +153,25 @@ extension Image {
      
      - returns: The normalized image with orientation set to up and correct scale.
      */
-    public func kf_normalized() -> Image {
+    public var normalized: Image {
         // prevent animated image (GIF) lose it's images
-        guard images == nil else { return self }
+        guard images == nil else { return base }
         // No need to do anything if already up
-        guard imageOrientation != .up else { return self }
+        guard base.imageOrientation != .up else { return base }
     
         return draw(cgImage: nil, to: size) {
-            draw(in: CGRect(origin: CGPoint.zero, size: size))
+            base.draw(in: CGRect(origin: CGPoint.zero, size: size))
         }
     }
     
-    static func kf_animated(with images: [Image], forDuration duration: TimeInterval) -> Image? {
+    static func animated(with images: [Image], forDuration duration: TimeInterval) -> Image? {
         return .animatedImage(with: images, duration: duration)
     }
-#endif
+    #endif
 }
 
 // MARK: - Image Representation
-extension Image {
+extension Kingfisher where Base: Image {
     // MARK: - PNG
     func pngRepresentation() -> Data? {
         #if os(macOS)
@@ -177,7 +181,7 @@ extension Image {
             let rep = NSBitmapImageRep(cgImage: cgimage)
             return rep.representation(using: .PNG, properties: [:])
         #else
-            return UIImagePNGRepresentation(self)
+            return UIImagePNGRepresentation(base)
         #endif
     }
     
@@ -190,7 +194,7 @@ extension Image {
             let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using:.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
         #else
-            return UIImageJPEGRepresentation(self, compressionQuality)
+            return UIImageJPEGRepresentation(base, compressionQuality)
         #endif
     }
     
@@ -199,18 +203,18 @@ extension Image {
         #if os(macOS)
             return gifRepresentation(duration: 0.0, repeatCount: 0)
         #else
-            return kf_animatedImageData
+            return animatedImageData
         #endif
     }
     
     #if os(macOS)
     func gifRepresentation(duration: TimeInterval, repeatCount: Int) -> Data? {
-        guard let images = kf_images else {
+        guard let images = images else {
             return nil
         }
         
         let frameCount = images.count
-        let gifDuration = duration <= 0.0 ? kf_duration / Double(frameCount) : duration / Double(frameCount)
+        let gifDuration = duration <= 0.0 ? duration / Double(frameCount) : duration / Double(frameCount)
         
         let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: gifDuration]]
         let imageProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: repeatCount]]
@@ -223,7 +227,7 @@ extension Image {
         CGImageDestinationSetProperties(destination, imageProperties as CFDictionary)
         
         for image in images {
-            CGImageDestinationAddImage(destination, image.cgImage!, frameProperties as CFDictionary)
+            CGImageDestinationAddImage(destination, image.kf.cgImage!, frameProperties as CFDictionary)
         }
         
         return CGImageDestinationFinalize(destination) ? data.copy() as? Data : nil
@@ -232,12 +236,11 @@ extension Image {
 }
 
 // MARK: - Create images from data
-extension Image {
-
-    static func kf_animated(with data: Data, scale: CGFloat = 1.0, duration: TimeInterval = 0.0, preloadAll: Bool) -> Image? {
+extension Kingfisher where Base: Image {
+    static func animated(with data: Data, scale: CGFloat = 1.0, duration: TimeInterval = 0.0, preloadAll: Bool) -> Image? {
         
         func decode(from imageSource: CGImageSource, for options: NSDictionary) -> ([Image], TimeInterval)? {
-
+            
             //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary
             func frameDuration(from gifInfo: NSDictionary) -> Double {
                 let gifDefaultFrameDuration = 0.100
@@ -266,14 +269,14 @@ extension Image {
                 } else {
                     // Animated GIF
                     guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                          let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary else
+                        let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary else
                     {
                         return nil
                     }
                     gifDuration += frameDuration(from: gifInfo)
                 }
                 
-                images.append(Image.kf_image(cgImage: imageRef, scale: scale, refImage: nil))
+                images.append(Kingfisher<Image>.image(cgImage: imageRef, scale: scale, refImage: nil))
             }
             
             return (images, gifDuration)
@@ -285,47 +288,47 @@ extension Image {
             return nil
         }
         
-#if os(macOS)
-        guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
-            return nil
-        }
-        let image = Image(data: data)
-        image?.kf_images = images
-        image?.kf_duration = gifDuration
-    
-        return image
-#else
-    
-        if preloadAll {
+        #if os(macOS)
             guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
                 return nil
             }
-            let image = Image.kf_animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
-            image?.kf_animatedImageData = data
+            var image = Image(data: data)
+            image?.kf.images = images
+            image?.kf.duration = gifDuration
+            
             return image
-        } else {
-            let image = Image(data: data)
-            image?.kf_animatedImageData = data
-            image?.kf_imageSource = ImageSource(ref: imageSource)
-            return image
-        }
-#endif
+        #else
+            
+            if preloadAll {
+                guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
+                    return nil
+                }
+                var image = Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
+                image?.kf.animatedImageData = data
+                return image
+            } else {
+                var image = Image(data: data)
+                image?.kf.animatedImageData = data
+                image?.kf.imageSource = ImageSource(ref: imageSource)
+                return image
+            }
+        #endif
     }
     
-    static func kf_image(data: Data, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
+    static func image(data: Data, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         var image: Image?
         #if os(macOS)
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data)
             case .PNG: image = Image(data: data)
-            case .GIF: image = Image.kf_animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .GIF: image = Kingfisher<Image>.animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .unknown: image = Image(data: data)
             }
         #else
             switch data.kf_imageFormat {
             case .JPEG: image = Image(data: data, scale: scale)
             case .PNG: image = Image(data: data, scale: scale)
-            case .GIF: image = Image.kf_animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
+            case .GIF: image = Kingfisher<Image>.animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .unknown: image = Image(data: data, scale: scale)
             }
         #endif
@@ -335,9 +338,8 @@ extension Image {
 }
 
 // MARK: - Image Transforming
-extension Image {
+extension Kingfisher where Base: Image {
     // MARK: - Round Corner
-    
     /// Create a round corner image based on `self`.
     ///
     /// - parameter radius: The round corner radius of creating image.
@@ -347,44 +349,44 @@ extension Image {
     /// - returns: An image with round corner of `self`.
     ///
     /// - Note: This method only works for CG-based image.
-    public func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
+    public func image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
         
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Round corder image only works for CG-based image.")
-            return self
+            return base
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         return draw(cgImage: cgImage, to: size) {
             #if os(macOS)
-            let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
-            path.windingRule = .evenOddWindingRule
-            path.addClip()
-            draw(in: rect)
+                let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+                path.windingRule = .evenOddWindingRule
+                path.addClip()
+                base.draw(in: rect)
             #else
-            guard let context = UIGraphicsGetCurrentContext() else {
-                assertionFailure("[Kingfisher] Failed to create CG context for image.")
-                return
-            }
-            let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
-            context.addPath(path)
-            context.clip()
-            draw(in: rect)
+                guard let context = UIGraphicsGetCurrentContext() else {
+                    assertionFailure("[Kingfisher] Failed to create CG context for image.")
+                    return
+                }
+                let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
+                context.addPath(path)
+                context.clip()
+                base.draw(in: rect)
             #endif
         }
     }
     
     #if os(iOS) || os(tvOS)
-    func kf_resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
+    func resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
         switch contentMode {
         case .scaleAspectFit:
             let newSize = self.size.kf_constrained(size)
-            return kf_resize(to: newSize)
+            return resize(to: newSize)
         case .scaleAspectFill:
             let newSize = self.size.kf_filling(size)
-            return kf_resize(to: newSize)
+            return resize(to: newSize)
         default:
-            return kf_resize(to: size)
+            return resize(to: size)
         }
     }
     #endif
@@ -398,19 +400,19 @@ extension Image {
     /// - returns: An image with new size.
     ///
     /// - Note: This method only works for CG-based image.
-    public func kf_resize(to size: CGSize) -> Image {
+    public func resize(to size: CGSize) -> Image {
         
         guard let cgImage = cgImage?.fixed else {
             assertionFailure("[Kingfisher] Resize only works for CG-based image.")
-            return self
+            return base
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         return draw(cgImage: cgImage, to: size) {
             #if os(macOS)
-            draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
+                base.draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
             #else
-            draw(in: rect)
+                base.draw(in: rect)
             #endif
         }
     }
@@ -424,13 +426,13 @@ extension Image {
     /// - returns: An image with blur effect applied.
     ///
     /// - Note: This method only works for CG-based image.
-    public func kf_blurred(withRadius radius: CGFloat) -> Image {
+    public func blurred(withRadius radius: CGFloat) -> Image {
         #if os(watchOS)
             return self
         #else
             guard let cgImage = cgImage else {
                 assertionFailure("[Kingfisher] Blur only works for CG-based image.")
-                return self
+                return base
             }
             
             // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
@@ -453,16 +455,16 @@ extension Image {
                 iterations = 3
             }
             
-            let w = Int(kf_size.width)
-            let h = Int(kf_size.height)
+            let w = Int(size.width)
+            let h = Int(size.height)
             let rowBytes = Int(CGFloat(cgImage.bytesPerRow))
-
+            
             let inDataPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: rowBytes * Int(h))
             inDataPointer.initialize(to: 0)
             defer {
                 inDataPointer.deinitialize()
                 inDataPointer.deallocate(capacity: rowBytes * Int(h))
-            }
+        }
             
             let bitmapInfo = cgImage.bitmapInfo.fixed
             guard let context = CGContext(data: inDataPointer,
@@ -474,7 +476,7 @@ extension Image {
                                           bitmapInfo: bitmapInfo.rawValue) else
             {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
-                return self
+                return base
             }
             
             context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
@@ -487,7 +489,7 @@ extension Image {
             defer {
                 outDataPointer.deinitialize()
                 outDataPointer.deallocate(capacity: rowBytes * Int(h))
-            }
+        }
             
             var outBuffer = vImage_Buffer(data: outDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
             
@@ -505,17 +507,17 @@ extension Image {
                                              bitmapInfo: bitmapInfo.rawValue) else
             {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
-                return self
+                return base
             }
             
             #if os(macOS)
-                let result = outContext.makeImage().flatMap { kf_fixedForRetinaPixel(cgImage: $0, to: kf_size) }
+                let result = outContext.makeImage().flatMap { fixedForRetinaPixel(cgImage: $0, to: size) }
             #else
                 let result = outContext.makeImage().flatMap { Image(cgImage: $0) }
             #endif
             guard let blurredImage = result else {
                 assertionFailure("[Kingfisher] Can not make an blurred image within this context.")
-                return self
+                return base
             }
             
             return blurredImage
@@ -532,29 +534,29 @@ extension Image {
     /// - returns: An image with a color overlay applied.
     ///
     /// - Note: This method only works for CG-based image.
-    public func kf_overlaying(with color: Color, fraction: CGFloat) -> Image {
-
+    public func overlaying(with color: Color, fraction: CGFloat) -> Image {
+        
         guard let cgImage = cgImage?.fixed else {
             assertionFailure("[Kingfisher] Overlaying only works for CG-based image.")
-            return self
+            return base
         }
         
-        let rect = CGRect(x: 0, y: 0, width: kf_size.width, height: kf_size.height)
+        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         return draw(cgImage: cgImage, to: rect.size) {
             #if os(macOS)
-            draw(in: rect)
-            if fraction > 0 {
-                color.withAlphaComponent(1 - fraction).set()
-                NSRectFillUsingOperation(rect, .sourceAtop)
-            }
+                base.draw(in: rect)
+                if fraction > 0 {
+                    color.withAlphaComponent(1 - fraction).set()
+                    NSRectFillUsingOperation(rect, .sourceAtop)
+                }
             #else
-            color.set()
-            UIRectFill(rect)
-            draw(in: rect, blendMode: .destinationIn, alpha: 1.0)
-            
-            if fraction > 0 {
-                draw(in: rect, blendMode: .sourceAtop, alpha: fraction)
-            }
+                color.set()
+                UIRectFill(rect)
+                base.draw(in: rect, blendMode: .destinationIn, alpha: 1.0)
+                
+                if fraction > 0 {
+                    base.draw(in: rect, blendMode: .sourceAtop, alpha: fraction)
+                }
             #endif
         }
     }
@@ -566,11 +568,11 @@ extension Image {
     /// - parameter color: The color should be used to tint `self`
     ///
     /// - returns: An image with a color tint applied.
-    public func kf_tinted(with color: Color) -> Image {
+    public func tinted(with color: Color) -> Image {
         #if os(watchOS)
-        return self
+            return self
         #else
-        return kf_apply(.tint(color))
+            return apply(.tint(color))
         #endif
     }
     
@@ -584,45 +586,45 @@ extension Image {
     /// - parameter inputEV:    InputEV changing to image.
     ///
     /// - returns: An image with color control applied.
-    public func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
+    public func adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
         #if os(watchOS)
-        return self
+            return base
         #else
-        return kf_apply(.colorControl(brightness, contrast, saturation, inputEV))
+            return apply(.colorControl(brightness, contrast, saturation, inputEV))
         #endif
     }
 }
 
 // MARK: - Decode
-extension Image {
-    func kf_decoded() -> Image? {
-        return self.kf_decoded(scale: kf_scale)
+extension Kingfisher where Base: Image {
+    var decoded: Image? {
+        return decoded(scale: scale)
     }
     
-    func kf_decoded(scale: CGFloat) -> Image {
+    func decoded(scale: CGFloat) -> Image {
         // prevent animated image (GIF) lose it's images
-#if os(iOS)
-        if kf_imageSource != nil { return self }
-#else
-        if kf_images != nil { return self }
-#endif
+        #if os(iOS)
+            if imageSource != nil { return base }
+        #else
+            if images != nil { return base }
+        #endif
         
         guard let imageRef = self.cgImage else {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
-            return self
+            return base
         }
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = imageRef.bitmapInfo.fixed
         
         guard let context = CGContext(data: nil, width: imageRef.width, height: imageRef.height, bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue) else {
             assertionFailure("[Kingfisher] Decoding fails to create a valid context.")
-            return self
+            return base
         }
         
         let rect = CGRect(x: 0, y: 0, width: imageRef.width, height: imageRef.height)
         context.draw(imageRef, in: rect)
         let decompressedImageRef = context.makeImage()
-        return Image.kf_image(cgImage: decompressedImageRef!, scale: scale, refImage: self)
+        return Kingfisher<Image>.image(cgImage: decompressedImageRef!, scale: scale, refImage: base)
     }
 }
 
@@ -728,7 +730,7 @@ extension CGBitmapInfo {
 }
 
 
-extension Image {
+extension Kingfisher where Base: Image {
     
     func draw(cgImage: CGImage?, to size: CGSize, draw: ()->()) -> Image {
         #if os(macOS)
@@ -745,7 +747,7 @@ extension Image {
             bitsPerPixel: 0) else
         {
             assertionFailure("[Kingfisher] Image representation cannot be created.")
-            return self
+            return base
         }
         rep.size = size
         
@@ -764,18 +766,18 @@ extension Image {
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         defer { UIGraphicsEndImageContext() }
         draw()
-        return UIGraphicsGetImageFromCurrentImageContext() ?? self
+        return UIGraphicsGetImageFromCurrentImageContext() ?? base
         
         #endif
     }
     
     #if os(macOS)
-    func kf_fixedForRetinaPixel(cgImage: CGImage, to size: CGSize) -> Image {
+    func fixedForRetinaPixel(cgImage: CGImage, to size: CGSize) -> Image {
         
-        let image = Image(cgImage: cgImage, size: self.size)
+        let image = Image(cgImage: cgImage, size: base.size)
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
-        return draw(cgImage: cgImage, to: kf_size) {
+        return draw(cgImage: cgImage, to: self.size) {
             image.draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
         }
     }
@@ -818,4 +820,112 @@ extension Double {
     }
 }
 
-
+// MARK: - Deprecated. Only for back compatibility.
+extension Image {
+    /**
+     Normalize the image. This method does nothing in OS X.
+     
+     - returns: The image itself.
+     */
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.normalized` instead.",
+    renamed: "kf.normalized")
+    public func kf_normalized() -> Image {
+        return kf.normalized
+    }
+    
+    // MARK: - Round Corner
+    
+    /// Create a round corner image based on `self`.
+    ///
+    /// - parameter radius: The round corner radius of creating image.
+    /// - parameter size:   The target size of creating image.
+    /// - parameter scale:  The image scale of creating image.
+    ///
+    /// - returns: An image with round corner of `self`.
+    ///
+    /// - Note: This method only works for CG-based image.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.image(withRoundRadius:fit:scale:)` instead.",
+    renamed: "kf.image")
+    public func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
+        return kf.image(withRoundRadius: radius, fit: size, scale: scale)
+    }
+    
+    // MARK: - Resize
+    /// Resize `self` to an image of new size.
+    ///
+    /// - parameter size: The target size.
+    ///
+    /// - returns: An image with new size.
+    ///
+    /// - Note: This method only works for CG-based image.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.resize(to:)` instead.",
+    renamed: "kf.resize")
+    public func kf_resize(to size: CGSize) -> Image {
+        return kf.resize(to: size)
+    }
+    
+    // MARK: - Blur
+    /// Create an image with blur effect based on `self`.
+    ///
+    /// - parameter radius: The blur radius should be used when creating blue.
+    ///
+    /// - returns: An image with blur effect applied.
+    ///
+    /// - Note: This method only works for CG-based image.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.blurred(withRadius:)` instead.",
+    renamed: "kf.blurred")
+    public func kf_blurred(withRadius radius: CGFloat) -> Image {
+        return kf.blurred(withRadius: radius)
+    }
+    
+    // MARK: - Overlay
+    /// Create an image from `self` with a color overlay layer.
+    ///
+    /// - parameter color:    The color should be use to overlay.
+    /// - parameter fraction: Fraction of input color. From 0.0 to 1.0. 0.0 means solid color, 1.0 means transparent overlay.
+    ///
+    /// - returns: An image with a color overlay applied.
+    ///
+    /// - Note: This method only works for CG-based image.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.overlaying(with:fraction:)` instead.",
+    renamed: "kf.overlaying")
+    public func kf_overlaying(with color: Color, fraction: CGFloat) -> Image {
+        return kf.overlaying(with: color, fraction: fraction)
+    }
+    
+    // MARK: - Tint
+    
+    /// Create an image from `self` with a color tint.
+    ///
+    /// - parameter color: The color should be used to tint `self`
+    ///
+    /// - returns: An image with a color tint applied.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.tinted(with:)` instead.",
+    renamed: "kf.tinted")
+    public func kf_tinted(with color: Color) -> Image {
+        return kf.tinted(with: color)
+    }
+    
+    // MARK: - Color Control
+    
+    /// Create an image from `self` with color control.
+    ///
+    /// - parameter brightness: Brightness changing to image.
+    /// - parameter contrast:   Contrast changing to image.
+    /// - parameter saturation: Saturation changing to image.
+    /// - parameter inputEV:    InputEV changing to image.
+    ///
+    /// - returns: An image with color control applied.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.adjusted` instead.",
+    renamed: "kf.adjusted")
+    public func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
+        return kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
+    }
+}
