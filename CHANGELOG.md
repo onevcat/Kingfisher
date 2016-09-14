@@ -2,6 +2,28 @@
 
 -----
 
+## [3.0.1 - New Age - Swift 3](https://github.com/onevcat/Kingfisher/releases/tag/3.0.1) (2016-09-14)
+
+#### Add
+* Swift 3 compatibility. This version follows Swift 3 API design guideline as well as contains a lot of breaking changes from version 2.x. See [Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) for more about how to migrate your project to 3.0. Kingfisher 2.6.x is still supporting both Swift 2.2 and 2.3.
+* Image Processor. Now you can specify an image processor and it will be used to process images after downloaded. It is useful when you need to apply some transforming or filter to the image. You can also use the processor to support any other image format, like WebP. See [Processor](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#processor) section in the wiki for more. The default processor should behave the same as before. [#420](https://github.com/onevcat/Kingfisher/pull/420)
+* Built-in processors from simple round corner and resizing to filters like tint and blur. Check [Built-in processors of Kingfisher](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#built-in-processors-of-kingfisher) for more.
+* Cache Serializer. [CacheSerializer](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#serializer) will be used to convert some data to an image object for retrieving from disk cache and vice versa for storing to disk cache.
+* New indicator type. Now you should be able to use your own indicators. [#430](https://github.com/onevcat/Kingfisher/pull/430)
+* ImageDownloadRequestModifier. Use this protocol to modify requests being sent to your server.
+
+#### Fix
+* Resource is now a protocol instead of a struct. Use `ImageResource` for your original `Resource` type. And now `URL` conforms `Resource` so the APIs could be clearer.
+* Now Kingfisher cache will store re-encoded image data instead of the original data by default. This is needed due to we want to store the processed data from `ImageProcessor`. If this is not what you want, you should supply your customized instanse of `CacheSerializer`.
+
+#### Remove
+* KingfisherManager.init is removed since you should never create your own manager.
+* cachedImageExistsforURL in `ImageCache` is removed since it introduced unnecessary coupling. Use `isImageCached` instead.
+* requestModifier` is removed. Use `.requestModifier` and pass a `ImageDownloadRequestModifier`.
+* kf_showIndicatorWhenLoading is removed since we have a better and flexible way to use indicator by `kf_indicatorType`.
+
+---
+
 ## [3.0.0 - New Age - Swift 3](https://github.com/onevcat/Kingfisher/releases/tag/3.0.0) (2016-09-14)
 
 #### Add
