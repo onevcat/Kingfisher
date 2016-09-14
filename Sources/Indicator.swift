@@ -36,6 +36,17 @@
     public typealias IndicatorView = UIView
 #endif
 
+public enum IndicatorType {
+    /// No indicator.
+    case none
+    /// Use system activity indicator.
+    case activity
+    /// Use an image as indicator. GIF is supported.
+    case image(imageData: Data)
+    /// Use a custom indicator, which conforms to the `Indicator` protocol.
+    case custom(indicator: Indicator)
+}
+
 // MARK: - Indicator Protocol
 public protocol Indicator {
     func startAnimatingView()
