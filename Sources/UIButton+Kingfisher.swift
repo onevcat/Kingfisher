@@ -26,6 +26,7 @@
 
 import UIKit
 
+// MARK: - Set Images
 /**
  *	Set image to use in button from web for a specified state.
  */
@@ -96,55 +97,7 @@ extension Kingfisher where Base: UIButton {
     public func cancelImageDownloadTask() {
         imageTask?.downloadTask?.cancel()
     }
-}
-
-// MARK: - Associated Object
-private var lastURLKey: Void?
-private var imageTaskKey: Void?
-
-extension Kingfisher where Base: UIButton {
-    /**
-     Get the image URL binded to this button for a specified state.
-     
-     - parameter state: The state that uses the specified image.
-     
-     - returns: Current URL for image.
-     */
-    public func webURL(for state: UIControlState) -> URL? {
-        return webURLs[NSNumber(value:state.rawValue)] as? URL
-    }
     
-    fileprivate func setWebURL(_ url: URL, for state: UIControlState) {
-        webURLs[NSNumber(value:state.rawValue)] = url
-    }
-    
-    fileprivate var webURLs: NSMutableDictionary {
-        var dictionary = objc_getAssociatedObject(base, &lastURLKey) as? NSMutableDictionary
-        if dictionary == nil {
-            dictionary = NSMutableDictionary()
-            setWebURLs(dictionary!)
-        }
-        return dictionary!
-    }
-    
-    fileprivate func setWebURLs(_ URLs: NSMutableDictionary) {
-        objc_setAssociatedObject(base, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    fileprivate var imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? RetrieveImageTask
-    }
-    
-    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
-        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-}
-
-
-/**
- *	Set background image to use from web for a specified state.
- */
-extension Kingfisher where Base: UIButton {
     /**
      Set the background image to use for a specified state with a resource,
      a placeholder image, options progress handler and completion handler.
@@ -209,12 +162,56 @@ extension Kingfisher where Base: UIButton {
     public func cancelBackgroundImageDownloadTask() {
         backgroundImageTask?.downloadTask?.cancel()
     }
+
 }
+
+// MARK: - Associated Object
+private var lastURLKey: Void?
+private var imageTaskKey: Void?
+
+extension Kingfisher where Base: UIButton {
+    /**
+     Get the image URL binded to this button for a specified state.
+     
+     - parameter state: The state that uses the specified image.
+     
+     - returns: Current URL for image.
+     */
+    public func webURL(for state: UIControlState) -> URL? {
+        return webURLs[NSNumber(value:state.rawValue)] as? URL
+    }
+    
+    fileprivate func setWebURL(_ url: URL, for state: UIControlState) {
+        webURLs[NSNumber(value:state.rawValue)] = url
+    }
+    
+    fileprivate var webURLs: NSMutableDictionary {
+        var dictionary = objc_getAssociatedObject(base, &lastURLKey) as? NSMutableDictionary
+        if dictionary == nil {
+            dictionary = NSMutableDictionary()
+            setWebURLs(dictionary!)
+        }
+        return dictionary!
+    }
+    
+    fileprivate func setWebURLs(_ URLs: NSMutableDictionary) {
+        objc_setAssociatedObject(base, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    fileprivate var imageTask: RetrieveImageTask? {
+        return objc_getAssociatedObject(base, &imageTaskKey) as? RetrieveImageTask
+    }
+    
+    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
+        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+}
+
 
 private var lastBackgroundURLKey: Void?
 private var backgroundImageTaskKey: Void?
 
-// MARK: - Runtime for UIButton background image
+
 extension Kingfisher where Base: UIButton {
     /**
      Get the background image URL binded to this button for a specified state.
