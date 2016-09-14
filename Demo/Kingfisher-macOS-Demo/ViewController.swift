@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Kingfisher-OSX-Demo
+//  Kingfisher-macOS-Demo
 //
 //  Created by Wei Wang on 16/1/6.
 //
@@ -37,15 +37,9 @@ class ViewController: NSViewController {
         title = "Kingfisher"
     }
 
-    override var representedObject: AnyObject? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-    }
-
     @IBAction func clearCachePressed(sender: AnyObject) {
-        KingfisherManager.sharedManager.cache.clearMemoryCache()
-        KingfisherManager.sharedManager.cache.clearDiskCache()
+        KingfisherManager.shared.cache.clearMemoryCache()
+        KingfisherManager.shared.cache.clearDiskCache()
     }
     
     @IBAction func reloadPressed(sender: AnyObject) {
@@ -54,22 +48,17 @@ class ViewController: NSViewController {
 }
 
 extension ViewController: NSCollectionViewDataSource {
-    func collectionView(collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
     
-    func collectionView(collectionView: NSCollectionView, itemForRepresentedObjectAtIndexPath indexPath: NSIndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItemWithIdentifier("Cell", forIndexPath: indexPath)
+    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+        let item = collectionView.makeItem(withIdentifier: "Cell", for: indexPath)
         
-        if let loaderPath = NSBundle.mainBundle().pathForResource("loader", ofType: "gif") {
-            if let loaderData = NSData(contentsOfFile: loaderPath) {
-                item.imageView?.kf_indicatorType = .image(imageData: loaderData)
-            }
-        }
+        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
         
-        let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
-        
-        item.imageView?.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: nil,
+        item.imageView?.kf_indicatorType = .activity
+        item.imageView?.kf_setImage(with: url, placeholder: nil, options: nil,
                                                    progressBlock: { receivedSize, totalSize in
                                                     print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")
                                                     },

@@ -24,13 +24,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
     import AppKit
 #else
     import UIKit
 #endif
 
-#if os(OSX)
+#if os(macOS)
     public typealias IndicatorView = NSView
 #else
     public typealias IndicatorView = UIView
@@ -46,8 +46,8 @@ public protocol Indicator {
 }
 
 extension Indicator {
-    #if os(OSX)
-    var viewCenter: CGPoint {
+    #if os(macOS)
+    public var viewCenter: CGPoint {
         get {
             let frame = view.frame
             return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
@@ -62,7 +62,7 @@ extension Indicator {
         }
     }
     #else
-    var viewCenter: CGPoint {
+    public var viewCenter: CGPoint {
         get {
             return view.center
         }
@@ -77,7 +77,7 @@ extension Indicator {
 // Displays a NSProgressIndicator / UIActivityIndicatorView
 struct ActivityIndicator: Indicator {
 
-    #if os(OSX)
+    #if os(macOS)
     private let activityIndicatorView: NSProgressIndicator
     #else
     private let activityIndicatorView: UIActivityIndicatorView
@@ -88,41 +88,36 @@ struct ActivityIndicator: Indicator {
     }
 
     func startAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             activityIndicatorView.startAnimation(nil)
         #else
             activityIndicatorView.startAnimating()
         #endif
-        activityIndicatorView.hidden = false
+        activityIndicatorView.isHidden = false
     }
 
     func stopAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             activityIndicatorView.stopAnimation(nil)
         #else
             activityIndicatorView.stopAnimating()
         #endif
-        activityIndicatorView.hidden = true
+        activityIndicatorView.isHidden = true
     }
 
     init() {
-        #if os(OSX)
+        #if os(macOS)
             activityIndicatorView = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
-
-            #if swift(>=2.3)
-                activityIndicatorView.controlSize = .Small
-            #else
-                activityIndicatorView.controlSize = .SmallControlSize
-            #endif
-            activityIndicatorView.style = .SpinningStyle
+            activityIndicatorView.controlSize = .small
+            activityIndicatorView.style = .spinningStyle
         #else
             #if os(tvOS)
-                let indicatorStyle = UIActivityIndicatorViewStyle.White
+                let indicatorStyle = UIActivityIndicatorViewStyle.white
             #else
-                let indicatorStyle = UIActivityIndicatorViewStyle.Gray
+                let indicatorStyle = UIActivityIndicatorViewStyle.gray
             #endif
             activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
-            activityIndicatorView.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+            activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleTopMargin]
         #endif
     }
 }
@@ -136,41 +131,50 @@ struct ImageIndicator: Indicator {
         return animatedImageIndicatorView
     }
 
-    init(imageData data: NSData) {
+    init?(imageData data: Data, processor: ImageProcessor = DefaultImageProcessor.default, options: KingfisherOptionsInfo = KingfisherEmptyOptionsInfo) {
 
-        let image = Image.kf_imageWithData(data, scale: 1.0, preloadAllGIFData: true)
+        var options = options
+        // Use normal image view to show gif, so we need to preload all gif data.
+        if !options.preloadAllGIFData {
+            options.append(.preloadAllGIFData)
+        }
+        
+        guard let image = processor.process(item: .data(data), options: options) else {
+            return nil
+        }
+
         animatedImageIndicatorView = ImageView()
         animatedImageIndicatorView.image = image
         
-        #if os(OSX)
-            // Need for gif to animate on OSX
-            self.animatedImageIndicatorView.imageScaling = .ScaleNone
+        #if os(macOS)
+            // Need for gif to animate on macOS
+            self.animatedImageIndicatorView.imageScaling = .scaleNone
             self.animatedImageIndicatorView.canDrawSubviewsIntoLayer = true
         #else
-            animatedImageIndicatorView.contentMode = .Center
+            animatedImageIndicatorView.contentMode = .center
             
-            animatedImageIndicatorView.autoresizingMask = [.FlexibleLeftMargin,
-                                                           .FlexibleRightMargin,
-                                                           .FlexibleBottomMargin,
-                                                           .FlexibleTopMargin]
+            animatedImageIndicatorView.autoresizingMask = [.flexibleLeftMargin,
+                                                           .flexibleRightMargin,
+                                                           .flexibleBottomMargin,
+                                                           .flexibleTopMargin]
         #endif
     }
 
     func startAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             animatedImageIndicatorView.animates = true
         #else
             animatedImageIndicatorView.startAnimating()
         #endif
-        animatedImageIndicatorView.hidden = false
+        animatedImageIndicatorView.isHidden = false
     }
 
     func stopAnimatingView() {
-        #if os(OSX)
+        #if os(macOS)
             animatedImageIndicatorView.animates = false
         #else
             animatedImageIndicatorView.stopAnimating()
         #endif
-        animatedImageIndicatorView.hidden = true
+        animatedImageIndicatorView.isHidden = true
     }
 }
