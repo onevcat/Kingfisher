@@ -282,7 +282,7 @@ extension Kingfisher where Base: Image {
             return (images, gifDuration)
         }
         
-        // Start of kf_animatedImageWithGIFData
+        // Start of kf.animatedImageWithGIFData
         let options: NSDictionary = [kCGImageSourceShouldCache as String: true, kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, options) else {
             return nil
@@ -317,15 +317,16 @@ extension Kingfisher where Base: Image {
     
     static func image(data: Data, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         var image: Image?
+        
         #if os(macOS)
-            switch data.kf_imageFormat {
+            switch data.kf.imageFormat {
             case .JPEG: image = Image(data: data)
             case .PNG: image = Image(data: data)
             case .GIF: image = Kingfisher<Image>.animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
             case .unknown: image = Image(data: data)
             }
         #else
-            switch data.kf_imageFormat {
+            switch data.kf.imageFormat {
             case .JPEG: image = Image(data: data, scale: scale)
             case .PNG: image = Image(data: data, scale: scale)
             case .GIF: image = Kingfisher<Image>.animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
@@ -380,10 +381,10 @@ extension Kingfisher where Base: Image {
     func resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
         switch contentMode {
         case .scaleAspectFit:
-            let newSize = self.size.kf_constrained(size)
+            let newSize = self.size.kf.constrained(size)
             return resize(to: newSize)
         case .scaleAspectFill:
-            let newSize = self.size.kf_filling(size)
+            let newSize = self.size.kf.filling(size)
             return resize(to: newSize)
         default:
             return resize(to: size)
@@ -428,7 +429,7 @@ extension Kingfisher where Base: Image {
     /// - Note: This method only works for CG-based image.
     public func blurred(withRadius radius: CGFloat) -> Image {
         #if os(watchOS)
-            return self
+            return base
         #else
             guard let cgImage = cgImage else {
                 assertionFailure("[Kingfisher] Blur only works for CG-based image.")
@@ -570,7 +571,7 @@ extension Kingfisher where Base: Image {
     /// - returns: An image with a color tint applied.
     public func tinted(with color: Color) -> Image {
         #if os(watchOS)
-            return self
+            return base
         #else
             return apply(.tint(color))
         #endif
@@ -650,10 +651,20 @@ enum ImageFormat {
 
 
 // MARK: - Misc Helpers
-extension Data {
-    var kf_imageFormat: ImageFormat {
+protocol DataType {
+    func getBytes(_ buffer: UnsafeMutableRawPointer, length: Int)
+}
+extension Data: DataType {
+    func getBytes(_ buffer: UnsafeMutableRawPointer, length: Int) {
+        (self as NSData).getBytes(buffer, length: length)
+    }
+}
+
+extension Data: KingfisherCompatible { }
+extension Kingfisher where Base: DataType {
+    var imageFormat: ImageFormat {
         var buffer = [UInt8](repeating: 0, count: 8)
-        (self as NSData).getBytes(&buffer, length: 8)
+        base.getBytes(&buffer, length: 8)
         if buffer == ImageHeaderData.PNG {
             return .PNG
         } else if buffer[0] == ImageHeaderData.JPEG_SOI[0] &&
@@ -672,23 +683,30 @@ extension Data {
     }
 }
 
-extension CGSize {
-    func kf_constrained(_ size: CGSize) -> CGSize {
-        let aspectWidth = round(kf_aspectRatio * size.height)
-        let aspectHeight = round(size.width / kf_aspectRatio)
+protocol SizeType {
+    var width: CGFloat { get }
+    var height: CGFloat { get }
+}
+extension CGSize: SizeType { }
+
+extension CGSize: KingfisherCompatible { }
+extension Kingfisher where Base: SizeType {
+    func constrained(_ size: CGSize) -> CGSize {
+        let aspectWidth = round(aspectRatio * size.height)
+        let aspectHeight = round(size.width / aspectRatio)
         
         return aspectWidth > size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
     }
     
-    func kf_filling(_ size: CGSize) -> CGSize {
-        let aspectWidth = round(kf_aspectRatio * size.height)
-        let aspectHeight = round(size.width / kf_aspectRatio)
+    func filling(_ size: CGSize) -> CGSize {
+        let aspectWidth = round(aspectRatio * size.height)
+        let aspectHeight = round(size.width / aspectRatio)
         
         return aspectWidth < size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
     }
     
-    private var kf_aspectRatio: CGFloat {
-        return height == 0.0 ? 1.0 : width / height
+    private var aspectRatio: CGFloat {
+        return base.height == 0.0 ? 1.0 : base.width / base.height
     }
 }
 

@@ -94,7 +94,7 @@ extension Kingfisher where Base: ImageView {
                         return
                     }
                     
-                    guard let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.transition(.none)),
+                    guard let transitionItem = options.firstMatchIgnoringAssociatedValue(.transition(.none)),
                         case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) else
                     {
                         maybeIndicator?.stopAnimatingView()
@@ -182,7 +182,7 @@ extension Kingfisher where Base: ImageView {
     
     /// Holds any type that conforms to the protocol `Indicator`.
     /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
-    /// It will be `nil` if `kf_indicatorType` is `.none`.
+    /// It will be `nil` if `indicatorType` is `.none`.
     public fileprivate(set) var indicator: Indicator? {
         get {
             return (objc_getAssociatedObject(base, &indicatorKey) as? Box<Indicator?>)?.value
@@ -252,9 +252,7 @@ extension ImageView {
      Nothing will happen if the downloading has already finished.
      */
     @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.cancelDownloadTask` instead.", renamed: "kf.cancelDownloadTask")
-    public func kf_cancelDownloadTask() {
-        kf_imageTask?.downloadTask?.cancel()
-    }
+    public func kf_cancelDownloadTask() { kf.cancelDownloadTask() }
     
     /// Get the image URL binded to this image view.
     @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.webURL` instead.", renamed: "kf.webURL")

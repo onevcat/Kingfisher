@@ -138,18 +138,18 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
 }
 
 extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-    func kf_firstMatchIgnoringAssociatedValue(_ target: Iterator.Element) -> Iterator.Element? {
+    func firstMatchIgnoringAssociatedValue(_ target: Iterator.Element) -> Iterator.Element? {
         return index { $0 <== target }.flatMap { self[$0] }
     }
     
-    func kf_removeAllMatchesIgnoringAssociatedValue(_ target: Iterator.Element) -> [Iterator.Element] {
+    func removeAllMatchesIgnoringAssociatedValue(_ target: Iterator.Element) -> [Iterator.Element] {
         return self.filter { !($0 <== target) }
     }
 }
 
 extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     var targetCache: ImageCache {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.targetCache(.default)),
+        if let item = firstMatchIgnoringAssociatedValue(.targetCache(.default)),
             case .targetCache(let cache) = item
         {
             return cache
@@ -158,7 +158,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var downloader: ImageDownloader {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.downloader(.default)),
+        if let item = firstMatchIgnoringAssociatedValue(.downloader(.default)),
             case .downloader(let downloader) = item
         {
             return downloader
@@ -167,7 +167,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var transition: ImageTransition {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.transition(.none)),
+        if let item = firstMatchIgnoringAssociatedValue(.transition(.none)),
             case .transition(let transition) = item
         {
             return transition
@@ -176,7 +176,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var downloadPriority: Float {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.downloadPriority(0)),
+        if let item = firstMatchIgnoringAssociatedValue(.downloadPriority(0)),
             case .downloadPriority(let priority) = item
         {
             return priority
@@ -209,7 +209,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var callbackDispatchQueue: DispatchQueue {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
+        if let item = firstMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
             case .callbackDispatchQueue(let queue) = item
         {
             return queue ?? DispatchQueue.main
@@ -218,7 +218,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var scaleFactor: CGFloat {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.scaleFactor(0)),
+        if let item = firstMatchIgnoringAssociatedValue(.scaleFactor(0)),
             case .scaleFactor(let scale) = item
         {
             return scale
@@ -227,7 +227,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var modifier: ImageDownloadRequestModifier {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.requestModifier(NoModifier.default)),
+        if let item = firstMatchIgnoringAssociatedValue(.requestModifier(NoModifier.default)),
             case .requestModifier(let modifier) = item
         {
             return modifier
@@ -236,7 +236,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var processor: ImageProcessor {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.processor(DefaultImageProcessor.default)),
+        if let item = firstMatchIgnoringAssociatedValue(.processor(DefaultImageProcessor.default)),
             case .processor(let processor) = item
         {
             return processor
@@ -245,7 +245,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
     
     var cacheSerializer: CacheSerializer {
-        if let item = kf_firstMatchIgnoringAssociatedValue(.cacheSerializer(DefaultCacheSerializer.default)),
+        if let item = firstMatchIgnoringAssociatedValue(.cacheSerializer(DefaultCacheSerializer.default)),
             case .cacheSerializer(let cacheSerializer) = item
         {
             return cacheSerializer

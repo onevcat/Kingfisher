@@ -63,7 +63,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
     private init() {}
     
     public func data(with image: Image, original: Data?) -> Data? {
-        let imageFormat = original?.kf_imageFormat ?? .unknown
+        let imageFormat = original?.kf.imageFormat ?? .unknown
         
         let data: Data?
         switch imageFormat {

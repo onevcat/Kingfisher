@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ImageIO
 
 #if os(macOS)
     import AppKit
@@ -18,8 +19,10 @@ import Foundation
     import UIKit
     public typealias Image = UIImage
     public typealias Color = UIColor
+    #if !os(watchOS)
     public typealias ImageView = UIImageView
     typealias Button = UIButton
+    #endif
 #endif
 
 public struct Kingfisher<Base> {
@@ -44,6 +47,8 @@ public extension KingfisherCompatible {
     }
 }
 
-extension ImageView: KingfisherCompatible { }
 extension Image: KingfisherCompatible { }
+#if !os(watchOS)
+extension ImageView: KingfisherCompatible { }
 extension Button: KingfisherCompatible { }
+#endif
