@@ -44,7 +44,7 @@ extension CIImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf_apply(filter)
+            return image.kf.apply(filter)
         case .data(let data):
             return Kingfisher<Image>.image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
         }
@@ -136,6 +136,9 @@ public extension Image {
     /// - returns: A transformed image by input `Filter`.
     ///
     /// - Note: Only CG-based images are supported. If any error happens during transforming, `self` will be returned.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.apply` instead.",
+    renamed: "kf.apply")
     public func kf_apply(_ filter: Filter) -> Image {
         return kf.apply(filter)
     }

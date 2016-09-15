@@ -42,18 +42,18 @@ class ImageExtensionTests: XCTestCase {
     
     func testImageFormat() {
         var format: ImageFormat
-        format = testImageJEPGData.kf_imageFormat
+        format = testImageJEPGData.kf.imageFormat
         XCTAssertEqual(format, ImageFormat.JPEG)
         
-        format = testImagePNGData.kf_imageFormat
+        format = testImagePNGData.kf.imageFormat
         XCTAssertEqual(format, ImageFormat.PNG)
         
-        format = testImageGIFData.kf_imageFormat
+        format = testImageGIFData.kf.imageFormat
         XCTAssertEqual(format, ImageFormat.GIF)
         
         let raw: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8]
         
-        format = Data(bytes: raw) .kf_imageFormat
+        format = Data(bytes: raw).kf.imageFormat
         XCTAssertEqual(format, ImageFormat.unknown)
     }
     
@@ -75,12 +75,12 @@ class ImageExtensionTests: XCTestCase {
         let data = image.kf.gifRepresentation()
         
         XCTAssertNotNil(data, "Data should not be nil")
-        XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)
+        XCTAssertEqual(data?.kf.imageFormat, ImageFormat.GIF)
         
         let allLoadImage = Kingfisher<Image>.animated(with: data!, preloadAll: true)!
         let allLoadData = allLoadImage.kf.gifRepresentation()
         XCTAssertNotNil(allLoadData, "Data1 should not be nil")
-        XCTAssertEqual(allLoadData?.kf_imageFormat, ImageFormat.GIF)
+        XCTAssertEqual(allLoadData?.kf.imageFormat, ImageFormat.GIF)
     }
     
     func testGenerateSingleFrameGIFImage() {

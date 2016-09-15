@@ -510,7 +510,7 @@ extension ImageCache {
     */
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
-        guard let sharedApplication = UIApplication.kf_shared else { return }
+        guard let sharedApplication = Kingfisher<UIApplication>.shared else { return }
 
         func endBackgroundTask(_ task: inout UIBackgroundTaskIdentifier) {
             sharedApplication.endBackgroundTask(task)
@@ -636,7 +636,7 @@ extension ImageCache {
     }
     
     func cacheFileName(forComputedKey key: String) -> String {
-        return key.kf_MD5
+        return key.kf.md5
     }
 }
 
@@ -656,11 +656,12 @@ extension Dictionary {
 
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
-extension UIApplication {
-    public static var kf_shared: UIApplication? {
+extension UIApplication: KingfisherCompatible { }
+extension Kingfisher where Base: UIApplication {
+    public static var shared: UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")
-        guard responds(to: selector) else { return nil }
-        return perform(selector).takeUnretainedValue() as? UIApplication
+        guard Base.responds(to: selector) else { return nil }
+        return Base.perform(selector).takeUnretainedValue() as? UIApplication
     }
 }
 #endif
