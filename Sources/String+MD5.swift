@@ -21,34 +21,43 @@ Permission is granted to anyone to use this software for any purpose,including c
 
 import Foundation
 
-protocol StringType {
-    func data(using encoding: String.Encoding, allowLossyConversion: Bool) -> Data?
+public struct StringProxy {
+    fileprivate let base: String
+    init(proxy: String) {
+        base = proxy
+    }
 }
-extension String: StringType { }
-extension String: KingfisherCompatible {}
 
-extension Kingfisher where Base: StringType {
-    var md5: Base {
+extension String: KingfisherCompatible {
+    public typealias CompatibleType = StringProxy
+    public var kf: CompatibleType {
+        return StringProxy(proxy: self)
+    }
+}
+
+extension StringProxy {
+    var md5: String {
         if let data = base.data(using: .utf8, allowLossyConversion: true) {
-            
+
             let message = data.withUnsafeBytes { bytes -> [UInt8] in
                 return Array(UnsafeBufferPointer(start: bytes, count: data.count))
             }
-            
+
             let MD5Calculator = MD5(message)
             let MD5Data = MD5Calculator.calculate()
-            
+
             let MD5String = NSMutableString()
             for c in MD5Data {
                 MD5String.appendFormat("%02x", c)
             }
-            return MD5String as! Base
-            
+            return MD5String as String
+
         } else {
             return base
         }
     }
 }
+
 
 /** array of bytes, little-endian representation */
 func arrayOfBytes<T>(_ value: T, length: Int? = nil) -> [UInt8] {

@@ -651,20 +651,24 @@ enum ImageFormat {
 
 
 // MARK: - Misc Helpers
-protocol DataType {
-    func getBytes(_ buffer: UnsafeMutableRawPointer, length: Int)
-}
-extension Data: DataType {
-    func getBytes(_ buffer: UnsafeMutableRawPointer, length: Int) {
-        (self as NSData).getBytes(buffer, length: length)
+public struct DataProxy {
+    fileprivate let base: Data
+    init(proxy: Data) {
+        base = proxy
     }
 }
 
-extension Data: KingfisherCompatible { }
-extension Kingfisher where Base: DataType {
+extension Data: KingfisherCompatible {
+    public typealias CompatibleType = DataProxy
+    public var kf: DataProxy {
+        return DataProxy(proxy: self)
+    }
+}
+
+extension DataProxy {
     var imageFormat: ImageFormat {
         var buffer = [UInt8](repeating: 0, count: 8)
-        base.getBytes(&buffer, length: 8)
+        (base as NSData).getBytes(&buffer, length: 8)
         if buffer == ImageHeaderData.PNG {
             return .PNG
         } else if buffer[0] == ImageHeaderData.JPEG_SOI[0] &&
@@ -678,37 +682,45 @@ extension Kingfisher where Base: DataType {
         {
             return .GIF
         }
-        
+
         return .unknown
     }
 }
 
-protocol SizeType {
-    var width: CGFloat { get }
-    var height: CGFloat { get }
+public struct CGSizeProxy {
+    fileprivate let base: CGSize
+    init(proxy: CGSize) {
+        base = proxy
+    }
 }
-extension CGSize: SizeType { }
 
-extension CGSize: KingfisherCompatible { }
-extension Kingfisher where Base: SizeType {
+extension CGSize: KingfisherCompatible {
+    public typealias CompatibleType = CGSizeProxy
+    public var kf: CGSizeProxy {
+        return CGSizeProxy(proxy: self)
+    }
+}
+
+extension CGSizeProxy {
     func constrained(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
-        
+
         return aspectWidth > size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
     }
-    
+
     func filling(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
-        
+
         return aspectWidth < size.width ? CGSize(width: size.width, height: aspectHeight) : CGSize(width: aspectWidth, height: size.height)
     }
-    
+
     private var aspectRatio: CGFloat {
         return base.height == 0.0 ? 1.0 : base.width / base.height
     }
 }
+
 
 extension CGImage {
     var isARGB8888: Bool {
