@@ -37,7 +37,7 @@ public struct Kingfisher<Base> {
  */
 public protocol KingfisherCompatible {
     associatedtype CompatibleType
-    var kf: Kingfisher<CompatibleType> { get set }
+    var kf: CompatibleType { get }
 }
 
 public extension KingfisherCompatible {
