@@ -35,7 +35,7 @@ import UIKit
 import ImageIO
 
 /// `AnimatedImageView` is a subclass of `UIImageView` for displaying animated image.
-public class AnimatedImageView: UIImageView {
+open class AnimatedImageView: UIImageView {
     
     /// Proxy object for prevending a reference cycle between the CADDisplayLink and AnimatedImageView.
     class TargetProxy {
@@ -91,7 +91,7 @@ public class AnimatedImageView: UIImageView {
     }()
     
     // MARK: - Override
-    override public var image: Image? {
+    override open var image: Image? {
         didSet {
             if image != oldValue {
                 reset()
@@ -107,7 +107,7 @@ public class AnimatedImageView: UIImageView {
         }
     }
     
-    override public var isAnimating: Bool {
+    override open var isAnimating: Bool {
         if isDisplayLinkInitialized {
             return !displayLink.isPaused
         } else {
@@ -116,7 +116,7 @@ public class AnimatedImageView: UIImageView {
     }
     
     /// Starts the animation.
-    override public func startAnimating() {
+    override open func startAnimating() {
         if self.isAnimating {
             return
         } else {
@@ -125,14 +125,14 @@ public class AnimatedImageView: UIImageView {
     }
     
     /// Stops the animation.
-    override public func stopAnimating() {
+    override open func stopAnimating() {
         super.stopAnimating()
         if isDisplayLinkInitialized {
             displayLink.isPaused = true
         }
     }
     
-    override public func display(_ layer: CALayer) {
+    override open func display(_ layer: CALayer) {
         if let currentFrame = animator?.currentFrame {
             layer.contents = currentFrame.cgImage
         } else {
@@ -140,12 +140,12 @@ public class AnimatedImageView: UIImageView {
         }
     }
     
-    override public func didMoveToWindow() {
+    override open func didMoveToWindow() {
         super.didMoveToWindow()
         didMove()
     }
     
-    override public func didMoveToSuperview() {
+    override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         didMove()
     }
