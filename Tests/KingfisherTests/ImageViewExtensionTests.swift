@@ -68,7 +68,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
         
-        imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             XCTAssertTrue(Thread.isMainThread)
         }) { (image, error, cacheType, imageURL) -> () in
@@ -78,7 +78,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssert(image != nil, "Downloaded image should exist.")
             XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
             XCTAssert(self.imageView.image! == testImage, "Downloaded image should be already set to the image property.")
-            XCTAssert(self.imageView.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
+            XCTAssert(self.imageView.kf.webURL == imageURL, "Web URL should equal to the downloaded url.")
             
             XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded.")
             XCTAssertTrue(Thread.isMainThread)
@@ -95,7 +95,7 @@ class ImageViewExtensionTests: XCTestCase {
         let url = URL(string: URLString)!
         
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        imageView.kf_setImage(with: url, placeholder: nil, options: [.callbackDispatchQueue(customQueue)], progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: [.callbackDispatchQueue(customQueue)], progressBlock: { (receivedSize, totalSize) -> () in
             XCTAssertTrue(Thread.isMainThread)
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertTrue(Thread.isMainThread, "The image extension callback should be always in main queue.")
@@ -117,7 +117,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         cleanDefaultCache()
         
-        _ = imageView.kf_setImage(with: resource, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        _ = imageView.kf.setImage(with: resource, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             }) { (image, error, cacheType, imageURL) -> () in
                 expectation.fulfill()
@@ -126,7 +126,7 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTAssert(image != nil, "Downloaded image should exist.")
                 XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
                 XCTAssert(self.imageView.image! == testImage, "Downloaded image should be already set to the image property.")
-                XCTAssert(self.imageView.kf_webURL == imageURL, "Web URL should equal to the downloaded url.")
+                XCTAssert(self.imageView.kf.webURL == imageURL, "Web URL should equal to the downloaded url.")
                 
                 XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded. But now is: \(cacheType)")
         }
@@ -144,7 +144,7 @@ class ImageViewExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
         var completionBlockIsCalled = false
         
-        let task = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
         }) { (image, error, cacheType, imageURL) -> () in
             completionBlockIsCalled = true
@@ -173,7 +173,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         cleanDefaultCache()
         
-        let task = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             progressBlockIsCalled = true
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(error)
@@ -206,20 +206,20 @@ class ImageViewExtensionTests: XCTestCase {
         var task2Completion = false
         var task3Completion = false
         
-        let task1 = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task1 = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
 
             }) { (image, error, cacheType, imageURL) -> () in
                 task1Completion = true
         }
         
-        let _ = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let _ = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(image)
                 task2Completion = true
         }
         
-        let _ = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let _ = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(image)
@@ -252,21 +252,21 @@ class ImageViewExtensionTests: XCTestCase {
         var task2Completion = false
         var task3Completion = false
         
-        let task1 = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task1 = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(image)
                 task1Completion = true
         }
         
-        let _ = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let _ = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(image)
                 task2Completion = true
         }
         
-        let _ = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let _ = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(image)
@@ -299,7 +299,7 @@ class ImageViewExtensionTests: XCTestCase {
         var task2Completion = false
         var task3Completion = false
         
-        let task1 = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task1 = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(error)
@@ -307,7 +307,7 @@ class ImageViewExtensionTests: XCTestCase {
                 task1Completion = true
         }
         
-        let task2 = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task2 = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(error)
@@ -315,7 +315,7 @@ class ImageViewExtensionTests: XCTestCase {
                 task2Completion = true
         }
         
-        let task3 = imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        let task3 = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(error)
@@ -354,7 +354,7 @@ class ImageViewExtensionTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
-        imageView.kf_setImage(with: url, placeholder: nil, options: [.targetCache(cache1)], progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: [.targetCache(cache1)], progressBlock: { (receivedSize, totalSize) -> () in
             
         }) { (image, error, cacheType, imageURL) -> () in
             
@@ -362,7 +362,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertFalse(cache2.isImageCached(forKey: URLString).cached, "This image should not be cached in cache2.")
             XCTAssertFalse(KingfisherManager.shared.cache.isImageCached(forKey: URLString).cached, "This image should not be cached in default cache.")
             
-            self.imageView.kf_setImage(with: url, placeholder: nil, options: [.targetCache(cache2)], progressBlock: { (receivedSize, totalSize) -> () in
+            self.imageView.kf.setImage(with: url, placeholder: nil, options: [.targetCache(cache2)], progressBlock: { (receivedSize, totalSize) -> () in
                 
             }, completionHandler: { (image, error, cacheType, imageURL) -> () in
                 
@@ -383,17 +383,17 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testIndicatorViewExisting() {
-        imageView.kf_indicatorType = .activity
-        XCTAssertNotNil(imageView.kf_indicator, "The indicator should exist when indicatorType is different than .none")
-        XCTAssertTrue(imageView.kf_indicator is ActivityIndicator)
+        imageView.kf.indicatorType = .activity
+        XCTAssertNotNil(imageView.kf.indicator, "The indicator should exist when indicatorType is different than .none")
+        XCTAssertTrue(imageView.kf.indicator is ActivityIndicator)
 
 
-        imageView.kf_indicatorType = .none
-        XCTAssertNil(imageView.kf_indicator, "The indicator should be removed when indicatorType is .none")
+        imageView.kf.indicatorType = .none
+        XCTAssertNil(imageView.kf.indicator, "The indicator should be removed when indicatorType is .none")
     }
     
     func testActivityIndicatorViewAnimating() {
-        imageView.kf_indicatorType = .activity
+        imageView.kf.indicatorType = .activity
         
         let expectation = self.expectation(description: "wait for downloading image")
         
@@ -401,14 +401,14 @@ class ImageViewExtensionTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
-        imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
-            let indicator = self.imageView.kf_indicator
+            let indicator = self.imageView.kf.indicator
             XCTAssertNotNil(indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
             XCTAssertFalse(indicator!.view.isHidden, "The indicator should be shown and animating when loading")
 
         }) { (image, error, cacheType, imageURL) -> () in
-            let indicator = self.imageView.kf_indicator
+            let indicator = self.imageView.kf.indicator
             XCTAssertTrue(indicator!.view.isHidden, "The indicator should stop and hidden after loading")
             expectation.fulfill()
         }
@@ -418,9 +418,9 @@ class ImageViewExtensionTests: XCTestCase {
     
     func testCanUseImageIndicatorViewAnimating() {
         
-        imageView.kf_indicatorType = .image(imageData: testImageData as! Data)
-        XCTAssertTrue(imageView.kf_indicator is ImageIndicator)
-        let image = (imageView.kf_indicator?.view as? ImageView)?.image
+        imageView.kf.indicatorType = .image(imageData: testImageData as! Data)
+        XCTAssertTrue(imageView.kf.indicator is ImageIndicator)
+        let image = (imageView.kf.indicator?.view as? ImageView)?.image
         XCTAssertNotNil(image)
         XCTAssertTrue(image!.renderEqual(to: testImage))
         
@@ -430,14 +430,14 @@ class ImageViewExtensionTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
         
-        imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
-            let indicator = self.imageView.kf_indicator
+            let indicator = self.imageView.kf.indicator
             XCTAssertNotNil(indicator, "The indicator view should exist when showIndicatorWhenLoading is true")
             XCTAssertFalse(indicator!.view.isHidden, "The indicator should be shown and animating when loading")
             
         }) { (image, error, cacheType, imageURL) -> () in
-            let indicator = self.imageView.kf_indicator
+            let indicator = self.imageView.kf.indicator
             XCTAssertTrue(indicator!.view.isHidden, "The indicator should stop and hidden after loading")
             expectation.fulfill()
         }
@@ -452,7 +452,7 @@ class ImageViewExtensionTests: XCTestCase {
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
         
-        imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                 XCTFail("Progress block should not be called.")
             }) { (image, error, cacheType, imageURL) -> () in
                 XCTAssertNotNil(error)
@@ -462,7 +462,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
-            self.imageView.kf_cancelDownloadTask()
+            self.imageView.kf.cancelDownloadTask()
             _ = stub!.go()
         }
         
@@ -480,7 +480,7 @@ class ImageViewExtensionTests: XCTestCase {
         var task1Complete = false
         var task2Complete = false
         
-        imageView.kf_setImage(with: URLs[0], placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: URLs[0], placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 task1Complete = true
@@ -489,7 +489,7 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTAssertNotEqual(self.imageView.image, image)
         }
         
-        self.imageView.kf_setImage(with: URLs[1], placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        self.imageView.kf.setImage(with: URLs[1], placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             
             }) { (image, error, cacheType, imageURL) -> () in
                 task2Complete = true
@@ -512,7 +512,7 @@ class ImageViewExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let url: URL? = nil
-        imageView.kf_setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
             XCTFail("Progress block should not be called.")
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertNil(image)

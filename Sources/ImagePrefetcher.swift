@@ -128,7 +128,7 @@ public class ImagePrefetcher {
         pendingResources = ArraySlice(resources)
         
         // We want all callbacks from main queue, so we ignore the call back queue in options
-        let optionsInfoWithoutQueue = options?.kf_removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
+        let optionsInfoWithoutQueue = options?.removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
         self.optionsInfo = optionsInfoWithoutQueue ?? KingfisherEmptyOptionsInfo
         
         let cache = self.optionsInfo.targetCache

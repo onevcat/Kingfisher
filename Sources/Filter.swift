@@ -44,9 +44,9 @@ extension CIImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf_apply(filter)
+            return image.kf.apply(filter)
         case .data(let data):
-            return Image.kf_image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
+            return Kingfisher<Image>.image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
         }
     }
 }
@@ -93,6 +93,40 @@ public struct Filter {
     }
 }
 
+extension Kingfisher where Base: Image {
+    /// Apply a `Filter` containing `CIImage` transformer to `self`.
+    ///
+    /// - parameter filter: The filter used to transform `self`.
+    ///
+    /// - returns: A transformed image by input `Filter`.
+    ///
+    /// - Note: Only CG-based images are supported. If any error happens during transforming, `self` will be returned.
+    public func apply(_ filter: Filter) -> Image {
+        
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
+            return base
+        }
+        
+        let inputImage = CIImage(cgImage: cgImage)
+        guard let outputImage = filter.transform(inputImage) else {
+            return base
+        }
+        
+        guard let result = ciContext.createCGImage(outputImage, from: outputImage.extent) else {
+            assertionFailure("[Kingfisher] Can not make an tint image within context.")
+            return base
+        }
+        
+        #if os(macOS)
+            return fixedForRetinaPixel(cgImage: result, to: size)
+        #else
+            return Image(cgImage: result)
+        #endif
+    }
+
+}
+
 public extension Image {
     
     /// Apply a `Filter` containing `CIImage` transformer to `self`.
@@ -102,27 +136,10 @@ public extension Image {
     /// - returns: A transformed image by input `Filter`.
     ///
     /// - Note: Only CG-based images are supported. If any error happens during transforming, `self` will be returned.
+    @available(*, deprecated,
+    message: "Extensions directly on Image are deprecated. Use `kf.apply` instead.",
+    renamed: "kf.apply")
     public func kf_apply(_ filter: Filter) -> Image {
-        
-        guard let cgImage = cgImage else {
-            assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
-            return self
-        }
-        
-        let inputImage = CIImage(cgImage: cgImage)
-        guard let outputImage = filter.transform(inputImage) else {
-            return self
-        }
-        
-        guard let result = ciContext.createCGImage(outputImage, from: outputImage.extent) else {
-            assertionFailure("[Kingfisher] Can not make an tint image within context.")
-            return self
-        }
-        
-        #if os(macOS)
-            return kf_fixedForRetinaPixel(cgImage: result, to: kf_size)
-        #else
-            return Image(cgImage: result)
-        #endif
+        return kf.apply(filter)
     }
 }

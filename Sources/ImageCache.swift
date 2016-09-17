@@ -174,7 +174,7 @@ extension ImageCache {
     {
         
         let computedKey = key.computedKey(with: identifier)
-        memoryCache.setObject(image, forKey: computedKey as NSString, cost: image.kf_imageCost)
+        memoryCache.setObject(image, forKey: computedKey as NSString, cost: image.kf.imageCost)
 
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
@@ -280,7 +280,7 @@ extension ImageCache {
                 if let image = sSelf.retrieveImageInDiskCache(forKey: key, options: options) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async {
-                            let result = image.kf_decoded(scale: options.scaleFactor)
+                            let result = image.kf.decoded(scale: options.scaleFactor)
                             
                             sSelf.store(result,
                                         forKey: key,
@@ -510,7 +510,7 @@ extension ImageCache {
     */
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
-        guard let sharedApplication = UIApplication.kf_shared else { return }
+        guard let sharedApplication = Kingfisher<UIApplication>.shared else { return }
 
         func endBackgroundTask(_ task: inout UIBackgroundTaskIdentifier) {
             sharedApplication.endBackgroundTask(task)
@@ -636,15 +636,15 @@ extension ImageCache {
     }
     
     func cacheFileName(forComputedKey key: String) -> String {
-        return key.kf_MD5
+        return key.kf.md5
     }
 }
 
-extension Image {
-    var kf_imageCost: Int {
-        return kf_images == nil ?
-            Int(size.height * size.width * kf_scale * kf_scale) :
-            Int(size.height * size.width * kf_scale * kf_scale) * kf_images!.count
+extension Kingfisher where Base: Image {
+    var imageCost: Int {
+        return images == nil ?
+            Int(size.height * size.width * scale * scale) :
+            Int(size.height * size.width * scale * scale) * images!.count
     }
 }
 
@@ -656,11 +656,12 @@ extension Dictionary {
 
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
-extension UIApplication {
-    public static var kf_shared: UIApplication? {
+extension UIApplication: KingfisherCompatible { }
+extension Kingfisher where Base: UIApplication {
+    public static var shared: UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")
-        guard responds(to: selector) else { return nil }
-        return perform(selector).takeUnretainedValue() as? UIApplication
+        guard Base.responds(to: selector) else { return nil }
+        return Base.perform(selector).takeUnretainedValue() as? UIApplication
     }
 }
 #endif
