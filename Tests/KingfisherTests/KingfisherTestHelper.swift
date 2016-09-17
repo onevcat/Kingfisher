@@ -34,8 +34,8 @@ var testImage: Image = Image(data: testImageData! as Data)!
 
 let testImageData = NSData(base64Encoded: testImageString, options: [])
 
-let testImagePNGData = testImage.pngRepresentation()!
-let testImageJEPGData = testImage.jpegRepresentation(compressionQuality: 1.0)!
+let testImagePNGData = testImage.kf.pngRepresentation()!
+let testImageJEPGData = testImage.kf.jpegRepresentation(compressionQuality: 1.0)!
 let testImageGIFData = try! Data(contentsOf: URL(fileURLWithPath: Bundle(for: ImageExtensionTests.self).path(forResource: "dancing-banana", ofType: "gif")!))
 let testImageSingleFrameGIFData = try! Data(contentsOf: URL(fileURLWithPath: Bundle(for: ImageExtensionTests.self).path(forResource: "single-frame", ofType: "gif")!))
 
@@ -64,11 +64,11 @@ extension Image {
     func renderEqual(to image: Image, withinTolerance tolerance: UInt8 = 3) -> Bool {
         
         guard size == image.size else { return false }
-        guard let imageData1 = pngRepresentation(), let imageData2 = image.pngRepresentation() else { return false }
+        guard let imageData1 = kf.pngRepresentation(), let imageData2 = image.kf.pngRepresentation() else { return false }
         guard let unifiedImage1 = Image(data: imageData1), let unifiedImage2 = Image(data: imageData2) else { return false }
         
         guard let rendered1 = unifiedImage1.rendered(), let rendered2 = unifiedImage2.rendered() else { return false }
-        guard let data1 = rendered1.cgImage?.dataProvider?.data, let data2 = rendered2.cgImage?.dataProvider?.data else { return false }
+        guard let data1 = rendered1.kf.cgImage?.dataProvider?.data, let data2 = rendered2.kf.cgImage?.dataProvider?.data else { return false }
         
         let length1 = CFDataGetLength(data1)
         let length2 = CFDataGetLength(data2)
@@ -92,7 +92,7 @@ extension Image {
     
     func rendered() -> Image? {
         // Ignore non CG images
-        guard let cgImage = cgImage else {
+        guard let cgImage = kf.cgImage else {
             return nil
         }
         
@@ -128,7 +128,7 @@ extension Image {
         context.draw(cgImage, in: CGRect(origin: CGPoint.zero, size: size))
         
         #if os(macOS)
-        return context.makeImage().flatMap { Image(cgImage: $0, size: kf_size) }
+        return context.makeImage().flatMap { Image(cgImage: $0, size: kf.size) }
         #else
         return context.makeImage().flatMap { Image(cgImage: $0) }
         #endif
@@ -146,7 +146,7 @@ extension Image {
         let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).last!
         let p = ((path) as NSString).appendingPathComponent(name)
         print(p)
-        try! pngRepresentation()?.write(to: URL(fileURLWithPath: p))
+        try! kf.pngRepresentation()?.write(to: URL(fileURLWithPath: p))
         return p
     }
 }

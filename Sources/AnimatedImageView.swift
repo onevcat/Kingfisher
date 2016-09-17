@@ -159,7 +159,7 @@ public class AnimatedImageView: UIImageView {
     /// Reset the animator.
     private func reset() {
         animator = nil
-        if let imageSource = image?.kf_imageSource?.imageRef {
+        if let imageSource = image?.kf.imageSource?.imageRef {
             animator = Animator(imageSource: imageSource, contentMode: contentMode, size: bounds.size, framePreloadCount: framePreloadCount)
             animator?.needsPrescaling = needsPrescaling
             animator?.prepareFrames()
@@ -258,7 +258,7 @@ class Animator {
             return AnimatedFrame.null
         }
         
-        let frameDuration = imageSource.kf_GIFProperties(at: index).flatMap {
+        let frameDuration = imageSource.kf.GIFProperties(at: index).flatMap {
             gifInfo -> Double? in
             
             let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as Double?
@@ -281,7 +281,7 @@ class Animator {
         let scaledImage: Image?
         
         if needsPrescaling {
-            scaledImage = image.kf_resize(to: size, for: contentMode)
+            scaledImage = image.kf.resize(to: size, for: contentMode)
         } else {
             scaledImage = image
         }
@@ -312,9 +312,10 @@ class Animator {
     }
 }
 
-extension CGImageSource {
-    func kf_GIFProperties(at index: Int) -> [String: Double]? {
-        let properties = CGImageSourceCopyPropertiesAtIndex(self, index, nil) as Dictionary?
+extension CGImageSource: KingfisherCompatible { }
+extension Kingfisher where Base: CGImageSource {
+    func GIFProperties(at index: Int) -> [String: Double]? {
+        let properties = CGImageSourceCopyPropertiesAtIndex(base, index, nil) as Dictionary?
         return properties?[kCGImagePropertyGIFDictionary] as? [String: Double]
     }
 }

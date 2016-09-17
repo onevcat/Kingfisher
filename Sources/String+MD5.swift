@@ -21,14 +21,28 @@ Permission is granted to anyone to use this software for any purpose,including c
 
 import Foundation
 
-extension String {
-    var kf_MD5: String {
-        if let data = data(using: .utf8) {
-            
+public struct StringProxy {
+    fileprivate let base: String
+    init(proxy: String) {
+        base = proxy
+    }
+}
+
+extension String: KingfisherCompatible {
+    public typealias CompatibleType = StringProxy
+    public var kf: CompatibleType {
+        return StringProxy(proxy: self)
+    }
+}
+
+extension StringProxy {
+    var md5: String {
+        if let data = base.data(using: .utf8, allowLossyConversion: true) {
+
             let message = data.withUnsafeBytes { bytes -> [UInt8] in
                 return Array(UnsafeBufferPointer(start: bytes, count: data.count))
             }
-            
+
             let MD5Calculator = MD5(message)
             let MD5Data = MD5Calculator.calculate()
 
@@ -37,12 +51,13 @@ extension String {
                 MD5String.appendFormat("%02x", c)
             }
             return MD5String as String
-            
+
         } else {
-            return self
+            return base
         }
     }
 }
+
 
 /** array of bytes, little-endian representation */
 func arrayOfBytes<T>(_ value: T, length: Int? = nil) -> [UInt8] {

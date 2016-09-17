@@ -57,16 +57,16 @@ extension ViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {        
         // This will cancel all unfinished downloading task when the cell disappearing.
-        (cell as! CollectionViewCell).cellImageView.kf_cancelDownloadTask()
+        (cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
     
-        cell.cellImageView.kf_indicatorType = .activity
+        cell.cellImageView.kf.indicatorType = .activity
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
-        _ = cell.cellImageView.kf_setImage(with: url,
+        _ = cell.cellImageView.kf.setImage(with: url,
                                            placeholder: nil,
                                            options: [.transition(ImageTransition.fade(1))],
                                            progressBlock: { receivedSize, totalSize in
