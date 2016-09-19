@@ -1,0 +1,21 @@
+PODS:
+  - Nocilla (0.10.0)
+
+DEPENDENCIES:
+  - Nocilla (from `https://github.com/onevcat/Nocilla.git`)
+
+EXTERNAL SOURCES:
+  Nocilla:
+    :git: https://github.com/onevcat/Nocilla.git
+
+CHECKOUT OPTIONS:
+  Nocilla:
+    :commit: 4e3ec2dac36ea2a6f7c57f089cfb47081fd5cd24
+    :git: https://github.com/onevcat/Nocilla.git
+
+SPEC CHECKSUMS:
+  Nocilla: c31f714d1f0a24a983c430e99a1283908ed9c1d7
+
+PODFILE CHECKSUM: bd0768e8d3956c76784f115ce9feab1d939e0834
+
+COCOAPODS: 1.0.1

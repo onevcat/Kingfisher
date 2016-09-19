@@ -1,0 +1,80 @@
+
+fastlane_version "1.37.0"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+
+  end
+
+  desc "Runs all the tests"
+  lane :test_all_schemes do
+    scan(scheme: "Kingfisher", clean: true)
+    scan(scheme: "Kingfisher-macOS", clean: true)
+    scan(scheme: "Kingfisher-tvOS", clean: true)
+  end
+  
+  desc "Build for Carthage"
+  lane :carthage_lint do
+      Actions.sh("cd .. && carthage build --no-skip-current && cd fastlane")
+  end
+  
+  desc "Lint for Cocoapod"
+  lane :pod_lint do
+      Actions.sh("cd .. && pod lib lint && cd fastlane")
+  end
+  
+  desc "Lint"
+  lane :lint do
+      carthage_lint
+      pod_lint
+  end
+
+  desc "Release new version"
+  lane :release do |options|
+      target_version = options[:version]
+      raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+
+      ensure_git_branch
+      ensure_git_status_clean
+      
+      test_all_schemes
+      carthage_lint
+      
+      sync_build_number_to_git
+      increment_version_number(version_number: target_version)
+      version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
+
+      log = extract_current_change_log(version: target_version)
+      release_log = update_change_log(log: log)
+
+      git_commit_all(message: "Bump version to #{target_version}")
+      
+      Actions.sh("git tag -s #{target_version} -m ''")
+
+      push_to_git_remote
+
+      set_github_release(
+      repository_name: "onevcat/Kingfisher",
+      api_token: ENV['GITHUB_TOKEN'],
+      name: release_log[:title],
+      tag_name: target_version,
+      description: release_log[:text]
+      )
+
+      pod_push
+  end
+
+  lane :podpush do
+    pod_push
+  end
+
+  after_all do |lane|
+
+  end
+
+  error do |lane, exception|
+
+  end
+end

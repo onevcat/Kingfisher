@@ -1,0 +1,32 @@
+language: objective-c
+os: osx
+osx_image: xcode8
+
+env:
+  matrix:
+    - TEST_TYPE=iOS
+    - TEST_TYPE=macOS
+    - TEST_TYPE=tvOS
+-before_install:
+ - |
+    gem install xcpretty -N --no-ri --no-rdoc
+ 
+script:
+- |
+    if [ "$TEST_TYPE" = iOS ]; then
+      set -o pipefail
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination "platform=iOS Simulator,name=iPhone 6 Plus" -enableCodeCoverage YES | xcpretty
+    elif [ "$TEST_TYPE" = macOS ]; then
+      set -o pipefail
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -sdk macosx -enableCodeCoverage YES | xcpretty
+    elif [ "$TEST_TYPE" = tvOS ]; then
+      set -o pipefail
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-tvOS -destination "platform=tvOS Simulator,name=Apple TV 1080p" -enableCodeCoverage YES | xcpretty
+    fi
+after_success:
+- |
+    if [ "$TEST_TYPE" = iOS ] || [ "$TEST_TYPE" = macOS ] || [ "$TEST_TYPE" = tvOS ]; then
+      bash <(curl -s https://codecov.io/bash)
+    fi
+    sleep 10
+    
