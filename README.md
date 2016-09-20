@@ -25,59 +25,59 @@
 
 </p>
 
-Kingfisher is a lightweight and pure Swift implemented library for downloading and caching image from the web. This project is heavily inspired by the popular [SDWebImage](https://github.com/rs/SDWebImage). And it provides you a chance to use pure Swift alternative in your next app.
+Kingfisher is a lightweight, pure-Swift library for downloading and caching images from the web. This project is heavily inspired by the popular [SDWebImage](https://github.com/rs/SDWebImage). It provides you a chance to use a pure-Swift alternative in your next app.
 
 ## Features
 
 - [x] Asynchronous image downloading and caching.
-- [x] `URLSession` based networking. Basic image processors and filters supplied.
+- [x] `URLSession`-based networking. Basic image processors and filters supplied.
 - [x] Multiple-layer cache for both memory and disk.
-- [x] Cancelable downloading and processing task to improve performance.
+- [x] Cancelable downloading and processing tasks to improve performance.
 - [x] Independent components. Use the downloader or caching system separately as you need.
-- [x] Prefetching images and show them from cache later when necessary.
-- [x] Extension over `UIImageView`, `NSImage` and `UIButton` for setting image from a URL directly.
+- [x] Prefetching images and showing them from cache later when necessary.
+- [x] Extensions for `UIImageView`, `NSImage` and `UIButton` to directly set an image from a URL.
 - [x] Built-in transition animation when setting images.
-- [x] Extendable image processing and more image format support.
+- [x] Extensible image processing and image format support.
 
-The simplest using case is setting an image to an image view with extension:
+The simplest use-case is setting an image to an image view with the `UIImageView` extension:
 
 ```swift
 let url = URL(string: "url_of_your_image")
 imageView.kf_setImage(with: url)
 ```
 
-It will download the image from `url`, send it to both memory and disk cache, then show it in the `imageView`. When you use the same code later, the image will be retrieved from cache and show immediately.
+Kingfisher will download the image from `url`, send it to both the memory cache and the disk cache, and display it in `imageView`. When you use the same code later, the image will be retrieved from cache and shown immediately.
 
 ## Requirements
 
 - iOS 8.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
 - Swift 3 (Kingfisher 3.x), Swift 2.3 (Kingfisher 2.x)
 
-The main development of Kingfisher is based on Swift 3. There will be only fatal issue fix update for Kingfisher 2.x.
+Main development of Kingfisher will support Swift 3. Only critical bug fixes will be made for Kingfisher 2.x.
 
 If you are upgrading to Kingfisher 3.x from an earlier version, please read the [Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) for more information.
 
-## Next Step
+## Next Steps
 
-Check [wiki page](https://github.com/onevcat/Kingfisher/wiki) of Kingfisher.
+Read the Kingfisher [wiki](https://github.com/onevcat/Kingfisher/wiki).
 
-* Follow the [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) to integrate Kingfisher to your project.
-* Curious about what Kingfisher could do and how would it look like when used in your project? See our [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet) page, in which some useful code snippet are listed. There you can learn how to use Kingfisher in your project better.
-* At last, please also remember to check the full [API Reference](http://cocoadocs.org/docsets/Kingfisher/) whenever you need to know more about Kingfisher.
+* Follow the [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) to integrate Kingfisher into your project.
+* Curious about what Kingfisher could do and how would it look like when used in your project? See our [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet) page for useful code snippets. If you are already familiar with Kingfisher, you may learn new tricks to improve the way you use Kingfisher! 
+* Lastly, please remember to read the full [API Reference](http://cocoadocs.org/docsets/Kingfisher/) whenever you may need a more detailed reference.
 
 ## Other
 
 ### Future of Kingfisher
 
-I want to keep Kingfisher slim. This framework will focus on providing a simple solution for image downloading and caching. But that does not mean the framework will not be improved. Kingfisher is far away from perfect, and necessary and useful features will be added later to make it better.
+I want to keep Kingfisher lightweight. This framework will focus on providing a simple solution for downloading and caching images. This doesn’t mean the framework can’t be improved. Kingfisher is far from perfect, so necessary and useful updates will be made to make it better.
 
 ### About the logo
 
-The logo of Kingfisher is inspired by [Tangram (七巧板)](http://en.wikipedia.org/wiki/Tangram), a dissection puzzle consisting of seven flat shapes from China. I believe she's a kingfisher bird instead of a swift, but someone insists that she is a pigeon. I guess I should give her a name. Hi, guys, do you have any suggestion?
+The logo of Kingfisher is inspired by [Tangram (七巧板)](http://en.wikipedia.org/wiki/Tangram), a dissection puzzle consisting of seven flat shapes from China. I believe she's a kingfisher bird instead of a swift, but someone insists that she is a pigeon. I guess I should give her a name. Hi, guys, do you have any suggestions?
 
 ### Contact
 
-Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](http://weibo.com/onevcat). If you find an issue, just [open a ticket](https://github.com/onevcat/Kingfisher/issues/new) on it. Pull requests are warmly welcome as well.
+Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](http://weibo.com/onevcat). If you find an issue, just [open a ticket](https://github.com/onevcat/Kingfisher/issues/new). Pull requests are warmly welcome as well.
 
 ### License
 
