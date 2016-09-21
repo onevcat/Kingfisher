@@ -2,6 +2,20 @@
 
 -----
 
+## [3.1.0 - Namespace](https://github.com/onevcat/Kingfisher/releases/tag/3.1.0) (2016-09-21)
+
+#### Add
+* Add `kf` namespace for all extension APIs in Kingfisher. Now no need to worry about name conflicting any more. [#435](https://github.com/onevcat/Kingfisher/pull/435)
+
+#### Fix
+* Mark `AnimateImageView` to open so you can extend this class again. [#442](https://github.com/onevcat/Kingfisher/pull/442)
+* Update demo code to adopt iOS 10 prefetching cell feature and new cell life cycle. [#447](https://github.com/onevcat/Kingfisher/issues/447)
+
+#### Remove
+* Since `kf` namespace is added, all original `kf_` prefix methods are marked as deprecated.
+
+---
+
 ## [3.0.1 - New Age - Swift 3](https://github.com/onevcat/Kingfisher/releases/tag/3.0.1) (2016-09-14)
 
 #### Add
