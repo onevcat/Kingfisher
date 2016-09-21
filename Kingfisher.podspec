@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
-  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h"]
+  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h", "Sources/Kingfisher.swift"]
   s.public_header_files = ["Sources/Kingfisher.h"]
   
   s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift"]
