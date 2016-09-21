@@ -43,7 +43,7 @@ The simplest use-case is setting an image to an image view with the `UIImageView
 
 ```swift
 let url = URL(string: "url_of_your_image")
-imageView.kf_setImage(with: url)
+imageView.kf.setImage(with: url)
 ```
 
 Kingfisher will download the image from `url`, send it to both the memory cache and the disk cache, and display it in `imageView`. When you use the same code later, the image will be retrieved from cache and shown immediately.
@@ -55,15 +55,15 @@ Kingfisher will download the image from `url`, send it to both the memory cache 
 
 Main development of Kingfisher will support Swift 3. Only critical bug fixes will be made for Kingfisher 2.x.
 
-If you are upgrading to Kingfisher 3.x from an earlier version, please read the [Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) for more information.
+[Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
 
 ## Next Steps
 
-Read the Kingfisher [wiki](https://github.com/onevcat/Kingfisher/wiki).
+We prepared a [wiki page](https://github.com/onevcat/Kingfisher/wiki). You can find tons of useful things there.
 
-* Follow the [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) to integrate Kingfisher into your project.
-* Curious about what Kingfisher could do and how would it look like when used in your project? See our [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet) page for useful code snippets. If you are already familiar with Kingfisher, you may learn new tricks to improve the way you use Kingfisher! 
-* Lastly, please remember to read the full [API Reference](http://cocoadocs.org/docsets/Kingfisher/) whenever you may need a more detailed reference.
+* [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) - Follow it to integrate Kingfisher into your project.
+* [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet)- Curious about what Kingfisher could do and how would it look like when used in your project? See this page for useful code snippets. If you are already familiar with Kingfisher, you could also learn new tricks to improve the way you use Kingfisher! 
+* [API Reference](http://cocoadocs.org/docsets/Kingfisher/) - Lastly, please remember to read the full whenever you may need a more detailed reference.
 
 ## Other
 
