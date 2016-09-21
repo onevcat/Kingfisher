@@ -60,21 +60,25 @@ extension ViewController {
         (cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
     
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
+        
+        _ = (cell as! CollectionViewCell).cellImageView.kf.setImage(with: url,
+                                           placeholder: nil,
+                                           options: [.transition(ImageTransition.fade(1))],
+                                           progressBlock: { receivedSize, totalSize in
+                                            print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
+            },
+                                           completionHandler: { image, error, cacheType, imageURL in
+                                            print("\(indexPath.row + 1): Finished")
+        })
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
     
         cell.cellImageView.kf.indicatorType = .activity
-        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
-        
-        _ = cell.cellImageView.kf.setImage(with: url,
-                                           placeholder: nil,
-                                           options: [.transition(ImageTransition.fade(1))],
-                                           progressBlock: { receivedSize, totalSize in
-                                                print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
-                                           },
-                                           completionHandler: { image, error, cacheType, imageURL in
-                                                print("\(indexPath.row + 1): Finished")
-        })
         
         return cell
     }
