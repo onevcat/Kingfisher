@@ -33,6 +33,10 @@ class ViewController: UICollectionViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         title = "Kingfisher"
+        
+        if #available(iOS 10.0, *) {
+            collectionView?.prefetchDataSource = self
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -83,3 +87,14 @@ extension ViewController {
         return cell
     }
 }
+
+extension ViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let urls = indexPaths.flatMap {
+            URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\($0.row + 1).jpg")
+        }
+        
+        ImagePrefetcher(urls: urls).start()
+    }
+}
+
