@@ -200,6 +200,51 @@ class ImageCacheTests: XCTestCase {
         XCTAssertFalse(exists)
     }
 
+    func testCachedFileWithCustomPathExtensionExists() {
+        cache.pathExtension = "jpg"
+        let expectation = self.expectation(description: "cache with custom path extension does contain image")
+        
+        let URLString = testKeys[0]
+        let url = URL(string: URLString)!
+        
+        let exists = cache.isImageCached(forKey: url.cacheKey).cached
+        XCTAssertFalse(exists)
+        
+        cache.retrieveImage(forKey: URLString, options: nil, completionHandler: { (image, type) -> () in
+            XCTAssertNil(image, "Should not be cached yet")
+            
+            XCTAssertEqual(type, .none)
+            
+            self.cache.store(testImage, forKey: URLString, toDisk: true) { () -> () in
+                self.cache.retrieveImage(forKey: URLString, options: nil, completionHandler: { (image, type) -> () in
+                    XCTAssertNotNil(image, "Should be cached (memory or disk)")
+                    XCTAssertEqual(type, .memory)
+                    
+                    let exists = self.cache.isImageCached(forKey: url.cacheKey).cached
+                    XCTAssertTrue(exists, "Image should exist in the cache (memory or disk)")
+                    
+                    self.cache.clearMemoryCache()
+                    self.cache.retrieveImage(forKey: URLString, options: nil, completionHandler: { (image, type) -> () in
+                        XCTAssertNotNil(image, "Should be cached (disk)")
+                        XCTAssertEqual(type, CacheType.disk)
+                        
+                        let exists = self.cache.isImageCached(forKey: url.cacheKey).cached
+                        XCTAssertTrue(exists, "Image should exist in the cache (disk)")
+                        
+                        let cachePath = self.cache.cachePath(forKey: url.cacheKey)
+                        let hasExtension = cachePath.hasSuffix(".jpg")
+                        XCTAssert(hasExtension, "Should have .jpg file extension")
+                        
+                        expectation.fulfill()
+                    })
+                })
+            }
+        })
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+  
     func testCachedImageIsFetchedSyncronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false) { () -> () in
             // do nothing
