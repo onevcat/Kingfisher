@@ -227,7 +227,7 @@ extension ImageView {
             if kf_showIndicatorWhenLoading == newValue {
                 return
             } else {
-                kf_indicatorType = .Activity
+                kf_indicatorType = newValue ? .Activity : .None
             }
         }
     }
