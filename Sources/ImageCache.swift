@@ -87,6 +87,9 @@ open class ImageCache {
     
     ///The disk cache location.
     open let diskCachePath: String
+  
+    /// The default file extension appended to cached files.
+    open var pathExtension: String?
     
     /// The longest time duration in second of the cache being stored in disk. 
     /// Default is 1 week (60 * 60 * 24 * 7 seconds).
@@ -621,7 +624,7 @@ extension ImageCache {
 
 // MARK: - Internal Helper
 extension ImageCache {
-    
+  
     func diskImage(forComputedKey key: String, serializer: CacheSerializer, options: KingfisherOptionsInfo) -> Image? {
         if let data = diskImageData(forComputedKey: key) {
             return serializer.image(with: data, options: options)
@@ -636,6 +639,9 @@ extension ImageCache {
     }
     
     func cacheFileName(forComputedKey key: String) -> String {
+        if let ext = self.pathExtension {
+          return (key.kf.md5 as NSString).appendingPathExtension(ext)!
+        }
         return key.kf.md5
     }
 }
