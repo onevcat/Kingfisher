@@ -403,7 +403,7 @@ extension Kingfisher where Base: Image {
     /// - Note: This method only works for CG-based image.
     public func resize(to size: CGSize) -> Image {
         
-        guard let cgImage = cgImage?.fixed else {
+        guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Resize only works for CG-based image.")
             return base
         }
@@ -537,7 +537,7 @@ extension Kingfisher where Base: Image {
     /// - Note: This method only works for CG-based image.
     public func overlaying(with color: Color, fraction: CGFloat) -> Image {
         
-        guard let cgImage = cgImage?.fixed else {
+        guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Overlaying only works for CG-based image.")
             return base
         }
@@ -718,29 +718,6 @@ extension CGSizeProxy {
 
     private var aspectRatio: CGFloat {
         return base.height == 0.0 ? 1.0 : base.width / base.height
-    }
-}
-
-
-extension CGImage {
-    var isARGB8888: Bool {
-        return bitsPerPixel == 32 && bitsPerComponent == 8 && bitmapInfo.contains(.alphaInfoMask)
-    }
-    
-    var fixed: CGImage {
-        if isARGB8888 { return self }
-
-        // Convert to ARGB if it isn't
-        guard let context = CGContext.createARGBContext(from: self) else {
-            assertionFailure("[Kingfisher] Failed to create CG context when converting non ARGB image.")
-            return self
-        }
-        context.draw(self, in: CGRect(x: 0, y: 0, width: width, height: height))
-        guard let r = context.makeImage() else {
-            assertionFailure("[Kingfisher] Failed to create CG image when converting non ARGB image.")
-            return self
-        }
-        return r
     }
 }
 
