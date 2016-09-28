@@ -300,16 +300,57 @@ class ImageDownloaderTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         
         let url = URL(string: URLString)!
+        
         let p = RoundCornerImageProcessor(cornerRadius: 40)
+        let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size, scale: 1)
+        
         downloader.downloadImage(with: url, options: [.processor(p)], progressBlock: { (receivedSize, totalSize) -> () in
-            return
+            
         }) { (image, error, imageURL, data) -> () in
             expectation.fulfill()
             XCTAssert(image != nil, "Download should be able to finished for URL: \(imageURL)")
-            XCTAssert(image != testImage, "The processed image should not equal to the original one.")
+            XCTAssertFalse(image!.renderEqual(to: testImage), "The processed image should not equal to the original one.")
+            XCTAssertTrue(image!.renderEqual(to: roundcornered), "The processed image should equal to the one directly processed from original one.")
             XCTAssertEqual(NSData(data: data!), testImageData, "But the original data should equal each other.")
         }
         
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testDownloadWithDifferentProcessors() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        
+        let url = URL(string: URLString)!
+        
+        let p1 = RoundCornerImageProcessor(cornerRadius: 40)
+        let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size, scale: 1)
+
+        let p2 = BlurImageProcessor(blurRadius: 3.0)
+        let blurred = testImage.kf.blurred(withRadius: 3.0)
+        
+        var count = 0
+        
+        downloader.downloadImage(with: url, options: [.processor(p1)], progressBlock: { (receivedSize, totalSize) -> () in
+
+        }) { (image, error, imageURL, data) -> () in
+            XCTAssertTrue(image!.renderEqual(to: roundcornered), "The processed image should equal to the one directly processed from original one.")
+            
+            count += 1
+            if count == 2 { expectation.fulfill() }
+        }
+        
+        downloader.downloadImage(with: url, options: [.processor(p2)], progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL, data) -> () in
+            XCTAssertTrue(image!.renderEqual(to: blurred), "The processed image should equal to the one directly processed from original one.")
+            
+            count += 1
+            if count == 2 { expectation.fulfill() }
+        }
+
         waitForExpectations(timeout: 5, handler: nil)
     }
 }
