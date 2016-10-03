@@ -27,7 +27,7 @@
 import XCTest
 import Kingfisher
 
-#if os(OSX)
+#if os(macOS)
     import AppKit
 #else
     import UIKit
@@ -58,81 +58,82 @@ class ImagePrefetcherTests: XCTestCase {
     }
 
     func testPrefetchingImages() {
-        let expectation = expectationWithDescription("wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         
-        var urls = [NSURL]()
+        var urls = [URL]()
         for URLString in testKeys {
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
-            urls.append(NSURL(string: URLString)!)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            urls.append(URL(string: URLString)!)
         }
         
         var progressCalledCount = 0
-        let prefetcher = ImagePrefetcher(urls: urls, optionsInfo: nil, progressBlock: { (skippedResources, failedResources, completedResources) -> () in
-            progressCalledCount += 1
-            }) { (skippedResources, failedResources, completedResources) -> () in
-                expectation.fulfill()
-                XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
-                XCTAssertEqual(failedResources.count, 0, "There should be no failed downloading.")
-                XCTAssertEqual(completedResources.count, urls.count, "All resources prefetching should be completed.")
-                XCTAssertEqual(progressCalledCount, urls.count, "Progress should be called the same time of download count.")
-                for url in urls {
-                    XCTAssertTrue(KingfisherManager.sharedManager.cache.isImageCachedForKey(url.absoluteString).cached)
-                }
-        }
-        
+        let prefetcher = ImagePrefetcher(urls: urls, options: nil,
+                            progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+                                progressCalledCount += 1
+                            },
+                            completionHandler: {(skippedResources, failedResources, completedResources) -> () in
+                                expectation.fulfill()
+                                XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
+                                XCTAssertEqual(failedResources.count, 0, "There should be no failed downloading.")
+                                XCTAssertEqual(completedResources.count, urls.count, "All resources prefetching should be completed.")
+                                XCTAssertEqual(progressCalledCount, urls.count, "Progress should be called the same time of download count.")
+                                for url in urls {
+                                    XCTAssertTrue(KingfisherManager.shared.cache.isImageCached(forKey: url.absoluteString).cached)
+                                }
+                            })
         prefetcher.start()
         
-        waitForExpectationsWithTimeout(5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testCancelPrefetching() {
-        let expectation = expectationWithDescription("wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         
-        var urls = [NSURL]()
+        var urls = [URL]()
         var responses = [LSStubResponseDSL!]()
         for URLString in testKeys {
-            let response = stubRequest("GET", URLString).andReturn(200).withBody(testImageData).delay()
+            let response = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
             responses.append(response)
-            urls.append(NSURL(string: URLString)!)
+            urls.append(URL(string: URLString)!)
         }
         
         let maxConcurrentCount = 2
-        let prefetcher = ImagePrefetcher(urls: urls, optionsInfo: nil, progressBlock: { (skippedResources, failedResources, completedResources) -> () in
-            
-            }) { (skippedResources, failedResources, completedResources) -> () in
-                expectation.fulfill()
-                XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
-                XCTAssertEqual(failedResources.count, urls.count, "The failed count should be the same with started downloads due to cancellation.")
-                XCTAssertEqual(completedResources.count, 0, "None resources prefetching should complete.")
-        }
+        let prefetcher = ImagePrefetcher(urls: urls, options: nil,
+                            progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+                            },
+                            completionHandler: {(skippedResources, failedResources, completedResources) -> () in
+                                expectation.fulfill()
+                                XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
+                                XCTAssertEqual(failedResources.count, urls.count, "The failed count should be the same with started downloads due to cancellation.")
+                                XCTAssertEqual(completedResources.count, 0, "None resources prefetching should complete.")
+                            })
         
         prefetcher.maxConcurrentDownloads = maxConcurrentCount
         
         prefetcher.start()
         prefetcher.stop()
         
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue()) {
-            for response in responses {
-                response.go()
-            }
+        let delayTime = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        
+        DispatchQueue.main.asyncAfter(deadline: delayTime) {
+            responses.forEach { _ = $0!.go() }
         }
 
-        waitForExpectationsWithTimeout(5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
 
     func testPrefetcherCouldSkipCachedImages() {
-        let expectation = expectationWithDescription("wait for prefetching images")
-        KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
+        let expectation = self.expectation(description: "wait for prefetching images")
+        KingfisherManager.shared.cache.store(Image(), forKey: testKeys[0])
         
-        var urls = [NSURL]()
+        var urls = [URL]()
         for URLString in testKeys {
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
-            urls.append(NSURL(string: URLString)!)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            urls.append(URL(string: URLString)!)
         }
         
-        let prefetcher = ImagePrefetcher(urls: urls, optionsInfo: nil, progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+        let prefetcher = ImagePrefetcher(urls: urls, options: nil, progressBlock: { (skippedResources, failedResources, completedResources) -> () in
 
             }) { (skippedResources, failedResources, completedResources) -> () in
                 expectation.fulfill()
@@ -145,23 +146,23 @@ class ImagePrefetcherTests: XCTestCase {
         
         prefetcher.start()
         
-        waitForExpectationsWithTimeout(5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testPrefetcherForceRefreshDownloadImages() {
-        let expectation = expectationWithDescription("wait for prefetching images")
+        let expectation = self.expectation(description: "wait for prefetching images")
         
         // Store an image in cache.
-        KingfisherManager.sharedManager.cache.storeImage(Image(), forKey: testKeys[0])
+        KingfisherManager.shared.cache.store(Image(), forKey: testKeys[0])
         
-        var urls = [NSURL]()
+        var urls = [URL]()
         for URLString in testKeys {
-            stubRequest("GET", URLString).andReturn(200).withBody(testImageData)
-            urls.append(NSURL(string: URLString)!)
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            urls.append(URL(string: URLString)!)
         }
         
         // Use `.ForceRefresh` to download it forcely.
-        let prefetcher = ImagePrefetcher(urls: urls, optionsInfo: [.ForceRefresh], progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+        let prefetcher = ImagePrefetcher(urls: urls, options: [.forceRefresh], progressBlock: { (skippedResources, failedResources, completedResources) -> () in
             
             }) { (skippedResources, failedResources, completedResources) -> () in
                 expectation.fulfill()
@@ -173,12 +174,12 @@ class ImagePrefetcherTests: XCTestCase {
         
         prefetcher.start()
         
-        waitForExpectationsWithTimeout(5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testPrefetchWithWrongInitParameters() {
-        let expectation = expectationWithDescription("wait for prefetching images")
-        let prefetcher = ImagePrefetcher(urls: [], optionsInfo: nil, progressBlock: nil) { (skippedResources, failedResources, completedResources) -> () in
+        let expectation = self.expectation(description: "wait for prefetching images")
+        let prefetcher = ImagePrefetcher(urls: [], options: nil, progressBlock: nil) { (skippedResources, failedResources, completedResources) -> () in
             expectation.fulfill()
             
             XCTAssertEqual(skippedResources.count, 0, "There should be no item skipped.")
@@ -187,6 +188,6 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         prefetcher.start()
-        waitForExpectationsWithTimeout(5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }

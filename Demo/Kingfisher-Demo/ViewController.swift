@@ -33,6 +33,10 @@ class ViewController: UICollectionViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         title = "Kingfisher"
+        
+        if #available(iOS 10.0, *) {
+            collectionView?.prefetchDataSource = self
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,8 +45,8 @@ class ViewController: UICollectionViewController {
     }
 
     @IBAction func clearCache(sender: AnyObject) {
-        KingfisherManager.sharedManager.cache.clearMemoryCache()
-        KingfisherManager.sharedManager.cache.clearDiskCache()
+        KingfisherManager.shared.cache.clearMemoryCache()
+        KingfisherManager.shared.cache.clearDiskCache()
     }
     
     @IBAction func reload(sender: AnyObject) {
@@ -51,34 +55,46 @@ class ViewController: UICollectionViewController {
 }
 
 extension ViewController {
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
     
-    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {        
         // This will cancel all unfinished downloading task when the cell disappearing.
-        // swiftlint:disable force_cast
-        (cell as! CollectionViewCell).cellImageView.kf_cancelDownloadTask()
+        (cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
     
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        // swiftlint:disable force_cast
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionViewCell", forIndexPath: indexPath) as! CollectionViewCell
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        cell.cellImageView.kf_showIndicatorWhenLoading = true
+        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
         
-        let URL = NSURL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
+        _ = (cell as! CollectionViewCell).cellImageView.kf.setImage(with: url,
+                                           placeholder: nil,
+                                           options: [.transition(ImageTransition.fade(1))],
+                                           progressBlock: { receivedSize, totalSize in
+                                            print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
+            },
+                                           completionHandler: { image, error, cacheType, imageURL in
+                                            print("\(indexPath.row + 1): Finished")
+        })
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
+    
+        cell.cellImageView.kf.indicatorType = .activity
         
-        
-        cell.cellImageView.kf_setImageWithURL(URL, placeholderImage: nil,
-                                                        optionsInfo: [.Transition(ImageTransition.Fade(1))],
-                                                      progressBlock: { receivedSize, totalSize in
-                                                          print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
-                                                      },
-                                                  completionHandler: { image, error, cacheType, imageURL in
-                                                          print("\(indexPath.row + 1): Finished")
-                                                      })
         return cell
     }
 }
+
+extension ViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let urls = indexPaths.flatMap {
+            URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\($0.row + 1).jpg")
+        }
+        
+        ImagePrefetcher(urls: urls).start()
+    }
+}
+

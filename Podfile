@@ -6,7 +6,7 @@ target 'KingfisherTests' do
     pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git'
 end
 
-target 'KingfisherTests-OSX' do
+target 'KingfisherTests-macOS' do
     platform :osx, '10.10'
     pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git'
 end

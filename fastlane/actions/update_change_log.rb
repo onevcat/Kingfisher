@@ -14,6 +14,9 @@ module Fastlane
 
           fix = log[:fix].map { |i| "* #{i}" }.join("\n") unless log[:fix].nil?
           des = des + "#### Fix\n#{fix}\n\n" unless fix.nil? or fix.empty?
+          
+          remove = log[:remove].map { |i| "* #{i}" }.join("\n") unless log[:remove].nil?
+          des = des + "#### Remove\n#{remove}\n\n" unless remove.nil? or remove.empty?
 
           log_text = log_text + des
 
