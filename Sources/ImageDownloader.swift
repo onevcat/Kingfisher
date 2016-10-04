@@ -177,11 +177,6 @@ open class ImageDownloader: NSObject {
     }
     
     // MARK: - Public property
-    /// This closure will be applied to the image download request before it being sent. 
-    /// You can modify the request for some customizing purpose, like adding auth token to the header, do basic HTTP auth or something like url mapping.
-    @available(*, unavailable, message: "`requestModifier` is removed. Use 'urlRequest(for:byModifying:)' from the 'ImageDownloaderDelegate' instead")
-    open var requestModifier: ((inout URLRequest) -> Void)?
-
     /// The duration before the download is timeout. Default is 15 seconds.
     open var downloadTimeout: TimeInterval = 15.0
     
