@@ -2,6 +2,17 @@
 
 -----
 
+## [3.1.3 - Collocalia](https://github.com/onevcat/Kingfisher/releases/tag/3.1.3) (2016-10-06)
+
+#### Fix
+* A compiling time issue. Now the compile time of Kingfisher should drop dramatically. [#467](https://github.com/onevcat/Kingfisher/pull/467)
+* kf wrapper of all Kingfisher compatible types now a class instead of struct, to make mutating opearation on it possible. [#469](https://github.com/onevcat/Kingfisher/issues/469)
+
+#### Remove
+* requestModifier of `ImageDownloader` is removed to prevent leading to misunderstanding.
+
+---
+
 ## [3.1.1 - Kingfisher likes more](https://github.com/onevcat/Kingfisher/releases/tag/3.1.1) (2016-09-28)
 
 #### Fix
