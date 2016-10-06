@@ -263,10 +263,7 @@ extension ImageView {
     @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.indicatorType` instead.", renamed: "kf.indicatorType")
     public var kf_indicatorType: IndicatorType {
         get { return kf.indicatorType }
-        set {
-            var holder = kf
-            holder.indicatorType = newValue
-        }
+        set { kf.indicatorType = newValue }
     }
     
     @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.indicator` instead.", renamed: "kf.indicator")
@@ -275,10 +272,7 @@ extension ImageView {
     /// It will be `nil` if `kf_indicatorType` is `.none`.
     public private(set) var kf_indicator: Indicator? {
         get { return kf.indicator }
-        set {
-            var holder = kf
-            holder.indicator = newValue
-        }
+        set { kf.indicator = newValue }
     }
     
     @available(*, deprecated, message: "Extensions directly on image views are deprecated.", renamed: "kf.imageTask")
