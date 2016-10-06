@@ -358,7 +358,12 @@ fileprivate extension Color {
         
         getRed(&r, green: &g, blue: &b, alpha: &a)
         
-        let rgba = Int(r * 255) << 24 | Int(g * 255) << 16 | Int(b * 255) << 8 | Int(a * 255)
+        let rInt = Int(r * 255) << 24
+        let gInt = Int(g * 255) << 16
+        let bInt = Int(b * 255) << 8
+        let aInt = Int(a * 255)
+        
+        let rgba = rInt | gInt | bInt | aInt
         
         return String(format:"#%08x", rgba)
     }
