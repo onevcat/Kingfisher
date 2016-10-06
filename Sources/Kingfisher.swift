@@ -43,7 +43,7 @@ import ImageIO
     #endif
 #endif
 
-public struct Kingfisher<Base> {
+public final class Kingfisher<Base> {
     public let base: Base
     public init(_ base: Base) {
         self.base = base
@@ -61,7 +61,6 @@ public protocol KingfisherCompatible {
 public extension KingfisherCompatible {
     public var kf: Kingfisher<Self> {
         get { return Kingfisher(self) }
-        set { }
     }
 }
 
