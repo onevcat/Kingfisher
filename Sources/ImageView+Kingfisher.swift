@@ -180,17 +180,15 @@ extension ImageView {
 /**
  Enum for the types of indicators that the user can choose from.
  */
-extension ImageView {
-    public enum IndicatorType {
-        /// No indicator.
-        case None
-        /// Use system activity indicator.
-        case Activity
-        /// Use an image as indicator. GIF is supported.
-        case Image(imageData: NSData)
-        /// Use a custom indicator, which conforms to the `Indicator` protocol.
-        case Custom(indicator: Indicator)
-    }
+public enum IndicatorType {
+    /// No indicator.
+    case None
+    /// Use system activity indicator.
+    case Activity
+    /// Use an image as indicator. GIF is supported.
+    case Image(imageData: NSData)
+    /// Use a custom indicator, which conforms to the `Indicator` protocol.
+    case Custom(indicator: Indicator)
 }
 
 // MARK: - Associated Object
