@@ -2,6 +2,14 @@
 
 -----
 
+## [2.6.1 - Linking Fix](https://github.com/onevcat/Kingfisher/releases/tag/2.6.1) (2016-10-14)
+
+#### Fix
+* A linking error of Swift 2.3 that prevents from using nested types when bridging. [#480](https://github.com/onevcat/Kingfisher/issues/480)
+* An issue which prevents to reset the loading indicator type. [c20e455](https://github.com/onevcat/Kingfisher/commit/c20e4556e84326e47e7e8081ea6903b2c2c00a39)
+
+---
+
 ## [2.6.0 - Indicator Customization](https://github.com/onevcat/Kingfisher/releases/tag/2.6.0) (2016-09-12)
 
 #### Add
