@@ -45,8 +45,8 @@ extension CIImageProcessor {
         switch item {
         case .image(let image):
             return image.kf.apply(filter)
-        case .data(let data):
-            return Kingfisher<Image>.image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
+        case .data(_):
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
