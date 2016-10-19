@@ -156,7 +156,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
             let size = targetSize ?? image.kf.size
             return image.kf.image(withRoundRadius: cornerRadius, fit: size, scale: options.scaleFactor)
         case .data(_):
-            return (DefaultImageProcessor() >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
@@ -183,7 +183,7 @@ public struct ResizingImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf.resize(to: targetSize)
         case .data(_):
-            return (DefaultImageProcessor() >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
@@ -212,7 +212,7 @@ public struct BlurImageProcessor: ImageProcessor {
             let radius = blurRadius * options.scaleFactor
             return image.kf.blurred(withRadius: radius)
         case .data(_):
-            return (DefaultImageProcessor() >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
@@ -246,7 +246,7 @@ public struct OverlayImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf.overlaying(with: overlay, fraction: fraction)
         case .data(_):
-            return (DefaultImageProcessor() >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
@@ -274,7 +274,7 @@ public struct TintImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf.tinted(with: tint)
         case .data(_):
-            return (DefaultImageProcessor() >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
@@ -318,7 +318,7 @@ public struct ColorControlsProcessor: ImageProcessor {
         case .image(let image):
             return image.kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
         case .data(_):
-            return (DefaultImageProcessor() >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }
 }
