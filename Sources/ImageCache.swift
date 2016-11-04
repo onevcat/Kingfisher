@@ -105,6 +105,15 @@ open class ImageCache {
     /// The default cache.
     public static let `default` = ImageCache(name: "default")
     
+    /// Closure that defines the disk cache path from a given path and cacheName.
+    public typealias DiskCachePathClosure = (String?, String) -> String
+    
+    /// The default DiskCachePathClosure
+    public final class func DefaultDiskCachePathClosure(path: String?, cacheName: String) -> String {
+        let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+        return (dstPath as NSString).appendingPathComponent(cacheName)
+    }
+    
     /**
     Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.
     
@@ -112,10 +121,15 @@ open class ImageCache {
                       appending to the cache path. This value should not be an empty string.
     - parameter path: Optional - Location of cache path on disk. If `nil` is passed in (the default value),
                       the `.cachesDirectory` in of your app will be used.
+    - parameter diskCachePathClosure: Closure that takes in an optional initial path string and generates
+                      the final disk cache path.
     
     - returns: The cache object.
     */
-    public init(name: String, path: String? = nil) {
+    public init(name: String,
+                path: String? = nil,
+                diskCachePathClosure: DiskCachePathClosure = ImageCache.DefaultDiskCachePathClosure)
+    {
         
         if name.isEmpty {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
@@ -124,8 +138,7 @@ open class ImageCache {
         let cacheName = "com.onevcat.Kingfisher.ImageCache.\(name)"
         memoryCache.name = cacheName
         
-        let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
-        diskCachePath = (dstPath as NSString).appendingPathComponent(cacheName)
+        diskCachePath = diskCachePathClosure(path, cacheName)
         
         let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue.\(name)"
         ioQueue = DispatchQueue(label: ioQueueName)
