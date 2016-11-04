@@ -612,7 +612,7 @@ open class ImageCache {
         return cachePath(forComputedKey: computedKey)
     }
 
-    fileprivate func cachePath(forComputedKey key: String) -> String {
+    open func cachePath(forComputedKey key: String) -> String {
         let fileName = cacheFileName(forComputedKey: key)
         return (diskCachePath as NSString).appendingPathComponent(fileName)
     }
