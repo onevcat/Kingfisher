@@ -109,7 +109,7 @@ open class ImageCache {
     public typealias DiskCachePathClosure = (String?, String) -> String
     
     /// The default DiskCachePathClosure
-    public final class func DefaultDiskCachePathClosure(path: String?, cacheName: String) -> String {
+    public final class func defaultDiskCachePathClosure(path: String?, cacheName: String) -> String {
         let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
         return (dstPath as NSString).appendingPathComponent(cacheName)
     }
@@ -122,13 +122,13 @@ open class ImageCache {
     - parameter path: Optional - Location of cache path on disk. If `nil` is passed in (the default value),
                       the `.cachesDirectory` in of your app will be used.
     - parameter diskCachePathClosure: Closure that takes in an optional initial path string and generates
-                      the final disk cache path.
+                      the final disk cache path. You could use it to fully customize your cache path.
     
     - returns: The cache object.
     */
     public init(name: String,
                 path: String? = nil,
-                diskCachePathClosure: DiskCachePathClosure = ImageCache.DefaultDiskCachePathClosure)
+                diskCachePathClosure: DiskCachePathClosure = ImageCache.defaultDiskCachePathClosure)
     {
         
         if name.isEmpty {
