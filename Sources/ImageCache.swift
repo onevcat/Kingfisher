@@ -161,10 +161,10 @@ open class ImageCache {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-}
 
-// MARK: - Store & Remove
-extension ImageCache {
+
+    // MARK: - Store & Remove
+
     /**
     Store an image to cache. It will be saved to both memory and disk. It is an async operation.
     
@@ -256,11 +256,9 @@ extension ImageCache {
             callHandlerInMainQueue()
         }
     }
-    
-}
 
-// MARK: - Get data from cache
-extension ImageCache {
+    // MARK: - Get data from cache
+
     /**
     Get an image for a key from memory or disk.
     
@@ -370,10 +368,10 @@ extension ImageCache {
         
         return diskImage(forComputedKey: computedKey, serializer: options.cacheSerializer, options: options)
     }
-}
 
-// MARK: - Clear & Clean
-extension ImageCache {
+
+    // MARK: - Clear & Clean
+
     /**
     Clear memory cache.
     */
@@ -543,11 +541,9 @@ extension ImageCache {
         }
     }
 #endif
-}
 
 
-// MARK: - Check cache status
-extension ImageCache {
+    // MARK: - Check cache status
     
     /**
     *  Cache result for checking whether an image is cached for a key.
@@ -629,7 +625,7 @@ extension ImageCache {
         return cachePath(forComputedKey: computedKey)
     }
 
-    func cachePath(forComputedKey key: String) -> String {
+    open func cachePath(forComputedKey key: String) -> String {
         let fileName = cacheFileName(forComputedKey: key)
         return (diskCachePath as NSString).appendingPathComponent(fileName)
     }
