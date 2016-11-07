@@ -106,6 +106,11 @@ public enum KingfisherOptionsInfoItem {
     /// retrieving from disk cache or vice versa for storing to disk cache.
     /// `DefaultCacheSerializer.default` will be used by default.
     case cacheSerializer(CacheSerializer)
+    
+    /// Keep the existing image while setting another image to an image view.
+    /// By setting this option, the placeholder image parameter of imageview extension method
+    /// will be ignored and the current image will be kept while loading or downloading the new image.
+    case keepCurrentImageWhileLoading
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -133,6 +138,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.requestModifier(_), .requestModifier(_)): return true
     case (.processor(_), .processor(_)): return true
     case (.cacheSerializer(_), .cacheSerializer(_)): return true
+    case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     default: return false
     }
 }
@@ -251,5 +257,9 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
             return cacheSerializer
         }
         return DefaultCacheSerializer.default
+    }
+    
+    var keepCurrentImageWhileLoading: Bool {
+        return contains { $0 <== .keepCurrentImageWhileLoading }
     }
 }
