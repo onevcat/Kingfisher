@@ -525,4 +525,19 @@ class ImageViewExtensionTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testSettingImageWhileKeepingCurrentOne() {
+
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        let url = URL(string: URLString)!
+        
+        imageView.image = testImage
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil)
+        XCTAssertNil(imageView.image)
+        
+        imageView.image = testImage
+        imageView.kf.setImage(with: url, placeholder: nil, options: [.keepCurrentImageWhileLoading])
+        XCTAssertEqual(testImage, imageView.image)
+    }
 }
