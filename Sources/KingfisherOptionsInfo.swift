@@ -153,8 +153,8 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     }
 }
 
-extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-    var targetCache: ImageCache {
+public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+    public var targetCache: ImageCache {
         if let item = firstMatchIgnoringAssociatedValue(.targetCache(.default)),
             case .targetCache(let cache) = item
         {
@@ -163,7 +163,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return ImageCache.default
     }
     
-    var downloader: ImageDownloader {
+    public var downloader: ImageDownloader {
         if let item = firstMatchIgnoringAssociatedValue(.downloader(.default)),
             case .downloader(let downloader) = item
         {
@@ -172,7 +172,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return ImageDownloader.default
     }
     
-    var transition: ImageTransition {
+    public var transition: ImageTransition {
         if let item = firstMatchIgnoringAssociatedValue(.transition(.none)),
             case .transition(let transition) = item
         {
@@ -181,7 +181,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return ImageTransition.none
     }
     
-    var downloadPriority: Float {
+    public var downloadPriority: Float {
         if let item = firstMatchIgnoringAssociatedValue(.downloadPriority(0)),
             case .downloadPriority(let priority) = item
         {
@@ -190,31 +190,31 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return URLSessionTask.defaultPriority
     }
     
-    var forceRefresh: Bool {
+    public var forceRefresh: Bool {
         return contains{ $0 <== .forceRefresh }
     }
     
-    var forceTransition: Bool {
+    public var forceTransition: Bool {
         return contains{ $0 <== .forceTransition }
     }
     
-    var cacheMemoryOnly: Bool {
+    public var cacheMemoryOnly: Bool {
         return contains{ $0 <== .cacheMemoryOnly }
     }
     
-    var onlyFromCache: Bool {
+    public var onlyFromCache: Bool {
         return contains{ $0 <== .onlyFromCache }
     }
     
-    var backgroundDecode: Bool {
+    public var backgroundDecode: Bool {
         return contains{ $0 <== .backgroundDecode }
     }
     
-    var preloadAllGIFData: Bool {
+    public var preloadAllGIFData: Bool {
         return contains { $0 <== .preloadAllGIFData }
     }
     
-    var callbackDispatchQueue: DispatchQueue {
+    public var callbackDispatchQueue: DispatchQueue {
         if let item = firstMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
             case .callbackDispatchQueue(let queue) = item
         {
@@ -223,7 +223,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return DispatchQueue.main
     }
     
-    var scaleFactor: CGFloat {
+    public var scaleFactor: CGFloat {
         if let item = firstMatchIgnoringAssociatedValue(.scaleFactor(0)),
             case .scaleFactor(let scale) = item
         {
@@ -232,7 +232,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return 1.0
     }
     
-    var modifier: ImageDownloadRequestModifier {
+    public var modifier: ImageDownloadRequestModifier {
         if let item = firstMatchIgnoringAssociatedValue(.requestModifier(NoModifier.default)),
             case .requestModifier(let modifier) = item
         {
@@ -241,7 +241,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return NoModifier.default
     }
     
-    var processor: ImageProcessor {
+    public var processor: ImageProcessor {
         if let item = firstMatchIgnoringAssociatedValue(.processor(DefaultImageProcessor.default)),
             case .processor(let processor) = item
         {
@@ -250,7 +250,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return DefaultImageProcessor.default
     }
     
-    var cacheSerializer: CacheSerializer {
+    public var cacheSerializer: CacheSerializer {
         if let item = firstMatchIgnoringAssociatedValue(.cacheSerializer(DefaultCacheSerializer.default)),
             case .cacheSerializer(let cacheSerializer) = item
         {
@@ -259,7 +259,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
         return DefaultCacheSerializer.default
     }
     
-    var keepCurrentImageWhileLoading: Bool {
+    public var keepCurrentImageWhileLoading: Bool {
         return contains { $0 <== .keepCurrentImageWhileLoading }
     }
 }
