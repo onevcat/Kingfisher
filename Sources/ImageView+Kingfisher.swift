@@ -58,6 +58,7 @@ extension Kingfisher where Base: ImageView {
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         guard let resource = resource else {
+            base.image = placeholder
             completionHandler?(nil, nil, .none, nil)
             return .empty
         }
