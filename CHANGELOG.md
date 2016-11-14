@@ -2,6 +2,17 @@
 
 -----
 
+## [3.2.1 - Helper Helps](https://github.com/onevcat/Kingfisher/releases/tag/3.2.1) (2016-11-14)
+
+#### Add
+* A new set of `KingfisherOptionsInfo` extension helpers to extract options easiser. It will be useful when you are trying to implement your own processors or serializers. [#505](https://github.com/onevcat/Kingfisher/issues/505)
+* Mark the empty task for downloader as `public`. [#508](https://github.com/onevcat/Kingfisher/issues/508)
+
+#### Fix
+* Set placeholder image even when the input resource is `nil`. This is a regression from version 3.2.0. [#510](https://github.com/onevcat/Kingfisher/issues/510)
+
+---
+
 ## [3.2.0 - Quiet](https://github.com/onevcat/Kingfisher/releases/tag/3.2.0) (2016-11-07)
 
 #### Add
