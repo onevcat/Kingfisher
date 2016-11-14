@@ -56,6 +56,7 @@ extension Kingfisher where Base: UIButton {
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         guard let resource = resource else {
+            base.setImage(placeholder, for: state)
             completionHandler?(nil, nil, .none, nil)
             return .empty
         }
@@ -126,6 +127,7 @@ extension Kingfisher where Base: UIButton {
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         guard let resource = resource else {
+            base.setBackgroundImage(placeholder, for: state)
             completionHandler?(nil, nil, .none, nil)
             return .empty
         }
