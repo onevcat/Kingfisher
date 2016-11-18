@@ -1,5 +1,5 @@
 //
-//  RequrstModifier.swift
+//  RequestModifier.swift
 //  Kingfisher
 //
 //  Created by Wei Wang on 2016/09/05.
