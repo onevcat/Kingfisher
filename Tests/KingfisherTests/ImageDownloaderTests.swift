@@ -248,7 +248,7 @@ class ImageDownloaderTests: XCTestCase {
         }
         
         XCTAssertNotNil(task, "The task should exist.")
-        XCTAssertEqual(task!.ownerDownloader, downloader, "The owner downloader should be correct")
+        XCTAssertTrue(task!.ownerDownloader === downloader, "The owner downloader should be correct")
         XCTAssertEqual(task!.url, URL(string: "1234"), "The request URL should equal.")
     }
     
