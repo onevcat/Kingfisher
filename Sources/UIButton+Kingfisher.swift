@@ -55,11 +55,15 @@ extension Kingfisher where Base: UIButton {
                          progressBlock: DownloadProgressBlock? = nil,
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        base.setImage(placeholder, for: state)
-        
         guard let resource = resource else {
+            base.setImage(placeholder, for: state)
             completionHandler?(nil, nil, .none, nil)
             return .empty
+        }
+        
+        let options = options ?? KingfisherEmptyOptionsInfo
+        if !options.keepCurrentImageWhileLoading {
+            base.setImage(placeholder, for: state)
         }
         
         setWebURL(resource.downloadURL, for: state)
@@ -122,11 +126,15 @@ extension Kingfisher where Base: UIButton {
                                    progressBlock: DownloadProgressBlock? = nil,
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        base.setBackgroundImage(placeholder, for: state)
-        
         guard let resource = resource else {
+            base.setBackgroundImage(placeholder, for: state)
             completionHandler?(nil, nil, .none, nil)
             return .empty
+        }
+        
+        let options = options ?? KingfisherEmptyOptionsInfo
+        if !options.keepCurrentImageWhileLoading {
+            base.setBackgroundImage(placeholder, for: state)
         }
         
         setBackgroundWebURL(resource.downloadURL, for: state)

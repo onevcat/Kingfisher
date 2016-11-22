@@ -11,7 +11,7 @@ platform :ios do
   desc "Runs all the tests"
   lane :test_all_schemes do
     scan(scheme: "Kingfisher", clean: true)
-    scan(scheme: "Kingfisher-macOS", clean: true)
+    scan(scheme: "Kingfisher-macOS", clean: true, destination: 'platform=macOS')
     scan(scheme: "Kingfisher-tvOS", clean: true)
   end
   

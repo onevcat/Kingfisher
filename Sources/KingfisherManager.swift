@@ -37,7 +37,7 @@ public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cac
 /// It contains an async task of getting image from disk and from network.
 public class RetrieveImageTask {
     
-    static let empty = RetrieveImageTask()
+    public static let empty = RetrieveImageTask()
     
     // If task is canceled before the download task started (which means the `downloadTask` is nil),
     // the download task should not begin.

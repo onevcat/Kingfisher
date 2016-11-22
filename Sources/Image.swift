@@ -292,7 +292,7 @@ extension Kingfisher where Base: Image {
             guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
                 return nil
             }
-            var image = Image(data: data)
+            let image = Image(data: data)
             image?.kf.images = images
             image?.kf.duration = gifDuration
             
@@ -303,11 +303,11 @@ extension Kingfisher where Base: Image {
                 guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
                     return nil
                 }
-                var image = Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
+                let image = Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
                 image?.kf.animatedImageData = data
                 return image
             } else {
-                var image = Image(data: data)
+                let image = Image(data: data)
                 image?.kf.animatedImageData = data
                 image?.kf.imageSource = ImageSource(ref: imageSource)
                 return image

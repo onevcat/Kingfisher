@@ -117,6 +117,16 @@ class ImageProcessorTests: XCTestCase {
         // See results in Resource folder.
         checkProcessor(p, with: "blur-4-round-corner-60", noAlpha: true)
     }
+    
+    func testCIImageProcessor() {
+        let p = TestCIImageProcessor(filter: .tint(Color.yellow.withAlphaComponent(0.2)))
+        checkProcessor(p, with: "tint-yellow-02")
+    }
+}
+
+struct TestCIImageProcessor: CIImageProcessor {
+    let identifier = "com.onevcat.kingfishertest.tint"
+    let filter: Filter
 }
 
 extension ImageProcessorTests {

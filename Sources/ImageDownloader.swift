@@ -177,11 +177,6 @@ open class ImageDownloader: NSObject {
     }
     
     // MARK: - Public property
-    /// This closure will be applied to the image download request before it being sent. 
-    /// You can modify the request for some customizing purpose, like adding auth token to the header, do basic HTTP auth or something like url mapping.
-    @available(*, unavailable, message: "`requestModifier` is removed. Use 'urlRequest(for:byModifying:)' from the 'ImageDownloaderDelegate' instead")
-    open var requestModifier: ((inout URLRequest) -> Void)?
-
     /// The duration before the download is timeout. Default is 15 seconds.
     open var downloadTimeout: TimeInterval = 15.0
     
@@ -252,33 +247,33 @@ open class ImageDownloader: NSObject {
         barrierQueue.sync { fetchLoad = fetchLoads[url] }
         return fetchLoad
     }
+    
+    /**
+     Download an image with a URL and option.
+     
+     - parameter url:               Target URL.
+     - parameter options:           The options could control download behavior. See `KingfisherOptionsInfo`.
+     - parameter progressBlock:     Called when the download progress updated.
+     - parameter completionHandler: Called when the download progress finishes.
+     
+     - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
+     */
+    @discardableResult
+    open func downloadImage(with url: URL,
+                            options: KingfisherOptionsInfo? = nil,
+                            progressBlock: ImageDownloaderProgressBlock? = nil,
+                            completionHandler: ImageDownloaderCompletionHandler? = nil) -> RetrieveImageDownloadTask?
+    {
+        return downloadImage(with: url,
+                             retrieveImageTask: nil,
+                             options: options,
+                             progressBlock: progressBlock,
+                             completionHandler: completionHandler)
+    }
 }
 
 // MARK: - Download method
 extension ImageDownloader {
-    /**
-    Download an image with a URL and option.
-    
-    - parameter url:               Target URL.
-    - parameter options:           The options could control download behavior. See `KingfisherOptionsInfo`.
-    - parameter progressBlock:     Called when the download progress updated.
-    - parameter completionHandler: Called when the download progress finishes.
-
-    - returns: A downloading task. You could call `cancel` on it to stop the downloading process.
-    */
-    @discardableResult
-    open func downloadImage(with url: URL,
-                             options: KingfisherOptionsInfo? = nil,
-                       progressBlock: ImageDownloaderProgressBlock? = nil,
-                   completionHandler: ImageDownloaderCompletionHandler? = nil) -> RetrieveImageDownloadTask?
-    {
-        return downloadImage(with: url,
-                retrieveImageTask: nil,
-                          options: options,
-                    progressBlock: progressBlock,
-                completionHandler: completionHandler)
-    }
-    
     func downloadImage(with url: URL,
               retrieveImageTask: RetrieveImageTask?,
                         options: KingfisherOptionsInfo?,

@@ -34,7 +34,7 @@ class ViewController: UICollectionViewController {
         // Do any additional setup after loading the view, typically from a nib.
         title = "Kingfisher"
         
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10.0, tvOS 10.0, *) {
             collectionView?.prefetchDataSource = self
         }
     }
