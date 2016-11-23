@@ -166,7 +166,7 @@ extension AuthenticationChallengeResponsable {
 }
 
 /// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
-open class ImageDownloader: NSObject {
+open class ImageDownloader {
     
     class ImageFetchLoad {
         var contents = [(callback: CallbackPair, options: KingfisherOptionsInfo)]()
@@ -234,9 +234,7 @@ open class ImageDownloader: NSObject {
         processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process.\(name)", attributes: .concurrent)
         
         sessionHandler = ImageDownloaderSessionHandler()
-        
-        super.init()
-        
+
         // Provide a default implement for challenge responder.
         authenticationChallengeResponder = sessionHandler
         session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: .main)
