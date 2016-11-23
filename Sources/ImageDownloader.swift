@@ -492,15 +492,15 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 let completionHandler = content.callback.completionHandler
                 let callbackQueue = options.callbackDispatchQueue
                 
-                let processoor = options.processor
+                let processor = options.processor
                 
-                var image = imageCache[processoor.identifier]
+                var image = imageCache[processor.identifier]
                 if image == nil {
-                    image = processoor.process(item: .data(data), options: options)
+                    image = processor.process(item: .data(data), options: options)
                     
                     // Add the processed image to cache. 
                     // If `image` is nil, nothing will happen (since the key is not existing before).
-                    imageCache[processoor.identifier] = image
+                    imageCache[processor.identifier] = image
                 }
                 
                 if let image = image {
