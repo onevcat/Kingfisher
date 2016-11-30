@@ -90,7 +90,7 @@ public enum KingfisherError: Int {
     case invalidURL = 20000
     
     /// The downloading task is cancelled before started.
-    case downloadCanelledBeforeStarting = 30000
+    case downloadCancelledBeforeStarting = 30000
 }
 
 /// Key will be used in the `userInfo` of `.invalidStatusCode`
@@ -290,7 +290,7 @@ extension ImageDownloader {
 
         if let modifier = options?.modifier {
             guard let r = modifier.modified(for: request) else {
-                completionHandler?(nil, NSError(domain: KingfisherErrorDomain, code: KingfisherError.downloadCanelledBeforeStarting.rawValue, userInfo: nil), nil, nil)
+                completionHandler?(nil, NSError(domain: KingfisherErrorDomain, code: KingfisherError.downloadCancelledBeforeStarting.rawValue, userInfo: nil), nil, nil)
                 return nil
             }
             request = r
@@ -490,15 +490,15 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 let completionHandler = content.callback.completionHandler
                 let callbackQueue = options.callbackDispatchQueue
                 
-                let processoor = options.processor
+                let processor = options.processor
                 
-                var image = imageCache[processoor.identifier]
+                var image = imageCache[processor.identifier]
                 if image == nil {
-                    image = processoor.process(item: .data(data), options: options)
+                    image = processor.process(item: .data(data), options: options)
                     
                     // Add the processed image to cache. 
                     // If `image` is nil, nothing will happen (since the key is not existing before).
-                    imageCache[processoor.identifier] = image
+                    imageCache[processor.identifier] = image
                 }
                 
                 if let image = image {
