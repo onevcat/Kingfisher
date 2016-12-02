@@ -2,6 +2,15 @@
 
 -----
 
+## [3.2.2 - Faster GIF](https://github.com/onevcat/Kingfisher/releases/tag/3.2.2) (2016-12-02)
+
+#### Fix
+* Improve preload animated image loading strategy by using background queue. This should improve framerate when loading a lot of GIF files in the same time. [#529](https://github.com/onevcat/Kingfisher/pull/529)
+* Make `ImageDownloader` a pure Swift class to avoid the SDK bug which might leak memory in iOS 10. [#520](https://github.com/onevcat/Kingfisher/issues/520)
+* Fix some typos. [#523](https://github.com/onevcat/Kingfisher/issues/523)
+
+---
+
 ## [3.2.1 - Helper Helps](https://github.com/onevcat/Kingfisher/releases/tag/3.2.1) (2016-11-14)
 
 #### Add
