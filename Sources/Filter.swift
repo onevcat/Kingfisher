@@ -121,7 +121,7 @@ extension Kingfisher where Base: Image {
         #if os(macOS)
             return fixedForRetinaPixel(cgImage: result, to: size)
         #else
-            return Image(cgImage: result)
+            return Image(cgImage: result, scale: base.scale, orientation: base.imageOrientation)
         #endif
     }
 

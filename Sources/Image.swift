@@ -514,7 +514,7 @@ extension Kingfisher where Base: Image {
             #if os(macOS)
                 let result = outContext.makeImage().flatMap { fixedForRetinaPixel(cgImage: $0, to: size) }
             #else
-                let result = outContext.makeImage().flatMap { Image(cgImage: $0) }
+                let result = outContext.makeImage().flatMap { Image(cgImage: $0, scale: base.scale, orientation: base.imageOrientation) }
             #endif
             guard let blurredImage = result else {
                 assertionFailure("[Kingfisher] Can not make an blurred image within this context.")
