@@ -69,7 +69,7 @@ typealias ProcessorImp = ((ImageProcessItem, KingfisherOptionsInfo) -> Image?)
 public extension ImageProcessor {
     
     /// Append an `ImageProcessor` to another. The identifier of the new `ImageProcessor` 
-    /// will be "\(self.identifier)|>\(another.identifier)>".
+    /// will be "\(self.identifier)|>\(another.identifier)".
     ///
     /// - parameter another: An `ImageProcessor` you want to append to `self`.
     ///
