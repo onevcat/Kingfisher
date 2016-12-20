@@ -2,6 +2,13 @@
 
 -----
 
+## [3.2.3 - LI ZHENG](https://github.com/onevcat/Kingfisher/releases/tag/3.2.3) (2016-12-20)
+
+#### Fix
+* An issue which caused processed images igoring exif orientation information. [#535](https://github.com/onevcat/Kingfisher/issues/535)
+
+---
+
 ## [3.2.2 - Faster GIF](https://github.com/onevcat/Kingfisher/releases/tag/3.2.2) (2016-12-02)
 
 #### Fix
