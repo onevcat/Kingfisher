@@ -27,5 +27,6 @@
 import PackageDescription
 
 let package = Package(
-  name: "Kingfisher"
+  name: "Kingfisher",
+  exclude: ["Tests","Sources/AnimatedImageView.swift","Sources/UIButton+Kingfisher.swift"]
 )
