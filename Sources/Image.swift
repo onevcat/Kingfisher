@@ -340,17 +340,17 @@ extension Kingfisher where Base: Image {
 
 // MARK: - Image Transforming
 extension Kingfisher where Base: Image {
+
     // MARK: - Round Corner
     /// Create a round corner image based on `self`.
     ///
     /// - parameter radius: The round corner radius of creating image.
     /// - parameter size:   The target size of creating image.
-    /// - parameter scale:  The image scale of creating image.
     ///
     /// - returns: An image with round corner of `self`.
     ///
     /// - Note: This method only works for CG-based image.
-    public func image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
+    public func image(withRoundRadius radius: CGFloat, fit size: CGSize) -> Image {
         
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Round corder image only works for CG-based image.")
@@ -856,7 +856,7 @@ extension Image {
     message: "Extensions directly on Image are deprecated. Use `kf.image(withRoundRadius:fit:scale:)` instead.",
     renamed: "kf.image")
     public func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
-        return kf.image(withRoundRadius: radius, fit: size, scale: scale)
+        return kf.image(withRoundRadius: radius, fit: size)
     }
     
     // MARK: - Resize
@@ -934,5 +934,13 @@ extension Image {
     renamed: "kf.adjusted")
     public func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
         return kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
+    }
+}
+
+extension Kingfisher where Base: Image {
+    @available(*, deprecated,
+    message: "`scale` is not used. Use the version without scale instead. (Remove the `scale` argument)")
+    public func image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
+        return image(withRoundRadius: radius, fit: size)
     }
 }
