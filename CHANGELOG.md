@@ -2,6 +2,14 @@
 
 -----
 
+## [3.2.4 - Love SPM again](https://github.com/onevcat/Kingfisher/releases/tag/3.2.4) (2016-12-22)
+
+#### Fix
+* A problem that causes framework cannot be compiled by Swift Package Manager. [#547](https://github.com/onevcat/Kingfisher/issues/547)
+* Removed an unused parameter from round corner image API. [#548](https://github.com/onevcat/Kingfisher/issues/548)
+
+---
+
 ## [3.2.3 - LI ZHENG](https://github.com/onevcat/Kingfisher/releases/tag/3.2.3) (2016-12-20)
 
 #### Fix
