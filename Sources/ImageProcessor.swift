@@ -154,7 +154,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         switch item {
         case .image(let image):
             let size = targetSize ?? image.kf.size
-            return image.kf.image(withRoundRadius: cornerRadius, fit: size, scale: options.scaleFactor)
+            return image.kf.image(withRoundRadius: cornerRadius, fit: size)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
