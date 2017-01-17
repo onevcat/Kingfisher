@@ -173,7 +173,7 @@ extension Kingfisher where Base: Image {
 // MARK: - Image Representation
 extension Kingfisher where Base: Image {
     // MARK: - PNG
-    func pngRepresentation() -> Data? {
+    public func pngRepresentation() -> Data? {
         #if os(macOS)
             guard let cgimage = cgImage else {
                 return nil
@@ -186,7 +186,7 @@ extension Kingfisher where Base: Image {
     }
     
     // MARK: - JPEG
-    func jpegRepresentation(compressionQuality: CGFloat) -> Data? {
+    public func jpegRepresentation(compressionQuality: CGFloat) -> Data? {
         #if os(macOS)
             guard let cgImage = cgImage else {
                 return nil
@@ -199,7 +199,7 @@ extension Kingfisher where Base: Image {
     }
     
     // MARK: - GIF
-    func gifRepresentation() -> Data? {
+    public func gifRepresentation() -> Data? {
         #if os(macOS)
             return gifRepresentation(duration: 0.0, repeatCount: 0)
         #else
