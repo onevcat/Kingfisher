@@ -310,8 +310,14 @@ class ImageCacheTests: XCTestCase {
                 expectation.fulfill()
             })
             
-            self.cache.maxCachePeriodInSecond = 0
-            self.cache.cleanExpiredDiskCache()
+            let originalPeriod = self.cache.maxCachePeriodInSecond
+            self.cache.maxCachePeriodInSecond = 1
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5, execute: {
+                self.cache.cleanExpiredDiskCache {
+                    self.cache.maxCachePeriodInSecond = originalPeriod
+                }
+            })
         }
         
         waitForExpectations(timeout: 5, handler: nil)
