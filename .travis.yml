@@ -15,7 +15,7 @@ script:
 - |
     if [ "$TEST_TYPE" = iOS ]; then
       set -o pipefail
-      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination "platform=iOS Simulator,name=iPhone 7" -enableCodeCoverage YES | xcpretty
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' -enableCodeCoverage YES | xcpretty
     elif [ "$TEST_TYPE" = macOS ]; then
       set -o pipefail
       xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -sdk macosx -enableCodeCoverage YES | xcpretty
