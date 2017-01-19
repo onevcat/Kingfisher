@@ -93,6 +93,7 @@ open class ImageCache {
     
     /// The longest time duration in second of the cache being stored in disk. 
     /// Default is 1 week (60 * 60 * 24 * 7 seconds).
+    /// Set this value to 0 or negative means the disk cache will never expire.
     open var maxCachePeriodInSecond: TimeInterval = 60 * 60 * 24 * 7 //Cache exists for 1 week
     
     /// The largest disk size can be taken for the cache. It is the total 
@@ -475,7 +476,7 @@ open class ImageCache {
         
         let diskCacheURL = URL(fileURLWithPath: diskCachePath)
         let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentAccessDateKey, .totalFileAllocatedSizeKey]
-        let expiredDate = Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
+        let expiredDate = (maxCachePeriodInSecond > 0) ? Date(timeIntervalSinceNow: -maxCachePeriodInSecond) : nil
         
         var cachedFiles = [URL: URLResourceValues]()
         var urlsToDelete = [URL]()
@@ -493,14 +494,14 @@ open class ImageCache {
                         continue
                     }
                     
-                    if !onlyForCacheSize {
-                        // If this file is expired, add it to URLsToDelete
-                        if let lastAccessData = resourceValues.contentAccessDate {
-                            if (lastAccessData as NSDate).laterDate(expiredDate) == expiredDate {
-                                urlsToDelete.append(fileUrl)
-                                continue
-                            }
-                        }
+                    // If this file is expired, add it to URLsToDelete
+                    if !onlyForCacheSize,
+                       let expiredDate = expiredDate,
+                       let lastAccessData = resourceValues.contentAccessDate,
+                       (lastAccessData as NSDate).laterDate(expiredDate) == expiredDate
+                    {
+                        urlsToDelete.append(fileUrl)
+                        continue
                     }
 
                     if let fileSize = resourceValues.totalFileAllocatedSize {
