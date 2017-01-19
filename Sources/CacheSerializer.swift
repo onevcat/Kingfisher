@@ -63,6 +63,10 @@ public struct DefaultCacheSerializer: CacheSerializer {
     private init() {}
     
     public func data(with image: Image, original: Data?) -> Data? {
+        if original != nil {
+            return original
+        }
+        
         let imageFormat = original?.kf.imageFormat ?? .unknown
         
         let data: Data?
@@ -70,7 +74,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
         case .PNG: data = image.kf.pngRepresentation()
         case .JPEG: data = image.kf.jpegRepresentation(compressionQuality: 1.0)
         case .GIF: data = image.kf.gifRepresentation()
-        case .unknown: data = original ?? image.kf.normalized.kf.pngRepresentation()
+        case .unknown: data = image.kf.normalized.kf.pngRepresentation()
         }
         
         return data
