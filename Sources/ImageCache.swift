@@ -93,7 +93,7 @@ open class ImageCache {
     
     /// The longest time duration in second of the cache being stored in disk. 
     /// Default is 1 week (60 * 60 * 24 * 7 seconds).
-    /// Set this value to 0 or negative means the disk cache will never expire.
+    /// Setting this to a negative value will make the disk cache never expiring.
     open var maxCachePeriodInSecond: TimeInterval = 60 * 60 * 24 * 7 //Cache exists for 1 week
     
     /// The largest disk size can be taken for the cache. It is the total 
@@ -476,7 +476,7 @@ open class ImageCache {
         
         let diskCacheURL = URL(fileURLWithPath: diskCachePath)
         let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentAccessDateKey, .totalFileAllocatedSizeKey]
-        let expiredDate = (maxCachePeriodInSecond > 0) ? Date(timeIntervalSinceNow: -maxCachePeriodInSecond) : nil
+        let expiredDate = (maxCachePeriodInSecond < 0) ? nil : Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
         
         var cachedFiles = [URL: URLResourceValues]()
         var urlsToDelete = [URL]()
