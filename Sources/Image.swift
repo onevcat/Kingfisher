@@ -460,55 +460,40 @@ extension Kingfisher where Base: Image {
             let h = Int(size.height)
             let rowBytes = Int(CGFloat(cgImage.bytesPerRow))
             
-            let inDataPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: rowBytes * Int(h))
-            inDataPointer.initialize(to: 0)
-            defer {
-                inDataPointer.deinitialize()
-                inDataPointer.deallocate(capacity: rowBytes * Int(h))
-        }
-            
-            let bitmapInfo = cgImage.bitmapInfo.fixed
-            guard let context = CGContext(data: inDataPointer,
-                                          width: w,
-                                          height: h,
-                                          bitsPerComponent: cgImage.bitsPerComponent,
-                                          bytesPerRow: rowBytes,
-                                          space: cgImage.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
-                                          bitmapInfo: bitmapInfo.rawValue) else
-            {
+            func createEffectBuffer(_ context: CGContext) -> vImage_Buffer {
+                let data = context.data
+                let width = vImagePixelCount(context.width)
+                let height = vImagePixelCount(context.height)
+                let rowBytes = context.bytesPerRow
+                
+                return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
+            }
+
+            guard let context = beginContext() else {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
                 return base
             }
+            defer { endContext() }
+            
+            #if !os(macOS)
+            context.scaleBy(x: 1.0, y: -1.0)
+            context.translateBy(x: 0, y: -size.height)
+            #endif
             
             context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
             
+            var inBuffer = createEffectBuffer(context)
             
-            var inBuffer = vImage_Buffer(data: inDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
-            
-            let outDataPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: rowBytes * Int(h))
-            outDataPointer.initialize(to: 0)
-            defer {
-                outDataPointer.deinitialize()
-                outDataPointer.deallocate(capacity: rowBytes * Int(h))
-        }
-            
-            var outBuffer = vImage_Buffer(data: outDataPointer, height: vImagePixelCount(h), width: vImagePixelCount(w), rowBytes: rowBytes)
+            guard let outContext = beginContext() else {
+                assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
+                return base
+            }
+            defer { endContext() }
+            var outBuffer = createEffectBuffer(outContext)
             
             for _ in 0 ..< iterations {
                 vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer, nil, 0, 0, UInt32(targetRadius), UInt32(targetRadius), nil, vImage_Flags(kvImageEdgeExtend))
                 (inBuffer, outBuffer) = (outBuffer, inBuffer)
-            }
-            
-            guard let outContext = CGContext(data: inDataPointer,
-                                             width: w,
-                                             height: h,
-                                             bitsPerComponent: cgImage.bitsPerComponent,
-                                             bytesPerRow: rowBytes,
-                                             space: cgImage.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
-                                             bitmapInfo: bitmapInfo.rawValue) else
-            {
-                assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
-                return base
             }
             
             #if os(macOS)
@@ -736,8 +721,47 @@ extension CGBitmapInfo {
     }
 }
 
-
 extension Kingfisher where Base: Image {
+    
+    func beginContext() -> CGContext? {
+        #if os(macOS)
+            guard let rep = NSBitmapImageRep(
+                bitmapDataPlanes: nil,
+                pixelsWide: Int(size.width),
+                pixelsHigh: Int(size.height),
+                bitsPerSample: cgImage?.bitsPerComponent ?? 8,
+                samplesPerPixel: 4,
+                hasAlpha: true,
+                isPlanar: false,
+                colorSpaceName: NSCalibratedRGBColorSpace,
+                bytesPerRow: 0,
+                bitsPerPixel: 0) else
+            {
+                assertionFailure("[Kingfisher] Image representation cannot be created.")
+                return nil
+            }
+            rep.size = size
+            NSGraphicsContext.saveGraphicsState()
+            guard let context = NSGraphicsContext(bitmapImageRep: rep) else {
+                assertionFailure("[Kingfisher] Image contenxt cannot be created.")
+                return nil
+            }
+            
+            NSGraphicsContext.setCurrent(context)
+            return context.cgContext
+        #else
+            UIGraphicsBeginImageContextWithOptions(size, false, scale)
+            return UIGraphicsGetCurrentContext()
+        #endif
+    }
+    
+    func endContext() {
+        #if os(macOS)
+            NSGraphicsContext.restoreGraphicsState()
+        #else
+            UIGraphicsEndImageContext()
+        #endif
+    }
     
     func draw(cgImage: CGImage?, to size: CGSize, draw: ()->()) -> Image {
         #if os(macOS)
