@@ -226,9 +226,6 @@
 		4BB83F0B1E32075800B64183 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BB83E4F1E32075800B64183 /* unicorn.png */; };
 		4BB83F0C1E32075800B64183 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BB83E4F1E32075800B64183 /* unicorn.png */; };
 		4BB83F0D1E32075800B64183 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BB83E4F1E32075800B64183 /* unicorn.png */; };
-		4BB83F0E1E32075800B64183 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 4BB83E501E32075800B64183 /* README.md */; };
-		4BB83F0F1E32075800B64183 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 4BB83E501E32075800B64183 /* README.md */; };
-		4BB83F101E32075800B64183 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 4BB83E501E32075800B64183 /* README.md */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
 		4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3371D5B02F8003387C2 /* Assets.xcassets */; };
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
@@ -559,7 +556,6 @@
 		4BB83E4D1E32075800B64183 /* kingfisher.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = kingfisher.jpg; sourceTree = "<group>"; };
 		4BB83E4E1E32075800B64183 /* onevcat.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = onevcat.jpg; sourceTree = "<group>"; };
 		4BB83E4F1E32075800B64183 /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unicorn.png; sourceTree = "<group>"; };
-		4BB83E501E32075800B64183 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4BCCF3391D5B02F8003387C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -739,7 +735,6 @@
 			children = (
 				4BB83E071E32075800B64183 /* Modified */,
 				4BB83E4C1E32075800B64183 /* Original */,
-				4BB83E501E32075800B64183 /* README.md */,
 			);
 			path = "Kingfisher-TestImages";
 			sourceTree = SOURCE_ROOT;
@@ -2106,7 +2101,6 @@
 				D12E0C6F1C47F6FE00AC98AD /* ImageDownloaderTests.swift in Sources */,
 				D9638BA71C7DCF560046523D /* ImagePrefetcherTests.swift in Sources */,
 				D12E0C701C47F6FE00AC98AD /* ImageExtensionTests.swift in Sources */,
-				4BB83F0F1E32075800B64183 /* README.md in Sources */,
 				D12E0C711C47F6FE00AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				D12E0C721C47F6FE00AC98AD /* KingfisherManagerTests.swift in Sources */,
 				D12E0C731C47F6FE00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
@@ -2125,7 +2119,6 @@
 				D12E0C821C47F7AF00AC98AD /* ImageCacheTests.swift in Sources */,
 				D12E0C831C47F7AF00AC98AD /* ImageDownloaderTests.swift in Sources */,
 				D9638BA81C7DCF570046523D /* ImagePrefetcherTests.swift in Sources */,
-				4BB83F101E32075800B64183 /* README.md in Sources */,
 				D12E0C841C47F7AF00AC98AD /* ImageExtensionTests.swift in Sources */,
 				D12E0C851C47F7AF00AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				D12E0C861C47F7AF00AC98AD /* KingfisherManagerTests.swift in Sources */,
@@ -2248,7 +2241,6 @@
 				D12E0C561C47F23500AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
 				D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */,
 				D12E0C551C47F23500AC98AD /* KingfisherManagerTests.swift in Sources */,
-				4BB83F0E1E32075800B64183 /* README.md in Sources */,
 				D12E0C511C47F23500AC98AD /* ImageDownloaderTests.swift in Sources */,
 				D12E0C521C47F23500AC98AD /* ImageExtensionTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
