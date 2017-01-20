@@ -600,12 +600,12 @@ extension Kingfisher where Base: Image {
             return base
         }
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = imageRef.bitmapInfo.fixed
-        
-        guard let context = CGContext(data: nil, width: imageRef.width, height: imageRef.height, bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue) else {
+        guard let context = beginContext() else {
             assertionFailure("[Kingfisher] Decoding fails to create a valid context.")
             return base
         }
+        
+        defer { endContext() }
         
         let rect = CGRect(x: 0, y: 0, width: imageRef.width, height: imageRef.height)
         context.draw(imageRef, in: rect)
@@ -706,21 +706,6 @@ extension CGSizeProxy {
     }
 }
 
-extension CGBitmapInfo {
-    var fixed: CGBitmapInfo {
-        var fixed = self
-        let alpha = (rawValue & CGBitmapInfo.alphaInfoMask.rawValue)
-        if alpha == CGImageAlphaInfo.none.rawValue {
-            fixed.remove(.alphaInfoMask)
-            fixed = CGBitmapInfo(rawValue: fixed.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue)
-        } else if !(alpha == CGImageAlphaInfo.noneSkipFirst.rawValue) || !(alpha == CGImageAlphaInfo.noneSkipLast.rawValue) {
-            fixed.remove(.alphaInfoMask)
-            fixed = CGBitmapInfo(rawValue: fixed.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)
-        }
-        return fixed
-    }
-}
-
 extension Kingfisher where Base: Image {
     
     func beginContext() -> CGContext? {
@@ -813,36 +798,6 @@ extension Kingfisher where Base: Image {
         }
     }
     #endif
-}
-
-
-extension CGContext {
-    static func createARGBContext(from imageRef: CGImage) -> CGContext? {
-        
-        let w = imageRef.width
-        let h = imageRef.height
-        let bytesPerRow = w * 4
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        
-        let data = malloc(bytesPerRow * h)
-        defer {
-            free(data)
-        }
-        
-        let bitmapInfo = imageRef.bitmapInfo.fixed
-        
-        // Create the bitmap context. We want pre-multiplied ARGB, 8-bits
-        // per component. Regardless of what the source image format is
-        // (CMYK, Grayscale, and so on) it will be converted over to the format
-        // specified here.
-        return CGContext(data: data,
-                         width: w,
-                         height: h,
-                         bitsPerComponent: imageRef.bitsPerComponent,
-                         bytesPerRow: bytesPerRow,
-                         space: colorSpace,
-                         bitmapInfo: bitmapInfo.rawValue)
-    }
 }
 
 extension Double {
