@@ -2,6 +2,18 @@
 
 -----
 
+## [3.3.1 - Lunar Eve](https://github.com/onevcat/Kingfisher/releases/tag/3.3.1) (2017-01-21)
+
+#### Add
+* Expose default `pngRepresentation`, `jpegRepresentation` and `gifRepresentation` as public. [#560](https://github.com/onevcat/Kingfisher/pull/560)
+* Support unlimited disk cache duration. [#566](https://github.com/onevcat/Kingfisher/pull/566)
+
+#### Fix
+* A mismatch of CG image component when creating `CGContext` for blur filter. [#567](https://github.com/onevcat/Kingfisher/pull/567)
+* Remove test images from repo to keep slim. [#568](https://github.com/onevcat/Kingfisher/pull/568)
+
+---
+
 ## [3.3.0 - Lunar Eve](https://github.com/onevcat/Kingfisher/releases/tag/3.3.0) (2017-01-21)
 
 #### Add
