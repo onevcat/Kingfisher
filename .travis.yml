@@ -10,9 +10,10 @@ env:
 -before_install:
  - |
     gem install xcpretty -N --no-ri --no-rdoc
- 
 script:
 - |
+    git submodule init
+    git submodule update
     if [ "$TEST_TYPE" = iOS ]; then
       set -o pipefail
       xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.1' -enableCodeCoverage YES | xcpretty

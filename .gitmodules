@@ -1,0 +1,3 @@
+[submodule "Kingfisher-TestImages"]
+	path = Kingfisher-TestImages
+	url = https://github.com/onevcat/Kingfisher-TestImages.git
