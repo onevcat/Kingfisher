@@ -474,12 +474,7 @@ extension Kingfisher where Base: Image {
                 return base
             }
             defer { endContext() }
-            
-            #if !os(macOS)
-            context.scaleBy(x: 1.0, y: -1.0)
-            context.translateBy(x: 0, y: -size.height)
-            #endif
-            
+
             context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
             
             var inBuffer = createEffectBuffer(context)
@@ -736,7 +731,10 @@ extension Kingfisher where Base: Image {
             return context.cgContext
         #else
             UIGraphicsBeginImageContextWithOptions(size, false, scale)
-            return UIGraphicsGetCurrentContext()
+            let context = UIGraphicsGetCurrentContext()
+            context?.scaleBy(x: 1.0, y: -1.0)
+            context?.translateBy(x: 0, y: -size.height)
+            return context
         #endif
     }
     
