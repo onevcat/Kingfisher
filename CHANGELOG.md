@@ -2,6 +2,13 @@
 
 -----
 
+## [3.3.2 - Upside Down](https://github.com/onevcat/Kingfisher/releases/tag/3.3.2) (2017-01-23)
+
+#### Fix
+* An issue which causes the background decoded images drawn upside down.
+
+---
+
 ## [3.3.1 - Lunar Eve](https://github.com/onevcat/Kingfisher/releases/tag/3.3.1) (2017-01-21)
 
 #### Add
