@@ -100,6 +100,7 @@ extension Kingfisher where Base: UIButton {
      */
     public func cancelImageDownloadTask() {
         imageTask?.downloadTask?.cancel()
+        setImageTask(nil)
     }
     
     /**
