@@ -137,6 +137,7 @@ extension Kingfisher where Base: ImageView {
      */
     public func cancelDownloadTask() {
         imageTask?.downloadTask?.cancel()
+        setImageTask(nil)
     }
 }
 
