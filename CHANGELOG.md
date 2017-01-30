@@ -2,6 +2,13 @@
 
 -----
 
+## [3.3.3 - Xcode 8.0 is not dead yet](https://github.com/onevcat/Kingfisher/releases/tag/3.3.3) (2017-01-30)
+
+#### Fix
+* A type inference to make Kingfisher compiles on Xcode 8.0 again. [#572](https://github.com/onevcat/Kingfisher/issues/572)
+
+---
+
 ## [3.3.2 - Upside Down](https://github.com/onevcat/Kingfisher/releases/tag/3.3.2) (2017-01-23)
 
 #### Fix
