@@ -99,7 +99,12 @@ extension Kingfisher where Base: UIButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelImageDownloadTask() {
-        imageTask?.downloadTask?.cancel()
+        if let downloadTask = imageTask?.downloadTask {
+            downloadTask.cancel()
+        }
+        else {
+            imageTask?.cancelledBeforeDownloadStarting = true
+        }
     }
     
     /**
@@ -168,9 +173,13 @@ extension Kingfisher where Base: UIButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelBackgroundImageDownloadTask() {
-        backgroundImageTask?.downloadTask?.cancel()
+        if let downloadTask = backgroundImageTask?.downloadTask {
+            downloadTask.cancel()
+        }
+        else {
+            backgroundImageTask?.cancelledBeforeDownloadStarting = true
+        }
     }
-
 }
 
 // MARK: - Associated Object

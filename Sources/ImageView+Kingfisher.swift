@@ -136,7 +136,12 @@ extension Kingfisher where Base: ImageView {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelDownloadTask() {
-        imageTask?.downloadTask?.cancel()
+        if let downloadTask = imageTask?.downloadTask {
+            downloadTask.cancel()
+        }
+        else {
+            imageTask?.cancelledBeforeDownloadStarting = true
+        }
     }
 }
 
