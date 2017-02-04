@@ -279,6 +279,7 @@ extension ImageDownloader {
               completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
     {
         if let retrieveImageTask = retrieveImageTask, retrieveImageTask.cancelledBeforeDownloadStarting {
+            completionHandler?(nil, NSError(domain: KingfisherErrorDomain, code: KingfisherError.downloadCancelledBeforeStarting.rawValue, userInfo: nil), nil, nil)
             return nil
         }
         

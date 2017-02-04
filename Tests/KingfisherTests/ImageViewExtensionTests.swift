@@ -148,6 +148,7 @@ class ImageViewExtensionTests: XCTestCase {
             progressBlockIsCalled = true
         }) { (image, error, cacheType, imageURL) -> () in
             completionBlockIsCalled = true
+            XCTAssertEqual(error?.code, KingfisherError.downloadCancelledBeforeStarting.rawValue, "The error should be downloadCancelledBeforeStarting")
         }
 
         task.cancel()
@@ -155,7 +156,7 @@ class ImageViewExtensionTests: XCTestCase {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            XCTAssert(completionBlockIsCalled == false, "CompletionBlock should not be called since it is canceled.")
+            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called since it is canceled.")
         }
         
         waitForExpectations(timeout: 5, handler: nil)
@@ -209,7 +210,9 @@ class ImageViewExtensionTests: XCTestCase {
         let task1 = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
 
             }) { (image, error, cacheType, imageURL) -> () in
+                XCTAssertNil(image)
                 task1Completion = true
+                XCTAssertEqual(error?.code, KingfisherError.downloadCancelledBeforeStarting.rawValue, "The error should be downloadCancelledBeforeStarting")
         }
         
         let _ = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
@@ -233,7 +236,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.2)) / Double(NSEC_PER_SEC)) { () -> Void in
             expectation.fulfill()
-            XCTAssert(task1Completion == false, "Task 1 should be not completed since it is cancelled before downloading started.")
+            XCTAssert(task1Completion == true, "Task 1 should be completed.")
             XCTAssert(task2Completion == true, "Task 2 should be completed.")
             XCTAssert(task3Completion == true, "Task 3 should be completed.")
         }
