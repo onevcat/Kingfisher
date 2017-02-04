@@ -439,9 +439,9 @@ extension Kingfisher where Base: Image {
             // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
             // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
             // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
-            let s = max(radius, 2.0)
+            let s = Float(max(radius, 2.0))
             // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
-            var targetRadius = floor((Double(s * 3.0) * sqrt(2 * M_PI) / 4.0 + 0.5))
+            var targetRadius = floor(s * 3.0 * sqrt(2 * Float.pi) / 4.0 + 0.5)
             
             if targetRadius.isEven {
                 targetRadius += 1
@@ -798,7 +798,7 @@ extension Kingfisher where Base: Image {
     #endif
 }
 
-extension Double {
+extension Float {
     var isEven: Bool {
         return truncatingRemainder(dividingBy: 2.0) == 0
     }
