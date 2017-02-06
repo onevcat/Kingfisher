@@ -353,7 +353,7 @@ extension Kingfisher where Base: Image {
     public func image(withRoundRadius radius: CGFloat, fit size: CGSize) -> Image {
         
         guard let cgImage = cgImage else {
-            assertionFailure("[Kingfisher] Round corder image only works for CG-based image.")
+            assertionFailure("[Kingfisher] Round corner image only works for CG-based image.")
             return base
         }
         
