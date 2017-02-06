@@ -69,6 +69,9 @@ extension Kingfisher where Base: NSButton {
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
+                guard imageURL == self.webURL else {
+                    return
+                }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
@@ -135,6 +138,9 @@ extension Kingfisher where Base: NSButton {
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
+                guard imageURL == self.alternateWebURL else {
+                    return
+                }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }

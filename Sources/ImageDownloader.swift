@@ -406,7 +406,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             if let expectedLength = dataTask.response?.expectedContentLength {
                 for content in fetchLoad.contents {
                     DispatchQueue.main.async {
-                        content.callback.progressBlock?(Int64(fetchLoad.responseData.length), expectedLength)
+                        content.callback.progressBlock?(Int64(fetchLoad.responseData.length), expectedLength, dataTask.originalRequest?.url)
                     }
                 }
             }

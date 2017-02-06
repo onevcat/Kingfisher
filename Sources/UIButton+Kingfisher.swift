@@ -70,9 +70,12 @@ extension Kingfisher where Base: UIButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: options,
-            progressBlock: { receivedSize, totalSize in
+            progressBlock: { receivedSize, totalSize, imageURL in
+                guard imageURL == self.webURL(for: state) else {
+                    return
+                }
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
+                    progressBlock(receivedSize, totalSize, imageURL)
                 }
             },
             completionHandler: {[weak base] image, error, cacheType, imageURL in
@@ -141,9 +144,12 @@ extension Kingfisher where Base: UIButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: options,
-            progressBlock: { receivedSize, totalSize in
+            progressBlock: { receivedSize, totalSize, imageURL in
+                guard imageURL == self.webURL(for: state) else {
+                    return
+                }
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
+                    progressBlock(receivedSize, totalSize, imageURL)
                 }
             },
             completionHandler: { [weak base] image, error, cacheType, imageURL in
