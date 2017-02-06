@@ -30,7 +30,7 @@ import AppKit
 import UIKit
 #endif
 
-public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: Int64) -> ())
+public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: Int64, _ imageURL: URL?) -> ())
 public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> ())
 
 /// RetrieveImageTask represents a task of image retrieving process.
@@ -141,8 +141,8 @@ public class KingfisherManager {
         let options = options ?? KingfisherEmptyOptionsInfo
         let downloader = options.downloader
         return downloader.downloadImage(with: url, retrieveImageTask: retrieveImageTask, options: options,
-            progressBlock: { receivedSize, totalSize in
-                progressBlock?(receivedSize, totalSize)
+            progressBlock: { receivedSize, totalSize, imageURL in
+                progressBlock?(receivedSize, totalSize, imageURL)
             },
             completionHandler: { image, error, imageURL, originalData in
 
