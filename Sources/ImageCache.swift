@@ -476,7 +476,7 @@ open class ImageCache {
         
         let diskCacheURL = URL(fileURLWithPath: diskCachePath)
         let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentAccessDateKey, .totalFileAllocatedSizeKey]
-        let expiredDate = (maxCachePeriodInSecond < 0) ? nil : Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
+        let expiredDate: Date? = (maxCachePeriodInSecond < 0) ? nil : Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
         
         var cachedFiles = [URL: URLResourceValues]()
         var urlsToDelete = [URL]()

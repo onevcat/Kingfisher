@@ -2,6 +2,21 @@
 
 -----
 
+## [3.3.4 - Cancellation means a new start!](https://github.com/onevcat/Kingfisher/releases/tag/3.3.4) (2017-02-04)
+
+#### Fix
+* Now `cancel` on a `RetrieveImageTask` will work properly even when the downloading not started. [#578](https://github.com/onevcat/Kingfisher/pull/578)
+* Use modern float constant of pi. [#576](https://github.com/onevcat/Kingfisher/pull/576)
+
+---
+
+## [3.3.3 - Xcode 8.0 is not dead yet](https://github.com/onevcat/Kingfisher/releases/tag/3.3.3) (2017-01-30)
+
+#### Fix
+* A type inference to make Kingfisher compiles on Xcode 8.0 again. [#572](https://github.com/onevcat/Kingfisher/issues/572)
+
+---
+
 ## [3.3.2 - Upside Down](https://github.com/onevcat/Kingfisher/releases/tag/3.3.2) (2017-01-23)
 
 #### Fix

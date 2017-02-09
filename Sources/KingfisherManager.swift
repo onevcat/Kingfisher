@@ -44,22 +44,17 @@ public class RetrieveImageTask {
     var cancelledBeforeDownloadStarting: Bool = false
     
     /// The disk retrieve task in this image task. Kingfisher will try to look up in cache first. This task represent the cache search task.
+    @available(*, deprecated,
+    message: "diskRetrieveTask is not in use anymore. You cannot cancel a disk retrieve task anymore once it started.")
     public var diskRetrieveTask: RetrieveImageDiskTask?
     
     /// The network retrieve task in this image task.
     public var downloadTask: RetrieveImageDownloadTask?
     
     /**
-    Cancel current task. If this task does not begin or already done, do nothing.
+    Cancel current task. If this task is already done, do nothing.
     */
     public func cancel() {
-        // From Xcode 7 beta 6, the `dispatch_block_cancel` will crash at runtime.
-        // It fixed in Xcode 7.1.
-        // See https://github.com/onevcat/Kingfisher/issues/99 for more.
-        if let diskRetrieveTask = diskRetrieveTask {
-            diskRetrieveTask.cancel()
-        }
-        
         if let downloadTask = downloadTask {
             downloadTask.cancel()
         } else {
@@ -184,13 +179,11 @@ public class KingfisherManager {
                                         options: KingfisherOptionsInfo?)
     {
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
-            // Break retain cycle created inside diskTask closure below
-            retrieveImageTask.diskRetrieveTask = nil
             completionHandler?(image, error, cacheType, imageURL)
         }
         
         let targetCache = options?.targetCache ?? cache
-        let diskTask = targetCache.retrieveImage(forKey: key, options: options,
+        targetCache.retrieveImage(forKey: key, options: options,
             completionHandler: { image, cacheType in
                 if image != nil {
                     diskTaskCompletionHandler(image, nil, cacheType, url)
@@ -208,6 +201,5 @@ public class KingfisherManager {
                 }
             }
         )
-        retrieveImageTask.diskRetrieveTask = diskTask
     }
 }

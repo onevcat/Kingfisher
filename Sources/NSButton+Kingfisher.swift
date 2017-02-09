@@ -69,6 +69,9 @@ extension Kingfisher where Base: NSButton {
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
+                guard resource.downloadURL == self.webURL else {
+                    return
+                }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
@@ -95,7 +98,7 @@ extension Kingfisher where Base: NSButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelImageDownloadTask() {
-        imageTask?.downloadTask?.cancel()
+        imageTask?.cancel()
     }
     
     /**
@@ -135,6 +138,9 @@ extension Kingfisher where Base: NSButton {
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
+                guard resource.downloadURL == self.alternateWebURL else {
+                    return
+                }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
@@ -164,7 +170,7 @@ extension Kingfisher where Base: NSButton {
     /// Cancel the alternate image download task bounded to the image view if it is running. 
     /// Nothing will happen if the downloading has already finished.
     public func cancelAlternateImageDownloadTask() {
-        alternateImageTask?.downloadTask?.cancel()
+        alternateImageTask?.cancel()
     }
 }
 
