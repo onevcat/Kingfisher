@@ -237,7 +237,9 @@ public class ImagePrefetcher {
         if optionsInfo.forceRefresh {
             downloadAndCache(resource)
         } else {
-            let alreadyInCache = manager.cache.isImageCached(forKey: resource.cacheKey).cached
+            let alreadyInCache = manager.cache.isImageCached(forKey: resource.cacheKey,
+                                                             processorIdentifier: optionsInfo.processor.identifier).cached
+
             if alreadyInCache {
                 append(cached: resource)
             } else {
