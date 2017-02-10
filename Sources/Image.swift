@@ -94,15 +94,15 @@ extension Kingfisher where Base: Image {
     }
     
     var scale: CGFloat {
-    return base.scale
+        return base.scale
     }
     
     var images: [Image]? {
-    return base.images
+        return base.images
     }
     
     var duration: TimeInterval {
-    return base.duration
+        return base.duration
     }
     
     fileprivate(set) var imageSource: ImageSource? {

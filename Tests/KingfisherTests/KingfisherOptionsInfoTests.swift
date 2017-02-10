@@ -59,6 +59,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.callbackDispatchQueue.label, DispatchQueue.main.label)
         XCTAssertEqual(options.scaleFactor, 1.0)
         XCTAssertFalse(options.keepCurrentImageWhileLoading)
+        XCTAssertFalse(options.onlyLoadFirstFrame)
     }
     
 
@@ -89,7 +90,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
             KingfisherOptionsInfoItem.scaleFactor(2.0),
             .requestModifier(testModifier),
             .processor(processor),
-            .keepCurrentImageWhileLoading
+            .keepCurrentImageWhileLoading,
+            .onlyLoadFirstFrame
         ]
         
         XCTAssertTrue(options.targetCache === cache)
@@ -113,6 +115,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.modifier is TestModifier)
         XCTAssertEqual(options.processor.identifier, processor.identifier)
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
+        XCTAssertTrue(options.onlyLoadFirstFrame)
     }
 }
 

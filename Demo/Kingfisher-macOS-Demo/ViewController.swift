@@ -66,6 +66,8 @@ extension ViewController: NSCollectionViewDataSource {
                                                     print("\(indexPath.item + 1): Finished")
                                                     })
         
+        // Set imageView's `animates` to true if you are loading a GIF.
+        // item.imageView?.animates = true
         return item
     }
 }
