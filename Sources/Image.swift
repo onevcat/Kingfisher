@@ -33,8 +33,8 @@ private var durationKey: Void?
 import UIKit
 import MobileCoreServices
 private var imageSourceKey: Void?
-private var animatedImageDataKey: Void?
 #endif
+private var animatedImageDataKey: Void?
 
 import ImageIO
 import CoreGraphics
@@ -46,6 +46,15 @@ import CoreImage
 
 // MARK: - Image Properties
 extension Kingfisher where Base: Image {
+    fileprivate(set) var animatedImageData: Data? {
+        get {
+            return objc_getAssociatedObject(base, &animatedImageDataKey) as? Data
+        }
+        set {
+            objc_setAssociatedObject(base, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
     #if os(macOS)
     var cgImage: CGImage? {
         return base.cgImage(forProposedRect: nil, context: nil, hints: nil)
@@ -103,15 +112,6 @@ extension Kingfisher where Base: Image {
         set {
             objc_setAssociatedObject(base, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-    }
-    
-    fileprivate(set) var animatedImageData: Data? {
-    get {
-        return objc_getAssociatedObject(base, &animatedImageDataKey) as? Data
-    }
-    set {
-        objc_setAssociatedObject(base, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
     }
     
     var size: CGSize {
@@ -200,44 +200,13 @@ extension Kingfisher where Base: Image {
     
     // MARK: - GIF
     public func gifRepresentation() -> Data? {
-        #if os(macOS)
-            return gifRepresentation(duration: 0.0, repeatCount: 0)
-        #else
-            return animatedImageData
-        #endif
+        return animatedImageData
     }
-    
-    #if os(macOS)
-    func gifRepresentation(duration: TimeInterval, repeatCount: Int) -> Data? {
-        guard let images = images else {
-            return nil
-        }
-        
-        let frameCount = images.count
-        let gifDuration = duration <= 0.0 ? duration / Double(frameCount) : duration / Double(frameCount)
-        
-        let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: gifDuration]]
-        let imageProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: repeatCount]]
-        
-        let data = NSMutableData()
-        
-        guard let destination = CGImageDestinationCreateWithData(data, kUTTypeGIF, frameCount, nil) else {
-            return nil
-        }
-        CGImageDestinationSetProperties(destination, imageProperties as CFDictionary)
-        
-        for image in images {
-            CGImageDestinationAddImage(destination, image.kf.cgImage!, frameProperties as CFDictionary)
-        }
-        
-        return CGImageDestinationFinalize(destination) ? data.copy() as? Data : nil
-    }
-    #endif
 }
 
 // MARK: - Create images from data
 extension Kingfisher where Base: Image {
-    static func animated(with data: Data, scale: CGFloat = 1.0, duration: TimeInterval = 0.0, preloadAll: Bool) -> Image? {
+    static func animated(with data: Data, scale: CGFloat = 1.0, duration: TimeInterval = 0.0, preloadAll: Bool, onlyFirstFrame: Bool = false) -> Image? {
         
         func decode(from imageSource: CGImageSource, for options: NSDictionary) -> ([Image], TimeInterval)? {
             
@@ -262,7 +231,7 @@ extension Kingfisher where Base: Image {
                 guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
                     return nil
                 }
-                
+
                 if frameCount == 1 {
                     // Single frame
                     gifDuration = Double.infinity
@@ -277,6 +246,8 @@ extension Kingfisher where Base: Image {
                 }
                 
                 images.append(Kingfisher<Image>.image(cgImage: imageRef, scale: scale, refImage: nil))
+                
+                if onlyFirstFrame { break }
             }
             
             return (images, gifDuration)
@@ -292,45 +263,65 @@ extension Kingfisher where Base: Image {
             guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
                 return nil
             }
-            let image = Image(data: data)
-            image?.kf.images = images
-            image?.kf.duration = gifDuration
-            
+            let image: Image?
+            if onlyFirstFrame {
+                image = images.first
+            } else {
+                image = Image(data: data)
+                image?.kf.images = images
+                image?.kf.duration = gifDuration
+            }
+            image?.kf.animatedImageData = data
             return image
         #else
             
-            if preloadAll {
-                guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
-                    return nil
-                }
-                let image = Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
-                image?.kf.animatedImageData = data
-                return image
+            let image: Image?
+            if preloadAll || onlyFirstFrame {
+                guard let (images, gifDuration) = decode(from: imageSource, for: options) else { return nil }
+                image = onlyFirstFrame ? images.first : Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
             } else {
-                let image = Image(data: data)
-                image?.kf.animatedImageData = data
+                image = Image(data: data)
                 image?.kf.imageSource = ImageSource(ref: imageSource)
-                return image
             }
+            image?.kf.animatedImageData = data
+            return image
         #endif
     }
     
-    static func image(data: Data, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
+    static func image(data: Data, scale: CGFloat, preloadAllGIFData: Bool, onlyFirstFrame: Bool) -> Image? {
         var image: Image?
         
         #if os(macOS)
             switch data.kf.imageFormat {
-            case .JPEG: image = Image(data: data)
-            case .PNG: image = Image(data: data)
-            case .GIF: image = Kingfisher<Image>.animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
-            case .unknown: image = Image(data: data)
+            case .JPEG:
+                image = Image(data: data)
+            case .PNG:
+                image = Image(data: data)
+            case .GIF:
+                image = Kingfisher<Image>.animated(
+                    with: data,
+                    scale: scale,
+                    duration: 0.0,
+                    preloadAll: preloadAllGIFData,
+                    onlyFirstFrame: onlyFirstFrame)
+            case .unknown:
+                image = Image(data: data)
             }
         #else
             switch data.kf.imageFormat {
-            case .JPEG: image = Image(data: data, scale: scale)
-            case .PNG: image = Image(data: data, scale: scale)
-            case .GIF: image = Kingfisher<Image>.animated(with: data, scale: scale, duration: 0.0, preloadAll: preloadAllGIFData)
-            case .unknown: image = Image(data: data, scale: scale)
+            case .JPEG:
+                image = Image(data: data, scale: scale)
+            case .PNG:
+                image = Image(data: data, scale: scale)
+            case .GIF:
+                image = Kingfisher<Image>.animated(
+                    with: data,
+                    scale: scale,
+                    duration: 0.0,
+                    preloadAll: preloadAllGIFData,
+                    onlyFirstFrame: onlyFirstFrame)
+            case .unknown:
+                image = Image(data: data, scale: scale)
             }
         #endif
         
