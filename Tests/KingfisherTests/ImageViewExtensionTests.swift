@@ -482,9 +482,11 @@ class ImageViewExtensionTests: XCTestCase {
         
         var task1Complete = false
         var task2Complete = false
+        var task1Progress = false
+        var task2Progress = false
         
         imageView.kf.setImage(with: URLs[0], placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
-            
+            task1Progress = true
             }) { (image, error, cacheType, imageURL) -> () in
                 task1Complete = true
                 XCTAssertNotNil(image)
@@ -493,7 +495,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         self.imageView.kf.setImage(with: URLs[1], placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
-            
+            task2Progress = true
             }) { (image, error, cacheType, imageURL) -> () in
                 task2Complete = true
                 XCTAssertNotNil(image)
@@ -505,6 +507,9 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertFalse(task1Complete, "Task 1 should not be completed since task 2 overrides it.")
             XCTAssertTrue(task2Complete, "Task 2 should be completed.")
 
+            XCTAssertFalse(task1Progress, "Progress of Task 1 should not be called since task 2 overrides it.")
+            XCTAssertTrue(task2Progress, "Progress of Task 2 should be called.")
+            
             expectation.fulfill()
         }
         
