@@ -211,8 +211,12 @@ extension Kingfisher where Base: Image {
         func decode(from imageSource: CGImageSource, for options: NSDictionary) -> ([Image], TimeInterval)? {
             
             //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary
-            func frameDuration(from gifInfo: NSDictionary) -> Double {
+            func frameDuration(from gifInfo: NSDictionary?) -> Double {
                 let gifDefaultFrameDuration = 0.100
+                
+                guard let gifInfo = gifInfo else {
+                    return gifDefaultFrameDuration
+                }
                 
                 let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber
                 let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber
@@ -236,12 +240,13 @@ extension Kingfisher where Base: Image {
                     // Single frame
                     gifDuration = Double.infinity
                 } else {
+                    
                     // Animated GIF
-                    guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-                        let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary else
-                    {
+                    guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) else {
                         return nil
                     }
+
+                    let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary
                     gifDuration += frameDuration(from: gifInfo)
                 }
                 

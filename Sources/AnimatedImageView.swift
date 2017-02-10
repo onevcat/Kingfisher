@@ -261,15 +261,18 @@ class Animator {
         let frameToProcess = min(frameCount, maxFrameCount)
         animatedFrames.reserveCapacity(frameToProcess)
         animatedFrames = (0..<frameToProcess).reduce([]) { $0 + pure(prepareFrame(at: $1))}
+        currentPreloadIndex = (frameToProcess + 1) % frameCount
     }
     
     private func prepareFrame(at index: Int) -> AnimatedFrame {
+        
         guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, index, nil) else {
             return AnimatedFrame.null
         }
         
-        let frameDuration = imageSource.kf.gifProperties(at: index).flatMap {
-            gifInfo -> Double? in
+        let defaultGIFFrameDuration = 0.100
+        let frameDuration = imageSource.kf.gifProperties(at: index).map {
+            gifInfo -> Double in
             
             let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as Double?
             let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as Double?
@@ -284,8 +287,8 @@ class Animator {
              
              See also: http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser.
              */
-            return duration > 0.011 ? duration : 0.100
-        }
+            return duration > 0.011 ? duration : defaultGIFFrameDuration
+        } ?? defaultGIFFrameDuration
         
         let image = Image(cgImage: imageRef)
         let scaledImage: Image?
@@ -296,7 +299,7 @@ class Animator {
             scaledImage = image
         }
         
-        return AnimatedFrame(image: scaledImage, duration: frameDuration ?? 0.0)
+        return AnimatedFrame(image: scaledImage, duration: frameDuration)
     }
     
     /**
@@ -309,6 +312,7 @@ class Animator {
         }
         
         timeSinceLastFrameChange -= frameDuration
+        
         let lastFrameIndex = currentFrameIndex
         currentFrameIndex += 1
         currentFrameIndex = currentFrameIndex % animatedFrames.count
