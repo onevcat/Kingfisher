@@ -77,9 +77,11 @@ public struct DefaultCacheSerializer: CacheSerializer {
     }
     
     public func image(with data: Data, options: KingfisherOptionsInfo?) -> Image? {
-        let scale = (options ?? KingfisherEmptyOptionsInfo).scaleFactor
-        let preloadAllGIFData = (options ?? KingfisherEmptyOptionsInfo).preloadAllGIFData
-        
-        return Kingfisher<Image>.image(data: data, scale: scale, preloadAllGIFData: preloadAllGIFData)
+        let options = options ?? KingfisherEmptyOptionsInfo
+        return Kingfisher<Image>.image(
+            data: data,
+            scale: options.scaleFactor,
+            preloadAllGIFData: options.preloadAllGIFData,
+            onlyFirstFrame: options.onlyLoadFirstFrame)
     }
 }

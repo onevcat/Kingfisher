@@ -116,7 +116,11 @@ public struct DefaultImageProcessor: ImageProcessor {
         case .image(let image):
             return image
         case .data(let data):
-            return Kingfisher<Image>.image(data: data, scale: options.scaleFactor, preloadAllGIFData: options.preloadAllGIFData)
+            return Kingfisher<Image>.image(
+                data: data,
+                scale: options.scaleFactor,
+                preloadAllGIFData: options.preloadAllGIFData,
+                onlyFirstFrame: options.onlyLoadFirstFrame)
         }
     }
 }

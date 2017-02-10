@@ -548,4 +548,53 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, placeholder: nil, options: [.keepCurrentImageWhileLoading])
         XCTAssertEqual(testImage, imageView.image)
     }
+    
+    func testSetGIFImageOnlyFirstFrameThenFullFrames() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        
+        let URLString = testKeys[0]
+        
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(NSData(data: testImageGIFData))
+        let url = URL(string: URLString)!
+        
+        func loadFullGIFImage() {
+            var progressBlockIsCalled = false
+            ImageCache.default.clearMemoryCache()
+            
+            imageView.kf.setImage(with: url, placeholder: nil, options: [], progressBlock: { (receivedSize, totalSize) -> () in
+                progressBlockIsCalled = true
+                XCTAssertTrue(Thread.isMainThread)
+            }) { (image, error, cacheType, imageURL) -> () in
+                
+                XCTAssertFalse(progressBlockIsCalled, "progressBlock should not be called since the image is cached.")
+                XCTAssertNotNil(image, "Downloaded image should exist.")
+                XCTAssertNotNil(image!.kf.images, "images should exist since we load full GIF.")
+                XCTAssertEqual(image!.kf.images?.count, 8, "There are 8 frames in total.")
+                
+                XCTAssert(cacheType == .disk, "We should find it cached in disk")
+                XCTAssertTrue(Thread.isMainThread)
+                
+                expectation.fulfill()
+            }
+        }
+        
+        var progressBlockIsCalled = false
+        imageView.kf.setImage(with: url, placeholder: nil, options: [.onlyLoadFirstFrame], progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+            XCTAssertTrue(Thread.isMainThread)
+        }) { (image, error, cacheType, imageURL) -> () in
+            XCTAssertTrue(progressBlockIsCalled, "progressBlock should be called at least once.")
+            XCTAssertNotNil(image, "Downloaded image should exist.")
+            XCTAssertNil(image!.kf.images, "images should not exist since we set only load first frame.")
+            
+            XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded.")
+            XCTAssertTrue(Thread.isMainThread)
+            
+            loadFullGIFImage()
+        }
+        
+        
+        waitForExpectations(timeout: 5, handler: nil)
+
+    }
 }

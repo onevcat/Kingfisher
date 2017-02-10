@@ -113,6 +113,12 @@ public enum KingfisherOptionsInfoItem {
     /// By setting this option, the placeholder image parameter of imageview extension method
     /// will be ignored and the current image will be kept while loading or downloading the new image.
     case keepCurrentImageWhileLoading
+    
+    /// If set, Kingfisher will only load the first frame from a GIF file as a single image.
+    /// Loading a lot of GIFs may take too much memory. It will be useful when you want to display a 
+    /// static preview of the first frame from a GIF image.
+    /// This option will be ignored if the target image is not GIF.
+    case onlyLoadFirstFrame
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -141,6 +147,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.processor(_), .processor(_)): return true
     case (.cacheSerializer(_), .cacheSerializer(_)): return true
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
+    case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     default: return false
     }
 }
@@ -281,5 +288,9 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     /// Or the placeholder will be used while downloading.
     public var keepCurrentImageWhileLoading: Bool {
         return contains { $0 <== .keepCurrentImageWhileLoading }
+    }
+    
+    public var onlyLoadFirstFrame: Bool {
+        return contains { $0 <== .onlyLoadFirstFrame }
     }
 }
