@@ -2,6 +2,18 @@
 
 -----
 
+## [3.4.0 - Spring is here](https://github.com/onevcat/Kingfisher/releases/tag/3.4.0) (2017-02-11)
+
+#### Add
+* Use the `onlyLoadFirstFrame` option to load only the first frame from a GIF file. It will be useful when you want to display a static preview of the first frame from a GIF image. By doing so, you could save huge ammount of memory. [#591](https://github.com/onevcat/Kingfisher/pull/591)
+
+#### Fix
+* Now `cancel` on a `RetrieveImageTask` will work properly even when the downloading not started for `UIButton` and `NSButton` too. [#580](https://github.com/onevcat/Kingfisher/pull/580)
+* Progress block of extensions setting methods will not be called multiple times if you set another task while the previous one still in downloading. [#583](https://github.com/onevcat/Kingfisher/pull/583)
+* Image cache will work properly when `ImagePrefetcher` trying to prefetch images with an `ImageProcessor`. Now the fetched and processed images could be retrieved correctly. [#590](https://github.com/onevcat/Kingfisher/pull/590)
+
+---
+
 ## [3.3.4 - Cancellation means a new start!](https://github.com/onevcat/Kingfisher/releases/tag/3.3.4) (2017-02-04)
 
 #### Fix
