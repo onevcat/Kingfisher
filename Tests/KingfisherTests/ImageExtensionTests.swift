@@ -115,4 +115,27 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertNotNil(image, "The image should be initiated.")
         XCTAssertNil(image.kf.images, "The image should be nil")
     }
+    
+    func testSizeContent() {
+        func getRatio(image: Image) -> CGFloat {
+            return image.size.height / image.size.width
+        }
+        
+        let image = testImage
+        let ratio = getRatio(image: image)
+        
+        let targetSize = CGSize(width: 100, height: 50)
+        
+        let fillImage = image.kf.resize(to: targetSize, for: .aspectFill)
+        XCTAssertEqual(getRatio(image: fillImage), ratio)
+        XCTAssertEqual(max(fillImage.size.width, fillImage.size.height), 100)
+        
+        let fitImage = image.kf.resize(to: targetSize, for: .aspectFit)
+        XCTAssertEqual(getRatio(image: fitImage), ratio)
+        XCTAssertEqual(max(fitImage.size.width, fitImage.size.height), 50)
+        
+        let resizeImage = image.kf.resize(to: targetSize)
+        XCTAssertEqual(resizeImage.size.width, 100)
+        XCTAssertEqual(resizeImage.size.height, 50)
+    }
 }

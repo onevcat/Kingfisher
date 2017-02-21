@@ -73,6 +73,16 @@ class ImageProcessorTests: XCTestCase {
         checkProcessor(p, with: "resize-120")
     }
     
+    func testResizingProcessorWithContentMode() {
+        let p1 = ResizingImageProcessor(targetSize: CGSize(width: 240, height: 60), contentMode: .aspectFill)
+        XCTAssertEqual(p1.identifier, "com.onevcat.Kingfisher.ResizingImageProcessor((240.0, 60.0), aspectFill)")
+        checkProcessor(p1, with: "resize-240-60-aspectFill")
+        
+        let p2 = ResizingImageProcessor(targetSize: CGSize(width: 240, height: 60), contentMode: .aspectFit)
+        XCTAssertEqual(p2.identifier, "com.onevcat.Kingfisher.ResizingImageProcessor((240.0, 60.0), aspectFit)")
+        checkProcessor(p2, with: "resize-240-60-aspectFit")
+    }
+    
     func testBlurProcessor() {
         let p = BlurImageProcessor(blurRadius: 10)
         XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlurImageProcessor(10.0)")
