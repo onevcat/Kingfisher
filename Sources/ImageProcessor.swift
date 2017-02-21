@@ -191,7 +191,12 @@ public struct ResizingImageProcessor: ImageProcessor {
     public init(targetSize: CGSize, contentMode: ContentMode = .none) {
         self.targetSize = targetSize
         self.targetContentMode = contentMode
-        self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize), \(targetContentMode))"
+        
+        if contentMode == .none {
+            self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
+        } else {
+            self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize), \(contentMode))"
+        }
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
