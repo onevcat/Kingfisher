@@ -167,25 +167,53 @@ public struct RoundCornerImageProcessor: ImageProcessor {
 
 /// Processor for resizing images. Only CG-based images are supported in macOS.
 public struct ResizingImageProcessor: ImageProcessor {
+    public enum ContentMode {
+        case none
+        case aspectFit
+        case aspectFill
+    }
+    
     public let identifier: String
     
     /// Target size of output image should be.
     public let targetSize: CGSize
     
+    /// Target content mode of output image should be.
+    /// Default to ContentMode.none
+    public let targetContentMode: ContentMode
+    
     /// Initialize a `ResizingImageProcessor`
     ///
     /// - parameter targetSize: Target size of output image should be.
+    /// - parameter contentMode: Target content mode of output image should be.
     ///
     /// - returns: An initialized `ResizingImageProcessor`.
-    public init(targetSize: CGSize) {
+    public init(targetSize: CGSize, contentMode: ContentMode = .none) {
         self.targetSize = targetSize
-        self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
+        self.targetContentMode = contentMode
+        
+        if contentMode == .none {
+            self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
+        } else {
+            self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize), \(contentMode))"
+        }
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.resize(to: targetSize)
+            var size: CGSize
+            
+            switch targetContentMode {
+            case .none:
+                size = targetSize
+            case .aspectFill:
+                size = image.size.kf.filling(targetSize)
+            case .aspectFit:
+                size = image.size.kf.constrained(targetSize)
+            }
+            
+            return image.kf.resize(to: size)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
