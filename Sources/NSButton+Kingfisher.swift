@@ -55,6 +55,7 @@ extension Kingfisher where Base: NSButton {
     {
         guard let resource = resource else {
             base.image = placeholder
+            setWebURL(nil)
             completionHandler?(nil, nil, .none, nil)
             return .empty
         }
@@ -124,6 +125,7 @@ extension Kingfisher where Base: NSButton {
     {
         guard let resource = resource else {
             base.alternateImage = placeholder
+            setAlternateWebURL(nil)
             completionHandler?(nil, nil, .none, nil)
             return .empty
         }
@@ -188,7 +190,7 @@ extension Kingfisher where Base: NSButton {
         return objc_getAssociatedObject(base, &lastURLKey) as? URL
     }
     
-    fileprivate func setWebURL(_ url: URL) {
+    fileprivate func setWebURL(_ url: URL?) {
         objc_setAssociatedObject(base, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
@@ -205,7 +207,7 @@ extension Kingfisher where Base: NSButton {
         return objc_getAssociatedObject(base, &lastAlternateURLKey) as? URL
     }
     
-    fileprivate func setAlternateWebURL(_ url: URL) {
+    fileprivate func setAlternateWebURL(_ url: URL?) {
         objc_setAssociatedObject(base, &lastAlternateURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
