@@ -25,7 +25,6 @@
 //  THE SOFTWARE.
 
 import Foundation
-import UIKit
 import CoreGraphics
 
 
@@ -36,6 +35,12 @@ import CoreGraphics
 public enum ImageProcessItem {
     case image(Image)
     case data(Data)
+}
+
+public enum ImageProcessContentMode {
+    case none // This will be the default one
+    case aspectFit
+    case aspectFill
 }
 
 /// An `ImageProcessor` would be used to convert some downloaded data to an image.
@@ -173,14 +178,10 @@ public struct ResizingImageProcessor: ImageProcessor {
     /// Target size of output image should be.
     public let targetSize: CGSize
     
+
     
-    public enum ContentMode {
-        case none // This will be the default one
-        case aspectFit
-        case aspectFill
-    }
     /// Target content mode of output image should be.
-    public let contentMode: UIViewContentMode
+    public let contentMode: ImageProcessContentMode
     
     /// Initialize a `ResizingImageProcessor`
     ///
@@ -188,23 +189,16 @@ public struct ResizingImageProcessor: ImageProcessor {
     /// - parameter mode: Target content mode of output image should be.
     ///
     /// - returns: An initialized `ResizingImageProcessor`.
-    public init(targetSize: CGSize, mode: ContentMode = .none) {
-        self.targetSize = targetSize
-        switch mode {
-        case .none:
-            contentMode = UIViewContentMode.scaleToFill
-        case .aspectFit:
-            contentMode = UIViewContentMode.scaleAspectFit
-        case .aspectFill:
-            contentMode = UIViewContentMode.scaleAspectFill
-        }
-        self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
+    public init(targetSize: CGSize, contentMode: ImageProcessContentMode = .none) {
+        self.targetSize  = targetSize
+        self.contentMode = contentMode
+        self.identifier  = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.resize(to: targetSize, for: contentMode)
+            return image.kf.resize(to: targetSize)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }

@@ -374,12 +374,12 @@ extension Kingfisher where Base: Image {
     }
     
     #if os(iOS) || os(tvOS)
-    func resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
+    func resize(to size: CGSize, for contentMode: ImageProcessContentMode) -> Image {
         switch contentMode {
-        case .scaleAspectFit:
+        case .aspectFit:
             let newSize = self.size.kf.constrained(size)
             return resize(to: newSize)
-        case .scaleAspectFill:
+        case .aspectFill:
             let newSize = self.size.kf.filling(size)
             return resize(to: newSize)
         default:
