@@ -377,11 +377,9 @@ extension Kingfisher where Base: Image {
     func resize(to size: CGSize, for contentMode: UIViewContentMode) -> Image {
         switch contentMode {
         case .scaleAspectFit:
-            let newSize = self.size.kf.constrained(size)
-            return resize(to: newSize)
+            return resize(to: size, for: .aspectFit)
         case .scaleAspectFill:
-            let newSize = self.size.kf.filling(size)
-            return resize(to: newSize)
+            return resize(to: size, for: .aspectFill)
         default:
             return resize(to: size)
         }
@@ -389,7 +387,6 @@ extension Kingfisher where Base: Image {
     #endif
     
     // MARK: - Resize
-    
     /// Resize `self` to an image of new size.
     ///
     /// - parameter size: The target size.
@@ -411,6 +408,25 @@ extension Kingfisher where Base: Image {
             #else
                 base.draw(in: rect)
             #endif
+        }
+    }
+    
+    /// Resize `self` to an image of new size, respecting the content mode.
+    ///
+    /// - Parameters:
+    ///   - size: The target size.
+    ///   - contentMode: Content mode of output image should be.
+    /// - Returns: An image with new size.
+    public func resize(to size: CGSize, for contentMode: ContentMode) -> Image {
+        switch contentMode {
+        case .aspectFit:
+            let newSize = self.size.kf.constrained(size)
+            return resize(to: newSize)
+        case .aspectFill:
+            let newSize = self.size.kf.filling(size)
+            return resize(to: newSize)
+        default:
+            return resize(to: size)
         }
     }
     

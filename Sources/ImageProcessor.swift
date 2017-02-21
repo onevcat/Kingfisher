@@ -165,14 +165,20 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     }
 }
 
+
+/// Specify how a size adjusts itself to fit a target.
+///
+/// - none: Not scale the content.
+/// - aspectFit: Scale the content to fit the size of the view by maintaining the aspect ratio.
+/// - aspectFill: Scale the content to fill the size of the view
+public enum ContentMode {
+    case none
+    case aspectFit
+    case aspectFill
+}
+
 /// Processor for resizing images. Only CG-based images are supported in macOS.
 public struct ResizingImageProcessor: ImageProcessor {
-    public enum ContentMode {
-        case none
-        case aspectFit
-        case aspectFill
-    }
-    
     public let identifier: String
     
     /// Target size of output image should be.
@@ -202,18 +208,7 @@ public struct ResizingImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            var size: CGSize
-            
-            switch targetContentMode {
-            case .none:
-                size = targetSize
-            case .aspectFill:
-                size = image.size.kf.filling(targetSize)
-            case .aspectFit:
-                size = image.size.kf.constrained(targetSize)
-            }
-            
-            return image.kf.resize(to: size)
+            return image.kf.resize(to: targetSize, for: targetContentMode)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
