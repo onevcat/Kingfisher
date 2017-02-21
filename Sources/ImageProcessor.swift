@@ -25,6 +25,7 @@
 //  THE SOFTWARE.
 
 import Foundation
+import UIKit
 import CoreGraphics
 
 
@@ -172,20 +173,38 @@ public struct ResizingImageProcessor: ImageProcessor {
     /// Target size of output image should be.
     public let targetSize: CGSize
     
+    
+    public enum ContentMode {
+        case none // This will be the default one
+        case aspectFit
+        case aspectFill
+    }
+    /// Target content mode of output image should be.
+    public let contentMode: UIViewContentMode
+    
     /// Initialize a `ResizingImageProcessor`
     ///
     /// - parameter targetSize: Target size of output image should be.
+    /// - parameter mode: Target content mode of output image should be.
     ///
     /// - returns: An initialized `ResizingImageProcessor`.
-    public init(targetSize: CGSize) {
+    public init(targetSize: CGSize, mode: ContentMode = .none) {
         self.targetSize = targetSize
+        switch mode {
+        case .none:
+            contentMode = UIViewContentMode.scaleToFill
+        case .aspectFit:
+            contentMode = UIViewContentMode.scaleAspectFit
+        case .aspectFill:
+            contentMode = UIViewContentMode.scaleAspectFill
+        }
         self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.resize(to: targetSize)
+            return image.kf.resize(to: targetSize, for: contentMode)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
