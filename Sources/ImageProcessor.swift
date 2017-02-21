@@ -37,6 +37,12 @@ public enum ImageProcessItem {
     case data(Data)
 }
 
+public enum ImageProcessContentMode {
+    case none // This will be the default one
+    case aspectFit
+    case aspectFill
+}
+
 /// An `ImageProcessor` would be used to convert some downloaded data to an image.
 public protocol ImageProcessor {
     /// Identifier of the processor. It will be used to identify the processor when 
@@ -172,14 +178,21 @@ public struct ResizingImageProcessor: ImageProcessor {
     /// Target size of output image should be.
     public let targetSize: CGSize
     
+
+    
+    /// Target content mode of output image should be.
+    public let contentMode: ImageProcessContentMode
+    
     /// Initialize a `ResizingImageProcessor`
     ///
     /// - parameter targetSize: Target size of output image should be.
+    /// - parameter mode: Target content mode of output image should be.
     ///
     /// - returns: An initialized `ResizingImageProcessor`.
-    public init(targetSize: CGSize) {
-        self.targetSize = targetSize
-        self.identifier = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
+    public init(targetSize: CGSize, contentMode: ImageProcessContentMode = .none) {
+        self.targetSize  = targetSize
+        self.contentMode = contentMode
+        self.identifier  = "com.onevcat.Kingfisher.ResizingImageProcessor(\(targetSize))"
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {

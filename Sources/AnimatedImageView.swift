@@ -294,7 +294,16 @@ class Animator {
         let scaledImage: Image?
         
         if needsPrescaling {
-            scaledImage = image.kf.resize(to: size, for: contentMode)
+            let mode: ImageProcessContentMode
+            switch contentMode {
+            case .scaleAspectFill:
+                mode = .aspectFill
+            case .scaleAspectFit:
+                mode = .aspectFit
+            default:
+                mode = .none
+            }
+            scaledImage = image.kf.resize(to: size, for: mode)
         } else {
             scaledImage = image
         }
