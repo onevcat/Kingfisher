@@ -2,6 +2,13 @@
 
 -----
 
+## [3.5.2 - Bad Apple](https://github.com/onevcat/Kingfisher/releases/tag/3.5.2) (2017-03-09)
+
+#### Fix
+* An issue which causes app crashing while folder enumerating encountered an error in `ImageCache`. [#620](https://github.com/onevcat/Kingfisher/pull/620)
+
+---
+
 ## [3.5.1 - Fast is better than slow](https://github.com/onevcat/Kingfisher/releases/tag/3.5.1) (2017-03-01)
 
 #### Fix
