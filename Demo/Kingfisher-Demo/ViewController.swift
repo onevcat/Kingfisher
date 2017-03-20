@@ -70,7 +70,7 @@ extension ViewController {
         
         _ = (cell as! CollectionViewCell).cellImageView.kf.setImage(with: url,
                                            placeholder: nil,
-                                           options: [.transition(ImageTransition.fade(1)), .keepCurrentImageWhileLoading],
+                                           options: [.transition(ImageTransition.fade(1))],
                                            progressBlock: { receivedSize, totalSize in
                                             print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
             },
