@@ -141,11 +141,11 @@ extension Kingfisher where Base: Image {
     }
     #else
     static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
-    if let refImage = refImage {
-        return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
-    } else {
-        return Image(cgImage: cgImage, scale: scale, orientation: .up)
-    }
+        if let refImage = refImage {
+            return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
+        } else {
+            return Image(cgImage: cgImage, scale: scale, orientation: .up)
+        }
     }
     
     /**
@@ -428,6 +428,21 @@ extension Kingfisher where Base: Image {
         default:
             return resize(to: size)
         }
+    }
+    
+    public func crop(to size: CGSize, anchorOn anchor: CGPoint) -> Image {
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] Crop only works for CG-based image.")
+            return base
+        }
+        
+        let rect = base.size.kf.constrainedRect(for: size, anchor: anchor)
+        guard let image = cgImage.cropping(to: rect) else {
+            assertionFailure("[Kingfisher] Cropping image failed.")
+            return base
+        }
+        
+        return Kingfisher.image(cgImage: image, scale: scale, refImage: base)
     }
     
     // MARK: - Blur
@@ -715,6 +730,16 @@ extension CGSizeProxy {
 
     private var aspectRatio: CGFloat {
         return base.height == 0.0 ? 1.0 : base.width / base.height
+    }
+    
+    
+    func constrainedRect(for size: CGSize, anchor: CGPoint) -> CGRect {
+        let x = anchor.x * base.width - anchor.x * size.width
+        let y = anchor.y * base.height - anchor.y * size.height
+        let r = CGRect(x: x, y: y, width: size.width, height: size.height)
+        
+        let ori = CGRect(origin: CGPoint.zero, size: base)
+        return ori.intersection(r)
     }
 }
 

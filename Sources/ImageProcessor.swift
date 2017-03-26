@@ -366,6 +366,28 @@ public struct BlackWhiteProcessor: ImageProcessor {
     }
 }
 
+public struct CroppingImageProcessor: ImageProcessor {
+    
+    public let identifier: String
+    
+    public let size: CGSize
+    public let anchor: CGPoint
+    
+    public init(size: CGSize, anchor: CGPoint = CGPoint(x: 0.5, y: 0.5)) {
+        self.size = size
+        self.anchor = anchor
+        self.identifier = "com.onevcat.Kingfisher.CroppingImageProcessor(\(size),\(anchor))"
+    }
+    
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf.crop(to: size, anchorOn: anchor)
+        case .data(_): return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+        }
+    }
+}
+
 /// Concatenate two `ImageProcessor`s. `ImageProcessor.appen(another:)` is used internally.
 ///
 /// - parameter left:  First processor.
