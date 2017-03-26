@@ -456,12 +456,19 @@ public struct CroppingImageProcessor: ImageProcessor {
     /// - Parameters:
     ///   - size: Target size of output image should be.
     ///   - anchor: The anchor point from which the size should be calculated.
+    ///             Default is `CGPoint(x: 0.5, y: 0.5)`, which means the center of input image.
     /// - Note:
     ///   The anchor point is consisted by two values between 0.0 and 1.0.
     ///   It indicates a related point in current image, eg: (0.0, 0.0) for top-left
     ///   corner, (0.5, 0.5) for center and (1.0, 1.0) for bottom-right corner.
     ///   The `size` property of `CroppingImageProcessor` will be used along with
     ///   `anchor` to calculate a target rectange in the size of image.
+    ///    
+    ///   The target size will be automatically calculated with a reasonable behavior.
+    ///   For example, when you have an image size of `CGSize(width: 100, height: 100)`,
+    ///   and a target size of `CGSize(width: 100, height: 100)`, with a (0.0, 0.0) anchor (top-left),
+    ///   the crop rect will be `{0, 0, 20, 20}`; with a (0.5, 0.5) anchor (center), it will be 
+    ///   `{40, 40, 20, 20}`; while with a (1.0, 1.0) anchor (bottom-right), it will be `{80, 80, 20, 20}`
     public init(size: CGSize, anchor: CGPoint = CGPoint(x: 0.5, y: 0.5)) {
         self.size = size
         self.anchor = anchor
