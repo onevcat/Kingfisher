@@ -376,7 +376,7 @@ public struct CroppingImageProcessor: ImageProcessor {
     public init(size: CGSize, anchor: CGPoint = CGPoint(x: 0.5, y: 0.5)) {
         self.size = size
         self.anchor = anchor
-        self.identifier = "com.onevcat.Kingfisher.CroppingImageProcessor(\(size),\(anchor))"
+        self.identifier = "com.onevcat.Kingfisher.CroppingImageProcessor(\(size)_\(anchor))"
     }
     
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {

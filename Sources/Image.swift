@@ -436,7 +436,7 @@ extension Kingfisher where Base: Image {
             return base
         }
         
-        let rect = base.size.kf.constrainedRect(for: size, anchor: anchor)
+        let rect = self.size.kf.constrainedRect(for: size, anchor: anchor)
         guard let image = cgImage.cropping(to: rect) else {
             assertionFailure("[Kingfisher] Cropping image failed.")
             return base
@@ -734,12 +734,22 @@ extension CGSizeProxy {
     
     
     func constrainedRect(for size: CGSize, anchor: CGPoint) -> CGRect {
-        let x = anchor.x * base.width - anchor.x * size.width
-        let y = anchor.y * base.height - anchor.y * size.height
+        
+        let unifiedAnchor = CGPoint(x: anchor.x.clamped(to: 0.0...1.0),
+                                    y: anchor.y.clamped(to: 0.0...1.0))
+        
+        let x = unifiedAnchor.x * base.width - unifiedAnchor.x * size.width
+        let y = unifiedAnchor.y * base.height - unifiedAnchor.y * size.height
         let r = CGRect(x: x, y: y, width: size.width, height: size.height)
         
         let ori = CGRect(origin: CGPoint.zero, size: base)
         return ori.intersection(r)
+    }
+}
+
+extension Comparable {
+    func clamped(to limits: ClosedRange<Self>) -> Self {
+        return min(max(self, limits.lowerBound), limits.upperBound)
     }
 }
 

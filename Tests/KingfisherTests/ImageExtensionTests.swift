@@ -138,4 +138,50 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(resizeImage.size.width, 100)
         XCTAssertEqual(resizeImage.size.height, 50)
     }
+    
+    func testSizeConstraintByAnchor() {
+        let size = CGSize(width: 100, height: 100)
+        
+        let topLeft = CGPoint(x: 0, y: 0)
+        let top = CGPoint(x: 0.5, y: 0)
+        let topRight = CGPoint(x: 1, y: 0)
+        let center = CGPoint(x: 0.5, y: 0.5)
+        let bottomRight = CGPoint(x: 1, y: 1)
+        let invalidAnchor = CGPoint(x: -1, y: 2)
+        
+        let inSize = CGSize(width: 20, height: 20)
+        let outX = CGSize(width: 120, height: 20)
+        let outY = CGSize(width: 20, height: 120)
+        let outSize = CGSize(width: 120, height: 120)
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: topLeft), CGRect(x: 0, y: 0, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: topLeft), CGRect(x: 0, y: 0, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: topLeft), CGRect(x: 0, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: topLeft), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: top), CGRect(x: 40, y: 0, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: top), CGRect(x: 0, y: 0, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: top), CGRect(x: 40, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: top), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: topRight), CGRect(x: 80, y: 0, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: topRight), CGRect(x: 0, y: 0, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: topRight), CGRect(x: 80, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: topRight), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: center), CGRect(x: 40, y: 40, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: center), CGRect(x: 0, y: 40, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: center), CGRect(x: 40, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: center), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: bottomRight), CGRect(x: 80, y: 80, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: bottomRight), CGRect(x: 0, y: 80, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: bottomRight), CGRect(x:80, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: bottomRight), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: invalidAnchor), CGRect(x: 0, y: 80, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: invalidAnchor), CGRect(x: 0, y: 80, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: invalidAnchor), CGRect(x:0, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: invalidAnchor), CGRect(x: 0, y: 0, width: 100, height: 100))
+    }
 }
