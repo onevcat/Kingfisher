@@ -372,6 +372,24 @@
 		D141465A1E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png in Resources */ = {isa = PBXBuildFile; fileRef = D14146361E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png */; };
 		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D1679A531C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */; };
+		D18C16A41E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A11E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg */; };
+		D18C16A51E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A11E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg */; };
+		D18C16A61E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A11E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg */; };
+		D18C16A71E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A21E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg */; };
+		D18C16A81E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A21E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg */; };
+		D18C16A91E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A21E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg */; };
+		D18C16AA1E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A31E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png */; };
+		D18C16AB1E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A31E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png */; };
+		D18C16AC1E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A31E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png */; };
+		D18C16B11E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */; };
+		D18C16B21E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */; };
+		D18C16B31E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */; };
+		D18C16B41E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */; };
+		D18C16B51E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */; };
+		D18C16B61E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */; };
+		D18C16B71E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */; };
+		D18C16B81E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */; };
+		D18C16B91E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */; };
 		D1D2C32A1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
 		D1D2C32B1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
 		D1D2C32C1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
@@ -666,6 +684,12 @@
 		D16799EB1C4E74460020FD12 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D18C16A11E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-cropping-50-50-anchor-center.jpg"; sourceTree = "<group>"; };
+		D18C16A21E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-cropping-50-50-anchor-center.jpg"; sourceTree = "<group>"; };
+		D18C16A31E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-cropping-50-50-anchor-center.png"; sourceTree = "<group>"; };
+		D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-cropping-50-50-anchor-center-mac.jpg"; sourceTree = "<group>"; };
+		D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-cropping-50-50-anchor-center-mac.jpg"; sourceTree = "<group>"; };
+		D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-cropping-50-50-anchor-center-mac.png"; sourceTree = "<group>"; };
 		D1D2C3291C70A3230018F2F9 /* single-frame.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "single-frame.gif"; sourceTree = "<group>"; };
 		D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensionTests.swift; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -794,6 +818,7 @@
 				4BB83E0F1E32075800B64183 /* Blur */,
 				4BB83E161E32075800B64183 /* ColorControl */,
 				4BB83E1D1E32075800B64183 /* Composition */,
+				D18C16A01E87FCF500673D57 /* Crop */,
 				4BB83E241E32075800B64183 /* Overlay */,
 				4BB83E311E32075800B64183 /* Resize */,
 				4BB83E381E32075800B64183 /* RoundCorner */,
@@ -1143,6 +1168,19 @@
 			);
 			name = "Kingfisher-watchOS-Demo Extension";
 			path = "Demo/Kingfisher-watchOS-Demo Extension";
+			sourceTree = "<group>";
+		};
+		D18C16A01E87FCF500673D57 /* Crop */ = {
+			isa = PBXGroup;
+			children = (
+				D18C16A11E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg */,
+				D18C16A21E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg */,
+				D18C16A31E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png */,
+				D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */,
+				D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */,
+				D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */,
+			);
+			path = Crop;
 			sourceTree = "<group>";
 		};
 		D1ED2D021AD2CFA600CFC3EB = {
@@ -1602,6 +1640,7 @@
 				4BB83EAF1E32075800B64183 /* onevcat-overlay-red.jpg in Resources */,
 				4BB83EBE1E32075800B64183 /* kingfisher-resize-120-mac.jpg in Resources */,
 				4BB83ECA1E32075800B64183 /* unicorn-resize-120-mac.png in Resources */,
+				D18C16B21E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				4BB83EB51E32075800B64183 /* unicorn-overlay-red-07.png in Resources */,
 				4BB83EC11E32075800B64183 /* kingfisher-resize-120.jpg in Resources */,
 				4BB83EB21E32075800B64183 /* unicorn-overlay-red-07-mac.png in Resources */,
@@ -1616,12 +1655,15 @@
 				4BB83ED31E32075800B64183 /* kingfisher-round-corner-40.jpg in Resources */,
 				4BB83EAC1E32075800B64183 /* onevcat-overlay-red-mac.jpg in Resources */,
 				4BB83EC41E32075800B64183 /* onevcat-resize-120-mac.jpg in Resources */,
+				D18C16B81E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */,
 				D14146441E5C7E86001476DF /* onevcat-resize-240-60-aspectFill-mac.jpg in Resources */,
 				D14146411E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit.jpg in Resources */,
 				D141464A1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit-mac.jpg in Resources */,
+				D18C16AB1E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png in Resources */,
 				4BB83F091E32075800B64183 /* onevcat.jpg in Resources */,
 				4BB83EC71E32075800B64183 /* onevcat-resize-120.jpg in Resources */,
 				D14146531E5C7E86001476DF /* unicorn-resize-240-60-aspectFill.png in Resources */,
+				D18C16A81E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg in Resources */,
 				4BB83EF41E32075800B64183 /* kingfisher-tint-yellow-02-mac.jpg in Resources */,
 				4BB83EE51E32075800B64183 /* onevcat-round-corner-60-resize-100.jpg in Resources */,
 				4BB83E701E32075800B64183 /* unicorn-blur-10-mac.png in Resources */,
@@ -1632,8 +1674,10 @@
 				4BB83E731E32075800B64183 /* unicorn-blur-10.png in Resources */,
 				4BB83F061E32075800B64183 /* kingfisher.jpg in Resources */,
 				4BB83EFA1E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				D18C16B51E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				D141463E1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit-mac.jpg in Resources */,
 				4BB83EBB1E32075800B64183 /* unicorn-overlay-red.png in Resources */,
+				D18C16A51E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */,
 				D14146591E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png in Resources */,
 				4BB83E8E1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E641E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
@@ -1686,6 +1730,7 @@
 				4BB83EB01E32075800B64183 /* onevcat-overlay-red.jpg in Resources */,
 				4BB83EBF1E32075800B64183 /* kingfisher-resize-120-mac.jpg in Resources */,
 				4BB83ECB1E32075800B64183 /* unicorn-resize-120-mac.png in Resources */,
+				D18C16B31E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				4BB83EB61E32075800B64183 /* unicorn-overlay-red-07.png in Resources */,
 				4BB83EC21E32075800B64183 /* kingfisher-resize-120.jpg in Resources */,
 				4BB83EB31E32075800B64183 /* unicorn-overlay-red-07-mac.png in Resources */,
@@ -1700,12 +1745,15 @@
 				4BB83ED41E32075800B64183 /* kingfisher-round-corner-40.jpg in Resources */,
 				4BB83EAD1E32075800B64183 /* onevcat-overlay-red-mac.jpg in Resources */,
 				4BB83EC51E32075800B64183 /* onevcat-resize-120-mac.jpg in Resources */,
+				D18C16B91E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */,
 				D14146451E5C7E86001476DF /* onevcat-resize-240-60-aspectFill-mac.jpg in Resources */,
 				D14146421E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit.jpg in Resources */,
 				D141464B1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit-mac.jpg in Resources */,
+				D18C16AC1E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png in Resources */,
 				4BB83F0A1E32075800B64183 /* onevcat.jpg in Resources */,
 				4BB83EC81E32075800B64183 /* onevcat-resize-120.jpg in Resources */,
 				D14146541E5C7E86001476DF /* unicorn-resize-240-60-aspectFill.png in Resources */,
+				D18C16A91E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg in Resources */,
 				4BB83EF51E32075800B64183 /* kingfisher-tint-yellow-02-mac.jpg in Resources */,
 				4BB83EE61E32075800B64183 /* onevcat-round-corner-60-resize-100.jpg in Resources */,
 				4BB83E711E32075800B64183 /* unicorn-blur-10-mac.png in Resources */,
@@ -1716,8 +1764,10 @@
 				4BB83E741E32075800B64183 /* unicorn-blur-10.png in Resources */,
 				4BB83F071E32075800B64183 /* kingfisher.jpg in Resources */,
 				4BB83EFB1E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				D18C16B61E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				D141463F1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit-mac.jpg in Resources */,
 				4BB83EBC1E32075800B64183 /* unicorn-overlay-red.png in Resources */,
+				D18C16A61E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */,
 				D141465A1E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png in Resources */,
 				4BB83E8F1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E651E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
@@ -1829,6 +1879,7 @@
 				4BB83EAE1E32075800B64183 /* onevcat-overlay-red.jpg in Resources */,
 				4BB83EBD1E32075800B64183 /* kingfisher-resize-120-mac.jpg in Resources */,
 				4BB83EC91E32075800B64183 /* unicorn-resize-120-mac.png in Resources */,
+				D18C16B11E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				4BB83EB41E32075800B64183 /* unicorn-overlay-red-07.png in Resources */,
 				4BB83EC01E32075800B64183 /* kingfisher-resize-120.jpg in Resources */,
 				4BB83EB11E32075800B64183 /* unicorn-overlay-red-07-mac.png in Resources */,
@@ -1843,12 +1894,15 @@
 				4BB83ED21E32075800B64183 /* kingfisher-round-corner-40.jpg in Resources */,
 				4BB83EAB1E32075800B64183 /* onevcat-overlay-red-mac.jpg in Resources */,
 				4BB83EC31E32075800B64183 /* onevcat-resize-120-mac.jpg in Resources */,
+				D18C16B71E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */,
 				D14146431E5C7E86001476DF /* onevcat-resize-240-60-aspectFill-mac.jpg in Resources */,
 				D14146401E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit.jpg in Resources */,
 				D14146491E5C7E86001476DF /* onevcat-resize-240-60-aspectFit-mac.jpg in Resources */,
+				D18C16AA1E87FCF500673D57 /* unicorn-cropping-50-50-anchor-center.png in Resources */,
 				4BB83F081E32075800B64183 /* onevcat.jpg in Resources */,
 				4BB83EC61E32075800B64183 /* onevcat-resize-120.jpg in Resources */,
 				D14146521E5C7E86001476DF /* unicorn-resize-240-60-aspectFill.png in Resources */,
+				D18C16A71E87FCF500673D57 /* onevcat-cropping-50-50-anchor-center.jpg in Resources */,
 				4BB83EF31E32075800B64183 /* kingfisher-tint-yellow-02-mac.jpg in Resources */,
 				4BB83EE41E32075800B64183 /* onevcat-round-corner-60-resize-100.jpg in Resources */,
 				4BB83E6F1E32075800B64183 /* unicorn-blur-10-mac.png in Resources */,
@@ -1859,8 +1913,10 @@
 				4BB83E721E32075800B64183 /* unicorn-blur-10.png in Resources */,
 				4BB83F051E32075800B64183 /* kingfisher.jpg in Resources */,
 				4BB83EF91E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				D18C16B41E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				D141463D1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit-mac.jpg in Resources */,
 				4BB83EBA1E32075800B64183 /* unicorn-overlay-red.png in Resources */,
+				D18C16A41E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */,
 				D14146581E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png in Resources */,
 				4BB83E8D1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E631E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
