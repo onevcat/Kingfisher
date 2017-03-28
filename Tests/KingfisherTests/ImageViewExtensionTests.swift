@@ -421,7 +421,7 @@ class ImageViewExtensionTests: XCTestCase {
     
     func testCanUseImageIndicatorViewAnimating() {
         
-        imageView.kf.indicatorType = .image(imageData: testImageData as! Data)
+        imageView.kf.indicatorType = .image(imageData: testImageData! as Data)
         XCTAssertTrue(imageView.kf.indicator is ImageIndicator)
         let image = (imageView.kf.indicator?.view as? ImageView)?.image
         XCTAssertNotNil(image)
