@@ -466,9 +466,10 @@ public struct CroppingImageProcessor: ImageProcessor {
     ///    
     ///   The target size will be automatically calculated with a reasonable behavior.
     ///   For example, when you have an image size of `CGSize(width: 100, height: 100)`,
-    ///   and a target size of `CGSize(width: 100, height: 100)`, with a (0.0, 0.0) anchor (top-left),
-    ///   the crop rect will be `{0, 0, 20, 20}`; with a (0.5, 0.5) anchor (center), it will be 
-    ///   `{40, 40, 20, 20}`; while with a (1.0, 1.0) anchor (bottom-right), it will be `{80, 80, 20, 20}`
+    ///   and a target size of `CGSize(width: 20, height: 20)`: 
+    ///   - with a (0.0, 0.0) anchor (top-left), the crop rect will be `{0, 0, 20, 20}`; 
+    ///   - with a (0.5, 0.5) anchor (center), it will be `{40, 40, 20, 20}`
+    ///   - while with a (1.0, 1.0) anchor (bottom-right), it will be `{80, 80, 20, 20}`
     public init(size: CGSize, anchor: CGPoint = CGPoint(x: 0.5, y: 0.5)) {
         self.size = size
         self.anchor = anchor
