@@ -46,11 +46,11 @@ extension StringProxy {
             let MD5Calculator = MD5(message)
             let MD5Data = MD5Calculator.calculate()
 
-            let MD5String = NSMutableString()
+            var MD5String = String()
             for c in MD5Data {
-                MD5String.appendFormat("%02x", c)
+                MD5String += String(format: "%02x", c)
             }
-            return MD5String as String
+            return MD5String
 
         } else {
             return base
