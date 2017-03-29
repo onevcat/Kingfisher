@@ -501,7 +501,7 @@ extension Kingfisher where Base: Image {
                 return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
             }
 
-            guard let context = beginContext() else {
+            guard let context = beginContext(size: size) else {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
                 return base
             }
@@ -511,7 +511,7 @@ extension Kingfisher where Base: Image {
             
             var inBuffer = createEffectBuffer(context)
             
-            guard let outContext = beginContext() else {
+            guard let outContext = beginContext(size: size) else {
                 assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
                 return base
             }
@@ -627,7 +627,7 @@ extension Kingfisher where Base: Image {
             return base
         }
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        guard let context = beginContext() else {
+        guard let context = beginContext(size: CGSize(width: imageRef.width, height: imageRef.height)) else {
             assertionFailure("[Kingfisher] Decoding fails to create a valid context.")
             return base
         }
@@ -755,7 +755,7 @@ extension Comparable {
 
 extension Kingfisher where Base: Image {
     
-    func beginContext() -> CGContext? {
+    func beginContext(size: CGSize) -> CGContext? {
         #if os(macOS)
             guard let rep = NSBitmapImageRep(
                 bitmapDataPlanes: nil,
