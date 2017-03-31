@@ -36,17 +36,19 @@ import UIKit
  *	Set image to use from web.
  */
 extension Kingfisher where Base: ImageView {
+
     /**
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
-     
+
      - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+     - parameter on:                Closure that assigns the final image to a property on the imageview
      - parameter placeholder:       A placeholder image when retrieving the image at URL.
      - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
-     
+
      - returns: A task represents the retrieving process.
-     
+
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
@@ -56,6 +58,56 @@ extension Kingfisher where Base: ImageView {
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+    {
+        return setImage(with: resource, on: { [weak self] in self?.base.image = $0 }, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+    }
+
+    /**
+     Set the highlighted image with a resource, a placeholder image, options, progress handler and completion handler.
+
+     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+     - parameter on:                Closure that assigns the final image to a property on the imageview
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter progressBlock:     Called when the image downloading progress gets updated.
+     - parameter completionHandler: Called when the image retrieved and set.
+
+     - returns: A task represents the retrieving process.
+
+     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
+     */
+    @discardableResult
+    public func setHighlightedImage(with resource: Resource?,
+                                    placeholder: Image? = nil,
+                                    options: KingfisherOptionsInfo? = nil,
+                                    progressBlock: DownloadProgressBlock? = nil,
+                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+    {
+        return setImage(with: resource, on: { [weak self] in self?.base.highlightedImage = $0 }, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+    }
+
+    /**
+     Set an image with a resource, a placeholder image, options, progress handler and completion handler.
+
+     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+     - parameter on:                Closure that assigns the final image to a property on the imageview
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter progressBlock:     Called when the image downloading progress gets updated.
+     - parameter completionHandler: Called when the image retrieved and set.
+
+     - returns: A task represents the retrieving process.
+
+     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
+     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
+     */
+    private func setImage(with resource: Resource?,
+                          on setImageOnImageView: @escaping (UIImage) -> Void,
+                          placeholder: Image? = nil,
+                          options: KingfisherOptionsInfo? = nil,
+                          progressBlock: DownloadProgressBlock? = nil,
+                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         guard let resource = resource else {
             base.image = placeholder
@@ -119,13 +171,17 @@ extension Kingfisher where Base: ImageView {
                                                               options: [transition.animationOptions, .allowUserInteraction],
                                                               animations: {
                                                                 // Set image property in the animation.
-                                                                transition.animations?(strongBase, image)
-                                                              },
+                                                                if let transitionAnimation = transition.animations {
+                                                                    transitionAnimation(strongBase, image)
+                                                                } else {
+                                                                    setImageOnImageView(image)
+                                                                }
+                                            },
                                                               completion: { finished in
                                                                 transition.completion?(finished)
                                                                 completionHandler?(image, error, cacheType, imageURL)
-                                                              })
-                                          })
+                                            })
+                        })
                     #endif
                 }
             })
