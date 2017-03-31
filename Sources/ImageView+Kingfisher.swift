@@ -62,6 +62,8 @@ extension Kingfisher where Base: ImageView {
         return setImage(with: resource, on: { [weak self] in self?.base.image = $0 }, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
     }
 
+    #if !os(macOS)
+
     /**
      Set the highlighted image with a resource, a placeholder image, options, progress handler and completion handler.
 
@@ -87,6 +89,8 @@ extension Kingfisher where Base: ImageView {
         return setImage(with: resource, on: { [weak self] in self?.base.highlightedImage = $0 }, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
     }
 
+    #endif
+
     /**
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
 
@@ -103,7 +107,7 @@ extension Kingfisher where Base: ImageView {
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
      */
     private func setImage(with resource: Resource?,
-                          on setImageOnImageView: @escaping (UIImage) -> Void,
+                          on setImageOnImageView: @escaping (Image) -> Void,
                           placeholder: Image? = nil,
                           options: KingfisherOptionsInfo? = nil,
                           progressBlock: DownloadProgressBlock? = nil,
