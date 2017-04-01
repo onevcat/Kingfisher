@@ -70,6 +70,20 @@ platform :ios do
     pod_push
   end
 
+  lane :doc do |options|
+      target_version = options[:version]
+      Actions.sh("cd .. && jazzy \
+                        --clean \
+                        --author \"Wei Wang\" \
+                        --author_url https://onevcat.com \
+                        --github_url https://github.com/onevcat/Kingfisher \
+                        --github-file-prefix https://github.com/onevcat/Kingfisher/tree/#{target_version} \
+                        --module-version #{target_version} \
+                        --module Kingfisher \
+                        --root-url https://realm.io/docs/swift/0.96.2/api/ \
+                        --output docs/")
+  end
+
   after_all do |lane|
 
   end
