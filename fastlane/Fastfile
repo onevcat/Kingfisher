@@ -49,6 +49,8 @@ platform :ios do
       log = extract_current_change_log(version: target_version)
       release_log = update_change_log(log: log)
 
+      doc(version: target_version)
+
       git_commit_all(message: "Bump version to #{target_version}")
       
       Actions.sh("git tag -s #{target_version} -m ''")
@@ -80,7 +82,7 @@ platform :ios do
                         --github-file-prefix https://github.com/onevcat/Kingfisher/tree/#{target_version} \
                         --module-version #{target_version} \
                         --module Kingfisher \
-                        --root-url https://realm.io/docs/swift/0.96.2/api/ \
+                        --root-url http://onevcat.github.io/Kingfisher/ \
                         --output docs/")
   end
 
