@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Structs  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a title="Structs  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html">Kingfisher Docs</a> (79% documented)</p>
+        <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="img/gh.png"/>View on GitHub</a></p>
+        <p class="header-right"><a href="dash-feed://https%3A%2F%2Frealm%2Eio%2Fdocs%2Fswift%2F0%2E96%2E2%2Fapi%2Fdocsets%2FKingfisher%2Exml"><img src="img/dash.png"/>Install in Dash</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">Kingfisher Reference</a>
+        <img id="carat" src="img/carat.png" />
+        Structs  Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/AnimatedImageView.html">AnimatedImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ImageCache.html">ImageCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ImageCache/CacheCheckResult.html">– CacheCheckResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ImageDownloader.html">ImageDownloader</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ImagePrefetcher.html">ImagePrefetcher</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Kingfisher.html">Kingfisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/KingfisherManager.html">KingfisherManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/RetrieveImageTask.html">RetrieveImageTask</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Global Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v10Kingfisher33KingfisherDiskCacheCleanedHashKeySS">KingfisherDiskCacheCleanedHashKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v10Kingfisher21KingfisherErrorDomainSS">KingfisherErrorDomain</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v10Kingfisher28KingfisherErrorStatusCodeKeySS">KingfisherErrorStatusCodeKey</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/CacheType.html">CacheType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ContentMode.html">ContentMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ImageProcessItem.html">ImageProcessItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ImageTransition.html">ImageTransition</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ImageTransition.html">ImageTransition</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/IndicatorType.html">IndicatorType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/KingfisherError.html">KingfisherError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/KingfisherOptionsInfoItem.html">KingfisherOptionsInfoItem</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Extensions/CGSize.html">CGSize</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Collection.html">Collection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Data.html">Data</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Image.html">Image</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/ImageView.html">ImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/UIButton.html">UIButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/URL.html">URL</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Functions.html#/s:F10Kingfisheroi2ggFTPS_14ImageProcessor_PS0___PS0__">&gt;&gt;(_:_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/CIImageProcessor.html">CIImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/CacheSerializer.html">CacheSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ImageDownloadRequestModifier.html">ImageDownloadRequestModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/ImageProcessor.html">ImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/Indicator.html">Indicator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/KingfisherCompatible.html">KingfisherCompatible</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/Resource.html">Resource</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Structs.html">Structs</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Structs/AnyModifier.html">AnyModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/BlackWhiteProcessor.html">BlackWhiteProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/BlurImageProcessor.html">BlurImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs.html#/s:V10Kingfisher11CGSizeProxy">CGSizeProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs.html#/s:V10Kingfisher9DataProxy">DataProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/DefaultImageProcessor.html">DefaultImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/Filter.html">Filter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ImageResource.html">ImageResource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/OverlayImageProcessor.html">OverlayImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ResizingImageProcessor.html">ResizingImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/RetrieveImageDownloadTask.html">RetrieveImageDownloadTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs.html#/s:V10Kingfisher11StringProxy">StringProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/TintImageProcessor.html">TintImageProcessor</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandler">ImageDownloaderCompletionHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlock">ImageDownloaderProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher21KingfisherOptionsInfo">KingfisherOptionsInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher27PrefetcherCompletionHandler">PrefetcherCompletionHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher23PrefetcherProgressBlock">PrefetcherProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher21RetrieveImageDiskTask">RetrieveImageDiskTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:10Kingfisher11Transformer">Transformer</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>Structs</h1>
+            <p>The following structs are available globally.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Misc%20Helpers"></a>
+                <a name="//apple_ref/swift/Section/Misc Helpers" class="dashAnchor"></a>
+                <a href="#/Misc%20Helpers">
+                  <h3 class="section-name">Misc Helpers</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher9DataProxy"></a>
+                    <a name="//apple_ref/swift/Struct/DataProxy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher9DataProxy">DataProxy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/Image.swift#L666-L671">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher11CGSizeProxy"></a>
+                    <a name="//apple_ref/swift/Struct/CGSizeProxy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher11CGSizeProxy">CGSizeProxy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/Image.swift#L702-L707">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher11AnyModifier"></a>
+                    <a name="//apple_ref/swift/Struct/AnyModifier" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher11AnyModifier">AnyModifier</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Structs/AnyModifier.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/RequestModifier.swift#L42-L53">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher6Filter"></a>
+                    <a name="//apple_ref/swift/Struct/Filter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher6Filter">Filter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Wrapper for a <code><a href="Typealiases.html#/s:10Kingfisher11Transformer">Transformer</a></code> of CIImage filters.</p>
+
+                        <a href="Structs/Filter.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Filter</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/Filter.swift#L55-L94">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher25RetrieveImageDownloadTask"></a>
+                    <a name="//apple_ref/swift/Struct/RetrieveImageDownloadTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher25RetrieveImageDownloadTask">RetrieveImageDownloadTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Download task.</p>
+
+                        <a href="Structs/RetrieveImageDownloadTask.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">RetrieveImageDownloadTask</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageDownloader.swift#L40-L70">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher21DefaultImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/DefaultImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher21DefaultImageProcessor">DefaultImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default processor. It convert the input data to a valid image.
+Images of .PNG, .JPEG and .GIF format are supported.
+If an image is given, <code>DefaultImageProcessor</code> will do nothing on it and just return that image.</p>
+
+                        <a href="Structs/DefaultImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L102-L134">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher25RoundCornerImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/RoundCornerImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher25RoundCornerImageProcessor">RoundCornerImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for making round corner images. Only CG-based images are supported in macOS, 
+if a non-CG image passed in, the processor will do nothing.</p>
+
+                        <a href="Structs/RoundCornerImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">RoundCornerImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L138-L183">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher22ResizingImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/ResizingImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher22ResizingImageProcessor">ResizingImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for resizing images. Only CG-based images are supported in macOS.</p>
+
+                        <a href="Structs/ResizingImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ResizingImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L198-L242">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher18BlurImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/BlurImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher18BlurImageProcessor">BlurImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for adding blur effect to images. <code>Accelerate.framework</code> is used underhood for 
+a better performance. A simulated Gaussian blur with specified blur radius will be applied.</p>
+
+                        <a href="Structs/BlurImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BlurImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L246-L280">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher21OverlayImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/OverlayImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher21OverlayImageProcessor">OverlayImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for adding an overlay to images. Only CG-based images are supported in macOS.</p>
+
+                        <a href="Structs/OverlayImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">OverlayImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L283-L322">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher18TintImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/TintImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher18TintImageProcessor">TintImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for tint images with color. Only CG-based images are supported.</p>
+
+                        <a href="Structs/TintImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TintImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L325-L358">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher22ColorControlsProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/ColorControlsProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher22ColorControlsProcessor">ColorControlsProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for applying some color control to images. Only CG-based images are supported.
+watchOS is not supported.</p>
+
+                        <a href="Structs/ColorControlsProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ColorControlsProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L362-L410">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher19BlackWhiteProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/BlackWhiteProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher19BlackWhiteProcessor">BlackWhiteProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for applying black and white effect to images. Only CG-based images are supported.
+watchOS is not supported.</p>
+
+                        <a href="Structs/BlackWhiteProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BlackWhiteProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L414-L435">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher22CroppingImageProcessor"></a>
+                    <a name="//apple_ref/swift/Struct/CroppingImageProcessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher22CroppingImageProcessor">CroppingImageProcessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Processor for cropping an image. Only CG-based images are supported.
+watchOS is not supported.</p>
+
+                        <a href="Structs/CroppingImageProcessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CroppingImageProcessor</span><span class="p">:</span> <span class="kt"><a href="Protocols/ImageProcessor.html">ImageProcessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageProcessor.swift#L439-L494">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher13ImageResource"></a>
+                    <a name="//apple_ref/swift/Struct/ImageResource" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher13ImageResource">ImageResource</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>ImageResource is a simple combination of <code>downloadURL</code> and <code>cacheKey</code>.</p>
+
+<p>When passed to image view set methods, Kingfisher will try to download the target 
+image from the <code>downloadURL</code>, and then store it with the <code>cacheKey</code> as the key in cache.</p>
+
+                        <a href="Structs/ImageResource.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ImageResource</span><span class="p">:</span> <span class="kt"><a href="Protocols/Resource.html">Resource</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/Resource.swift#L45-L64">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher11StringProxy"></a>
+                    <a name="//apple_ref/swift/Struct/StringProxy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher11StringProxy">StringProxy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/String+MD5.swift#L24-L29">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:V10Kingfisher22DefaultCacheSerializer"></a>
+                    <a name="//apple_ref/swift/Struct/DefaultCacheSerializer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:V10Kingfisher22DefaultCacheSerializer">DefaultCacheSerializer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>DefaultCacheSerializer</code> is a basic <code><a href="Protocols/CacheSerializer.html">CacheSerializer</a></code> used in default cache of
+Kingfisher. It could serialize and deserialize PNG, JEPG and GIF images. For 
+image other than these formats, a normalized <code>pngRepresentation</code> will be used.</p>
+
+                        <a href="Structs/DefaultCacheSerializer.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultCacheSerializer</span><span class="p">:</span> <span class="kt"><a href="Protocols/CacheSerializer.html">CacheSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/CacheSerializer.swift#L60-L87">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-04-01)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

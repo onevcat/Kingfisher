@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ImageCache Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/ImageCache" class="dashAnchor"></a>
+    <a title="ImageCache Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">Kingfisher Docs</a> (79% documented)</p>
+        <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="../img/gh.png"/>View on GitHub</a></p>
+        <p class="header-right"><a href="dash-feed://https%3A%2F%2Frealm%2Eio%2Fdocs%2Fswift%2F0%2E96%2E2%2Fapi%2Fdocsets%2FKingfisher%2Exml"><img src="../img/dash.png"/>Install in Dash</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Kingfisher Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        ImageCache Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnimatedImageView.html">AnimatedImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ImageCache.html">ImageCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ImageCache/CacheCheckResult.html">– CacheCheckResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ImageDownloader.html">ImageDownloader</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ImagePrefetcher.html">ImagePrefetcher</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Kingfisher.html">Kingfisher</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/KingfisherManager.html">KingfisherManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RetrieveImageTask.html">RetrieveImageTask</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Global Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:v10Kingfisher33KingfisherDiskCacheCleanedHashKeySS">KingfisherDiskCacheCleanedHashKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:v10Kingfisher21KingfisherErrorDomainSS">KingfisherErrorDomain</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:v10Kingfisher28KingfisherErrorStatusCodeKeySS">KingfisherErrorStatusCodeKey</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/CacheType.html">CacheType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ContentMode.html">ContentMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ImageProcessItem.html">ImageProcessItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ImageTransition.html">ImageTransition</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ImageTransition.html">ImageTransition</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/IndicatorType.html">IndicatorType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/KingfisherError.html">KingfisherError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/KingfisherOptionsInfoItem.html">KingfisherOptionsInfoItem</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/CGSize.html">CGSize</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Collection.html">Collection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Data.html">Data</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Image.html">Image</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/ImageView.html">ImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIButton.html">UIButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/URL.html">URL</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F10Kingfisheroi2ggFTPS_14ImageProcessor_PS0___PS0__">&gt;&gt;(_:_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CIImageProcessor.html">CIImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/CacheSerializer.html">CacheSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ImageDownloadRequestModifier.html">ImageDownloadRequestModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ImageProcessor.html">ImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/Indicator.html">Indicator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/KingfisherCompatible.html">KingfisherCompatible</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/Resource.html">Resource</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structs</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/AnyModifier.html">AnyModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BlackWhiteProcessor.html">BlackWhiteProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BlurImageProcessor.html">BlurImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:V10Kingfisher11CGSizeProxy">CGSizeProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:V10Kingfisher9DataProxy">DataProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/DefaultImageProcessor.html">DefaultImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Filter.html">Filter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ImageResource.html">ImageResource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/OverlayImageProcessor.html">OverlayImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ResizingImageProcessor.html">ResizingImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/RetrieveImageDownloadTask.html">RetrieveImageDownloadTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:V10Kingfisher11StringProxy">StringProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TintImageProcessor.html">TintImageProcessor</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandler">ImageDownloaderCompletionHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlock">ImageDownloaderProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher21KingfisherOptionsInfo">KingfisherOptionsInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher27PrefetcherCompletionHandler">PrefetcherCompletionHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher23PrefetcherProgressBlock">PrefetcherProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher21RetrieveImageDiskTask">RetrieveImageDiskTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10Kingfisher11Transformer">Transformer</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>ImageCache</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">ImageCache</span></code></pre>
+
+                </div>
+              </div>
+            <p><code>ImageCache</code> represents both the memory and disk cache system of Kingfisher. 
+While a default image cache object will be used if you prefer the extension methods of Kingfisher, 
+you can create your own cache object and configure it as your need. You could use an <code>ImageCache</code>
+object to manipulate memory and disk cache for Kingfisher.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:C10Kingfisher10ImageCache20DiskCachePathClosure"></a>
+                    <a name="//apple_ref/swift/Alias/DiskCachePathClosure" class="dashAnchor"></a>
+                    <a class="token" href="#/s:C10Kingfisher10ImageCache20DiskCachePathClosure">DiskCachePathClosure</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Closure that defines the disk cache path from a given path and cacheName.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">DiskCachePathClosure</span> <span class="o">=</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L110">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC10Kingfisher10ImageCache13maxMemoryCostSu"></a>
+                    <a name="//apple_ref/swift/Property/maxMemoryCost" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC10Kingfisher10ImageCache13maxMemoryCostSu">maxMemoryCost</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The largest cache cost of memory cache. The total cost is pixel count of 
+all cached images in memory.
+Default is unlimited. Memory cache will be purged automatically when a 
+memory warning notification is received.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maxMemoryCost</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">0</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L78-L82">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC10Kingfisher10ImageCache13diskCachePathSS"></a>
+                    <a name="//apple_ref/swift/Property/diskCachePath" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC10Kingfisher10ImageCache13diskCachePathSS">diskCachePath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The disk cache location.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">let</span> <span class="nv">diskCachePath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L89">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC10Kingfisher10ImageCache13pathExtensionGSqSS_"></a>
+                    <a name="//apple_ref/swift/Property/pathExtension" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC10Kingfisher10ImageCache13pathExtensionGSqSS_">pathExtension</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default file extension appended to cached files.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">pathExtension</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L92">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC10Kingfisher10ImageCache22maxCachePeriodInSecondSd"></a>
+                    <a name="//apple_ref/swift/Property/maxCachePeriodInSecond" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC10Kingfisher10ImageCache22maxCachePeriodInSecondSd">maxCachePeriodInSecond</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The longest time duration in second of the cache being stored in disk. 
+Default is 1 week (60 * 60 * 24 * 7 seconds).
+Setting this to a negative value will make the disk cache never expiring.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maxCachePeriodInSecond</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span> <span class="c1">//Cache exists for 1 week</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L97">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC10Kingfisher10ImageCache16maxDiskCacheSizeSu"></a>
+                    <a name="//apple_ref/swift/Property/maxDiskCacheSize" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC10Kingfisher10ImageCache16maxDiskCacheSizeSu">maxDiskCacheSize</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The largest disk size can be taken for the cache. It is the total 
+allocated size of cached files in bytes.
+Default is no limit.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maxDiskCacheSize</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">0</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L102">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:ZvC10Kingfisher10ImageCache7defaultS0_"></a>
+                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
+                    <a class="token" href="#/s:ZvC10Kingfisher10ImageCache7defaultS0_">default</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default cache.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span> <span class="o">=</span> <span class="kt">ImageCache</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"default"</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L107">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:ZFC10Kingfisher10ImageCache27defaultDiskCachePathClosureFT4pathGSqSS_9cacheNameSS_SS"></a>
+                    <a name="//apple_ref/swift/Method/defaultDiskCachePathClosure(path:cacheName:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:ZFC10Kingfisher10ImageCache27defaultDiskCachePathClosureFT4pathGSqSS_9cacheNameSS_SS">defaultDiskCachePathClosure(path:cacheName:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default DiskCachePathClosure</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">defaultDiskCachePathClosure</span><span class="p">(</span><span class="nv">path</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="nv">cacheName</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L113-L116">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCachecFT4nameSS4pathGSqSS_20diskCachePathClosureFTGSqSS_SS_SS_S0_"></a>
+                    <a name="//apple_ref/swift/Method/init(name:path:diskCachePathClosure:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCachecFT4nameSS4pathGSqSS_20diskCachePathClosureFTGSqSS_SS_SS_S0_">init(name:path:diskCachePathClosure:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                <span class="nv">path</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                <span class="nv">diskCachePathClosure</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageCache.html#/s:C10Kingfisher10ImageCache20DiskCachePathClosure">DiskCachePathClosure</a></span> <span class="o">=</span> <span class="kt">ImageCache</span><span class="o">.</span><span class="n">defaultDiskCachePathClosure</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Name of the cache. It will be used as the memory cache name and the disk cache folder name appending to the cache path. This value should not be an empty string.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>path</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional - Location of cache path on disk. If <code>nil</code> is passed in (the default value), the <code>.cachesDirectory</code> in of your app will be used.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>diskCachePathClosure</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure that takes in an optional initial path string and generates the final disk cache path. You could use it to fully customize your cache path.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The cache object.</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L130-L160">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Store%20&amp;%20Remove"></a>
+                <a name="//apple_ref/swift/Section/Store &amp; Remove" class="dashAnchor"></a>
+                <a href="#/Store%20&amp;%20Remove">
+                  <h3 class="section-name">Store &amp; Remove</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache5storeFTCSo7UIImage8originalGSqV10Foundation4Data_6forKeySS19processorIdentifierSS15cacheSerializerPS_15CacheSerializer_6toDiskSb17completionHandlerGSqFT_T___T_"></a>
+                    <a name="//apple_ref/swift/Method/store(_:original:forKey:processorIdentifier:cacheSerializer:toDisk:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache5storeFTCSo7UIImage8originalGSqV10Foundation4Data_6forKeySS19processorIdentifierSS15cacheSerializerPS_15CacheSerializer_6toDiskSb17completionHandlerGSqFT_T___T_">store(_:original:forKey:processorIdentifier:cacheSerializer:toDisk:completionHandler:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Store an image to cache. It will be saved to both memory and disk. It is an async operation.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">Image</span><span class="p">,</span>
+                      <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                      <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                      <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+                      <span class="n">cacheSerializer</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
+                      <span class="nv">toDisk</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                      <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>image</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The image to be stored.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>original</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The original data of the image. Kingfisher will use it to check the format of the image and optimize cache size on disk. If <code>nil</code> is supplied, the image data will be saved as a normalized PNG file. It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key for the image.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>identifier</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it. This identifier will be used to generate a corresponding key for the combination of <code>key</code> and processor.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>toDisk</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether this image should be cached to disk or not. If false, the image will be only cached in memory.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Called when store operation completes.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L184-L221">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache11removeImageFT6forKeySS19processorIdentifierSS8fromDiskSb17completionHandlerGSqFT_T___T_"></a>
+                    <a name="//apple_ref/swift/Method/removeImage(forKey:processorIdentifier:fromDisk:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache11removeImageFT6forKeySS19processorIdentifierSS8fromDiskSb17completionHandlerGSqFT_T___T_">removeImage(forKey:processorIdentifier:fromDisk:completionHandler:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Remove the image for key for the cache. It will be opted out from both memory and disk. 
+It is an async operation.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">removeImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                          <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+                          <span class="nv">fromDisk</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                          <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key for the image.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>identifier</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it. This identifier will be used to generate a corresponding key for the combination of <code>key</code> and processor.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fromDisk</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether this image should be removed from disk or not. If false, the image will be only removed from memory.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Called when removal operation completes.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L233-L259">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Get%20data%20from%20cache"></a>
+                <a name="//apple_ref/swift/Section/Get data from cache" class="dashAnchor"></a>
+                <a href="#/Get%20data%20from%20cache">
+                  <h3 class="section-name">Get data from cache</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache13retrieveImageFT6forKeySS7optionsGSqGSaOS_25KingfisherOptionsInfoItem__17completionHandlerGSqFTGSqCSo7UIImage_OS_9CacheType_T___GSqC8Dispatch16DispatchWorkItem_"></a>
+                    <a name="//apple_ref/swift/Method/retrieveImage(forKey:options:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache13retrieveImageFT6forKeySS7optionsGSqGSaOS_25KingfisherOptionsInfoItem__17completionHandlerGSqFTGSqCSo7UIImage_OS_9CacheType_T___GSqC8Dispatch16DispatchWorkItem_">retrieveImage(forKey:options:completionHandler:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get an image for a key from memory or disk.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">retrieveImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                               <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21KingfisherOptionsInfo">KingfisherOptionsInfo</a></span><span class="p">?,</span>
+                     <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">((</span><span class="kt">Image</span><span class="p">?,</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">())?)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21RetrieveImageDiskTask">RetrieveImageDiskTask</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key for the image.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Options of retrieving image. If you need to retrieve an image which was stored with a specified <code>ImageProcessor</code>, pass the processor in the option too.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Called when getting operation completes with image result and cached type of this image. If there is no such key cached, the image will be <code>nil</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The retrieving task.</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L275-L338">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache26retrieveImageInMemoryCacheFT6forKeySS7optionsGSqGSaOS_25KingfisherOptionsInfoItem___GSqCSo7UIImage_"></a>
+                    <a name="//apple_ref/swift/Method/retrieveImageInMemoryCache(forKey:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache26retrieveImageInMemoryCacheFT6forKeySS7optionsGSqGSaOS_25KingfisherOptionsInfoItem___GSqCSo7UIImage_">retrieveImageInMemoryCache(forKey:options:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get an image for a key from memory.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInMemoryCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21KingfisherOptionsInfo">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Image</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key for the image.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Options of retrieving image. If you need to retrieve an image which was stored with a specified <code>ImageProcessor</code>, pass the processor in the option too.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The image object if it is cached, or <code>nil</code> if there is no such key in the cache.</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L348-L354">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache24retrieveImageInDiskCacheFT6forKeySS7optionsGSqGSaOS_25KingfisherOptionsInfoItem___GSqCSo7UIImage_"></a>
+                    <a name="//apple_ref/swift/Method/retrieveImageInDiskCache(forKey:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache24retrieveImageInDiskCacheFT6forKeySS7optionsGSqGSaOS_25KingfisherOptionsInfoItem___GSqCSo7UIImage_">retrieveImageInDiskCache(forKey:options:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get an image for a key from disk.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInDiskCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21KingfisherOptionsInfo">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Image</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key for the image.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Options of retrieving image. If you need to retrieve an image which was stored with a specified <code>ImageProcessor</code>, pass the processor in the option too.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The image object if it is cached, or <code>nil</code> if there is no such key in the cache.</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L365-L371">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Clear%20&amp;%20Clean"></a>
+                <a name="//apple_ref/swift/Section/Clear &amp; Clean" class="dashAnchor"></a>
+                <a href="#/Clear%20&amp;%20Clean">
+                  <h3 class="section-name">Clear &amp; Clean</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache16clearMemoryCacheFT_T_"></a>
+                    <a name="//apple_ref/swift/Method/clearMemoryCache()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache16clearMemoryCacheFT_T_">clearMemoryCache()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Clear memory cache.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">clearMemoryCache</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L379-L381">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache14clearDiskCacheFT10completionGSqFT_T___T_"></a>
+                    <a name="//apple_ref/swift/Method/clearDiskCache(completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache14clearDiskCacheFT10completionGSqFT_T___T_">clearDiskCache(completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Clear disk cache. This is an async operation.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">clearDiskCache</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">(()</span><span class="o">-&gt;</span><span class="p">())?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHander</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Called after the operation completes.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L388-L401">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache21cleanExpiredDiskCacheFT10completionGSqFT_T___T_"></a>
+                    <a name="//apple_ref/swift/Method/cleanExpiredDiskCache(completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache21cleanExpiredDiskCacheFT10completionGSqFT_T___T_">cleanExpiredDiskCache(completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Clean expired disk cache. This is an async operation.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">cleanExpiredDiskCache</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">(()</span><span class="o">-&gt;</span><span class="p">())?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Called after the operation completes.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L415-L473">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache31backgroundCleanExpiredDiskCacheFT_T_"></a>
+                    <a name="//apple_ref/swift/Method/backgroundCleanExpiredDiskCache()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache31backgroundCleanExpiredDiskCacheFT_T_">backgroundCleanExpiredDiskCache()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Clean expired disk cache when app in background. This is an async operation.
+In most cases, you should not call this method explicitly. 
+It will be called automatically when <code>UIApplicationDidEnterBackgroundNotification</code> received.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">backgroundCleanExpiredDiskCache</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L522-L539">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Check%20cache%20status"></a>
+                <a name="//apple_ref/swift/Section/Check cache status" class="dashAnchor"></a>
+                <a href="#/Check%20cache%20status">
+                  <h3 class="section-name">Check cache status</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:VC10Kingfisher10ImageCache16CacheCheckResult"></a>
+                    <a name="//apple_ref/swift/Struct/CacheCheckResult" class="dashAnchor"></a>
+                    <a class="token" href="#/s:VC10Kingfisher10ImageCache16CacheCheckResult">CacheCheckResult</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Cache result for checking whether an image is cached for a key.</p>
+
+                        <a href="../Classes/ImageCache/CacheCheckResult.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CacheCheckResult</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L548-L551">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache13isImageCachedFT6forKeySS19processorIdentifierSS_VS0_16CacheCheckResult"></a>
+                    <a name="//apple_ref/swift/Method/isImageCached(forKey:processorIdentifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache13isImageCachedFT6forKeySS19processorIdentifierSS_VS0_16CacheCheckResult">isImageCached(forKey:processorIdentifier:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check whether an image is cached for a key.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">isImageCached</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/ImageCache/CacheCheckResult.html">CacheCheckResult</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key for the image.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The check result.</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L560-L580">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache4hashFT6forKeySS19processorIdentifierSS_SS"></a>
+                    <a name="//apple_ref/swift/Method/hash(forKey:processorIdentifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache4hashFT6forKeySS19processorIdentifierSS_SS">hash(forKey:processorIdentifier:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get the hash for the key. This could be used for matching files.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>key</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The key which is used for caching.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>identifier</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Corresponding hash.</p>
+
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L590-L593">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache22calculateDiskCacheSizeFT10completionFSuT__T_"></a>
+                    <a name="//apple_ref/swift/Method/calculateDiskCacheSize(completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache22calculateDiskCacheSizeFT10completionFSuT__T_">calculateDiskCacheSize(completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Calculate the disk size taken by cache. 
+It is the total allocated size of the cached files in bytes.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">calculateDiskCacheSize</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">((</span><span class="n">_</span> <span class="nv">size</span><span class="p">:</span> <span class="kt">UInt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()))</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Called with the calculated size when finishes.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L601-L608">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache9cachePathFT6forKeySS19processorIdentifierSS_SS"></a>
+                    <a name="//apple_ref/swift/Method/cachePath(forKey:processorIdentifier:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache9cachePathFT6forKeySS19processorIdentifierSS_SS">cachePath(forKey:processorIdentifier:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get the cache path for the key.
+It is useful for projects with UIWebView or anyone that needs access to the local file path.</p>
+
+<p>i.e. Replace the <code>&lt;img src=&#39;path_for_key&#39;&gt;</code> tag in your HTML.</p>
+
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This method does not guarantee there is an image already cached in the path. It just returns the path
+that the image should be.
+You could use <code>isImageCached(forKey:)</code> method to check whether the image is cached under that key.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">cachePath</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L620-L623">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC10Kingfisher10ImageCache9cachePathFT14forComputedKeySS_SS"></a>
+                    <a name="//apple_ref/swift/Method/cachePath(forComputedKey:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC10Kingfisher10ImageCache9cachePathFT14forComputedKeySS_SS">cachePath(forComputedKey:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">ImageCache</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.0/Sources/ImageCache.swift#L625-L628">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-04-01)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
