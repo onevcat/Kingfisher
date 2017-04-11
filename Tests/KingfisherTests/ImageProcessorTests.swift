@@ -68,17 +68,17 @@ class ImageProcessorTests: XCTestCase {
     }
 
     func testResizingProcessor() {
-        let p = ResizingImageProcessor(targetSize: CGSize(width: 120, height: 120))
+        let p = ResizingImageProcessor(referenceSize: CGSize(width: 120, height: 120))
         XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.ResizingImageProcessor((120.0, 120.0))")
         checkProcessor(p, with: "resize-120")
     }
     
     func testResizingProcessorWithContentMode() {
-        let p1 = ResizingImageProcessor(targetSize: CGSize(width: 240, height: 60), contentMode: .aspectFill)
+        let p1 = ResizingImageProcessor(referenceSize: CGSize(width: 240, height: 60), mode: .aspectFill)
         XCTAssertEqual(p1.identifier, "com.onevcat.Kingfisher.ResizingImageProcessor((240.0, 60.0), aspectFill)")
         checkProcessor(p1, with: "resize-240-60-aspectFill")
         
-        let p2 = ResizingImageProcessor(targetSize: CGSize(width: 240, height: 60), contentMode: .aspectFit)
+        let p2 = ResizingImageProcessor(referenceSize: CGSize(width: 240, height: 60), mode: .aspectFit)
         XCTAssertEqual(p2.identifier, "com.onevcat.Kingfisher.ResizingImageProcessor((240.0, 60.0), aspectFit)")
         checkProcessor(p2, with: "resize-240-60-aspectFit")
     }
