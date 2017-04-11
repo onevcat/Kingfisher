@@ -99,6 +99,25 @@ public let KingfisherErrorStatusCodeKey = "statusCode"
 /// Protocol of `ImageDownloader`.
 public protocol ImageDownloaderDelegate: class {
     /**
+     Called when the `ImageDownloader` object will start downloading an image from specified URL.
+     
+     - parameter downloader: The `ImageDownloader` object finishes the downloading.
+     - parameter url:        URL of the original request URL.
+     - parameter response:   The request object for the download process.
+     */
+    func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?)
+    
+    /**
+     Called when the `ImageDownloader` completes a downloading request with success or failure.
+     
+     - parameter downloader: The `ImageDownloader` object finishes the downloading.
+     - parameter url:        URL of the original request URL.
+     - parameter response:   The response object of the downloading process.
+     - parameter error:      The error in case of failure.
+     */
+    func imageDownloader(_ downloader: ImageDownloader, didFinishDownloadingImageForURL url: URL, with response: URLResponse?, error: Error?)
+    
+    /**
     Called when the `ImageDownloader` object successfully downloaded an image from specified URL.
     
     - parameter downloader: The `ImageDownloader` object finishes the downloading.
@@ -107,15 +126,6 @@ public protocol ImageDownloaderDelegate: class {
     - parameter response:   The response object of the downloading process.
     */
     func imageDownloader(_ downloader: ImageDownloader, didDownload image: Image, for url: URL, with response: URLResponse?)
-    
-    /**
-    Called when the `ImageDownloader` object starts to download an image from specified URL.
-     
-    - parameter downloader: The `ImageDownloader` object starts the downloading.
-    - parameter url:        URL of the original request.
-    - parameter response:   The request object of the downloading process.
-    */
-    func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?)
     
     /**
     Check if a received HTTP status code is valid or not. 
@@ -149,9 +159,13 @@ public protocol ImageDownloaderDelegate: class {
 }
 
 extension ImageDownloaderDelegate {
-    public func imageDownloader(_ downloader: ImageDownloader, didDownload image: Image, for url: URL, with response: URLResponse?) {}
     
     public func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?) {}
+    
+    public func imageDownloader(_ downloader: ImageDownloader, didFinishDownloadingImageForURL url: URL, with response: URLResponse?, error: Error?) {}
+    
+    public func imageDownloader(_ downloader: ImageDownloader, didDownload image: Image, for url: URL, with response: URLResponse?) {}
+    
     public func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool {
         return (200..<400).contains(code)
     }
@@ -350,8 +364,8 @@ open class ImageDownloader {
                 fetchLoad.downloadTask = RetrieveImageDownloadTask(internalTask: dataTask, ownerDownloader: self)
                 
                 dataTask.priority = options?.downloadPriority ?? URLSessionTask.defaultPriority
-                dataTask.resume()
                 self.delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
+                dataTask.resume()
                 
                 // Hold self while the task is executing.
                 self.sessionHandler.downloadHolder = self
@@ -499,6 +513,10 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Aut
         
         guard let url = task.originalRequest?.url else {
             return
+        }
+        
+        if let downloader = downloadHolder {
+            downloader.delegate?.imageDownloader(downloader, didFinishDownloadingImageForURL: url, with: task.response, error: error)
         }
         
         guard error == nil else {
