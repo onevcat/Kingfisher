@@ -298,7 +298,6 @@
 By default, a status code between 200 to 400 (excluded) is considered as valid.
 If an invalid code is received, the downloader will raise an .invalidStatusCode error.
 It has a <code>userInfo</code> which includes this statusCode and localizedString error message.</p>
-
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
     <p>If the default 200 to 400 valid code does not suit your need, 
@@ -328,7 +327,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                               <td>
                                 <div>
                                   <p>The <code>ImageDownloader</code> object finishes the downloading.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -341,7 +339,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                               <td>
                                 <div>
                                   <p>Downloaded image.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -354,7 +351,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                               <td>
                                 <div>
                                   <p>URL of the original request URL.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -367,7 +363,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                               <td>
                                 <div>
                                   <p>The response object of the downloading process.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -375,7 +370,97 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.2/Sources/ImageDownloader.swift#L109">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.7.0/Sources/ImageDownloader.swift#L109">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP10Kingfisher23ImageDownloaderDelegate15imageDownloaderFTCS_15ImageDownloader23willDownloadImageForURLV10Foundation3URL4withGSqVS2_10URLRequest__T_"></a>
+                    <a name="//apple_ref/swift/Method/imageDownloader(_:willDownloadImageForURL:with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP10Kingfisher23ImageDownloaderDelegate15imageDownloaderFTCS_15ImageDownloader23willDownloadImageForURLV10Foundation3URL4withGSqVS2_10URLRequest__T_">imageDownloader(_:willDownloadImageForURL:with:)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when the <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> object starts to download an image from specified URL.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        <p>Check if a received HTTP status code is valid or not. 
+By default, a status code between 200 to 400 (excluded) is considered as valid.
+If an invalid code is received, the downloader will raise an .invalidStatusCode error.
+It has a <code>userInfo</code> which includes this statusCode and localizedString error message.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If the default 200 to 400 valid code does not suit your need, 
+    you can implement this method to change that behavior.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">willDownloadImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>downloader</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>ImageDownloader</code> object starts the downloading.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>URL of the original request.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>response</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request object of the downloading process.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.7.0/Sources/ImageDownloader.swift#L118">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -400,7 +485,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
 By default, a status code between 200 to 400 (excluded) is considered as valid.
 If an invalid code is received, the downloader will raise an .invalidStatusCode error.
 It has a <code>userInfo</code> which includes this statusCode and localizedString error message.</p>
-
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
     <p>If the default 200 to 400 valid code does not suit your need, 
@@ -415,7 +499,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
 By default, a status code between 200 to 400 (excluded) is considered as valid.
 If an invalid code is received, the downloader will raise an .invalidStatusCode error.
 It has a <code>userInfo</code> which includes this statusCode and localizedString error message.</p>
-
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
     <p>If the default 200 to 400 valid code does not suit your need, 
@@ -445,7 +528,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                               <td>
                                 <div>
                                   <p>The received HTTP status code.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -458,7 +540,6 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                               <td>
                                 <div>
                                   <p>The <code>ImageDownloader</code> object asking for validate status code.</p>
-
                                 </div>
                               </td>
                             </tr>
@@ -468,10 +549,9 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                       <div>
                         <h4>Return Value</h4>
                         <p>Whether this HTTP status code is valid or not.</p>
-
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.6.2/Sources/ImageDownloader.swift#L126">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.7.0/Sources/ImageDownloader.swift#L134">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -481,8 +561,8 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-04-11)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-05-04)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -164,6 +164,11 @@ header {
     padding-top: 10px; }
     .main-content section .task-group-section .task-group:first-of-type .section-name {
       padding-top: 15px; }
+  .main-content section .heading:before {
+    content: "";
+    display: block;
+    padding-top: 70px;
+    margin: -70px 0 0; }
 
 .section {
   padding: 0 25px; }
