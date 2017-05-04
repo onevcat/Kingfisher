@@ -108,6 +108,14 @@ public protocol ImageDownloaderDelegate: class {
     */
     func imageDownloader(_ downloader: ImageDownloader, didDownload image: Image, for url: URL, with response: URLResponse?)
     
+    /**
+    Called when the `ImageDownloader` object starts to download an image from specified URL.
+     
+    - parameter downloader: The `ImageDownloader` object starts the downloading.
+    - parameter url:        URL of the original request.
+    - parameter response:   The request object of the downloading process.
+    */
+    func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?)
     
     /**
     Check if a received HTTP status code is valid or not. 
@@ -129,6 +137,7 @@ public protocol ImageDownloaderDelegate: class {
 extension ImageDownloaderDelegate {
     public func imageDownloader(_ downloader: ImageDownloader, didDownload image: Image, for url: URL, with response: URLResponse?) {}
     
+    public func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?) {}
     public func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool {
         return (200..<400).contains(code)
     }
@@ -312,6 +321,7 @@ extension ImageDownloader {
 
                 dataTask.priority = options?.downloadPriority ?? URLSessionTask.defaultPriority
                 dataTask.resume()
+                delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
                 
                 // Hold self while the task is executing.
                 self.sessionHandler.downloadHolder = self
