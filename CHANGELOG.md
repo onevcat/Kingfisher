@@ -2,6 +2,16 @@
 
 -----
 
+## [3.7.0 - Summer Bird](https://github.com/onevcat/Kingfisher/releases/tag/3.7.0) (2017-05-04)
+
+#### Add
+* A delegate method in `ImageDownloaderDelegate` to notify starting of a downloading progress.
+
+#### Fix
+* Better documentation for `Resource` parameter in image setting extension.
+
+---
+
 ## [3.6.2 - Naughty CGImage](https://github.com/onevcat/Kingfisher/releases/tag/3.6.2) (2017-04-11)
 
 #### Fix
