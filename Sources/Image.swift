@@ -292,10 +292,10 @@ extension Kingfisher where Base: Image {
             return image
         #endif
     }
-    
-    static func image(data: Data, scale: CGFloat, preloadAllGIFData: Bool, onlyFirstFrame: Bool) -> Image? {
+
+    static func image(data: Data, scale: CGFloat, preloadAllAnimationData: Bool, onlyFirstFrame: Bool) -> Image? {
         var image: Image?
-        
+
         #if os(macOS)
             switch data.kf.imageFormat {
             case .JPEG:
@@ -307,7 +307,7 @@ extension Kingfisher where Base: Image {
                     with: data,
                     scale: scale,
                     duration: 0.0,
-                    preloadAll: preloadAllGIFData,
+                    preloadAll: preloadAllAnimationData,
                     onlyFirstFrame: onlyFirstFrame)
             case .unknown:
                 image = Image(data: data)
@@ -323,13 +323,13 @@ extension Kingfisher where Base: Image {
                     with: data,
                     scale: scale,
                     duration: 0.0,
-                    preloadAll: preloadAllGIFData,
+                    preloadAll: preloadAllAnimationData,
                     onlyFirstFrame: onlyFirstFrame)
             case .unknown:
                 image = Image(data: data, scale: scale)
             }
         #endif
-        
+
         return image
     }
 }
