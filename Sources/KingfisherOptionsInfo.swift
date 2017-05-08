@@ -91,10 +91,6 @@ public enum KingfisherOptionsInfoItem {
     /// all data, while a normal image view (`UIImageView` or `NSImageView`) will load all data. Choose to use
     /// corresponding image view type instead of setting this option.
     case preloadAllAnimationData
-
-    /// Back compatibility for deprecated preloadAllGIFData
-    @available(*, deprecated, renamed: "preloadAllAnimation")
-    static let preloadAllGIFData = KingfisherOptionsInfoItem.preloadAllAnimationData
     
     /// The `ImageDownloadRequestModifier` contained will be used to change the request before it being sent.
     /// This is the last chance you can modify the request. You can modify the request for some customizing purpose,
@@ -237,12 +233,6 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     public var preloadAllAnimationData: Bool {
         return contains { $0 <== .preloadAllAnimationData }
     }
-
-    /// Whether the image data should be all loaded at once if it is a GIF.
-    @available(*, deprecated, renamed: "preloadAllAnimation")
-    public var preloadAllGIFData: Bool {
-        return contains { $0 <== .preloadAllAnimationData }
-    }
     
     /// The queue of callbacks should happen from Kingfisher.
     public var callbackDispatchQueue: DispatchQueue {
@@ -303,4 +293,19 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     public var onlyLoadFirstFrame: Bool {
         return contains { $0 <== .onlyLoadFirstFrame }
     }
+}
+
+// MARK: - Deprecated. Only for back compatibility.
+public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+
+    /// Whether the image data should be all loaded at once if it is a GIF.
+    @available(*, deprecated, renamed: "preloadAllAnimationData")
+    public var preloadAllGIFData: Bool {
+        return preloadAllAnimationData
+    }
+}
+
+public extension KingfisherOptionsInfoItem {
+    @available(*, deprecated, renamed: "preloadAllAnimationData")
+    static let preloadAllGIFData = KingfisherOptionsInfoItem.preloadAllAnimationData
 }
