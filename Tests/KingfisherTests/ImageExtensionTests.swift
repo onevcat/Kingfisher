@@ -96,7 +96,7 @@ class ImageExtensionTests: XCTestCase {
 #endif
     }
     
-    func testPreloadAllGIFData() {
+    func testPreloadAllAnimationData() {
         let image = Kingfisher<Image>.animated(with: testImageSingleFrameGIFData, preloadAll: true)!
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)

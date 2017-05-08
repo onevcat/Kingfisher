@@ -332,11 +332,6 @@ extension Kingfisher where Base: Image {
 
         return image
     }
-
-    @available(*, deprecated, message: "preloadAllGIFData is now preloadAllAnimationData")
-    static func image(data: Data, scale: CGFloat, preloadAllGIFData: Bool, onlyFirstFrame: Bool) -> Image? {
-        return image(data: data, scale: scale, preloadAllAnimationData: preloadAllGIFData, onlyFirstFrame: onlyFirstFrame)
-    }
 }
 
 // MARK: - Image Transforming
