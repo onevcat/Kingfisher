@@ -84,13 +84,13 @@ public enum KingfisherOptionsInfoItem {
     /// It is the image scale, instead of your screen scale. You may need to specify the correct scale when you dealing 
     /// with 2x or 3x retina images.
     case scaleFactor(CGFloat)
-    
-    /// Whether all the GIF data should be preloaded. Default it false, which means following frames will be
-    /// loaded on need. If true, all the GIF data will be loaded and decoded into memory. This option is mainly
+
+    /// Whether all the animated image data should be preloaded. Default it false, which means following frames will be
+    /// loaded on need. If true, all the animated image data will be loaded and decoded into memory. This option is mainly
     /// used for back compatibility internally. You should not set it directly. `AnimatedImageView` will not preload
     /// all data, while a normal image view (`UIImageView` or `NSImageView`) will load all data. Choose to use
     /// corresponding image view type instead of setting this option.
-    case preloadAllGIFData
+    case preloadAllAnimationData
     
     /// The `ImageDownloadRequestModifier` contained will be used to change the request before it being sent.
     /// This is the last chance you can modify the request. You can modify the request for some customizing purpose,
@@ -114,10 +114,10 @@ public enum KingfisherOptionsInfoItem {
     /// will be ignored and the current image will be kept while loading or downloading the new image.
     case keepCurrentImageWhileLoading
     
-    /// If set, Kingfisher will only load the first frame from a GIF file as a single image.
-    /// Loading a lot of GIFs may take too much memory. It will be useful when you want to display a 
-    /// static preview of the first frame from a GIF image.
-    /// This option will be ignored if the target image is not GIF.
+    /// If set, Kingfisher will only load the first frame from a animated image data file as a single image.
+    /// Loading a lot of animated images may take too much memory. It will be useful when you want to display a
+    /// static preview of the first frame from a animated image.
+    /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
 }
 
@@ -142,7 +142,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.backgroundDecode, .backgroundDecode): return true
     case (.callbackDispatchQueue(_), .callbackDispatchQueue(_)): return true
     case (.scaleFactor(_), .scaleFactor(_)): return true
-    case (.preloadAllGIFData, .preloadAllGIFData): return true
+    case (.preloadAllAnimationData, .preloadAllAnimationData): return true
     case (.requestModifier(_), .requestModifier(_)): return true
     case (.processor(_), .processor(_)): return true
     case (.cacheSerializer(_), .cacheSerializer(_)): return true
@@ -228,10 +228,10 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     public var backgroundDecode: Bool {
         return contains{ $0 <== .backgroundDecode }
     }
-    
-    /// Whether the image data should be all loaded at once if it is a GIF.
-    public var preloadAllGIFData: Bool {
-        return contains { $0 <== .preloadAllGIFData }
+
+    /// Whether the image data should be all loaded at once if it is an animated image.
+    public var preloadAllAnimationData: Bool {
+        return contains { $0 <== .preloadAllAnimationData }
     }
     
     /// The queue of callbacks should happen from Kingfisher.
@@ -293,4 +293,19 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     public var onlyLoadFirstFrame: Bool {
         return contains { $0 <== .onlyLoadFirstFrame }
     }
+}
+
+// MARK: - Deprecated. Only for back compatibility.
+public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+
+    /// Whether the image data should be all loaded at once if it is a GIF.
+    @available(*, deprecated, renamed: "preloadAllAnimationData")
+    public var preloadAllGIFData: Bool {
+        return preloadAllAnimationData
+    }
+}
+
+public extension KingfisherOptionsInfoItem {
+    @available(*, deprecated, renamed: "preloadAllAnimationData")
+    static let preloadAllGIFData = KingfisherOptionsInfoItem.preloadAllAnimationData
 }
