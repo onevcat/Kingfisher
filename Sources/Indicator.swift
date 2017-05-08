@@ -145,9 +145,9 @@ struct ImageIndicator: Indicator {
     init?(imageData data: Data, processor: ImageProcessor = DefaultImageProcessor.default, options: KingfisherOptionsInfo = KingfisherEmptyOptionsInfo) {
 
         var options = options
-        // Use normal image view to show gif, so we need to preload all gif data.
-        if !options.preloadAllGIFData {
-            options.append(.preloadAllGIFData)
+        // Use normal image view to show animations, so we need to preload all animation data.
+        if !options.preloadAllAnimationData {
+            options.append(.preloadAllAnimationData)
         }
         
         guard let image = processor.process(item: .data(data), options: options) else {

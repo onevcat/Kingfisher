@@ -78,8 +78,8 @@ extension Kingfisher where Base: ImageView {
         
         setWebURL(resource.downloadURL)
 
-        if base.shouldPreloadAllGIF() {
-            options.append(.preloadAllGIFData)
+        if base.shouldPreloadAllAnimation() {
+            options.append(.preloadAllAnimationData)
         }
         
         let task = KingfisherManager.shared.retrieveImage(
@@ -291,5 +291,8 @@ extension ImageView {
 }
 
 extension ImageView {
+    func shouldPreloadAllAnimation() -> Bool { return true }
+
+    @available(*, deprecated, renamed: "shouldPreloadAllAnimation")
     func shouldPreloadAllGIF() -> Bool { return true }
 }
