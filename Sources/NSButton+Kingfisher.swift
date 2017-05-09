@@ -83,9 +83,11 @@ extension Kingfisher where Base: NSButton {
             completionHandler: {[weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.webURL else {
+                        completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
                     self.setImageTask(nil)
+                    
                     if image != nil {
                         strongBase.image = image
                     }
@@ -156,16 +158,15 @@ extension Kingfisher where Base: NSButton {
             completionHandler: {[weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.alternateWebURL else {
+                        completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
                     self.setAlternateImageTask(nil)
                     
-                    guard let image = image else {
-                        completionHandler?(nil, error, cacheType, imageURL)
-                        return
+                    if image != nil {
+                        strongBase.alternateImage = image
                     }
                     
-                    strongBase.alternateImage = image
                     completionHandler?(image, error, cacheType, imageURL)
                 }
             })
