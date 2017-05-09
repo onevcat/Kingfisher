@@ -96,8 +96,10 @@ extension Kingfisher where Base: ImageView {
             completionHandler: {[weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.webURL else {
+                        completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
+                    
                     self.setImageTask(nil)
                     guard let image = image else {
                         maybeIndicator?.stopAnimatingView()
