@@ -2,6 +2,13 @@
 
 -----
 
+## [3.7.2 - Never Do Things by Halves](https://github.com/onevcat/Kingfisher/releases/tag/3.7.2) (2017-05-09)
+
+#### Fix
+* A wrong design which causes completion handler for previous downloading not called when setting to another url. [#665](https://github.com/onevcat/Kingfisher/issues/665)
+
+---
+
 ## [3.7.1 - GIF is Animated](https://github.com/onevcat/Kingfisher/releases/tag/3.7.1) (2017-05-08)
 
 #### Fix
