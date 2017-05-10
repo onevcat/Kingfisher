@@ -340,14 +340,17 @@ extension Kingfisher where Base: Image {
     // MARK: - Round Corner
     /// Create a round corner image based on `self`.
     ///
-    /// - parameter radius: The round corner radius of creating image.
-    /// - parameter size:   The target size of creating image.
+    /// - parameter radius:  The round corner radius of creating image.
+    /// - parameter size:    The target size of creating image.
+    /// - parameter corners: The target corners which will be applied rounding.
     ///
     /// - returns: An image with round corner of `self`.
     ///
     /// - Note: This method only works for CG-based image.
-    public func image(withRoundRadius radius: CGFloat, fit size: CGSize) -> Image {
-        
+    public func image(withRoundRadius radius: CGFloat,
+                      fit size: CGSize,
+                      roundingCorners corners: RectCorner = .all) -> Image
+    {   
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Round corner image only works for CG-based image.")
             return base
@@ -356,7 +359,7 @@ extension Kingfisher where Base: Image {
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         return draw(cgImage: cgImage, to: size) {
             #if os(macOS)
-                let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+                let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius)
                 path.windingRule = .evenOddWindingRule
                 path.addClip()
                 base.draw(in: rect)
@@ -365,7 +368,9 @@ extension Kingfisher where Base: Image {
                     assertionFailure("[Kingfisher] Failed to create CG context for image.")
                     return
                 }
-                let path = UIBezierPath(roundedRect: rect, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: radius, height: radius)).cgPath
+                let path = UIBezierPath(roundedRect: rect,
+                                        byRoundingCorners: corners.uiRectCorner,
+                                        cornerRadii: CGSize(width: radius, height: radius)).cgPath
                 context.addPath(path)
                 context.clip()
                 base.draw(in: rect)
@@ -862,6 +867,63 @@ extension Float {
         return truncatingRemainder(dividingBy: 2.0) == 0
     }
 }
+
+#if os(macOS)
+extension NSBezierPath {
+    convenience init(roundedRect rect: NSRect, topLeftRadius: CGFloat, topRightRadius: CGFloat,
+         bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat)
+    {
+        self.init()
+        
+        let maxCorner = min(rect.width, rect.height) / 2
+        
+        let radiusTopLeft = min(maxCorner, max(0, topLeftRadius))
+        let radiustopRight = min(maxCorner, max(0, topRightRadius))
+        let radiusbottomLeft = min(maxCorner, max(0, bottomLeftRadius))
+        let radiusbottomRight = min(maxCorner, max(0, bottomRightRadius))
+        
+        guard !NSIsEmptyRect(rect) else {
+            return
+        }
+        
+        let topLeft = NSMakePoint(NSMinX(rect), NSMaxY(rect));
+        let topRight = NSMakePoint(NSMaxX(rect), NSMaxY(rect));
+        let bottomRight = NSMakePoint(NSMaxX(rect), NSMinY(rect));
+        
+        move(to: NSMakePoint(NSMidX(rect), NSMaxY(rect)))
+        appendArc(from: topLeft, to: rect.origin, radius: radiusTopLeft)
+        appendArc(from: rect.origin, to: bottomRight, radius: radiusbottomLeft)
+        appendArc(from: bottomRight, to: topRight, radius: radiusbottomRight)
+        appendArc(from: topRight, to: topLeft, radius: radiustopRight)
+        close()
+    }
+    
+    convenience init(roundedRect rect: NSRect, byRoundingCorners corners: RectCorner, radius: CGFloat) {
+        let radiusTopLeft = corners.contains(.topLeft) ? radius : 0
+        let radiusTopRight = corners.contains(.topRight) ? radius : 0
+        let radiusBottomLeft = corners.contains(.bottomLeft) ? radius : 0
+        let radiusBottomRight = corners.contains(.bottomRight) ? radius : 0
+        
+        self.init(roundedRect: rect, topLeftRadius: radiusTopLeft, topRightRadius: radiusTopRight,
+                  bottomLeftRadius: radiusBottomLeft, bottomRightRadius: radiusBottomRight)
+    }
+}
+    
+#else
+extension RectCorner {
+    var uiRectCorner: UIRectCorner {
+        
+        var result: UIRectCorner = []
+        
+        if self.contains(.topLeft) { result.insert(.topLeft) }
+        if self.contains(.topRight) { result.insert(.topRight) }
+        if self.contains(.bottomLeft) { result.insert(.bottomLeft) }
+        if self.contains(.bottomRight) { result.insert(.bottomRight) }
+        
+        return result
+    }
+}
+#endif
 
 // MARK: - Deprecated. Only for back compatibility.
 extension Image {
