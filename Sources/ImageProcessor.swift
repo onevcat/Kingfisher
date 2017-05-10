@@ -27,7 +27,6 @@
 import Foundation
 import CoreGraphics
 
-
 /// The item which could be processed by an `ImageProcessor`
 ///
 /// - image: Input image
@@ -133,6 +132,26 @@ public struct DefaultImageProcessor: ImageProcessor {
     }
 }
 
+public struct RectCorner: OptionSet {
+    public let rawValue: Int
+    public static let topLeft = RectCorner(rawValue: 1 << 0)
+    public static let topRight = RectCorner(rawValue: 1 << 1)
+    public static let bottomLeft = RectCorner(rawValue: 1 << 2)
+    public static let bottomRight = RectCorner(rawValue: 1 << 3)
+    public static let all: RectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight]
+    
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+    
+    var cornerIdentifier: String {
+        if self == .all {
+            return ""
+        }
+        return "_\(rawValue)"
+    }
+}
+
 /// Processor for making round corner images. Only CG-based images are supported in macOS, 
 /// if a non-CG image passed in, the processor will do nothing.
 public struct RoundCornerImageProcessor: ImageProcessor {
@@ -144,6 +163,9 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     /// Corner radius will be applied in processing.
     public let cornerRadius: CGFloat
     
+    /// The target corners which will be applied rounding.
+    public let roundingCorners: RectCorner
+    
     /// Target size of output image should be. If `nil`, the image will keep its original size after processing.
     public let targetSize: CGSize?
     
@@ -153,13 +175,16 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     /// - parameter targetSize:   Target size of output image should be. If `nil`, 
     ///                           the image will keep its original size after processing.
     ///                           Default is `nil`.
-    public init(cornerRadius: CGFloat, targetSize: CGSize? = nil) {
+    /// - parameter corners:      The target corners which will be applied rounding. Default is `.all`.
+    public init(cornerRadius: CGFloat, targetSize: CGSize? = nil, roundingCorners corners: RectCorner = .all) {
         self.cornerRadius = cornerRadius
         self.targetSize = targetSize
+        self.roundingCorners = corners
+        
         if let size = targetSize {
-            self.identifier = "com.onevcat.Kingfisher.RoundCornerImageProcessor(\(cornerRadius)_\(size))"
+            self.identifier = "com.onevcat.Kingfisher.RoundCornerImageProcessor(\(cornerRadius)_\(size)\(corners.cornerIdentifier))"
         } else {
-            self.identifier = "com.onevcat.Kingfisher.RoundCornerImageProcessor(\(cornerRadius))"
+            self.identifier = "com.onevcat.Kingfisher.RoundCornerImageProcessor(\(cornerRadius)\(corners.cornerIdentifier))"
         }
     }
     
@@ -175,7 +200,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         switch item {
         case .image(let image):
             let size = targetSize ?? image.kf.size
-            return image.kf.image(withRoundRadius: cornerRadius, fit: size)
+            return image.kf.image(withRoundRadius: cornerRadius, fit: size, roundingCorners: roundingCorners)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
