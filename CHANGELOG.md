@@ -2,6 +2,13 @@
 
 -----
 
+## [3.8.0 - Prowess](https://github.com/onevcat/Kingfisher/releases/tag/3.8.0) (2017-05-10)
+
+#### Add
+* An API to apply rect round for specified corner in `RoundCornerImageProcessor`. Instead of making all four corners rounded, you can now set only some corners rounding. [#668](https://github.com/onevcat/Kingfisher/issues/668)
+
+---
+
 ## [3.7.2 - Never Do Things by Halves](https://github.com/onevcat/Kingfisher/releases/tag/3.7.2) (2017-05-09)
 
 #### Fix
