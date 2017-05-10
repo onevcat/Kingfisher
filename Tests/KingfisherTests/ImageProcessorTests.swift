@@ -66,6 +66,20 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.RoundCornerImageProcessor(60.0_(100.0, 100.0))")
         checkProcessor(p, with: "round-corner-60-resize-100")
     }
+    
+    func testRoundCornerWithRectCornerProcessor() {
+        let p1 = RoundCornerImageProcessor(cornerRadius: 40, roundingCorners: [.topLeft, .topRight])
+        XCTAssertEqual(p1.identifier, "com.onevcat.Kingfisher.RoundCornerImageProcessor(40.0_corner(3))")
+        checkProcessor(p1, with: "round-corner-40-corner-3")
+        
+        let p2 = RoundCornerImageProcessor(cornerRadius: 40, roundingCorners: [.bottomLeft, .bottomRight])
+        XCTAssertEqual(p2.identifier, "com.onevcat.Kingfisher.RoundCornerImageProcessor(40.0_corner(12))")
+        checkProcessor(p2, with: "round-corner-40-corner-12")
+        
+        let p3 = RoundCornerImageProcessor(cornerRadius: 40, roundingCorners: .all)
+        XCTAssertEqual(p3.identifier, "com.onevcat.Kingfisher.RoundCornerImageProcessor(40.0)")
+        checkProcessor(p3, with: "round-corner-40")
+    }
 
     func testResizingProcessor() {
         let p = ResizingImageProcessor(referenceSize: CGSize(width: 120, height: 120))
