@@ -33,6 +33,42 @@
 		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
 		4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
+		4BA697461EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697401EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg */; };
+		4BA697471EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697401EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg */; };
+		4BA697481EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697401EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg */; };
+		4BA697491EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697411EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg */; };
+		4BA6974A1EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697411EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg */; };
+		4BA6974B1EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697411EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg */; };
+		4BA6974C1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697421EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg */; };
+		4BA6974D1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697421EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg */; };
+		4BA6974E1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697421EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg */; };
+		4BA6974F1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697431EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg */; };
+		4BA697501EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697431EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg */; };
+		4BA697511EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697431EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg */; };
+		4BA697521EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697441EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png */; };
+		4BA697531EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697441EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png */; };
+		4BA697541EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697441EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png */; };
+		4BA697551EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697451EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png */; };
+		4BA697561EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697451EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png */; };
+		4BA697571EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697451EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png */; };
+		4BA6975E1EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697581EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg */; };
+		4BA6975F1EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697581EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg */; };
+		4BA697601EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697581EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg */; };
+		4BA697611EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697591EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg */; };
+		4BA697621EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697591EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg */; };
+		4BA697631EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA697591EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg */; };
+		4BA697641EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975A1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg */; };
+		4BA697651EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975A1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg */; };
+		4BA697661EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975A1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg */; };
+		4BA697671EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975B1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg */; };
+		4BA697681EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975B1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg */; };
+		4BA697691EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975B1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg */; };
+		4BA6976A1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png */; };
+		4BA6976B1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png */; };
+		4BA6976C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png */; };
+		4BA6976D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png */; };
+		4BA6976E1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png */; };
+		4BA6976F1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BA6975D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png */; };
 		4BB24C3D1D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
 		4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
 		4BB24C3F1D79215A00CD5F9C /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */; };
@@ -546,6 +582,18 @@
 		4B7742421D87E2AA0077024E /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Box.swift; path = Sources/Box.swift; sourceTree = "<group>"; };
 		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
 		4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimatedImageView.swift; path = Sources/AnimatedImageView.swift; sourceTree = "<group>"; };
+		4BA697401EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40-corner-3-mac.jpg"; sourceTree = "<group>"; };
+		4BA697411EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40-corner-3.jpg"; sourceTree = "<group>"; };
+		4BA697421EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-40-corner-3-mac.jpg"; sourceTree = "<group>"; };
+		4BA697431EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-40-corner-3.jpg"; sourceTree = "<group>"; };
+		4BA697441EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-40-corner-3-mac.png"; sourceTree = "<group>"; };
+		4BA697451EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-40-corner-3.png"; sourceTree = "<group>"; };
+		4BA697581EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40-corner-12-mac.jpg"; sourceTree = "<group>"; };
+		4BA697591EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40-corner-12.jpg"; sourceTree = "<group>"; };
+		4BA6975A1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-40-corner-12-mac.jpg"; sourceTree = "<group>"; };
+		4BA6975B1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-round-corner-40-corner-12.jpg"; sourceTree = "<group>"; };
+		4BA6975C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-40-corner-12-mac.png"; sourceTree = "<group>"; };
+		4BA6975D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-round-corner-40-corner-12.png"; sourceTree = "<group>"; };
 		4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CacheSerializer.swift; path = Sources/CacheSerializer.swift; sourceTree = "<group>"; };
 		4BB83E091E32075800B64183 /* kingfisher-b&w-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-b&w-mac.jpg"; sourceTree = "<group>"; };
 		4BB83E0A1E32075800B64183 /* kingfisher-b&w.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-b&w.jpg"; sourceTree = "<group>"; };
@@ -926,6 +974,18 @@
 		4BB83E381E32075800B64183 /* RoundCorner */ = {
 			isa = PBXGroup;
 			children = (
+				4BA697401EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg */,
+				4BA697411EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg */,
+				4BA697421EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg */,
+				4BA697431EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg */,
+				4BA697441EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png */,
+				4BA697451EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png */,
+				4BA697581EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg */,
+				4BA697591EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg */,
+				4BA6975A1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg */,
+				4BA6975B1EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg */,
+				4BA6975C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png */,
+				4BA6975D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png */,
 				4BB83E391E32075800B64183 /* kingfisher-round-corner-40-mac.jpg */,
 				4BB83E3A1E32075800B64183 /* kingfisher-round-corner-40.jpg */,
 				4BB83E3B1E32075800B64183 /* kingfisher-round-corner-60-resize-100-mac.jpg */,
@@ -1613,7 +1673,10 @@
 				4BB83E821E32075800B64183 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
 				4BB83F001E32075800B64183 /* unicorn-tint-yellow-02-mac.png in Resources */,
 				4BB83F031E32075800B64183 /* unicorn-tint-yellow-02.png in Resources */,
+				4BA6976B1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */,
 				D1D2C32B1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				4BA6975F1EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */,
+				4BA697651EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg in Resources */,
 				4BB83EA91E32075800B64183 /* onevcat-overlay-red-07.jpg in Resources */,
 				D14146381E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill-mac.jpg in Resources */,
 				4BB83EB81E32075800B64183 /* unicorn-overlay-red-mac.png in Resources */,
@@ -1625,6 +1688,7 @@
 				D12E0C751C47F70600AC98AD /* dancing-banana.gif in Resources */,
 				D14146561E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png in Resources */,
 				4BB83E6A1E32075800B64183 /* onevcat-blur-10-mac.jpg in Resources */,
+				4BA697681EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg in Resources */,
 				4BB83E791E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */,
 				4BB83EEB1E32075800B64183 /* unicorn-round-corner-40.png in Resources */,
 				D14146471E5C7E86001476DF /* onevcat-resize-240-60-aspectFill.jpg in Resources */,
@@ -1632,8 +1696,10 @@
 				D14146501E5C7E86001476DF /* unicorn-resize-240-60-aspectFill-mac.png in Resources */,
 				4BB83E881E32075800B64183 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
 				D141464D1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit.jpg in Resources */,
+				4BA697531EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */,
 				4BB83EF11E32075800B64183 /* unicorn-round-corner-60-resize-100.png in Resources */,
 				4BB83E971E32075800B64183 /* unicorn-blur-4-round-corner-60.png in Resources */,
+				4BA6974D1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E551E32075800B64183 /* kingfisher-b&w.jpg in Resources */,
 				4BB83E941E32075800B64183 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				4BB83EF71E32075800B64183 /* kingfisher-tint-yellow-02.jpg in Resources */,
@@ -1651,11 +1717,14 @@
 				4BB83E6D1E32075800B64183 /* onevcat-blur-10.jpg in Resources */,
 				4BB83E671E32075800B64183 /* kingfisher-blur-10.jpg in Resources */,
 				4BB83E7C1E32075800B64183 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BA697561EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png in Resources */,
+				4BA697471EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E9D1E32075800B64183 /* kingfisher-overlay-red-07.jpg in Resources */,
 				4BB83ED31E32075800B64183 /* kingfisher-round-corner-40.jpg in Resources */,
 				4BB83EAC1E32075800B64183 /* onevcat-overlay-red-mac.jpg in Resources */,
 				4BB83EC41E32075800B64183 /* onevcat-resize-120-mac.jpg in Resources */,
 				D18C16B81E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */,
+				4BA6976E1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png in Resources */,
 				D14146441E5C7E86001476DF /* onevcat-resize-240-60-aspectFill-mac.jpg in Resources */,
 				D14146411E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit.jpg in Resources */,
 				D141464A1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit-mac.jpg in Resources */,
@@ -1670,6 +1739,7 @@
 				4BB83E9A1E32075800B64183 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
 				4BB83EA31E32075800B64183 /* kingfisher-overlay-red.jpg in Resources */,
 				4BB83EA01E32075800B64183 /* kingfisher-overlay-red-mac.jpg in Resources */,
+				4BA697501EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg in Resources */,
 				4BB83E5B1E32075800B64183 /* onevcat-b&w.jpg in Resources */,
 				4BB83E731E32075800B64183 /* unicorn-blur-10.png in Resources */,
 				4BB83F061E32075800B64183 /* kingfisher.jpg in Resources */,
@@ -1682,10 +1752,12 @@
 				4BB83E8E1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E641E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
 				4BB83E761E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BA6974A1EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg in Resources */,
 				D141463B1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg in Resources */,
 				4BB83F0C1E32075800B64183 /* unicorn.png in Resources */,
 				4BB83E8B1E32075800B64183 /* kingfisher-blur-4-round-corner-60.jpg in Resources */,
 				4BB83ED91E32075800B64183 /* kingfisher-round-corner-60-resize-100.jpg in Resources */,
+				4BA697621EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg in Resources */,
 				4BB83EDC1E32075800B64183 /* onevcat-round-corner-40-mac.jpg in Resources */,
 				4BB83EFD1E32075800B64183 /* onevcat-tint-yellow-02.jpg in Resources */,
 				4BB83E581E32075800B64183 /* onevcat-b&w-mac.jpg in Resources */,
@@ -1703,7 +1775,10 @@
 				4BB83E831E32075800B64183 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
 				4BB83F011E32075800B64183 /* unicorn-tint-yellow-02-mac.png in Resources */,
 				4BB83F041E32075800B64183 /* unicorn-tint-yellow-02.png in Resources */,
+				4BA6976C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */,
 				D1D2C32C1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				4BA697601EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */,
+				4BA697661EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg in Resources */,
 				4BB83EAA1E32075800B64183 /* onevcat-overlay-red-07.jpg in Resources */,
 				D14146391E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill-mac.jpg in Resources */,
 				4BB83EB91E32075800B64183 /* unicorn-overlay-red-mac.png in Resources */,
@@ -1715,6 +1790,7 @@
 				D12E0C8A1C47F7C000AC98AD /* dancing-banana.gif in Resources */,
 				D14146571E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png in Resources */,
 				4BB83E6B1E32075800B64183 /* onevcat-blur-10-mac.jpg in Resources */,
+				4BA697691EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg in Resources */,
 				4BB83E7A1E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */,
 				4BB83EEC1E32075800B64183 /* unicorn-round-corner-40.png in Resources */,
 				D14146481E5C7E86001476DF /* onevcat-resize-240-60-aspectFill.jpg in Resources */,
@@ -1722,8 +1798,10 @@
 				D14146511E5C7E86001476DF /* unicorn-resize-240-60-aspectFill-mac.png in Resources */,
 				4BB83E891E32075800B64183 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
 				D141464E1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit.jpg in Resources */,
+				4BA697541EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */,
 				4BB83EF21E32075800B64183 /* unicorn-round-corner-60-resize-100.png in Resources */,
 				4BB83E981E32075800B64183 /* unicorn-blur-4-round-corner-60.png in Resources */,
+				4BA6974E1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E561E32075800B64183 /* kingfisher-b&w.jpg in Resources */,
 				4BB83E951E32075800B64183 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				4BB83EF81E32075800B64183 /* kingfisher-tint-yellow-02.jpg in Resources */,
@@ -1741,11 +1819,14 @@
 				4BB83E6E1E32075800B64183 /* onevcat-blur-10.jpg in Resources */,
 				4BB83E681E32075800B64183 /* kingfisher-blur-10.jpg in Resources */,
 				4BB83E7D1E32075800B64183 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BA697571EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png in Resources */,
+				4BA697481EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E9E1E32075800B64183 /* kingfisher-overlay-red-07.jpg in Resources */,
 				4BB83ED41E32075800B64183 /* kingfisher-round-corner-40.jpg in Resources */,
 				4BB83EAD1E32075800B64183 /* onevcat-overlay-red-mac.jpg in Resources */,
 				4BB83EC51E32075800B64183 /* onevcat-resize-120-mac.jpg in Resources */,
 				D18C16B91E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */,
+				4BA6976F1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png in Resources */,
 				D14146451E5C7E86001476DF /* onevcat-resize-240-60-aspectFill-mac.jpg in Resources */,
 				D14146421E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit.jpg in Resources */,
 				D141464B1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit-mac.jpg in Resources */,
@@ -1760,6 +1841,7 @@
 				4BB83E9B1E32075800B64183 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
 				4BB83EA41E32075800B64183 /* kingfisher-overlay-red.jpg in Resources */,
 				4BB83EA11E32075800B64183 /* kingfisher-overlay-red-mac.jpg in Resources */,
+				4BA697511EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg in Resources */,
 				4BB83E5C1E32075800B64183 /* onevcat-b&w.jpg in Resources */,
 				4BB83E741E32075800B64183 /* unicorn-blur-10.png in Resources */,
 				4BB83F071E32075800B64183 /* kingfisher.jpg in Resources */,
@@ -1772,10 +1854,12 @@
 				4BB83E8F1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E651E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
 				4BB83E771E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BA6974B1EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg in Resources */,
 				D141463C1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg in Resources */,
 				4BB83F0D1E32075800B64183 /* unicorn.png in Resources */,
 				4BB83E8C1E32075800B64183 /* kingfisher-blur-4-round-corner-60.jpg in Resources */,
 				4BB83EDA1E32075800B64183 /* kingfisher-round-corner-60-resize-100.jpg in Resources */,
+				4BA697631EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg in Resources */,
 				4BB83EDD1E32075800B64183 /* onevcat-round-corner-40-mac.jpg in Resources */,
 				4BB83EFE1E32075800B64183 /* onevcat-tint-yellow-02.jpg in Resources */,
 				4BB83E591E32075800B64183 /* onevcat-b&w-mac.jpg in Resources */,
@@ -1852,7 +1936,10 @@
 				4BB83E811E32075800B64183 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
 				4BB83EFF1E32075800B64183 /* unicorn-tint-yellow-02-mac.png in Resources */,
 				4BB83F021E32075800B64183 /* unicorn-tint-yellow-02.png in Resources */,
+				4BA6976A1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */,
 				D1D2C32A1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				4BA6975E1EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */,
+				4BA697641EC2F12000AA7935 /* onevcat-round-corner-40-corner-12-mac.jpg in Resources */,
 				4BB83EA81E32075800B64183 /* onevcat-overlay-red-07.jpg in Resources */,
 				D14146371E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill-mac.jpg in Resources */,
 				4BB83EB71E32075800B64183 /* unicorn-overlay-red-mac.png in Resources */,
@@ -1864,6 +1951,7 @@
 				D12E0C4F1C47F23500AC98AD /* dancing-banana.gif in Resources */,
 				D14146551E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png in Resources */,
 				4BB83E691E32075800B64183 /* onevcat-blur-10-mac.jpg in Resources */,
+				4BA697671EC2F12000AA7935 /* onevcat-round-corner-40-corner-12.jpg in Resources */,
 				4BB83E781E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07.jpg in Resources */,
 				4BB83EEA1E32075800B64183 /* unicorn-round-corner-40.png in Resources */,
 				D14146461E5C7E86001476DF /* onevcat-resize-240-60-aspectFill.jpg in Resources */,
@@ -1871,8 +1959,10 @@
 				D141464F1E5C7E86001476DF /* unicorn-resize-240-60-aspectFill-mac.png in Resources */,
 				4BB83E871E32075800B64183 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
 				D141464C1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit.jpg in Resources */,
+				4BA697521EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */,
 				4BB83EF01E32075800B64183 /* unicorn-round-corner-60-resize-100.png in Resources */,
 				4BB83E961E32075800B64183 /* unicorn-blur-4-round-corner-60.png in Resources */,
+				4BA6974C1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E541E32075800B64183 /* kingfisher-b&w.jpg in Resources */,
 				4BB83E931E32075800B64183 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				4BB83EF61E32075800B64183 /* kingfisher-tint-yellow-02.jpg in Resources */,
@@ -1890,11 +1980,14 @@
 				4BB83E6C1E32075800B64183 /* onevcat-blur-10.jpg in Resources */,
 				4BB83E661E32075800B64183 /* kingfisher-blur-10.jpg in Resources */,
 				4BB83E7B1E32075800B64183 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BA697551EC2F06000AA7935 /* unicorn-round-corner-40-corner-3.png in Resources */,
+				4BA697461EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E9C1E32075800B64183 /* kingfisher-overlay-red-07.jpg in Resources */,
 				4BB83ED21E32075800B64183 /* kingfisher-round-corner-40.jpg in Resources */,
 				4BB83EAB1E32075800B64183 /* onevcat-overlay-red-mac.jpg in Resources */,
 				4BB83EC31E32075800B64183 /* onevcat-resize-120-mac.jpg in Resources */,
 				D18C16B71E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */,
+				4BA6976D1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12.png in Resources */,
 				D14146431E5C7E86001476DF /* onevcat-resize-240-60-aspectFill-mac.jpg in Resources */,
 				D14146401E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit.jpg in Resources */,
 				D14146491E5C7E86001476DF /* onevcat-resize-240-60-aspectFit-mac.jpg in Resources */,
@@ -1909,6 +2002,7 @@
 				4BB83E991E32075800B64183 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
 				4BB83EA21E32075800B64183 /* kingfisher-overlay-red.jpg in Resources */,
 				4BB83E9F1E32075800B64183 /* kingfisher-overlay-red-mac.jpg in Resources */,
+				4BA6974F1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3.jpg in Resources */,
 				4BB83E5A1E32075800B64183 /* onevcat-b&w.jpg in Resources */,
 				4BB83E721E32075800B64183 /* unicorn-blur-10.png in Resources */,
 				4BB83F051E32075800B64183 /* kingfisher.jpg in Resources */,
@@ -1921,10 +2015,12 @@
 				4BB83E8D1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E631E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
 				4BB83E751E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				4BA697491EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3.jpg in Resources */,
 				D141463A1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg in Resources */,
 				4BB83F0B1E32075800B64183 /* unicorn.png in Resources */,
 				4BB83E8A1E32075800B64183 /* kingfisher-blur-4-round-corner-60.jpg in Resources */,
 				4BB83ED81E32075800B64183 /* kingfisher-round-corner-60-resize-100.jpg in Resources */,
+				4BA697611EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12.jpg in Resources */,
 				4BB83EDB1E32075800B64183 /* onevcat-round-corner-40-mac.jpg in Resources */,
 				4BB83EFC1E32075800B64183 /* onevcat-tint-yellow-02.jpg in Resources */,
 				4BB83E571E32075800B64183 /* onevcat-b&w-mac.jpg in Resources */,

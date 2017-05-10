@@ -148,7 +148,7 @@ public struct RectCorner: OptionSet {
         if self == .all {
             return ""
         }
-        return "_\(rawValue)"
+        return "_corner(\(rawValue))"
     }
 }
 
