@@ -203,7 +203,7 @@ open class ImageDownloader {
     }
     
     /// Whether the download requests should use pipeling or not. Default is false.
-    open var requestsUsePipeling = false
+    open var requestsUsePipelining = false
     
     fileprivate let sessionHandler: ImageDownloaderSessionHandler
     fileprivate var session: URLSession?
@@ -296,7 +296,7 @@ extension ImageDownloader {
         
         // We need to set the URL as the load key. So before setup progress, we need to ask the `requestModifier` for a final URL.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: timeout)
-        request.httpShouldUsePipelining = requestsUsePipeling
+        request.httpShouldUsePipelining = requestsUsePipelining
 
         if let modifier = options?.modifier {
             guard let r = modifier.modified(for: request) else {
@@ -540,3 +540,12 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
 
 // Placeholder. For retrieving extension methods of ImageDownloaderDelegate
 extension ImageDownloader: ImageDownloaderDelegate {}
+
+// MARK: - Deprecated
+extension ImageDownloader {
+    @available(*, deprecated, message: "`requestsUsePipeling` is deprecated. Use `requestsUsePipelining` instead", renamed: "requestsUsePipelining")
+    open var requestsUsePipeling: Bool {
+        get { return requestsUsePipelining }
+        set { requestsUsePipelining = newValue }
+    }
+}
