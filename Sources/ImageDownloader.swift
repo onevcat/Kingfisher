@@ -259,6 +259,7 @@ open class ImageDownloader {
      Download an image with a URL and option.
      
      - parameter url:               Target URL.
+     - parameter retrieveImageTask: The task to cooporate with cache. Pass `nil` if you are not trying to use downloader and cache.
      - parameter options:           The options could control download behavior. See `KingfisherOptionsInfo`.
      - parameter progressBlock:     Called when the download progress updated.
      - parameter completionHandler: Called when the download progress finishes.
@@ -267,25 +268,10 @@ open class ImageDownloader {
      */
     @discardableResult
     open func downloadImage(with url: URL,
-                            options: KingfisherOptionsInfo? = nil,
-                            progressBlock: ImageDownloaderProgressBlock? = nil,
-                            completionHandler: ImageDownloaderCompletionHandler? = nil) -> RetrieveImageDownloadTask?
-    {
-        return downloadImage(with: url,
-                             retrieveImageTask: nil,
-                             options: options,
-                             progressBlock: progressBlock,
-                             completionHandler: completionHandler)
-    }
-}
-
-// MARK: - Download method
-extension ImageDownloader {
-    func downloadImage(with url: URL,
-              retrieveImageTask: RetrieveImageTask?,
-                        options: KingfisherOptionsInfo?,
-                  progressBlock: ImageDownloaderProgressBlock?,
-              completionHandler: ImageDownloaderCompletionHandler?) -> RetrieveImageDownloadTask?
+                       retrieveImageTask: RetrieveImageTask? = nil,
+                       options: KingfisherOptionsInfo? = nil,
+                       progressBlock: ImageDownloaderProgressBlock? = nil,
+                       completionHandler: ImageDownloaderCompletionHandler? = nil) -> RetrieveImageDownloadTask?
     {
         if let retrieveImageTask = retrieveImageTask, retrieveImageTask.cancelledBeforeDownloadStarting {
             completionHandler?(nil, NSError(domain: KingfisherErrorDomain, code: KingfisherError.downloadCancelledBeforeStarting.rawValue, userInfo: nil), nil, nil)
@@ -318,7 +304,7 @@ extension ImageDownloader {
                 let dataTask = session.dataTask(with: request)
                 
                 fetchLoad.downloadTask = RetrieveImageDownloadTask(internalTask: dataTask, ownerDownloader: self)
-
+                
                 dataTask.priority = options?.downloadPriority ?? URLSessionTask.defaultPriority
                 dataTask.resume()
                 delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
@@ -334,6 +320,11 @@ extension ImageDownloader {
         }
         return downloadTask
     }
+    
+}
+
+// MARK: - Download method
+extension ImageDownloader {
     
     // A single key may have multiple callbacks. Only download once.
     func setup(progressBlock: ImageDownloaderProgressBlock?, with completionHandler: ImageDownloaderCompletionHandler?, for url: URL, options: KingfisherOptionsInfo?, started: ((URLSession, ImageFetchLoad) -> Void)) {

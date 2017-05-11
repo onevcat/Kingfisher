@@ -276,4 +276,21 @@ class KingfisherManagerTests: XCTestCase {
         })
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testDefaultOptionCouldApply() {
+        let expectation = self.expectation(description: "running on custom queue")
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        
+        let url = URL(string: URLString)!
+        
+        manager.defaultOptions = [.scaleFactor(2)]
+        manager.retrieveImage(with: url, options: nil, progressBlock: nil, completionHandler: { image, _, _, _ in
+            #if !os(macOS)
+            XCTAssertEqual(image!.scale, 2.0)
+            #endif
+            expectation.fulfill()
+        })
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 }
