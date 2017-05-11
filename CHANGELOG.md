@@ -2,6 +2,18 @@
 
 -----
 
+## [3.9.0 - Follow the Rules](https://github.com/onevcat/Kingfisher/releases/tag/3.9.0) (2017-05-11)
+
+#### Add
+* A default option in `KingfisherManager` to let users set a global default option to all `KingfisherManager` related methods, as well as all UI extension methods. [#674](https://github.com/onevcat/Kingfisher/pull/674)
+
+#### Fix
+* Now the options appended will overwrite the previous one. This makes users be able to set proper options in a per-image-way, even when there is already a default option set in `KingfisherManager`.
+* Deprecate `requestsUsePipeling` in `ImageDownloader` since there was a typo. Now use `requestsUsePipelining` instead. [#673](https://github.com/onevcat/Kingfisher/pull/673)
+* Some internal improvement for private APIs.
+
+---
+
 ## [3.8.0 - Prowess](https://github.com/onevcat/Kingfisher/releases/tag/3.8.0) (2017-05-10)
 
 #### Add
