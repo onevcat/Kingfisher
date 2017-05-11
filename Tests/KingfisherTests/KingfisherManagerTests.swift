@@ -286,7 +286,9 @@ class KingfisherManagerTests: XCTestCase {
         
         manager.defaultOptions = [.scaleFactor(2)]
         manager.retrieveImage(with: url, options: nil, progressBlock: nil, completionHandler: { image, _, _, _ in
+            #if !os(macOS)
             XCTAssertEqual(image!.scale, 2.0)
+            #endif
             expectation.fulfill()
         })
         waitForExpectations(timeout: 5, handler: nil)
