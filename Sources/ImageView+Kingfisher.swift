@@ -67,7 +67,7 @@ extension Kingfisher where Base: ImageView {
             return .empty
         }
         
-        var options = options ?? KingfisherEmptyOptionsInfo
+        var options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         
         if !options.keepCurrentImageWhileLoading {
             base.image = placeholder

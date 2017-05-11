@@ -65,7 +65,7 @@ extension Kingfisher where Base: UIButton {
             return .empty
         }
         
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         if !options.keepCurrentImageWhileLoading {
             base.setImage(placeholder, for: state)
         }
@@ -143,7 +143,7 @@ extension Kingfisher where Base: UIButton {
             return .empty
         }
         
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         if !options.keepCurrentImageWhileLoading {
             base.setBackgroundImage(placeholder, for: state)
         }
