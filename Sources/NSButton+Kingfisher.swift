@@ -63,7 +63,7 @@ extension Kingfisher where Base: NSButton {
             return .empty
         }
         
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         if !options.keepCurrentImageWhileLoading {
             base.image = placeholder
         }
@@ -138,7 +138,7 @@ extension Kingfisher where Base: NSButton {
             return .empty
         }
         
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         if !options.keepCurrentImageWhileLoading {
             base.alternateImage = placeholder
         }

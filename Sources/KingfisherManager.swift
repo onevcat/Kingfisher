@@ -79,6 +79,15 @@ public class KingfisherManager {
     /// Downloader used by this manager
     public var downloader: ImageDownloader
     
+    /// Default options used by the manager. This option will be used in 
+    /// Kingfisher manager related methods, including all image view and 
+    /// button extension methods. You can also passing the options per image by 
+    /// sending an `options` parameter to Kingfisher's APIs, the per image option 
+    /// will overwrite the default ones if exist.
+    ///
+    /// - Note: This option will not be applied to independent using of `ImageDownloader` or `ImageCache`.
+    public var defaultOptions = KingfisherEmptyOptionsInfo
+    
     convenience init() {
         self.init(downloader: .default, cache: .default)
     }
@@ -108,8 +117,8 @@ public class KingfisherManager {
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         let task = RetrieveImageTask()
-
-        if let options = options, options.forceRefresh {
+        let options = defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
+        if options.forceRefresh {
             _ = downloadAndCacheImage(
                 with: resource.downloadURL,
                 forKey: resource.cacheKey,
@@ -136,9 +145,8 @@ public class KingfisherManager {
                       retrieveImageTask: RetrieveImageTask,
                           progressBlock: DownloadProgressBlock?,
                       completionHandler: CompletionHandler?,
-                                options: KingfisherOptionsInfo?) -> RetrieveImageDownloadTask?
+                                options: KingfisherOptionsInfo) -> RetrieveImageDownloadTask?
     {
-        let options = options ?? KingfisherEmptyOptionsInfo
         let downloader = options.downloader
         return downloader.downloadImage(with: url, retrieveImageTask: retrieveImageTask, options: options,
             progressBlock: { receivedSize, totalSize in
@@ -176,18 +184,18 @@ public class KingfisherManager {
                               retrieveImageTask: RetrieveImageTask,
                                   progressBlock: DownloadProgressBlock?,
                               completionHandler: CompletionHandler?,
-                                        options: KingfisherOptionsInfo?)
+                                        options: KingfisherOptionsInfo)
     {
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             completionHandler?(image, error, cacheType, imageURL)
         }
         
-        let targetCache = options?.targetCache ?? cache
+        let targetCache = options.targetCache
         targetCache.retrieveImage(forKey: key, options: options,
             completionHandler: { image, cacheType in
                 if image != nil {
                     diskTaskCompletionHandler(image, nil, cacheType, url)
-                } else if let options = options, options.onlyFromCache {
+                } else if options.onlyFromCache {
                     let error = NSError(domain: KingfisherErrorDomain, code: KingfisherError.notCached.rawValue, userInfo: nil)
                     diskTaskCompletionHandler(nil, error, .none, url)
                 } else {
