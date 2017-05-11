@@ -535,7 +535,7 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testSettingImageWhileKeepingCurrentOne() {
-
+        let expectation = self.expectation(description: "wait for downloading image")
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
         let url = URL(string: URLString)!
@@ -547,6 +547,12 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.image = testImage
         imageView.kf.setImage(with: url, placeholder: nil, options: [.keepCurrentImageWhileLoading])
         XCTAssertEqual(testImage, imageView.image)
+        
+        // Wait request finished. Ensure tests timing order.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { 
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testSetGIFImageOnlyFirstFrameThenFullFrames() {

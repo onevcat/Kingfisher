@@ -152,20 +152,22 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     }
 }
 
-extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-    func firstMatchIgnoringAssociatedValue(_ target: Iterator.Element) -> Iterator.Element? {
-        return index { $0 <== target }.flatMap { self[$0] }
+extension Array where Element == KingfisherOptionsInfoItem {
+    
+    func lastMatchIgnoringAssociatedValue(_ target: Element) -> Element? {
+        return reversed().index { $0 <== target }
+            .flatMap { self[self.count - $0 - 1] }
     }
     
-    func removeAllMatchesIgnoringAssociatedValue(_ target: Iterator.Element) -> [Iterator.Element] {
-        return self.filter { !($0 <== target) }
+    func removeAllMatchesIgnoringAssociatedValue(_ target: Element) -> [Element] {
+        return filter { !($0 <== target) }
     }
 }
 
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+public extension Array where Element == KingfisherOptionsInfoItem {
     /// The target `ImageCache` which is used.
     public var targetCache: ImageCache {
-        if let item = firstMatchIgnoringAssociatedValue(.targetCache(.default)),
+        if let item = lastMatchIgnoringAssociatedValue(.targetCache(.default)),
             case .targetCache(let cache) = item
         {
             return cache
@@ -175,7 +177,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// The `ImageDownloader` which is specified.
     public var downloader: ImageDownloader {
-        if let item = firstMatchIgnoringAssociatedValue(.downloader(.default)),
+        if let item = lastMatchIgnoringAssociatedValue(.downloader(.default)),
             case .downloader(let downloader) = item
         {
             return downloader
@@ -185,7 +187,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// Member for animation transition when using UIImageView.
     public var transition: ImageTransition {
-        if let item = firstMatchIgnoringAssociatedValue(.transition(.none)),
+        if let item = lastMatchIgnoringAssociatedValue(.transition(.none)),
             case .transition(let transition) = item
         {
             return transition
@@ -196,7 +198,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     /// A `Float` value set as the priority of image download task. The value for it should be
     /// between 0.0~1.0.
     public var downloadPriority: Float {
-        if let item = firstMatchIgnoringAssociatedValue(.downloadPriority(0)),
+        if let item = lastMatchIgnoringAssociatedValue(.downloadPriority(0)),
             case .downloadPriority(let priority) = item
         {
             return priority
@@ -236,7 +238,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// The queue of callbacks should happen from Kingfisher.
     public var callbackDispatchQueue: DispatchQueue {
-        if let item = firstMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
+        if let item = lastMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
             case .callbackDispatchQueue(let queue) = item
         {
             return queue ?? DispatchQueue.main
@@ -246,7 +248,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// The scale factor which should be used for the image.
     public var scaleFactor: CGFloat {
-        if let item = firstMatchIgnoringAssociatedValue(.scaleFactor(0)),
+        if let item = lastMatchIgnoringAssociatedValue(.scaleFactor(0)),
             case .scaleFactor(let scale) = item
         {
             return scale
@@ -256,7 +258,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// The `ImageDownloadRequestModifier` will be used before sending a download request.
     public var modifier: ImageDownloadRequestModifier {
-        if let item = firstMatchIgnoringAssociatedValue(.requestModifier(NoModifier.default)),
+        if let item = lastMatchIgnoringAssociatedValue(.requestModifier(NoModifier.default)),
             case .requestModifier(let modifier) = item
         {
             return modifier
@@ -266,7 +268,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// `ImageProcessor` for processing when the downloading finishes.
     public var processor: ImageProcessor {
-        if let item = firstMatchIgnoringAssociatedValue(.processor(DefaultImageProcessor.default)),
+        if let item = lastMatchIgnoringAssociatedValue(.processor(DefaultImageProcessor.default)),
             case .processor(let processor) = item
         {
             return processor
@@ -276,7 +278,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     /// `CacheSerializer` to convert image to data for storing in cache.
     public var cacheSerializer: CacheSerializer {
-        if let item = firstMatchIgnoringAssociatedValue(.cacheSerializer(DefaultCacheSerializer.default)),
+        if let item = lastMatchIgnoringAssociatedValue(.cacheSerializer(DefaultCacheSerializer.default)),
             case .cacheSerializer(let cacheSerializer) = item
         {
             return cacheSerializer
@@ -296,7 +298,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
 }
 
 // MARK: - Deprecated. Only for back compatibility.
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+public extension Array where Element == KingfisherOptionsInfoItem {
 
     /// Whether the image data should be all loaded at once if it is a GIF.
     @available(*, deprecated, renamed: "preloadAllAnimationData")
