@@ -117,6 +117,17 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
     }
+    
+    func testOptionCouldBeOverwritten() {
+        var options: KingfisherOptionsInfo = [.downloadPriority(0.5), .onlyFromCache]
+        XCTAssertEqual(options.downloadPriority, 0.5)
+        
+        options.append(.downloadPriority(0.8))
+        XCTAssertEqual(options.downloadPriority, 0.8)
+        
+        options.append(.downloadPriority(1.0))
+        XCTAssertEqual(options.downloadPriority, 1.0)
+    }
 }
 
 class TestModifier: ImageDownloadRequestModifier {
