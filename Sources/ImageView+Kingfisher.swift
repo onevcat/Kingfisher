@@ -107,7 +107,7 @@ extension Kingfisher where Base: ImageView {
                         return
                     }
                     
-                    guard let transitionItem = options.firstMatchIgnoringAssociatedValue(.transition(.none)),
+                    guard let transitionItem = options.lastMatchIgnoringAssociatedValue(.transition(.none)),
                         case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) else
                     {
                         maybeIndicator?.stopAnimatingView()
