@@ -2,6 +2,13 @@
 
 -----
 
+## [3.9.1 - Compatibility](https://github.com/onevcat/Kingfisher/releases/tag/3.9.1) (2017-05-13)
+
+#### Fix
+* Fix a problem which prevents building under Xcode 8.2 / Swift 3.0. [#677](https://github.com/onevcat/Kingfisher/issues/677)
+
+---
+
 ## [3.9.0 - Follow the Rules](https://github.com/onevcat/Kingfisher/releases/tag/3.9.0) (2017-05-11)
 
 #### Add

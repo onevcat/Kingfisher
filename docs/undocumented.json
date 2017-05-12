@@ -457,14 +457,14 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/KingfisherOptionsInfo.swift",
-      "line": 295,
-      "symbol": "Array.onlyLoadFirstFrame",
+      "line": 294,
+      "symbol": "Collection.onlyLoadFirstFrame",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/KingfisherOptionsInfo.swift",
-      "line": 312,
+      "line": 311,
       "symbol": "KingfisherOptionsInfoItem.preloadAllGIFData",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
