@@ -152,19 +152,18 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     }
 }
 
-extension Array where Element == KingfisherOptionsInfoItem {
-    
-    func lastMatchIgnoringAssociatedValue(_ target: Element) -> Element? {
-        return reversed().index { $0 <== target }
-            .flatMap { self[self.count - $0 - 1] }
+
+extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+    func lastMatchIgnoringAssociatedValue(_ target: Iterator.Element) -> Iterator.Element? {
+        return reversed().first { $0 <== target }
     }
     
-    func removeAllMatchesIgnoringAssociatedValue(_ target: Element) -> [Element] {
+    func removeAllMatchesIgnoringAssociatedValue(_ target: Iterator.Element) -> [Iterator.Element] {
         return filter { !($0 <== target) }
     }
 }
 
-public extension Array where Element == KingfisherOptionsInfoItem {
+public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The target `ImageCache` which is used.
     public var targetCache: ImageCache {
         if let item = lastMatchIgnoringAssociatedValue(.targetCache(.default)),
@@ -298,7 +297,7 @@ public extension Array where Element == KingfisherOptionsInfoItem {
 }
 
 // MARK: - Deprecated. Only for back compatibility.
-public extension Array where Element == KingfisherOptionsInfoItem {
+public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
 
     /// Whether the image data should be all loaded at once if it is a GIF.
     @available(*, deprecated, renamed: "preloadAllAnimationData")
