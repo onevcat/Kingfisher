@@ -198,6 +198,7 @@ open class ImageDownloader {
     /// You could change the configuration before a downloaing task starts. A configuration without persistent storage for caches is requsted for downloader working correctly.
     open var sessionConfiguration = URLSessionConfiguration.ephemeral {
         didSet {
+            session?.invalidateAndCancel()
             session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main)
         }
     }
@@ -247,6 +248,10 @@ open class ImageDownloader {
         // Provide a default implement for challenge responder.
         authenticationChallengeResponder = sessionHandler
         session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: .main)
+    }
+    
+    deinit {
+        session?.invalidateAndCancel()
     }
     
     func fetchLoad(for url: URL) -> ImageFetchLoad? {
