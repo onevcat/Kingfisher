@@ -443,6 +443,10 @@
 		D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		D9638BA71C7DCF560046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		D9638BA81C7DCF570046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
+		FB402D0E1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */; };
+		FB402D0F1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */; };
+		FB402D101EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */; };
+		FB402D111EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -747,6 +751,7 @@
 		D9638B9F1C7DBA660046523D /* ImagePrefetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImagePrefetcher.swift; path = Sources/ImagePrefetcher.swift; sourceTree = "<group>"; };
 		D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePrefetcherTests.swift; sourceTree = "<group>"; };
 		DE80CB18FBC9F9F23DC1FDCF /* Pods-KingfisherTests-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormatIndicatedCacheSerializer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1058,6 +1063,7 @@
 				D9638B9F1C7DBA660046523D /* ImagePrefetcher.swift */,
 				4B2B8E491D70128200FC4749 /* ImageProcessor.swift */,
 				4BB24C3C1D79215A00CD5F9C /* CacheSerializer.swift */,
+				FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */,
 				4BFBEE7C1D7D0C3600699FD3 /* RequestModifier.swift */,
 				D10945ED1C526B6C001408EB /* ImageTransition.swift */,
 				D10945F11C526B6C001408EB /* KingfisherManager.swift */,
@@ -2319,6 +2325,7 @@
 				D109461F1C526C61001408EB /* KingfisherManager.swift in Sources */,
 				4B7742451D87E2AA0077024E /* Box.swift in Sources */,
 				4B6313F61D766BEF0078E017 /* Filter.swift in Sources */,
+				FB402D101EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
 				D10946201C526C61001408EB /* KingfisherOptionsInfo.swift in Sources */,
 				D10946211C526C61001408EB /* Resource.swift in Sources */,
@@ -2408,6 +2415,7 @@
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
 				4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D10946171C526C0D001408EB /* ThreadHelper.swift in Sources */,
+				FB402D0F1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				D10946181C526C0D001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2417,6 +2425,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D109462D1C526CF5001408EB /* ImageTransition.swift in Sources */,
+				FB402D111EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */,
 				D10946251C526CE8001408EB /* Image.swift in Sources */,
 				D10946261C526CE8001408EB /* ImageCache.swift in Sources */,
@@ -2475,6 +2484,7 @@
 				D10945FF1C526B86001408EB /* String+MD5.swift in Sources */,
 				4BB24C3D1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D10946001C526B86001408EB /* ThreadHelper.swift in Sources */,
+				FB402D0E1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				D10946011C526B86001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
