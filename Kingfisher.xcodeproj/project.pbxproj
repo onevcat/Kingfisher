@@ -751,7 +751,7 @@
 		D9638B9F1C7DBA660046523D /* ImagePrefetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImagePrefetcher.swift; path = Sources/ImagePrefetcher.swift; sourceTree = "<group>"; };
 		D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePrefetcherTests.swift; sourceTree = "<group>"; };
 		DE80CB18FBC9F9F23DC1FDCF /* Pods-KingfisherTests-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.release.xcconfig"; sourceTree = "<group>"; };
-		FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormatIndicatedCacheSerializer.swift; sourceTree = "<group>"; };
+		FB402D0D1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FormatIndicatedCacheSerializer.swift; path = Sources/FormatIndicatedCacheSerializer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
