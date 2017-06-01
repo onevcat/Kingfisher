@@ -183,6 +183,7 @@ open class ImageDownloader {
 
         var downloadTaskCount = 0
         var downloadTask: RetrieveImageDownloadTask?
+        var cancelSemaphore: DispatchSemaphore?
     }
     
     // MARK: - Public property
@@ -199,7 +200,7 @@ open class ImageDownloader {
     open var sessionConfiguration = URLSessionConfiguration.ephemeral {
         didSet {
             session?.invalidateAndCancel()
-            session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main)
+            session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: nil)
         }
     }
     
@@ -247,7 +248,7 @@ open class ImageDownloader {
 
         // Provide a default implement for challenge responder.
         authenticationChallengeResponder = sessionHandler
-        session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: .main)
+        session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: nil)
     }
     
     deinit {
@@ -256,7 +257,7 @@ open class ImageDownloader {
     
     func fetchLoad(for url: URL) -> ImageFetchLoad? {
         var fetchLoad: ImageFetchLoad?
-        barrierQueue.sync { fetchLoad = fetchLoads[url] }
+        barrierQueue.sync(flags: .barrier) { fetchLoad = fetchLoads[url] }
         return fetchLoad
     }
     
@@ -312,7 +313,7 @@ open class ImageDownloader {
                 
                 dataTask.priority = options?.downloadPriority ?? URLSessionTask.defaultPriority
                 dataTask.resume()
-                delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
+                self.delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
                 
                 // Hold self while the task is executing.
                 self.sessionHandler.downloadHolder = self
@@ -332,24 +333,41 @@ open class ImageDownloader {
 extension ImageDownloader {
     
     // A single key may have multiple callbacks. Only download once.
-    func setup(progressBlock: ImageDownloaderProgressBlock?, with completionHandler: ImageDownloaderCompletionHandler?, for url: URL, options: KingfisherOptionsInfo?, started: ((URLSession, ImageFetchLoad) -> Void)) {
+    func setup(progressBlock: ImageDownloaderProgressBlock?, with completionHandler: ImageDownloaderCompletionHandler?, for url: URL, options: KingfisherOptionsInfo?, started: @escaping ((URLSession, ImageFetchLoad) -> Void)) {
 
-        barrierQueue.sync(flags: .barrier) {
-            let loadObjectForURL = fetchLoads[url] ?? ImageFetchLoad()
-            let callbackPair = (progressBlock: progressBlock, completionHandler: completionHandler)
-            
-            loadObjectForURL.contents.append((callbackPair, options ?? KingfisherEmptyOptionsInfo))
-            
-            fetchLoads[url] = loadObjectForURL
-            
-            if let session = session {
-                started(session, loadObjectForURL)
+        func prepareFetchLoad() {
+            barrierQueue.sync(flags: .barrier) {
+                let loadObjectForURL = fetchLoads[url] ?? ImageFetchLoad()
+                let callbackPair = (progressBlock: progressBlock, completionHandler: completionHandler)
+                
+                loadObjectForURL.contents.append((callbackPair, options ?? KingfisherEmptyOptionsInfo))
+                
+                fetchLoads[url] = loadObjectForURL
+                
+                if let session = session {
+                    started(session, loadObjectForURL)
+                }
             }
+        }
+        
+        // Fetch load already exists, but there is no downloading.
+        // It happenes when user just cancelled the task, but the session 
+        // error completion handler not get called yet when user try to 
+        // download the same resource again.
+        // See https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305448593
+        if let fetchLoad = fetchLoads[url], fetchLoad.downloadTaskCount == 0 {
+            fetchLoad.cancelSemaphore = DispatchSemaphore(value: 0)
+            DispatchQueue.global().async {
+                _ = fetchLoad.cancelSemaphore?.wait(timeout: .distantFuture)
+                prepareFetchLoad()
+            }
+        } else {
+            prepareFetchLoad()
         }
     }
     
     func cancelDownloadingTask(_ task: RetrieveImageDownloadTask) {
-        barrierQueue.sync {
+        barrierQueue.sync(flags: .barrier) {
             if let URL = task.internalTask.originalRequest?.url, let imageFetchLoad = self.fetchLoads[URL] {
                 imageFetchLoad.downloadTaskCount -= 1
                 if imageFetchLoad.downloadTaskCount == 0 {
@@ -462,7 +480,9 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         }
         
         // We need to clean the fetch load first, before actually calling completion handler.
+        // Or it will not be possible to start the same download in error handler
         cleanFetchLoad(for: url)
+        fetchLoad.cancelSemaphore?.signal()
         
         for content in fetchLoad.contents {
             content.options.callbackDispatchQueue.safeAsync {
