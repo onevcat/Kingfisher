@@ -276,7 +276,7 @@ class ImageDownloaderTests: XCTestCase {
         downloadTask!.cancel()
         _ = stub!.go()
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             expectation.fulfill()
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
             XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
