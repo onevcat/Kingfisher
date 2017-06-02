@@ -92,10 +92,7 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
         
-        group.notify(queue: DispatchQueue.main) { () -> Void in
-            expectation.fulfill()
-        }
-        
+        group.notify(queue: .main, execute: expectation.fulfill)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -117,10 +114,7 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
 
-        group.notify(queue: DispatchQueue.main) { () -> Void in
-            expectation.fulfill()
-        }
-        
+        group.notify(queue: .main, execute: expectation.fulfill)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -261,26 +255,21 @@ class ImageDownloaderTests: XCTestCase {
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
-        var completionBlockIsCalled = false
         
         let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
                 progressBlockIsCalled = true
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error!.code, NSURLErrorCancelled)
-                completionBlockIsCalled = true
+                XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+                
+                delay(0.1, block: expectation.fulfill)
         }
         
         XCTAssertNotNil(downloadTask)
 
         downloadTask!.cancel()
         _ = stub!.go()
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
-            expectation.fulfill()
-            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
-        }
         
         waitForExpectations(timeout: 5, handler: nil)
     }
