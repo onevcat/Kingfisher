@@ -123,10 +123,10 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNotNil(error)
             XCTAssertEqual(error?.code, NSURLErrorCancelled)
 
-            expectation.fulfill()
+            delay(0.1, block: expectation.fulfill)
         }
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+        delay(0.1) { 
             self.button.kf.cancelImageDownloadTask()
             _ = stub!.go()
         }
@@ -147,10 +147,10 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNotNil(error)
             XCTAssertEqual(error?.code, NSURLErrorCancelled)
 
-            expectation.fulfill()
+            delay(0.1, block: expectation.fulfill)
         }
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+        delay(0.1) { 
             self.button.kf.cancelAlternateImageDownloadTask()
             _ = stub!.go()
         }
