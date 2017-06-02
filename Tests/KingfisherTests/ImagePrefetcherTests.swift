@@ -102,10 +102,10 @@ class ImagePrefetcherTests: XCTestCase {
                             progressBlock: { (skippedResources, failedResources, completedResources) -> () in
                             },
                             completionHandler: {(skippedResources, failedResources, completedResources) -> () in
-                                expectation.fulfill()
                                 XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
                                 XCTAssertEqual(failedResources.count, urls.count, "The failed count should be the same with started downloads due to cancellation.")
                                 XCTAssertEqual(completedResources.count, 0, "None resources prefetching should complete.")
+                                expectation.fulfill()
                             })
         
         prefetcher.maxConcurrentDownloads = maxConcurrentCount
@@ -113,12 +113,7 @@ class ImagePrefetcherTests: XCTestCase {
         prefetcher.start()
         prefetcher.stop()
         
-        let delayTime = DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-        
-        DispatchQueue.main.asyncAfter(deadline: delayTime) {
-            responses.forEach { _ = $0!.go() }
-        }
-
+        delay(0.1) { responses.forEach { _ = $0!.go() } }
         waitForExpectations(timeout: 5, handler: nil)
     }
     

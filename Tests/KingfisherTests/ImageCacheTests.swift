@@ -373,8 +373,6 @@ class ImageCacheTests: XCTestCase {
             group.leave()
         }
         
-        group.notify(queue: DispatchQueue.main) {
-            completionHandler()
-        }
+        group.notify(queue: .main, execute: completionHandler)
     }
 }

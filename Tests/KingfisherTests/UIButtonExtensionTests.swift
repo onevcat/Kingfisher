@@ -125,7 +125,7 @@ class UIButtonExtensionTests: XCTestCase {
 
                 expectation.fulfill()
         }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        delay(0.1) { 
             self.button.kf.cancelImageDownloadTask()
             _ = stub!.go()
         }
@@ -148,7 +148,7 @@ class UIButtonExtensionTests: XCTestCase {
                 
                 expectation.fulfill()
         }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        delay(0.1) { 
             self.button.kf.cancelBackgroundImageDownloadTask()
             _ = stub!.go()
         }
