@@ -346,6 +346,47 @@ class ImageDownloaderTests: XCTestCase {
 
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testStartAnotherDownloadRightAwayPreviousCancelled() {
+        let expectation = self.expectation(description: "wait for downloading image")
+
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let url = URL(string: URLString)!
+        
+        var progressBlockIsCalled = false
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+        }) { (image, error, imageURL, originalData) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertEqual(error!.code, NSURLErrorCancelled)
+            
+            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+            group.leave()
+        }
+        
+        XCTAssertNotNil(downloadTask)
+        
+        downloadTask!.cancel()
+        
+        group.enter()
+        downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL, originalData) -> () in
+            XCTAssertNotNil(image)
+            group.leave()
+        }
+        
+        _ = stub!.go()
+        
+        group.notify(queue: .main, execute: expectation.fulfill)
+        waitForExpectations(timeout: 5, handler: nil)
+        
+    }
 }
 
 class URLModifier: ImageDownloadRequestModifier {
