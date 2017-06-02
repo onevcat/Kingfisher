@@ -256,7 +256,7 @@ open class ImageDownloader {
     
     func fetchLoad(for url: URL) -> ImageFetchLoad? {
         var fetchLoad: ImageFetchLoad?
-        barrierQueue.sync { fetchLoad = fetchLoads[url] }
+        barrierQueue.sync(flags: .barrier) { fetchLoad = fetchLoads[url] }
         return fetchLoad
     }
     
@@ -349,7 +349,7 @@ extension ImageDownloader {
     }
     
     func cancelDownloadingTask(_ task: RetrieveImageDownloadTask) {
-        barrierQueue.sync {
+        barrierQueue.sync(flags: .barrier) {
             if let URL = task.internalTask.originalRequest?.url, let imageFetchLoad = self.fetchLoads[URL] {
                 imageFetchLoad.downloadTaskCount -= 1
                 if imageFetchLoad.downloadTaskCount == 0 {
