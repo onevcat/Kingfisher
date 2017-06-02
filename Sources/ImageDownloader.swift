@@ -220,6 +220,7 @@ open class ImageDownloader {
     // MARK: - Internal property
     let barrierQueue: DispatchQueue
     let processQueue: DispatchQueue
+    let cancelQueue: DispatchQueue
     
     typealias CallbackPair = (progressBlock: ImageDownloaderProgressBlock?, completionHandler: ImageDownloaderCompletionHandler?)
     
@@ -243,6 +244,7 @@ open class ImageDownloader {
         
         barrierQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Barrier.\(name)", attributes: .concurrent)
         processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process.\(name)", attributes: .concurrent)
+        cancelQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Cancel.\(name)")
         
         sessionHandler = ImageDownloaderSessionHandler()
 
@@ -356,8 +358,12 @@ extension ImageDownloader {
         // download the same resource again.
         // See https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305448593
         if let fetchLoad = fetchLoads[url], fetchLoad.downloadTaskCount == 0 {
-            fetchLoad.cancelSemaphore = DispatchSemaphore(value: 0)
-            DispatchQueue.global().async {
+            
+            if fetchLoad.cancelSemaphore == nil {
+                fetchLoad.cancelSemaphore = DispatchSemaphore(value: 0)
+            }
+            
+            cancelQueue.async {
                 _ = fetchLoad.cancelSemaphore?.wait(timeout: .distantFuture)
                 fetchLoad.cancelSemaphore = nil
                 prepareFetchLoad()
@@ -483,7 +489,12 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         // We need to clean the fetch load first, before actually calling completion handler.
         // Or it will not be possible to start the same download in error handler
         cleanFetchLoad(for: url)
-        fetchLoad.cancelSemaphore?.signal()
+        
+        // Repeat to send all waiting signals
+        var leftSignal: Int
+        repeat {
+            leftSignal = fetchLoad.cancelSemaphore?.signal() ?? 0
+        } while leftSignal != 0
         
         for content in fetchLoad.contents {
             content.options.callbackDispatchQueue.safeAsync {
