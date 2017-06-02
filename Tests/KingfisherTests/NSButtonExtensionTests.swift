@@ -46,7 +46,7 @@ class NSButtonExtensionTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         button = NSButton()
-        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
+        KingfisherManager.shared.downloader = ImageDownloader(name: "test-\(UUID().uuidString)")
         cleanDefaultCache()
     }
 

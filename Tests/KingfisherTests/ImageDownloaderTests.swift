@@ -47,7 +47,7 @@ class ImageDownloaderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        downloader = ImageDownloader(name: "test")
+        downloader = ImageDownloader(name: "test-\(UUID().uuidString)")
     }
     
     override func tearDown() {
@@ -92,10 +92,7 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
         
-        group.notify(queue: DispatchQueue.main) { () -> Void in
-            expectation.fulfill()
-        }
-        
+        group.notify(queue: .main, execute: expectation.fulfill)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -261,26 +258,22 @@ class ImageDownloaderTests: XCTestCase {
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
-        var completionBlockIsCalled = false
         
         let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
                 progressBlockIsCalled = true
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error!.code, NSURLErrorCancelled)
-                completionBlockIsCalled = true
+                
+                XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+                
+                expectation.fulfill()
         }
         
         XCTAssertNotNil(downloadTask)
 
         downloadTask!.cancel()
         _ = stub!.go()
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.09)) / Double(NSEC_PER_SEC)) { () -> Void in
-            expectation.fulfill()
-            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
-        }
         
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -352,6 +345,47 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testStartAnotherDownloadRightAwayPreviousCancelled() {
+        let expectation = self.expectation(description: "wait for downloading image")
+
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let url = URL(string: URLString)!
+        
+        var progressBlockIsCalled = false
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+        }) { (image, error, imageURL, originalData) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertEqual(error!.code, NSURLErrorCancelled)
+            
+            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+            group.leave()
+        }
+        
+        XCTAssertNotNil(downloadTask)
+        
+        downloadTask!.cancel()
+        
+        group.enter()
+        downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+            
+        }) { (image, error, imageURL, originalData) -> () in
+            XCTAssertNotNil(image)
+            group.leave()
+        }
+        
+        _ = stub!.go()
+        
+        group.notify(queue: .main, execute: expectation.fulfill)
+        waitForExpectations(timeout: 5, handler: nil)
+        
     }
 }
 

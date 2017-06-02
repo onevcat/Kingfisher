@@ -86,7 +86,7 @@ public class KingfisherManager {
     /// will overwrite the default ones if exist.
     ///
     /// - Note: This option will not be applied to independent using of `ImageDownloader` or `ImageCache`.
-    public var defaultOptions = KingfisherEmptyOptionsInfo
+    public lazy var defaultOptions: KingfisherOptionsInfo = [.downloader(self.downloader), .targetCache(self.cache)]
     
     convenience init() {
         self.init(downloader: .default, cache: .default)

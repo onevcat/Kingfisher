@@ -46,7 +46,7 @@ class UIButtonExtensionTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         button = UIButton()
-        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
+        KingfisherManager.shared.downloader = ImageDownloader(name: "test-\(UUID().uuidString)")
         cleanDefaultCache()
     }
     
@@ -125,7 +125,7 @@ class UIButtonExtensionTests: XCTestCase {
 
                 expectation.fulfill()
         }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.button.kf.cancelImageDownloadTask()
             _ = stub!.go()
         }
@@ -148,7 +148,7 @@ class UIButtonExtensionTests: XCTestCase {
                 
                 expectation.fulfill()
         }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(Double(NSEC_PER_SEC) * 0.1)) / Double(NSEC_PER_SEC)) { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.button.kf.cancelBackgroundImageDownloadTask()
             _ = stub!.go()
         }
