@@ -47,7 +47,7 @@ class ImageDownloaderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        downloader = ImageDownloader(name: "test")
+        downloader = ImageDownloader(name: "test-\(UUID().uuidString)")
     }
     
     override func tearDown() {
@@ -261,26 +261,22 @@ class ImageDownloaderTests: XCTestCase {
         let url = URL(string: URLString)!
         
         var progressBlockIsCalled = false
-        var completionBlockIsCalled = false
         
         let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
                 progressBlockIsCalled = true
             }) { (image, error, imageURL, originalData) -> () in
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error!.code, NSURLErrorCancelled)
-                completionBlockIsCalled = true
+                
+                XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+                
+                expectation.fulfill()
         }
         
         XCTAssertNotNil(downloadTask)
 
         downloadTask!.cancel()
         _ = stub!.go()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            expectation.fulfill()
-            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            XCTAssert(completionBlockIsCalled == true, "CompletionBlock should be called with error.")
-        }
         
         waitForExpectations(timeout: 5, handler: nil)
     }
