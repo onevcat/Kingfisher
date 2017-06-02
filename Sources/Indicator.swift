@@ -86,7 +86,7 @@ extension Indicator {
 
 // MARK: - ActivityIndicator
 // Displays a NSProgressIndicator / UIActivityIndicatorView
-struct ActivityIndicator: Indicator {
+class ActivityIndicator: Indicator {
 
     #if os(macOS)
     private let activityIndicatorView: NSProgressIndicator
@@ -97,23 +97,34 @@ struct ActivityIndicator: Indicator {
     var view: IndicatorView {
         return activityIndicatorView
     }
+    
+    private var animatingCount: Int
 
     func startAnimatingView() {
-        #if os(macOS)
-            activityIndicatorView.startAnimation(nil)
-        #else
-            activityIndicatorView.startAnimating()
-        #endif
-        activityIndicatorView.isHidden = false
+        if animatingCount == 0 {
+            #if os(macOS)
+                activityIndicatorView.startAnimation(nil)
+            #else
+                activityIndicatorView.startAnimating()
+            #endif
+            activityIndicatorView.isHidden = false
+        }
+        animatingCount += 1
     }
 
     func stopAnimatingView() {
-        #if os(macOS)
-            activityIndicatorView.stopAnimation(nil)
-        #else
-            activityIndicatorView.stopAnimating()
-        #endif
-        activityIndicatorView.isHidden = true
+        guard animatingCount > 0 else {
+            return
+        }
+        if animatingCount == 1 {
+            #if os(macOS)
+                activityIndicatorView.stopAnimation(nil)
+            #else
+                activityIndicatorView.stopAnimating()
+            #endif
+            activityIndicatorView.isHidden = true
+        }
+        animatingCount -= 1
     }
 
     init() {
@@ -130,18 +141,21 @@ struct ActivityIndicator: Indicator {
             activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
             activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleTopMargin]
         #endif
+        animatingCount = 0
     }
 }
 
 // MARK: - ImageIndicator
 // Displays an ImageView. Supports gif
-struct ImageIndicator: Indicator {
+class ImageIndicator: Indicator {
     private let animatedImageIndicatorView: ImageView
 
     var view: IndicatorView {
         return animatedImageIndicatorView
     }
 
+    private var animatingCount: Int
+    
     init?(imageData data: Data, processor: ImageProcessor = DefaultImageProcessor.default, options: KingfisherOptionsInfo = KingfisherEmptyOptionsInfo) {
 
         var options = options
@@ -169,23 +183,33 @@ struct ImageIndicator: Indicator {
                                                            .flexibleBottomMargin,
                                                            .flexibleTopMargin]
         #endif
+        animatingCount = 0
     }
 
     func startAnimatingView() {
-        #if os(macOS)
-            animatedImageIndicatorView.animates = true
-        #else
-            animatedImageIndicatorView.startAnimating()
-        #endif
-        animatedImageIndicatorView.isHidden = false
+        if animatingCount == 0 {
+            #if os(macOS)
+                animatedImageIndicatorView.animates = true
+            #else
+                animatedImageIndicatorView.startAnimating()
+            #endif
+            animatedImageIndicatorView.isHidden = false
+        }
+        animatingCount += 1
     }
 
     func stopAnimatingView() {
-        #if os(macOS)
-            animatedImageIndicatorView.animates = false
-        #else
-            animatedImageIndicatorView.stopAnimating()
-        #endif
-        animatedImageIndicatorView.isHidden = true
+        guard animatingCount > 0 else {
+            return
+        }
+        if animatingCount == 1 {
+            #if os(macOS)
+                animatedImageIndicatorView.animates = false
+            #else
+                animatedImageIndicatorView.stopAnimating()
+            #endif
+            animatedImageIndicatorView.isHidden = true
+        }
+        animatingCount -= 1
     }
 }
