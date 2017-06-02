@@ -119,6 +119,12 @@ public enum KingfisherOptionsInfoItem {
     /// static preview of the first frame from a animated image.
     /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
+    
+    /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both 
+    /// the final result and original image. Kingfisher will have a chance to use 
+    /// the original image when another processor is applied to the same resouce, 
+    /// instead of downloading it again.
+    case cacheOriginalImage
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -148,6 +154,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.cacheSerializer(_), .cacheSerializer(_)): return true
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
+    case (.cacheOriginalImage, .cacheOriginalImage): return true
     default: return false
     }
 }
@@ -293,6 +300,10 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     public var onlyLoadFirstFrame: Bool {
         return contains { $0 <== .onlyLoadFirstFrame }
+    }
+    
+    public var cacheOriginalImage: Bool {
+        return contains { $0 <== .cacheOriginalImage }
     }
 }
 
