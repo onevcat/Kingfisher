@@ -88,6 +88,10 @@ public class KingfisherManager {
     /// - Note: This option will not be applied to independent using of `ImageDownloader` or `ImageCache`.
     public var defaultOptions = KingfisherEmptyOptionsInfo
     
+    var currentDefaultOptions: KingfisherOptionsInfo {
+        return [.downloader(downloader), .targetCache(cache)] + defaultOptions
+    }
+    
     convenience init() {
         self.init(downloader: .default, cache: .default)
     }
@@ -117,7 +121,7 @@ public class KingfisherManager {
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         let task = RetrieveImageTask()
-        let options = defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
+        let options = currentDefaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         if options.forceRefresh {
             _ = downloadAndCacheImage(
                 with: resource.downloadURL,
