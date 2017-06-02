@@ -92,10 +92,7 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
         
-        group.notify(queue: DispatchQueue.main) { () -> Void in
-            expectation.fulfill()
-        }
-        
+        group.notify(queue: .main, execute: expectation.fulfill)
         waitForExpectations(timeout: 5, handler: nil)
     }
     

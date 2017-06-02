@@ -357,7 +357,7 @@ extension ImageDownloader {
         // error completion handler not get called yet when user try to 
         // download the same resource again.
         // See https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305448593
-        if let fetchLoad = fetchLoads[url], fetchLoad.downloadTaskCount == 0 {
+        if let fetchLoad = fetchLoad(for: url), fetchLoad.downloadTaskCount == 0 {
             
             if fetchLoad.cancelSemaphore == nil {
                 fetchLoad.cancelSemaphore = DispatchSemaphore(value: 0)
