@@ -275,7 +275,7 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     // Issue 532 https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305644311
-    func _testCancelThenRestartSameDownload() {
+    func testCancelThenRestartSameDownload() {
         let expectation = self.expectation(description: "wait for downloading")
         
         let URLString = testKeys[0]
