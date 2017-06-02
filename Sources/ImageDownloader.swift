@@ -525,7 +525,6 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 var image = imageCache[processor.identifier]
                 if image == nil {
                     image = processor.process(item: .data(data), options: options)
-                    
                     // Add the processed image to cache. 
                     // If `image` is nil, nothing will happen (since the key is not existing before).
                     imageCache[processor.identifier] = image
