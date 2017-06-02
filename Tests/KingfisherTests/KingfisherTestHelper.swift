@@ -60,6 +60,10 @@ func stubRequest(_ method: String, _ url: String) -> LSStubRequestDSL {
     return stubRequest(method, url as NSString)
 }
 
+func delay(_ time: Double, block: @escaping ()->()) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + time) { block() }
+}
+
 extension Image {
     func renderEqual(to image: Image, withinTolerance tolerance: UInt8 = 3) -> Bool {
         
