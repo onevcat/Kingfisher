@@ -123,7 +123,6 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error?.code, NSURLErrorCancelled)
 
-//                delay(0.1, block: expectation.fulfill)
                 expectation.fulfill()
         }
         delay(0.1) { 
@@ -147,7 +146,6 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error?.code, NSURLErrorCancelled)
                 
-//                delay(0.1, block: expectation.fulfill)
                 expectation.fulfill()
         }
         delay(0.1) { 

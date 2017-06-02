@@ -263,7 +263,6 @@ class ImageDownloaderTests: XCTestCase {
                 XCTAssertEqual(error!.code, NSURLErrorCancelled)
                 XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
                 
-//                delay(0.1, block: expectation.fulfill)
                 expectation.fulfill()
         }
         
@@ -310,11 +309,7 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
         
-        group.notify(queue: .main) { 
-//            delay(0.1, block: expectation.fulfill)
-            expectation.fulfill()
-        }
-        
+        group.notify(queue: .main, execute: expectation.fulfill)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
