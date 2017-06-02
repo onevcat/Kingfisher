@@ -364,7 +364,7 @@ extension ImageDownloader {
             }
             
             cancelQueue.async {
-                _ = fetchLoad.cancelSemaphore?.wait(timeout: .distantFuture)
+                _ = fetchLoad.cancelSemaphore?.wait(timeout: .now() + 1)
                 fetchLoad.cancelSemaphore = nil
                 prepareFetchLoad()
             }
