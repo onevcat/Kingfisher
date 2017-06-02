@@ -148,7 +148,8 @@ class ImageViewExtensionTests: XCTestCase {
         }) { (image, error, cacheType, imageURL) -> () in
             XCTAssertEqual(error?.code, KingfisherError.downloadCancelledBeforeStarting.rawValue, "The error should be downloadCancelledBeforeStarting")
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            delay(0.1, block: expectation.fulfill)
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
         }
 
         task.cancel()
@@ -172,7 +173,8 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error?.code, NSURLErrorCancelled)
                 XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-                delay(0.1, block: expectation.fulfill)
+//                delay(0.1, block: expectation.fulfill)
+                expectation.fulfill()
         }
         
         delay(0.1) { 
@@ -221,7 +223,8 @@ class ImageViewExtensionTests: XCTestCase {
         delay(0.1) { _ = stub!.go() }
         
         group.notify(queue: .main) { 
-            delay(0.1, block: expectation.fulfill)
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
         }
         
         waitForExpectations(timeout: 5, handler: nil)
@@ -266,7 +269,8 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { 
-            delay(0.1, block: expectation.fulfill)
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
         }
         
         waitForExpectations(timeout: 5, handler: nil)
@@ -317,7 +321,8 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { 
-            delay(0.1, block: expectation.fulfill)
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
         }
         
         waitForExpectations(timeout: 5, handler: nil)
@@ -481,7 +486,8 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { 
-            delay(0.1, block: expectation.fulfill)
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
         }
         
         waitForExpectations(timeout: 5, handler: nil)
@@ -599,7 +605,8 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { 
-            delay(0.1, block: expectation.fulfill)
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
         }
         
         waitForExpectations(timeout: 1, handler: nil)

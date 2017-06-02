@@ -123,7 +123,8 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error?.code, NSURLErrorCancelled)
 
-                delay(0.1, block: expectation.fulfill)
+//                delay(0.1, block: expectation.fulfill)
+                expectation.fulfill()
         }
         delay(0.1) { 
             self.button.kf.cancelImageDownloadTask()
@@ -146,7 +147,8 @@ class UIButtonExtensionTests: XCTestCase {
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error?.code, NSURLErrorCancelled)
                 
-                delay(0.1, block: expectation.fulfill)
+//                delay(0.1, block: expectation.fulfill)
+                expectation.fulfill()
         }
         delay(0.1) { 
             self.button.kf.cancelBackgroundImageDownloadTask()

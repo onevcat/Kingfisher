@@ -263,13 +263,57 @@ class ImageDownloaderTests: XCTestCase {
                 XCTAssertEqual(error!.code, NSURLErrorCancelled)
                 XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
                 
-                delay(0.1, block: expectation.fulfill)
+//                delay(0.1, block: expectation.fulfill)
+                expectation.fulfill()
         }
         
         XCTAssertNotNil(downloadTask)
 
         downloadTask!.cancel()
         _ = stub!.go()
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    // Issue 532 https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305644311
+    func _testCancelThenRestartSameDownload() {
+        let expectation = self.expectation(description: "wait for downloading")
+        
+        let URLString = testKeys[0]
+        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
+        let url = URL(string: URLString)!
+        
+        var progressBlockIsCalled = false
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+        }) { (image, error, imageURL, originalData) -> () in
+            XCTAssertNotNil(error)
+            XCTAssertEqual(error!.code, NSURLErrorCancelled)
+            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
+            group.leave()
+        }
+        
+        XCTAssertNotNil(downloadTask)
+        
+        downloadTask!.cancel()
+        _ = stub!.go()
+        
+        group.enter()
+        downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+            progressBlockIsCalled = true
+        }) { (image, error, imageURL, originalData) -> () in
+            XCTAssertNotNil(image)
+            group.leave()
+        }
+        
+        group.notify(queue: .main) { 
+//            delay(0.1, block: expectation.fulfill)
+            expectation.fulfill()
+        }
         
         waitForExpectations(timeout: 5, handler: nil)
     }
