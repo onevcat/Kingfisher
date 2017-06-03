@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>KingfisherCompatible Protocol Reference</title>
+    <title>FormatIndicatedCacheSerializer Struct Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Protocol/KingfisherCompatible" class="dashAnchor"></a>
-    <a title="KingfisherCompatible Protocol Reference"></a>
+    <a name="//apple_ref/swift/Struct/FormatIndicatedCacheSerializer" class="dashAnchor"></a>
+    <a title="FormatIndicatedCacheSerializer Struct Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">Kingfisher Docs</a> (78% documented)</p>
@@ -23,7 +23,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">Kingfisher Reference</a>
         <img id="carat" src="../img/carat.png" />
-        KingfisherCompatible Protocol Reference
+        FormatIndicatedCacheSerializer Struct Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -266,14 +266,35 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>KingfisherCompatible</h1>
+            <h1>FormatIndicatedCacheSerializer</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">KingfisherCompatible</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormatIndicatedCacheSerializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span></code></pre>
 
                 </div>
               </div>
-            <p>A type that has Kingfisher extensions.</p>
+            <p><code>FormatIndicatedCacheSerializer</code> let you indicate an image format for serialized caches.</p>
+
+<p>It could serialize and deserialize PNG, JEPG and GIF images. For
+ image other than these formats, a normalized <code>pngRepresentation</code> will be used.</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code> private let profileImageSize = CGSize(width: 44, height: 44)
+
+ private let imageProcessor = RoundCornerImageProcessor(
+     cornerRadius: profileImageSize.width / 2, targetSize: profileImageSize)
+
+ private let optionsInfo: KingfisherOptionsInfo = [
+     .cacheSerializer(FormatIndicatedCacheSerializer.png), 
+     .backgroundDecode, .processor(imageProcessor), .scaleFactor(UIScreen.main.scale)]
+
+ extension UIImageView {
+    func setProfileImage(with url: URL) {
+        // Image will always cached as PNG format to preserve alpha channel for round rect.
+        _ = kf.setImage(with: url, options: optionsInfo)
+    }
+}
+</code></pre>
 
           </section>
           <section class="section task-group-section">
@@ -282,13 +303,10 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:vP10Kingfisher20KingfisherCompatible2kfwx14CompatibleType"></a>
-                    <a name="//apple_ref/swift/Property/kf" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vP10Kingfisher20KingfisherCompatible2kfwx14CompatibleType">kf</a>
+                    <a name="/s:ZvV10Kingfisher30FormatIndicatedCacheSerializer3pngS0_"></a>
+                    <a name="//apple_ref/swift/Variable/png" class="dashAnchor"></a>
+                    <a class="token" href="#/s:ZvV10Kingfisher30FormatIndicatedCacheSerializer3pngS0_">png</a>
                     </code>
-                      <span class="declaration-note">
-                        Default implementation
-                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
@@ -298,8 +316,33 @@
                         <p>Undocumented</p>
 
                       </div>
-                      <h4>Default Implementation</h4>
-                      <div class="default_impl abstract">
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormatIndicatedCacheSerializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.0/Sources/FormatIndicatedCacheSerializer.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:ZvV10Kingfisher30FormatIndicatedCacheSerializer4jpegS0_"></a>
+                    <a name="//apple_ref/swift/Variable/jpeg" class="dashAnchor"></a>
+                    <a class="token" href="#/s:ZvV10Kingfisher30FormatIndicatedCacheSerializer4jpegS0_">jpeg</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
                         <p>Undocumented</p>
 
                       </div>
@@ -307,12 +350,132 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">KingfisherCompatible</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormatIndicatedCacheSerializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.0/Sources/FormatIndicatedCacheSerializer.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:ZvV10Kingfisher30FormatIndicatedCacheSerializer3gifS0_"></a>
+                    <a name="//apple_ref/swift/Variable/gif" class="dashAnchor"></a>
+                    <a class="token" href="#/s:ZvV10Kingfisher30FormatIndicatedCacheSerializer3gifS0_">gif</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormatIndicatedCacheSerializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.0/Sources/FormatIndicatedCacheSerializer.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP10Kingfisher15CacheSerializer4dataFT4withCSo7UIImage8originalGSqV10Foundation4Data__GSqS3__"></a>
+                    <a name="//apple_ref/swift/Method/data(with:original:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP10Kingfisher15CacheSerializer4dataFT4withCSo7UIImage8originalGSqV10Foundation4Data__GSqS3__">data(with:original:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">data</span><span class="p">(</span><span class="n">with</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">Image</span><span class="p">,</span> <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Data</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>image</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>original</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.0/Sources/FormatIndicatedCacheSerializer.swift#L61-L85">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV10Kingfisher30FormatIndicatedCacheSerializer5imageFT4withV10Foundation4Data7optionsGSqGSaOS_25KingfisherOptionsInfoItem___GSqCSo7UIImage_"></a>
+                    <a name="//apple_ref/swift/Method/image(with:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV10Kingfisher30FormatIndicatedCacheSerializer5imageFT4withV10Foundation4Data7optionsGSqGSaOS_25KingfisherOptionsInfoItem___GSqCSo7UIImage_">image(with:options:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Same implementation as <code><a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">image</span><span class="p">(</span><span class="n">with</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21KingfisherOptionsInfo">KingfisherOptionsInfo</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Image</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.0/Sources/FormatIndicatedCacheSerializer.swift#L88-L95">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
