@@ -2,6 +2,13 @@
 
 -----
 
+## [3.10.1 - Order, order!](https://github.com/onevcat/Kingfisher/releases/tag/3.10.1) (2017-06-04)
+
+#### Fix
+* Change a inline function order to make Swift 3.0 compiler happy. [#700](https://github.com/onevcat/Kingfisher/issues/700)
+
+---
+
 ## [3.10.0 - Hot Bird](https://github.com/onevcat/Kingfisher/releases/tag/3.10.0) (2017-06-03)
 
 #### Add
