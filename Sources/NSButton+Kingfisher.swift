@@ -56,6 +56,7 @@ extension Kingfisher where Base: NSButton {
                          progressBlock: DownloadProgressBlock? = nil,
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
+        cancelImageDownloadTask()
         guard let resource = resource else {
             base.image = placeholder
             setWebURL(nil)
@@ -131,6 +132,7 @@ extension Kingfisher where Base: NSButton {
                                   progressBlock: DownloadProgressBlock? = nil,
                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
+        cancelAlternateImageDownloadTask()
         guard let resource = resource else {
             base.alternateImage = placeholder
             setAlternateWebURL(nil)

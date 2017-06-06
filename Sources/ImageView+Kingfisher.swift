@@ -60,6 +60,7 @@ extension Kingfisher where Base: ImageView {
                          progressBlock: DownloadProgressBlock? = nil,
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
+        cancelDownloadTask()
         guard let resource = resource else {
             base.image = placeholder
             setWebURL(nil)
