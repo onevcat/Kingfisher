@@ -181,13 +181,9 @@ public class ImagePrefetcher {
      */
     public func stop() {
         DispatchQueue.main.safeAsync {
-            
             if self.finished { return }
-            
             self.stopped = true
-            self.tasks.forEach { (_, task) -> () in
-                task.cancel()
-            }
+            self.tasks.values.forEach { $0.cancel() }
         }
     }
     
