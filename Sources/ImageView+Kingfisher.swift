@@ -33,7 +33,7 @@ import UIKit
 
 // MARK: - Extension methods.
 /**
- *	Set image to use from web.
+ *    Set image to use from web.
  */
 extension Kingfisher where Base: ImageView {
     /**
@@ -224,10 +224,16 @@ extension Kingfisher where Base: ImageView {
     }
 }
 
+@objc extension ImageView {
+    func shouldPreloadAllAnimation() -> Bool { return true }
+    
+    @available(*, deprecated, renamed: "shouldPreloadAllAnimation")
+    func shouldPreloadAllGIF() -> Bool { return true }
+}
 
 // MARK: - Deprecated. Only for back compatibility.
 /**
-*	Set image to use from web. Deprecated. Use `kf` namespacing instead.
+*    Set image to use from web. Deprecated. Use `kf` namespacing instead.
 */
 extension ImageView {
     /**
@@ -289,9 +295,4 @@ extension ImageView {
     fileprivate func kf_setImageTask(_ task: RetrieveImageTask?) { kf.setImageTask(task) }
     @available(*, deprecated, message: "Extensions directly on image views are deprecated.", renamed: "kf.setWebURL")
     fileprivate func kf_setWebURL(_ url: URL) { kf.setWebURL(url) }
-
-    func shouldPreloadAllAnimation() -> Bool { return true }
-
-    @available(*, deprecated, renamed: "shouldPreloadAllAnimation")
-    func shouldPreloadAllGIF() -> Bool { return true }
 }

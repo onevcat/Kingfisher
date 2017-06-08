@@ -78,9 +78,9 @@ public struct Filter {
     public typealias ColorElement = (CGFloat, CGFloat, CGFloat, CGFloat)
     
     /// Color control filter which will apply color control change to images.
-    public static var colorControl: (ColorElement) -> Filter = {
-        brightness, contrast, saturation, inputEV in
-        Filter { input in
+    public static var colorControl: (ColorElement) -> Filter = { arg -> Filter in
+        let (brightness, contrast, saturation, inputEV) = arg
+        return Filter { input in
             let paramsColor = [kCIInputBrightnessKey: brightness,
                                kCIInputContrastKey: contrast,
                                kCIInputSaturationKey: saturation]

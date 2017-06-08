@@ -355,7 +355,7 @@ private func pure<T>(_ value: T) -> [T] {
 }
 
 // MARK: - Deprecated. Only for back compatibility.
-extension AnimatedImageView {
+@objc extension AnimatedImageView {
     // This is for back compatibility that using regular UIImageView to show GIF.
     @available(*, deprecated, renamed: "shouldPreloadAllAnimation")
     override func shouldPreloadAllGIF() -> Bool {
