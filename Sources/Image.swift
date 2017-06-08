@@ -179,7 +179,7 @@ extension Kingfisher where Base: Image {
                 return nil
             }
             let rep = NSBitmapImageRep(cgImage: cgimage)
-            return rep.representation(using: .PNG, properties: [:])
+            return rep.representation(using: .png, properties: [:])
         #else
             return UIImagePNGRepresentation(base)
         #endif
@@ -192,7 +192,7 @@ extension Kingfisher where Base: Image {
                 return nil
             }
             let rep = NSBitmapImageRep(cgImage: cgImage)
-            return rep.representation(using:.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
+            return rep.representation(using:.jpeg, properties: [.compressionFactor: compressionQuality])
         #else
             return UIImageJPEGRepresentation(base, compressionQuality)
         #endif
@@ -565,7 +565,7 @@ extension Kingfisher where Base: Image {
                 base.draw(in: rect)
                 if fraction > 0 {
                     color.withAlphaComponent(1 - fraction).set()
-                    NSRectFillUsingOperation(rect, .sourceAtop)
+                    rect.fill(using: .sourceAtop)
                 }
             #else
                 color.set()
@@ -777,7 +777,7 @@ extension Kingfisher where Base: Image {
                 samplesPerPixel: 4,
                 hasAlpha: true,
                 isPlanar: false,
-                colorSpaceName: NSCalibratedRGBColorSpace,
+                colorSpaceName: .calibratedRGB,
                 bytesPerRow: 0,
                 bitsPerPixel: 0) else
             {
@@ -791,7 +791,7 @@ extension Kingfisher where Base: Image {
                 return nil
             }
             
-            NSGraphicsContext.setCurrent(context)
+            NSGraphicsContext.current = context
             return context.cgContext
         #else
             UIGraphicsBeginImageContextWithOptions(size, false, scale)
@@ -820,7 +820,7 @@ extension Kingfisher where Base: Image {
             samplesPerPixel: 4,
             hasAlpha: true,
             isPlanar: false,
-            colorSpaceName: NSCalibratedRGBColorSpace,
+            colorSpaceName: .calibratedRGB,
             bytesPerRow: 0,
             bitsPerPixel: 0) else
         {
@@ -832,7 +832,7 @@ extension Kingfisher where Base: Image {
         NSGraphicsContext.saveGraphicsState()
         
         let context = NSGraphicsContext(bitmapImageRep: rep)
-        NSGraphicsContext.setCurrent(context)
+        NSGraphicsContext.current = context
         draw()
         NSGraphicsContext.restoreGraphicsState()
         
