@@ -367,13 +367,23 @@ class KingfisherManagerTests: XCTestCase {
         {
             let p = SimpleProcessor()
             
+            let cached = self.manager.cache.isImageCached(forKey: URLString, processorIdentifier: p.identifier)
+            XCTAssertFalse(cached.cached)
+            
             // No downloading will happen
             self.manager.retrieveImage(with: URL(string: URLString)!, options: [.processor(p)], progressBlock: nil) {
                 image, error, cacheType, url in
                 XCTAssertNotNil(image)
                 XCTAssertEqual(cacheType, .none)
                 XCTAssertTrue(p.processed)
-                expectation.fulfill()
+                
+                // The processed image should be cached
+                delay(0.1) {
+                    let cached = self.manager.cache.isImageCached(forKey: URLString, processorIdentifier: p.identifier)
+                    XCTAssertTrue(cached.cached)
+                    expectation.fulfill()
+                }
+                
             }
         }
         waitForExpectations(timeout: 5, handler: nil)
