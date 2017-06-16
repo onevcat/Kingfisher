@@ -226,29 +226,45 @@ public class KingfisherManager {
         }
         
         let targetCache = options.targetCache
+        // First, try to get the exactly image from cache
         targetCache.retrieveImage(forKey: key, options: options) { image, cacheType in
+            // If found, we could finish now.
             if image != nil {
                 diskTaskCompletionHandler(image, nil, cacheType, url)
                 return
             }
             
+            // If not found, and we are using a default processor, download it!
             let processor = options.processor
-            if processor != DefaultImageProcessor.default {
-                let optionsWithoutProcessor = options.removeAllMatchesIgnoringAssociatedValue(.processor(processor))
-                targetCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { image, cacheType in
-                    guard let image = image else {
-                        handleNoCache()
-                        return
-                    }
-                    
-                    let processedImage = processor.process(item: .image(image), options: options)
-                    diskTaskCompletionHandler(processedImage, nil, .none, url)
-                    return
-                }
+            guard processor != DefaultImageProcessor.default else {
+                handleNoCache()
                 return
             }
             
-            handleNoCache()
+            // If processor is not the default one, we have a chance to check whether
+            // the original image is already in cache.
+            let optionsWithoutProcessor = options.removeAllMatchesIgnoringAssociatedValue(.processor(processor))
+            targetCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { image, cacheType in
+                // If we found the original image, there is no need to download it again.
+                // We could just apply processor to it now.
+                guard let image = image else {
+                    handleNoCache()
+                    return
+                }
+                
+                guard let processedImage = processor.process(item: .image(image), options: options) else {
+                    diskTaskCompletionHandler(nil, nil, .none, url)
+                    return
+                }
+                targetCache.store(processedImage,
+                                  original: nil,
+                                  forKey: key,
+                                  processorIdentifier:options.processor.identifier,
+                                  cacheSerializer: options.cacheSerializer,
+                                  toDisk: !options.cacheMemoryOnly,
+                                  completionHandler: nil)
+                diskTaskCompletionHandler(processedImage, nil, .none, url)
+            }
         }
     }
 }
