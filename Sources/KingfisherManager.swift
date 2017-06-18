@@ -204,6 +204,11 @@ public class KingfisherManager {
                                         options: KingfisherOptionsInfo)
     {
         
+        let triggerProgressFromCache = {
+            // image comes from cache, so let's trigger progressBlock
+            let receivedSize: Int64 = 1, totalSize: Int64 = 1
+            progressBlock?(receivedSize, totalSize)
+        };
         
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             completionHandler?(image, error, cacheType, imageURL)
@@ -213,6 +218,7 @@ public class KingfisherManager {
             if options.onlyFromCache {
                 let error = NSError(domain: KingfisherErrorDomain, code: KingfisherError.notCached.rawValue, userInfo: nil)
                 diskTaskCompletionHandler(nil, error, .none, url)
+                triggerProgressFromCache()
                 return
             }
             self.downloadAndCacheImage(
@@ -231,6 +237,7 @@ public class KingfisherManager {
             // If found, we could finish now.
             if image != nil {
                 diskTaskCompletionHandler(image, nil, cacheType, url)
+                triggerProgressFromCache()
                 return
             }
             
@@ -254,6 +261,7 @@ public class KingfisherManager {
                 
                 guard let processedImage = processor.process(item: .image(image), options: options) else {
                     diskTaskCompletionHandler(nil, nil, .none, url)
+                    triggerProgressFromCache()
                     return
                 }
                 targetCache.store(processedImage,
@@ -264,6 +272,7 @@ public class KingfisherManager {
                                   toDisk: !options.cacheMemoryOnly,
                                   completionHandler: nil)
                 diskTaskCompletionHandler(processedImage, nil, .none, url)
+                triggerProgressFromCache()
             }
         }
     }
