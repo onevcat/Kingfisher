@@ -61,7 +61,7 @@ extension Kingfisher where Base: ImageView {
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         guard let resource = resource else {
-            base.image = placeholder
+            base.image = placeholder ?? base.image
             setWebURL(nil)
             completionHandler?(nil, nil, .none, nil)
             return .empty
@@ -70,7 +70,7 @@ extension Kingfisher where Base: ImageView {
         var options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         
         if !options.keepCurrentImageWhileLoading {
-            base.image = placeholder
+            base.image = placeholder ?? base.image
         }
 
         let maybeIndicator = indicator
