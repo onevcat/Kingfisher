@@ -20,3 +20,6 @@ Thanks for considering to open an issue. Before you submit your issue, please co
 
 [Add anything else here]
 
+
+<!-- Love Kingfisher? Please consider supporting our collective:
+👉  https://opencollective.com/Kingfisher/donate -->
