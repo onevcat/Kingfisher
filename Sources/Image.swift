@@ -631,7 +631,7 @@ extension Kingfisher where Base: Image {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
             return base
         }
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
         guard let context = beginContext(size: CGSize(width: imageRef.width, height: imageRef.height)) else {
             assertionFailure("[Kingfisher] Decoding fails to create a valid context.")
             return base
