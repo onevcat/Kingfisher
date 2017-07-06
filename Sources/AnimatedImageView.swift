@@ -184,7 +184,7 @@ open class AnimatedImageView: UIImageView {
         // CA based display link is opt-out from ProMotion by default.
         // So the duration and its FPS might not match. 
         // See [#718](https://github.com/onevcat/Kingfisher/issues/718)
-        if #available(iOSApplicationExtension 10.0, tvOSApplicationExtension 10.0, *) {
+        if #available(iOS 10.0, tvOS 10.0, *) {
             // By setting CADisableMinimumFrameDuration to YES in Info.plist may 
             // cause the preferredFramesPerSecond being 0
             if displayLink.preferredFramesPerSecond == 0 {
