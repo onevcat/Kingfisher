@@ -71,7 +71,7 @@ public struct Filter {
             let filter = CIFilter(name: "CISourceOverCompositing")!
             filter.setValue(colorImage, forKey: kCIInputImageKey)
             filter.setValue(input, forKey: kCIInputBackgroundImageKey)
-            return filter.outputImage?.cropping(to: input.extent)
+            return filter.outputImage?.cropped(to: input.extent)
         }
     }
     
@@ -85,9 +85,9 @@ public struct Filter {
                                kCIInputContrastKey: contrast,
                                kCIInputSaturationKey: saturation]
             
-            let blackAndWhite = input.applyingFilter("CIColorControls", withInputParameters: paramsColor)
+            let blackAndWhite = input.applyingFilter("CIColorControls", parameters: paramsColor)
             let paramsExposure = [kCIInputEVKey: inputEV]
-            return blackAndWhite.applyingFilter("CIExposureAdjust", withInputParameters: paramsExposure)
+            return blackAndWhite.applyingFilter("CIExposureAdjust", parameters: paramsExposure)
         }
         
     }
