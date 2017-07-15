@@ -454,7 +454,7 @@ extension Kingfisher where Base: Image {
     
     /// Create an image with blur effect based on `self`.
     ///
-    /// - parameter radius: The blur radius should be used when creating blue.
+    /// - parameter radius: The blur radius should be used when creating blur effect.
     ///
     /// - returns: An image with blur effect applied.
     ///
