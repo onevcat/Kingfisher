@@ -2,6 +2,13 @@
 
 -----
 
+## [3.10.4 - Indicator Size](https://github.com/onevcat/Kingfisher/releases/tag/3.10.4) (2017-07-26)
+
+#### Fix
+* Respect image and custom indicator size. Now Kingfisher will not resize the indicators to the image size for you automatically.
+
+---
+
 ## [3.10.3 - ProMotion](https://github.com/onevcat/Kingfisher/releases/tag/3.10.3) (2017-07-06)
 
 #### Fix
