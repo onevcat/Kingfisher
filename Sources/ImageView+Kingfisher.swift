@@ -204,7 +204,10 @@ extension Kingfisher where Base: ImageView {
             
             // Add new
             if var newIndicator = newValue {
-                newIndicator.view.frame = base.frame
+                // Set default indicator frame if the view's frame not set.
+                if newIndicator.view.frame != .zero {
+                    newIndicator.view.frame = base.frame
+                }
                 newIndicator.viewCenter = CGPoint(x: base.bounds.midX, y: base.bounds.midY)
                 newIndicator.view.isHidden = true
                 base.addSubview(newIndicator.view)

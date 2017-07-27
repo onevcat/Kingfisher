@@ -275,7 +275,7 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/ImageView+Kingfisher.swift",
-      "line": 281,
+      "line": 284,
       "symbol": "ImageView.kf_indicator",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
