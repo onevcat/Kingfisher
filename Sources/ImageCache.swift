@@ -554,7 +554,7 @@ open class ImageCache {
     ///   - key: Key for the image.
     ///   - identifier: Processor identifier which used for this image. Default is empty string.
     /// - Returns: A `CacheType` instance which indicates the cache status. `.none` means the image is not in cache yet.
-    open func imageChachedType(forKey key: String, processorIdentifier identifier: String = "") -> CacheType {
+    open func imageCachedType(forKey key: String, processorIdentifier identifier: String = "") -> CacheType {
         let computedKey = key.computedKey(with: identifier)
         
         if memoryCache.object(forKey: computedKey as NSString) != nil {
@@ -654,7 +654,7 @@ extension ImageCache {
      *  Cache result for checking whether an image is cached for a key.
      */
     @available(*, deprecated,
-    message: "CacheCheckResult is deprecated. Use imageChachedType(forKey:processorIdentifier:) API instead.")
+    message: "CacheCheckResult is deprecated. Use imageCachedType(forKey:processorIdentifier:) API instead.")
     public struct CacheCheckResult {
         public let cached: Bool
         public let cacheType: CacheType?
@@ -668,10 +668,10 @@ extension ImageCache {
      - returns: The check result.
      */
     @available(*, deprecated,
-    message: "Use imageChachedType(forKey:processorIdentifier:) instead. CacheCheckResult.none indicates not being cached.",
-    renamed: "imageChachedType(forKey:processorIdentifier:)")
+    message: "Use imageCachedType(forKey:processorIdentifier:) instead. CacheCheckResult.none indicates not being cached.",
+    renamed: "imageCachedType(forKey:processorIdentifier:)")
     open func isImageCached(forKey key: String, processorIdentifier identifier: String = "") -> CacheCheckResult {
-        let result = imageChachedType(forKey: key, processorIdentifier: identifier)
+        let result = imageCachedType(forKey: key, processorIdentifier: identifier)
         switch result {
         case .memory, .disk:
             return CacheCheckResult(cached: true, cacheType: result)
