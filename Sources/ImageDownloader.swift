@@ -153,9 +153,22 @@ public protocol AuthenticationChallengeResponsable: class {
      - parameter challenge:         An object that contains the request for authentication.
      - parameter completionHandler: A handler that your delegate method must call.
      
-     - Note: This method is a forward from `URLSession(:didReceiveChallenge:completionHandler:)`. Please refer to the document of it in `NSURLSessionDelegate`.
+     - Note: This method is a forward from `URLSessionDelegate.urlSession(:didReceiveChallenge:completionHandler:)`. Please refer to the document of it in `URLSessionDelegate`.
      */
     func downloader(_ downloader: ImageDownloader, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+
+    /**
+     Called when an session level authentication challenge is received.
+     This method provide a chance to handle and response to the authentication challenge before downloading could start.
+     
+     - parameter downloader:        The downloader which receives this challenge.
+     - parameter task:              The task whose request requires authentication.
+     - parameter challenge:         An object that contains the request for authentication.
+     - parameter completionHandler: A handler that your delegate method must call.
+     
+     - Note: This method is a forward from `URLSessionTaskDelegate.urlSession(:task:didReceiveChallenge:completionHandler:)`. Please refer to the document of it in `URLSessionTaskDelegate`.
+     */
+    func downloader(_ downloader: ImageDownloader, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
 
 extension AuthenticationChallengeResponsable {
@@ -172,6 +185,12 @@ extension AuthenticationChallengeResponsable {
         
         completionHandler(.performDefaultHandling, nil)
     }
+    
+    func downloader(_ downloader: ImageDownloader, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        
+        completionHandler(.performDefaultHandling, nil)
+    }
+
 }
 
 /// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
@@ -460,6 +479,14 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         }
         
         downloader.authenticationChallengeResponder?.downloader(downloader, didReceive: challenge, completionHandler: completionHandler)
+    }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard let downloader = downloadHolder else {
+            return
+        }
+        
+        downloader.authenticationChallengeResponder?.downloader(downloader, task: task, didReceive: challenge, completionHandler: completionHandler)
     }
     
     private func cleanFetchLoad(for url: URL) {
