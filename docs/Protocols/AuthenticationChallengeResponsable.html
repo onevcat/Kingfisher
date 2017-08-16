@@ -299,7 +299,7 @@
 This method provide a chance to handle and response to the authentication challenge before downloading could start.</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>This method is a forward from <code>URLSession(:didReceiveChallenge:completionHandler:)</code>. Please refer to the document of it in <code>NSURLSessionDelegate</code>.</p>
+    <p>This method is a forward from <code>URLSessionDelegate.urlSession(:didReceiveChallenge:completionHandler:)</code>. Please refer to the document of it in <code>URLSessionDelegate</code>.</p>
 
 </div>
 
@@ -356,7 +356,98 @@ This method provide a chance to handle and response to the authentication challe
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.10.4/Sources/ImageDownloader.swift#L158">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.11.0/Sources/ImageDownloader.swift#L158">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FP10Kingfisher34AuthenticationChallengeResponsable10downloaderFTCS_15ImageDownloader4taskCSo14URLSessionTask10didReceiveCSo26URLAuthenticationChallenge17completionHandlerFTOCSo10URLSession24AuthChallengeDispositionGSqCSo13URLCredential__T__T_"></a>
+                    <a name="//apple_ref/swift/Method/downloader(_:task:didReceive:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP10Kingfisher34AuthenticationChallengeResponsable10downloaderFTCS_15ImageDownloader4taskCSo14URLSessionTask10didReceiveCSo26URLAuthenticationChallenge17completionHandlerFTOCSo10URLSession24AuthChallengeDispositionGSqCSo13URLCredential__T__T_">downloader(_:task:didReceive:completionHandler:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when an session level authentication challenge is received.
+This method provide a chance to handle and response to the authentication challenge before downloading could start.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>This method is a forward from <code>URLSessionTaskDelegate.urlSession(:task:didReceiveChallenge:completionHandler:)</code>. Please refer to the document of it in <code>URLSessionTaskDelegate</code>.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">downloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">,</span> <span class="n">didReceive</span> <span class="nv">challenge</span><span class="p">:</span> <span class="kt">URLAuthenticationChallenge</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">URLSession</span><span class="o">.</span><span class="kt">AuthChallengeDisposition</span><span class="p">,</span> <span class="kt">URLCredential</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>downloader</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The downloader which receives this challenge.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>task</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The task whose request requires authentication.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>challenge</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An object that contains the request for authentication.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A handler that your delegate method must call.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.11.0/Sources/ImageDownloader.swift#L171">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -366,7 +457,7 @@ This method provide a chance to handle and response to the authentication challe
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-07-26)</p>
+          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-08-16)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
