@@ -512,6 +512,29 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
+    func testSettingImageKeepingRespectingPlaceholder() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        let url = URL(string: URLString)!
+        
+        // While current image is nil, set placeholder
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading])
+        XCTAssertNotNil(imageView.image)
+        XCTAssertEqual(testImage, imageView.image)
+        
+        // While current image is not nil, keep it
+        let anotherImage = Image(data: testImageJEPGData)
+        imageView.image = anotherImage
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading])
+        XCTAssertNotNil(imageView.image)
+        XCTAssertEqual(anotherImage, imageView.image)
+
+        // Wait request finished. Ensure tests timing order.
+        delay(0.1, block: expectation.fulfill)
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
     func testSetGIFImageOnlyFirstFrameThenFullFrames() {
         let expectation = self.expectation(description: "wait for downloading image")
         
