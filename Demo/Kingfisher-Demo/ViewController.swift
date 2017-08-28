@@ -67,9 +67,12 @@ extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
-        
+
+        // Bottom half has a custom placeholder, tap reload to see it
+        let placeholder = indexPath.row > 5 ? MyCustomPlaceholder() : nil
+
         _ = (cell as! CollectionViewCell).cellImageView.kf.setImage(with: url,
-                                           placeholder: nil,
+                                           placeholder: placeholder,
                                            options: [.transition(ImageTransition.fade(1))],
                                            progressBlock: { receivedSize, totalSize in
                                             print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")

@@ -10,6 +10,11 @@
 		008050DF31B6F246FFC8BEA1 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */; };
 		182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
+		444C03E91F548F6100990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
+		444C03EA1F548F6200990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
+		444C03EB1F548F6200990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
+		444C03ED1F548F8600990BCC /* MyCustomPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E41F548DA000990BCC /* MyCustomPlaceholder.swift */; };
+		444C03EE1F548F8700990BCC /* MyCustomPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E41F548DA000990BCC /* MyCustomPlaceholder.swift */; };
 		4B164AD01B8D556900768EC6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B164ACE1B8D554200768EC6 /* CFNetwork.framework */; };
 		4B2944641C3D03980088C3E7 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
 		4B2B8E4A1D70128200FC4749 /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2B8E491D70128200FC4749 /* ImageProcessor.swift */; };
@@ -572,6 +577,8 @@
 		1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSButton+Kingfisher.swift"; path = "Sources/NSButton+Kingfisher.swift"; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
+		444C03E01F547AAE00990BCC /* Placeholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Placeholder.swift; path = Sources/Placeholder.swift; sourceTree = "<group>"; };
+		444C03E41F548DA000990BCC /* MyCustomPlaceholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyCustomPlaceholder.swift; sourceTree = "<group>"; };
 		4AB2628A580157ADADCE0011 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1069,6 +1076,7 @@
 				D10945F11C526B6C001408EB /* KingfisherManager.swift */,
 				D10945F21C526B6C001408EB /* KingfisherOptionsInfo.swift */,
 				4B6313F31D766BEF0078E017 /* Filter.swift */,
+				444C03E01F547AAE00990BCC /* Placeholder.swift */,
 				D10945F31C526B6C001408EB /* Resource.swift */,
 				4BD8E04B1D9237E200A091BE /* Kingfisher.swift */,
 			);
@@ -1196,6 +1204,7 @@
 				D12E0C921C47F91800AC98AD /* Images.xcassets */,
 				D12E0C931C47F91800AC98AD /* Info.plist */,
 				D12E0C941C47F91800AC98AD /* ViewController.swift */,
+				444C03E41F548DA000990BCC /* MyCustomPlaceholder.swift */,
 			);
 			name = "Kingfisher-Demo";
 			path = "Demo/Kingfisher-Demo";
@@ -2334,6 +2343,7 @@
 				4BD8E04E1D9237E200A091BE /* Kingfisher.swift in Sources */,
 				D10946221C526C61001408EB /* String+MD5.swift in Sources */,
 				D10946231C526C61001408EB /* ThreadHelper.swift in Sources */,
+				444C03EB1F548F6200990BCC /* Placeholder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2386,6 +2396,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				444C03EE1F548F8700990BCC /* MyCustomPlaceholder.swift in Sources */,
 				D12E0CB51C47F9C100AC98AD /* CollectionViewCell.swift in Sources */,
 				D12E0CB61C47F9C100AC98AD /* ViewController.swift in Sources */,
 				D12E0CA21C47F92200AC98AD /* AppDelegate.swift in Sources */,
@@ -2415,6 +2426,7 @@
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
 				4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D10946171C526C0D001408EB /* ThreadHelper.swift in Sources */,
+				444C03EA1F548F6200990BCC /* Placeholder.swift in Sources */,
 				FB402D0F1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				D10946181C526C0D001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
@@ -2455,6 +2467,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				444C03ED1F548F8600990BCC /* MyCustomPlaceholder.swift in Sources */,
 				D12E0C9B1C47F91800AC98AD /* ViewController.swift in Sources */,
 				D12E0C981C47F91800AC98AD /* CollectionViewCell.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
@@ -2484,6 +2497,7 @@
 				D10945FF1C526B86001408EB /* String+MD5.swift in Sources */,
 				4BB24C3D1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
 				D10946001C526B86001408EB /* ThreadHelper.swift in Sources */,
+				444C03E91F548F6100990BCC /* Placeholder.swift in Sources */,
 				FB402D0E1EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				D10946011C526B86001408EB /* UIButton+Kingfisher.swift in Sources */,
 			);
