@@ -24,8 +24,9 @@
 //  THE SOFTWARE.
 
 import UIKit
+import Kingfisher
 
-class MyCustomPlaceholder : UIView {
+class MyCustomPlaceholder : UIView, Placeholder {
     override func draw(_ rect: CGRect) {
         let path = UIBezierPath(ovalIn: rect)
         UIColor.red.setFill()
