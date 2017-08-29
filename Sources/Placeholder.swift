@@ -42,7 +42,7 @@ extension Placeholder where Self: Image {
 
 extension Image: Placeholder {}
 
-extension Placeholder where Self: UIView {
+extension Placeholder where Self: View {
     public func add(to imageView: ImageView) {
         imageView.addSubview(self)
 
