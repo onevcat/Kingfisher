@@ -35,12 +35,14 @@ public protocol Placeholder {
     func remove(from imageView: ImageView)
 }
 
-extension Image: Placeholder {
+extension Placeholder where Self: Image {
     public func add(to imageView: ImageView) { imageView.image = self }
     public func remove(from imageView: ImageView) { imageView.image = nil }
 }
 
-extension UIView: Placeholder {
+extension Image: Placeholder {}
+
+extension Placeholder where Self: UIView {
     public func add(to imageView: ImageView) {
         imageView.addSubview(self)
 
