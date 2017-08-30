@@ -1,9 +1,8 @@
 //
-//  Kingfisher.swift
+//  MyCustomPlaceholder.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 16/9/14.
-//
+//  Created by Tieme van Veen on 28/08/2017.
 //  Copyright (c) 2017 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,50 +23,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
-import ImageIO
+import UIKit
+import Kingfisher
 
-#if os(macOS)
-    import AppKit
-    public typealias Image = NSImage
-    public typealias View = NSView
-    public typealias Color = NSColor
-    public typealias ImageView = NSImageView
-    typealias Button = NSButton
-#else
-    import UIKit
-    public typealias Image = UIImage
-    public typealias View = UIView
-    public typealias Color = UIColor
-    #if !os(watchOS)
-    public typealias ImageView = UIImageView
-    typealias Button = UIButton
-    #endif
-#endif
-
-public final class Kingfisher<Base> {
-    public let base: Base
-    public init(_ base: Base) {
-        self.base = base
+class MyCustomPlaceholder : UIView, Placeholder {
+    override func draw(_ rect: CGRect) {
+        let path = UIBezierPath(ovalIn: rect)
+        UIColor.red.setFill()
+        path.fill()
     }
 }
-
-/**
- A type that has Kingfisher extensions.
- */
-public protocol KingfisherCompatible {
-    associatedtype CompatibleType
-    var kf: CompatibleType { get }
-}
-
-public extension KingfisherCompatible {
-    public var kf: Kingfisher<Self> {
-        get { return Kingfisher(self) }
-    }
-}
-
-extension Image: KingfisherCompatible { }
-#if !os(watchOS)
-extension ImageView: KingfisherCompatible { }
-extension Button: KingfisherCompatible { }
-#endif
