@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>RetrieveImageDownloadTask Struct Reference</title>
+    <title>Placeholder Protocol Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Struct/RetrieveImageDownloadTask" class="dashAnchor"></a>
-    <a title="RetrieveImageDownloadTask Struct Reference"></a>
+    <a name="//apple_ref/swift/Protocol/Placeholder" class="dashAnchor"></a>
+    <a title="Placeholder Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">Kingfisher Docs</a> (78% documented)</p>
@@ -23,7 +23,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">Kingfisher Reference</a>
         <img id="carat" src="../img/carat.png" />
-        RetrieveImageDownloadTask Struct Reference
+        Placeholder Protocol Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -272,14 +272,15 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>RetrieveImageDownloadTask</h1>
+            <h1>Placeholder</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">RetrieveImageDownloadTask</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">Placeholder</span></code></pre>
 
                 </div>
               </div>
-            <p>Download task.</p>
+            <p>Represent a placeholder type which could be set while loading as well as
+loading finished without getting an image.</p>
 
           </section>
           <section class="section task-group-section">
@@ -288,29 +289,37 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:vV10Kingfisher25RetrieveImageDownloadTask15ownerDownloaderXwGSqCS_15ImageDownloader_"></a>
-                    <a name="//apple_ref/swift/Property/ownerDownloader" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vV10Kingfisher25RetrieveImageDownloadTask15ownerDownloaderXwGSqCS_15ImageDownloader_">ownerDownloader</a>
+                    <a name="/s:FP10Kingfisher11Placeholder3addFT2toCSo11UIImageView_T_"></a>
+                    <a name="//apple_ref/swift/Method/add(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP10Kingfisher11Placeholder3addFT2toCSo11UIImageView_T_">add(to:)</a>
                     </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Downloader by which this task is intialized.</p>
+                        <p>How the placeholder should be added to a given image view.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        <p>How the placeholder should be added to a given image view.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">ownerDownloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="n">to</span> <span class="nv">imageView</span><span class="p">:</span> <span class="kt">ImageView</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.12.0/Sources/ImageDownloader.swift#L44">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.12.0/Sources/Placeholder.swift#L39">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -318,92 +327,37 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV10Kingfisher25RetrieveImageDownloadTask6cancelFT_T_"></a>
-                    <a name="//apple_ref/swift/Method/cancel()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV10Kingfisher25RetrieveImageDownloadTask6cancelFT_T_">cancel()</a>
+                    <a name="/s:FP10Kingfisher11Placeholder6removeFT4fromCSo11UIImageView_T_"></a>
+                    <a name="//apple_ref/swift/Method/remove(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FP10Kingfisher11Placeholder6removeFT4fromCSo11UIImageView_T_">remove(from:)</a>
                     </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Cancel this download task. It will trigger the completion handler with an NSURLErrorCancelled error.</p>
+                        <p>How the placeholder should be removed from a given image view.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        <p>How the placeholder should be removed from a given image view.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancel</span><span class="p">()</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">remove</span><span class="p">(</span><span class="n">from</span> <span class="nv">imageView</span><span class="p">:</span> <span class="kt">ImageView</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.12.0/Sources/ImageDownloader.swift#L49-L51">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:vV10Kingfisher25RetrieveImageDownloadTask3urlGSqV10Foundation3URL_"></a>
-                    <a name="//apple_ref/swift/Property/url" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vV10Kingfisher25RetrieveImageDownloadTask3urlGSqV10Foundation3URL_">url</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The original request URL of this download task.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.12.0/Sources/ImageDownloader.swift#L54-L56">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:vV10Kingfisher25RetrieveImageDownloadTask8prioritySf"></a>
-                    <a name="//apple_ref/swift/Property/priority" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vV10Kingfisher25RetrieveImageDownloadTask8prioritySf">priority</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The relative priority of this download task. 
-It represents the <code>priority</code> property of the internal <code>NSURLSessionTask</code> of this download task.
-The value for it is between 0.0~1.0. Default priority is value of 0.5.
-See documentation on <code>priority</code> of <code>NSURLSessionTask</code> for more about it.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">priority</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/3.12.0/Sources/ImageDownloader.swift#L62-L69">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/3.12.0/Sources/Placeholder.swift#L42">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
