@@ -42,7 +42,7 @@ Pod::Spec.new do |s|
                              "Sources/NSButton+Kingfisher.swift", 
                              "Sources/Indicator.swift", 
                              "Sources/Filter.swift",
-                              "Sources/Placeholder.swift"
+                             "Sources/Placeholder.swift"
                             ]
   s.ios.exclude_files = "Sources/NSButton+Kingfisher.swift"
   s.tvos.exclude_files = "Sources/NSButton+Kingfisher.swift"
