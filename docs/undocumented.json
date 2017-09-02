@@ -107,35 +107,35 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 671,
+      "line": 672,
       "symbol": "DataProxy",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 680,
+      "line": 681,
       "symbol": "Data.kf",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 707,
+      "line": 708,
       "symbol": "CGSizeProxy",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 716,
+      "line": 717,
       "symbol": "CGSize.kf",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 1041,
+      "line": 1042,
       "symbol": "Kingfisher.image(withRoundRadius:fit:scale:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
