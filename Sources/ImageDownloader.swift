@@ -562,7 +562,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                     downloader.delegate?.imageDownloader(downloader, didDownload: image, for: url, with: task.response)
                     
                     if options.backgroundDecode {
-                        let decodedImage = image.kf.decoded(scale: options.scaleFactor)
+                        let decodedImage = image.kf.decoded
                         callbackQueue.safeAsync { completionHandler?(decodedImage, nil, url, data) }
                     } else {
                         callbackQueue.safeAsync { completionHandler?(image, nil, url, data) }
