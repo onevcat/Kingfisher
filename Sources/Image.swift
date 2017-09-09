@@ -340,16 +340,18 @@ extension Kingfisher where Base: Image {
     // MARK: - Round Corner
     /// Create a round corner image based on `self`.
     ///
-    /// - parameter radius:  The round corner radius of creating image.
-    /// - parameter size:    The target size of creating image.
-    /// - parameter corners: The target corners which will be applied rounding.
+    /// - parameter radius:          The round corner radius of creating image.
+    /// - parameter size:            The target size of creating image.
+    /// - parameter corners:         The target corners which will be applied rounding.
+    /// - parameter backgroundColor: The background color for the output image
     ///
     /// - returns: An image with round corner of `self`.
     ///
     /// - Note: This method only works for CG-based image.
     public func image(withRoundRadius radius: CGFloat,
                       fit size: CGSize,
-                      roundingCorners corners: RectCorner = .all) -> Image
+                      roundingCorners corners: RectCorner = .all,
+                      backgroundColor: Color? = nil) -> Image
     {   
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Round corner image only works for CG-based image.")
@@ -359,6 +361,12 @@ extension Kingfisher where Base: Image {
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         return draw(cgImage: cgImage, to: size) {
             #if os(macOS)
+                if let backgroundColor = backgroundColor {
+                    let rectPath = NSBezierPath(rect: rect)
+                    backgroundColor.setFill()
+                    rectPath.fill()
+                }
+
                 let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius)
                 path.windingRule = .evenOddWindingRule
                 path.addClip()
@@ -368,6 +376,13 @@ extension Kingfisher where Base: Image {
                     assertionFailure("[Kingfisher] Failed to create CG context for image.")
                     return
                 }
+
+                if let backgroundColor = backgroundColor {
+                    let rectPath = UIBezierPath(rect: rect)
+                    backgroundColor.setFill()
+                    rectPath.fill()
+                }
+
                 let path = UIBezierPath(roundedRect: rect,
                                         byRoundingCorners: corners.uiRectCorner,
                                         cornerRadii: CGSize(width: radius, height: radius)).cgPath
