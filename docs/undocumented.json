@@ -100,42 +100,42 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 438,
+      "line": 453,
       "symbol": "Kingfisher.crop(to:anchorOn:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 672,
+      "line": 687,
       "symbol": "DataProxy",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 681,
+      "line": 696,
       "symbol": "Data.kf",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 708,
+      "line": 723,
       "symbol": "CGSizeProxy",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 717,
+      "line": 732,
       "symbol": "CGSize.kf",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image.swift",
-      "line": 1042,
+      "line": 1057,
       "symbol": "Kingfisher.image(withRoundRadius:fit:scale:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -254,21 +254,21 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/ImageProcessor.swift",
-      "line": 225,
+      "line": 239,
       "symbol": "ContentMode.none",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/ImageProcessor.swift",
-      "line": 226,
+      "line": 240,
       "symbol": "ContentMode.aspectFit",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/ImageProcessor.swift",
-      "line": 227,
+      "line": 241,
       "symbol": "ContentMode.aspectFill",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
