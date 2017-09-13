@@ -30,16 +30,18 @@ import ImageIO
 #if os(macOS)
     import AppKit
     public typealias Image = NSImage
+    public typealias View = NSView
     public typealias Color = NSColor
     public typealias ImageView = NSImageView
-    typealias Button = NSButton
+    public typealias Button = NSButton
 #else
     import UIKit
     public typealias Image = UIImage
     public typealias Color = UIColor
     #if !os(watchOS)
     public typealias ImageView = UIImageView
-    typealias Button = UIButton
+    public typealias View = UIView
+    public typealias Button = UIButton
     #endif
 #endif
 
