@@ -15,20 +15,10 @@ platform :ios do
     scan(scheme: "Kingfisher-tvOS", clean: true)
   end
   
-  desc "Build for Carthage"
-  lane :carthage_lint do
-      Actions.sh("cd .. && carthage build --no-skip-current && cd fastlane")
-  end
-  
-  desc "Lint for Cocoapod"
-  lane :pod_lint do
-      Actions.sh("cd .. && pod lib lint && cd fastlane")
-  end
-  
   desc "Lint"
   lane :lint do
-      carthage_lint
-      pod_lint
+      carthage(command: "build", no_skip_current: true)
+      pod_lib_lint
   end
 
   desc "Release new version"
@@ -40,7 +30,7 @@ platform :ios do
       ensure_git_status_clean
       
       test_all_schemes
-      carthage_lint
+      lint
       
       sync_build_number_to_git
       increment_version_number(version_number: target_version)

@@ -67,7 +67,7 @@ extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
-        
+
         _ = (cell as! CollectionViewCell).cellImageView.kf.setImage(with: url,
                                            placeholder: nil,
                                            options: [.transition(ImageTransition.fade(1))],

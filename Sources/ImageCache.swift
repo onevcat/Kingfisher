@@ -302,7 +302,7 @@ open class ImageCache {
                 if let image = sSelf.retrieveImageInDiskCache(forKey: key, options: options) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async {
-                            let result = image.kf.decoded(scale: options.scaleFactor)
+                            let result = image.kf.decoded
                             
                             sSelf.store(result,
                                         forKey: key,
