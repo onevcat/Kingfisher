@@ -169,7 +169,13 @@ extension ImageProcessorTests {
         
         let targetImages = filteredImageNames
             .map { $0.replacingOccurrences(of: ".", with: "-\(specifiedSuffix).") }
-            .flatMap { Image(fileName: $0) }
+            .flatMap { name -> Image? in
+                if #available(iOS 11, tvOS 11.0, *) {
+                    // Look for the version specified target first. Then roll back to base.
+                    return Image(fileName: name.replacingOccurrences(of: ".", with: "-iOS11.")) ?? Image(fileName: name)
+                }
+                return Image(fileName: name)
+            }
         
         let resultImages = imageData(noAlpha: noAlpha).flatMap { p.process(item: .data($0), options: []) }
         

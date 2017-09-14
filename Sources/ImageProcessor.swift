@@ -584,25 +584,3 @@ fileprivate extension Color {
         return String(format:"#%08x", rgba)
     }
 }
-
-// MARK: - Deprecated
-extension ResizingImageProcessor {
-    /// Reference size of output image should follow.
-    @available(*, deprecated,
-    message: "targetSize are renamed. Use `referenceSize` instead",
-    renamed: "referenceSize")
-    public var targetSize: CGSize {
-        return referenceSize
-    }
-    
-    /// Initialize a `ResizingImageProcessor`
-    ///
-    /// - parameter targetSize: Reference size of output image should follow.
-    /// - parameter contentMode: Target content mode of output image should be.
-    @available(*, deprecated,
-    message: "targetSize and contentMode are renamed. Use `init(referenceSize:mode:)` instead",
-    renamed: "init(referenceSize:mode:)")
-    public init(targetSize: CGSize, contentMode: ContentMode = .none) {
-        self.init(referenceSize: targetSize, mode: contentMode)
-    }
-}

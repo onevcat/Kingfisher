@@ -1,6 +1,6 @@
 language: objective-c
 os: osx
-osx_image: xcode8.3
+osx_image: xcode9
 
 env:
   matrix:
@@ -18,7 +18,7 @@ script:
       xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.1' -enableCodeCoverage YES | xcpretty
     elif [ "$TEST_TYPE" = macOS ]; then
       set -o pipefail
-      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -sdk macosx -enableCodeCoverage YES | xcpretty
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -enableCodeCoverage YES | xcpretty
     elif [ "$TEST_TYPE" = tvOS ]; then
       set -o pipefail
       xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-tvOS -destination "platform=tvOS Simulator,name=Apple TV 1080p" -enableCodeCoverage YES | xcpretty

@@ -306,18 +306,3 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .cacheOriginalImage }
     }
 }
-
-// MARK: - Deprecated. Only for back compatibility.
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-
-    /// Whether the image data should be all loaded at once if it is a GIF.
-    @available(*, deprecated, renamed: "preloadAllAnimationData")
-    public var preloadAllGIFData: Bool {
-        return preloadAllAnimationData
-    }
-}
-
-public extension KingfisherOptionsInfoItem {
-    @available(*, deprecated, renamed: "preloadAllAnimationData")
-    static let preloadAllGIFData = KingfisherOptionsInfoItem.preloadAllAnimationData
-}

@@ -60,6 +60,13 @@ Cache type of a cached image.
 */
 public enum CacheType {
     case none, memory, disk
+    
+    public var cached: Bool {
+        switch self {
+        case .memory, .disk: return true
+        case .none: return false
+        }
+    }
 }
 
 /// `ImageCache` represents both the memory and disk cache system of Kingfisher. 
@@ -541,27 +548,17 @@ open class ImageCache {
 
     // MARK: - Check cache status
     
-    /**
-    *  Cache result for checking whether an image is cached for a key.
-    */
-    public struct CacheCheckResult {
-        public let cached: Bool
-        public let cacheType: CacheType?
-    }
-    
-    /**
-    Check whether an image is cached for a key.
-    
-    - parameter key: Key for the image.
-    
-    - returns: The check result.
-    */
-    open func isImageCached(forKey key: String, processorIdentifier identifier: String = "") -> CacheCheckResult {
-        
+    /// Cache type for checking whether an image is cached for a key in current cache.
+    ///
+    /// - Parameters:
+    ///   - key: Key for the image.
+    ///   - identifier: Processor identifier which used for this image. Default is empty string.
+    /// - Returns: A `CacheType` instance which indicates the cache status. `.none` means the image is not in cache yet.
+    open func imageCachedType(forKey key: String, processorIdentifier identifier: String = "") -> CacheType {
         let computedKey = key.computedKey(with: identifier)
         
         if memoryCache.object(forKey: computedKey as NSString) != nil {
-            return CacheCheckResult(cached: true, cacheType: .memory)
+            return .memory
         }
         
         let filePath = cachePath(forComputedKey: computedKey)
@@ -570,12 +567,12 @@ open class ImageCache {
         ioQueue.sync {
             diskCached = fileManager.fileExists(atPath: filePath)
         }
-
+        
         if diskCached {
-            return CacheCheckResult(cached: true, cacheType: .disk)
+            return .disk
         }
         
-        return CacheCheckResult(cached: false, cacheType: nil)
+        return .none
     }
     
     /**
@@ -648,6 +645,39 @@ extension ImageCache {
           return (key.kf.md5 as NSString).appendingPathExtension(ext)!
         }
         return key.kf.md5
+    }
+}
+
+// MARK: - Deprecated
+extension ImageCache {
+    /**
+     *  Cache result for checking whether an image is cached for a key.
+     */
+    @available(*, deprecated,
+    message: "CacheCheckResult is deprecated. Use imageCachedType(forKey:processorIdentifier:) API instead.")
+    public struct CacheCheckResult {
+        public let cached: Bool
+        public let cacheType: CacheType?
+    }
+    
+    /**
+     Check whether an image is cached for a key.
+     
+     - parameter key: Key for the image.
+     
+     - returns: The check result.
+     */
+    @available(*, deprecated,
+    message: "Use imageCachedType(forKey:processorIdentifier:) instead. CacheCheckResult.none indicates not being cached.",
+    renamed: "imageCachedType(forKey:processorIdentifier:)")
+    open func isImageCached(forKey key: String, processorIdentifier identifier: String = "") -> CacheCheckResult {
+        let result = imageCachedType(forKey: key, processorIdentifier: identifier)
+        switch result {
+        case .memory, .disk:
+            return CacheCheckResult(cached: true, cacheType: result)
+        case .none:
+            return CacheCheckResult(cached: false, cacheType: nil)
+        }
     }
 }
 

@@ -179,7 +179,7 @@ extension Kingfisher where Base: Image {
                 return nil
             }
             let rep = NSBitmapImageRep(cgImage: cgimage)
-            return rep.representation(using: .PNG, properties: [:])
+            return rep.representation(using: .png, properties: [:])
         #else
             return UIImagePNGRepresentation(base)
         #endif
@@ -192,7 +192,7 @@ extension Kingfisher where Base: Image {
                 return nil
             }
             let rep = NSBitmapImageRep(cgImage: cgImage)
-            return rep.representation(using:.JPEG, properties: [NSImageCompressionFactor: compressionQuality])
+            return rep.representation(using:.jpeg, properties: [.compressionFactor: compressionQuality])
         #else
             return UIImageJPEGRepresentation(base, compressionQuality)
         #endif
@@ -580,7 +580,7 @@ extension Kingfisher where Base: Image {
                 base.draw(in: rect)
                 if fraction > 0 {
                     color.withAlphaComponent(1 - fraction).set()
-                    NSRectFillUsingOperation(rect, .sourceAtop)
+                    rect.fill(using: .sourceAtop)
                 }
             #else
                 color.set()
@@ -623,7 +623,7 @@ extension Kingfisher where Base: Image {
         #if os(watchOS)
             return base
         #else
-            return apply(.colorControl(brightness, contrast, saturation, inputEV))
+            return apply(.colorControl((brightness, contrast, saturation, inputEV)))
         #endif
     }
 }
@@ -793,7 +793,7 @@ extension Kingfisher where Base: Image {
                 samplesPerPixel: 4,
                 hasAlpha: true,
                 isPlanar: false,
-                colorSpaceName: NSCalibratedRGBColorSpace,
+                colorSpaceName: .calibratedRGB,
                 bytesPerRow: 0,
                 bitsPerPixel: 0) else
             {
@@ -807,7 +807,7 @@ extension Kingfisher where Base: Image {
                 return nil
             }
             
-            NSGraphicsContext.setCurrent(context)
+            NSGraphicsContext.current = context
             return context.cgContext
         #else
             UIGraphicsBeginImageContextWithOptions(size, false, scale)
@@ -836,7 +836,7 @@ extension Kingfisher where Base: Image {
             samplesPerPixel: 4,
             hasAlpha: true,
             isPlanar: false,
-            colorSpaceName: NSCalibratedRGBColorSpace,
+            colorSpaceName: .calibratedRGB,
             bytesPerRow: 0,
             bitsPerPixel: 0) else
         {
@@ -848,7 +848,7 @@ extension Kingfisher where Base: Image {
         NSGraphicsContext.saveGraphicsState()
         
         let context = NSGraphicsContext(bitmapImageRep: rep)
-        NSGraphicsContext.setCurrent(context)
+        NSGraphicsContext.current = context
         draw()
         NSGraphicsContext.restoreGraphicsState()
         
@@ -941,120 +941,3 @@ extension RectCorner {
 }
 #endif
 
-// MARK: - Deprecated. Only for back compatibility.
-extension Image {
-    /**
-     Normalize the image. This method does nothing in OS X.
-     
-     - returns: The image itself.
-     */
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.normalized` instead.",
-    renamed: "kf.normalized")
-    public func kf_normalized() -> Image {
-        return kf.normalized
-    }
-    
-    // MARK: - Round Corner
-    
-    /// Create a round corner image based on `self`.
-    ///
-    /// - parameter radius: The round corner radius of creating image.
-    /// - parameter size:   The target size of creating image.
-    /// - parameter scale:  The image scale of creating image.
-    ///
-    /// - returns: An image with round corner of `self`.
-    ///
-    /// - Note: This method only works for CG-based image.
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.image(withRoundRadius:fit:scale:)` instead.",
-    renamed: "kf.image")
-    public func kf_image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
-        return kf.image(withRoundRadius: radius, fit: size)
-    }
-    
-    // MARK: - Resize
-    /// Resize `self` to an image of new size.
-    ///
-    /// - parameter size: The target size.
-    ///
-    /// - returns: An image with new size.
-    ///
-    /// - Note: This method only works for CG-based image.
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.resize(to:)` instead.",
-    renamed: "kf.resize")
-    public func kf_resize(to size: CGSize) -> Image {
-        return kf.resize(to: size)
-    }
-    
-    // MARK: - Blur
-    /// Create an image with blur effect based on `self`.
-    ///
-    /// - parameter radius: The blur radius should be used when creating blue.
-    ///
-    /// - returns: An image with blur effect applied.
-    ///
-    /// - Note: This method only works for CG-based image.
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.blurred(withRadius:)` instead.",
-    renamed: "kf.blurred")
-    public func kf_blurred(withRadius radius: CGFloat) -> Image {
-        return kf.blurred(withRadius: radius)
-    }
-    
-    // MARK: - Overlay
-    /// Create an image from `self` with a color overlay layer.
-    ///
-    /// - parameter color:    The color should be use to overlay.
-    /// - parameter fraction: Fraction of input color. From 0.0 to 1.0. 0.0 means solid color, 1.0 means transparent overlay.
-    ///
-    /// - returns: An image with a color overlay applied.
-    ///
-    /// - Note: This method only works for CG-based image.
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.overlaying(with:fraction:)` instead.",
-    renamed: "kf.overlaying")
-    public func kf_overlaying(with color: Color, fraction: CGFloat) -> Image {
-        return kf.overlaying(with: color, fraction: fraction)
-    }
-    
-    // MARK: - Tint
-    
-    /// Create an image from `self` with a color tint.
-    ///
-    /// - parameter color: The color should be used to tint `self`
-    ///
-    /// - returns: An image with a color tint applied.
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.tinted(with:)` instead.",
-    renamed: "kf.tinted")
-    public func kf_tinted(with color: Color) -> Image {
-        return kf.tinted(with: color)
-    }
-    
-    // MARK: - Color Control
-    
-    /// Create an image from `self` with color control.
-    ///
-    /// - parameter brightness: Brightness changing to image.
-    /// - parameter contrast:   Contrast changing to image.
-    /// - parameter saturation: Saturation changing to image.
-    /// - parameter inputEV:    InputEV changing to image.
-    ///
-    /// - returns: An image with color control applied.
-    @available(*, deprecated,
-    message: "Extensions directly on Image are deprecated. Use `kf.adjusted` instead.",
-    renamed: "kf.adjusted")
-    public func kf_adjusted(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) -> Image {
-        return kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
-    }
-}
-
-extension Kingfisher where Base: Image {
-    @available(*, deprecated,
-    message: "`scale` is not used. Use the version without scale instead. (Remove the `scale` argument)")
-    public func image(withRoundRadius radius: CGFloat, fit size: CGSize, scale: CGFloat) -> Image {
-        return image(withRoundRadius: radius, fit: size)
-    }
-}

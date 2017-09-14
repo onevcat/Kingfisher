@@ -65,8 +65,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(count, 8, "There should be 8 frames.")
 #else
         XCTAssertEqual(image!.kf.images!.count, 8, "There should be 8 frames.")
-        
-        XCTAssertEqualWithAccuracy(image!.kf.duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
+        XCTAssertEqual(image!.kf.duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
 #endif
     }
     
