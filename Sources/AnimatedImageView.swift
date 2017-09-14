@@ -371,12 +371,3 @@ extension Array {
 private func pure<T>(_ value: T) -> [T] {
     return [value]
 }
-
-// MARK: - Deprecated. Only for back compatibility.
-extension AnimatedImageView {
-    // This is for back compatibility that using regular UIImageView to show GIF.
-    @available(*, deprecated, renamed: "shouldPreloadAllAnimation")
-    override func shouldPreloadAllGIF() -> Bool {
-        return false
-    }
-}

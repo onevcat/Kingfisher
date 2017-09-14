@@ -33,7 +33,7 @@ import UIKit
 
 // MARK: - Extension methods.
 /**
- *	Set image to use from web.
+ *    Set image to use from web.
  */
 extension Kingfisher where Base: ImageView {
     /**
@@ -253,73 +253,6 @@ extension Kingfisher where Base: ImageView {
 }
 
 
-// MARK: - Deprecated. Only for back compatibility.
-/**
-*	Set image to use from web. Deprecated. Use `kf` namespacing instead.
-*/
-extension ImageView {
-    /**
-    Set an image with a resource, a placeholder image, options, progress handler and completion handler.
-    
-    - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-    - parameter placeholder:       A placeholder image when retrieving the image at URL.
-    - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    - parameter progressBlock:     Called when the image downloading progress gets updated.
-    - parameter completionHandler: Called when the image retrieved and set.
-    
-    - returns: A task represents the retrieving process.
-     
-    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread. 
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-    */
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.setImage` instead.", renamed: "kf.setImage")
-    @discardableResult
-    public func kf_setImage(with resource: Resource?,
-                              placeholder: Placeholder? = nil,
-                                  options: KingfisherOptionsInfo? = nil,
-                            progressBlock: DownloadProgressBlock? = nil,
-                        completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
-    {
-        return kf.setImage(with: resource, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
-    }
-    
-    /**
-     Cancel the image download task bounded to the image view if it is running.
-     Nothing will happen if the downloading has already finished.
-     */
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.cancelDownloadTask` instead.", renamed: "kf.cancelDownloadTask")
-    public func kf_cancelDownloadTask() { kf.cancelDownloadTask() }
-    
-    /// Get the image URL binded to this image view.
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.webURL` instead.", renamed: "kf.webURL")
-    public var kf_webURL: URL? { return kf.webURL }
-    
-    /// Holds which indicator type is going to be used.
-    /// Default is .none, means no indicator will be shown.
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.indicatorType` instead.", renamed: "kf.indicatorType")
-    public var kf_indicatorType: IndicatorType {
-        get { return kf.indicatorType }
-        set { kf.indicatorType = newValue }
-    }
-    
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated. Use `imageView.kf.indicator` instead.", renamed: "kf.indicator")
-    /// Holds any type that conforms to the protocol `Indicator`.
-    /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
-    /// It will be `nil` if `kf_indicatorType` is `.none`.
-    public private(set) var kf_indicator: Indicator? {
-        get { return kf.indicator }
-        set { kf.indicator = newValue }
-    }
-    
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated.", renamed: "kf.imageTask")
-    fileprivate var kf_imageTask: RetrieveImageTask? { return kf.imageTask }
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated.", renamed: "kf.setImageTask")
-    fileprivate func kf_setImageTask(_ task: RetrieveImageTask?) { kf.setImageTask(task) }
-    @available(*, deprecated, message: "Extensions directly on image views are deprecated.", renamed: "kf.setWebURL")
-    fileprivate func kf_setWebURL(_ url: URL) { kf.setWebURL(url) }
-
+@objc extension ImageView {
     func shouldPreloadAllAnimation() -> Bool { return true }
-
-    @available(*, deprecated, renamed: "shouldPreloadAllAnimation")
-    func shouldPreloadAllGIF() -> Bool { return true }
 }

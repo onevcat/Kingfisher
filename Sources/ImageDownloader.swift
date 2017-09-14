@@ -586,11 +586,3 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
 // Placeholder. For retrieving extension methods of ImageDownloaderDelegate
 extension ImageDownloader: ImageDownloaderDelegate {}
 
-// MARK: - Deprecated
-extension ImageDownloader {
-    @available(*, deprecated, message: "`requestsUsePipeling` is deprecated. Use `requestsUsePipelining` instead", renamed: "requestsUsePipelining")
-    open var requestsUsePipeling: Bool {
-        get { return requestsUsePipelining }
-        set { requestsUsePipelining = newValue }
-    }
-}
