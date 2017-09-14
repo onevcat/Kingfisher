@@ -2,6 +2,13 @@
 
 -----
 
+## [3.13.1 - Evil Setting](https://github.com/onevcat/Kingfisher/releases/tag/3.13.1) (2017-09-14)
+
+#### Fix
+* Disable code coverage for all targets in build setting to avoid rejecting from iTunes when building with Xcode 9. [#753](https://github.com/onevcat/Kingfisher/pull/753)
+
+---
+
 ## [3.13.0 - Rum Bird](https://github.com/onevcat/Kingfisher/releases/tag/3.13.0) (2017-09-12)
 
 #### Add
