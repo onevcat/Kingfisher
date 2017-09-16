@@ -46,8 +46,8 @@ Kingfisher will download the image from `url`, send it to both the memory cache 
 
 Main development of Kingfisher is based on Swift 4. Only critical bug fixes will be applied to Kingfisher 3.x.
 
-Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 has been removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble in migrating, please open an issue to discuss.
-[Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
+- Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 has been removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble in migrating, please open an issue to discuss.
+- [Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
 
 ## Next Steps
 
