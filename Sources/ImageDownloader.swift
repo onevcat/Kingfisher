@@ -132,6 +132,18 @@ public protocol ImageDownloaderDelegate: class {
             you can implement this method to change that behavior.
     */
     func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool
+    
+    /**
+     Called when the `ImageDownloader` object successfully downloaded image data from specified URL.
+     
+     - parameter downloader: The `ImageDownloader` object finishes data downloading.
+     - parameter data:       Downloaded data.
+     - parameter url:        URL of the original request URL.
+     
+     - Note: This callback can be used to preprocess raw image data
+             before creation of UIImage instance (i.e. decrypting).
+     */
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
 }
 
 extension ImageDownloaderDelegate {
@@ -140,6 +152,9 @@ extension ImageDownloaderDelegate {
     public func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?) {}
     public func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool {
         return (200..<400).contains(code)
+    }
+    public func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data? {
+        return nil
     }
 }
 
@@ -536,7 +551,12 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             
             self.cleanFetchLoad(for: url)
             
-            let data = fetchLoad.responseData as Data
+            let data: Data
+            if let modifiedData = downloader.delegate?.imageDownloader(downloader, didDownload: fetchLoad.responseData as Data, for: url) {
+                data = modifiedData
+            } else {
+                data = fetchLoad.responseData as Data
+            }
             
             // Cache the processed images. So we do not need to re-process the image if using the same processor.
             // Key is the identifier of processor.
