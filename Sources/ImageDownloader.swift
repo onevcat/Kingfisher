@@ -140,8 +140,10 @@ public protocol ImageDownloaderDelegate: class {
      - parameter data:       Downloaded data.
      - parameter url:        URL of the original request URL.
      
+     - returns: The data from which Kingfisher should use to create an image.
+     
      - Note: This callback can be used to preprocess raw image data
-             before creation of UIImage instance (i.e. decrypting).
+             before creation of UIImage instance (i.e. decrypting or verification).
      */
     func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
 }
@@ -551,11 +553,13 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
             
             self.cleanFetchLoad(for: url)
             
-            let data: Data
-            if let modifiedData = downloader.delegate?.imageDownloader(downloader, didDownload: fetchLoad.responseData as Data, for: url) {
-                data = modifiedData
+            let data: Data?
+            let fetchedData = fetchLoad.responseData as Data
+            
+            if let delegate = downloader.delegate {
+                data = delegate.imageDownloader(downloader, didDownload: fetchedData, for: url)
             } else {
-                data = fetchLoad.responseData as Data
+                data = fetchedData
             }
             
             // Cache the processed images. So we do not need to re-process the image if using the same processor.
@@ -570,7 +574,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 let processor = options.processor
                 
                 var image = imageCache[processor.identifier]
-                if image == nil {
+                if let data = data, image == nil {
                     image = processor.process(item: .data(data), options: options)
                     // Add the processed image to cache. 
                     // If `image` is nil, nothing will happen (since the key is not existing before).

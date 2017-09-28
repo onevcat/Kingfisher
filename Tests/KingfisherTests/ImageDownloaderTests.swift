@@ -381,6 +381,31 @@ class ImageDownloaderTests: XCTestCase {
 
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testDownloadedDataCouldBeModified() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        
+        let url = URL(string: URLString)!
+        
+        downloader.delegate = self
+        downloader.downloadImage(with: url) { image, error, imageURL, data in
+            XCTAssertNil(image)
+            XCTAssertNotNil(error)
+            XCTAssertEqual(error?.code, KingfisherError.badData.rawValue)
+            self.downloader.delegate = nil
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+}
+
+extension ImageDownloaderTests: ImageDownloaderDelegate {
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data? {
+        return nil
+    }
 }
 
 class URLModifier: ImageDownloadRequestModifier {
