@@ -7,7 +7,7 @@ target 'KingfisherTests' do
 end
 
 target 'KingfisherTests-macOS' do
-    platform :osx, '10.11'
+    platform :osx, '10.10'
     pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git', :branch => 'swift4'
 end
 
