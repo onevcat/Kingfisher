@@ -412,13 +412,6 @@ extension ImageDownloader {
             }
         }
     }
-    
-    func clean(for url: URL) {
-        barrierQueue.sync(flags: .barrier) {
-            fetchLoads.removeValue(forKey: url)
-            return
-        }
-    }
 }
 
 // MARK: - NSURLSessionDataDelegate
@@ -510,11 +503,12 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
         guard let downloader = downloadHolder else {
             return
         }
-        
-        downloader.clean(for: url)
-        
-        if downloader.fetchLoads.isEmpty {
-            downloadHolder = nil
+
+        downloader.barrierQueue.sync(flags: .barrier) {
+            downloader.fetchLoads.removeValue(forKey: url)
+            if downloader.fetchLoads.isEmpty {
+                downloadHolder = nil
+            }
         }
     }
     
