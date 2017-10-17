@@ -2,6 +2,13 @@
 
 -----
 
+## [4.1.1 - Love Barrier Again](https://github.com/onevcat/Kingfisher/releases/tag/4.1.1) (2017-10-17)
+
+#### Fix
+* A potential race condition in `ImageDownloader`. [#763](https://github.com/onevcat/Kingfisher/issues/763)
+
+---
+
 ## [4.1.0 - Data in Hand](https://github.com/onevcat/Kingfisher/releases/tag/4.1.0) (2017-09-28)
 
 #### Add
