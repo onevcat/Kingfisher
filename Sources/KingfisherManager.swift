@@ -171,7 +171,7 @@ public class KingfisherManager {
                                       cacheSerializer: options.cacheSerializer,
                                       toDisk: !options.cacheMemoryOnly,
                                       completionHandler: nil)
-                    if options.cacheOriginalImage {
+                    if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
                         let originalCache = options.originalCache
                         let defaultProcessor = DefaultImageProcessor.default
                         if let originalImage = defaultProcessor.process(item: .data(originalData), options: options) {
@@ -183,7 +183,6 @@ public class KingfisherManager {
                                               toDisk: !options.cacheMemoryOnly,
                                               completionHandler: nil)
                         }
-                        
                     }
                 }
 
