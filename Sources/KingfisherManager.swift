@@ -174,8 +174,8 @@ public class KingfisherManager {
                     if options.cacheOriginalImage {
                         let originalCache = options.originalCache
                         let defaultProcessor = DefaultImageProcessor.default
-                        if let originaliImage = defaultProcessor.process(item: .data(originalData), options: options) {
-                            originalCache.store(originaliImage,
+                        if let originalImage = defaultProcessor.process(item: .data(originalData), options: options) {
+                            originalCache.store(originalImage,
                                               original: originalData,
                                               forKey: key,
                                               processorIdentifier: defaultProcessor.identifier,
