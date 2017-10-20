@@ -388,6 +388,72 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testCacheOriginalImageWithOriginalCache() {
+        cleanDefaultCache()
+        let expectation = self.expectation(description: "wait for downloading image")
+        let URLString = testKeys[0]
+        let originalCache = ImageCache(name: "test-originalCache")
+        
+        // Clear original cache first.
+        originalCache.clearMemoryCache()
+        originalCache.clearDiskCache {
+            _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+            
+            let url = URL(string: URLString)!
+            
+            let p = RoundCornerImageProcessor(cornerRadius: 20)
+            self.manager.retrieveImage(with: url, options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache)], progressBlock: nil) {
+                image, error, cacheType, imageURL in
+                delay(0.1) {
+                    let originalCached = originalCache.imageCachedType(forKey: URLString)
+                    XCTAssertEqual(originalCached, .memory)
+                    expectation.fulfill()
+                }
+            }
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testCouldProcessOnOriginalImageWithOriginalCache() {
+        cleanDefaultCache()
+        let expectation = self.expectation(description: "waiting for downloading finished")
+        
+        let URLString = testKeys[0]
+        let originalCache = ImageCache(name: "test-originalCache")
+        
+        // Clear original cache first.
+        originalCache.clearMemoryCache()
+        originalCache.clearDiskCache {
+            originalCache.store(testImage, original: testImageData! as Data,
+                                forKey: URLString, processorIdentifier: DefaultImageProcessor.default.identifier,
+                                cacheSerializer: DefaultCacheSerializer.default, toDisk: true)
+            {
+                let p = SimpleProcessor()
+                
+                let cached = self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: p.identifier)
+                XCTAssertFalse(cached.cached)
+                
+                // No downloading will happen
+                self.manager.retrieveImage(with: URL(string: URLString)!, options: [.processor(p), .originalCache(originalCache)], progressBlock: nil) {
+                    image, error, cacheType, url in
+                    XCTAssertNotNil(image)
+                    XCTAssertEqual(cacheType, .none)
+                    XCTAssertTrue(p.processed)
+                    
+                    // The processed image should be cached
+                    delay(0.1) {
+                        let cached = self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: p.identifier)
+                        XCTAssertTrue(cached.cached)
+                        expectation.fulfill()
+                    }
+                }
+            }
+        }
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
