@@ -310,6 +310,14 @@
 		D18C16B31E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */; };
 		D18C16B61E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */; };
 		D18C16B91E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */; };
+		D1C0B1781F9B965A00422960 /* unicorn-overlay-red-mac-macOS1013.png in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B1721F9B965800422960 /* unicorn-overlay-red-mac-macOS1013.png */; };
+		D1C0B1791F9B965A00422960 /* kingfisher-overlay-red-07-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B1731F9B965800422960 /* kingfisher-overlay-red-07-mac-macOS1013.jpg */; };
+		D1C0B17A1F9B965A00422960 /* onevcat-overlay-red-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B1741F9B965900422960 /* onevcat-overlay-red-mac-macOS1013.jpg */; };
+		D1C0B17B1F9B965A00422960 /* unicorn-overlay-red-07-mac-macOS1013.png in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B1751F9B965900422960 /* unicorn-overlay-red-07-mac-macOS1013.png */; };
+		D1C0B17C1F9B965A00422960 /* onevcat-overlay-red-07-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B1761F9B965900422960 /* onevcat-overlay-red-07-mac-macOS1013.jpg */; };
+		D1C0B17D1F9B965A00422960 /* kingfisher-overlay-red-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B1771F9B965900422960 /* kingfisher-overlay-red-mac-macOS1013.jpg */; };
+		D1C0B1801F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B17E1F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg */; };
+		D1C0B1811F9B997C00422960 /* kingfisher-tint-yellow-02-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C0B17F1F9B997C00422960 /* kingfisher-tint-yellow-02-mac-macOS1013.jpg */; };
 		D1D2C32A1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
 		D1D2C32B1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
 		D1D2C32C1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
@@ -635,6 +643,14 @@
 		D18C16AE1E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-cropping-50-50-anchor-center-mac.jpg"; sourceTree = "<group>"; };
 		D18C16AF1E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-cropping-50-50-anchor-center-mac.jpg"; sourceTree = "<group>"; };
 		D18C16B01E87FDA300673D57 /* unicorn-cropping-50-50-anchor-center-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-cropping-50-50-anchor-center-mac.png"; sourceTree = "<group>"; };
+		D1C0B1721F9B965800422960 /* unicorn-overlay-red-mac-macOS1013.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-overlay-red-mac-macOS1013.png"; sourceTree = "<group>"; };
+		D1C0B1731F9B965800422960 /* kingfisher-overlay-red-07-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-overlay-red-07-mac-macOS1013.jpg"; sourceTree = "<group>"; };
+		D1C0B1741F9B965900422960 /* onevcat-overlay-red-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-overlay-red-mac-macOS1013.jpg"; sourceTree = "<group>"; };
+		D1C0B1751F9B965900422960 /* unicorn-overlay-red-07-mac-macOS1013.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-overlay-red-07-mac-macOS1013.png"; sourceTree = "<group>"; };
+		D1C0B1761F9B965900422960 /* onevcat-overlay-red-07-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-overlay-red-07-mac-macOS1013.jpg"; sourceTree = "<group>"; };
+		D1C0B1771F9B965900422960 /* kingfisher-overlay-red-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-overlay-red-mac-macOS1013.jpg"; sourceTree = "<group>"; };
+		D1C0B17E1F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-tint-yellow-02-mac-macOS1013.jpg"; sourceTree = "<group>"; };
+		D1C0B17F1F9B997C00422960 /* kingfisher-tint-yellow-02-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-tint-yellow-02-mac-macOS1013.jpg"; sourceTree = "<group>"; };
 		D1D2C3291C70A3230018F2F9 /* single-frame.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "single-frame.gif"; sourceTree = "<group>"; };
 		D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensionTests.swift; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -830,6 +846,12 @@
 		4BB83E241E32075800B64183 /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
+				D1C0B1731F9B965800422960 /* kingfisher-overlay-red-07-mac-macOS1013.jpg */,
+				D1C0B1771F9B965900422960 /* kingfisher-overlay-red-mac-macOS1013.jpg */,
+				D1C0B1761F9B965900422960 /* onevcat-overlay-red-07-mac-macOS1013.jpg */,
+				D1C0B1741F9B965900422960 /* onevcat-overlay-red-mac-macOS1013.jpg */,
+				D1C0B1751F9B965900422960 /* unicorn-overlay-red-07-mac-macOS1013.png */,
+				D1C0B1721F9B965800422960 /* unicorn-overlay-red-mac-macOS1013.png */,
 				4BB83E251E32075800B64183 /* kingfisher-overlay-red-07-mac.jpg */,
 				4BB83E261E32075800B64183 /* kingfisher-overlay-red-07.jpg */,
 				4BB83E271E32075800B64183 /* kingfisher-overlay-red-mac.jpg */,
@@ -911,6 +933,8 @@
 		4BB83E451E32075800B64183 /* Tint */ = {
 			isa = PBXGroup;
 			children = (
+				D1C0B17F1F9B997C00422960 /* kingfisher-tint-yellow-02-mac-macOS1013.jpg */,
+				D1C0B17E1F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg */,
 				4BB83E461E32075800B64183 /* kingfisher-tint-yellow-02-mac.jpg */,
 				4BB83E471E32075800B64183 /* kingfisher-tint-yellow-02.jpg */,
 				4BB83E481E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg */,
@@ -1649,9 +1673,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BB83EA71E32075800B64183 /* onevcat-overlay-red-07-mac.jpg in Resources */,
+				D1C0B17B1F9B965A00422960 /* unicorn-overlay-red-07-mac-macOS1013.png in Resources */,
 				4BB83EE91E32075800B64183 /* unicorn-round-corner-40-mac.png in Resources */,
 				4BB83E831E32075800B64183 /* unicorn-color-control-b00-c11-s12-ev07-mac.png in Resources */,
 				4BB83F011E32075800B64183 /* unicorn-tint-yellow-02-mac.png in Resources */,
+				D1C0B1811F9B997C00422960 /* kingfisher-tint-yellow-02-mac-macOS1013.jpg in Resources */,
 				4BA6976C1EC2F12000AA7935 /* unicorn-round-corner-40-corner-12-mac.png in Resources */,
 				D1D2C32C1C70A3230018F2F9 /* single-frame.gif in Resources */,
 				4BA697601EC2F12000AA7935 /* kingfisher-round-corner-40-corner-12-mac.jpg in Resources */,
@@ -1672,6 +1698,9 @@
 				4BB83E951E32075800B64183 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
 				4BB83EBF1E32075800B64183 /* kingfisher-resize-120-mac.jpg in Resources */,
 				4BB83ECB1E32075800B64183 /* unicorn-resize-120-mac.png in Resources */,
+				D1C0B17C1F9B965A00422960 /* onevcat-overlay-red-07-mac-macOS1013.jpg in Resources */,
+				D1C0B17A1F9B965A00422960 /* onevcat-overlay-red-mac-macOS1013.jpg in Resources */,
+				D1C0B17D1F9B965A00422960 /* kingfisher-overlay-red-mac-macOS1013.jpg in Resources */,
 				D18C16B31E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				4BB83EB31E32075800B64183 /* unicorn-overlay-red-07-mac.png in Resources */,
 				4BB83EE31E32075800B64183 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */,
@@ -1688,12 +1717,15 @@
 				4BB83E9B1E32075800B64183 /* kingfisher-overlay-red-07-mac.jpg in Resources */,
 				4BB83EA11E32075800B64183 /* kingfisher-overlay-red-mac.jpg in Resources */,
 				4BB83F071E32075800B64183 /* kingfisher.jpg in Resources */,
+				D1C0B1801F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg in Resources */,
 				4BB83EFB1E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
 				D18C16B61E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				D141463F1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit-mac.jpg in Resources */,
 				4BB83E8F1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,
 				4BB83E651E32075800B64183 /* kingfisher-blur-10-mac.jpg in Resources */,
 				4BB83E771E32075800B64183 /* kingfisher-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
+				D1C0B1781F9B965A00422960 /* unicorn-overlay-red-mac-macOS1013.png in Resources */,
+				D1C0B1791F9B965A00422960 /* kingfisher-overlay-red-07-mac-macOS1013.jpg in Resources */,
 				4BB83F0D1E32075800B64183 /* unicorn.png in Resources */,
 				4BB83EDD1E32075800B64183 /* onevcat-round-corner-40-mac.jpg in Resources */,
 				4BB83E591E32075800B64183 /* onevcat-b&w-mac.jpg in Resources */,
