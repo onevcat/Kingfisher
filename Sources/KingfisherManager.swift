@@ -171,10 +171,11 @@ public class KingfisherManager {
                                       cacheSerializer: options.cacheSerializer,
                                       toDisk: !options.cacheMemoryOnly,
                                       completionHandler: nil)
-                    if options.cacheOriginalImage {
+                    if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
+                        let originalCache = options.originalCache
                         let defaultProcessor = DefaultImageProcessor.default
-                        if let originaliImage = defaultProcessor.process(item: .data(originalData), options: options) {
-                            targetCache.store(originaliImage,
+                        if let originalImage = defaultProcessor.process(item: .data(originalData), options: options) {
+                            originalCache.store(originalImage,
                                               original: originalData,
                                               forKey: key,
                                               processorIdentifier: defaultProcessor.identifier,
@@ -182,7 +183,6 @@ public class KingfisherManager {
                                               toDisk: !options.cacheMemoryOnly,
                                               completionHandler: nil)
                         }
-                        
                     }
                 }
 
@@ -238,8 +238,9 @@ public class KingfisherManager {
             
             // If processor is not the default one, we have a chance to check whether
             // the original image is already in cache.
+            let originalCache = options.originalCache
             let optionsWithoutProcessor = options.removeAllMatchesIgnoringAssociatedValue(.processor(processor))
-            targetCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { image, cacheType in
+            originalCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { image, cacheType in
                 // If we found the original image, there is no need to download it again.
                 // We could just apply processor to it now.
                 guard let image = image else {
