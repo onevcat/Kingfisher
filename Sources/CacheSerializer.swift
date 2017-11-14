@@ -63,17 +63,8 @@ public struct DefaultCacheSerializer: CacheSerializer {
     private init() {}
     
     public func data(with image: Image, original: Data?) -> Data? {
-        let imageFormat = original?.kf.imageFormat ?? .unknown
-        
-        let data: Data?
-        switch imageFormat {
-        case .PNG: data = image.kf.pngRepresentation()
-        case .JPEG: data = image.kf.jpegRepresentation(compressionQuality: 1.0)
-        case .GIF: data = image.kf.gifRepresentation()
-        case .unknown: data = original ?? image.kf.normalized.kf.pngRepresentation()
-        }
-        
-        return data
+        // If original data is provided, just use it.
+        return original ?? image.kf.normalized.kf.pngRepresentation()
     }
     
     public func image(with data: Data, options: KingfisherOptionsInfo?) -> Image? {
