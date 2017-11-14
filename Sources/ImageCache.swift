@@ -295,6 +295,10 @@ open class ImageCache {
             options.callbackDispatchQueue.safeAsync {
                 completionHandler(image, .memory)
             }
+        } else if options.fromMemoryCacheOrRefresh { // Only allows to get images from memory cache.
+            options.callbackDispatchQueue.safeAsync {
+                completionHandler(nil, .none)
+            }
         } else {
             var sSelf: ImageCache! = self
             block = DispatchWorkItem(block: {
