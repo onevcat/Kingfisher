@@ -227,7 +227,9 @@ class KingfisherManagerTests: XCTestCase {
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNotNil(error)
                 XCTAssertTrue(Thread.isMainThread)
-                expectation.fulfill()
+                DispatchQueue.main.async {
+                    expectation.fulfill()
+                }
         })
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -243,7 +245,7 @@ class KingfisherManagerTests: XCTestCase {
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         manager.retrieveImage(with: url, options: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
-            progressExpectation.fulfill()
+            DispatchQueue.main.async { progressExpectation.fulfill() }
             }, completionHandler: { _, error, _, _ in
                 XCTAssertNil(error)
                 
