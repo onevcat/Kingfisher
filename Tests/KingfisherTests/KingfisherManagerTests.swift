@@ -454,6 +454,62 @@ class KingfisherManagerTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+    func testImageShouldOnlyFromMemoryCacheOrRefreshCanBeGotFromMemory() {
+        let expectation = self.expectation(description: "only from memory cache or refresh")
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+
+        let url = URL(string: URLString)!
+
+        manager.retrieveImage(with: url, options: [.fromMemoryCacheOrRefresh], progressBlock: nil) {
+            image, _, type, _ in
+            // Can download and cache normally
+            XCTAssertNotNil(image)
+            XCTAssertEqual(type, .none)
+
+            // Can still be got from memory even when disk cache cleared.
+            self.manager.cache.clearDiskCache {
+                self.manager.retrieveImage(with: url, options: [.fromMemoryCacheOrRefresh], progressBlock: nil) {
+                    image, _, type, _ in
+                    XCTAssertNotNil(image)
+                    XCTAssertEqual(type, .memory)
+
+                    expectation.fulfill()
+                }
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testImageShouldOnlyFromMemoryCacheOrRefreshCanRefreshIfNotInMemory() {
+        let expectation = self.expectation(description: "only from memory cache or refresh")
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+
+        let url = URL(string: URLString)!
+
+        manager.retrieveImage(with: url, options: [.fromMemoryCacheOrRefresh], progressBlock: nil) {
+            image, _, type, _ in
+            // Can download and cache normally
+            XCTAssertNotNil(image)
+            XCTAssertEqual(type, .none)
+            XCTAssertEqual(self.manager.cache.imageCachedType(forKey: URLString), .memory)
+
+            self.manager.cache.clearMemoryCache()
+            XCTAssertEqual(self.manager.cache.imageCachedType(forKey: URLString), .disk)
+            
+            self.manager.retrieveImage(with: url, options: [.fromMemoryCacheOrRefresh], progressBlock: nil) {
+                image, _, type, _ in
+                XCTAssertNotNil(image)
+                XCTAssertEqual(type, .none)
+                XCTAssertEqual(self.manager.cache.imageCachedType(forKey: URLString), .memory)
+
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
