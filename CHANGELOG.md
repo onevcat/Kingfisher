@@ -2,6 +2,13 @@
 
 -----
 
+## [4.3.1 - Cache Regression](https://github.com/onevcat/Kingfisher/releases/tag/4.3.1) (2017-11-21)
+
+#### Fix
+* A regression introduced in 4.3.0 which cause the cache not working well for processed images.
+
+---
+
 ## [4.3.0 - Memory Or Refresh](https://github.com/onevcat/Kingfisher/releases/tag/4.3.0) (2017-11-17)
 
 #### Add
