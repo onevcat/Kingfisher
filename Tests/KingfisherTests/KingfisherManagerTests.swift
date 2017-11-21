@@ -515,6 +515,39 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+    func testShouldDownloadAndCacheProcessedImage() {
+        let expectation = self.expectation(description: "waiting for downloading and cache")
+
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+
+        let url = URL(string: URLString)!
+
+        let size = CGSize(width: 1, height: 1)
+        let processor = ResizingImageProcessor(referenceSize: size)
+
+        manager.retrieveImage(with: url, options: [.processor(processor)], progressBlock: nil) {
+            image, _, type, _ in
+            // Can download and cache normally
+            XCTAssertNotNil(image)
+            XCTAssertEqual(image!.size, size)
+            XCTAssertEqual(type, .none)
+
+            self.manager.cache.clearMemoryCache()
+            XCTAssertEqual(self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: processor.identifier), .disk)
+
+            self.manager.retrieveImage(with: url, options: [.processor(processor)], progressBlock: nil) {
+                image, _, type, _ in
+                XCTAssertNotNil(image)
+                XCTAssertEqual(image!.size, size)
+                XCTAssertEqual(type, .disk)
+
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
