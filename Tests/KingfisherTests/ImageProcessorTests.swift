@@ -152,6 +152,32 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.CroppingImageProcessor((50.0, 50.0)_(0.5, 0.5))")
         checkProcessor(p, with: "cropping-50-50-anchor-center")
     }
+
+    #if os(iOS) || os(tvOS)
+    func testImageProcessorRespectOptionScale() {
+        let image = testImage
+        XCTAssertEqual(image.scale, 1.0)
+
+        let size = CGSize(width: 2, height: 2)
+
+        let processors: [ImageProcessor] = [
+            DefaultImageProcessor(),
+            RoundCornerImageProcessor(cornerRadius: 1.0, targetSize: size),
+            ResizingImageProcessor(referenceSize: size),
+            BlurImageProcessor(blurRadius: 1.0),
+            OverlayImageProcessor(overlay: .red),
+            TintImageProcessor(tint: .red),
+            ColorControlsProcessor(brightness: 0, contrast: 0, saturation: 0, inputEV: 0),
+            BlackWhiteProcessor(),
+            CroppingImageProcessor(size: size)
+        ]
+
+        let images = processors.map { $0.process(item: .image(image), options: [.scaleFactor(2.0)]) }
+        images.forEach {
+            XCTAssertEqual($0!.scale, 2.0)
+        }
+    }
+    #endif
 }
 
 struct TestCIImageProcessor: CIImageProcessor {
