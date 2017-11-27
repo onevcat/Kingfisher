@@ -129,7 +129,7 @@ public struct DefaultImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image
+            return image.kf.scaled(to: options.scaleFactor)
         case .data(let data):
             return Kingfisher<Image>.image(
                 data: data,
@@ -222,7 +222,8 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         switch item {
         case .image(let image):
             let size = targetSize ?? image.kf.size
-            return image.kf.image(withRoundRadius: cornerRadius, fit: size, roundingCorners: roundingCorners, backgroundColor: backgroundColor)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.image(withRoundRadius: cornerRadius, fit: size, roundingCorners: roundingCorners, backgroundColor: backgroundColor)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -296,7 +297,8 @@ public struct ResizingImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.resize(to: referenceSize, for: targetContentMode)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.resize(to: referenceSize, for: targetContentMode)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -334,7 +336,8 @@ public struct BlurImageProcessor: ImageProcessor {
         switch item {
         case .image(let image):
             let radius = blurRadius * options.scaleFactor
-            return image.kf.blurred(withRadius: radius)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.blurred(withRadius: radius)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -376,7 +379,8 @@ public struct OverlayImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.overlaying(with: overlay, fraction: fraction)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.overlaying(with: overlay, fraction: fraction)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -412,7 +416,8 @@ public struct TintImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.tinted(with: tint)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.tinted(with: tint)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -464,7 +469,8 @@ public struct ColorControlsProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
         case .data(_):
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -549,7 +555,8 @@ public struct CroppingImageProcessor: ImageProcessor {
     public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
-            return image.kf.crop(to: size, anchorOn: anchor)
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.crop(to: size, anchorOn: anchor)
         case .data(_): return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }

@@ -626,6 +626,21 @@ extension Kingfisher where Base: Image {
             return apply(.colorControl((brightness, contrast, saturation, inputEV)))
         #endif
     }
+
+    /// Return an image with given scale.
+    ///
+    /// - Parameter scale: Target scale factor the new image should have.
+    /// - Returns: The image with target scale. If the base image is already in the scale, `base` will be returned.
+    public func scaled(to scale: CGFloat) -> Image {
+        guard scale != self.scale else {
+            return base
+        }
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] Scaling only works for CG-based image.")
+            return base
+        }
+        return Kingfisher.image(cgImage: cgImage, scale: scale, refImage: base)
+    }
 }
 
 // MARK: - Decode
