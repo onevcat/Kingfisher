@@ -109,7 +109,7 @@ public enum KingfisherOptionsInfoItem {
     case requestModifier(ImageDownloadRequestModifier)
     
     /// Processor for processing when the downloading finishes, a processor will convert the downloaded data to an image
-    /// and/or apply some filter on it. If a cache is connected to the downloader (it happenes when you are using
+    /// and/or apply some filter on it. If a cache is connected to the downloader (it happens when you are using
     /// KingfisherManager or the image extension methods), the converted image will also be sent to cache as well as the
     /// image view. `DefaultImageProcessor.default` will be used by default.
     case processor(ImageProcessor)
@@ -118,6 +118,15 @@ public enum KingfisherOptionsInfoItem {
     /// retrieving from disk cache or vice versa for storing to disk cache.
     /// `DefaultCacheSerializer.default` will be used by default.
     case cacheSerializer(CacheSerializer)
+
+    /// Modifier for modifying an image right before it is used.
+    /// If the image was fetched directly from the downloader, the modifier will
+    /// run directly after the processor.
+    /// If the image is being fetched from a cache, the modifier will run after
+    /// the cacheSerializer.
+    /// Use `ImageModifier` when you need to set properties on a concrete type
+    /// of `Image`, such as a `UIImage`, that do not persist when caching the image.
+    case imageModifier(ImageModifier)
     
     /// Keep the existing image while setting another image to an image view.
     /// By setting this option, the placeholder image parameter of imageview extension method
@@ -164,6 +173,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.requestModifier(_), .requestModifier(_)): return true
     case (.processor(_), .processor(_)): return true
     case (.cacheSerializer(_), .cacheSerializer(_)): return true
+    case (.imageModifier(_), .imageModifier(_)): return true
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true
@@ -307,6 +317,16 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
             return processor
         }
         return DefaultImageProcessor.default
+    }
+
+    /// `ImageModifier` for modifying right before the image is displayed.
+    public var imageModifier: ImageModifier {
+        if let item = lastMatchIgnoringAssociatedValue(.imageModifier(DefaultImageModifier.default)),
+            case .imageModifier(let imageModifier) = item
+        {
+            return imageModifier
+        }
+        return DefaultImageModifier.default
     }
     
     /// `CacheSerializer` to convert image to data for storing in cache.
