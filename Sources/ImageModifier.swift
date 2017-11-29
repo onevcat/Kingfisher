@@ -29,64 +29,25 @@ import Foundation
 /// An `ImageModifier` can be used to change properties on an Image in between
 /// cache serialization and use of the image.
 public protocol ImageModifier {
-    /// Identifier of the modifier. It will be used to identify the modifier when
-    /// modifying an image.
-    ///
-    /// - Note: Do not supply an empty string for a customized modifier, as the
-    /// `DefaultImageModifier` uses this idenfifier. It is recommended to use a
-    /// reverse domain name notation string of your own for the identifier.
-    var identifier: String { get }
-
     /// Modify an input `Image`.
     ///
     /// - parameter image:   Image which will be modified by `self`
-    /// - parameter options: Options when modifying the image.
     ///
     /// - returns: The modified image.
     ///
     /// - Note: The return value will be unmodified if modifying is not possible on
     ///         the current platform.
     /// - Note: Most modifiers support UIImage or NSImage, but not CGImage.
-    func modify(image: Image, options: KingfisherOptionsInfo) -> Image?
+    func modify(image: Image) -> Image
 }
 
-typealias ModifierImp = ((Image, KingfisherOptionsInfo) -> Image?)
-
-public extension ImageModifier {
-
-    /// Append an `ImageModifier` to another. The identifier of the new `ImageModifier`
-    /// will be "\(self.identifier)|>\(another.identifier)".
-    ///
-    /// - parameter another: An `ImageModifier` you want to append to `self`.
-    ///
-    /// - returns: The new `ImageModifier` will process the image in the order
-    ///            of the two modifiers concatenated.
-    public func append(another: ImageModifier) -> ImageModifier {
-        let newIdentifier = identifier.appending("|>\(another.identifier)")
-        return GeneralModifier(identifier: newIdentifier) {
-            image, options in
-            if let image = self.modify(image: image, options: options) {
-                return another.modify(image: image, options: options)
-            } else {
-                return nil
-            }
-        }
-    }
-}
-
-func ==(left: ImageModifier, right: ImageModifier) -> Bool {
-    return left.identifier == right.identifier
-}
-
-func !=(left: ImageModifier, right: ImageModifier) -> Bool {
-    return !(left == right)
-}
+typealias ModifierImp = ((Image) -> Image)
 
 fileprivate struct GeneralModifier: ImageModifier {
     let identifier: String
     let m: ModifierImp
-    func modify(image: Image, options: KingfisherOptionsInfo) -> Image? {
-        return m(image, options)
+    func modify(image: Image) -> Image {
+        return m(image)
     }
 }
 
@@ -97,91 +58,126 @@ public struct DefaultImageModifier: ImageModifier {
     /// A default `DefaultImageModifier` which can be used everywhere.
     public static let `default` = DefaultImageModifier()
 
-    /// Identifier of the modifier.
-    /// - Note: See documentation of `ImageModifier` protocol for more.
-    public let identifier = ""
-
     /// Initialize a `DefaultImageModifier`
-    public init() {}
+    private init() {}
 
     /// Modify an input `Image`.
     ///
     /// - parameter image:   Image which will be modified by `self`
-    /// - parameter options: Options when modifying the image.
     ///
     /// - returns: The modified image.
     ///
     /// - Note: See documentation of `ImageModifier` protocol for more.
-    public func modify(image: Image, options: KingfisherOptionsInfo) -> Image? {
+    public func modify(image: Image) -> Image {
         return image
+    }
+}
+
+/// A custom modifier.
+/// Can be initialized with a block to modify images in a custom way
+public struct AnyImageModifier: ImageModifier {
+
+    /// A block which modifies images, or returns the original image
+    /// if modification cannot be performed.
+    let block: (Image) -> Image
+
+    /// Initialize an `AnyImageModifier`
+    public init(modify: @escaping (Image) -> Image) {
+        block = modify
+    }
+
+    /// Modifies an input `Image` using this `AnyImageModifier`'s `block`.
+    ///
+    /// - parameter image:   Image which will be modified by `self`
+    ///
+    /// - returns: The modified image.
+    ///
+    /// - Note: See documentation of `ImageModifier` protocol for more.
+    public func modify(image: Image) -> Image {
+        return block(image)
     }
 }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
 import UIKit
 
-/// Modifier for setting the rendering mode of images.
-/// Only UI-based images are supported; if a non-UI image is passed in, the modifier
-/// will do nothing.
-public struct RenderingModeImageModifier: ImageModifier {
+    /// Modifier for setting the rendering mode of images.
+    /// Only UI-based images are supported; if a non-UI image is passed in, the
+    /// modifier will do nothing.
+    public struct RenderingModeImageModifier: ImageModifier {
 
-    /// Identifier of the modifier.
-    /// - Note: See documentation of `ImageModifier` protocol for more.
-    public let identifier: String
+        /// The rendering mode to apply to the image.
+        public let renderingMode: UIImageRenderingMode
 
-    /// The rendering mode to apply to the image.
-    public let renderingMode: UIImageRenderingMode
+        /// Initialize a `RenderingModeImageModifier`
+        ///
+        /// - parameter renderingMode: The rendering mode to apply to the image.
+        ///                            Default is .automatic
+        public init(renderingMode: UIImageRenderingMode = .automatic) {
+            self.renderingMode = renderingMode
+        }
 
-    /// Initialize a `RenderingModeImageModifier`
-    ///
-    /// - parameter renderingMode: The rendering mode to apply to the image.
-    ///                            Default is .automatic
-    public init(renderingMode: UIImageRenderingMode = .automatic) {
-        self.renderingMode = renderingMode
-        self.identifier = "com.onevcat.Kingfisher.RenderingModeImageModifier(\(renderingMode))"
-    }
-
-    /// Modify an input `Image`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    /// - parameter options: Options when modifying the image.
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
-    public func modify(image: Image, options: KingfisherOptionsInfo) -> Image? {
-        return image.withRenderingMode(renderingMode)
-    }
-}
-
-public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
-    /// Identifier of the modifier.
-    /// - Note: See documentation of `ImageModifier` protocol for more.
-    public let identifier: String
-
-    /// Initialize a `FlipsForRightToLeftLayoutDirectionImageModifier`
-    ///
-    /// - Note: On versions of iOS lower than 9.0, the image will be returned
-    ///         unmodified.
-    public init() {
-        self.identifier = "com.onevcat.Kingfisher.FlipsForRightToLeftLayoutDirectionImageModifier"
-    }
-
-    /// Modify an input `Image`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    /// - parameter options: Options when modifying the image.
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
-    public func modify(image: Image, options: KingfisherOptionsInfo) -> Image? {
-        if #available(iOS 9.0, *) {
-            return image.imageFlippedForRightToLeftLayoutDirection()
-        } else {
-            return image
+        /// Modify an input `Image`.
+        ///
+        /// - parameter image:   Image which will be modified by `self`
+        ///
+        /// - returns: The modified image.
+        ///
+        /// - Note: See documentation of `ImageModifier` protocol for more.
+        public func modify(image: Image) -> Image {
+            return image.withRenderingMode(renderingMode)
         }
     }
-}
+
+    /// Modifier for setting the `flipsForRightToLeftLayoutDirection` property of images.
+    /// Only UI-based images are supported; if a non-UI image is passed in, the
+    /// modifier will do nothing.
+    public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
+        /// Initialize a `FlipsForRightToLeftLayoutDirectionImageModifier`
+        ///
+        /// - Note: On versions of iOS lower than 9.0, the image will be returned
+        ///         unmodified.
+        public init() {}
+
+        /// Modify an input `Image`.
+        ///
+        /// - parameter image:   Image which will be modified by `self`
+        ///
+        /// - returns: The modified image.
+        ///
+        /// - Note: See documentation of `ImageModifier` protocol for more.
+        public func modify(image: Image) -> Image {
+            if #available(iOS 9.0, *) {
+                return image.imageFlippedForRightToLeftLayoutDirection()
+            } else {
+                return image
+            }
+        }
+    }
+
+    /// Modifier for setting the `alignmentRectInsets` property of images.
+    /// Only UI-based images are supported; if a non-UI image is passed in, the
+    /// modifier will do nothing.
+    public struct AlignmentRectInsetsImageModifier: ImageModifier {
+
+        /// The alignment insets to apply to the image
+        public let alignmentInsets: UIEdgeInsets
+
+        /// Initialize a `AlignmentRectInsetsImageModifier`
+        public init(alignmentInsets: UIEdgeInsets) {
+            self.alignmentInsets = alignmentInsets
+        }
+
+        /// Modify an input `Image`.
+        ///
+        /// - parameter image:   Image which will be modified by `self`
+        ///
+        /// - returns: The modified image.
+        ///
+        /// - Note: See documentation of `ImageModifier` protocol for more.
+        public func modify(image: Image) -> Image {
+            return image.withAlignmentRectInsets(alignmentInsets)
+        }
+    }
 
 #endif
