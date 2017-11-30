@@ -154,12 +154,11 @@ public class KingfisherManager {
             completionHandler: { image, error, imageURL, originalData in
 
                 let targetCache = options.targetCache
-                let imageModifier = options.imageModifier
                 if let error = error, error.code == KingfisherError.notModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
                     targetCache.retrieveImage(forKey: key, options: options, completionHandler: { (cacheImage, cacheType) -> () in
-                        completionHandler?(imageModifier.modify(cacheImage), nil, cacheType, url)
+                        completionHandler?(cacheImage, nil, cacheType, url)
                     })
                     return
                 }
@@ -187,7 +186,7 @@ public class KingfisherManager {
                     }
                 }
 
-                completionHandler?(imageModifier.modify(image), error, .none, url)
+                completionHandler?(image, error, .none, url)
 
             })
     }
@@ -201,8 +200,7 @@ public class KingfisherManager {
     {
 
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
-            let imageModifier = options.imageModifier
-            completionHandler?(imageModifier.modify(image), error, cacheType, imageURL)
+            completionHandler?(image, error, cacheType, imageURL)
         }
         
         func handleNoCache() {

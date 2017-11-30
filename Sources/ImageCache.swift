@@ -290,10 +290,11 @@ open class ImageCache {
         
         var block: RetrieveImageDiskTask?
         let options = options ?? KingfisherEmptyOptionsInfo
-        
+        let imageModifier = options.imageModifier
+
         if let image = self.retrieveImageInMemoryCache(forKey: key, options: options) {
             options.callbackDispatchQueue.safeAsync {
-                completionHandler(image, .memory)
+                completionHandler(imageModifier.modify(image), .memory)
             }
         } else if options.fromMemoryCacheOrRefresh { // Only allows to get images from memory cache.
             options.callbackDispatchQueue.safeAsync {
@@ -306,6 +307,7 @@ open class ImageCache {
                 if let image = sSelf.retrieveImageInDiskCache(forKey: key, options: options) {
                     if options.backgroundDecode {
                         sSelf.processQueue.async {
+
                             let result = image.kf.decoded
                             
                             sSelf.store(result,
@@ -315,7 +317,7 @@ open class ImageCache {
                                         toDisk: false,
                                         completionHandler: nil)
                             options.callbackDispatchQueue.safeAsync {
-                                completionHandler(result, .memory)
+                                completionHandler(imageModifier.modify(result), .memory)
                                 sSelf = nil
                             }
                         }
@@ -328,7 +330,7 @@ open class ImageCache {
                                     completionHandler: nil
                         )
                         options.callbackDispatchQueue.safeAsync {
-                            completionHandler(image, .disk)
+                            completionHandler(imageModifier.modify(image), .disk)
                             sSelf = nil
                         }
                     }
