@@ -80,30 +80,30 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute]](https://github.com/onevcat/Kingfisher/blob/master/CONTRIBUTING.md).
-<a href="https://github.com/onevcat/Kingfisher/graphs/contributors"><img src="https://opencollective.com/Kingfisher/contributors.svg?width=890" /></a>
+<a href="https://github.com/onevcat/Kingfisher/graphs/contributors"><img src="https://opencollective.com/kingfisher/contributors.svg?width=890" /></a>
 
 
 ## Backers
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/Kingfisher#backer)]
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
 
-<a href="https://opencollective.com/Kingfisher#backers" target="_blank"><img src="https://opencollective.com/Kingfisher/backers.svg?width=890"></a>
+<a href="https://opencollective.com/kingfisher#backers" target="_blank"><img src="https://opencollective.com/kingfisher/backers.svg?width=890"></a>
 
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/Kingfisher#sponsor)]
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/kingfisher#sponsor)]
 
-<a href="https://opencollective.com/Kingfisher/sponsor/0/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/1/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/2/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/3/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/4/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/5/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/6/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/7/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/8/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/Kingfisher/sponsor/9/website" target="_blank"><img src="https://opencollective.com/Kingfisher/sponsor/9/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/0/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/1/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/2/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/3/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/4/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/5/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/6/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/7/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/8/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/kingfisher/sponsor/9/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/9/avatar.svg"></a>
 
 
 
