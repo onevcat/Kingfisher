@@ -44,7 +44,7 @@ class ImageModifierTests: XCTestCase {
             return image
         })
         let image = Image(data: testImagePNGData)!
-        let modifiedImage = m.modify(image: image)
+        let modifiedImage = m.modify(image)
         XCTAssert(modifiedImage == image)
     }
 
@@ -53,18 +53,18 @@ class ImageModifierTests: XCTestCase {
     func testRenderingModeImageModifier() {
         let m1 = RenderingModeImageModifier(renderingMode: .alwaysOriginal)
         let image = Image(data: testImagePNGData)!
-        let alwaysOriginalImage = m1.modify(image: image)
+        let alwaysOriginalImage = m1.modify(image)
         XCTAssert(alwaysOriginalImage.renderingMode == .alwaysOriginal)
 
         let m2 = RenderingModeImageModifier(renderingMode: .alwaysTemplate)
-        let alwaysTemplateImage = m2.modify(image: image)
+        let alwaysTemplateImage = m2.modify(image)
         XCTAssert(alwaysTemplateImage.renderingMode == .alwaysTemplate)
     }
 
     func testFlipsForRightToLeftLayoutDirectionImageModifier() {
         let m = FlipsForRightToLeftLayoutDirectionImageModifier()
         let image = Image(data: testImagePNGData)!
-        let modifiedImage = m.modify(image: image)
+        let modifiedImage = m.modify(image)
         if #available(iOS 9.0, *) {
             XCTAssert(modifiedImage.flipsForRightToLeftLayoutDirection == true)
         } else {
@@ -76,7 +76,7 @@ class ImageModifierTests: XCTestCase {
         let insets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         let m = AlignmentRectInsetsImageModifier(alignmentInsets: insets)
         let image = Image(data: testImagePNGData)!
-        let modifiedImage = m.modify(image: image)
+        let modifiedImage = m.modify(image)
         XCTAssert(modifiedImage.alignmentRectInsets == insets)
     }
 

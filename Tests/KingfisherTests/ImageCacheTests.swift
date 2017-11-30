@@ -350,7 +350,49 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
-    
+
+    func testGettingMemoryCachedImageCouldBeModified() {
+
+        let expectation = self.expectation(description: "wait for retrieving image")
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0]) {
+            self.cache.retrieveImage(forKey: testKeys[0], options: [.imageModifier(modifier)]) {
+                image, _ in
+                XCTAssertTrue(modifierCalled)
+                XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testGettingDiskCachedImageCouldBeModified() {
+        let expectation = self.expectation(description: "wait for retrieving image")
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0]) {
+            self.cache.clearMemoryCache()
+            self.cache.retrieveImage(forKey: testKeys[0], options: [.imageModifier(modifier)]) {
+                image, _ in
+                XCTAssertTrue(modifierCalled)
+                XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
     // MARK: - Helper
     func storeMultipleImages(_ completionHandler:@escaping ()->()) {
         
