@@ -360,7 +360,6 @@ class ImageCacheTests: XCTestCase {
         let modifier = AnyImageModifier { image in
             modifierCalled = true
             return image.withRenderingMode(.alwaysTemplate)
-            image.isTemplate = true
         }
 
         cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0]) {
