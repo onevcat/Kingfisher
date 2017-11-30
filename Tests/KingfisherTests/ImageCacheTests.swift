@@ -351,6 +351,7 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+#if os(iOS) || os(tvOS) || os(watchOS)
     func testGettingMemoryCachedImageCouldBeModified() {
 
         let expectation = self.expectation(description: "wait for retrieving image")
@@ -359,6 +360,7 @@ class ImageCacheTests: XCTestCase {
         let modifier = AnyImageModifier { image in
             modifierCalled = true
             return image.withRenderingMode(.alwaysTemplate)
+            image.isTemplate = true
         }
 
         cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0]) {
@@ -392,6 +394,7 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+#endif
 
     // MARK: - Helper
     func storeMultipleImages(_ completionHandler:@escaping ()->()) {

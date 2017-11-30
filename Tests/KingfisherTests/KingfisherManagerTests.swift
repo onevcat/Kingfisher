@@ -549,6 +549,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+#if os(iOS) || os(tvOS) || os(watchOS)
     func testShouldApplyImageModifierWhenDownload() {
         let expectation = self.expectation(description: "waiting for downloading and cache")
 
@@ -615,6 +616,7 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+#endif
 }
 
 class SimpleProcessor: ImageProcessor {
