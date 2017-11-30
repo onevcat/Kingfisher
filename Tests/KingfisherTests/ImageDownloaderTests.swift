@@ -401,6 +401,7 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+#if os(iOS) || os(tvOS) || os(watchOS)
     func testDownloadedImageCouldBeModified() {
         let expectation = self.expectation(description: "wait for downloading image")
 
@@ -424,6 +425,7 @@ class ImageDownloaderTests: XCTestCase {
 
         waitForExpectations(timeout: 5, handler: nil)
     }
+#endif
 }
 
 extension ImageDownloaderTests: ImageDownloaderDelegate {
