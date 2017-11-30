@@ -366,7 +366,7 @@ class KingfisherManagerTests: XCTestCase {
         let expectation = self.expectation(description: "waiting for downloading finished")
         
         let URLString = testKeys[0]
-        manager.cache.store(testImage, original: testImageData! as Data,
+        manager.cache.store(testImage, original: testImageData as Data,
                             forKey: URLString, processorIdentifier: DefaultImageProcessor.default.identifier,
                             cacheSerializer: DefaultCacheSerializer.default, toDisk: true)
         {
@@ -431,7 +431,7 @@ class KingfisherManagerTests: XCTestCase {
         // Clear original cache first.
         originalCache.clearMemoryCache()
         originalCache.clearDiskCache {
-            originalCache.store(testImage, original: testImageData! as Data,
+            originalCache.store(testImage, original: testImageData as Data,
                                 forKey: URLString, processorIdentifier: DefaultImageProcessor.default.identifier,
                                 cacheSerializer: DefaultCacheSerializer.default, toDisk: true)
             {
