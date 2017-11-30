@@ -38,7 +38,16 @@ public protocol ImageModifier {
     /// - Note: The return value will be unmodified if modifying is not possible on
     ///         the current platform.
     /// - Note: Most modifiers support UIImage or NSImage, but not CGImage.
-    func modify(image: Image) -> Image
+    func modify(_ image: Image) -> Image
+}
+
+extension ImageModifier {
+    func modify(_ image: Image?) -> Image? {
+        guard let image = image else {
+            return nil
+        }
+        return modify(image)
+    }
 }
 
 typealias ModifierImp = ((Image) -> Image)
@@ -46,7 +55,7 @@ typealias ModifierImp = ((Image) -> Image)
 fileprivate struct GeneralModifier: ImageModifier {
     let identifier: String
     let m: ModifierImp
-    func modify(image: Image) -> Image {
+    func modify(_ image: Image) -> Image {
         return m(image)
     }
 }
@@ -68,7 +77,7 @@ public struct DefaultImageModifier: ImageModifier {
     /// - returns: The modified image.
     ///
     /// - Note: See documentation of `ImageModifier` protocol for more.
-    public func modify(image: Image) -> Image {
+    public func modify(_ image: Image) -> Image {
         return image
     }
 }
@@ -93,7 +102,7 @@ public struct AnyImageModifier: ImageModifier {
     /// - returns: The modified image.
     ///
     /// - Note: See documentation of `ImageModifier` protocol for more.
-    public func modify(image: Image) -> Image {
+    public func modify(_ image: Image) -> Image {
         return block(image)
     }
 }
@@ -124,7 +133,7 @@ import UIKit
         /// - returns: The modified image.
         ///
         /// - Note: See documentation of `ImageModifier` protocol for more.
-        public func modify(image: Image) -> Image {
+        public func modify(_ image: Image) -> Image {
             return image.withRenderingMode(renderingMode)
         }
     }
@@ -146,7 +155,7 @@ import UIKit
         /// - returns: The modified image.
         ///
         /// - Note: See documentation of `ImageModifier` protocol for more.
-        public func modify(image: Image) -> Image {
+        public func modify(_ image: Image) -> Image {
             if #available(iOS 9.0, *) {
                 return image.imageFlippedForRightToLeftLayoutDirection()
             } else {
@@ -175,7 +184,7 @@ import UIKit
         /// - returns: The modified image.
         ///
         /// - Note: See documentation of `ImageModifier` protocol for more.
-        public func modify(image: Image) -> Image {
+        public func modify(_ image: Image) -> Image {
             return image.withAlignmentRectInsets(alignmentInsets)
         }
     }
