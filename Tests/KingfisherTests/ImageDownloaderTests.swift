@@ -400,6 +400,32 @@ class ImageDownloaderTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+#if os(iOS) || os(tvOS) || os(watchOS)
+    func testDownloadedImageCouldBeModified() {
+        let expectation = self.expectation(description: "wait for downloading image")
+
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+
+        let url = URL(string: URLString)!
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        downloader.downloadImage(with: url, options: [.imageModifier(modifier)]) {
+            image, _, _, _ in
+            XCTAssertTrue(modifierCalled)
+            XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+#endif
 }
 
 extension ImageDownloaderTests: ImageDownloaderDelegate {

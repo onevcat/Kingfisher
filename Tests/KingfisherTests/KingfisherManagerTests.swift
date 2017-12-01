@@ -366,7 +366,7 @@ class KingfisherManagerTests: XCTestCase {
         let expectation = self.expectation(description: "waiting for downloading finished")
         
         let URLString = testKeys[0]
-        manager.cache.store(testImage, original: testImageData! as Data,
+        manager.cache.store(testImage, original: testImageData as Data,
                             forKey: URLString, processorIdentifier: DefaultImageProcessor.default.identifier,
                             cacheSerializer: DefaultCacheSerializer.default, toDisk: true)
         {
@@ -431,7 +431,7 @@ class KingfisherManagerTests: XCTestCase {
         // Clear original cache first.
         originalCache.clearMemoryCache()
         originalCache.clearDiskCache {
-            originalCache.store(testImage, original: testImageData! as Data,
+            originalCache.store(testImage, original: testImageData as Data,
                                 forKey: URLString, processorIdentifier: DefaultImageProcessor.default.identifier,
                                 cacheSerializer: DefaultCacheSerializer.default, toDisk: true)
             {
@@ -548,6 +548,75 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+#if os(iOS) || os(tvOS) || os(watchOS)
+    func testShouldApplyImageModifierWhenDownload() {
+        let expectation = self.expectation(description: "waiting for downloading and cache")
+
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        let url = URL(string: URLString)!
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+        manager.retrieveImage(with: url, options: [.imageModifier(modifier)], progressBlock: nil) {
+            image, _, _, _ in
+            XCTAssertTrue(modifierCalled)
+            XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testShouldApplyImageModifierWhenLoadFromMemoryCache() {
+        let expectation = self.expectation(description: "waiting for downloading and cache")
+        let URLString = testKeys[0]
+        let url = URL(string: URLString)!
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        manager.cache.store(testImage, forKey: URLString)
+        manager.retrieveImage(with: url, options: [.imageModifier(modifier)], progressBlock: nil) {
+            image, _, type, _ in
+            XCTAssertTrue(modifierCalled)
+            XCTAssertEqual(type, .memory)
+            XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testShouldApplyImageModifierWhenLoadFromDiskCache() {
+        let expectation = self.expectation(description: "waiting for downloading and cache")
+        let URLString = testKeys[0]
+        let url = URL(string: URLString)!
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        manager.cache.store(testImage, forKey: URLString) {
+            self.manager.cache.clearMemoryCache()
+            self.manager.retrieveImage(with: url, options: [.imageModifier(modifier)], progressBlock: nil) {
+                image, _, type, _ in
+                XCTAssertTrue(modifierCalled)
+                XCTAssertEqual(type, .disk)
+                XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+#endif
 }
 
 class SimpleProcessor: ImageProcessor {

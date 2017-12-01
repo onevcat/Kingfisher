@@ -76,7 +76,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for clearing disk cache")
         let key = testKeys[0]
         
-        cache.store(testImage, original: testImageData as Data?, forKey: key, toDisk: true) { () -> () in
+        cache.store(testImage, original: testImageData as Data, forKey: key, toDisk: true) {
             self.cache.clearMemoryCache()
             let cacheResult = self.cache.imageCachedType(forKey: key)
             XCTAssertTrue(cacheResult.cached, "Should be cached")
@@ -94,7 +94,7 @@ class ImageCacheTests: XCTestCase {
     func testClearMemoryCache() {
         let expectation = self.expectation(description: "wait for retrieving image")
         
-        cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0], toDisk: true) { () -> () in
+        cache.store(testImage, original: testImageData as Data, forKey: testKeys[0], toDisk: true) { () -> () in
             self.cache.clearMemoryCache()
             self.cache.retrieveImage(forKey: testKeys[0], options: nil, completionHandler: { (image, type) -> () in
                 XCTAssert(image != nil && type == .disk, "Should be cached in disk. But \(type)")
@@ -263,7 +263,7 @@ class ImageCacheTests: XCTestCase {
         let expectation = self.expectation(description: "wait for caching image")
         
         XCTAssert(self.cache.imageCachedType(forKey: testKeys[0]).cached == false, "This image should not be cached yet.")
-        self.cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0], toDisk: true) { () -> () in
+        self.cache.store(testImage, original: testImageData as Data, forKey: testKeys[0], toDisk: true) { () -> () in
             XCTAssert(self.cache.imageCachedType(forKey: testKeys[0]).cached == true, "This image should be already cached.")
             expectation.fulfill()
         }
@@ -274,7 +274,7 @@ class ImageCacheTests: XCTestCase {
     func testRetrievingImagePerformance() {
 
         let expectation = self.expectation(description: "wait for retrieving image")
-        self.cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0], toDisk: true) { () -> () in
+        self.cache.store(testImage, original: testImageData as Data, forKey: testKeys[0], toDisk: true) { () -> () in
             self.measure({ () -> Void in
                 for _ in 1 ..< 200 {
                     _ = self.cache.retrieveImageInDiskCache(forKey: testKeys[0])
@@ -350,7 +350,51 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
-    
+
+#if os(iOS) || os(tvOS) || os(watchOS)
+    func testGettingMemoryCachedImageCouldBeModified() {
+
+        let expectation = self.expectation(description: "wait for retrieving image")
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0]) {
+            self.cache.retrieveImage(forKey: testKeys[0], options: [.imageModifier(modifier)]) {
+                image, _ in
+                XCTAssertTrue(modifierCalled)
+                XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testGettingDiskCachedImageCouldBeModified() {
+        let expectation = self.expectation(description: "wait for retrieving image")
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        cache.store(testImage, original: testImageData as Data?, forKey: testKeys[0]) {
+            self.cache.clearMemoryCache()
+            self.cache.retrieveImage(forKey: testKeys[0], options: [.imageModifier(modifier)]) {
+                image, _ in
+                XCTAssertTrue(modifierCalled)
+                XCTAssertEqual(image?.renderingMode, .alwaysTemplate)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+#endif
+
     // MARK: - Helper
     func storeMultipleImages(_ completionHandler:@escaping ()->()) {
         
