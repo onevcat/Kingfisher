@@ -49,7 +49,7 @@ class ImageProcessorTests: XCTestCase {
     }
     
     func testRenderEqual() {
-        let image1 = Image(data: testImageData! as Data)!
+        let image1 = Image(data: testImageData as Data)!
         let image2 = Image(data: testImagePNGData)!
         
         XCTAssertTrue(image1.renderEqual(to: image2))

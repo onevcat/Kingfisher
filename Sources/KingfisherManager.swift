@@ -198,8 +198,7 @@ public class KingfisherManager {
                               completionHandler: CompletionHandler?,
                                         options: KingfisherOptionsInfo)
     {
-        
-        
+
         let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> () in
             completionHandler?(image, error, cacheType, imageURL)
         }
