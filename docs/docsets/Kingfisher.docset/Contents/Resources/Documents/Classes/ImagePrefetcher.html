@@ -14,7 +14,7 @@
     <a title="ImagePrefetcher Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Kingfisher Docs</a> (79% documented)</p>
+        <p><a href="../index.html">Kingfisher Docs</a> (80% documented)</p>
         <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right"><a href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml"><img src="../img/dash.png"/>Install in Dash</a></p>
       </div>
@@ -154,6 +154,9 @@
                 <a href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Protocols/ImageModifier.html">ImageModifier</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Protocols/ImageProcessor.html">ImageProcessor</a>
               </li>
               <li class="nav-group-task">
@@ -173,6 +176,12 @@
           <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/AlignmentRectInsetsImageModifier.html">AlignmentRectInsetsImageModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AnyImageModifier.html">AnyImageModifier</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Structs/AnyModifier.html">AnyModifier</a>
               </li>
@@ -198,10 +207,16 @@
                 <a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/DefaultImageModifier.html">DefaultImageModifier</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/DefaultImageProcessor.html">DefaultImageProcessor</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/Filter.html">Filter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FlipsForRightToLeftLayoutDirectionImageModifier.html">FlipsForRightToLeftLayoutDirectionImageModifier</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/FormatIndicatedCacheSerializer.html">FormatIndicatedCacheSerializer</a>
@@ -214,6 +229,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/RectCorner.html">RectCorner</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/RenderingModeImageModifier.html">RenderingModeImageModifier</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ResizingImageProcessor.html">ResizingImageProcessor</a>
@@ -302,7 +320,7 @@ This is useful when you know a list of image resources and want to download them
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.3.1/Sources/ImagePrefetcher.swift#L54">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.4.0/Sources/ImagePrefetcher.swift#L54">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -405,7 +423,7 @@ Both the progress and completion block will be invoked in main thread. The <code
                         <p>An <code>ImagePrefetcher</code> object.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.3.1/Sources/ImagePrefetcher.swift#L95-L102">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.4.0/Sources/ImagePrefetcher.swift#L95-L102">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -508,7 +526,7 @@ Both the progress and completion block will be invoked in main thread. The <code
                         <p>An <code>ImagePrefetcher</code> object.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.3.1/Sources/ImagePrefetcher.swift#L122-L140">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.4.0/Sources/ImagePrefetcher.swift#L122-L140">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -540,7 +558,7 @@ with the results of the process.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.3.1/Sources/ImagePrefetcher.swift#L147-L176">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.4.0/Sources/ImagePrefetcher.swift#L147-L176">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -570,7 +588,7 @@ with the results of the process.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.3.1/Sources/ImagePrefetcher.swift#L182-L188">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.4.0/Sources/ImagePrefetcher.swift#L182-L188">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -580,7 +598,7 @@ with the results of the process.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-11-21)</p>
+          <p>&copy; 2017 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2017-12-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

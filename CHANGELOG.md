@@ -2,6 +2,16 @@
 
 -----
 
+## [4.4.0 - Image Modifier](https://github.com/onevcat/Kingfisher/releases/tag/4.4.0) (2017-12-01)
+
+#### Add
+* Add `ImageModifier` to give a final chance for setting image object related properties just before getting back the image from either network or cache. [#810](https://github.com/onevcat/Kingfisher/issues/810)
+
+#### Fix
+* Apply scale on all image based processor methods, including the existing ones from memory cache. [#813](https://github.com/onevcat/Kingfisher/issues/813)
+
+---
+
 ## [4.3.1 - Cache Regression](https://github.com/onevcat/Kingfisher/releases/tag/4.3.1) (2017-11-21)
 
 #### Fix
