@@ -204,7 +204,9 @@ public class ImagePrefetcher {
                     self.handleComplete()
                 }
             } else {
-                self.reportCompletionOrStartNext()
+                DispatchQueue.main.async {
+                    self.reportCompletionOrStartNext()
+                }
             }
         }
         
