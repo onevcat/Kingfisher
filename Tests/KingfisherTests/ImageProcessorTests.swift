@@ -27,6 +27,10 @@
 import XCTest
 import Kingfisher
 
+#if os(macOS)
+import AppKit
+#endif
+
 class ImageProcessorTests: XCTestCase {
     
     let imageNames = ["kingfisher.jpg", "onevcat.jpg", "unicorn.png"]
@@ -54,6 +58,22 @@ class ImageProcessorTests: XCTestCase {
         
         XCTAssertTrue(image1.renderEqual(to: image2))
     }
+
+    #if !os(macOS)
+    func testBlendProcessor() {
+        let p = BlendImageProcessor(blendMode: .darken, alpha: 1.0, backgroundColor: .lightGray)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlendImageProcessor(\(CGBlendMode.darken.rawValue))")
+        checkProcessor(p, with: "blend-\(CGBlendMode.darken.rawValue)")
+    }
+    #endif
+
+    #if os(macOS)
+    func testCompositingProcessor() {
+        let p = CompositingImageProcessor(compositingOperation: .darken, alpha: 1.0, backgroundColor: .lightGray)
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.CompositingImageProcessor(\(NSCompositingOperation.darken.rawValue))")
+        checkProcessor(p, with: "compositing-\(NSCompositingOperation.darken.rawValue)")
+    }
+    #endif
     
     func testRoundCornerProcessor() {
         let p = RoundCornerImageProcessor(cornerRadius: 40)
