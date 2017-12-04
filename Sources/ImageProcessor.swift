@@ -694,9 +694,13 @@ fileprivate extension Color {
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        
+
+        #if os(macOS)
+        (usingColorSpace(NSColorSpace.deviceRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        #else
         getRed(&r, green: &g, blue: &b, alpha: &a)
-        
+        #endif
+
         let rInt = Int(r * 255) << 24
         let gInt = Int(g * 255) << 16
         let bInt = Int(b * 255) << 8
