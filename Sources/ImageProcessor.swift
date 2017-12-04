@@ -164,15 +164,17 @@ public struct RectCorner: OptionSet {
     }
 }
 
-/// Processor for adding an blend mode to images. Only CG-based images are supported.
 #if !os(macOS)
+/// Processor for adding an blend mode to images. Only CG-based images are supported.
 public struct BlendImageProcessor: ImageProcessor {
 
     /// Identifier of the processor.
     /// - Note: See documentation of `ImageProcessor` protocol for more.
     public let identifier: String
 
+    /// Blend Mode will be used to blend the input image.
     public let blendMode: CGBlendMode
+    /// Alpha will be used when blend image.
     public let alpha: CGFloat
 
     /// Background color of the output image. If `nil`, it will stay transparent.
@@ -220,7 +222,10 @@ public struct CompositingImageProcessor: ImageProcessor {
     /// - Note: See documentation of `ImageProcessor` protocol for more.
     public let identifier: String
 
+    /// Compositing operation will be used to the input image.
     public let compositingOperation: NSCompositingOperation
+
+    /// Alpha will be used when compositing image.
     public let alpha: CGFloat
 
     /// Background color of the output image. If `nil`, it will stay transparent.
