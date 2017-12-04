@@ -336,6 +336,69 @@ extension Kingfisher where Base: Image {
 
 // MARK: - Image Transforming
 extension Kingfisher where Base: Image {
+    // MARK: - Blend Mode
+    /// Create image based on `self` and apply blend mode.
+    ///
+    /// - parameter blendMode:       The blend mode of creating image.
+    /// - parameter alpha:           The alpha should be used for image.
+    /// - parameter backgroundColor: The background color for the output image.
+    ///
+    /// - returns: An image with blend mode applied.
+    ///
+    /// - Note: This method only works for CG-based image.
+    #if !os(macOS)
+    public func image(withBlendMode blendMode: CGBlendMode,
+                      alpha: CGFloat = 1.0,
+                      backgroundColor: Color? = nil) -> Image
+    {
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] Blend mode image only works for CG-based image.")
+            return base
+        }
+
+        let rect = CGRect(origin: .zero, size: size)
+        return draw(cgImage: cgImage, to: rect.size) {
+            if let backgroundColor = backgroundColor {
+                backgroundColor.setFill()
+                UIRectFill(rect)
+            }
+
+            base.draw(in: rect, blendMode: blendMode, alpha: alpha)
+        }
+    }
+    #endif
+
+    // MARK: - Compositing Operation
+    /// Create image based on `self` and apply compositing operation.
+    ///
+    /// - parameter compositingOperation: The compositing operation of creating image.
+    /// - parameter alpha:                The alpha should be used for image.
+    /// - parameter backgroundColor:      The background color for the output image.
+    ///
+    /// - returns: An image with compositing operation applied.
+    ///
+    /// - Note: This method only works for CG-based image.
+    #if os(macOS)
+    public func image(withCompositingOperation compositingOperation: NSCompositingOperation,
+                      alpha: CGFloat = 1.0,
+                      backgroundColor: Color? = nil) -> Image
+    {
+        guard let cgImage = cgImage else {
+            assertionFailure("[Kingfisher] Compositing Operation image only works for CG-based image.")
+            return base
+        }
+
+        let rect = CGRect(origin: .zero, size: size)
+        return draw(cgImage: cgImage, to: rect.size) {
+            if let backgroundColor = backgroundColor {
+                backgroundColor.setFill()
+                rect.fill()
+            }
+
+            base.draw(in: rect, from: NSRect.zero, operation: compositingOperation, fraction: alpha)
+        }
+    }
+    #endif
 
     // MARK: - Round Corner
     /// Create a round corner image based on `self`.
