@@ -363,7 +363,7 @@ extension Kingfisher where Base: CGImageSource {
 }
 
 extension Array {
-    subscript(safe index: Int) -> Element? {
+    fileprivate subscript(safe index: Int) -> Element? {
         return indices ~= index ? self[index] : nil
     }
 }
