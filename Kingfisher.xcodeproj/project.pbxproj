@@ -308,6 +308,9 @@
 		D14146571E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png in Resources */ = {isa = PBXBuildFile; fileRef = D14146351E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png */; };
 		D14146581E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png in Resources */ = {isa = PBXBuildFile; fileRef = D14146361E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png */; };
 		D14146591E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png in Resources */ = {isa = PBXBuildFile; fileRef = D14146361E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png */; };
+		D15FB5C51FD592A3008391AE /* unicorn-compositing-17-mac-macOS1013.png in Resources */ = {isa = PBXBuildFile; fileRef = D15FB5C21FD592A2008391AE /* unicorn-compositing-17-mac-macOS1013.png */; };
+		D15FB5C61FD592A3008391AE /* onevcat-compositing-17-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D15FB5C31FD592A3008391AE /* onevcat-compositing-17-mac-macOS1013.jpg */; };
+		D15FB5C71FD592A3008391AE /* kingfisher-compositing-17-mac-macOS1013.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D15FB5C41FD592A3008391AE /* kingfisher-compositing-17-mac-macOS1013.jpg */; };
 		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D1679A531C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */; };
 		D18C16A41E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D18C16A11E87FCF500673D57 /* kingfisher-cropping-50-50-anchor-center.jpg */; };
@@ -656,6 +659,9 @@
 		D14146341E5C7E86001476DF /* unicorn-resize-240-60-aspectFill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-resize-240-60-aspectFill.png"; sourceTree = "<group>"; };
 		D14146351E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-resize-240-60-aspectFit-mac.png"; sourceTree = "<group>"; };
 		D14146361E5C7E86001476DF /* unicorn-resize-240-60-aspectFit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-resize-240-60-aspectFit.png"; sourceTree = "<group>"; };
+		D15FB5C21FD592A2008391AE /* unicorn-compositing-17-mac-macOS1013.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-compositing-17-mac-macOS1013.png"; sourceTree = "<group>"; };
+		D15FB5C31FD592A3008391AE /* onevcat-compositing-17-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-compositing-17-mac-macOS1013.jpg"; sourceTree = "<group>"; };
+		D15FB5C41FD592A3008391AE /* kingfisher-compositing-17-mac-macOS1013.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-compositing-17-mac-macOS1013.jpg"; sourceTree = "<group>"; };
 		D16799EB1C4E74460020FD12 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1085,6 +1091,9 @@
 				CCA25D371FD49A3100FA5C6E /* kingfisher-compositing-17-mac.jpg */,
 				CCA25D381FD49A3100FA5C6E /* onevcat-compositing-17-mac.jpg */,
 				CCA25D391FD49A3100FA5C6E /* unicorn-compositing-17-mac.png */,
+				D15FB5C41FD592A3008391AE /* kingfisher-compositing-17-mac-macOS1013.jpg */,
+				D15FB5C31FD592A3008391AE /* onevcat-compositing-17-mac-macOS1013.jpg */,
+				D15FB5C21FD592A2008391AE /* unicorn-compositing-17-mac-macOS1013.png */,
 			);
 			path = Compositing;
 			sourceTree = "<group>";
@@ -1744,6 +1753,7 @@
 				D14146571E5C7E86001476DF /* unicorn-resize-240-60-aspectFit-mac.png in Resources */,
 				4BB83E6B1E32075800B64183 /* onevcat-blur-10-mac.jpg in Resources */,
 				CCA25D3A1FD49A3100FA5C6E /* kingfisher-compositing-17-mac.jpg in Resources */,
+				D15FB5C71FD592A3008391AE /* kingfisher-compositing-17-mac-macOS1013.jpg in Resources */,
 				4BB83E531E32075800B64183 /* kingfisher-b&w-mac.jpg in Resources */,
 				D14146511E5C7E86001476DF /* unicorn-resize-240-60-aspectFill-mac.png in Resources */,
 				4BB83E891E32075800B64183 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
@@ -1757,6 +1767,7 @@
 				D1C0B17D1F9B965A00422960 /* kingfisher-overlay-red-mac-macOS1013.jpg in Resources */,
 				D18C16B31E87FDA300673D57 /* kingfisher-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				4BB83EB31E32075800B64183 /* unicorn-overlay-red-07-mac.png in Resources */,
+				D15FB5C51FD592A3008391AE /* unicorn-compositing-17-mac-macOS1013.png in Resources */,
 				4BB83EE31E32075800B64183 /* onevcat-round-corner-60-resize-100-mac.jpg in Resources */,
 				4BB83E7D1E32075800B64183 /* onevcat-color-control-b00-c11-s12-ev07-mac.jpg in Resources */,
 				4BA697481EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg in Resources */,
@@ -1773,6 +1784,7 @@
 				4BB83F071E32075800B64183 /* kingfisher.jpg in Resources */,
 				D1C0B1801F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg in Resources */,
 				4BB83EFB1E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg in Resources */,
+				D15FB5C61FD592A3008391AE /* onevcat-compositing-17-mac-macOS1013.jpg in Resources */,
 				D18C16B61E87FDA300673D57 /* onevcat-cropping-50-50-anchor-center-mac.jpg in Resources */,
 				D141463F1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFit-mac.jpg in Resources */,
 				4BB83E8F1E32075800B64183 /* onevcat-blur-4-round-corner-60-mac.jpg in Resources */,

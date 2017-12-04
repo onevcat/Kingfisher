@@ -62,7 +62,7 @@ class ImageProcessorTests: XCTestCase {
     #if !os(macOS)
     func testBlendProcessor() {
         let p = BlendImageProcessor(blendMode: .darken, alpha: 1.0, backgroundColor: .lightGray)
-        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlendImageProcessor(\(CGBlendMode.darken.rawValue))")
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.BlendImageProcessor(\(CGBlendMode.darken.rawValue),\(p.alpha))_#aaaaaaff")
         checkProcessor(p, with: "blend-\(CGBlendMode.darken.rawValue)")
     }
     #endif
@@ -70,7 +70,7 @@ class ImageProcessorTests: XCTestCase {
     #if os(macOS)
     func testCompositingProcessor() {
         let p = CompositingImageProcessor(compositingOperation: .darken, alpha: 1.0, backgroundColor: .lightGray)
-        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.CompositingImageProcessor(\(NSCompositingOperation.darken.rawValue))")
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.CompositingImageProcessor(\(NSCompositingOperation.darken.rawValue),\(p.alpha))_#aaaaaaff")
         checkProcessor(p, with: "compositing-\(NSCompositingOperation.darken.rawValue)")
     }
     #endif
