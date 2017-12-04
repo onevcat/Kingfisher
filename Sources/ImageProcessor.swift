@@ -191,7 +191,11 @@ public struct BlendImageProcessor: ImageProcessor {
         self.blendMode = blendMode
         self.alpha = alpha
         self.backgroundColor = backgroundColor
-        self.identifier = "com.onevcat.Kingfisher.BlendImageProcessor(\(blendMode.rawValue))"
+        var identifier = "com.onevcat.Kingfisher.BlendImageProcessor(\(blendMode.rawValue),\(alpha))"
+        if let color = backgroundColor {
+            identifier.append("_\(color.hex)")
+        }
+        self.identifier = identifier
     }
 
     /// Process an input `ImageProcessItem` item to an image for this processor.
@@ -245,7 +249,11 @@ public struct CompositingImageProcessor: ImageProcessor {
         self.compositingOperation = compositingOperation
         self.alpha = alpha
         self.backgroundColor = backgroundColor
-        self.identifier = "com.onevcat.Kingfisher.CompositingImageProcessor(\(compositingOperation.rawValue))"
+        var identifier = "com.onevcat.Kingfisher.CompositingImageProcessor(\(compositingOperation.rawValue),\(alpha))"
+        if let color = backgroundColor {
+            identifier.append("_\(color.hex)")
+        }
+        self.identifier = identifier
     }
 
     /// Process an input `ImageProcessItem` item to an image for this processor.
