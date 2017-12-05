@@ -47,7 +47,7 @@ class InterfaceController: WKInterfaceController {
     
     func refreshImage() {
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(currentIndex! + 1).jpg")!
-        _ = KingfisherManager.shared.retrieveImage(with: url, options: nil, progressBlock: nil) { (image, error, cacheType, imageURL) -> () in
+        _ = KingfisherManager.shared.retrieveImage(with: url, options: nil, progressBlock: nil) { (image, error, cacheType, imageURL) -> Void in
             self.interfaceImage.setImage(image)
         }
     }

@@ -64,9 +64,9 @@ class ImageDownloaderTests: XCTestCase {
         _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
 
         let url = URL(string: URLString)!
-        downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
             return
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             expectation.fulfill()
             XCTAssert(image != nil, "Download should be able to finished for URL: \(String(describing: imageURL))")
         }
@@ -83,9 +83,9 @@ class ImageDownloaderTests: XCTestCase {
             if let url = URL(string: URLString) {
                 group.enter()
                 _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-                downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+                downloader.downloadImage(with: url, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
                     
-                }, completionHandler: { (image, error, imageURL, data) -> () in
+                }, completionHandler: { (image, error, imageURL, data) -> Void in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(String(describing: imageURL)).")
                     group.leave()
                 })
@@ -105,9 +105,9 @@ class ImageDownloaderTests: XCTestCase {
 
         for _ in 0...5 {
             group.enter()
-            downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+            downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
                 
-                }) { (image, error, imageURL, data) -> () in
+                }) { (image, error, imageURL, data) -> Void in
                     XCTAssert(image != nil, "Download should be able to finished for URL: \(String(describing: imageURL)).")
                     group.leave()
                     
@@ -127,9 +127,9 @@ class ImageDownloaderTests: XCTestCase {
         modifier.url = URL(string: URLString)
         
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> Void in
             
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             XCTAssert(image != nil, "Download should be able to finished for URL: \(String(describing: imageURL)).")
             XCTAssertEqual(imageURL!, URL(string: URLString)!, "The returned imageURL should be the replaced one")
             expectation.fulfill()
@@ -143,9 +143,9 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(304)
         
-        downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
             
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             XCTAssertNotNil(error, "There should be an error since server returning 304 and no image downloaded.")
             XCTAssertEqual(error!.code, KingfisherError.notModified.rawValue, "The error should be NotModified.")
             expectation.fulfill()
@@ -159,9 +159,9 @@ class ImageDownloaderTests: XCTestCase {
         let URLString = testKeys[0]
         _ = stubRequest("GET", URLString).andReturn(404)?.withBody(testImageData)
         
-        downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: URL(string: URLString)!, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
             
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             XCTAssertNotNil(error, "There should be an error since server returning 404")
             XCTAssertEqual(error!.code, KingfisherError.invalidStatusCode.rawValue, "The error should be InvalidStatusCode.")
             XCTAssertEqual(error!.userInfo["statusCode"]! as? Int, 404, "The error should be InvalidStatusCode.")
@@ -181,7 +181,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let expectation = self.expectation(description: "wait for download from an invalid ssl site.")
         
-        downloader.downloadImage(with: url, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
+        downloader.downloadImage(with: url, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> Void in
             XCTAssertNotNil(error, "Error should not be nil")
             XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted || error?.code == NSURLErrorSecureConnectionFailed, "Error should be NSURLErrorServerCertificateUntrusted, but \(String(describing: error))")
             expectation.fulfill()
@@ -202,14 +202,14 @@ class ImageDownloaderTests: XCTestCase {
         stubRequest("GET", URLString).andFailWithError(NSError(domain: "stubError", code: -1, userInfo: nil))
         let url = URL(string: URLString)!
         
-        downloader.downloadImage(with: url, progressBlock: nil) { (image, error, imageURL, data) -> () in
+        downloader.downloadImage(with: url, progressBlock: nil) { (image, error, imageURL, data) -> Void in
             XCTAssertNotNil(error, "Should return with an error")
             
             LSNocilla.sharedInstance().clearStubs()
             _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
             
             // Retry the download
-            self.downloader.downloadImage(with: url, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> () in
+            self.downloader.downloadImage(with: url, progressBlock: nil, completionHandler: { (image, error, imageURL, data) -> Void in
                 XCTAssertNil(error, "Download should be finished without error")
                 expectation.fulfill()
             })
@@ -224,9 +224,9 @@ class ImageDownloaderTests: XCTestCase {
         modifier.url = nil
         
         let url = URL(string: "http://onevcat.com")
-        downloader.downloadImage(with: url!, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url!, options: [.requestModifier(modifier)], progressBlock: { (receivedSize, totalSize) -> Void in
             XCTFail("The progress block should not be called.")
-            }) { (image, error, imageURL, originalData) -> () in
+            }) { (image, error, imageURL, originalData) -> Void in
                 XCTAssertNotNil(error, "An error should happen for empty URL")
                 XCTAssertEqual(error!.code, KingfisherError.invalidURL.rawValue)
                 self.downloader.delegate = nil
@@ -236,9 +236,9 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskProperty() {
-        let task = downloader.downloadImage(with: URL(string: "1234")!, progressBlock: { (receivedSize, totalSize) -> () in
+        let task = downloader.downloadImage(with: URL(string: "1234")!, progressBlock: { (receivedSize, totalSize) -> Void in
 
-            }) { (image, error, imageURL, originalData) -> () in
+            }) { (image, error, imageURL, originalData) -> Void in
         }
         
         XCTAssertNotNil(task, "The task should exist.")
@@ -256,9 +256,9 @@ class ImageDownloaderTests: XCTestCase {
         
         var progressBlockIsCalled = false
         
-        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> Void in
                 progressBlockIsCalled = true
-            }) { (image, error, imageURL, originalData) -> () in
+            }) { (image, error, imageURL, originalData) -> Void in
                 XCTAssertNotNil(error)
                 XCTAssertEqual(error!.code, NSURLErrorCancelled)
                 XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
@@ -287,9 +287,9 @@ class ImageDownloaderTests: XCTestCase {
         let group = DispatchGroup()
         
         group.enter()
-        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+        let downloadTask = downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> Void in
             progressBlockIsCalled = true
-        }) { (image, error, imageURL, originalData) -> () in
+        }) { (image, error, imageURL, originalData) -> Void in
             XCTAssertNotNil(error)
             XCTAssertEqual(error!.code, NSURLErrorCancelled)
             XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
@@ -302,9 +302,9 @@ class ImageDownloaderTests: XCTestCase {
         _ = stub!.go()
         
         group.enter()
-        downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url, progressBlock: { (receivedSize, totalSize) -> Void in
             progressBlockIsCalled = true
-        }) { (image, error, imageURL, originalData) -> () in
+        }) { (image, error, imageURL, originalData) -> Void in
             XCTAssertNotNil(image)
             group.leave()
         }
@@ -332,9 +332,9 @@ class ImageDownloaderTests: XCTestCase {
         let p = RoundCornerImageProcessor(cornerRadius: 40)
         let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
         
-        downloader.downloadImage(with: url, options: [.processor(p)], progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url, options: [.processor(p)], progressBlock: { (receivedSize, totalSize) -> Void in
             
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             expectation.fulfill()
             XCTAssert(image != nil, "Download should be able to finished for URL: \(String(describing: imageURL))")
             XCTAssertFalse(image!.renderEqual(to: testImage), "The processed image should not equal to the original one.")
@@ -361,18 +361,18 @@ class ImageDownloaderTests: XCTestCase {
         
         var count = 0
         
-        downloader.downloadImage(with: url, options: [.processor(p1)], progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url, options: [.processor(p1)], progressBlock: { (receivedSize, totalSize) -> Void in
 
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             XCTAssertTrue(image!.renderEqual(to: roundcornered), "The processed image should equal to the one directly processed from original one.")
             
             count += 1
             if count == 2 { expectation.fulfill() }
         }
         
-        downloader.downloadImage(with: url, options: [.processor(p2)], progressBlock: { (receivedSize, totalSize) -> () in
+        downloader.downloadImage(with: url, options: [.processor(p2)], progressBlock: { (receivedSize, totalSize) -> Void in
             
-        }) { (image, error, imageURL, data) -> () in
+        }) { (image, error, imageURL, data) -> Void in
             XCTAssertTrue(image!.renderEqual(to: blurred), "The processed image should equal to the one directly processed from original one.")
             
             count += 1

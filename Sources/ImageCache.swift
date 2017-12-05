@@ -281,7 +281,7 @@ open class ImageCache {
     @discardableResult
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo?,
-                     completionHandler: ((Image?, CacheType) -> ())?) -> RetrieveImageDiskTask?
+                     completionHandler: ((Image?, CacheType) -> Void)?) -> RetrieveImageDiskTask?
     {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else {
@@ -600,7 +600,7 @@ open class ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> ())) {
+    open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> Void)) {
         ioQueue.async {
             let (_, diskCacheSize, _) = self.travelCachedFiles(onlyForCacheSize: true)
             DispatchQueue.main.async {
