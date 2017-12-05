@@ -68,10 +68,10 @@ class ImagePrefetcherTests: XCTestCase {
         
         var progressCalledCount = 0
         let prefetcher = ImagePrefetcher(urls: urls, options: nil,
-                            progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+                            progressBlock: { (skippedResources, failedResources, completedResources) -> Void in
                                 progressCalledCount += 1
                             },
-                            completionHandler: {(skippedResources, failedResources, completedResources) -> () in
+                            completionHandler: {(skippedResources, failedResources, completedResources) -> Void in
                                 expectation.fulfill()
                                 XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
                                 XCTAssertEqual(failedResources.count, 0, "There should be no failed downloading.")
@@ -99,9 +99,9 @@ class ImagePrefetcherTests: XCTestCase {
         
         let maxConcurrentCount = 2
         let prefetcher = ImagePrefetcher(urls: urls, options: nil,
-                            progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+                            progressBlock: { (skippedResources, failedResources, completedResources) -> Void in
                             },
-                            completionHandler: {(skippedResources, failedResources, completedResources) -> () in
+                            completionHandler: {(skippedResources, failedResources, completedResources) -> Void in
                                 XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
                                 XCTAssertEqual(failedResources.count, urls.count, "The failed count should be the same with started downloads due to cancellation.")
                                 XCTAssertEqual(completedResources.count, 0, "None resources prefetching should complete.")
@@ -128,9 +128,9 @@ class ImagePrefetcherTests: XCTestCase {
             urls.append(URL(string: URLString)!)
         }
         
-        let prefetcher = ImagePrefetcher(urls: urls, options: nil, progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+        let prefetcher = ImagePrefetcher(urls: urls, options: nil, progressBlock: { (skippedResources, failedResources, completedResources) -> Void in
 
-            }) { (skippedResources, failedResources, completedResources) -> () in
+            }) { (skippedResources, failedResources, completedResources) -> Void in
                 expectation.fulfill()
                 XCTAssertEqual(skippedResources.count, 1, "There should be 1 item skipped.")
                 XCTAssertEqual(skippedResources[0].downloadURL.absoluteString, testKeys[0], "The correct image key should be skipped.")
@@ -157,9 +157,9 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         // Use `.ForceRefresh` to download it forcely.
-        let prefetcher = ImagePrefetcher(urls: urls, options: [.forceRefresh], progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+        let prefetcher = ImagePrefetcher(urls: urls, options: [.forceRefresh], progressBlock: { (skippedResources, failedResources, completedResources) -> Void in
             
-            }) { (skippedResources, failedResources, completedResources) -> () in
+            }) { (skippedResources, failedResources, completedResources) -> Void in
                 expectation.fulfill()
                 
                 XCTAssertEqual(skippedResources.count, 0, "There should be no item skipped.")
@@ -174,7 +174,7 @@ class ImagePrefetcherTests: XCTestCase {
     
     func testPrefetchWithWrongInitParameters() {
         let expectation = self.expectation(description: "wait for prefetching images")
-        let prefetcher = ImagePrefetcher(urls: [], options: nil, progressBlock: nil) { (skippedResources, failedResources, completedResources) -> () in
+        let prefetcher = ImagePrefetcher(urls: [], options: nil, progressBlock: nil) { (skippedResources, failedResources, completedResources) -> Void in
             expectation.fulfill()
             
             XCTAssertEqual(skippedResources.count, 0, "There should be no item skipped.")
@@ -200,10 +200,10 @@ class ImagePrefetcherTests: XCTestCase {
         func prefetchAgain() {
             var progressCalledCount = 0
             let prefetcher = ImagePrefetcher(urls: urls, options: [.processor(p)],
-                                             progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+                                             progressBlock: { (skippedResources, failedResources, completedResources) -> Void in
                                                 progressCalledCount += 1
             },
-                                             completionHandler: {(skippedResources, failedResources, completedResources) -> () in
+                                             completionHandler: {(skippedResources, failedResources, completedResources) -> Void in
                                                 
                                                 XCTAssertEqual(skippedResources.count, urls.count, "There should be one item skipped since it is just prefetched.")
                                                 XCTAssertEqual(failedResources.count, 0, "There should be no failed downloading.")
@@ -221,10 +221,10 @@ class ImagePrefetcherTests: XCTestCase {
         
         var progressCalledCount = 0
         let prefetcher = ImagePrefetcher(urls: urls, options: [.processor(p)],
-                                         progressBlock: { (skippedResources, failedResources, completedResources) -> () in
+                                         progressBlock: { (skippedResources, failedResources, completedResources) -> Void in
                                             progressCalledCount += 1
         },
-                                         completionHandler: {(skippedResources, failedResources, completedResources) -> () in
+                                         completionHandler: {(skippedResources, failedResources, completedResources) -> Void in
                                             
                                             XCTAssertEqual(skippedResources.count, 0, "There should be no items skipped.")
                                             XCTAssertEqual(failedResources.count, 0, "There should be no failed downloading.")

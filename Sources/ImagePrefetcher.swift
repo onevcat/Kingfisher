@@ -37,14 +37,14 @@
 /// - `skippedResources`: An array of resources that are already cached before the prefetching starting.
 /// - `failedResources`: An array of resources that fail to be downloaded. It could because of being cancelled while downloading, encountered an error when downloading or the download not being started at all.
 /// - `completedResources`: An array of resources that are downloaded and cached successfully.
-public typealias PrefetcherProgressBlock = ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> ())
+public typealias PrefetcherProgressBlock = ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
 
 /// Completion block of prefetcher.
 ///
 /// - `skippedResources`: An array of resources that are already cached before the prefetching starting.
 /// - `failedResources`: An array of resources that fail to be downloaded. It could because of being cancelled while downloading, encountered an error when downloading or the download not being started at all.
 /// - `completedResources`: An array of resources that are downloaded and cached successfully.
-public typealias PrefetcherCompletionHandler = ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> ())
+public typealias PrefetcherCompletionHandler = ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
 
 /// `ImagePrefetcher` represents a downloading manager for requesting many images via URLs, then caching them.
 /// This is useful when you know a list of image resources and want to download them before showing.
@@ -189,7 +189,7 @@ public class ImagePrefetcher {
     
     func downloadAndCache(_ resource: Resource) {
 
-        let downloadTaskCompletionHandler: CompletionHandler = { (image, error, _, _) -> () in
+        let downloadTaskCompletionHandler: CompletionHandler = { (image, error, _, _) -> Void in
             self.tasks.removeValue(forKey: resource.downloadURL)
             if let _ = error {
                 self.failedResources.append(resource)
