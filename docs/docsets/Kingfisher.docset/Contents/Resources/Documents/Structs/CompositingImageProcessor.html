@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>KingfisherError Enumeration Reference</title>
+    <title>CompositingImageProcessor Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Enum/KingfisherError" class="dashAnchor"></a>
-    <a title="KingfisherError Enumeration Reference"></a>
+    <a name="//apple_ref/swift/Struct/CompositingImageProcessor" class="dashAnchor"></a>
+    <a title="CompositingImageProcessor Structure Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">Kingfisher Docs</a> (80% documented)</p>
@@ -23,7 +23,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">Kingfisher Reference</a>
         <img id="carat" src="../img/carat.png" />
-        KingfisherError Enumeration Reference
+        CompositingImageProcessor Structure Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -287,14 +287,8 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>KingfisherError</h1>
-              <div class="declaration">
-                <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">KingfisherError</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
-
-                </div>
-              </div>
-            <p>The code of errors which <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> might encountered.</p>
+            <h1>CompositingImageProcessor</h1>
+            <p>Processor for adding an compositing operation to images. Only CG-based images are supported in macOS.</p>
 
           </section>
           <section class="section task-group-section">
@@ -303,9 +297,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher0A5ErrorO7badDataA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/badData" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher0A5ErrorO7badDataA2CmF">badData</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Property/identifier" class="dashAnchor"></a>
+                    <a class="token" href="#/">identifier</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -313,33 +307,23 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>badData: The downloaded data is not an image or the data is corrupted.</p>
+                        <p>Identifier of the processor.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    See documentation of <code><a href="../Protocols/ImageProcessor.html">ImageProcessor</a></code> protocol for more.
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">badData</span> <span class="o">=</span> <span class="mi">10000</span></code></pre>
+</div>
 
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.5.0/Sources/ImageDownloader.swift#L76">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher0A5ErrorO11notModifiedA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/notModified" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher0A5ErrorO11notModifiedA2CmF">notModified</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Property/compositingOperation" class="dashAnchor"></a>
+                    <a class="token" href="#/">compositingOperation</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -347,33 +331,18 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>notModified: The remote server responsed a 304 code. No image data downloaded.</p>
+                        <p>Compositing operation will be used to the input image.</p>
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">notModified</span> <span class="o">=</span> <span class="mi">10001</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.5.0/Sources/ImageDownloader.swift#L79">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher0A5ErrorO17invalidStatusCodeA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/invalidStatusCode" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher0A5ErrorO17invalidStatusCodeA2CmF">invalidStatusCode</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Property/alpha" class="dashAnchor"></a>
+                    <a class="token" href="#/">alpha</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -381,35 +350,18 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The HTTP status code in response is not valid. If an invalid
-code error received, you could check the value under <code><a href="../Global Variables.html#/s:10Kingfisher0A18ErrorStatusCodeKeySSv">KingfisherErrorStatusCodeKey</a></code> 
-in <code>userInfo</code> to see the code.</p>
+                        <p>Alpha will be used when compositing image.</p>
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">invalidStatusCode</span> <span class="o">=</span> <span class="mi">10002</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.5.0/Sources/ImageDownloader.swift#L84">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher0A5ErrorO9notCachedA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/notCached" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher0A5ErrorO9notCachedA2CmF">notCached</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Property/backgroundColor" class="dashAnchor"></a>
+                    <a class="token" href="#/">backgroundColor</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -417,33 +369,18 @@ in <code>userInfo</code> to see the code.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>notCached: The image rquested is not in cache but .onlyFromCache is activated.</p>
+                        <p>Background color of the output image. If <code>nil</code>, it will stay transparent.</p>
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">notCached</span> <span class="o">=</span> <span class="mi">10003</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.5.0/Sources/ImageDownloader.swift#L87">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher0A5ErrorO10invalidURLA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/invalidURL" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher0A5ErrorO10invalidURLA2CmF">invalidURL</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/init(compositingOperation:alpha:backgroundColor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">init(compositingOperation:alpha:backgroundColor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -451,33 +388,18 @@ in <code>userInfo</code> to see the code.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The URL is invalid.</p>
+                        <p>Initialize an <code>CompositingImageProcessor</code></p>
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">invalidURL</span> <span class="o">=</span> <span class="mi">20000</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.5.0/Sources/ImageDownloader.swift#L90">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher0A5ErrorO31downloadCancelledBeforeStartingA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/downloadCancelledBeforeStarting" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher0A5ErrorO31downloadCancelledBeforeStartingA2CmF">downloadCancelledBeforeStarting</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/process(item:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">process(item:options:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -485,19 +407,13 @@ in <code>userInfo</code> to see the code.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The downloading task is cancelled before started.</p>
+                        <p>Process an input <code><a href="../Enums/ImageProcessItem.html">ImageProcessItem</a></code> item to an image for this processor.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>See documentation of <code><a href="../Protocols/ImageProcessor.html">ImageProcessor</a></code> protocol for more.</p>
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">downloadCancelledBeforeStarting</span> <span class="o">=</span> <span class="mi">30000</span></code></pre>
+</div>
 
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.5.0/Sources/ImageDownloader.swift#L93">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
