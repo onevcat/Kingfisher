@@ -2531,6 +2531,7 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = CommonCrypto/macOSX;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2561,6 +2562,7 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = CommonCrypto/macOSX;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -2760,6 +2762,9 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[sdk=appletvos*]" = CommonCrypto/appleTVOS;
+				"SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]" = CommonCrypto/appleTVSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -2792,6 +2797,9 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[sdk=appletvos*]" = CommonCrypto/appleTVOS;
+				"SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]" = CommonCrypto/appleTVSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -2823,6 +2831,9 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[sdk=watchos*]" = CommonCrypto/watchOS;
+				"SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]" = CommonCrypto/watchSimulator;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -2852,6 +2863,9 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[sdk=watchos*]" = CommonCrypto/watchOS;
+				"SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]" = CommonCrypto/watchSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -3103,6 +3117,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = CommonCrypto/iPhoneOS;
+				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = CommonCrypto/iPhoneSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -3131,6 +3148,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = CommonCrypto/iPhoneOS;
+				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = CommonCrypto/iPhoneSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;

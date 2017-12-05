@@ -1,0 +1,5 @@
+
+module CCommonCrypto [system] {
+    header "/Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS.sdk/usr/include/CommonCrypto/CommonCrypto.h"
+    export *
+}
