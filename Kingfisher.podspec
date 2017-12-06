@@ -47,8 +47,19 @@ Pod::Spec.new do |s|
   s.ios.exclude_files = "Sources/NSButton+Kingfisher.swift"
   s.tvos.exclude_files = "Sources/NSButton+Kingfisher.swift"
   
+  s.resources = ['CommonCrypto']
+
   s.requires_arc = true
   s.framework = "CFNetwork"
 
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
+  s.pod_target_xcconfig = { 
+    'SWIFT_VERSION'                              => '4.0', 
+    'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'         => '$(PODS_ROOT)/Kingfisher/CommonCrypto/iPhoneOS',
+    'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'  => '$(PODS_ROOT)/Kingfisher/CommonCrypto/iPhoneSimulator', 
+    'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'        => '$(PODS_ROOT)/Kingfisher/CommonCrypto/appleTVOS',
+    'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]' => '$(PODS_ROOT)/Kingfisher/CommonCrypto/appleTVSimulator',
+    'SWIFT_INCLUDE_PATHS[sdk=macosx*]'           => '$(PODS_ROOT)/Kingfisher/CommonCrypto/macOSX',
+    'SWIFT_INCLUDE_PATHS[sdk=watchos*]'          => '$(PODS_ROOT)/Kingfisher/CommonCrypto/watchOS',
+    'SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]'   => '$(PODS_ROOT)/Kingfisher/CommonCrypto/watchSimulator',
+  }
 end
