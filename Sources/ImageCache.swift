@@ -239,11 +239,15 @@ open class ImageCache {
     */
     open func removeImage(forKey key: String,
                           processorIdentifier identifier: String = "",
+                          fromMemory: Bool = true,
                           fromDisk: Bool = true,
                           completionHandler: (() -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
-        memoryCache.removeObject(forKey: computedKey as NSString)
+
+        if fromMemory {
+            memoryCache.removeObject(forKey: computedKey as NSString)
+        }
         
         func callHandlerInMainQueue() {
             if let handler = completionHandler {
