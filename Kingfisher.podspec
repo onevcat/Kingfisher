@@ -47,19 +47,19 @@ Pod::Spec.new do |s|
   s.ios.exclude_files = "Sources/NSButton+Kingfisher.swift"
   s.tvos.exclude_files = "Sources/NSButton+Kingfisher.swift"
   
-  s.resources = ['CommonCrypto']
+  s.resources = ['Sources/CommonCrypto']
 
   s.requires_arc = true
   s.framework = "CFNetwork"
 
   s.pod_target_xcconfig = { 
     'SWIFT_VERSION'                              => '4.0', 
-    'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'         => '$(PODS_TARGET_SRCROOT)/CommonCrypto/iPhoneOS',
-    'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'  => '$(PODS_TARGET_SRCROOT)/CommonCrypto/iPhoneSimulator', 
-    'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'        => '$(PODS_TARGET_SRCROOT)/CommonCrypto/appleTVOS',
-    'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]' => '$(PODS_TARGET_SRCROOT)/CommonCrypto/appleTVSimulator',
-    'SWIFT_INCLUDE_PATHS[sdk=macosx*]'           => '$(PODS_TARGET_SRCROOT)/CommonCrypto/macOSX',
-    'SWIFT_INCLUDE_PATHS[sdk=watchos*]'          => '$(PODS_TARGET_SRCROOT)/CommonCrypto/watchOS',
-    'SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]'   => '$(PODS_TARGET_SRCROOT)/CommonCrypto/watchSimulator',
+    'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'         => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/iPhoneOS',
+    'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'  => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/iPhoneSimulator', 
+    'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'        => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/appleTVOS',
+    'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]' => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/appleTVSimulator',
+    'SWIFT_INCLUDE_PATHS[sdk=macosx*]'           => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/macOSX',
+    'SWIFT_INCLUDE_PATHS[sdk=watchos*]'          => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/watchOS',
+    'SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]'   => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/watchSimulator',
   }
 end
