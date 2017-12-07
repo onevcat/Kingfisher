@@ -1,0 +1,6 @@
+
+module CCommonCrypto [system] {
+    header "/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator.sdk/usr/include/CommonCrypto/CommonCrypto.h"
+    export *
+}
+
