@@ -1,6 +1,0 @@
-
-module CCommonCrypto [system] {
-    header "/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/SDKs/WatchOS.sdk/usr/include/CommonCrypto/CommonCrypto.h"
-    export *
-}
-

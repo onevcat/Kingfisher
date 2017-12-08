@@ -1,9 +1,8 @@
 //
-//  Kingfisher.h
+//  NSString+Kingfisher.h
 //  Kingfisher
 //
-//  Created by Wei Wang on 15/4/6.
-//
+//  Created by 张奇 on 2017/12/9.
 //  Copyright (c) 2017 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,16 +22,12 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
+//
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for Kingfisher.
-FOUNDATION_EXPORT double KingfisherVersionNumber;
+@interface NSString(MD5)
 
-//! Project version string for Kingfisher.
-FOUNDATION_EXPORT const unsigned char KingfisherVersionString[];
+@property(nonatomic, readonly, nonnull) NSString *kf_md5;
 
-// In this header, you should import all the public headers of your framework using statements like #import <Kingfisher/PublicHeader.h>
-#import "NSString+MD5.h"
-
-
+@end

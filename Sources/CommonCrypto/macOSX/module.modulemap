@@ -1,6 +1,0 @@
-
-module CCommonCrypto [system] {
-    header "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/CommonCrypto/CommonCrypto.h"
-    export *
-}
-
