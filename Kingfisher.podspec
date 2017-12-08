@@ -25,41 +25,33 @@ Pod::Spec.new do |s|
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
   s.social_media_url   = "http://twitter.com/onevcat"
 
-  s.ios.deployment_target = "8.0"
-  s.tvos.deployment_target = "9.0"
-  s.osx.deployment_target = "10.10"
+  s.ios.deployment_target     = "8.0"
+  s.tvos.deployment_target    = "9.0"
+  s.osx.deployment_target     = "10.10"
   s.watchos.deployment_target = "2.0"
 
-  s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
+  s.source        = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
-  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h", "Sources/Kingfisher.swift"]
-  s.public_header_files = ["Sources/Kingfisher.h"]
+  s.source_files  = ["Sources/**/*.{h,m,swift}"]
   
-  s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift"]
+  s.osx.exclude_files     = ["Sources/AnimatedImageView.swift", 
+                             "Sources/UIButton+Kingfisher.swift",
+                             "Sources/Kingfisher.h"]
   s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", 
                              "Sources/UIButton+Kingfisher.swift", 
                              "Sources/ImageView+Kingfisher.swift", 
                              "Sources/NSButton+Kingfisher.swift", 
                              "Sources/Indicator.swift", 
                              "Sources/Filter.swift",
-                             "Sources/Placeholder.swift"
-                            ]
-  s.ios.exclude_files = "Sources/NSButton+Kingfisher.swift"
-  s.tvos.exclude_files = "Sources/NSButton+Kingfisher.swift"
-  
-  s.resources = ['Sources/CommonCrypto']
+                             "Sources/Placeholder.swift",
+                             "Sources/Kingfisher.h"]
+  s.ios.exclude_files     = ["Sources/NSButton+Kingfisher.swift",
+                             "Sources/Kingfisher.h"]
+  s.tvos.exclude_files    = ["Sources/NSButton+Kingfisher.swift",
+                             "Sources/Kingfisher.h"]
+                         
+  s.requires_arc          = true
+  s.framework             = "CFNetwork"
 
-  s.requires_arc = true
-  s.framework = "CFNetwork"
-
-  s.pod_target_xcconfig = { 
-    'SWIFT_VERSION'                              => '4.0', 
-    'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'         => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/iPhoneOS',
-    'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'  => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/iPhoneSimulator', 
-    'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'        => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/appleTVOS',
-    'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]' => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/appleTVSimulator',
-    'SWIFT_INCLUDE_PATHS[sdk=macosx*]'           => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/macOSX',
-    'SWIFT_INCLUDE_PATHS[sdk=watchos*]'          => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/watchOS',
-    'SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]'   => '$(PODS_TARGET_SRCROOT)/Sources/CommonCrypto/watchSimulator',
-  }
+  s.pod_target_xcconfig   = { 'SWIFT_VERSION' => '4.0' }
 end
