@@ -16,6 +16,9 @@
 		3D5406351FDB10FF006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3D5406361FDB1100006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3D5406371FDB1102006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3DFE0D171FDB81D700B96EB1 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
+		3DFE0D181FDB81D800B96EB1 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
+		3DFE0D191FDB81D800B96EB1 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
 		444C03E91F548F6100990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
 		444C03EA1F548F6200990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
 		444C03EB1F548F6200990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
@@ -2252,6 +2255,7 @@
 				D10946221C526C61001408EB /* String+MD5.swift in Sources */,
 				D10946231C526C61001408EB /* ThreadHelper.swift in Sources */,
 				444C03EB1F548F6200990BCC /* Placeholder.swift in Sources */,
+				3DFE0D181FDB81D800B96EB1 /* NSString+MD5.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2334,6 +2338,7 @@
 				D10946151C526C0D001408EB /* Resource.swift in Sources */,
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
 				4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
+				3DFE0D171FDB81D700B96EB1 /* NSString+MD5.m in Sources */,
 				D10946171C526C0D001408EB /* ThreadHelper.swift in Sources */,
 				444C03EA1F548F6200990BCC /* Placeholder.swift in Sources */,
 				F78F5EBE1FCDDE42001A9111 /* ImageModifier.swift in Sources */,
@@ -2350,6 +2355,7 @@
 				D109462D1C526CF5001408EB /* ImageTransition.swift in Sources */,
 				FB402D111EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */,
+				3DFE0D191FDB81D800B96EB1 /* NSString+MD5.m in Sources */,
 				D10946251C526CE8001408EB /* Image.swift in Sources */,
 				D10946261C526CE8001408EB /* ImageCache.swift in Sources */,
 				D9638BA31C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
