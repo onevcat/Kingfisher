@@ -10,6 +10,15 @@
 		008050DF31B6F246FFC8BEA1 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */; };
 		182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */; };
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
+		3D5406301FDB10B5006F0D43 /* Kingfisher.h in Headers */ = {isa = PBXBuildFile; fileRef = D10945F01C526B6C001408EB /* Kingfisher.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3D5406331FDB10E1006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3D5406341FDB10E1006F0D43 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
+		3D5406351FDB10FF006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3D5406361FDB1100006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3D5406371FDB1102006F0D43 /* NSString+MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5406311FDB10E0006F0D43 /* NSString+MD5.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3DFE0D171FDB81D700B96EB1 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
+		3DFE0D181FDB81D800B96EB1 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
+		3DFE0D191FDB81D800B96EB1 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5406321FDB10E0006F0D43 /* NSString+MD5.m */; };
 		444C03E91F548F6100990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
 		444C03EA1F548F6200990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
 		444C03EB1F548F6200990BCC /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C03E01F547AAE00990BCC /* Placeholder.swift */; };
@@ -483,6 +492,8 @@
 		1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSButton+Kingfisher.swift"; path = "Sources/NSButton+Kingfisher.swift"; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
+		3D5406311FDB10E0006F0D43 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+MD5.h"; path = "Sources/NSString+MD5.h"; sourceTree = "<group>"; };
+		3D5406321FDB10E0006F0D43 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+MD5.m"; path = "Sources/NSString+MD5.m"; sourceTree = "<group>"; };
 		444C03E01F547AAE00990BCC /* Placeholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Placeholder.swift; path = Sources/Placeholder.swift; sourceTree = "<group>"; };
 		4AB2628A580157ADADCE0011 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -1055,6 +1066,8 @@
 		4BF39F3F1D796BDD0035ECC8 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3D5406311FDB10E0006F0D43 /* NSString+MD5.h */,
+				3D5406321FDB10E0006F0D43 /* NSString+MD5.m */,
 				4B7742421D87E2AA0077024E /* Box.swift */,
 				D10945F41C526B6C001408EB /* String+MD5.swift */,
 				D10945F51C526B6C001408EB /* ThreadHelper.swift */,
@@ -1284,6 +1297,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D5406361FDB1100006F0D43 /* NSString+MD5.h in Headers */,
 				D10946241C526C65001408EB /* Kingfisher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1293,6 +1307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10946191C526C13001408EB /* Kingfisher.h in Headers */,
+				3D5406351FDB10FF006F0D43 /* NSString+MD5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1300,6 +1315,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D5406301FDB10B5006F0D43 /* Kingfisher.h in Headers */,
+				3D5406371FDB1102006F0D43 /* NSString+MD5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1308,6 +1325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10946021C526B8E001408EB /* Kingfisher.h in Headers */,
+				3D5406331FDB10E1006F0D43 /* NSString+MD5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1604,7 +1622,7 @@
 					};
 					D1ED2D341AD2D09F00CFC3EB = {
 						CreatedOnToolsVersion = 6.2;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 0910;
 					};
 					D1ED2D3E1AD2D09F00CFC3EB = {
 						CreatedOnToolsVersion = 6.2;
@@ -2237,6 +2255,7 @@
 				D10946221C526C61001408EB /* String+MD5.swift in Sources */,
 				D10946231C526C61001408EB /* ThreadHelper.swift in Sources */,
 				444C03EB1F548F6200990BCC /* Placeholder.swift in Sources */,
+				3DFE0D181FDB81D800B96EB1 /* NSString+MD5.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2319,6 +2338,7 @@
 				D10946151C526C0D001408EB /* Resource.swift in Sources */,
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
 				4BB24C3E1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
+				3DFE0D171FDB81D700B96EB1 /* NSString+MD5.m in Sources */,
 				D10946171C526C0D001408EB /* ThreadHelper.swift in Sources */,
 				444C03EA1F548F6200990BCC /* Placeholder.swift in Sources */,
 				F78F5EBE1FCDDE42001A9111 /* ImageModifier.swift in Sources */,
@@ -2335,6 +2355,7 @@
 				D109462D1C526CF5001408EB /* ImageTransition.swift in Sources */,
 				FB402D111EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				4B2B8E4D1D70141100FC4749 /* ImageProcessor.swift in Sources */,
+				3DFE0D191FDB81D800B96EB1 /* NSString+MD5.m in Sources */,
 				D10946251C526CE8001408EB /* Image.swift in Sources */,
 				D10946261C526CE8001408EB /* ImageCache.swift in Sources */,
 				D9638BA31C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
@@ -2391,6 +2412,7 @@
 				D10945FE1C526B86001408EB /* Resource.swift in Sources */,
 				D10945FF1C526B86001408EB /* String+MD5.swift in Sources */,
 				4BB24C3D1D79215A00CD5F9C /* CacheSerializer.swift in Sources */,
+				3D5406341FDB10E1006F0D43 /* NSString+MD5.m in Sources */,
 				D10946001C526B86001408EB /* ThreadHelper.swift in Sources */,
 				444C03E91F548F6100990BCC /* Placeholder.swift in Sources */,
 				F78F5EBD1FCDDE42001A9111 /* ImageModifier.swift in Sources */,
@@ -2531,7 +2553,7 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = Sources/CommonCrypto/macOSX;
+				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2562,7 +2584,7 @@
 				PRODUCT_NAME = Kingfisher;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = Sources/CommonCrypto/macOSX;
+				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -2763,8 +2785,6 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				"SWIFT_INCLUDE_PATHS[sdk=appletvos*]" = Sources/CommonCrypto/appleTVOS;
-				"SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]" = Sources/CommonCrypto/appleTVSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -2798,8 +2818,6 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				"SWIFT_INCLUDE_PATHS[sdk=appletvos*]" = Sources/CommonCrypto/appleTVOS;
-				"SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]" = Sources/CommonCrypto/appleTVSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -2832,8 +2850,6 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				"SWIFT_INCLUDE_PATHS[sdk=watchos*]" = Sources/CommonCrypto/watchOS;
-				"SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]" = Sources/CommonCrypto/watchSimulator;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -2864,8 +2880,6 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				"SWIFT_INCLUDE_PATHS[sdk=watchos*]" = Sources/CommonCrypto/watchOS;
-				"SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]" = Sources/CommonCrypto/watchSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -3118,8 +3132,6 @@
 				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = Sources/CommonCrypto/iPhoneOS;
-				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = Sources/CommonCrypto/iPhoneSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -3149,8 +3161,6 @@
 				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = Sources/CommonCrypto/iPhoneOS;
-				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = Sources/CommonCrypto/iPhoneSimulator;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;

@@ -22,12 +22,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
-// adding CommonCrypto to a Swift framework See:
-// http://stackoverflow.com/questions/25248598/importing-commoncrypto-in-a-swift-framework
-
 
 import Foundation
-import CCommonCrypto
 
 public struct StringProxy {
     fileprivate let base: String
@@ -44,21 +40,7 @@ extension String: KingfisherCompatible {
 }
 
 extension StringProxy {
-    var md5: String {
-        guard let cStr = base.cString(using: .utf8) else {
-            return base
-        }
-        let bytesLength = CUnsignedInt(base.lengthOfBytes(using: .utf8))
-        let md5DigestLenth = Int(CC_MD5_DIGEST_LENGTH)
-        let md5StringPointer = UnsafeMutablePointer<CUnsignedChar>.allocate(capacity: md5DigestLenth)
-        defer {
-            md5StringPointer.deallocate(capacity: md5DigestLenth)
-        }
-        CC_MD5(cStr, bytesLength, md5StringPointer)
-        var md5String = ""
-        for i in 0 ..< md5DigestLenth {
-            md5String = md5String.appendingFormat("%02x", md5StringPointer[i])
-        }
-        return md5String
+    public var md5: String {
+        return (base as NSString).kf_md5
     }
 }
