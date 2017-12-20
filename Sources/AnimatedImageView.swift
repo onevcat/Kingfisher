@@ -49,6 +49,13 @@ open class AnimatedImageView: UIImageView {
             target?.updateFrame()
         }
     }
+
+    /// Enumeration that specifies repeat count of GIF
+    public enum RepeatCount {
+        case once
+        case finite(count: UInt)
+        case infinite
+    }
     
     // MARK: - Public property
     /// Whether automatically play the animation when the view become visible. Default is true.
@@ -73,6 +80,8 @@ open class AnimatedImageView: UIImageView {
             }
         }
     }
+
+    public var repeatCount = RepeatCount.infinite
     
     // MARK: - Private property
     /// `Animator` instance that holds the frames of a specific image in memory.
@@ -120,6 +129,10 @@ open class AnimatedImageView: UIImageView {
         if self.isAnimating {
             return
         } else {
+            if animator?.isReachMaxRepeatCount ?? false {
+                return
+            }
+
             displayLink.isPaused = false
         }
     }
@@ -160,7 +173,11 @@ open class AnimatedImageView: UIImageView {
     private func reset() {
         animator = nil
         if let imageSource = image?.kf.imageSource?.imageRef {
-            animator = Animator(imageSource: imageSource, contentMode: contentMode, size: bounds.size, framePreloadCount: framePreloadCount)
+            animator = Animator(imageSource: imageSource,
+                                contentMode: contentMode,
+                                size: bounds.size,
+                                framePreloadCount: framePreloadCount,
+                                repeatCount: repeatCount)
             animator?.needsPrescaling = needsPrescaling
             animator?.prepareFramesAsynchronously()
         }
@@ -199,6 +216,10 @@ open class AnimatedImageView: UIImageView {
     
         if animator?.updateCurrentFrame(duration: duration) ?? false {
             layer.setNeedsDisplay()
+
+            if animator?.isReachMaxRepeatCount ?? false {
+                stopAnimating()
+            }
         }
     }
 }
@@ -217,6 +238,7 @@ class Animator {
     fileprivate let size: CGSize
     fileprivate let maxFrameCount: Int
     fileprivate let imageSource: CGImageSource
+    fileprivate let maxRepeatCount: AnimatedImageView.RepeatCount
     
     fileprivate var animatedFrames = [AnimatedFrame]()
     fileprivate let maxTimeStep: TimeInterval = 1.0
@@ -225,12 +247,24 @@ class Animator {
     fileprivate var currentPreloadIndex = 0
     fileprivate var timeSinceLastFrameChange: TimeInterval = 0.0
     fileprivate var needsPrescaling = true
+    fileprivate var currentRepeatCount: UInt = 0
     
     /// Loop count of animated image.
     private var loopCount = 0
     
     var currentFrame: UIImage? {
         return frame(at: currentFrameIndex)
+    }
+
+    var isReachMaxRepeatCount: Bool {
+        switch maxRepeatCount {
+        case .once:
+            return currentRepeatCount >= 1
+        case .finite(let maxCount):
+            return currentRepeatCount >= maxCount
+        case .infinite:
+            return false
+        }
     }
     
     var contentMode = UIViewContentMode.scaleToFill
@@ -249,11 +283,16 @@ class Animator {
      
      - returns: The animator object.
      */
-    init(imageSource source: CGImageSource, contentMode mode: UIViewContentMode, size: CGSize, framePreloadCount count: Int) {
+    init(imageSource source: CGImageSource,
+         contentMode mode: UIViewContentMode,
+         size: CGSize,
+         framePreloadCount count: Int,
+         repeatCount: AnimatedImageView.RepeatCount) {
         self.imageSource = source
         self.contentMode = mode
         self.size = size
         self.maxFrameCount = count
+        self.maxRepeatCount = repeatCount
     }
     
     func frame(at index: Int) -> Image? {
@@ -334,10 +373,15 @@ class Animator {
         let lastFrameIndex = currentFrameIndex
         currentFrameIndex += 1
         currentFrameIndex = currentFrameIndex % animatedFrames.count
-        
+
         if animatedFrames.count < frameCount {
             preloadFrameAsynchronously(at: lastFrameIndex)
         }
+
+        if currentFrameIndex == 0 {
+            currentRepeatCount += 1
+        }
+
         return true
     }
     
