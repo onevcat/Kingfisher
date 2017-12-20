@@ -51,10 +51,24 @@ open class AnimatedImageView: UIImageView {
     }
 
     /// Enumeration that specifies repeat count of GIF
-    public enum RepeatCount {
+    public enum RepeatCount: Equatable {
         case once
         case finite(count: UInt)
         case infinite
+
+        public static func ==(lhs: RepeatCount, rhs: RepeatCount) -> Bool {
+            switch (lhs, rhs) {
+            case let (.finite(l), .finite(r)):
+                return l == r
+            case (.once, .once),
+                 (.infinite, .infinite):
+                return true
+            case (.once, _),
+                 (.infinite, _),
+                 (.finite, _):
+                return false
+            }
+        }
     }
     
     // MARK: - Public property
@@ -81,7 +95,15 @@ open class AnimatedImageView: UIImageView {
         }
     }
 
-    public var repeatCount = RepeatCount.infinite
+    public var repeatCount = RepeatCount.infinite {
+        didSet {
+            if oldValue != repeatCount {
+                reset()
+                setNeedsDisplay()
+                layer.setNeedsDisplay()
+            }
+        }
+    }
     
     // MARK: - Private property
     /// `Animator` instance that holds the frames of a specific image in memory.
