@@ -34,7 +34,13 @@
 import UIKit
 import ImageIO
 
+/// Protocol of `AnimatedImageView`.
 public protocol AnimatedImageViewDelegate: class {
+    /**
+     Called after the animatedImageView has reached the max repeat count.
+
+     - parameter imageView: The animatedImageView that is being animated.
+     */
     func didFinishAnimate(for imageView: AnimatedImageView)
 }
 
@@ -103,6 +109,7 @@ open class AnimatedImageView: UIImageView {
         }
     }
 
+    /// The repeat count.
     public var repeatCount = RepeatCount.infinite {
         didSet {
             if oldValue != repeatCount {
@@ -113,6 +120,7 @@ open class AnimatedImageView: UIImageView {
         }
     }
 
+    /// A delegate to be called after reach max repeat count.
     public var delegate: AnimatedImageViewDelegate?
     
     // MARK: - Private property
