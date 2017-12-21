@@ -34,6 +34,14 @@
 import UIKit
 import ImageIO
 
+public protocol AnimatedImageViewDelegate: class {
+    func didFinishAnimate(for imageView: AnimatedImageView)
+}
+
+extension AnimatedImageViewDelegate {
+    public func didFinishAnimate(for imageView: AnimatedImageView) {}
+}
+
 /// `AnimatedImageView` is a subclass of `UIImageView` for displaying animated image.
 open class AnimatedImageView: UIImageView {
     
@@ -104,6 +112,8 @@ open class AnimatedImageView: UIImageView {
             }
         }
     }
+
+    public var delegate: AnimatedImageViewDelegate?
     
     // MARK: - Private property
     /// `Animator` instance that holds the frames of a specific image in memory.
@@ -241,6 +251,7 @@ open class AnimatedImageView: UIImageView {
 
             if animator?.isReachMaxRepeatCount ?? false {
                 stopAnimating()
+                delegate?.didFinishAnimate(for: self)
             }
         }
     }
