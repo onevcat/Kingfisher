@@ -741,7 +741,7 @@ extension Kingfisher where Base: Image {
 }
 
 /// Reference the source image reference
-class ImageSource {
+final class ImageSource {
     var imageRef: CGImageSource?
     init(ref: CGImageSource) {
         self.imageRef = ref
