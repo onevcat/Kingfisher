@@ -173,7 +173,7 @@ extension Kingfisher where Base: ImageView {
     /// Default is .none, means no indicator will be shown.
     public var indicatorType: IndicatorType {
         get {
-            let indicator = (objc_getAssociatedObject(base, &indicatorTypeKey) as? Box<IndicatorType?>)?.value
+            let indicator = objc_getAssociatedObject(base, &indicatorTypeKey) as? IndicatorType
             return indicator ?? .none
         }
         
@@ -189,7 +189,7 @@ extension Kingfisher where Base: ImageView {
                 indicator = anIndicator
             }
             
-            objc_setAssociatedObject(base, &indicatorTypeKey, Box(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(base, &indicatorTypeKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -198,7 +198,7 @@ extension Kingfisher where Base: ImageView {
     /// It will be `nil` if `indicatorType` is `.none`.
     public fileprivate(set) var indicator: Indicator? {
         get {
-            return (objc_getAssociatedObject(base, &indicatorKey) as? Box<Indicator?>)?.value
+            return objc_getAssociatedObject(base, &indicatorKey) as? Indicator
         }
         
         set {
@@ -219,7 +219,7 @@ extension Kingfisher where Base: ImageView {
             }
             
             // Save in associated object
-            objc_setAssociatedObject(base, &indicatorKey, Box(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(base, &indicatorKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -233,7 +233,7 @@ extension Kingfisher where Base: ImageView {
     
     public fileprivate(set) var placeholder: Placeholder? {
         get {
-            return (objc_getAssociatedObject(base, &placeholderKey) as? Box<Placeholder?>)?.value
+            return objc_getAssociatedObject(base, &placeholderKey) as? Placeholder
         }
         
         set {
@@ -247,7 +247,7 @@ extension Kingfisher where Base: ImageView {
                 base.image = nil
             }
             
-            objc_setAssociatedObject(base, &placeholderKey, Box(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(base, &placeholderKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
