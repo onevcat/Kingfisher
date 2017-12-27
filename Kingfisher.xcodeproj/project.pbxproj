@@ -29,9 +29,6 @@
 		4B77423F1D87E08A0077024E /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B77423E1D87E08A0077024E /* Indicator.swift */; };
 		4B7742401D87E08A0077024E /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B77423E1D87E08A0077024E /* Indicator.swift */; };
 		4B7742411D87E08A0077024E /* Indicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B77423E1D87E08A0077024E /* Indicator.swift */; };
-		4B7742431D87E2AA0077024E /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7742421D87E2AA0077024E /* Box.swift */; };
-		4B7742441D87E2AA0077024E /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7742421D87E2AA0077024E /* Box.swift */; };
-		4B7742451D87E2AA0077024E /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7742421D87E2AA0077024E /* Box.swift */; };
 		4B7742471D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */; };
@@ -495,7 +492,6 @@
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B6313F31D766BEF0078E017 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Filter.swift; path = Sources/Filter.swift; sourceTree = "<group>"; };
 		4B77423E1D87E08A0077024E /* Indicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Indicator.swift; path = Sources/Indicator.swift; sourceTree = "<group>"; };
-		4B7742421D87E2AA0077024E /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Box.swift; path = Sources/Box.swift; sourceTree = "<group>"; };
 		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
 		4B98674E1CD1CF42003ADAC7 /* AnimatedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimatedImageView.swift; path = Sources/AnimatedImageView.swift; sourceTree = "<group>"; };
 		4BA697401EC2F06000AA7935 /* kingfisher-round-corner-40-corner-3-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-round-corner-40-corner-3-mac.jpg"; sourceTree = "<group>"; };
@@ -1055,7 +1051,6 @@
 		4BF39F3F1D796BDD0035ECC8 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				4B7742421D87E2AA0077024E /* Box.swift */,
 				D10945F41C526B6C001408EB /* String+MD5.swift */,
 				D10945F51C526B6C001408EB /* ThreadHelper.swift */,
 			);
@@ -2225,7 +2220,6 @@
 				4B7742411D87E08A0077024E /* Indicator.swift in Sources */,
 				D109461E1C526C61001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D109461F1C526C61001408EB /* KingfisherManager.swift in Sources */,
-				4B7742451D87E2AA0077024E /* Box.swift in Sources */,
 				4B6313F61D766BEF0078E017 /* Filter.swift in Sources */,
 				FB402D101EDEAB7E002B62A1 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				182FFF781CC9ACBA004B728D /* NSButton+Kingfisher.swift in Sources */,
@@ -2303,7 +2297,6 @@
 			files = (
 				D109460E1C526C0D001408EB /* Image.swift in Sources */,
 				4BFBEE7E1D7D0C3600699FD3 /* RequestModifier.swift in Sources */,
-				4B7742441D87E2AA0077024E /* Box.swift in Sources */,
 				4B6313F51D766BEF0078E017 /* Filter.swift in Sources */,
 				4B9867501CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				4BD8E04D1D9237E200A091BE /* Kingfisher.swift in Sources */,
@@ -2375,7 +2368,6 @@
 			files = (
 				D10945F71C526B86001408EB /* Image.swift in Sources */,
 				4BFBEE7D1D7D0C3600699FD3 /* RequestModifier.swift in Sources */,
-				4B7742431D87E2AA0077024E /* Box.swift in Sources */,
 				4B6313F41D766BEF0078E017 /* Filter.swift in Sources */,
 				4B98674F1CD1CF42003ADAC7 /* AnimatedImageView.swift in Sources */,
 				4BD8E04C1D9237E200A091BE /* Kingfisher.swift in Sources */,
