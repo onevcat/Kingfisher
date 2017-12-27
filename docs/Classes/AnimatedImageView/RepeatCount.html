@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Name Extension Reference</title>
+    <title>RepeatCount Enumeration Reference</title>
     <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Extension/Name" class="dashAnchor"></a>
-    <a title="Name Extension Reference"></a>
+    <a name="//apple_ref/swift/Enum/RepeatCount" class="dashAnchor"></a>
+    <a title="RepeatCount Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../../index.html">Kingfisher Docs</a> (80% documented)</p>
@@ -23,7 +23,7 @@
       <p id="breadcrumbs">
         <a href="../../index.html">Kingfisher Reference</a>
         <img id="carat" src="../../img/carat.png" />
-        Name Extension Reference
+        RepeatCount Enumeration Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -293,8 +293,15 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>Name</h1>
-            
+            <h1>RepeatCount</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RepeatCount</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                </div>
+              </div>
+            <p>Enumeration that specifies repeat count of GIF</p>
+
           </section>
           <section class="section task-group-section">
             <div class="task-group">
@@ -302,9 +309,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:So14NSNotificationC4NameV10KingfisherE0C17DidCleanDiskCacheADvZ"></a>
-                    <a name="//apple_ref/swift/Variable/KingfisherDidCleanDiskCache" class="dashAnchor"></a>
-                    <a class="token" href="#/s:So14NSNotificationC4NameV10KingfisherE0C17DidCleanDiskCacheADvZ">KingfisherDidCleanDiskCache</a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC11RepeatCountO4onceA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/once" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC11RepeatCountO4onceA2EmF">once</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -312,25 +319,120 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This notification will be sent when the disk cache got cleaned either there are cached files expired or the total size exceeding the max allowed size. The manually invoking of <code>clearDiskCache</code> method will not trigger this notification.</p>
-
-<p>The <code>object</code> of this notification is the <code><a href="../../Classes/ImageCache.html">ImageCache</a></code> object which sends the notification.</p>
-
-<p>A list of removed hashes (files) could be retrieved by accessing the array under <code><a href="../../Global Variables.html#/s:10Kingfisher0A23DiskCacheCleanedHashKeySSv">KingfisherDiskCacheCleanedHashKey</a></code> key in <code>userInfo</code> of the notification object you received. By checking the array, you could know the hash codes of files are removed.</p>
-
-<p>The main purpose of this notification is supplying a chance to maintain some necessary information on the cached files. See <a href="https://github.com/onevcat/Kingfisher/wiki/How-to-implement-ETag-based-304-(Not-Modified)-handling-in-Kingfisher">this wiki</a> for a use case on it.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">KingfisherDidCleanDiskCache</span> <span class="o">=</span> <span class="kt">Notification</span><span class="o">.</span><span class="kt">Name</span><span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="s">"com.onevcat.Kingfisher.KingfisherDidCleanDiskCache"</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RepeatCount</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.6.0/Sources/ImageCache.swift#L43">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.6.0/Sources/AnimatedImageView.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC11RepeatCountO6finiteAESu5count_tcAEmF"></a>
+                    <a name="//apple_ref/swift/Element/finite" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC11RepeatCountO6finiteAESu5count_tcAEmF">finite</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RepeatCount</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.6.0/Sources/AnimatedImageView.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC11RepeatCountO8infiniteA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/infinite" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC11RepeatCountO8infiniteA2EmF">infinite</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RepeatCount</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.6.0/Sources/AnimatedImageView.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:s9EquatableP2eeoiSbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:s9EquatableP2eeoiSbx_xtFZ">==(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span><span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">RepeatCount</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">RepeatCount</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.6.0/Sources/AnimatedImageView.swift#L82-L94">Show on GitHub</a>
                       </div>
                     </section>
                   </div>

@@ -2,6 +2,18 @@
 
 -----
 
+## [4.6.0 - AniBird](https://github.com/onevcat/Kingfisher/releases/tag/4.6.0) (2017-12-27)
+
+#### Add
+* Delegate methods for `AnimatedImageView` to inspect finishing event and/or end of an animation loop. [#829](https://github.com/onevcat/Kingfisher/pull/829)
+
+#### Fix
+* Minor performance improvement by `final` some classes.
+* Remove unnecessary `Box` type since Objective-C world takes `Any`. [#832](https://github.com/onevcat/Kingfisher/pull/832).
+* Some internal failing tests on earlier macOS, in which color space giving different result.
+
+---
+
 ## [4.5.0 - Blending](https://github.com/onevcat/Kingfisher/releases/tag/4.5.0) (2017-12-05)
 
 #### Add
