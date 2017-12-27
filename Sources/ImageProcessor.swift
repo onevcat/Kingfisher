@@ -696,7 +696,7 @@ fileprivate extension Color {
         var a: CGFloat = 0
 
         #if os(macOS)
-        (usingColorSpace(.genericRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        (usingColorSpace(.sRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
         #else
         getRed(&r, green: &g, blue: &b, alpha: &a)
         #endif
