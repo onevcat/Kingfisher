@@ -37,15 +37,24 @@ import ImageIO
 /// Protocol of `AnimatedImageView`.
 public protocol AnimatedImageViewDelegate: class {
     /**
+     Called after the animatedImageView has finished each animation loop.
+
+     - parameter imageView: The animatedImageView that is being animated.
+     - parameter count: The looped count.
+     */
+    func animatedImageView(_ imageView: AnimatedImageView, didPlayAnimationLoops count: UInt)
+
+    /**
      Called after the animatedImageView has reached the max repeat count.
 
      - parameter imageView: The animatedImageView that is being animated.
      */
-    func didFinishAnimate(for imageView: AnimatedImageView)
+    func animatedImageViewDidFinishAnimating(_ imageView: AnimatedImageView)
 }
 
 extension AnimatedImageViewDelegate {
-    public func didFinishAnimate(for imageView: AnimatedImageView) {}
+    public func animatedImageView(_ imageView: AnimatedImageView, didPlayAnimationLoops count: UInt) {}
+    public func animatedImageViewDidFinishAnimating(_ imageView: AnimatedImageView) {}
 }
 
 /// `AnimatedImageView` is a subclass of `UIImageView` for displaying animated image.
@@ -120,8 +129,8 @@ open class AnimatedImageView: UIImageView {
         }
     }
 
-    /// A delegate to be called after reach max repeat count.
-    public var delegate: AnimatedImageViewDelegate?
+    /// Delegate of this `AnimatedImageView` object. See `AnimatedImageViewDelegate` protocol for more.
+    public weak var delegate: AnimatedImageViewDelegate?
     
     // MARK: - Private property
     /// `Animator` instance that holds the frames of a specific image in memory.
@@ -218,6 +227,7 @@ open class AnimatedImageView: UIImageView {
                                 size: bounds.size,
                                 framePreloadCount: framePreloadCount,
                                 repeatCount: repeatCount)
+            animator?.delegate = self
             animator?.needsPrescaling = needsPrescaling
             animator?.prepareFramesAsynchronously()
         }
@@ -259,9 +269,15 @@ open class AnimatedImageView: UIImageView {
 
             if animator?.isReachMaxRepeatCount ?? false {
                 stopAnimating()
-                delegate?.didFinishAnimate(for: self)
+                delegate?.animatedImageViewDidFinishAnimating(self)
             }
         }
+    }
+}
+
+extension AnimatedImageView: AnimatorDelegate {
+    func animator(_ animator: Animator, didPlayAnimationLoops count: UInt) {
+        delegate?.animatedImageView(self, didPlayAnimationLoops: count)
     }
 }
 
@@ -271,6 +287,10 @@ struct AnimatedFrame {
     let duration: TimeInterval
     
     static let null: AnimatedFrame = AnimatedFrame(image: .none, duration: 0.0)
+}
+
+protocol AnimatorDelegate: class {
+    func animator(_ animator: Animator, didPlayAnimationLoops count: UInt)
 }
 
 // MARK: - Animator
@@ -289,6 +309,7 @@ class Animator {
     fileprivate var timeSinceLastFrameChange: TimeInterval = 0.0
     fileprivate var needsPrescaling = true
     fileprivate var currentRepeatCount: UInt = 0
+    fileprivate weak var delegate: AnimatorDelegate?
     
     /// Loop count of animated image.
     private var loopCount = 0
@@ -421,6 +442,8 @@ class Animator {
 
         if currentFrameIndex == 0 {
             currentRepeatCount += 1
+
+            delegate?.animator(self, didPlayAnimationLoops: currentRepeatCount)
         }
 
         return true
