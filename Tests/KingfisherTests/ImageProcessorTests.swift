@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import XCTest
-import Kingfisher
+@testable import Kingfisher
 
 #if os(macOS)
 import AppKit
@@ -70,7 +70,7 @@ class ImageProcessorTests: XCTestCase {
     #if os(macOS)
     func testCompositingProcessor() {
         let p = CompositingImageProcessor(compositingOperation: .darken, alpha: 1.0, backgroundColor: .lightGray)
-        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.CompositingImageProcessor(\(NSCompositingOperation.darken.rawValue),\(p.alpha))_#aaaaaaff")
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.CompositingImageProcessor(\(NSCompositingOperation.darken.rawValue),\(p.alpha))_\(Color.lightGray.hex)")
         checkProcessor(p, with: "compositing-\(NSCompositingOperation.darken.rawValue)")
     }
     #endif
@@ -127,18 +127,18 @@ class ImageProcessorTests: XCTestCase {
     
     func testOverlayProcessor() {
         let p1 = OverlayImageProcessor(overlay: .red)
-        XCTAssertEqual(p1.identifier, "com.onevcat.Kingfisher.OverlayImageProcessor(#ff0000ff_0.5)")
+        XCTAssertEqual(p1.identifier, "com.onevcat.Kingfisher.OverlayImageProcessor(\(Color.red.hex)_0.5)")
         checkProcessor(p1, with: "overlay-red")
         
         let p2 = OverlayImageProcessor(overlay: .red, fraction: 0.7)
-        XCTAssertEqual(p2.identifier, "com.onevcat.Kingfisher.OverlayImageProcessor(#ff0000ff_0.7)")
+        XCTAssertEqual(p2.identifier, "com.onevcat.Kingfisher.OverlayImageProcessor(\(Color.red.hex)_0.7)")
         checkProcessor(p2, with: "overlay-red-07")
     }
 
     func testTintProcessor() {
         let color = Color.yellow.withAlphaComponent(0.2)
         let p = TintImageProcessor(tint: color)
-        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.TintImageProcessor(#ffff0033)")
+        XCTAssertEqual(p.identifier, "com.onevcat.Kingfisher.TintImageProcessor(\(color.hex))")
         checkProcessor(p, with: "tint-yellow-02")
     }
 

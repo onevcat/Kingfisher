@@ -688,7 +688,7 @@ public func >>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
     return left.append(another: right)
 }
 
-fileprivate extension Color {
+extension Color {
     var hex: String {
         var r: CGFloat = 0
         var g: CGFloat = 0
@@ -696,7 +696,7 @@ fileprivate extension Color {
         var a: CGFloat = 0
 
         #if os(macOS)
-        (usingColorSpace(.genericRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        (usingColorSpace(.sRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
         #else
         getRed(&r, green: &g, blue: &b, alpha: &a)
         #endif

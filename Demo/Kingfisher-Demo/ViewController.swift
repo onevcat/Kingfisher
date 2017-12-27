@@ -97,4 +97,3 @@ extension ViewController: UICollectionViewDataSourcePrefetching {
         ImagePrefetcher(urls: urls).start()
     }
 }
-
