@@ -35,7 +35,7 @@ public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cac
 
 /// RetrieveImageTask represents a task of image retrieving process.
 /// It contains an async task of getting image from disk and from network.
-public class RetrieveImageTask {
+public final class RetrieveImageTask {
     
     public static let empty = RetrieveImageTask()
     
