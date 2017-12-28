@@ -1,6 +1,0 @@
-
-module CCommonCrypto [system] {
-    header "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/usr/include/CommonCrypto/CommonCrypto.h"
-    export *
-}
-
