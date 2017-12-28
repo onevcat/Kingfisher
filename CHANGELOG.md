@@ -2,6 +2,13 @@
 
 -----
 
+## [4.6.1 - MD5](https://github.com/onevcat/Kingfisher/releases/tag/4.6.1) (2017-12-28)
+
+#### Fix
+* Revert to use non-dependency way to handle MD5, to solve issues which redefination of dependency library. [#834](https://github.com/onevcat/Kingfisher/pull/834)
+
+---
+
 ## [4.6.0 - AniBird](https://github.com/onevcat/Kingfisher/releases/tag/4.6.0) (2017-12-27)
 
 #### Add
