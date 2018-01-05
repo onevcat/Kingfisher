@@ -50,7 +50,7 @@ public struct ImageResource: Resource {
     public let downloadURL: URL
     
     /// The origin image URL.
-    public let originURL: URL
+    public let originURL: URL?
     
     /**
      Create a resource.
@@ -63,6 +63,7 @@ public struct ImageResource: Resource {
     public init(downloadURL: URL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
         self.cacheKey = cacheKey ?? downloadURL.absoluteString
+        self.originURL = nil
     }
     
     /// Create a resource.
