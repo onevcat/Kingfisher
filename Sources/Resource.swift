@@ -49,6 +49,9 @@ public struct ImageResource: Resource {
     /// The target image URL.
     public let downloadURL: URL
     
+    /// The origin image URL.
+    public let originURL: URL
+    
     /**
      Create a resource.
      
@@ -61,6 +64,27 @@ public struct ImageResource: Resource {
         self.downloadURL = downloadURL
         self.cacheKey = cacheKey ?? downloadURL.absoluteString
     }
+    
+    /// Create a resource.
+    ///
+    /// - Parameters:
+    ///   - urlString: Origin urlString from background platform
+    ///   - block: Deal with urlString by your business
+    public init(urlString: String, block: ((String) -> String)? = nil) {
+        let imageURLString: String
+        if urlString.hasPrefix("//") {
+            imageURLString = "http:\(urlString)"
+        } else {
+            imageURLString = urlString
+        }
+        self.originURL = URL(string: imageURLString)!
+        if let block = block {
+            self.downloadURL = URL(string: block(imageURLString))!
+        } else {
+            self.downloadURL = self.originURL
+        }
+        self.cacheKey = downloadURL.absoluteString
+    }
 }
 
 /**
@@ -72,3 +96,4 @@ extension URL: Resource {
     public var cacheKey: String { return absoluteString }
     public var downloadURL: URL { return self }
 }
+
