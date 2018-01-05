@@ -63,7 +63,7 @@ extension Kingfisher where Base: ImageView {
         return _setImage(with: resource, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: { (image, error, cacheType, url) in
             if let e = error, let originURL = resource?.originURL {
                 print("Download image failure, URL:\(String(describing: url)) ERROR:\(e)")
-                self.setImage(with: ImageResource(downloadURL: originURL), placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+                _setImage(with: ImageResource(downloadURL: originURL), placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
             }
         })
     }
