@@ -82,7 +82,7 @@ public struct ImageResource: Resource {
         if let block = block {
             self.downloadURL = URL(string: block(imageURLString))!
         } else {
-            self.downloadURL = self.originURL
+            self.downloadURL = self.originURL!
         }
         self.cacheKey = downloadURL.absoluteString
     }
