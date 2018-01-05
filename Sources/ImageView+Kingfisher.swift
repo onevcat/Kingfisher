@@ -61,7 +61,7 @@ extension Kingfisher where Base: ImageView {
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         return _setImage(with: resource, placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: { (image, error, cacheType, url) in
-            if let e = error, let originURL = resource?.originURL {
+            if let e = error, let originURL = (resource as? ImageResource)?.originURL {
                 print("Download image failure, URL:\(String(describing: url)) ERROR:\(e)")
                 _setImage(with: ImageResource(downloadURL: originURL), placeholder: placeholder, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
             }
