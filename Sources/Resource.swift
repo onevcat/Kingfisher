@@ -72,15 +72,22 @@ public struct ImageResource: Resource {
     ///   - urlString: Origin urlString from background platform
     ///   - block: Deal with urlString by your business
     public init(urlString: String, block: ((String) -> String)? = nil) {
+        guard urlString.isEmpty else { return nil }
         let imageURLString: String
         if urlString.hasPrefix("//") {
             imageURLString = "http:\(urlString)"
         } else {
             imageURLString = urlString
         }
-        self.originURL = URL(string: imageURLString)!
+        let imageURL = URL(string: imageURLString)
+        guard imageURL != nil else { return nil }
+        self.originURL = imageURL
         if let block = block {
-            self.downloadURL = URL(string: block(imageURLString))!
+            if let imageURL = URL(string: block(imageURLString)) {
+                self.downloadURL = imageURL
+            } else {
+                return nil
+            }
         } else {
             self.downloadURL = self.originURL!
         }
