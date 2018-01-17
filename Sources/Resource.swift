@@ -72,7 +72,7 @@ public struct ImageResource: Resource {
     ///   - urlString: Origin urlString from background platform
     ///   - block: Deal with urlString by your business
     public init?(urlString: String, block: ((String) -> String)? = nil) {
-        guard urlString.isEmpty else { return nil }
+        guard !urlString.isEmpty else { return nil }
         let imageURLString: String
         if urlString.hasPrefix("//") {
             imageURLString = "http:\(urlString)"
