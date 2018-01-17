@@ -68,7 +68,7 @@ extension Kingfisher where Base: ImageView {
         })
     }
     
-    
+    @discardableResult
     internal func _setImage(with resource: Resource?,
                          placeholder: Placeholder? = nil,
                          options: KingfisherOptionsInfo? = nil,
