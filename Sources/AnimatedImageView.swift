@@ -380,7 +380,7 @@ class Animator {
         let frameToProcess = min(frameCount, maxFrameCount)
         animatedFrames.reserveCapacity(frameToProcess)
         animatedFrames = (0..<frameToProcess).reduce([]) { $0 + pure(prepareFrame(at: $1))}
-        currentPreloadIndex = (frameToProcess + 1) % frameCount
+        currentPreloadIndex = (frameToProcess + 1) % frameCount - 1
     }
     
     private func prepareFrame(at index: Int) -> AnimatedFrame {
