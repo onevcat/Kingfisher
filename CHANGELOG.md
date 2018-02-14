@@ -2,6 +2,13 @@
 
 -----
 
+## [4.6.2 - GIF frames](https://github.com/onevcat/Kingfisher/releases/tag/4.6.2) (2018-02-14)
+
+#### Fix
+* Animated image view now will call finished delegate method in correct timing. [#860](https://github.com/onevcat/Kingfisher/issues/860)
+
+---
+
 ## [4.6.1 - MD5](https://github.com/onevcat/Kingfisher/releases/tag/4.6.1) (2017-12-28)
 
 #### Fix
