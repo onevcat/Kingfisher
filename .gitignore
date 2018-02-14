@@ -84,3 +84,6 @@ fastlane/README.md
 /Gemfile
 /Gemfile.lock
 /Kingfisher-TestImages
+
+.bundle/
+vendor/
