@@ -204,9 +204,7 @@ public class ImagePrefetcher {
                     self.handleComplete()
                 }
             } else {
-                DispatchQueue.main.async {
-                    self.reportCompletionOrStartNext()
-                }
+                self.reportCompletionOrStartNext()
             }
         }
         
@@ -250,11 +248,13 @@ public class ImagePrefetcher {
     }
     
     func reportCompletionOrStartNext() {
-        if let resource = pendingResources.popFirst() {
-            startPrefetching(resource)
-        } else {
-            guard tasks.isEmpty else { return }
-            handleComplete()
+        DispatchQueue.main.async {
+            if let resource = self.pendingResources.popFirst() {
+                self.startPrefetching(resource)
+            } else {
+                guard self.tasks.isEmpty else { return }
+                self.handleComplete()
+            }
         }
     }
     
