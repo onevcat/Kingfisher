@@ -9,7 +9,7 @@ platform :ios do
   end
 
   desc "Runs all the tests"
-  lane :test_all_schemes do
+  lane :test do
     scan(scheme: "Kingfisher", clean: true)
     scan(scheme: "Kingfisher-macOS", clean: true, destination: 'platform=macOS')
     scan(scheme: "Kingfisher-tvOS", clean: true)
@@ -29,7 +29,7 @@ platform :ios do
       ensure_git_branch
       ensure_git_status_clean
       
-      test_all_schemes
+      test
       lint
       
       sync_build_number_to_git
