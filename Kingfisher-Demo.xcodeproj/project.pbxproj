@@ -418,16 +418,19 @@
 					};
 					D13F49C11BEDA53F00CE335D = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = T499X543T7;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					D1679A381C4E78B20020FD12 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = T499X543T7;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					D1679A441C4E78B20020FD12 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = T499X543T7;
 						LastSwiftMigration = 0920;
 					};
 					D1ED2D0A1AD2CFA600CFC3EB = {
@@ -664,7 +667,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = T499X543T7;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Demo/Kingfisher-tvOS-Demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -688,7 +691,7 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = T499X543T7;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Demo/Kingfisher-tvOS-Demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -710,7 +713,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = T499X543T7;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -732,7 +735,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = T499X543T7;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -758,7 +761,7 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = T499X543T7;
 				GCC_NO_COMMON_BLOCKS = YES;
 				IBSC_MODULE = Kingfisher_watchOS_Demo_Extension;
 				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo/Info.plist";
@@ -784,7 +787,7 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = T499X543T7;
 				GCC_NO_COMMON_BLOCKS = YES;
 				IBSC_MODULE = Kingfisher_watchOS_Demo_Extension;
 				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo/Info.plist";
