@@ -2,6 +2,14 @@
 
 -----
 
+## [4.6.3 - Clean Demo](https://github.com/onevcat/Kingfisher/releases/tag/4.6.3) (2018-03-01)
+
+#### Fix
+* Move demo project out from Kingfisher framework project. [#867](https://github.com/onevcat/Kingfisher/pull/867)
+* An issue that caused stack overflow when prefetching too many images, while they are already cached. [#866](https://github.com/onevcat/Kingfisher/pull/866)
+
+---
+
 ## [4.6.2 - GIF frames](https://github.com/onevcat/Kingfisher/releases/tag/4.6.2) (2018-02-14)
 
 #### Fix
