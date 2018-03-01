@@ -232,6 +232,9 @@
 		D109462C1C526CE8001408EB /* ThreadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10945F51C526B6C001408EB /* ThreadHelper.swift */; };
 		D109462D1C526CF5001408EB /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10945ED1C526B6C001408EB /* ImageTransition.swift */; };
 		D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
+		D1109F292048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png in Resources */ = {isa = PBXBuildFile; fileRef = D1109F282048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png */; };
+		D1109F2A2048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png in Resources */ = {isa = PBXBuildFile; fileRef = D1109F282048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png */; };
+		D1109F2B2048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png in Resources */ = {isa = PBXBuildFile; fileRef = D1109F282048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png */; };
 		D12E0C4F1C47F23500AC98AD /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C441C47F23500AC98AD /* dancing-banana.gif */; };
 		D12E0C501C47F23500AC98AD /* ImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C451C47F23500AC98AD /* ImageCacheTests.swift */; };
 		D12E0C511C47F23500AC98AD /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */; };
@@ -477,6 +480,7 @@
 		D10945F51C526B6C001408EB /* ThreadHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ThreadHelper.swift; path = Sources/ThreadHelper.swift; sourceTree = "<group>"; };
 		D10945F61C526B6C001408EB /* UIButton+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIButton+Kingfisher.swift"; path = "Sources/UIButton+Kingfisher.swift"; sourceTree = "<group>"; };
 		D10EC2311C3D632300A4211C /* KingfisherTests-macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1109F282048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unicorn-tint-yellow-02-mac-macOS1013.png"; sourceTree = "<group>"; };
 		D12E0C441C47F23500AC98AD /* dancing-banana.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "dancing-banana.gif"; sourceTree = "<group>"; };
 		D12E0C451C47F23500AC98AD /* ImageCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheTests.swift; sourceTree = "<group>"; };
 		D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloaderTests.swift; sourceTree = "<group>"; };
@@ -768,6 +772,7 @@
 			children = (
 				D1C0B17F1F9B997C00422960 /* kingfisher-tint-yellow-02-mac-macOS1013.jpg */,
 				D1C0B17E1F9B997C00422960 /* onevcat-tint-yellow-02-mac-macOS1013.jpg */,
+				D1109F282048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png */,
 				4BB83E461E32075800B64183 /* kingfisher-tint-yellow-02-mac.jpg */,
 				4BB83E471E32075800B64183 /* kingfisher-tint-yellow-02.jpg */,
 				4BB83E481E32075800B64183 /* onevcat-tint-yellow-02-mac.jpg */,
@@ -1265,6 +1270,7 @@
 				D14146471E5C7E86001476DF /* onevcat-resize-240-60-aspectFill.jpg in Resources */,
 				D141464D1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit.jpg in Resources */,
 				4BEC7CC61EE8FAD800759A9E /* onevcat-round-corner-40-iOS11.jpg in Resources */,
+				D1109F2A2048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png in Resources */,
 				4BB83EF11E32075800B64183 /* unicorn-round-corner-60-resize-100.png in Resources */,
 				CCA25D281FD4713D00FA5C6E /* kingfisher-blend-4.jpg in Resources */,
 				4BB83E971E32075800B64183 /* unicorn-blur-4-round-corner-60.png in Resources */,
@@ -1344,6 +1350,7 @@
 				4BB83E531E32075800B64183 /* kingfisher-b&w-mac.jpg in Resources */,
 				D14146511E5C7E86001476DF /* unicorn-resize-240-60-aspectFill-mac.png in Resources */,
 				4BB83E891E32075800B64183 /* kingfisher-blur-4-round-corner-60-mac.jpg in Resources */,
+				D1109F2B2048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png in Resources */,
 				4BA697541EC2F06000AA7935 /* unicorn-round-corner-40-corner-3-mac.png in Resources */,
 				4BA6974E1EC2F06000AA7935 /* onevcat-round-corner-40-corner-3-mac.jpg in Resources */,
 				4BB83E951E32075800B64183 /* unicorn-blur-4-round-corner-60-mac.png in Resources */,
@@ -1425,6 +1432,7 @@
 				D14146461E5C7E86001476DF /* onevcat-resize-240-60-aspectFill.jpg in Resources */,
 				D141464C1E5C7E86001476DF /* onevcat-resize-240-60-aspectFit.jpg in Resources */,
 				4BEC7CBE1EE8FAD700759A9E /* onevcat-round-corner-40-iOS11.jpg in Resources */,
+				D1109F292048389C00B589CE /* unicorn-tint-yellow-02-mac-macOS1013.png in Resources */,
 				4BB83EF01E32075800B64183 /* unicorn-round-corner-60-resize-100.png in Resources */,
 				CCA25D271FD4713D00FA5C6E /* kingfisher-blend-4.jpg in Resources */,
 				4BB83E961E32075800B64183 /* unicorn-blur-4-round-corner-60.png in Resources */,
