@@ -198,7 +198,10 @@ extension Kingfisher where Base: ImageView {
     /// It will be `nil` if `indicatorType` is `.none`.
     public fileprivate(set) var indicator: Indicator? {
         get {
-            return objc_getAssociatedObject(base, &indicatorKey) as? Indicator
+            guard let box = objc_getAssociatedObject(base, &indicatorKey) as? Box<Indicator> else {
+                return nil
+            }
+            return box.value
         }
         
         set {
@@ -219,7 +222,9 @@ extension Kingfisher where Base: ImageView {
             }
             
             // Save in associated object
-            objc_setAssociatedObject(base, &indicatorKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            // Wrap newValue with Box to workaround an issue that Swift does not recognize
+            // and casting protocol for associate object correctly. https://github.com/onevcat/Kingfisher/issues/872
+            objc_setAssociatedObject(base, &indicatorKey, newValue.map(Box.init), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
