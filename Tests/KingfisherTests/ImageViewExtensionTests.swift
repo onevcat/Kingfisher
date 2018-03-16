@@ -367,7 +367,7 @@ class ImageViewExtensionTests: XCTestCase {
     
     func testCustomizeStructIndicatorExisting() {
         struct StructIndicator: Indicator {
-            let view = UIView()
+            let view = View()
             func startAnimatingView() {}
             func stopAnimatingView() {}
         }
