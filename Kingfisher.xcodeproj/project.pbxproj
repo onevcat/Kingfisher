@@ -261,6 +261,10 @@
 		D12E0C871C47F7AF00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4B1C47F23500AC98AD /* KingfisherOptionsInfoTests.swift */; };
 		D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4C1C47F23500AC98AD /* KingfisherTestHelper.swift */; };
 		D12E0C8A1C47F7C000AC98AD /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C441C47F23500AC98AD /* dancing-banana.gif */; };
+		D13EA67D205C189C004F625F /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13EA67C205C189C004F625F /* Box.swift */; };
+		D13EA67E205C189C004F625F /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13EA67C205C189C004F625F /* Box.swift */; };
+		D13EA67F205C189C004F625F /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13EA67C205C189C004F625F /* Box.swift */; };
+		D13EA680205C189C004F625F /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13EA67C205C189C004F625F /* Box.swift */; };
 		D14146391E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill-mac.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D141462B1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill-mac.jpg */; };
 		D141463A1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D141462C1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg */; };
 		D141463B1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D141462C1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg */; };
@@ -493,6 +497,7 @@
 		D12E0C4D1C47F23500AC98AD /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
 		D12E0C5F1C47F24800AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D13EA67C205C189C004F625F /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Box.swift; path = Sources/Box.swift; sourceTree = "<group>"; };
 		D13F49D61BEDA67C00CE335D /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D141462B1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill-mac.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-resize-240-60-aspectFill-mac.jpg"; sourceTree = "<group>"; };
 		D141462C1E5C7E86001476DF /* kingfisher-resize-240-60-aspectFill.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-resize-240-60-aspectFill.jpg"; sourceTree = "<group>"; };
@@ -849,6 +854,7 @@
 			children = (
 				D10945F41C526B6C001408EB /* String+MD5.swift */,
 				D10945F51C526B6C001408EB /* ThreadHelper.swift */,
+				D13EA67C205C189C004F625F /* Box.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1777,6 +1783,7 @@
 				D109461C1C526C61001408EB /* ImageDownloader.swift in Sources */,
 				D109461D1C526C61001408EB /* ImageTransition.swift in Sources */,
 				F78F5EBF1FCDDE42001A9111 /* ImageModifier.swift in Sources */,
+				D13EA67F205C189C004F625F /* Box.swift in Sources */,
 				4B2B8E4C1D70141000FC4749 /* ImageProcessor.swift in Sources */,
 				4BFBEE7F1D7D0C3600699FD3 /* RequestModifier.swift in Sources */,
 				4B7742411D87E08A0077024E /* Indicator.swift in Sources */,
@@ -1851,6 +1858,7 @@
 				D10946121C526C0D001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D10946131C526C0D001408EB /* KingfisherManager.swift in Sources */,
 				D10946141C526C0D001408EB /* KingfisherOptionsInfo.swift in Sources */,
+				D13EA67E205C189C004F625F /* Box.swift in Sources */,
 				D9638BA11C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
 				D10946151C526C0D001408EB /* Resource.swift in Sources */,
 				D10946161C526C0D001408EB /* String+MD5.swift in Sources */,
@@ -1880,6 +1888,7 @@
 				D10946281C526CE8001408EB /* KingfisherManager.swift in Sources */,
 				4BD8E04F1D9237E200A091BE /* Kingfisher.swift in Sources */,
 				D10946291C526CE8001408EB /* KingfisherOptionsInfo.swift in Sources */,
+				D13EA680205C189C004F625F /* Box.swift in Sources */,
 				D109462A1C526CE8001408EB /* Resource.swift in Sources */,
 				D109462B1C526CE8001408EB /* String+MD5.swift in Sources */,
 				D109462C1C526CE8001408EB /* ThreadHelper.swift in Sources */,
@@ -1903,6 +1912,7 @@
 				D10945FB1C526B86001408EB /* ImageView+Kingfisher.swift in Sources */,
 				D10945FC1C526B86001408EB /* KingfisherManager.swift in Sources */,
 				D10945FD1C526B86001408EB /* KingfisherOptionsInfo.swift in Sources */,
+				D13EA67D205C189C004F625F /* Box.swift in Sources */,
 				D9638BA01C7DBA660046523D /* ImagePrefetcher.swift in Sources */,
 				D10945FE1C526B86001408EB /* Resource.swift in Sources */,
 				D10945FF1C526B86001408EB /* String+MD5.swift in Sources */,
