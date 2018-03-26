@@ -144,6 +144,11 @@ public enum KingfisherOptionsInfoItem {
     /// the original image when another processor is applied to the same resouce, 
     /// instead of downloading it again.
     case cacheOriginalImage
+
+    /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
+    case useFileDownloads
+
+    
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -177,6 +182,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true
+    case (.useFileDownloads, .useFileDownloads): return true
     default: return false
     }
 }
@@ -349,6 +355,10 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .onlyLoadFirstFrame }
     }
     
+    public var useFileDownloads: Bool {
+        return contains { $0 <== .useFileDownloads }
+    }
+
     public var cacheOriginalImage: Bool {
         return contains { $0 <== .cacheOriginalImage }
     }

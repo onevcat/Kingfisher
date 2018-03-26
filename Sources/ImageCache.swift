@@ -226,6 +226,50 @@ open class ImageCache {
             callHandlerInMainQueue()
         }
     }
+
+    // MARK: - Add file
+
+    /**
+     Adds an existing image file to cache. It will be saved to disk only. It is a sync operation, since (URLSessionDownloadDelegate.urlSession(:downloadTask:didFinishDownloadingTo:) requires that the move/sync be done synchronously.)
+
+     Will MOVE the original file instead of coping the file if 'moveFile' is true.
+
+     Returns the destination URL of the copied or moved file.
+
+      */
+
+    open func addFile(_ originalFileURL: URL,
+                       moveFile: Bool,
+                       forKey key: String,
+                       processorIdentifier identifier: String = "") -> URL
+    {
+
+        let computedKey = key.computedKey(with: identifier)
+        let destinationURL = URL(fileURLWithPath: self.cachePath(forComputedKey: computedKey))
+        if moveFile {
+            ioQueue.sync {
+                do {
+                    if !self.fileManager.fileExists(atPath: self.diskCachePath) {
+                        try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    try self.fileManager.moveItem(at: originalFileURL, to: destinationURL)
+                } catch {
+                }
+            }
+        } else {
+            ioQueue.sync {
+                do {
+                    if !self.fileManager.fileExists(atPath: self.diskCachePath) {
+                        try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    try self.fileManager.copyItem(at: originalFileURL, to: destinationURL)
+                } catch {
+                }
+            }
+        }
+        return destinationURL
+    }
+
     
     /**
     Remove the image for key for the cache. It will be opted out from both memory and disk. 

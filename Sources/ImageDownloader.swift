@@ -38,7 +38,7 @@ public typealias ImageDownloaderCompletionHandler = ((_ image: Image?, _ error: 
 
 /// Download task.
 public struct RetrieveImageDownloadTask {
-    let internalTask: URLSessionDataTask
+    let internalTask: URLSessionTask
     
     /// Downloader by which this task is intialized.
     public private(set) weak var ownerDownloader: ImageDownloader?
@@ -345,12 +345,18 @@ open class ImageDownloader {
         var downloadTask: RetrieveImageDownloadTask?
         setup(progressBlock: progressBlock, with: completionHandler, for: url, options: options) {(session, fetchLoad) -> Void in
             if fetchLoad.downloadTask == nil {
-                let dataTask = session.dataTask(with: request)
+
+                let task: URLSessionTask
+                if options?.useFileDownloads ?? false {
+                    task = session.downloadTask(with: request)
+                } else {
+                    task = session.dataTask(with: request)
+                }
                 
-                fetchLoad.downloadTask = RetrieveImageDownloadTask(internalTask: dataTask, ownerDownloader: self)
+                fetchLoad.downloadTask = RetrieveImageDownloadTask(internalTask: task, ownerDownloader: self)
                 
-                dataTask.priority = options?.downloadPriority ?? URLSessionTask.defaultPriority
-                dataTask.resume()
+                task.priority = options?.downloadPriority ?? URLSessionTask.defaultPriority
+                task.resume()
                 self.delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
                 
                 // Hold self while the task is executing.
@@ -421,8 +427,8 @@ extension ImageDownloader {
 /// If we use `ImageDownloader` as the session delegate, it will not be released.
 /// So we need an additional handler to break the retain cycle.
 // See https://github.com/onevcat/Kingfisher/issues/235
-final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, AuthenticationChallengeResponsable {
-    
+final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URLSessionDownloadDelegate, AuthenticationChallengeResponsable {
+
     // The holder will keep downloader not released while a data task is being executed.
     // It will be set when the task started, and reset when the task finished.
     var downloadHolder: ImageDownloader?
@@ -465,7 +471,57 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Aut
             }
         }
     }
-    
+
+
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+
+        guard let url = downloadTask.originalRequest?.url else {
+            return
+        }
+
+        guard let downloader = downloadHolder else {
+            return
+        }
+
+        guard let fetchLoad = downloader.fetchLoad(for: url) else {
+            return
+        }
+        let defaultIdentifier = DefaultImageProcessor.default.identifier
+
+        var fileLocation = location
+        for idx in 0..<fetchLoad.contents.count {
+            let content = fetchLoad.contents[idx]
+            let moveFile = (idx == fetchLoad.contents.count-1)
+            fileLocation = content.options.targetCache
+                .addFile(location,
+                         moveFile: moveFile,
+                         forKey: url.cacheKey,
+                         processorIdentifier: defaultIdentifier)
+
+        }
+
+        let fileData = try? Data(contentsOf: fileLocation)
+
+        processImage(for: downloadTask, url: url, fileData: fileData)
+
+    }
+
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+
+        guard let downloader = downloadHolder else {
+            return
+        }
+
+        if let url = downloadTask.originalRequest?.url, let fetchLoad = downloader.fetchLoad(for: url) {
+            for content in fetchLoad.contents {
+                DispatchQueue.main.async {
+                    content.callback.progressBlock?(totalBytesWritten, totalBytesExpectedToWrite)
+                }
+            }
+        }
+
+    }
+
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         guard let url = task.originalRequest?.url else {
@@ -531,13 +587,13 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Aut
             }
         }
     }
-    
-    private func processImage(for task: URLSessionTask, url: URL) {
+
+    private func processImage(for task: URLSessionTask, url: URL, fileData: Data? = nil) {
 
         guard let downloader = downloadHolder else {
             return
         }
-        
+
         // We are on main queue when receiving this.
         downloader.processQueue.async {
             
@@ -548,8 +604,9 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Aut
             self.cleanFetchLoad(for: url)
             
             let data: Data?
-            let fetchedData = fetchLoad.responseData as Data
-            
+
+            let fetchedData = fileData ?? fetchLoad.responseData as Data
+
             if let delegate = downloader.delegate {
                 data = delegate.imageDownloader(downloader, didDownload: fetchedData, for: url)
             } else {
