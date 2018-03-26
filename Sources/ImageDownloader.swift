@@ -500,9 +500,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
 
         }
 
-        let fileData = try? Data(contentsOf: fileLocation)
-
-        processImage(for: downloadTask, url: url, fileData: fileData)
+        processImage(for: downloadTask, url: url, downloadedFileUrl: fileLocation)
 
     }
 
@@ -588,7 +586,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
         }
     }
 
-    private func processImage(for task: URLSessionTask, url: URL, fileData: Data? = nil) {
+    private func processImage(for task: URLSessionTask, url: URL, downloadedFileUrl: URL? = nil) {
 
         guard let downloader = downloadHolder else {
             return
@@ -604,6 +602,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             self.cleanFetchLoad(for: url)
             
             let data: Data?
+            let fileData = downloadedFileUrl.flatMap { try? Data(contentsOf: $0, options: .mappedIfSafe) }
 
             let fetchedData = fileData ?? fetchLoad.responseData as Data
 
