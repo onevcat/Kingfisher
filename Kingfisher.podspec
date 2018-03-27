@@ -25,24 +25,22 @@ Pod::Spec.new do |s|
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
   s.social_media_url   = "http://twitter.com/onevcat"
 
-  s.swift_version = "4.0"
-
   s.ios.deployment_target = "8.0"
   s.tvos.deployment_target = "9.0"
   s.osx.deployment_target = "10.10"
   s.watchos.deployment_target = "2.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
-  
+
   s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h", "Sources/Kingfisher.swift"]
   s.public_header_files = ["Sources/Kingfisher.h"]
-  
+
   s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift"]
-  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", 
-                             "Sources/UIButton+Kingfisher.swift", 
-                             "Sources/ImageView+Kingfisher.swift", 
-                             "Sources/NSButton+Kingfisher.swift", 
-                             "Sources/Indicator.swift", 
+  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift",
+                             "Sources/UIButton+Kingfisher.swift",
+                             "Sources/ImageView+Kingfisher.swift",
+                             "Sources/NSButton+Kingfisher.swift",
+                             "Sources/Indicator.swift",
                              "Sources/Filter.swift",
                              "Sources/Placeholder.swift"
                             ]
