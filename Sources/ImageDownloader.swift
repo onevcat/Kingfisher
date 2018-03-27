@@ -492,12 +492,13 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
         for idx in 0..<fetchLoad.contents.count {
             let content = fetchLoad.contents[idx]
             let moveFile = (idx == fetchLoad.contents.count-1)
-            fileLocation = content.options.targetCache
-                .addFile(location,
-                         moveFile: moveFile,
-                         forKey: url.cacheKey,
-                         processorIdentifier: defaultIdentifier)
-
+            if let location =
+                content.options.targetCache.addFile(location,
+                                                    moveFile: moveFile,
+                                                    forKey: url.cacheKey,
+                                                    processorIdentifier: defaultIdentifier) {
+                fileLocation = location
+            }
         }
 
         processImage(for: downloadTask, url: url, downloadedFileUrl: fileLocation)
@@ -602,7 +603,12 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             self.cleanFetchLoad(for: url)
             
             let data: Data?
-            let fileData = downloadedFileUrl.flatMap { try? Data(contentsOf: $0, options: .mappedIfSafe) }
+            let fileData = downloadedFileUrl.flatMap { url -> Data? in
+                let readingOptions = fetchLoad.contents.reduce(NSData.ReadingOptions()) {
+                    return $0.union($1.options.dataReadingOptions)
+                }
+                return try? Data(contentsOf: url, options: readingOptions)
+            }
 
             let fetchedData = fileData ?? fetchLoad.responseData as Data
 

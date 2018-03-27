@@ -241,33 +241,28 @@ open class ImageCache {
     open func addFile(_ originalFileURL: URL,
                        moveFile: Bool,
                        forKey key: String,
-                       processorIdentifier identifier: String = "") -> URL
+                       processorIdentifier identifier: String = "") -> URL?
     {
+        var finalDestination: URL?
+        ioQueue.sync {
+            do {
+                let computedKey = key.computedKey(with: identifier)
+                let destinationURL = URL(fileURLWithPath: self.cachePath(forComputedKey: computedKey))
 
-        let computedKey = key.computedKey(with: identifier)
-        let destinationURL = URL(fileURLWithPath: self.cachePath(forComputedKey: computedKey))
-        if moveFile {
-            ioQueue.sync {
-                do {
-                    if !self.fileManager.fileExists(atPath: self.diskCachePath) {
-                        try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
-                    }
+                if !self.fileManager.fileExists(atPath: self.diskCachePath) {
+                    try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                }
+                if moveFile {
                     try self.fileManager.moveItem(at: originalFileURL, to: destinationURL)
-                } catch {
-                }
-            }
-        } else {
-            ioQueue.sync {
-                do {
-                    if !self.fileManager.fileExists(atPath: self.diskCachePath) {
-                        try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
-                    }
+                } else {
                     try self.fileManager.copyItem(at: originalFileURL, to: destinationURL)
-                } catch {
                 }
+                finalDestination = destinationURL
+            } catch {
+
             }
         }
-        return destinationURL
+        return finalDestination
     }
 
     
@@ -683,16 +678,17 @@ open class ImageCache {
 extension ImageCache {
   
     func diskImage(forComputedKey key: String, serializer: CacheSerializer, options: KingfisherOptionsInfo) -> Image? {
-        if let data = diskImageData(forComputedKey: key) {
+
+        if let data = diskImageData(forComputedKey: key, readingOptions: options.dataReadingOptions) {
             return serializer.image(with: data, options: options)
         } else {
             return nil
         }
     }
     
-    func diskImageData(forComputedKey key: String) -> Data? {
+    func diskImageData(forComputedKey key: String, readingOptions: NSData.ReadingOptions) -> Data? {
         let filePath = cachePath(forComputedKey: key)
-        return (try? Data(contentsOf: URL(fileURLWithPath: filePath)))
+        return (try? Data(contentsOf: URL(fileURLWithPath: filePath), options: readingOptions))
     }
     
     func cacheFileName(forComputedKey key: String) -> String {

@@ -148,6 +148,9 @@ public enum KingfisherOptionsInfoItem {
     /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
     case useFileDownloads
 
+    /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
+    case dataReadingOptions(NSData.ReadingOptions)
+
     
 }
 
@@ -183,6 +186,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true
     case (.useFileDownloads, .useFileDownloads): return true
+    case (.dataReadingOptions, .dataReadingOptions): return true
     default: return false
     }
 }
@@ -355,11 +359,23 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .onlyLoadFirstFrame }
     }
     
+    public var cacheOriginalImage: Bool {
+        return contains { $0 <== .cacheOriginalImage }
+    }
+
     public var useFileDownloads: Bool {
         return contains { $0 <== .useFileDownloads }
     }
 
-    public var cacheOriginalImage: Bool {
-        return contains { $0 <== .cacheOriginalImage }
+    public var dataReadingOptions: NSData.ReadingOptions {
+        let defaultReadingOptions = NSData.ReadingOptions()
+        if let item = lastMatchIgnoringAssociatedValue(.dataReadingOptions(defaultReadingOptions)),
+            case .dataReadingOptions(let readingOptions) = item
+        {
+            return readingOptions
+        }
+        return defaultReadingOptions
     }
+
+
 }
