@@ -8,16 +8,16 @@
 
 import UIKit
 
-class BackgroundImageFetch {
+public class BackgroundImageFetch {
 
     private var urls: [URL] = []
 
-    convenience init(urls: [URL]) {
+    public convenience init(urls: [URL]) {
         self.init()
         self.urls = urls
     }
 
-    func fetch() {
+    public func fetch() {
         DispatchQueue.global(qos: .background).async {
             let manager = KingfisherManager.shared
             for imageUrl in self.urls {
