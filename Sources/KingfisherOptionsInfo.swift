@@ -146,7 +146,7 @@ public enum KingfisherOptionsInfoItem {
     case cacheOriginalImage
 
     /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
-    case useFileDownloads
+    case useFileDownloads(Bool)
 
     /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
     case dataReadingOptions(NSData.ReadingOptions)
@@ -363,8 +363,14 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .cacheOriginalImage }
     }
 
+    /// `CacheSerializer` to convert image to data for storing in cache.
     public var useFileDownloads: Bool {
-        return contains { $0 <== .useFileDownloads }
+        if let item = lastMatchIgnoringAssociatedValue(.useFileDownloads(false)),
+            case .useFileDownloads(let useFileDownloads) = item
+        {
+            return useFileDownloads
+        }
+        return false
     }
 
     public var dataReadingOptions: NSData.ReadingOptions {
