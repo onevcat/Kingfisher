@@ -242,7 +242,7 @@ open class ImageDownloader {
     
     /// Whether the download requests should use pipeling or not. Default is false.
     open var requestsUsePipelining = false
-    
+
     fileprivate let sessionHandler: ImageDownloaderSessionHandler
     fileprivate var session: URLSession?
     

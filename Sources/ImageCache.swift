@@ -247,19 +247,24 @@ open class ImageCache {
         ioQueue.sync {
             do {
                 let computedKey = key.computedKey(with: identifier)
-                let destinationURL = URL(fileURLWithPath: self.cachePath(forComputedKey: computedKey))
+                let destinationPath = self.cachePath(forComputedKey: computedKey)
+                let destinationURL = URL(fileURLWithPath: destinationPath)
 
                 if !self.fileManager.fileExists(atPath: self.diskCachePath) {
                     try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
                 }
-                if moveFile {
-                    try self.fileManager.moveItem(at: originalFileURL, to: destinationURL)
+                if !self.fileManager.fileExists(atPath: destinationPath) {
+                    if moveFile {
+                        try self.fileManager.moveItem(at: originalFileURL, to: destinationURL)
+                    } else {
+                        try self.fileManager.copyItem(at: originalFileURL, to: destinationURL)
+                    }
+                    finalDestination = destinationURL
                 } else {
-                    try self.fileManager.copyItem(at: originalFileURL, to: destinationURL)
+                    print("file already exists at:\(destinationPath)")
                 }
-                finalDestination = destinationURL
             } catch {
-
+                print("error \(error) in addFile(\(originalFileURL), moveFile:\(moveFile) forKey:\(key) processorIdentifier:\(identifier)")
             }
         }
         return finalDestination
