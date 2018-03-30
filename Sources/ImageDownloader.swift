@@ -488,7 +488,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
         }
         let defaultIdentifier = DefaultImageProcessor.default.identifier
 
-        var fileLocation = location
+        var fileLocation: URL?
         var readOptions = NSData.ReadingOptions()
 
         for idx in 0..<fetchLoad.contents.count {
@@ -506,10 +506,21 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
                 fileLocation = location
             }
         }
+        if fileLocation == nil {
+            fileLocation = KingfisherManager.shared.cache.addFile(location, moveFile: false,
+                                                                  forKey: url.cacheKey,
+                                                                  processorIdentifier: defaultIdentifier)
+        }
 
-        let fileData = try? Data(contentsOf: fileLocation, options: readOptions)
-
-        processImage(for: downloadTask, url: url, downloadedFileData: fileData)
+        if let file = fileLocation {
+            do {
+                let fileData = try Data(contentsOf: file, options: readOptions)
+                processImage(for: downloadTask, url: url, downloadedFileData: fileData)
+            }
+            catch {
+                callCompletionHandlerFailure(error: error, url: url)
+            }
+        }
 
     }
 

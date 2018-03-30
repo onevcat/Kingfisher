@@ -259,9 +259,9 @@ open class ImageCache {
                     } else {
                         try self.fileManager.copyItem(at: originalFileURL, to: destinationURL)
                     }
-                    finalDestination = destinationURL
                 } else {
                 }
+                finalDestination = destinationURL
             } catch {
                 print("error \(error) in addFile(\(originalFileURL), moveFile:\(moveFile) forKey:\(key) processorIdentifier:\(identifier)")
             }
