@@ -489,8 +489,14 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
         let defaultIdentifier = DefaultImageProcessor.default.identifier
 
         var fileLocation = location
+        var readOptions = NSData.ReadingOptions()
+
         for idx in 0..<fetchLoad.contents.count {
+
             let content = fetchLoad.contents[idx]
+
+            readOptions = content.options.dataReadingOptions.union(readOptions)
+
             let moveFile = (idx == fetchLoad.contents.count-1)
             if let location =
                 content.options.targetCache.addFile(location,
@@ -501,7 +507,9 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             }
         }
 
-        processImage(for: downloadTask, url: url, downloadedFileUrl: fileLocation)
+        let fileData = try? Data(contentsOf: fileLocation, options: readOptions)
+
+        processImage(for: downloadTask, url: url, downloadedFileData: fileData)
 
     }
 
@@ -587,7 +595,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
         }
     }
 
-    private func processImage(for task: URLSessionTask, url: URL, downloadedFileUrl: URL? = nil) {
+    private func processImage(for task: URLSessionTask, url: URL, downloadedFileData: Data? = nil) {
 
         guard let downloader = downloadHolder else {
             return
@@ -603,14 +611,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             self.cleanFetchLoad(for: url)
             
             let data: Data?
-            let fileData = downloadedFileUrl.flatMap { url -> Data? in
-                let readingOptions = fetchLoad.contents.reduce(NSData.ReadingOptions()) {
-                    return $0.union($1.options.dataReadingOptions)
-                }
-                return try? Data(contentsOf: url, options: readingOptions)
-            }
-
-            let fetchedData = fileData ?? fetchLoad.responseData as Data
+            let fetchedData = downloadedFileData ?? fetchLoad.responseData as Data
 
             if let delegate = downloader.delegate {
                 data = delegate.imageDownloader(downloader, didDownload: fetchedData, for: url)
