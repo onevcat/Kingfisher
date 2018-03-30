@@ -498,13 +498,13 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             readOptions = content.options.dataReadingOptions.union(readOptions)
 
             let moveFile = (idx == fetchLoad.contents.count-1)
-            if let location =
+            if let cacheLocation =
                 content.options.targetCache.addFile(location,
                                                     moveFile: moveFile,
                                                     overwriteExisting: false,
                                                     forKey: url.cacheKey,
                                                     processorIdentifier: defaultIdentifier) {
-                fileLocation = location
+                fileLocation = cacheLocation
             }
         }
         // we need the file somewhere before we leave this delegate method.
@@ -516,15 +516,13 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
                                                                   forKey: url.cacheKey,
                                                                   processorIdentifier: defaultIdentifier)
         }
-
-        if let file = fileLocation {
-            do {
-                let fileData = try Data(contentsOf: file, options: readOptions)
-                processImage(for: downloadTask, url: url, downloadedFileData: fileData)
-            }
-            catch {
-                callCompletionHandlerFailure(error: error, url: url)
-            }
+        let file = fileLocation ?? location
+        do {
+            let fileData = try Data(contentsOf: file, options: readOptions)
+            processImage(for: downloadTask, url: url, downloadedFileData: fileData)
+        }
+        catch {
+            callCompletionHandlerFailure(error: error, url: url)
         }
 
     }
