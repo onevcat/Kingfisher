@@ -240,6 +240,7 @@ open class ImageCache {
 
     open func addFile(_ originalFileURL: URL,
                        moveFile: Bool,
+                       overwriteExisting: Bool,
                        forKey key: String,
                        processorIdentifier identifier: String = "") -> URL?
     {
@@ -252,6 +253,9 @@ open class ImageCache {
 
                 if !self.fileManager.fileExists(atPath: self.diskCachePath) {
                     try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                }
+                if overwriteExisting {
+                    try? self.fileManager.removeItem(at: destinationURL)
                 }
                 if !self.fileManager.fileExists(atPath: destinationPath) {
                     if moveFile {

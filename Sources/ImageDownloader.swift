@@ -501,13 +501,18 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             if let location =
                 content.options.targetCache.addFile(location,
                                                     moveFile: moveFile,
+                                                    overwriteExisting: false,
                                                     forKey: url.cacheKey,
                                                     processorIdentifier: defaultIdentifier) {
                 fileLocation = location
             }
         }
+        // we need the file somewhere before we leave this delegate method.
+        // we either didn't have any contents active, or they all already had a copy.
         if fileLocation == nil {
-            fileLocation = KingfisherManager.shared.cache.addFile(location, moveFile: false,
+            fileLocation = KingfisherManager.shared.cache.addFile(location,
+                                                                  moveFile: true,
+                                                                  overwriteExisting: true,
                                                                   forKey: url.cacheKey,
                                                                   processorIdentifier: defaultIdentifier)
         }
