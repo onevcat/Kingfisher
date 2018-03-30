@@ -261,7 +261,6 @@ open class ImageCache {
                     }
                     finalDestination = destinationURL
                 } else {
-                    print("file already exists at:\(destinationPath)")
                 }
             } catch {
                 print("error \(error) in addFile(\(originalFileURL), moveFile:\(moveFile) forKey:\(key) processorIdentifier:\(identifier)")
