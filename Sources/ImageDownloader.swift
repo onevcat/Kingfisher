@@ -347,7 +347,7 @@ open class ImageDownloader {
             if fetchLoad.downloadTask == nil {
 
                 let task: URLSessionTask
-                if options?.useFileDownloads ?? false {
+                if options?.useDownloadTask ?? false {
                     task = session.downloadTask(with: request)
                 } else {
                     task = session.dataTask(with: request)
@@ -449,7 +449,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
                                 userInfo: [KingfisherErrorStatusCodeKey: statusCode, NSLocalizedDescriptionKey: HTTPURLResponse.localizedString(forStatusCode: statusCode)])
             callCompletionHandlerFailure(error: error, url: url)
         }
-        
+
         completionHandler(.allow)
     }
     
@@ -479,46 +479,46 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             return
         }
 
-        guard let downloader = downloadHolder else {
-            return
-        }
+//        guard let downloader = downloadHolder else {
+//            return
+//        }
 
-        guard let fetchLoad = downloader.fetchLoad(for: url) else {
-            return
-        }
-        let defaultIdentifier = DefaultImageProcessor.default.identifier
-
-        var fileLocation: URL?
-        var readOptions = NSData.ReadingOptions()
-
-        for idx in 0..<fetchLoad.contents.count {
-
-            let content = fetchLoad.contents[idx]
-
-            readOptions = content.options.dataReadingOptions.union(readOptions)
-
-            let moveFile = (idx == fetchLoad.contents.count-1)
-            if let cacheLocation =
-                content.options.targetCache.addFile(location,
-                                                    moveFile: moveFile,
-                                                    overwriteExisting: false,
-                                                    forKey: url.cacheKey,
-                                                    processorIdentifier: defaultIdentifier) {
-                fileLocation = cacheLocation
-            }
-        }
-        // we need the file somewhere before we leave this delegate method.
-        // we either didn't have any contents active, or they all already had a copy.
-        if fileLocation == nil {
-            fileLocation = KingfisherManager.shared.cache.addFile(location,
-                                                                  moveFile: true,
-                                                                  overwriteExisting: true,
-                                                                  forKey: url.cacheKey,
-                                                                  processorIdentifier: defaultIdentifier)
-        }
-        let file = fileLocation ?? location
+//        guard let fetchLoad = downloader.fetchLoad(for: url) else {
+//            return
+//        }
+//        let defaultIdentifier = DefaultImageProcessor.default.identifier
+//
+//        var fileLocation: URL?
+//        var readOptions = NSData.ReadingOptions()
+//
+//        for idx in 0..<fetchLoad.contents.count {
+//
+//            let content = fetchLoad.contents[idx]
+//
+//            readOptions = content.options.dataReadingOptions.union(readOptions)
+//
+//            let moveFile = (idx == fetchLoad.contents.count-1)
+//            if let cacheLocation =
+//                content.options.targetCache.addFile(location,
+//                                                    moveFile: moveFile,
+//                                                    overwriteExisting: false,
+//                                                    forKey: url.cacheKey,
+//                                                    processorIdentifier: defaultIdentifier) {
+//                fileLocation = cacheLocation
+//            }
+//        }
+//        // we need the file somewhere before we leave this delegate method.
+//        // we either didn't have any contents active, or they all already had a copy.
+//        if fileLocation == nil {
+//            fileLocation = KingfisherManager.shared.cache.addFile(location,
+//                                                                  moveFile: true,
+//                                                                  overwriteExisting: true,
+//                                                                  forKey: url.cacheKey,
+//                                                                  processorIdentifier: defaultIdentifier)
+//        }
+//        let file = fileLocation ?? location
         do {
-            let fileData = try Data(contentsOf: file, options: readOptions)
+            let fileData = try Data(contentsOf: location, options: .mappedIfSafe)
             processImage(for: downloadTask, url: url, downloadedFileData: fileData)
         }
         catch {

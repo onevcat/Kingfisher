@@ -164,15 +164,12 @@ public class KingfisherManager {
                 }
                 
                 if let image = image, let originalData = originalData {
-
-                    let toDisk = !options.cacheMemoryOnly && !(options.useFileDownloads &&
-                                                               options.processor == DefaultImageProcessor.default)
                     targetCache.store(image,
                                       original: originalData,
                                       forKey: key,
                                       processorIdentifier:options.processor.identifier,
                                       cacheSerializer: options.cacheSerializer,
-                                      toDisk: toDisk,
+                                      toDisk: !options.cacheMemoryOnly,
                                       completionHandler: nil)
                     if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
                         let originalCache = options.originalCache
@@ -183,7 +180,7 @@ public class KingfisherManager {
                                               forKey: key,
                                               processorIdentifier: defaultProcessor.identifier,
                                               cacheSerializer: options.cacheSerializer,
-                                              toDisk: !options.cacheMemoryOnly && !options.useFileDownloads,
+                                              toDisk: !options.cacheMemoryOnly,
                                               completionHandler: nil)
                         }
                     }

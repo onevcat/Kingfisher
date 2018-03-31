@@ -146,7 +146,7 @@ public enum KingfisherOptionsInfoItem {
     case cacheOriginalImage
 
     /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
-    case useFileDownloads(Bool)
+    case useDownloadTask(Bool)
 
     /// If set, will use an NSURLSession.downloadTask instead of a dataTask.  The resulting files are directly moved into the disk cache directly. (Ignores the cacheSerializer() option.).   Similar to .cacheOriginalImage and setting both may not be optimal.  Should allow you to download and larger images more efficiently.
     case dataReadingOptions(NSData.ReadingOptions)
@@ -185,7 +185,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true
-    case (.useFileDownloads, .useFileDownloads): return true
+    case (.useDownloadTask, .useDownloadTask): return true
     case (.dataReadingOptions, .dataReadingOptions): return true
     default: return false
     }
@@ -363,24 +363,23 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .cacheOriginalImage }
     }
 
-    /// `CacheSerializer` to convert image to data for storing in cache.
-    public var useFileDownloads: Bool {
-        if let item = lastMatchIgnoringAssociatedValue(.useFileDownloads(false)),
-            case .useFileDownloads(let useFileDownloads) = item
+    /// use NSURL Download Tasks instead of DataTasks
+    public var useDownloadTask: Bool {
+        if let item = lastMatchIgnoringAssociatedValue(.useDownloadTask(false)),
+            case .useDownloadTask(let useDownloadTask) = item
         {
-            return useFileDownloads
+            return useDownloadTask
         }
         return false
     }
 
     public var dataReadingOptions: NSData.ReadingOptions {
-        let defaultReadingOptions = NSData.ReadingOptions()
-        if let item = lastMatchIgnoringAssociatedValue(.dataReadingOptions(defaultReadingOptions)),
+        if let item = lastMatchIgnoringAssociatedValue(.dataReadingOptions(NSData.ReadingOptions())),
             case .dataReadingOptions(let readingOptions) = item
         {
             return readingOptions
         }
-        return defaultReadingOptions
+        return NSData.ReadingOptions()
     }
 
 
