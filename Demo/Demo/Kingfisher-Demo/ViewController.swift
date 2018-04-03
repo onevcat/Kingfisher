@@ -81,26 +81,14 @@ extension ViewController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
-    
-        cell.cellImageView.kf.indicatorType = .custom(indicator: MyIndicator())
+        cell.cellImageView.kf.indicatorType = .activity
         return cell
-    }
-}
-
-struct MyIndicator: Indicator {
-    let view: UIView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-    
-    func startAnimatingView() { print("start"); view.isHidden = false }
-    func stopAnimatingView() { view.isHidden = true }
-    
-    init() {
-        view.backgroundColor = UIColor.blue
     }
 }
 
 extension ViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let urls = indexPaths.flatMap {
+        let urls = indexPaths.compactMap {
             URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\($0.row + 1).jpg")
         }
         
