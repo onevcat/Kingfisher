@@ -91,6 +91,7 @@ open class ImageCache {
     //Disk
     fileprivate let ioQueue: DispatchQueue
     fileprivate var fileManager: FileManager!
+    fileprivate var ignoreWritesBefore = DispatchTime(uptimeNanoseconds: 0)
     
     ///The disk cache location.
     open let diskCachePath: String
@@ -171,6 +172,21 @@ open class ImageCache {
     }
 
 
+    /**
+     should allow you to 'flush' any images that are pending to be saved.
+     Will be called automatically when
+     */
+
+    open func flushSaveQueue(until: DispatchTimeInterval = .seconds(0)) {
+
+        let flushTime = DispatchTime.now() + until
+        // use a barrier item, to force our way to the top of the queue.
+        ioQueue.async(execute: DispatchWorkItem(qos: .unspecified, flags: .barrier) {
+            self.ignoreWritesBefore = flushTime
+        })
+    }
+
+
     // MARK: - Store & Remove
 
     /**
@@ -209,16 +225,18 @@ open class ImageCache {
         }
         
         if toDisk {
+            let dispatchTime: DispatchTime = .now()
             ioQueue.async {
-                
-                if let data = serializer.data(with: image, original: original) {
-                    if !self.fileManager.fileExists(atPath: self.diskCachePath) {
-                        do {
-                            try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
-                        } catch _ {}
+                if dispatchTime >= self.ignoreWritesBefore {
+                    if let data = serializer.data(with: image, original: original) {
+                        if !self.fileManager.fileExists(atPath: self.diskCachePath) {
+                            do {
+                                try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
+                            } catch _ {}
+                        }
+
+                        self.fileManager.createFile(atPath: self.cachePath(forComputedKey: computedKey), contents: data, attributes: nil)
                     }
-                    
-                    self.fileManager.createFile(atPath: self.cachePath(forComputedKey: computedKey), contents: data, attributes: nil)
                 }
                 callHandlerInMainQueue()
             }
@@ -441,6 +459,7 @@ open class ImageCache {
     Clear memory cache.
     */
     @objc public func clearMemoryCache() {
+        self.flushSaveQueue()
         memoryCache.removeAllObjects()
     }
     
@@ -450,7 +469,11 @@ open class ImageCache {
     - parameter completionHander: Called after the operation completes.
     */
     open func clearDiskCache(completion handler: (()->())? = nil) {
-        ioQueue.async {
+
+        let flushTime = DispatchTime.now()
+        // use a barrier item, to force our way to the top of the queue.
+        ioQueue.async(execute: DispatchWorkItem(qos: .unspecified, flags: .barrier) {
+            self.ignoreWritesBefore = flushTime
             do {
                 try self.fileManager.removeItem(atPath: self.diskCachePath)
                 try self.fileManager.createDirectory(atPath: self.diskCachePath, withIntermediateDirectories: true, attributes: nil)
@@ -461,7 +484,7 @@ open class ImageCache {
                     handler()
                 }
             }
-        }
+        })
     }
     
     /**
