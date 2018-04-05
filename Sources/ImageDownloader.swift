@@ -427,10 +427,10 @@ extension ImageDownloader {
         barrierQueue.sync(flags: .barrier) { cancelTaskImpl(task) }
     }
     
-    /// Cancell all downloading tasks. It will trigger the completion handlers for all not-yet-finished
+    /// Cancel all downloading tasks. It will trigger the completion handlers for all not-yet-finished
     /// downloading tasks with an NSURLErrorCancelled error.
     ///
-    /// If you need to only cacnel a certain task, call `cancel()` on the `RetrieveImageDownloadTask`
+    /// If you need to only cancel a certain task, call `cancel()` on the `RetrieveImageDownloadTask`
     /// returned by the downloading methods.
     public func cancelAll() {
         barrierQueue.sync(flags: .barrier) {
