@@ -90,7 +90,7 @@ class ImagePrefetcherTests: XCTestCase {
         let expectation = self.expectation(description: "wait for prefetching images")
         
         var urls = [URL]()
-        var responses = [LSStubResponseDSL!]()
+        var responses = [LSStubResponseDSL?]()
         for URLString in testKeys {
             let response = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
             responses.append(response)

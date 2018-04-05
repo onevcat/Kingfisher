@@ -215,7 +215,7 @@ extension ImageProcessorTests {
         
         let targetImages = filteredImageNames
             .map { $0.replacingOccurrences(of: ".", with: "-\(specifiedSuffix).") }
-            .flatMap { name -> Image? in
+            .compactMap { name -> Image? in
                 if #available(iOS 11, tvOS 11.0, macOS 10.13, *) {
                     // Look for the version specified target first. Then roll back to base.
                     return Image(fileName: name.replacingOccurrences(of: ".", with: "-iOS11.")) ??
@@ -226,7 +226,7 @@ extension ImageProcessorTests {
                 return Image(fileName: name)
             }
         
-        let resultImages = imageData(noAlpha: noAlpha).flatMap { p.process(item: .data($0), options: []) }
+        let resultImages = imageData(noAlpha: noAlpha).compactMap { p.process(item: .data($0), options: []) }
         
         checkImagesEqual(targetImages: targetImages, resultImages: resultImages, for: specifiedSuffix)
     }
@@ -264,7 +264,7 @@ extension ImageProcessorTests {
         
         let p = BlurImageProcessor(blurRadius: 4) >> RoundCornerImageProcessor(cornerRadius: 60)
         let suffix = "blur-4-round-corner-60-mac"
-        let resultImages = imageData().flatMap { p.process(item: .data($0), options: []) }
+        let resultImages = imageData().compactMap { p.process(item: .data($0), options: []) }
         for i in 0..<resultImages.count {
             resultImages[i].write(imageNames[i].replacingOccurrences(of: ".", with: "-\(suffix)."))
         }
