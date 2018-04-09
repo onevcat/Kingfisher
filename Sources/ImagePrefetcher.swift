@@ -182,29 +182,43 @@ public class ImagePrefetcher {
      */
     public func startBackgroundCaching() {
         DispatchQueue.global(qos: .background).async {
-            let urls = self.prefetchResources.map { $0.downloadURL }
-            for imageUrl in urls {
-                if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
-                    self.backgroundCacheTask = URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
-                        guard let data = data, let image = UIImage(data: data) else {
-                            return
-                        }
-                        if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
-                            self.manager.cache.store(image, forKey: imageUrl.absoluteString)
-                        }
-                    })
-                    self.backgroundCacheTask?.resume()
+            guard !self.stopped else {
+                assertionFailure("You can not restart the same prefetcher. Try to create a new prefetcher.")
+                self.handleComplete()
+                return
+            }
+
+            guard self.maxConcurrentDownloads > 0 else {
+                assertionFailure("There should be concurrent downloads value should be at least 1.")
+                self.handleComplete()
+                return
+            }
+
+            guard self.prefetchResources.count > 0 else {
+                self.handleComplete()
+                return
+            }
+
+            let initialConcurentDownloads = min(self.prefetchResources.count, self.maxConcurrentDownloads)
+            for _ in 0 ..< initialConcurentDownloads {
+                if let resource = self.pendingResources.popFirst() {
+                    self.startPrefetching(resource)
                 }
             }
-        }
-    }
-
-    /**
-     Stop background caching task, and cancel any future prefetching activity that might be occuring.
-     */
-    public func stopBackgroudCaching() {
-        if backgroundCacheTask?.state == .running {
-            backgroundCacheTask?.cancel()
+//            let urls = self.prefetchResources.map { $0.downloadURL }
+//            for imageUrl in urls {
+//                if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
+//                    self.backgroundCacheTask = URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
+//                        guard let data = data, let image = UIImage(data: data) else {
+//                            return
+//                        }
+//                        if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
+//                            self.manager.cache.store(image, forKey: imageUrl.absoluteString)
+//                        }
+//                    })
+//                    self.backgroundCacheTask?.resume()
+//                }
+//            }
         }
     }
    
