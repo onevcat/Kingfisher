@@ -59,6 +59,7 @@ public class ImagePrefetcher {
     private var completionHandler: PrefetcherCompletionHandler?
     
     private var tasks = [URL: RetrieveImageDownloadTask]()
+    private var backgroundCacheTask: URLSessionDataTask?
     
     private var pendingResources: ArraySlice<Resource>
     private var skippedResources = [Resource]()
@@ -175,6 +176,37 @@ public class ImagePrefetcher {
         }
     }
 
+    /**
+     Download and cache resources using backgroun thread. This can be useful for background downloading
+     of assets that are required for later use in an app.
+     */
+    public func startBackgroundCaching() {
+        DispatchQueue.global(qos: .background).async {
+            guard !self.stopped else {
+                assertionFailure("You can not restart the same prefetcher. Try to create a new prefetcher.")
+                self.handleComplete()
+                return
+            }
+
+            guard self.maxConcurrentDownloads > 0 else {
+                assertionFailure("There should be concurrent downloads value should be at least 1.")
+                self.handleComplete()
+                return
+            }
+
+            guard self.prefetchResources.count > 0 else {
+                self.handleComplete()
+                return
+            }
+
+            let initialConcurentDownloads = min(self.prefetchResources.count, self.maxConcurrentDownloads)
+            for _ in 0 ..< initialConcurentDownloads {
+                if let resource = self.pendingResources.popFirst() {
+                    self.startPrefetching(resource)
+                }
+            }
+        }
+    }
    
     /**
      Stop current downloading progress, and cancel any future prefetching activity that might be occuring.
