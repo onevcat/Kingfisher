@@ -205,20 +205,6 @@ public class ImagePrefetcher {
                     self.startPrefetching(resource)
                 }
             }
-//            let urls = self.prefetchResources.map { $0.downloadURL }
-//            for imageUrl in urls {
-//                if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
-//                    self.backgroundCacheTask = URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
-//                        guard let data = data, let image = UIImage(data: data) else {
-//                            return
-//                        }
-//                        if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
-//                            self.manager.cache.store(image, forKey: imageUrl.absoluteString)
-//                        }
-//                    })
-//                    self.backgroundCacheTask?.resume()
-//                }
-//            }
         }
     }
    

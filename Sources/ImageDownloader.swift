@@ -448,18 +448,20 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Aut
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-
+        
         guard let downloader = downloadHolder else {
             return
         }
 
-        if let url = dataTask.originalRequest?.url, let fetchLoad = downloader.fetchLoad(for: url) {
-            fetchLoad.responseData.append(data)
-            
-            if let expectedLength = dataTask.response?.expectedContentLength {
-                for content in fetchLoad.contents {
-                    DispatchQueue.main.async {
-                        content.callback.progressBlock?(Int64(fetchLoad.responseData.length), expectedLength)
+        DispatchQueue.global(qos: .background).async {
+            if let url = dataTask.originalRequest?.url, let fetchLoad = downloader.fetchLoad(for: url) {
+                fetchLoad.responseData.append(data)
+
+                if let expectedLength = dataTask.response?.expectedContentLength {
+                    for content in fetchLoad.contents {
+                        DispatchQueue.main.async {
+                            content.callback.progressBlock?(Int64(fetchLoad.responseData.length), expectedLength)
+                        }
                     }
                 }
             }
