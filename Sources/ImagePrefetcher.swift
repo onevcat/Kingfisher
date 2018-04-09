@@ -176,37 +176,37 @@ public class ImagePrefetcher {
         }
     }
 
-    /**
-     Download and cache resources using backgroun thread. This can be useful for background downloading
-     of assets that are required for later use in an app.
-     */
-    public func startBackgroundCaching() {
-        DispatchQueue.global(qos: .background).async {
-            let urls = self.prefetchResources.map { $0.downloadURL }
-            for imageUrl in urls {
-                if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
-                    self.backgroundCacheTask = URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
-                        guard let data = data, let image = UIImage(data: data) else {
-                            return
-                        }
-                        if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
-                            self.manager.cache.store(image, forKey: imageUrl.absoluteString)
-                        }
-                    })
-                    self.backgroundCacheTask?.resume()
-                }
-            }
-        }
-    }
-
-    /**
-     Stop background caching task, and cancel any future prefetching activity that might be occuring.
-     */
-    public func stopBackgroudCaching() {
-        if backgroundCacheTask?.state == .running {
-            backgroundCacheTask?.cancel()
-        }
-    }
+//    /**
+//     Download and cache resources using backgroun thread. This can be useful for background downloading
+//     of assets that are required for later use in an app.
+//     */
+//    public func startBackgroundCaching() {
+//        DispatchQueue.global(qos: .background).async {
+//            let urls = self.prefetchResources.map { $0.downloadURL }
+//            for imageUrl in urls {
+//                if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
+//                    self.backgroundCacheTask = URLSession.shared.dataTask(with: imageUrl, completionHandler: { (data, _, _) in
+//                        guard let data = data, let image = UIImage(data: data) else {
+//                            return
+//                        }
+//                        if self.manager.cache.imageCachedType(forKey: imageUrl.absoluteString) == .none {
+//                            self.manager.cache.store(image, forKey: imageUrl.absoluteString)
+//                        }
+//                    })
+//                    self.backgroundCacheTask?.resume()
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     Stop background caching task, and cancel any future prefetching activity that might be occuring.
+//     */
+//    public func stopBackgroudCaching() {
+//        if backgroundCacheTask?.state == .running {
+//            backgroundCacheTask?.cancel()
+//        }
+//    }
    
     /**
      Stop current downloading progress, and cancel any future prefetching activity that might be occuring.
