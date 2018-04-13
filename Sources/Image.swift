@@ -972,9 +972,9 @@ extension NSBezierPath {
         let maxCorner = min(rect.width, rect.height) / 2
         
         let radiusTopLeft = min(maxCorner, max(0, topLeftRadius))
-        let radiustopRight = min(maxCorner, max(0, topRightRadius))
-        let radiusbottomLeft = min(maxCorner, max(0, bottomLeftRadius))
-        let radiusbottomRight = min(maxCorner, max(0, bottomRightRadius))
+        let radiusTopRight = min(maxCorner, max(0, topRightRadius))
+        let radiusBottomLeft = min(maxCorner, max(0, bottomLeftRadius))
+        let radiusBottomRight = min(maxCorner, max(0, bottomRightRadius))
         
         guard !NSIsEmptyRect(rect) else {
             return
@@ -986,9 +986,9 @@ extension NSBezierPath {
         
         move(to: NSMakePoint(NSMidX(rect), NSMaxY(rect)))
         appendArc(from: topLeft, to: rect.origin, radius: radiusTopLeft)
-        appendArc(from: rect.origin, to: bottomRight, radius: radiusbottomLeft)
-        appendArc(from: bottomRight, to: topRight, radius: radiusbottomRight)
-        appendArc(from: topRight, to: topLeft, radius: radiustopRight)
+        appendArc(from: rect.origin, to: bottomRight, radius: radiusBottomLeft)
+        appendArc(from: bottomRight, to: topRight, radius: radiusBottomRight)
+        appendArc(from: topRight, to: topLeft, radius: radiusTopRight)
         close()
     }
     
