@@ -56,8 +56,8 @@ public struct Filter {
     
     let transform: Transformer
 
-    public init(tranform: @escaping Transformer) {
-        self.transform = tranform
+    public init(transform: @escaping Transformer) {
+        self.transform = transform
     }
     
     /// Tint filter which will apply a tint color to images.

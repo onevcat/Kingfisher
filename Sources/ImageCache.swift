@@ -431,7 +431,7 @@ open class ImageCache {
     */
     open func cleanExpiredDiskCache(completion handler: (()->())? = nil) {
         
-        // Do things in cocurrent io queue
+        // Do things in concurrent io queue
         ioQueue.async {
             
             var (URLsToDelete, diskCacheSize, cachedFiles) = self.travelCachedFiles(onlyForCacheSize: false)
