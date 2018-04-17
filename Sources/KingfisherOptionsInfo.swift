@@ -87,7 +87,7 @@ public enum KingfisherOptionsInfoItem {
     case backgroundDecode
     
     /// The associated value of this member will be used as the target queue of dispatch callbacks when
-    /// retrieving images from cache. If not set, `Kingfisher` will use main quese for callbacks.
+    /// retrieving images from cache. If not set, `Kingfisher` will use main queue for callbacks.
     case callbackDispatchQueue(DispatchQueue?)
     
     /// The associated value of this member will be used as the scale factor when converting retrieved data to an image.
@@ -141,7 +141,7 @@ public enum KingfisherOptionsInfoItem {
     
     /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both 
     /// the final result and original image. Kingfisher will have a chance to use 
-    /// the original image when another processor is applied to the same resouce, 
+    /// the original image when another processor is applied to the same resource,
     /// instead of downloading it again.
     case cacheOriginalImage
 }

@@ -45,7 +45,7 @@ public protocol ImageProcessor {
     /// Identifier of the processor. It will be used to identify the processor when 
     /// caching and retrieving an image. You might want to make sure that processors with
     /// same properties/functionality have the same identifiers, so correct processed images
-    /// could be retrived with proper key.
+    /// could be retrieved with proper key.
     /// 
     /// - Note: Do not supply an empty string for a customized processor, which is already taken by
     /// the `DefaultImageProcessor`. It is recommended to use a reverse domain name notation
@@ -63,7 +63,7 @@ public protocol ImageProcessor {
     ///         If input item is already an image and there is any errors in processing, the input 
     ///         image itself will be returned.
     /// - Note: Most processor only supports CG-based images. 
-    ///         watchOS is not supported for processers containing filter, the input image will be returned directly on watchOS.
+    ///         watchOS is not supported for processors containing filter, the input image will be returned directly on watchOS.
     func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image?
 }
 
@@ -186,7 +186,7 @@ public struct BlendImageProcessor: ImageProcessor {
     /// - parameter alpha:           Alpha will be used when blend image.
     ///                              From 0.0 to 1.0. 1.0 means solid image, 0.0 means transparent image.
     ///                              Default is 1.0.
-    /// - parameter backgroundColor: Backgroud color to apply for the output image. Default is `nil`.
+    /// - parameter backgroundColor: Background color to apply for the output image. Default is `nil`.
     public init(blendMode: CGBlendMode, alpha: CGFloat = 1.0, backgroundColor: Color? = nil) {
         self.blendMode = blendMode
         self.alpha = alpha
@@ -241,7 +241,7 @@ public struct CompositingImageProcessor: ImageProcessor {
     /// - parameter alpha:                Alpha will be used when compositing image.
     ///                                   From 0.0 to 1.0. 1.0 means solid image, 0.0 means transparent image.
     ///                                   Default is 1.0.
-    /// - parameter backgroundColor:      Backgroud color to apply for the output image. Default is `nil`.
+    /// - parameter backgroundColor:      Background color to apply for the output image. Default is `nil`.
     public init(compositingOperation: NSCompositingOperation,
                 alpha: CGFloat = 1.0,
                 backgroundColor: Color? = nil)
@@ -303,7 +303,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     ///                              the image will keep its original size after processing.
     ///                              Default is `nil`.
     /// - parameter corners:         The target corners which will be applied rounding. Default is `.all`.
-    /// - parameter backgroundColor: Backgroud color to apply for the output image. Default is `nil`.
+    /// - parameter backgroundColor: Background color to apply for the output image. Default is `nil`.
     public init(cornerRadius: CGFloat, targetSize: CGSize? = nil, roundingCorners corners: RectCorner = .all, backgroundColor: Color? = nil) {
         self.cornerRadius = cornerRadius
         self.targetSize = targetSize
@@ -646,7 +646,7 @@ public struct CroppingImageProcessor: ImageProcessor {
     ///   It indicates a related point in current image, eg: (0.0, 0.0) for top-left
     ///   corner, (0.5, 0.5) for center and (1.0, 1.0) for bottom-right corner.
     ///   The `size` property of `CroppingImageProcessor` will be used along with
-    ///   `anchor` to calculate a target rectange in the size of image.
+    ///   `anchor` to calculate a target rectangle in the size of image.
     ///    
     ///   The target size will be automatically calculated with a reasonable behavior.
     ///   For example, when you have an image size of `CGSize(width: 100, height: 100)`,

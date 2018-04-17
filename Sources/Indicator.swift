@@ -101,7 +101,7 @@ final class ActivityIndicator: Indicator {
 
     func startAnimatingView() {
         animatingCount += 1
-        // Alrady animating
+        // Already animating
         if animatingCount == 1 {
             #if os(macOS)
                 activityIndicatorView.startAnimation(nil)
