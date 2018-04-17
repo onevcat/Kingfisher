@@ -62,7 +62,7 @@ public protocol KingfisherCompatible {
 
 public extension KingfisherCompatible {
     public var kf: Kingfisher<Self> {
-        get { return Kingfisher(self) }
+        return Kingfisher(self)
     }
 }
 

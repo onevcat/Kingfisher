@@ -56,10 +56,10 @@ to enable the animation transition.
 
 Apple's UIViewAnimationOptions is used under the hood.
 For custom transition, you should specified your own transition options, animations and 
-comletion handler as well.
+completion handler as well.
 */
 public enum ImageTransition {
-    ///  No animation transistion.
+    ///  No animation transition.
     case none
     
     /// Fade in the loaded image.
