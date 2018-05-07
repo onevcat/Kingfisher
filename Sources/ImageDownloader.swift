@@ -236,7 +236,7 @@ open class ImageDownloader {
     open var sessionConfiguration = URLSessionConfiguration.ephemeral {
         didSet {
             session?.invalidateAndCancel()
-            session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: OperationQueue.main)
+            session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: nil)
         }
     }
     
