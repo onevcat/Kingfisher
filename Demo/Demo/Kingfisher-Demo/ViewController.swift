@@ -95,3 +95,15 @@ extension ViewController: UICollectionViewDataSourcePrefetching {
         ImagePrefetcher(urls: urls).start()
     }
 }
+
+
+// Inspired by: https://fdp.io/blog/2018/03/22/supporting-compactmap-in-swift-4/
+#if swift(>=4.1)
+    // This is provided by the stdlib
+#else
+    extension Sequence {
+        func compactMap<T>(_ transform: (Self.Element) throws -> T?) rethrows -> [T] {
+            return try flatMap(transform)
+        }
+    }
+#endif
