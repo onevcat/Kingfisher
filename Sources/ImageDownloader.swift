@@ -43,11 +43,11 @@ public struct RetrieveImageDownloadTask {
     /// Downloader by which this task is intialized.
     public private(set) weak var ownerDownloader: ImageDownloader?
 
-    /**
-     Cancel this download task. It will trigger the completion handler with an NSURLErrorCancelled error.
-     */
+    
+    /// Cancel this download task. It will trigger the completion handler with an NSURLErrorCancelled error.
+    /// If you want to cancel all downloading tasks, call `cancelAll()` of `ImageDownloader` instance.
     public func cancel() {
-        ownerDownloader?.cancelDownloadingTask(self)
+        ownerDownloader?.cancel(self)
     }
     
     /// The original request URL of this download task.
@@ -408,13 +408,42 @@ extension ImageDownloader {
         }
     }
     
-    func cancelDownloadingTask(_ task: RetrieveImageDownloadTask) {
+    private func cancelTaskImpl(_ task: RetrieveImageDownloadTask, fetchLoad: ImageFetchLoad? = nil, ignoreTaskCount: Bool = false) {
+        
+        func getFetchLoad(from task: RetrieveImageDownloadTask) -> ImageFetchLoad? {
+            guard let URL = task.internalTask.originalRequest?.url,
+                  let imageFetchLoad = self.fetchLoads[URL] else
+            {
+                return nil
+            }
+            return imageFetchLoad
+        }
+        
+        guard let imageFetchLoad = fetchLoad ?? getFetchLoad(from: task) else {
+            return
+        }
+
+        imageFetchLoad.downloadTaskCount -= 1
+        if ignoreTaskCount || imageFetchLoad.downloadTaskCount == 0 {
+            task.internalTask.cancel()
+        }
+    }
+    
+    func cancel(_ task: RetrieveImageDownloadTask) {
+        barrierQueue.sync(flags: .barrier) { cancelTaskImpl(task) }
+    }
+    
+    /// Cancel all downloading tasks. It will trigger the completion handlers for all not-yet-finished
+    /// downloading tasks with an NSURLErrorCancelled error.
+    ///
+    /// If you need to only cancel a certain task, call `cancel()` on the `RetrieveImageDownloadTask`
+    /// returned by the downloading methods.
+    public func cancelAll() {
         barrierQueue.sync(flags: .barrier) {
-            if let URL = task.internalTask.originalRequest?.url, let imageFetchLoad = self.fetchLoads[URL] {
-                imageFetchLoad.downloadTaskCount -= 1
-                if imageFetchLoad.downloadTaskCount == 0 {
-                    task.internalTask.cancel()
-                }
+            fetchLoads.forEach { v in
+                let fetchLoad = v.value
+                guard let task = fetchLoad.downloadTask else { return }
+                cancelTaskImpl(task, fetchLoad: fetchLoad, ignoreTaskCount: true)
             }
         }
     }

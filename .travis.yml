@@ -1,6 +1,6 @@
 language: objective-c
 os: osx
-osx_image: xcode9
+osx_image: xcode9.3beta
 
 env:
   matrix:
@@ -21,7 +21,7 @@ script:
       xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -enableCodeCoverage YES | xcpretty
     elif [ "$TEST_TYPE" = tvOS ]; then
       set -o pipefail
-      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-tvOS -destination "platform=tvOS Simulator,name=Apple TV 1080p" -enableCodeCoverage YES | xcpretty
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-tvOS -destination "platform=tvOS Simulator,name=Apple TV" -enableCodeCoverage YES | xcpretty
     fi
 after_success:
     - sleep 5
