@@ -159,10 +159,30 @@ open class AnimatedImageView: UIImageView {
         }
     }
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        registerNotifications()
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        registerNotifications()
+    }
+
+    private func registerNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(startAnimating), name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(stopAnimating), name: .UIApplicationDidEnterBackground, object: nil)
+    }
+    
+    private func removeNotificaitons() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     deinit {
         if isDisplayLinkInitialized {
             displayLink.invalidate()
         }
+        removeNotificaitons()
     }
     
     override open var isAnimating: Bool {
