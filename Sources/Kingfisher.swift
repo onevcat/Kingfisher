@@ -42,6 +42,8 @@ import ImageIO
     public typealias ImageView = UIImageView
     public typealias View = UIView
     public typealias Button = UIButton
+    #else
+    import WatchKit
     #endif
 #endif
 
@@ -70,4 +72,6 @@ extension Image: KingfisherCompatible { }
 #if !os(watchOS)
 extension ImageView: KingfisherCompatible { }
 extension Button: KingfisherCompatible { }
+#else
+extension WKInterfaceImage: KingfisherCompatible { }
 #endif
