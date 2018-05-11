@@ -935,7 +935,7 @@ extension Kingfisher where Base: Image {
         return outputImage
         #else
             
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
         defer { UIGraphicsEndImageContext() }
         draw()
         return UIGraphicsGetImageFromCurrentImageContext() ?? base
