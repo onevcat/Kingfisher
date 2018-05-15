@@ -6,7 +6,13 @@
 
 #### Add
 * WKInterfaceImage setting image interface for watchOS.
-* 
+* A new delegate method for watching `ImageDownloader` object completes a downloading request with success or failure. [#901](https://github.com/onevcat/Kingfisher/pull/901)
+
+#### Fix
+
+* Use newly created operation queue for downloader. 
+* Filter.init(tranform:) is renamed to Filter.init(transform:) 
+* Some internal minor fix on constant and typo, etc.
 
 ---
 
