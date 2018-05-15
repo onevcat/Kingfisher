@@ -2,6 +2,14 @@
 
 -----
 
+## [4.8.0 - Watch & Watching](https://github.com/onevcat/Kingfisher/releases/tag/4.8.0) (2018-05-15)
+
+#### Add
+* WKInterfaceImage setting image interface for watchOS.
+* 
+
+---
+
 ## [4.7.0 - Cancel All](https://github.com/onevcat/Kingfisher/releases/tag/4.7.0) (2018-04-06)
 
 #### Add

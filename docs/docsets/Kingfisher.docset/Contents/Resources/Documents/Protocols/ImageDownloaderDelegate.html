@@ -351,6 +351,178 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_10Foundation3URLV012willDownloadb3ForG0AG10URLRequestVSg4withtF"></a>
+                    <a name="//apple_ref/swift/Method/imageDownloader(_:willDownloadImageForURL:with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_10Foundation3URLV012willDownloadb3ForG0AG10URLRequestVSg4withtF">imageDownloader(_:willDownloadImageForURL:with:)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when the <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> object will start downloading an image from specified URL.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">willDownloadImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>downloader</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> object finishes the downloading.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>URL of the original request URL.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>response</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request object for the download process.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L108">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_10Foundation3URLV020didFinishDownloadingb3ForG0So11URLResponseCSg4withs5Error_pSg5errortF"></a>
+                    <a name="//apple_ref/swift/Method/imageDownloader(_:didFinishDownloadingImageForURL:with:error:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_10Foundation3URLV020didFinishDownloadingb3ForG0So11URLResponseCSg4withs5Error_pSg5errortF">imageDownloader(_:didFinishDownloadingImageForURL:with:error:)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when the <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> completes a downloading request with success or failure.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didFinishDownloadingImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">URLResponse</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>downloader</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> object finishes the downloading.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>URL of the original request URL.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>response</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The response object of the downloading process.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>error</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The error in case of failure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L118">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_So7UIImageC11didDownload10Foundation3URLV3forSo11URLResponseCSg4withtF"></a>
                     <a name="//apple_ref/swift/Method/imageDownloader(_:didDownload:for:with:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_So7UIImageC11didDownload10Foundation3URLV3forSo11URLResponseCSg4withtF">imageDownloader(_:didDownload:for:with:)</a>
@@ -435,87 +607,7 @@
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.7.0/Sources/ImageDownloader.swift#L109">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_10Foundation3URLV012willDownloadb3ForG0AG10URLRequestVSg4withtF"></a>
-                    <a name="//apple_ref/swift/Method/imageDownloader(_:willDownloadImageForURL:with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher23ImageDownloaderDelegateP05imageC0yAA0bC0C_10Foundation3URLV012willDownloadb3ForG0AG10URLRequestVSg4withtF">imageDownloader(_:willDownloadImageForURL:with:)</a>
-                    </code>
-                      <span class="declaration-note">
-                        Default implementation
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Called when the <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> object starts to download an image from specified URL.</p>
-
-                      </div>
-                      <h4>Default Implementation</h4>
-                      <div class="default_impl abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">willDownloadImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>downloader</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The <code><a href="../Classes/ImageDownloader.html">ImageDownloader</a></code> object starts the downloading.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>url</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>URL of the original request.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>response</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The request object of the downloading process.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.7.0/Sources/ImageDownloader.swift#L118">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L128">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -596,7 +688,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         <p>Whether this HTTP status code is valid or not.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.7.0/Sources/ImageDownloader.swift#L134">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L144">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -686,7 +778,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         <p>The data from which Kingfisher should use to create an image.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.7.0/Sources/ImageDownloader.swift#L148">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L158">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -696,7 +788,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-04-06)</p>
+          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-05-15)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
