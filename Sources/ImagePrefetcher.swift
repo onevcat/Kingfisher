@@ -86,8 +86,6 @@ public class ImagePrefetcher {
      - parameter progressBlock:     Called every time an resource is downloaded, skipped or cancelled.
      - parameter completionHandler: Called when the whole prefetching process finished.
      
-     - returns: An `ImagePrefetcher` object.
-     
      - Note: By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as 
      the downloader and cache target respectively. You can specify another downloader or cache by using a customized `KingfisherOptionsInfo`.
      Both the progress and completion block will be invoked in main thread. The `CallbackDispatchQueue` in `optionsInfo` will be ignored in this method.
@@ -112,9 +110,7 @@ public class ImagePrefetcher {
      - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called every time an resource is downloaded, skipped or cancelled.
      - parameter completionHandler: Called when the whole prefetching process finished.
-     
-     - returns: An `ImagePrefetcher` object.
-     
+
      - Note: By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as
      the downloader and cache target respectively. You can specify another downloader or cache by using a customized `KingfisherOptionsInfo`.
      Both the progress and completion block will be invoked in main thread. The `CallbackDispatchQueue` in `optionsInfo` will be ignored in this method.
