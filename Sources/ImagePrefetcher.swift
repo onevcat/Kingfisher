@@ -139,8 +139,8 @@ public class ImagePrefetcher {
         
         self.optionsInfo = optionsInfoWithoutQueue
         
-        let cache = self.optionsInfo.targetCache
-        let downloader = self.optionsInfo.downloader
+        let cache = self.optionsInfo.targetCache ?? .default
+        let downloader = self.optionsInfo.downloader ?? .default
         manager = KingfisherManager(downloader: downloader, cache: cache)
         
         self.progressBlock = progressBlock
