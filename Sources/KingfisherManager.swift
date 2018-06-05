@@ -146,14 +146,14 @@ public class KingfisherManager {
                       completionHandler: CompletionHandler?,
                                 options: KingfisherOptionsInfo) -> RetrieveImageDownloadTask?
     {
-        let downloader = options.downloader
+        let downloader = options.downloader ?? self.downloader
         return downloader.downloadImage(with: url, retrieveImageTask: retrieveImageTask, options: options,
             progressBlock: { receivedSize, totalSize in
                 progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { image, error, imageURL, originalData in
 
-                let targetCache = options.targetCache
+                let targetCache = options.targetCache ?? self.cache
                 if let error = error, error.code == KingfisherError.notModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
@@ -172,7 +172,7 @@ public class KingfisherManager {
                                       toDisk: !options.cacheMemoryOnly,
                                       completionHandler: nil)
                     if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
-                        let originalCache = options.originalCache
+                        let originalCache = options.originalCache ?? targetCache
                         let defaultProcessor = DefaultImageProcessor.default
                         if let originalImage = defaultProcessor.process(item: .data(originalData), options: options) {
                             originalCache.store(originalImage,
@@ -219,7 +219,7 @@ public class KingfisherManager {
             
         }
         
-        let targetCache = options.targetCache
+        let targetCache = options.targetCache ?? self.cache
         // First, try to get the exactly image from cache
         targetCache.retrieveImage(forKey: key, options: options) { image, cacheType in
             // If found, we could finish now.
@@ -237,7 +237,7 @@ public class KingfisherManager {
             
             // If processor is not the default one, we have a chance to check whether
             // the original image is already in cache.
-            let originalCache = options.originalCache
+            let originalCache = options.originalCache ?? targetCache
             let optionsWithoutProcessor = options.removeAllMatchesIgnoringAssociatedValue(.processor(processor))
             originalCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { image, cacheType in
                 // If we found the original image, there is no need to download it again.
