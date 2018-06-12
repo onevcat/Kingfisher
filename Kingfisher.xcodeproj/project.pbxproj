@@ -177,6 +177,7 @@
 		4BFBEE7E1D7D0C3600699FD3 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFBEE7C1D7D0C3600699FD3 /* RequestModifier.swift */; };
 		4BFBEE7F1D7D0C3600699FD3 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFBEE7C1D7D0C3600699FD3 /* RequestModifier.swift */; };
 		4BFBEE801D7D0C3600699FD3 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFBEE7C1D7D0C3600699FD3 /* RequestModifier.swift */; };
+		98A20535209CA0CA00738CD3 /* WKInterfaceImage+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A20533209C853400738CD3 /* WKInterfaceImage+Kingfisher.swift */; };
 		B8BBB7092D89EAC97D6ED888 /* libPods-KingfisherTests-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0268A213AE27BC6133BC5E0F /* libPods-KingfisherTests-macOS.a */; };
 		CCA25D271FD4713D00FA5C6E /* kingfisher-blend-4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CCA25D241FD4713D00FA5C6E /* kingfisher-blend-4.jpg */; };
 		CCA25D281FD4713D00FA5C6E /* kingfisher-blend-4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CCA25D241FD4713D00FA5C6E /* kingfisher-blend-4.jpg */; };
@@ -463,6 +464,7 @@
 		4BFBEE7C1D7D0C3600699FD3 /* RequestModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RequestModifier.swift; path = Sources/RequestModifier.swift; sourceTree = "<group>"; };
 		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		98A20533209C853400738CD3 /* WKInterfaceImage+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WKInterfaceImage+Kingfisher.swift"; path = "Sources/WKInterfaceImage+Kingfisher.swift"; sourceTree = "<group>"; };
 		9D0E767B01589AA8BE21FFA6 /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCA25D241FD4713D00FA5C6E /* kingfisher-blend-4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "kingfisher-blend-4.jpg"; sourceTree = "<group>"; };
 		CCA25D251FD4713D00FA5C6E /* onevcat-blend-4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "onevcat-blend-4.jpg"; sourceTree = "<group>"; };
@@ -837,6 +839,7 @@
 				D10945EE1C526B6C001408EB /* ImageView+Kingfisher.swift */,
 				D10945F61C526B6C001408EB /* UIButton+Kingfisher.swift */,
 				182FFF771CC9ACBA004B728D /* NSButton+Kingfisher.swift */,
+				98A20533209C853400738CD3 /* WKInterfaceImage+Kingfisher.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1886,6 +1889,7 @@
 				4BFBEE801D7D0C3600699FD3 /* RequestModifier.swift in Sources */,
 				D10946271C526CE8001408EB /* ImageDownloader.swift in Sources */,
 				D10946281C526CE8001408EB /* KingfisherManager.swift in Sources */,
+				98A20535209CA0CA00738CD3 /* WKInterfaceImage+Kingfisher.swift in Sources */,
 				4BD8E04F1D9237E200A091BE /* Kingfisher.swift in Sources */,
 				D10946291C526CE8001408EB /* KingfisherOptionsInfo.swift in Sources */,
 				D13EA680205C189C004F625F /* Box.swift in Sources */,
@@ -1971,11 +1975,11 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2002,11 +2006,11 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2118,11 +2122,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
@@ -2152,11 +2156,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
@@ -2183,11 +2187,11 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
@@ -2214,11 +2218,11 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
@@ -2354,10 +2358,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2383,10 +2387,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CURRENT_PROJECT_VERSION = 1276;
+				CURRENT_PROJECT_VERSION = 1293;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1276;
+				DYLIB_CURRENT_VERSION = 1293;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

@@ -1,8 +1,8 @@
 //
-//  InterfaceController.swift
-//  Kingfisher-watchOS-Demo Extension
+//  WKInterfaceImage+Kingfisher.swift
+//  Kingfisher
 //
-//  Created by Wei Wang on 16/1/19.
+//  Created by Rodrigo Borges Soares on 04/05/18.
 //
 //  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
@@ -24,41 +24,28 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 import WatchKit
-import Foundation
-import Kingfisher
 
-var count = 0
+// MARK: - Extension methods.
+/**
+ *    Set image to use from web.
+ */
+extension Kingfisher where Base: WKInterfaceImage {
+    /**
+     Set an image with a resource.
 
-class InterfaceController: WKInterfaceController {
-    
-    @IBOutlet var interfaceImage: WKInterfaceImage!
-    
-    var currentIndex: Int?
-    
-    
-    override func awake(withContext context: Any?) {
-        super.awake(withContext: context)
-        
-        currentIndex = count
-        count += 1
+     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+     */
+    public func setImage(_ resource: Resource?) {
+        guard let resource = resource else {
+            return
+        }
+
+        KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil, completionHandler: { [weak base] image, error, cacheType, imageURL in
+            DispatchQueue.main.safeAsync {
+                base?.setImage(image)
+            }
+        })
     }
-    
-    func refreshImage() {
-        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(currentIndex! + 1).jpg")!
-        self.interfaceImage.kf.setImage(url)
-    }
-
-    override func willActivate() {
-        // This method is called when watch view controller is about to be visible to user
-        super.willActivate()
-        refreshImage()
-    }
-
-    override func didDeactivate() {
-        // This method is called when watch view controller is no longer visible
-        super.didDeactivate()
-    }
-
 }
+

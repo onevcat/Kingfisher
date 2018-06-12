@@ -17,6 +17,7 @@
 		08BC807B6BB579B8C50B80703F8DF85B /* NSRegularExpression+Matcheable.h in Headers */ = {isa = PBXBuildFile; fileRef = 588488FDD3DC715C789C633D8AE779BF /* NSRegularExpression+Matcheable.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		090CB1D7F7AA0852214CDA8E6F19C454 /* NSRegularExpression+Matcheable.h in Headers */ = {isa = PBXBuildFile; fileRef = 588488FDD3DC715C789C633D8AE779BF /* NSRegularExpression+Matcheable.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0A1A411A728BCAFBAB7511DA5C40F99F /* NSString+Nocilla.m in Sources */ = {isa = PBXBuildFile; fileRef = 73267DBB05F593219E498271E93E5C35 /* NSString+Nocilla.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		0B9309A0E7ACC3A28EFE45B7BD0B531A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68A70A4CE45095CAA25FC97F4E352006 /* Cocoa.framework */; };
 		0BF936F4146CE471BBE89420B1D72BBD /* LSASIHTTPRequestHook.m in Sources */ = {isa = PBXBuildFile; fileRef = 070FBB4CAED1D28AE5C0B867F37121F7 /* LSASIHTTPRequestHook.m */; };
 		11D9A4092AB873A9332CEBA2904CCE14 /* LSNSURLHook.m in Sources */ = {isa = PBXBuildFile; fileRef = B4084ABF3E86DFF00D529E760BDFC388 /* LSNSURLHook.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		149D6B2B0CBF399B8A74DE2A2220B3F0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87BFF0A6B440475A593E22D98A59E7A9 /* Foundation.framework */; };
@@ -79,12 +80,12 @@
 		683FE35728C5C69508460CC61C82D2FC /* LSHTTPClientHook.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D1D5744E475F26D8B361B2C914F07ED /* LSHTTPClientHook.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		68880755CB13355DD76B0F481EA8288E /* NSString+Matcheable.m in Sources */ = {isa = PBXBuildFile; fileRef = C5E43DF655F600A053BABEBCEE25A53D /* NSString+Matcheable.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		688D3DFB896A95DE1F3ED5AFCA39179C /* LSNSURLSessionHook.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C8347F60187C4EF5B0364B1A13E4A9B /* LSNSURLSessionHook.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		69539C41E8CC77399F004DAE277FE733 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68A70A4CE45095CAA25FC97F4E352006 /* Cocoa.framework */; };
 		6CF95C3D4A2BFC55F63F4816E2A9484A /* LSNSURLHook.h in Headers */ = {isa = PBXBuildFile; fileRef = 313C7C4F9AE4ECD5E14ED6667C3A5A0A /* LSNSURLHook.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6E1B17C831D333EA064137CDA64AB10E /* LSASIHTTPRequestHook.h in Headers */ = {isa = PBXBuildFile; fileRef = C1BDFC533D7CAE52DCDAF8D21CDD694D /* LSASIHTTPRequestHook.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6E5A9D7007874C9A1364E61B1351012D /* NSString+Matcheable.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DDB7287C0B14977704607BB2B0C1809 /* NSString+Matcheable.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6E6106CA2F4EC42FCAFC19F4E0C29AF5 /* Pods-KingfisherTests-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DC3EF1CD34EB97E6C6C6018DAF9C8809 /* Pods-KingfisherTests-tvOS-dummy.m */; };
 		6EABFFAA4E720804A04C5984CDC34CB6 /* NSString+Nocilla.m in Sources */ = {isa = PBXBuildFile; fileRef = 73267DBB05F593219E498271E93E5C35 /* NSString+Nocilla.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		6EDB895A61BF0FA43D09ACF9D7B12FAD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 455B79A5E61FC80FD86F300424F8DEC5 /* Cocoa.framework */; };
 		700ED71C333C2C235F819C5E267EA9A8 /* LSRegexMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 94ECB89C9A4661E83DC2670382C2FB63 /* LSRegexMatcher.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		72A3FF2AA086F440EA8566BC9B4E8E8C /* LSASIHTTPRequestAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = C2506AB5383A27BD90205FA1EE1ABDE2 /* LSASIHTTPRequestAdapter.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		73220CCF9784DEC3CF088A4FC166E86E /* LSNSURLHook.h in Headers */ = {isa = PBXBuildFile; fileRef = 313C7C4F9AE4ECD5E14ED6667C3A5A0A /* LSNSURLHook.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -104,7 +105,6 @@
 		8500C995C3C4C666103D66244F1549DA /* NSString+Nocilla.h in Headers */ = {isa = PBXBuildFile; fileRef = C88615AD7BBE507AC2F39A4A6F5B1FCE /* NSString+Nocilla.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		850C526C46B0C4BB7711E945826F400F /* LSMatcheable.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EA65663C1341EC3A4E733F375F1760A /* LSMatcheable.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		86196989CB4727F6CC7D0A20EAEC0864 /* NSURLRequest+LSHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B7D8FB64B8CBDED592BFE170938170 /* NSURLRequest+LSHTTPRequest.m */; };
-		883702F8B547BBD7BA036CCB511493F5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 455B79A5E61FC80FD86F300424F8DEC5 /* Cocoa.framework */; };
 		88B09282A5CC84DEDB12B1D26D4B8B35 /* LSDataMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 5036C1EE9C1F23BAD27139DAA655845F /* LSDataMatcher.m */; };
 		8A9A5FFD292E8874C1D76E839E617623 /* LSStringMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A2645E4140A6ED8538ACD4B030DEEE78 /* LSStringMatcher.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8FDA6C59E8AEE8B73019952E5A25ABE2 /* LSHTTPClientHook.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D1D5744E475F26D8B361B2C914F07ED /* LSHTTPClientHook.m */; };
@@ -132,6 +132,7 @@
 		BA58BB5C6FB11D66C2132218F81F8D37 /* LSHTTPRequestDiff.h in Headers */ = {isa = PBXBuildFile; fileRef = E70623C8BCDD891AE035ED2F3E4B2267 /* LSHTTPRequestDiff.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BCC6174493E6CD287BA07786DD0B5127 /* LSStubRequestDSL.m in Sources */ = {isa = PBXBuildFile; fileRef = 80ED34909071E8F44747E3928C5F701A /* LSStubRequestDSL.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		BDCEF0B8B2D5EE6E1A8ED306F1CA191D /* LSStubResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EDD1D4A1D0058A528A80F29720C1220 /* LSStubResponse.m */; };
+		BE64321FB1E3B19FF8F36F951DB2406A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A4C5ABA3EE351E9EA309CE64F6268F4 /* CFNetwork.framework */; };
 		BFCB9B91962861851510CC9B5972A3C0 /* LSHTTPBody.h in Headers */ = {isa = PBXBuildFile; fileRef = 9425C16C4CA4AD18C8D84218F4652AB8 /* LSHTTPBody.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C18C3ACEA8494965D0BA1DFBA05D4CEB /* NSString+Matcheable.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DDB7287C0B14977704607BB2B0C1809 /* NSString+Matcheable.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C32D46CD65CA374D861D3DF77A21ED68 /* LSNSURLHook.m in Sources */ = {isa = PBXBuildFile; fileRef = B4084ABF3E86DFF00D529E760BDFC388 /* LSNSURLHook.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -142,7 +143,6 @@
 		C516FB29EA3E61634D15308F4DCED720 /* LSHTTPClientHook.h in Headers */ = {isa = PBXBuildFile; fileRef = 2344A9FF58877D93F8C5DFB562FC3475 /* LSHTTPClientHook.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C7790673765BFCEF4E0DB01208AB06B4 /* LSHTTPRequestDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = C034A2DF2C26C1D67670B84BB6A751AC /* LSHTTPRequestDiff.m */; };
 		C7A563BB4EE9B1210104E1993238B9A9 /* LSHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC5AEB00AA1B863AA4145E7D3C53112 /* LSHTTPRequest.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		CB64B4A8258BB6ACF7E1103D40B215C1 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C82121AE334D7D758400323E9DAA40F9 /* CFNetwork.framework */; };
 		CC706F57A10F3B4E26FA1F12067A9C08 /* NSURLRequest+LSHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B7D8FB64B8CBDED592BFE170938170 /* NSURLRequest+LSHTTPRequest.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		CE0ABB47BF274E15E4FFC2DF78D92EC4 /* Nocilla-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E431C9FC853E2BB7ABC7765C2A4F7835 /* Nocilla-tvOS-dummy.m */; };
 		CE9C3D6DBA3881CDBF088837160A35CE /* LSHTTPRequestDSLRepresentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC27CE7C114136E403CF38E4DFC966A /* LSHTTPRequestDSLRepresentation.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -226,6 +226,7 @@
 		17C7E507AE5ACE4D0F70E5FC158F4448 /* Pods-KingfisherTests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-KingfisherTests-resources.sh"; sourceTree = "<group>"; };
 		2344A9FF58877D93F8C5DFB562FC3475 /* LSHTTPClientHook.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = LSHTTPClientHook.h; path = Nocilla/Hooks/LSHTTPClientHook.h; sourceTree = "<group>"; };
 		293DD7AD1E1F0C33B5D057EB6C4DC82D /* Pods-KingfisherTests-macOS-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-KingfisherTests-macOS-frameworks.sh"; sourceTree = "<group>"; };
+		2A4C5ABA3EE351E9EA309CE64F6268F4 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		2D82E6820899E51A496CD2312E9DB0A5 /* LSDataMatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = LSDataMatcher.h; path = Nocilla/Matchers/LSDataMatcher.h; sourceTree = "<group>"; };
 		2D8692BB06D94B44A8DF98C7B48EAF24 /* Pods-KingfisherTests-tvOS-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-KingfisherTests-tvOS-frameworks.sh"; sourceTree = "<group>"; };
 		2FDC356739387B8CABD13FC568787F9E /* Nocilla-macOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Nocilla-macOS-prefix.pch"; path = "../Nocilla-macOS/Nocilla-macOS-prefix.pch"; sourceTree = "<group>"; };
@@ -238,7 +239,6 @@
 		3C2438B16E47ADD9E782248726460423 /* NSData+Nocilla.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSData+Nocilla.m"; path = "Nocilla/Categories/NSData+Nocilla.m"; sourceTree = "<group>"; };
 		43B7D8FB64B8CBDED592BFE170938170 /* NSURLRequest+LSHTTPRequest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSURLRequest+LSHTTPRequest.m"; path = "Nocilla/Hooks/NSURLRequest/NSURLRequest+LSHTTPRequest.m"; sourceTree = "<group>"; };
 		44FA74975C4E9116C2D45CD82838A328 /* LSASIHTTPRequestAdapter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = LSASIHTTPRequestAdapter.m; path = Nocilla/Hooks/ASIHTTPRequest/LSASIHTTPRequestAdapter.m; sourceTree = "<group>"; };
-		455B79A5E61FC80FD86F300424F8DEC5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		4919D8B656A57098295C655735F4B1B4 /* NSURLRequest+DSL.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSURLRequest+DSL.m"; path = "Nocilla/Hooks/NSURLRequest/NSURLRequest+DSL.m"; sourceTree = "<group>"; };
 		4A5F1A67D29C2E4D77DCAEA139910FDE /* Nocilla-tvOS-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Nocilla-tvOS-prefix.pch"; path = "../Nocilla-tvOS/Nocilla-tvOS-prefix.pch"; sourceTree = "<group>"; };
 		4D2057AF2695544F1F10A7EC07DD3FCF /* libNocilla-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libNocilla-iOS.a"; path = "libNocilla-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -249,6 +249,7 @@
 		5F233054A3754E145F753C01DD5ACEDA /* libPods-KingfisherTests-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-KingfisherTests-macOS.a"; path = "libPods-KingfisherTests-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6150EC783F65711E86018573BE092A18 /* NSURLRequest+DSL.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSURLRequest+DSL.h"; path = "Nocilla/Hooks/NSURLRequest/NSURLRequest+DSL.h"; sourceTree = "<group>"; };
 		636FCA7AE537CF093BCB08291D42C618 /* Nocilla-iOS-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Nocilla-iOS-dummy.m"; sourceTree = "<group>"; };
+		68A70A4CE45095CAA25FC97F4E352006 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		6D1D5744E475F26D8B361B2C914F07ED /* LSHTTPClientHook.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = LSHTTPClientHook.m; path = Nocilla/Hooks/LSHTTPClientHook.m; sourceTree = "<group>"; };
 		6EDD1D4A1D0058A528A80F29720C1220 /* LSStubResponse.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = LSStubResponse.m; path = Nocilla/Stubs/LSStubResponse.m; sourceTree = "<group>"; };
 		73267DBB05F593219E498271E93E5C35 /* NSString+Nocilla.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSString+Nocilla.m"; path = "Nocilla/Categories/NSString+Nocilla.m"; sourceTree = "<group>"; };
@@ -284,7 +285,6 @@
 		C2506AB5383A27BD90205FA1EE1ABDE2 /* LSASIHTTPRequestAdapter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = LSASIHTTPRequestAdapter.h; path = Nocilla/Hooks/ASIHTTPRequest/LSASIHTTPRequestAdapter.h; sourceTree = "<group>"; };
 		C2DC481F495E79321BDFA7D03CE9D8DB /* LSMatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = LSMatcher.h; path = Nocilla/Matchers/LSMatcher.h; sourceTree = "<group>"; };
 		C5E43DF655F600A053BABEBCEE25A53D /* NSString+Matcheable.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSString+Matcheable.m"; path = "Nocilla/Matchers/NSString+Matcheable.m"; sourceTree = "<group>"; };
-		C82121AE334D7D758400323E9DAA40F9 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		C88615AD7BBE507AC2F39A4A6F5B1FCE /* NSString+Nocilla.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSString+Nocilla.h"; path = "Nocilla/Categories/NSString+Nocilla.h"; sourceTree = "<group>"; };
 		CC15B6510C41D560DF6A24EF0AF4C726 /* LSStubResponseDSL.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = LSStubResponseDSL.m; path = Nocilla/DSL/LSStubResponseDSL.m; sourceTree = "<group>"; };
 		CD8E4C9589685A8F43C8617EECD09180 /* Pods-KingfisherTests-macOS-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-KingfisherTests-macOS-acknowledgements.markdown"; sourceTree = "<group>"; };
@@ -319,8 +319,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB64B4A8258BB6ACF7E1103D40B215C1 /* CFNetwork.framework in Frameworks */,
-				6EDB895A61BF0FA43D09ACF9D7B12FAD /* Cocoa.framework in Frameworks */,
+				BE64321FB1E3B19FF8F36F951DB2406A /* CFNetwork.framework in Frameworks */,
+				69539C41E8CC77399F004DAE277FE733 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +345,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				883702F8B547BBD7BA036CCB511493F5 /* Cocoa.framework in Frameworks */,
+				0B9309A0E7ACC3A28EFE45B7BD0B531A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +400,15 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
+		5E7871E81B018740E9951E8B9C713B97 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				2A4C5ABA3EE351E9EA309CE64F6268F4 /* CFNetwork.framework */,
+				68A70A4CE45095CAA25FC97F4E352006 /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
 		7DB346D0F39D3F0E887471402A8071AB = {
 			isa = PBXGroup;
 			children = (
@@ -432,15 +441,6 @@
 			);
 			name = "Pods-KingfisherTests-tvOS";
 			path = "Target Support Files/Pods-KingfisherTests-tvOS";
-			sourceTree = "<group>";
-		};
-		A636D28BC67405D7BF84C199D9775C4E /* OS X */ = {
-			isa = PBXGroup;
-			children = (
-				C82121AE334D7D758400323E9DAA40F9 /* CFNetwork.framework */,
-				455B79A5E61FC80FD86F300424F8DEC5 /* Cocoa.framework */,
-			);
-			name = "OS X";
 			sourceTree = "<group>";
 		};
 		C35547E19F17CB911BF0C32DF16206E9 /* Nocilla */ = {
@@ -553,7 +553,7 @@
 			isa = PBXGroup;
 			children = (
 				5648F8B416B94B74E55B47DDC352F78D /* iOS */,
-				A636D28BC67405D7BF84C199D9775C4E /* OS X */,
+				5E7871E81B018740E9951E8B9C713B97 /* OS X */,
 				42E5109AC44AC266BA0F8B00E3CA85F8 /* tvOS */,
 			);
 			name = Frameworks;
@@ -799,7 +799,7 @@
 		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0830;
+				LastSwiftUpdateCheck = 0930;
 				LastUpgradeCheck = 0930;
 			};
 			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
@@ -972,6 +972,28 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		019B85ABDBAFF1FA1568DEAC3503B75A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF99B902587D0AF28C189733B730808D /* Nocilla-macOS.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-macOS/Nocilla-macOS-prefix.pch";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
 		03A5B1D5CFD6FB98FA5870F618A414BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0B380A5248B15FBE72E2A5C63DE7788A /* Nocilla-tvOS.xcconfig */;
@@ -991,6 +1013,49 @@
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		07E8137B3C43DB6BBE618D905D0527FE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF99B902587D0AF28C189733B730808D /* Nocilla-macOS.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-macOS/Nocilla-macOS-prefix.pch";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+		1ADE1E3E09C988BE33AD7860CB341C8D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A68D6EAB5CEF4358E48DA40DD9A12448 /* Pods-KingfisherTests-macOS.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				EXECUTABLE_PREFIX = lib;
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -1014,6 +1079,50 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		3653C00F1113AE4CF2184EA816F78F84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9DCE96B78CC69B7BE1783791C07DD490 /* Pods-KingfisherTests-macOS.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				EXECUTABLE_PREFIX = lib;
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		45236D9019B60CC8A2FB992FBF650FEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DDC704A007D68783A6CBE0AD212A7E11 /* Nocilla-iOS.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-iOS/Nocilla-iOS-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		529757685C8E402C118B85E571C76B3A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1056,7 +1165,46 @@
 			};
 			name = Release;
 		};
-		5912B2A96B338ED9F7317C2BB760D723 /* Release */ = {
+		8C53DC90015A673C4980CDC3B54EC1AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E988CB7FE39E72F9C8A1027C9EEE96C9 /* Pods-KingfisherTests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACH_O_TYPE = staticlib;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A8F415E07AA7B8A140AA2A9E9CD9A7B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1335B5B7EF5F0B96397BB582D2739D72 /* Pods-KingfisherTests-tvOS.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				MACH_O_TYPE = staticlib;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		C3C69122EA95B177AAF83B8D6D762064 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1066,6 +1214,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1115,152 +1264,7 @@
 			};
 			name = Release;
 		};
-		712AD14711E6DA3D3C09C128203E325E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DDC704A007D68783A6CBE0AD212A7E11 /* Nocilla-iOS.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-iOS/Nocilla-iOS-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		78AA4A72A5249A7F4B96FF502CA8056A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A68D6EAB5CEF4358E48DA40DD9A12448 /* Pods-KingfisherTests-macOS.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				EXECUTABLE_PREFIX = lib;
-				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		82C6618D1048AACDDAE83135F78E4549 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9DCE96B78CC69B7BE1783791C07DD490 /* Pods-KingfisherTests-macOS.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				EXECUTABLE_PREFIX = lib;
-				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		8C53DC90015A673C4980CDC3B54EC1AD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E988CB7FE39E72F9C8A1027C9EEE96C9 /* Pods-KingfisherTests.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACH_O_TYPE = staticlib;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		963A926C9F2121DF34781B222F9B3D0E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DDC704A007D68783A6CBE0AD212A7E11 /* Nocilla-iOS.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-iOS/Nocilla-iOS-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		A8F415E07AA7B8A140AA2A9E9CD9A7B1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1335B5B7EF5F0B96397BB582D2739D72 /* Pods-KingfisherTests-tvOS.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				MACH_O_TYPE = staticlib;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
-			};
-			name = Debug;
-		};
-		AE6646D32947BC0B2726EAB6C3A39827 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF99B902587D0AF28C189733B730808D /* Nocilla-macOS.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				EXECUTABLE_PREFIX = lib;
-				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-macOS/Nocilla-macOS-prefix.pch";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
-			};
-			name = Release;
-		};
-		D7DB47C088D24B9A6401EB77F37AF434 /* Debug */ = {
+		CC4765277F1FE32A803FFD5536BE5DF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1270,6 +1274,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -1324,26 +1329,29 @@
 			};
 			name = Debug;
 		};
-		DFB06CAC179240803C5593D9790AA61E /* Debug */ = {
+		F98E00746B6154C826299C7560799CE6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF99B902587D0AF28C189733B730808D /* Nocilla-macOS.xcconfig */;
+			baseConfigurationReference = DDC704A007D68783A6CBE0AD212A7E11 /* Nocilla-iOS.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				EXECUTABLE_PREFIX = lib;
-				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-macOS/Nocilla-macOS-prefix.pch";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				GCC_PREFIX_HEADER = "Target Support Files/Nocilla-iOS/Nocilla-iOS-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
-			name = Debug;
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1360,8 +1368,8 @@
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D7DB47C088D24B9A6401EB77F37AF434 /* Debug */,
-				5912B2A96B338ED9F7317C2BB760D723 /* Release */,
+				CC4765277F1FE32A803FFD5536BE5DF1 /* Debug */,
+				C3C69122EA95B177AAF83B8D6D762064 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1369,8 +1377,8 @@
 		6ED987E768BA7086705A56AC71FE1A2F /* Build configuration list for PBXNativeTarget "Pods-KingfisherTests-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				82C6618D1048AACDDAE83135F78E4549 /* Debug */,
-				78AA4A72A5249A7F4B96FF502CA8056A /* Release */,
+				3653C00F1113AE4CF2184EA816F78F84 /* Debug */,
+				1ADE1E3E09C988BE33AD7860CB341C8D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1378,8 +1386,8 @@
 		A47AD5A5F2E885254A70EDEFFB521D40 /* Build configuration list for PBXNativeTarget "Nocilla-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DFB06CAC179240803C5593D9790AA61E /* Debug */,
-				AE6646D32947BC0B2726EAB6C3A39827 /* Release */,
+				019B85ABDBAFF1FA1568DEAC3503B75A /* Debug */,
+				07E8137B3C43DB6BBE618D905D0527FE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1405,8 +1413,8 @@
 		F5B04723FC11F560525E7E3518D33D1B /* Build configuration list for PBXNativeTarget "Nocilla-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				963A926C9F2121DF34781B222F9B3D0E /* Debug */,
-				712AD14711E6DA3D3C09C128203E325E /* Release */,
+				45236D9019B60CC8A2FB992FBF650FEE /* Debug */,
+				F98E00746B6154C826299C7560799CE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
