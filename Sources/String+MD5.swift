@@ -24,7 +24,7 @@ import Foundation
 extension String: KingfisherCompatible { }
 
 extension Kingfisher where Base == String {
-    var md5: String {
+    public var md5: String {
         if let data = base.data(using: .utf8, allowLossyConversion: true) {
 
             let message = data.withUnsafeBytes { bytes -> [UInt8] in
