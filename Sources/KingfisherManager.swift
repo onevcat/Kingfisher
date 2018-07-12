@@ -170,7 +170,13 @@ public class KingfisherManager {
                                       processorIdentifier:options.processor.identifier,
                                       cacheSerializer: options.cacheSerializer,
                                       toDisk: !options.cacheMemoryOnly,
-                                      completionHandler: nil)
+                                      completionHandler: {
+                                        guard options.waitForCache else { return }
+                                        
+                                        let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
+                                        completionHandler?(image, nil, cacheType, url)
+                    })
+                    
                     if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
                         let originalCache = options.originalCache
                         let defaultProcessor = DefaultImageProcessor.default
@@ -186,8 +192,9 @@ public class KingfisherManager {
                     }
                 }
 
-                completionHandler?(image, error, .none, url)
-
+                if options.waitForCache == false {
+                    completionHandler?(image, error, .none, url)
+                }
             })
     }
     
@@ -257,8 +264,16 @@ public class KingfisherManager {
                                   processorIdentifier:options.processor.identifier,
                                   cacheSerializer: options.cacheSerializer,
                                   toDisk: !options.cacheMemoryOnly,
-                                  completionHandler: nil)
-                diskTaskCompletionHandler(processedImage, nil, .none, url)
+                                  completionHandler: {
+                                    guard options.waitForCache else { return }
+                                    
+                                    let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
+                                    diskTaskCompletionHandler(processedImage, nil, cacheType, url)
+                })
+                
+                if options.waitForCache == false {
+                    diskTaskCompletionHandler(processedImage, nil, .none, url)
+                }
             }
         }
     }
