@@ -15,13 +15,13 @@ script:
     ./setup.sh
     if [ "$TEST_TYPE" = iOS ]; then
       set -o pipefail
-      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.1' -enableCodeCoverage YES | xcpretty
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.1' -enableCodeCoverage YES | bundle exec xcpretty
     elif [ "$TEST_TYPE" = macOS ]; then
       set -o pipefail
-      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -enableCodeCoverage YES | xcpretty
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-macOS -enableCodeCoverage YES | bundle exec xcpretty
     elif [ "$TEST_TYPE" = tvOS ]; then
       set -o pipefail
-      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-tvOS -destination "platform=tvOS Simulator,name=Apple TV" -enableCodeCoverage YES | xcpretty
+      xcodebuild clean test -workspace Kingfisher.xcworkspace -scheme Kingfisher-tvOS -destination "platform=tvOS Simulator,name=Apple TV" -enableCodeCoverage YES | bundle exec xcpretty
     fi
 after_success:
     - sleep 5
