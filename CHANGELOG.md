@@ -2,6 +2,14 @@
 
 -----
 
+## [4.8.1 - Prefetch Improvement](https://github.com/onevcat/Kingfisher/releases/tag/4.8.1) (2018-07-26)
+
+#### Fix
+* Fix a performance issue when prefetching images by moving related operation away from main queue. [#957](https://github.com/onevcat/Kingfisher/pull/957)
+* Improvement on stability of some test cases.
+
+---
+
 ## [4.8.0 - Watch & Watching](https://github.com/onevcat/Kingfisher/releases/tag/4.8.0) (2018-05-15)
 
 #### Add
