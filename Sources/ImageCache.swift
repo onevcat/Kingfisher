@@ -93,7 +93,7 @@ open class ImageCache {
     fileprivate var fileManager: FileManager!
     
     ///The disk cache location.
-    open let diskCachePath: String
+    public let diskCachePath: String
   
     /// The default file extension appended to cached files.
     open var pathExtension: String?
