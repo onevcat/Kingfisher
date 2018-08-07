@@ -57,6 +57,11 @@ extension AnimatedImageViewDelegate {
     public func animatedImageViewDidFinishAnimating(_ imageView: AnimatedImageView) {}
 }
 
+private extension Notification.Name {
+    static let AnimatedImageViewWillDisplay = Notification.Name("AnimatedImageViewWillDisplay")
+    static let AnimatedImageViewEndDisplay = Notification.Name("AnimatedImageViewEndDisplay")
+}
+
 /// `AnimatedImageView` is a subclass of `UIImageView` for displaying animated image.
 open class AnimatedImageView: UIImageView {
     
@@ -159,10 +164,55 @@ open class AnimatedImageView: UIImageView {
         }
     }
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        registerNotifications()
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        registerNotifications()
+    }
+
+    private func registerNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(startAnimating), name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(stopAnimating), name: .UIApplicationDidEnterBackground, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(willDisplayForAnimatedImageView), name: .AnimatedImageViewWillDisplay, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(endDisplayForAnimatedImageView), name: .AnimatedImageViewEndDisplay, object: nil)
+    }
+    
+    private func removeNotificaitons() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    open class func willDisplayAnimatedImageView(_ imageView: AnimatedImageView?) {
+        NotificationCenter.default.post(name: .AnimatedImageViewWillDisplay, object: imageView, userInfo: nil)
+    }
+    
+    open class func endDisplayAnimatedImageView(_ imageView: AnimatedImageView?) {
+        NotificationCenter.default.post(name: .AnimatedImageViewEndDisplay, object: imageView, userInfo: nil)
+    }
+    
+    @objc
+    private func willDisplayForAnimatedImageView(_ notification: Notification) {
+        if let imageView = notification.object as? AnimatedImageView, imageView == self {
+            startAnimating()
+        }
+    }
+    
+    @objc
+    private func endDisplayForAnimatedImageView(_ notification: Notification) {
+        if let imageView = notification.object as? AnimatedImageView, imageView == self {
+            stopAnimating()
+        }
+    }
+
     deinit {
         if isDisplayLinkInitialized {
             displayLink.invalidate()
         }
+        removeNotificaitons()
     }
     
     override open var isAnimating: Bool {
