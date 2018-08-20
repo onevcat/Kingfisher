@@ -81,7 +81,7 @@ extension ViewController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
-        cell.cellImageView.kf.indicatorType = .activity
+        cell.cellImageView.kf.indicatorType = .activity(style: .white)
         return cell
     }
 }
