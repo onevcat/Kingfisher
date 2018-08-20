@@ -32,15 +32,17 @@
 
 #if os(macOS)
     public typealias IndicatorView = NSView
+    public typealias ActivityIndicatorStyle = NSProgressIndicator.Style
 #else
     public typealias IndicatorView = UIView
+    public typealias ActivityIndicatorStyle = UIActivityIndicatorViewStyle
 #endif
 
 public enum IndicatorType {
     /// No indicator.
     case none
     /// Use system activity indicator.
-    case activity
+    case activity(style: ActivityIndicatorStyle)
     /// Use an image as indicator. GIF is supported.
     case image(imageData: Data)
     /// Use a custom indicator, which conforms to the `Indicator` protocol.
@@ -124,18 +126,13 @@ final class ActivityIndicator: Indicator {
         }
     }
 
-    init() {
+    init(style: ActivityIndicatorStyle) {
         #if os(macOS)
             activityIndicatorView = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
             activityIndicatorView.controlSize = .small
-            activityIndicatorView.style = .spinning
+            activityIndicatorView.style = style
         #else
-            #if os(tvOS)
-                let indicatorStyle = UIActivityIndicatorViewStyle.white
-            #else
-                let indicatorStyle = UIActivityIndicatorViewStyle.gray
-            #endif
-            activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
+            activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: style)
             activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleTopMargin]
         #endif
     }

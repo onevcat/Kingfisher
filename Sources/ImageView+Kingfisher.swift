@@ -181,8 +181,8 @@ extension Kingfisher where Base: ImageView {
             switch newValue {
             case .none:
                 indicator = nil
-            case .activity:
-                indicator = ActivityIndicator()
+            case .activity(let style):
+                indicator = ActivityIndicator(style: style)
             case .image(let data):
                 indicator = ImageIndicator(imageData: data)
             case .custom(let anIndicator):
