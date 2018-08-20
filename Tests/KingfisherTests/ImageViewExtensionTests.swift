@@ -357,7 +357,11 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testIndicatorViewExisting() {
-        imageView.kf.indicatorType = .activity(style: .white)
+        #if os(macOS)
+            imageView.kf.indicatorType = .activity(style: .spinning)
+        #else
+            imageView.kf.indicatorType = .activity(style: .white)
+        #endif
         XCTAssertNotNil(imageView.kf.indicator, "The indicator should exist when indicatorType is different than .none")
         XCTAssertTrue(imageView.kf.indicator is ActivityIndicator)
 
@@ -381,7 +385,11 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testActivityIndicatorViewAnimating() {
-        imageView.kf.indicatorType = .activity(style: .white)
+        #if os(macOS)
+            imageView.kf.indicatorType = .activity(style: .spinning)
+        #else
+            imageView.kf.indicatorType = .activity(style: .white)
+        #endif
         
         let expectation = self.expectation(description: "wait for downloading image")
         
