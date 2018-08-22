@@ -86,6 +86,9 @@ open class AnimatedImageView: UIImageView {
             case (.once, .once),
                  (.infinite, .infinite):
                 return true
+            case (.once, .finite(let count)),
+                 (.finite(let count), .once):
+                return count == 1
             case (.once, _),
                  (.infinite, _),
                  (.finite, _):
