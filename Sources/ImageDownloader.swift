@@ -475,7 +475,7 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Aut
             return
         }
         
-        var disposition: URLSession.ResponseDisposition = .allow
+        var disposition = URLSession.ResponseDisposition.allow
         
         if let statusCode = (response as? HTTPURLResponse)?.statusCode,
            let url = dataTask.originalRequest?.url,
