@@ -77,6 +77,8 @@ extension Placeholder where Self: View {
 
     /// How the placeholder should be removed from a given image view.
     public func remove(from imageView: ImageView) {
-        self.removeFromSuperview()
+        if self.superview == imageView {
+            self.removeFromSuperview()
+        }
     }
 }
