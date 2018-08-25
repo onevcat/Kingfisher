@@ -35,7 +35,7 @@ import UIKit
 import ImageIO
 
 /// Protocol of `AnimatedImageView`.
-public protocol AnimatedImageViewDelegate: class {
+public protocol AnimatedImageViewDelegate: AnyObject {
     /**
      Called after the animatedImageView has finished each animation loop.
 
@@ -292,7 +292,7 @@ struct AnimatedFrame {
     static let null: AnimatedFrame = AnimatedFrame(image: .none, duration: 0.0)
 }
 
-protocol AnimatorDelegate: class {
+protocol AnimatorDelegate: AnyObject {
     func animator(_ animator: Animator, didPlayAnimationLoops count: UInt)
 }
 

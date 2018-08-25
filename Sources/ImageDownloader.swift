@@ -97,7 +97,7 @@ public enum KingfisherError: Int {
 public let KingfisherErrorStatusCodeKey = "statusCode"
 
 /// Protocol of `ImageDownloader`.
-public protocol ImageDownloaderDelegate: class {
+public protocol ImageDownloaderDelegate: AnyObject {
     /**
      Called when the `ImageDownloader` object will start downloading an image from specified URL.
      
@@ -175,7 +175,7 @@ extension ImageDownloaderDelegate {
 }
 
 /// Protocol indicates that an authentication challenge could be handled.
-public protocol AuthenticationChallengeResponsable: class {
+public protocol AuthenticationChallengeResponsable: AnyObject {
     /**
      Called when an session level authentication challenge is received.
      This method provide a chance to handle and response to the authentication challenge before downloading could start.
