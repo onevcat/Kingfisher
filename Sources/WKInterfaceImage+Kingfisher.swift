@@ -57,27 +57,27 @@ extension Kingfisher where Base: WKInterfaceImage {
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo),
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else {
+            progressBlock: {[weak self] receivedSize, totalSize in
+                guard let strongSelf = self, resource.downloadURL == strongSelf.webURL else {
                     return
                 }
 
                 progressBlock?(receivedSize, totalSize)
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { [weak self] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.webURL else {
+                    guard let strongSelf = self, imageURL == strongSelf.webURL else {
                         completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
 
-                    self.setImageTask(nil)
+                    strongSelf.setImageTask(nil)
                     guard let image = image else {
                         completionHandler?(nil, error, cacheType, imageURL)
                         return
                     }
                 
-                    strongBase.setImage(image)
+                    strongSelf.base.setImage(image)
                     completionHandler?(image, error, cacheType, imageURL)
                 }
             })

@@ -72,24 +72,24 @@ extension Kingfisher where Base: NSButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else {
+            progressBlock: {[weak self] receivedSize, totalSize in
+                guard let strongSelf = self, resource.downloadURL == strongSelf.webURL else {
                     return
                 }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: {[weak base] image, error, cacheType, imageURL in
+            completionHandler: {[weak self] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.webURL else {
+                    guard let strongSelf = self, imageURL == strongSelf.webURL else {
                         completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
-                    self.setImageTask(nil)
+                    strongSelf.setImageTask(nil)
                     
                     if image != nil {
-                        strongBase.image = image
+                        strongSelf.base.image = image
                     }
                     completionHandler?(image, error, cacheType, imageURL)
                 }
