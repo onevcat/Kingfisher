@@ -75,3 +75,10 @@ extension Button: KingfisherCompatible { }
 #else
 extension WKInterfaceImage: KingfisherCompatible { }
 #endif
+
+class WeakKingfisher<Base: AnyObject> {
+    weak var base: Base?
+    init(_ base: Base) {
+        self.base = base
+    }
+}

@@ -83,36 +83,43 @@ extension Kingfisher where Base: ImageView {
             options.append(.preloadAllAnimationData)
         }
         
+        let weakKingfisher = WeakKingfisher<Base>(self.base)
+        
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: options,
-            progressBlock: {[weak self] receivedSize, totalSize in
-                guard let strongSelf = self, resource.downloadURL == strongSelf.webURL else {
+            progressBlock: { receivedSize, totalSize in
+                guard let base = weakKingfisher.base else {
                     return
                 }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
+                let kf = Kingfisher<Base>(base)
+                guard resource.downloadURL == kf.webURL else {
+                    return
                 }
+                progressBlock?(receivedSize, totalSize)
             },
-            completionHandler: {[weak self] image, error, cacheType, imageURL in
+            completionHandler: { image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
+                    guard let base = weakKingfisher.base else {
+                        return
+                    }
                     maybeIndicator?.stopAnimatingView()
-                    guard let strongSelf = self, imageURL == strongSelf.webURL else {
+                    let kf = Kingfisher<Base>(base)
+                    guard imageURL == kf.webURL else {
                         completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
                     
-                    strongSelf.setImageTask(nil)
+                    kf.setImageTask(nil)
                     guard let image = image else {
                         completionHandler?(nil, error, cacheType, imageURL)
                         return
                     }
                     
-                    let base = strongSelf.base
                     guard let transitionItem = options.lastMatchIgnoringAssociatedValue(.transition(.none)),
                         case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) else
                     {
-                        strongSelf.placeholder = nil
+                        kf.placeholder = nil
                         base.image = image
                         completionHandler?(image, error, cacheType, imageURL)
                         return
@@ -123,7 +130,7 @@ extension Kingfisher where Base: ImageView {
                                           animations: { maybeIndicator?.stopAnimatingView() },
                                           completion: { _ in
 
-                                            strongSelf.placeholder = nil
+                                            kf.placeholder = nil
                                             UIView.transition(with: base, duration: transition.duration,
                                                               options: [transition.animationOptions, .allowUserInteraction],
                                                               animations: {
