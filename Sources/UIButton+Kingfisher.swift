@@ -88,7 +88,6 @@ extension Kingfisher where Base: UIButton {
                         completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
-                    
                     self.setImageTask(nil)
                     if image != nil {
                         strongBase.setImage(image, for: state)
