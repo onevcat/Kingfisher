@@ -14,7 +14,7 @@
     <a title="ImageCache Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Kingfisher Docs</a> (77% documented)</p>
+        <p><a href="../index.html">Kingfisher Docs</a> (74% documented)</p>
         <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right"><a href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml"><img src="../img/dash.png"/>Install in Dash</a></p>
       </div>
@@ -85,6 +85,9 @@
                 <a href="../Enums/ContentMode.html">ContentMode</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/ImageFormat.html">ImageFormat</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/ImageProcessItem.html">ImageProcessItem</a>
               </li>
               <li class="nav-group-task">
@@ -121,9 +124,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Notification/Name.html">– Name</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/URL.html">URL</a>
@@ -201,7 +201,7 @@
                 <a href="../Structs/BlurImageProcessor.html">BlurImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher11CGSizeProxyV">CGSizeProxy</a>
+                <a href="../Structs/CGSizeProxy.html">CGSizeProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
@@ -213,7 +213,7 @@
                 <a href="../Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher9DataProxyV">DataProxy</a>
+                <a href="../Structs/DataProxy.html">DataProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
@@ -253,9 +253,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher11StringProxyV">StringProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/TintImageProcessor.html">TintImageProcessor</a>
@@ -338,7 +335,7 @@
             <h1>ImageCache</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">ImageCache</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ImageCache</span></code></pre>
 
                 </div>
               </div>
@@ -374,12 +371,12 @@ memory warning notification is received.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maxMemoryCost</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">0</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">maxMemoryCost</span><span class="p">:</span> <span class="kt">UInt</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L85-L89">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L85-L89">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -404,12 +401,12 @@ memory warning notification is received.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">let</span> <span class="nv">diskCachePath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">let</span> <span class="nv">diskCachePath</span><span class="p">:</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L96">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L96">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -434,12 +431,12 @@ memory warning notification is received.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">pathExtension</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">pathExtension</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L99">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L99">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -466,12 +463,12 @@ Setting this to a negative value will make the disk cache never expiring.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maxCachePeriodInSecond</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span> <span class="c1">//Cache exists for 1 week</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">maxCachePeriodInSecond</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L104">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L104">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -498,12 +495,12 @@ Default is no limit.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">maxDiskCacheSize</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">0</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">maxDiskCacheSize</span><span class="p">:</span> <span class="kt">UInt</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L109">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L109">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -528,12 +525,12 @@ Default is no limit.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span> <span class="o">=</span> <span class="kt">ImageCache</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"default"</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">ImageCache</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L114">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L114">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -558,12 +555,12 @@ Default is no limit.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">DiskCachePathClosure</span> <span class="o">=</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">DiskCachePathClosure</span> <span class="o">=</span> <span class="p">(</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L117">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L117">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -588,12 +585,12 @@ Default is no limit.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">defaultDiskCachePathClosure</span><span class="p">(</span><span class="nv">path</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="nv">cacheName</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">defaultDiskCachePathClosure</span><span class="p">(</span><span class="nv">path</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="nv">cacheName</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L120-L123">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L120-L123">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -618,9 +615,9 @@ Default is no limit.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">path</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                <span class="nv">diskCachePathClosure</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageCache.html#/s:10Kingfisher10ImageCacheC04DiskC11PathClosurea">DiskCachePathClosure</a></span> <span class="o">=</span> <span class="kt">ImageCache</span><span class="o">.</span><span class="n">defaultDiskCachePathClosure</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">path</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">diskCachePathClosure</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageCache.html#/s:10Kingfisher10ImageCacheC04DiskC11PathClosurea">DiskCachePathClosure</a></span> <span class="o">=</span> <span class="kt">ImageCache</span><span class="o">.</span><span class="n">defaultDiskCachePathClosure</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -670,12 +667,8 @@ Default is no limit.</p>
                           </tbody>
                         </table>
                       </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The cache object.</p>
-                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L137-L167">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L135-L165">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -711,13 +704,13 @@ Default is no limit.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">,</span>
-                      <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                      <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                      <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
-                      <span class="n">cacheSerializer</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
-                      <span class="nv">toDisk</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-                      <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">,</span>
+                  <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                  <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                  <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+                  <span class="n">cacheSerializer</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheSerializer.html">CacheSerializer</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
+                  <span class="nv">toDisk</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                  <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -806,7 +799,7 @@ Default is no limit.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L191-L228">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L189-L226">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -832,11 +825,11 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">removeImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                          <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
-                          <span class="nv">fromMemory</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-                          <span class="nv">fromDisk</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-                          <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">removeImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                      <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+                      <span class="nv">fromMemory</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                      <span class="nv">fromDisk</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                      <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -909,7 +902,7 @@ It is an async operation.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L241-L271">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L239-L269">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -945,9 +938,10 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">retrieveImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                               <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?,</span>
-                     <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21RetrieveImageDiskTaska">RetrieveImageDiskTask</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                           <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?,</span>
+                 <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher21RetrieveImageDiskTaska">RetrieveImageDiskTask</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -1001,7 +995,7 @@ It is an async operation.</p>
                         <p>The retrieving task.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L287-L355">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L285-L353">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1026,7 +1020,7 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInMemoryCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInMemoryCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -1067,7 +1061,7 @@ It is an async operation.</p>
                         <p>The image object if it is cached, or <code>nil</code> if there is no such key in the cache.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L365-L371">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L363-L369">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1092,7 +1086,7 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInDiskCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInDiskCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -1133,7 +1127,7 @@ It is an async operation.</p>
                         <p>The image object if it is cached, or <code>nil</code> if there is no such key in the cache.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L382-L388">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L380-L386">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1169,12 +1163,13 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">clearMemoryCache</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">clearMemoryCache</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L396-L398">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L394-L396">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1199,7 +1194,7 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">clearDiskCache</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">(()</span><span class="o">-&gt;</span><span class="p">())?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">clearDiskCache</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">(()</span><span class="o">-&gt;</span><span class="p">())?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1223,7 +1218,7 @@ It is an async operation.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L405-L418">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L403-L416">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1248,7 +1243,7 @@ It is an async operation.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">cleanExpiredDiskCache</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">(()</span><span class="o">-&gt;</span><span class="p">())?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">cleanExpiredDiskCache</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="p">(()</span><span class="o">-&gt;</span><span class="p">())?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1272,7 +1267,7 @@ It is an async operation.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L432-L490">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L430-L488">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1299,12 +1294,13 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">@objc</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">backgroundCleanExpiredDiskCache</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">backgroundCleanExpiredDiskCache</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L539-L556">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L537-L554">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1340,7 +1336,7 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">imageCachedType</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">imageCachedType</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1380,7 +1376,7 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
                         <p>A <code><a href="../Enums/CacheType.html">CacheType</a></code> instance which indicates the cache status. <code>.none</code> means the image is not in cache yet.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L568-L587">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L566-L585">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1405,7 +1401,7 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -1445,7 +1441,7 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
                         <p>Corresponding hash.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L597-L600">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L595-L598">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1471,7 +1467,7 @@ It is the total allocated size of the cached files in bytes.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">calculateDiskCacheSize</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">((</span><span class="n">_</span> <span class="nv">size</span><span class="p">:</span> <span class="kt">UInt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">))</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">calculateDiskCacheSize</span><span class="p">(</span><span class="n">completion</span> <span class="nv">handler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">((</span><span class="n">_</span> <span class="nv">size</span><span class="p">:</span> <span class="kt">UInt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">))</span></code></pre>
 
                         </div>
                       </div>
@@ -1495,7 +1491,7 @@ It is the total allocated size of the cached files in bytes.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L608-L615">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L606-L613">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1530,12 +1526,12 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">cachePath</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">cachePath</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L627-L630">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L625-L628">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1560,12 +1556,12 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">ImageCache</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">cachePath</span><span class="p">(</span><span class="n">forComputedKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L632-L635">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L630-L633">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1573,6 +1569,13 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Deprecated"></a>
+                <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
+                <a href="#/Deprecated">
+                  <h3 class="section-name">Deprecated</h3>
+                </a>
+              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -1595,12 +1598,13 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CacheCheckResult</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "CacheCheckResult is deprecated. Use imageCachedType(forKey:processorIdentifier:﹚ API instead.")</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">CacheCheckResult</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L669-L672">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L667-L670">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1625,7 +1629,8 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">isImageCached</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/ImageCache/CacheCheckResult.html">CacheCheckResult</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, renamed: "imageCachedType(forKey:processorIdentifier:﹚", message: "Use imageCachedType(forKey:processorIdentifier:﹚ instead. CacheCheckResult.none indicates not being cached.")</span>
+<span class="kd">open</span> <span class="kd">func</span> <span class="nf">isImageCached</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/ImageCache/CacheCheckResult.html">CacheCheckResult</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1653,7 +1658,7 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
                         <p>The check result.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L684-L692">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L682-L690">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1663,8 +1668,8 @@ You could use <code>isImageCached(forKey:)</code> method to check whether the im
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-05-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-09-04)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

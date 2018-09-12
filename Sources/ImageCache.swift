@@ -132,8 +132,6 @@ open class ImageCache {
                       the `.cachesDirectory` in of your app will be used.
     - parameter diskCachePathClosure: Closure that takes in an optional initial path string and generates
                       the final disk cache path. You could use it to fully customize your cache path.
-    
-    - returns: The cache object.
     */
     public init(name: String,
                 path: String? = nil,
@@ -387,7 +385,7 @@ open class ImageCache {
                                         toDisk: false,
                                         completionHandler: nil)
                             options.callbackDispatchQueue.safeAsync {
-                                completionHandler(imageModifier.modify(result), .memory)
+                                completionHandler(imageModifier.modify(result), .disk)
                                 sSelf = nil
                             }
                         }

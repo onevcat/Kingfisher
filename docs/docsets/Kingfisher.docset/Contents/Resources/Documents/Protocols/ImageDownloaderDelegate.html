@@ -14,7 +14,7 @@
     <a title="ImageDownloaderDelegate Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Kingfisher Docs</a> (77% documented)</p>
+        <p><a href="../index.html">Kingfisher Docs</a> (74% documented)</p>
         <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right"><a href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml"><img src="../img/dash.png"/>Install in Dash</a></p>
       </div>
@@ -85,6 +85,9 @@
                 <a href="../Enums/ContentMode.html">ContentMode</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/ImageFormat.html">ImageFormat</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/ImageProcessItem.html">ImageProcessItem</a>
               </li>
               <li class="nav-group-task">
@@ -121,9 +124,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Notification/Name.html">– Name</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/URL.html">URL</a>
@@ -201,7 +201,7 @@
                 <a href="../Structs/BlurImageProcessor.html">BlurImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher11CGSizeProxyV">CGSizeProxy</a>
+                <a href="../Structs/CGSizeProxy.html">CGSizeProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
@@ -213,7 +213,7 @@
                 <a href="../Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher9DataProxyV">DataProxy</a>
+                <a href="../Structs/DataProxy.html">DataProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
@@ -253,9 +253,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher11StringProxyV">StringProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/TintImageProcessor.html">TintImageProcessor</a>
@@ -338,7 +335,7 @@
             <h1>ImageDownloaderDelegate</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ImageDownloaderDelegate</span><span class="p">:</span> <span class="kd">class</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ImageDownloaderDelegate</span> <span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
 
                 </div>
               </div>
@@ -375,7 +372,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">willDownloadImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">willDownloadImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -423,7 +420,7 @@
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L108">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L108">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -455,7 +452,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didFinishDownloadingImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">URLResponse</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didFinishDownloadingImageForURL</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">URLResponse</span><span class="p">?,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -515,7 +512,7 @@
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L118">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L118">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -547,7 +544,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didDownload</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">,</span> <span class="k">for</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">URLResponse</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didDownload</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/Image">Image</a></span><span class="p">,</span> <span class="k">for</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">with</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">URLResponse</span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -607,7 +604,7 @@
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L128">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L128">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -648,7 +645,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">isValidStatusCode</span><span class="p">(</span><span class="n">_</span> <span class="nv">code</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="k">for</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">isValidStatusCode</span><span class="p">(</span><span class="n">_</span> <span class="nv">code</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="k">for</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -688,7 +685,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         <p>Whether this HTTP status code is valid or not.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L144">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L144">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -726,7 +723,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didDownload</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="k">for</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Data</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">imageDownloader</span><span class="p">(</span><span class="n">_</span> <span class="nv">downloader</span><span class="p">:</span> <span class="kt"><a href="../Classes/ImageDownloader.html">ImageDownloader</a></span><span class="p">,</span> <span class="n">didDownload</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="k">for</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Data</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -778,7 +775,7 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
                         <p>The data from which Kingfisher should use to create an image.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L158">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L158">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -788,8 +785,8 @@ It has a <code>userInfo</code> which includes this statusCode and localizedStrin
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-05-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-09-04)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

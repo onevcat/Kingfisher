@@ -14,7 +14,7 @@
     <a title="ImageDownloader Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Kingfisher Docs</a> (77% documented)</p>
+        <p><a href="../index.html">Kingfisher Docs</a> (74% documented)</p>
         <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right"><a href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml"><img src="../img/dash.png"/>Install in Dash</a></p>
       </div>
@@ -85,6 +85,9 @@
                 <a href="../Enums/ContentMode.html">ContentMode</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/ImageFormat.html">ImageFormat</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/ImageProcessItem.html">ImageProcessItem</a>
               </li>
               <li class="nav-group-task">
@@ -121,9 +124,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Notification/Name.html">– Name</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/URL.html">URL</a>
@@ -201,7 +201,7 @@
                 <a href="../Structs/BlurImageProcessor.html">BlurImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher11CGSizeProxyV">CGSizeProxy</a>
+                <a href="../Structs/CGSizeProxy.html">CGSizeProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
@@ -213,7 +213,7 @@
                 <a href="../Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher9DataProxyV">DataProxy</a>
+                <a href="../Structs/DataProxy.html">DataProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
@@ -253,9 +253,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher11StringProxyV">StringProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/TintImageProcessor.html">TintImageProcessor</a>
@@ -338,7 +335,7 @@
             <h1>ImageDownloader</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="n">open</span> <span class="kd">class</span> <span class="kt">ImageDownloader</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ImageDownloader</span></code></pre>
 
                 </div>
               </div>
@@ -375,12 +372,12 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">downloadTimeout</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="o">=</span> <span class="mf">15.0</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">downloadTimeout</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L241">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L241">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -407,12 +404,12 @@ If <code><a href="../Classes/ImageDownloader.html#/s:10Kingfisher15ImageDownload
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">trustedHosts</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">trustedHosts</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L246">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L246">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -438,12 +435,12 @@ You could change the configuration before a downloading task starts. A configura
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">sessionConfiguration</span> <span class="o">=</span> <span class="kt">URLSessionConfiguration</span><span class="o">.</span><span class="n">ephemeral</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">sessionConfiguration</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L250-L255">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L250-L255">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -468,12 +465,12 @@ You could change the configuration before a downloading task starts. A configura
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">var</span> <span class="nv">requestsUsePipelining</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">requestsUsePipelining</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L258">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L258">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -498,12 +495,12 @@ You could change the configuration before a downloading task starts. A configura
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L264">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L264">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -529,12 +526,12 @@ Downloader will forward the received authentication challenge for the downloadin
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">authenticationChallengeResponder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">authenticationChallengeResponder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L268">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L268">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -570,12 +567,12 @@ Downloader will forward the received authentication challenge for the downloadin
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span> <span class="o">=</span> <span class="kt">ImageDownloader</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"default"</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">ImageDownloader</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L281">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L281">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -600,7 +597,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -623,12 +620,8 @@ Downloader will forward the received authentication challenge for the downloadin
                           </tbody>
                         </table>
                       </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The downloader object.</p>
-                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L290-L304">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L288-L302">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -653,11 +646,12 @@ Downloader will forward the received authentication challenge for the downloadin
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">downloadImage</span><span class="p">(</span><span class="n">with</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
-                       <span class="nv">retrieveImageTask</span><span class="p">:</span> <span class="kt"><a href="../Classes/RetrieveImageTask.html">RetrieveImageTask</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                       <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                       <span class="nv">progressBlock</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                       <span class="nv">completionHandler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/RetrieveImageDownloadTask.html">RetrieveImageDownloadTask</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">open</span> <span class="kd">func</span> <span class="nf">downloadImage</span><span class="p">(</span><span class="n">with</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
+                   <span class="nv">retrieveImageTask</span><span class="p">:</span> <span class="kt"><a href="../Classes/RetrieveImageTask.html">RetrieveImageTask</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                   <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                   <span class="nv">progressBlock</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                   <span class="nv">completionHandler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/RetrieveImageDownloadTask.html">RetrieveImageDownloadTask</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -733,7 +727,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         <p>A downloading task. You could call <code>cancel</code> on it to stop the downloading process.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L328-L380">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L326-L378">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -741,6 +735,13 @@ Downloader will forward the received authentication challenge for the downloadin
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Download%20method"></a>
+                <a name="//apple_ref/swift/Section/Download method" class="dashAnchor"></a>
+                <a href="#/Download%20method">
+                  <h3 class="section-name">Download method</h3>
+                </a>
+              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -766,12 +767,12 @@ returned by the downloading methods.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancelAll</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancelAll</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L449-L457">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L447-L455">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -781,8 +782,8 @@ returned by the downloading methods.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-05-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-09-04)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

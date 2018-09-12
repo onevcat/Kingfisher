@@ -2,11 +2,38 @@
 
 -----
 
+## [4.9.0 - Patience is a Virtue](https://github.com/onevcat/Kingfisher/releases/tag/4.9.0) (2018-09-04)
+
+#### Add
+* Add a `waitForCache` option to allowing cache callback called after cache operation finishes. [#963](https://github.com/onevcat/Kingfisher/pull/963)
+
+#### Fix
+* Animated image now will recognize `.once` and `.finite(1)` the same thing. [#982](https://github.com/onevcat/Kingfisher/pull/982)
+* Replace class-only protocol keyword with AnyObject as Swift convention. [#983](https://github.com/onevcat/Kingfisher/pull/983)
+* A wrong cache callback parameter when storing cache with background decoding. [#986](https://github.com/onevcat/Kingfisher/pull/986)
+* Access `downloadHolder` in a serial queue to avoid racing. [#984](https://github.com/onevcat/Kingfisher/pull/984)
+
+---
+
+## [4.8.1 - Prefetch Improvement](https://github.com/onevcat/Kingfisher/releases/tag/4.8.1) (2018-07-26)
+
+#### Fix
+* Fix a performance issue when prefetching images by moving related operation away from main queue. [#957](https://github.com/onevcat/Kingfisher/pull/957)
+* Improvement on stability of some test cases.
+
+---
+
 ## [4.8.0 - Watch & Watching](https://github.com/onevcat/Kingfisher/releases/tag/4.8.0) (2018-05-15)
 
 #### Add
-* WKInterfaceImage setting image interface for watchOS.
-* 
+* WKInterfaceImage setting image interface for watchOS. [#913](https://github.com/onevcat/Kingfisher/pull/913)
+* A new delegate method for watching `ImageDownloader` object completes a downloading request with success or failure. [#901](https://github.com/onevcat/Kingfisher/pull/901)
+
+#### Fix
+
+* Use newly created operation queue for downloader. 
+* Filter.init(tranform:) is renamed to Filter.init(transform:) 
+* Some internal minor fix on constant and typo, etc.
 
 ---
 

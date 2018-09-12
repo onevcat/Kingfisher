@@ -10,10 +10,11 @@
     
   </head>
   <body>
+    <a name="//apple_ref/swift/Section/Type Aliases" class="dashAnchor"></a>
     <a title="Type Aliases  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Kingfisher Docs</a> (77% documented)</p>
+        <p><a href="index.html">Kingfisher Docs</a> (74% documented)</p>
         <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="img/gh.png"/>View on GitHub</a></p>
         <p class="header-right"><a href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml"><img src="img/dash.png"/>Install in Dash</a></p>
       </div>
@@ -84,6 +85,9 @@
                 <a href="Enums/ContentMode.html">ContentMode</a>
               </li>
               <li class="nav-group-task">
+                <a href="Enums/ImageFormat.html">ImageFormat</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Enums/ImageProcessItem.html">ImageProcessItem</a>
               </li>
               <li class="nav-group-task">
@@ -120,9 +124,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Notification/Name.html">– Name</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/URL.html">URL</a>
@@ -200,7 +201,7 @@
                 <a href="Structs/BlurImageProcessor.html">BlurImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs.html#/s:10Kingfisher11CGSizeProxyV">CGSizeProxy</a>
+                <a href="Structs/CGSizeProxy.html">CGSizeProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
@@ -212,7 +213,7 @@
                 <a href="Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs.html#/s:10Kingfisher9DataProxyV">DataProxy</a>
+                <a href="Structs/DataProxy.html">DataProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
@@ -252,9 +253,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Structs.html#/s:10Kingfisher11StringProxyV">StringProxy</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/TintImageProcessor.html">TintImageProcessor</a>
@@ -361,12 +359,238 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Transformer</span> <span class="o">=</span> <span class="p">(</span><span class="kt">CIImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">CIImage</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Transformer</span> <span class="o">=</span> <span class="p">(</span><span class="kt">CIImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">CIImage</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Filter.swift#L36">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Filter.swift#L36">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher21RetrieveImageDiskTaska"></a>
+                    <a name="//apple_ref/swift/Alias/RetrieveImageDiskTask" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher21RetrieveImageDiskTaska">RetrieveImageDiskTask</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>It represents a task of retrieving image. You can call <code>cancel</code> on it to stop the process.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">RetrieveImageDiskTask</span> <span class="o">=</span> <span class="kt">DispatchWorkItem</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageCache.swift#L52">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher28ImageDownloaderProgressBlocka"></a>
+                    <a name="//apple_ref/swift/Alias/ImageDownloaderProgressBlock" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Progress update block of downloader.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ImageDownloaderProgressBlock</span> <span class="o">=</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher21DownloadProgressBlocka">DownloadProgressBlock</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L34">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher32ImageDownloaderCompletionHandlera"></a>
+                    <a name="//apple_ref/swift/Alias/ImageDownloaderCompletionHandler" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Completion block of downloader.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ImageDownloaderCompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="Typealiases.html#/Image">Image</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">originalData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImageDownloader.swift#L37">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher23PrefetcherProgressBlocka"></a>
+                    <a name="//apple_ref/swift/Alias/PrefetcherProgressBlock" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher23PrefetcherProgressBlocka">PrefetcherProgressBlock</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Progress update block of prefetcher. </p>
+
+<ul>
+<li><code>skippedResources</code>: An array of resources that are already cached before the prefetching starting.</li>
+<li><code>failedResources</code>: An array of resources that fail to be downloaded. It could because of being cancelled while downloading, encountered an error when downloading or the download not being started at all.</li>
+<li><code>completedResources</code>: An array of resources that are downloaded and cached successfully.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">PrefetcherProgressBlock</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">skippedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">failedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">completedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImagePrefetcher.swift#L40">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher27PrefetcherCompletionHandlera"></a>
+                    <a name="//apple_ref/swift/Alias/PrefetcherCompletionHandler" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher27PrefetcherCompletionHandlera">PrefetcherCompletionHandler</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Completion block of prefetcher.</p>
+
+<ul>
+<li><code>skippedResources</code>: An array of resources that are already cached before the prefetching starting.</li>
+<li><code>failedResources</code>: An array of resources that fail to be downloaded. It could because of being cancelled while downloading, encountered an error when downloading or the download not being started at all.</li>
+<li><code>completedResources</code>: An array of resources that are downloaded and cached successfully.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">PrefetcherCompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">skippedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">failedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">completedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/ImagePrefetcher.swift#L47">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Alias/IndicatorView" class="dashAnchor"></a>
+                    <a class="token" href="#/">IndicatorView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher13IndicatorViewa"></a>
+                    <a name="//apple_ref/swift/Alias/IndicatorView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher13IndicatorViewa">IndicatorView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="Typealiases.html#/IndicatorView">IndicatorView</a></span> <span class="o">=</span> <span class="kt">UIView</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Indicator.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -481,8 +705,16 @@
                         <p>Undocumented</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="Typealiases.html#/Image">Image</a></span> <span class="o">=</span> <span class="kt">UIImage</span></code></pre>
+
+                        </div>
+                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -503,8 +735,16 @@
                         <p>Undocumented</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="Typealiases.html#/Color">Color</a></span> <span class="o">=</span> <span class="kt">UIColor</span></code></pre>
+
+                        </div>
+                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -525,8 +765,16 @@
                         <p>Undocumented</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="Typealiases.html#/ImageView">ImageView</a></span> <span class="o">=</span> <span class="kt">UIImageView</span></code></pre>
+
+                        </div>
+                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -547,8 +795,16 @@
                         <p>Undocumented</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="Typealiases.html#/View">View</a></span> <span class="o">=</span> <span class="kt">UIView</span></code></pre>
+
+                        </div>
+                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -569,150 +825,16 @@
                         <p>Undocumented</p>
 
                       </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher21RetrieveImageDiskTaska"></a>
-                    <a name="//apple_ref/swift/Alias/RetrieveImageDiskTask" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher21RetrieveImageDiskTaska">RetrieveImageDiskTask</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>It represents a task of retrieving image. You can call <code>cancel</code> on it to stop the process.</p>
-
-                      </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">RetrieveImageDiskTask</span> <span class="o">=</span> <span class="kt">DispatchWorkItem</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="Typealiases.html#/Button">Button</a></span> <span class="o">=</span> <span class="kt">UIButton</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageCache.swift#L52">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher28ImageDownloaderProgressBlocka"></a>
-                    <a name="//apple_ref/swift/Alias/ImageDownloaderProgressBlock" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Progress update block of downloader.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ImageDownloaderProgressBlock</span> <span class="o">=</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher21DownloadProgressBlocka">DownloadProgressBlock</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L34">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher32ImageDownloaderCompletionHandlera"></a>
-                    <a name="//apple_ref/swift/Alias/ImageDownloaderCompletionHandler" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Completion block of downloader.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ImageDownloaderCompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="Typealiases.html#/Image">Image</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">originalData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImageDownloader.swift#L37">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/"></a>
-                    <a name="//apple_ref/swift/Alias/IndicatorView" class="dashAnchor"></a>
-                    <a class="token" href="#/">IndicatorView</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher13IndicatorViewa"></a>
-                    <a name="//apple_ref/swift/Alias/IndicatorView" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher13IndicatorViewa">IndicatorView</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/Indicator.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -737,8 +859,16 @@
                         <p>Undocumented</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">DownloadProgressBlock</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">receivedSize</span><span class="p">:</span> <span class="kt">Int64</span><span class="p">,</span> <span class="n">_</span> <span class="nv">totalSize</span><span class="p">:</span> <span class="kt">Int64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/KingfisherManager.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/KingfisherManager.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -759,8 +889,16 @@
                         <p>Undocumented</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">CompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="Typealiases.html#/Image">Image</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">cacheType</span><span class="p">:</span> <span class="kt"><a href="Enums/CacheType.html">CacheType</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">imageURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/KingfisherManager.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/KingfisherManager.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -789,88 +927,12 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">KingfisherOptionsInfo</span> <span class="o">=</span> <span class="p">[</span><span class="kt"><a href="Enums/KingfisherOptionsInfoItem.html">KingfisherOptionsInfoItem</a></span><span class="p">]</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">KingfisherOptionsInfo</span> <span class="o">=</span> <span class="p">[</span><span class="kt"><a href="Enums/KingfisherOptionsInfoItem.html">KingfisherOptionsInfoItem</a></span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/KingfisherOptionsInfo.swift#L37">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher23PrefetcherProgressBlocka"></a>
-                    <a name="//apple_ref/swift/Alias/PrefetcherProgressBlock" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher23PrefetcherProgressBlocka">PrefetcherProgressBlock</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Progress update block of prefetcher. </p>
-
-<ul>
-<li><code>skippedResources</code>: An array of resources that are already cached before the prefetching starting.</li>
-<li><code>failedResources</code>: An array of resources that fail to be downloaded. It could because of being cancelled while downloading, encountered an error when downloading or the download not being started at all.</li>
-<li><code>completedResources</code>: An array of resources that are downloaded and cached successfully.</li>
-</ul>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">PrefetcherProgressBlock</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">skippedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">failedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">completedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImagePrefetcher.swift#L40">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher27PrefetcherCompletionHandlera"></a>
-                    <a name="//apple_ref/swift/Alias/PrefetcherCompletionHandler" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher27PrefetcherCompletionHandlera">PrefetcherCompletionHandler</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Completion block of prefetcher.</p>
-
-<ul>
-<li><code>skippedResources</code>: An array of resources that are already cached before the prefetching starting.</li>
-<li><code>failedResources</code>: An array of resources that fail to be downloaded. It could because of being cancelled while downloading, encountered an error when downloading or the download not being started at all.</li>
-<li><code>completedResources</code>: An array of resources that are downloaded and cached successfully.</li>
-</ul>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">PrefetcherCompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">skippedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">failedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">],</span> <span class="n">_</span> <span class="nv">completedResources</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="Protocols/Resource.html">Resource</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/4.8.0/Sources/ImagePrefetcher.swift#L47">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/4.9.0/Sources/KingfisherOptionsInfo.swift#L37">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -880,8 +942,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-05-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-09-04)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>
