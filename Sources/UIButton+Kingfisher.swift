@@ -52,7 +52,7 @@ extension Kingfisher where Base: UIButton {
      */
     @discardableResult
     public func setImage(with resource: Resource?,
-                         for state: UIControlState,
+                         for state: UIControl.State,
                          placeholder: UIImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
@@ -130,7 +130,7 @@ extension Kingfisher where Base: UIButton {
      */
     @discardableResult
     public func setBackgroundImage(with resource: Resource?,
-                                   for state: UIControlState,
+                                   for state: UIControl.State,
                                    placeholder: UIImage? = nil,
                                    options: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
@@ -200,11 +200,11 @@ extension Kingfisher where Base: UIButton {
      
      - returns: Current URL for image.
      */
-    public func webURL(for state: UIControlState) -> URL? {
+    public func webURL(for state: UIControl.State) -> URL? {
         return webURLs[NSNumber(value:state.rawValue)] as? URL
     }
     
-    fileprivate func setWebURL(_ url: URL?, for state: UIControlState) {
+    fileprivate func setWebURL(_ url: URL?, for state: UIControl.State) {
         webURLs[NSNumber(value:state.rawValue)] = url
     }
     
@@ -243,11 +243,11 @@ extension Kingfisher where Base: UIButton {
      
      - returns: Current URL for background image.
      */
-    public func backgroundWebURL(for state: UIControlState) -> URL? {
+    public func backgroundWebURL(for state: UIControl.State) -> URL? {
         return backgroundWebURLs[NSNumber(value:state.rawValue)] as? URL
     }
     
-    fileprivate func setBackgroundWebURL(_ url: URL?, for state: UIControlState) {
+    fileprivate func setBackgroundWebURL(_ url: URL?, for state: UIControl.State) {
         backgroundWebURLs[NSNumber(value:state.rawValue)] = url
     }
     
