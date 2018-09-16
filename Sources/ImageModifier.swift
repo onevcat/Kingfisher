@@ -116,13 +116,13 @@ import UIKit
 public struct RenderingModeImageModifier: ImageModifier {
 
     /// The rendering mode to apply to the image.
-    public let renderingMode: UIImageRenderingMode
+    public let renderingMode: UIImage.RenderingMode
 
     /// Initialize a `RenderingModeImageModifier`
     ///
     /// - parameter renderingMode: The rendering mode to apply to the image.
     ///                            Default is .automatic
-    public init(renderingMode: UIImageRenderingMode = .automatic) {
+    public init(renderingMode: UIImage.RenderingMode = .automatic) {
         self.renderingMode = renderingMode
     }
 
