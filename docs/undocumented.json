@@ -10,7 +10,7 @@
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/AnimatedImageView.swift",
       "line": 79,
-      "symbol": "AnimatedImageView.RepeatCount.finite",
+      "symbol": "AnimatedImageView.RepeatCount.finite(count:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
@@ -367,14 +367,14 @@
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/ImageProcessor.swift",
       "line": 39,
-      "symbol": "ImageProcessItem.image",
+      "symbol": "ImageProcessItem.image(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/ImageProcessor.swift",
       "line": 40,
-      "symbol": "ImageProcessItem.data",
+      "symbol": "ImageProcessItem.data(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
