@@ -33,16 +33,16 @@ Pod::Spec.new do |s|
   s.watchos.deployment_target = "2.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
-  
+
   s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h", "Sources/Kingfisher.swift"]
   s.public_header_files = ["Sources/Kingfisher.h"]
-  
+
   s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift", "Sources/WKInterfaceImage+Kingfisher.swift"]
-  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", 
-                             "Sources/UIButton+Kingfisher.swift", 
-                             "Sources/ImageView+Kingfisher.swift", 
-                             "Sources/NSButton+Kingfisher.swift", 
-                             "Sources/Indicator.swift", 
+  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift",
+                             "Sources/UIButton+Kingfisher.swift",
+                             "Sources/ImageView+Kingfisher.swift",
+                             "Sources/NSButton+Kingfisher.swift",
+                             "Sources/Indicator.swift",
                              "Sources/Filter.swift",
                              "Sources/Placeholder.swift"
                             ]
@@ -51,5 +51,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
   s.framework = "CFNetwork"
+
+  s.swift_version = "4.2"
 
 end
