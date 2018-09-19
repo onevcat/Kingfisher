@@ -2,6 +2,16 @@
 
 -----
 
+## [4.10.0 - Swift 4.2](https://github.com/onevcat/Kingfisher/releases/tag/4.10.0) (2018-09-20)
+
+#### Add
+* Support for building with Xcode 10 and Swift 4.2. This version requires Xcode 10 or later with Swift 4.2 compiler.
+
+#### Fix
+* Improve performance when an invalide HTTP status code received. [#985](https://github.com/onevcat/Kingfisher/pull/985)
+
+---
+
 ## [4.9.0 - Patience is a Virtue](https://github.com/onevcat/Kingfisher/releases/tag/4.9.0) (2018-09-04)
 
 #### Add
