@@ -470,7 +470,7 @@ class Animator {
 }
 
 extension CGImageSource: KingfisherCompatible { }
-extension Kingfisher where Base: CGImageSource {
+extension KingfisherClass where Base: CGImageSource {
     func gifProperties(at index: Int) -> [String: Double]? {
         let properties = CGImageSourceCopyPropertiesAtIndex(base, index, nil) as Dictionary?
         return properties?[kCGImagePropertyGIFDictionary] as? [String: Double]

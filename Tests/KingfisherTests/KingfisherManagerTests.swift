@@ -686,7 +686,7 @@ class SimpleProcessor: ImageProcessor {
         case .image(let image):
             return image
         case .data(let data):
-            return Kingfisher<Image>.image(
+            return KingfisherClass<Image>.image(
                 data: data,
                 scale: options.scaleFactor,
                 preloadAllAnimationData: options.preloadAllAnimationData,

@@ -35,7 +35,7 @@ import UIKit
 /**
  *    Set image to use from web.
  */
-extension Kingfisher where Base: ImageView {
+extension KingfisherClass where Base: ImageView {
     /**
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
      
@@ -159,7 +159,7 @@ private var indicatorTypeKey: Void?
 private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
-extension Kingfisher where Base: ImageView {
+extension KingfisherClass where Base: ImageView {
     /// Get the image URL binded to this image view.
     public var webURL: URL? {
         return objc_getAssociatedObject(base, &lastURLKey) as? URL

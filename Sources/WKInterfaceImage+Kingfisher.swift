@@ -30,7 +30,7 @@ import WatchKit
 /**
  *    Set image to use from web.
  */
-extension Kingfisher where Base: WKInterfaceImage {
+extension KingfisherClass where Base: WKInterfaceImage {
     /**
      Set an image with a resource.
 
@@ -100,7 +100,7 @@ extension Kingfisher where Base: WKInterfaceImage {
 private var lastURLKey: Void?
 private var imageTaskKey: Void?
 
-extension Kingfisher where Base: WKInterfaceImage {
+extension KingfisherClass where Base: WKInterfaceImage {
     /// Get the image URL binded to this image view.
     public var webURL: URL? {
         return objc_getAssociatedObject(base, &lastURLKey) as? URL

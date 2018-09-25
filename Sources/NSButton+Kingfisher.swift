@@ -31,7 +31,7 @@ import AppKit
 /**
  *	Set image to use from web.
  */
-extension Kingfisher where Base: NSButton {
+extension KingfisherClass where Base: NSButton {
     /**
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
      
@@ -191,7 +191,7 @@ private var imageTaskKey: Void?
 private var lastAlternateURLKey: Void?
 private var alternateImageTaskKey: Void?
 
-extension Kingfisher where Base: NSButton {
+extension KingfisherClass where Base: NSButton {
     /// Get the image URL binded to this image view.
     public var webURL: URL? {
         return objc_getAssociatedObject(base, &lastURLKey) as? URL

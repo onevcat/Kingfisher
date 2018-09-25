@@ -135,7 +135,7 @@ public struct DefaultImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
         case .data(let data):
-            return Kingfisher<Image>.image(
+            return KingfisherClass<Image>.image(
                 data: data,
                 scale: options.scaleFactor,
                 preloadAllAnimationData: options.preloadAllAnimationData,

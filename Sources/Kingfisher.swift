@@ -47,31 +47,46 @@ import ImageIO
     #endif
 #endif
 
-public final class Kingfisher<Base> {
+public final class KingfisherClass<Base> {
     public let base: Base
     public init(_ base: Base) {
         self.base = base
     }
 }
 
-/**
- A type that has Kingfisher extensions.
- */
-public protocol KingfisherCompatible {
+public protocol KingfisherClassCompatible {
     associatedtype CompatibleType
     var kf: CompatibleType { get }
 }
 
-public extension KingfisherCompatible {
-    public var kf: Kingfisher<Self> {
-        return Kingfisher(self)
+public extension KingfisherClassCompatible {
+    public var kf: KingfisherClass<Self> {
+        return KingfisherClass(self)
     }
 }
 
-extension Image: KingfisherCompatible { }
+public struct KingfisherStruct<Base> {
+    public let base: Base
+    public init(_ base: Base) {
+        self.base = base
+    }
+}
+
+public protocol KingfisherStructCompatible {
+    associatedtype CompatibleType
+    var kf: CompatibleType { get }
+}
+
+public extension KingfisherStructCompatible {
+    public var kf: KingfisherStruct<Self> {
+        return KingfisherStruct(self)
+    }
+}
+
+extension Image: KingfisherClassCompatible { }
 #if !os(watchOS)
-extension ImageView: KingfisherCompatible { }
-extension Button: KingfisherCompatible { }
+extension ImageView: KingfisherClassCompatible { }
+extension Button: KingfisherClassCompatible { }
 #else
 extension WKInterfaceImage: KingfisherCompatible { }
 #endif
