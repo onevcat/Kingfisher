@@ -690,7 +690,7 @@ extension ImageCache {
     }
 }
 
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     var imageCost: Int {
         return images == nil ?
             Int(size.height * size.width * scale * scale) :
@@ -707,7 +707,7 @@ extension Dictionary {
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
 extension UIApplication: KingfisherCompatible { }
-extension Kingfisher where Base: UIApplication {
+extension KingfisherClass where Base: UIApplication {
     public static var shared: UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")
         guard Base.responds(to: selector) else { return nil }

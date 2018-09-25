@@ -30,7 +30,7 @@ import UIKit
 /**
  *	Set image to use in button from web for a specified state.
  */
-extension Kingfisher where Base: UIButton {
+extension KingfisherClass where Base: UIButton {
     /**
      Set an image to use for a specified state with a resource, a placeholder image, options, progress handler and
      completion handler.
@@ -192,7 +192,7 @@ extension Kingfisher where Base: UIButton {
 private var lastURLKey: Void?
 private var imageTaskKey: Void?
 
-extension Kingfisher where Base: UIButton {
+extension KingfisherClass where Base: UIButton {
     /**
      Get the image URL binded to this button for a specified state.
      
@@ -235,7 +235,7 @@ private var lastBackgroundURLKey: Void?
 private var backgroundImageTaskKey: Void?
 
 
-extension Kingfisher where Base: UIButton {
+extension KingfisherClass where Base: UIButton {
     /**
      Get the background image URL binded to this button for a specified state.
      

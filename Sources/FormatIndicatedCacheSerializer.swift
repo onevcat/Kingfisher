@@ -87,7 +87,7 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     /// Same implementation as `DefaultCacheSerializer`.
     public func image(with data: Data, options: KingfisherOptionsInfo?) -> Image? {
         let options = options ?? KingfisherEmptyOptionsInfo
-        return Kingfisher<Image>.image(
+        return KingfisherClass<Image>.image(
             data: data,
             scale: options.scaleFactor,
             preloadAllAnimationData: options.preloadAllAnimationData,

@@ -109,7 +109,7 @@ extension Filter {
     }
 }
 
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     /// Apply a `Filter` containing `CIImage` transformer to `self`.
     ///
     /// - parameter filter: The filter used to transform `self`.

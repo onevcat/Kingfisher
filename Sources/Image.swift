@@ -45,7 +45,7 @@ import CoreImage
 #endif
 
 // MARK: - Image Properties
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     fileprivate(set) var animatedImageData: Data? {
         get {
             return objc_getAssociatedObject(base, &animatedImageDataKey) as? Data
@@ -121,7 +121,7 @@ extension Kingfisher where Base: Image {
 }
 
 // MARK: - Image Conversion
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     #if os(macOS)
     static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         return Image(cgImage: cgImage, size: CGSize.zero)
@@ -171,7 +171,7 @@ extension Kingfisher where Base: Image {
 }
 
 // MARK: - Image Representation
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     // MARK: - PNG
     public func pngRepresentation() -> Data? {
         #if os(macOS)
@@ -205,7 +205,7 @@ extension Kingfisher where Base: Image {
 }
 
 // MARK: - Create images from data
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     public static func animated(with data: Data, scale: CGFloat = 1.0, duration: TimeInterval = 0.0, preloadAll: Bool, onlyFirstFrame: Bool = false) -> Image? {
         
         func decode(from imageSource: CGImageSource, for options: NSDictionary) -> ([Image], TimeInterval)? {
@@ -250,7 +250,7 @@ extension Kingfisher where Base: Image {
                     gifDuration += frameDuration(from: gifInfo)
                 }
                 
-                images.append(Kingfisher<Image>.image(cgImage: imageRef, scale: scale, refImage: nil))
+                images.append(KingfisherClass<Image>.image(cgImage: imageRef, scale: scale, refImage: nil))
                 
                 if onlyFirstFrame { break }
             }
@@ -303,7 +303,7 @@ extension Kingfisher where Base: Image {
             case .PNG:
                 image = Image(data: data)
             case .GIF:
-                image = Kingfisher<Image>.animated(
+                image = KingfisherClass<Image>.animated(
                     with: data,
                     scale: scale,
                     duration: 0.0,
@@ -335,7 +335,7 @@ extension Kingfisher where Base: Image {
 }
 
 // MARK: - Image Transforming
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     // MARK: - Blend Mode
     /// Create image based on `self` and apply blend mode.
     ///
@@ -525,7 +525,7 @@ extension Kingfisher where Base: Image {
             return base
         }
         
-        return Kingfisher.image(cgImage: image, scale: scale, refImage: base)
+        return KingfisherClass.image(cgImage: image, scale: scale, refImage: base)
     }
     
     // MARK: - Blur
@@ -702,12 +702,12 @@ extension Kingfisher where Base: Image {
             assertionFailure("[Kingfisher] Scaling only works for CG-based image.")
             return base
         }
-        return Kingfisher.image(cgImage: cgImage, scale: scale, refImage: base)
+        return KingfisherClass.image(cgImage: cgImage, scale: scale, refImage: base)
     }
 }
 
 // MARK: - Decode
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     public var decoded: Image {
         return decoded(scale: scale)
     }
@@ -736,7 +736,7 @@ extension Kingfisher where Base: Image {
         let rect = CGRect(x: 0, y: 0, width: CGFloat(imageRef.width), height: CGFloat(imageRef.height))
         context.draw(imageRef, in: rect)
         let decompressedImageRef = context.makeImage()
-        return Kingfisher<Image>.image(cgImage: decompressedImageRef!, scale: scale, refImage: base)
+        return KingfisherClass<Image>.image(cgImage: decompressedImageRef!, scale: scale, refImage: base)
     }
 }
 
@@ -769,7 +769,7 @@ public struct DataProxy {
     }
 }
 
-extension Data: KingfisherCompatible {
+extension Data: KingfisherStructCompatible {
     public typealias CompatibleType = DataProxy
     public var kf: DataProxy {
         return DataProxy(proxy: self)
@@ -805,7 +805,7 @@ public struct CGSizeProxy {
     }
 }
 
-extension CGSize: KingfisherCompatible {
+extension CGSize: KingfisherStructCompatible {
     public typealias CompatibleType = CGSizeProxy
     public var kf: CGSizeProxy {
         return CGSizeProxy(proxy: self)
@@ -871,7 +871,7 @@ extension Comparable {
     }
 }
 
-extension Kingfisher where Base: Image {
+extension KingfisherClass where Base: Image {
     
     func beginContext(size: CGSize, scale: CGFloat) -> CGContext? {
         #if os(macOS)
