@@ -61,7 +61,7 @@ class ImageExtensionTests: XCTestCase {
         let image = KingfisherClass<Image>.animated(with: testImageGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
-        let count = CGImageSourceGetCount(image!.kf.imageSource!.imageRef!)
+        let count = CGImageSourceGetCount(image!.kf.imageSource!)
         XCTAssertEqual(count, 8, "There should be 8 frames.")
 #else
         XCTAssertEqual(image!.kf.images!.count, 8, "There should be 8 frames.")
@@ -86,7 +86,7 @@ class ImageExtensionTests: XCTestCase {
         let image = KingfisherClass<Image>.animated(with: testImageSingleFrameGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
-        let count = CGImageSourceGetCount(image!.kf.imageSource!.imageRef!)
+        let count = CGImageSourceGetCount(image!.kf.imageSource!)
         XCTAssertEqual(count, 1, "There should be 1 frames.")
 #else
         XCTAssertEqual(image!.kf.images!.count, 1, "There should be 1 frames.")
@@ -190,7 +190,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(image.size, CGSize(width: 64, height: 64))
         XCTAssertEqual(image.scale, 1.0)
 
-        let image_2x = Kingfisher<Image>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
+        let image_2x = KingfisherClass<Image>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
         XCTAssertEqual(image_2x.size, CGSize(width: 32, height: 32))
         XCTAssertEqual(image_2x.scale, 2.0)
         
