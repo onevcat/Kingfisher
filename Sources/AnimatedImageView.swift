@@ -224,7 +224,7 @@ open class AnimatedImageView: UIImageView {
     /// Reset the animator.
     private func reset() {
         animator = nil
-        if let imageSource = image?.kf.imageSource?.imageRef {
+        if let imageSource = image?.kf.imageSource {
             animator = Animator(imageSource: imageSource,
                                 contentMode: contentMode,
                                 size: bounds.size,
@@ -469,7 +469,7 @@ class Animator {
     }
 }
 
-extension CGImageSource: KingfisherCompatible { }
+extension CGImageSource: KingfisherClassCompatible { }
 extension KingfisherClass where Base: CGImageSource {
     func gifProperties(at index: Int) -> [String: Double]? {
         let properties = CGImageSourceCopyPropertiesAtIndex(base, index, nil) as Dictionary?

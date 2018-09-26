@@ -536,7 +536,7 @@ open class ImageCache {
     */
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
-        guard let sharedApplication = Kingfisher<UIApplication>.shared else { return }
+        guard let sharedApplication = KingfisherClass<UIApplication>.shared else { return }
 
         func endBackgroundTask(_ task: inout UIBackgroundTaskIdentifier) {
             sharedApplication.endBackgroundTask(task)
@@ -706,7 +706,7 @@ extension Dictionary {
 
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
-extension UIApplication: KingfisherCompatible { }
+extension UIApplication: KingfisherClassCompatible { }
 extension KingfisherClass where Base: UIApplication {
     public static var shared: UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")

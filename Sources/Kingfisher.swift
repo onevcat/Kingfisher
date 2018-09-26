@@ -88,5 +88,5 @@ extension Image: KingfisherClassCompatible { }
 extension ImageView: KingfisherClassCompatible { }
 extension Button: KingfisherClassCompatible { }
 #else
-extension WKInterfaceImage: KingfisherCompatible { }
+extension WKInterfaceImage: KingfisherClassCompatible { }
 #endif

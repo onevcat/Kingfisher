@@ -34,25 +34,30 @@ import UIKit
 import MobileCoreServices
 private var imageSourceKey: Void?
 #endif
-private var animatedImageDataKey: Void?
-
-import ImageIO
-import CoreGraphics
 
 #if !os(watchOS)
 import Accelerate
 import CoreImage
 #endif
 
+private var animatedImageDataKey: Void?
+
+import ImageIO
+import CoreGraphics
+
+func getAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer) -> T? {
+    return objc_getAssociatedObject(object, key) as? T
+}
+
+func setRetainedAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer, _ value: T) {
+    objc_setAssociatedObject(object, key, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+}
+
 // MARK: - Image Properties
 extension KingfisherClass where Base: Image {
-    fileprivate(set) var animatedImageData: Data? {
-        get {
-            return objc_getAssociatedObject(base, &animatedImageDataKey) as? Data
-        }
-        set {
-            objc_setAssociatedObject(base, &animatedImageDataKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
+    private(set) var animatedImageData: Data? {
+        get { return getAssociatedObject(base, &animatedImageDataKey) }
+        set { setRetainedAssociatedObject(base, &animatedImageDataKey, newValue) }
     }
     
     #if os(macOS)
@@ -64,58 +69,33 @@ extension KingfisherClass where Base: Image {
         return 1.0
     }
     
-    fileprivate(set) var images: [Image]? {
-        get {
-            return objc_getAssociatedObject(base, &imagesKey) as? [Image]
-        }
-        set {
-            objc_setAssociatedObject(base, &imagesKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
+    private(set) var images: [Image]? {
+        get { return getAssociatedObject(base, &imagesKey) }
+        set { setRetainedAssociatedObject(base, &imagesKey, newValue) }
     }
     
-    fileprivate(set) var duration: TimeInterval {
-        get {
-            return objc_getAssociatedObject(base, &durationKey) as? TimeInterval ?? 0.0
-        }
-        set {
-            objc_setAssociatedObject(base, &durationKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
+    private(set) var duration: TimeInterval {
+        get { return getAssociatedObject(base, &durationKey) ?? 0.0 }
+        set { setRetainedAssociatedObject(base, &durationKey, newValue) }
     }
     
     var size: CGSize {
-        return base.representations.reduce(CGSize.zero, { size, rep in
-            return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
-        })
+        return base.representations.reduce(.zero) { size, rep in
+            let width = max(size.width, CGFloat(rep.pixelsWide))
+            let height = max(size.height, CGFloat(rep.pixelsHigh))
+            return CGSize(width: width, height: height)
+        }
     }
-    
     #else
-    var cgImage: CGImage? {
-        return base.cgImage
-    }
+    var cgImage: CGImage? { return base.cgImage }
+    var scale: CGFloat { return base.scale }
+    var images: [Image]? { return base.images }
+    var duration: TimeInterval { return base.duration }
+    var size: CGSize { return base.size }
     
-    var scale: CGFloat {
-        return base.scale
-    }
-    
-    var images: [Image]? {
-        return base.images
-    }
-    
-    var duration: TimeInterval {
-        return base.duration
-    }
-    
-    fileprivate(set) var imageSource: ImageSource? {
-        get {
-            return objc_getAssociatedObject(base, &imageSourceKey) as? ImageSource
-        }
-        set {
-            objc_setAssociatedObject(base, &imageSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    var size: CGSize {
-        return base.size
+    private(set) var imageSource: CGImageSource? {
+        get { return getAssociatedObject(base, &imageSourceKey) }
+        set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
     }
     #endif
 }
@@ -124,43 +104,29 @@ extension KingfisherClass where Base: Image {
 extension KingfisherClass where Base: Image {
     #if os(macOS)
     static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
-        return Image(cgImage: cgImage, size: CGSize.zero)
+        return Image(cgImage: cgImage, size: .zero)
     }
     
-    /**
-     Normalize the image. This method does nothing in OS X.
-     
-     - returns: The image itself.
-     */
-    public var normalized: Image {
-        return base
-    }
-    
-    static func animated(with images: [Image], forDuration forDurationduration: TimeInterval) -> Image? {
-        return nil
-    }
+    /// Normalize the image. This getter does nothing on macOS.
+    public var normalized: Image { return base }
+
     #else
+    /// Creating an image from a give `CGImage` at scale and orientation for refImage. The method signature is for
+    /// compability of macOS version.
     static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
-        if let refImage = refImage {
-            return Image(cgImage: cgImage, scale: scale, orientation: refImage.imageOrientation)
-        } else {
-            return Image(cgImage: cgImage, scale: scale, orientation: .up)
-        }
+        return Image(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
     }
     
-    /**
-     Normalize the image. This method will try to redraw an image with orientation and scale considered.
-     
-     - returns: The normalized image with orientation set to up and correct scale.
-     */
+    /// Normalized image of current `base`.
+    /// This method will try to redraw an image with orientation and scale considered.
     public var normalized: Image {
         // prevent animated image (GIF) lose it's images
         guard images == nil else { return base }
         // No need to do anything if already up
         guard base.imageOrientation != .up else { return base }
     
-        return draw(cgImage: nil, to: size) {
-            base.draw(in: CGRect(origin: CGPoint.zero, size: size))
+        return draw(to: size) {
+            base.draw(in: CGRect(origin: .zero, size: size))
         }
     }
     
@@ -204,93 +170,134 @@ extension KingfisherClass where Base: Image {
     }
 }
 
-// MARK: - Create images from data
-extension KingfisherClass where Base: Image {
-    public static func animated(with data: Data, scale: CGFloat = 1.0, duration: TimeInterval = 0.0, preloadAll: Bool, onlyFirstFrame: Bool = false) -> Image? {
+public struct AnimatedImageCreatingOptions {
+    public let scale: CGFloat
+    public let duration: TimeInterval
+    public let preloadAll: Bool
+    public let onlyFirstFrame: Bool
+    
+    public init(
+        scale: CGFloat = 1.0,
+        duration: TimeInterval = 0.0,
+        preloadAll: Bool = false,
+        onlyFirstFrame: Bool = false)
+    {
+        self.scale = scale
+        self.duration = duration
+        self.preloadAll = preloadAll
+        self.onlyFirstFrame = onlyFirstFrame
+    }
+}
+
+class AnimatedImage {
+    let images: [Image]
+    let duration: TimeInterval
+    
+    init?(from imageSource: CGImageSource, for info: [String: Any], options: AnimatedImageCreatingOptions) {
+        let frameCount = CGImageSourceGetCount(imageSource)
+        var images = [Image]()
+        var gifDuration = 0.0
         
-        func decode(from imageSource: CGImageSource, for options: NSDictionary) -> ([Image], TimeInterval)? {
-            
-            //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary
-            func frameDuration(from gifInfo: NSDictionary?) -> Double {
-                let gifDefaultFrameDuration = 0.100
-                
-                guard let gifInfo = gifInfo else {
-                    return gifDefaultFrameDuration
-                }
-                
-                let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber
-                let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber
-                let duration = unclampedDelayTime ?? delayTime
-                
-                guard let frameDuration = duration else { return gifDefaultFrameDuration }
-                
-                return frameDuration.doubleValue > 0.011 ? frameDuration.doubleValue : gifDefaultFrameDuration
+        for i in 0 ..< frameCount {
+            guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, info as CFDictionary) else {
+                return nil
             }
             
-            let frameCount = CGImageSourceGetCount(imageSource)
-            var images = [Image]()
-            var gifDuration = 0.0
-            for i in 0 ..< frameCount {
-                
-                guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, options) else {
+            if frameCount == 1 {
+                gifDuration = .infinity
+            } else {
+                // Get current animated GIF frame duration
+                guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) else {
                     return nil
                 }
-
-                if frameCount == 1 {
-                    // Single frame
-                    gifDuration = Double.infinity
-                } else {
-                    
-                    // Animated GIF
-                    guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) else {
-                        return nil
-                    }
-
-                    let gifInfo = (properties as NSDictionary)[kCGImagePropertyGIFDictionary as String] as? NSDictionary
-                    gifDuration += frameDuration(from: gifInfo)
-                }
                 
-                images.append(KingfisherClass<Image>.image(cgImage: imageRef, scale: scale, refImage: nil))
-                
-                if onlyFirstFrame { break }
+                let gifInfo = (properties as? [String: Any])?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                gifDuration += AnimatedImage.getFrameDuration(from: gifInfo)
             }
-            
-            return (images, gifDuration)
+            images.append(KingfisherClass<Image>.image(cgImage: imageRef, scale: options.scale, refImage: nil))
+            if options.onlyFirstFrame { break }
         }
+        self.images = images
+        self.duration = gifDuration
+    }
+    
+     //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary.
+    static func getFrameDuration(from gifInfo: [String: Any]?) -> TimeInterval {
+        let defaultFrameDuration = 0.1
+        guard let gifInfo = gifInfo else { return defaultFrameDuration }
         
-        // Start of kf.animatedImageWithGIFData
-        let options: NSDictionary = [kCGImageSourceShouldCache as String: true, kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF]
-        guard let imageSource = CGImageSourceCreateWithData(data as CFData, options) else {
+        let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as? NSNumber
+        let delayTime = gifInfo[kCGImagePropertyGIFDelayTime as String] as? NSNumber
+        let duration = unclampedDelayTime ?? delayTime
+
+        guard let frameDuration = duration else { return defaultFrameDuration }
+        return frameDuration.doubleValue > 0.011 ? frameDuration.doubleValue : defaultFrameDuration
+    }
+}
+
+// MARK: - Create images from data
+extension KingfisherClass where Base: Image {
+    
+    public static func animated(with data: Data, options: AnimatedImageCreatingOptions) -> Image? {
+        let info: [String: Any] = [
+            kCGImageSourceShouldCache as String: true,
+            kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF
+        ]
+        
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, info as CFDictionary) else {
             return nil
         }
         
         #if os(macOS)
-            guard let (images, gifDuration) = decode(from: imageSource, for: options) else {
+        guard let animatedImage = AnimatedImage(from: imageSource, for: info, options: options) else {
+            return nil
+        }
+        let image: Image?
+        if options.onlyFirstFrame {
+            image = animatedImage.images.first
+        } else {
+            image = Image(data: data)
+            let kf = image?.kf
+            kf?.images = animatedImage.images
+            kf?.duration = animatedImage.duration
+        }
+        image?.kf.animatedImageData = data
+        return image
+        #else
+        
+        let image: Image?
+        if options.preloadAll || options.onlyFirstFrame {
+            // Use `images` image if you want to preload all animated data
+            guard let animatedImage = AnimatedImage(from: imageSource, for: info, options: options) else {
                 return nil
             }
-            let image: Image?
-            if onlyFirstFrame {
-                image = images.first
-            } else {
-                image = Image(data: data)
-                image?.kf.images = images
-                image?.kf.duration = gifDuration
-            }
+            image = options.onlyFirstFrame ? animatedImage.images.first :
+                KingfisherClass<Image>.animated(
+                    with: animatedImage.images,
+                    forDuration: options.duration <= 0.0 ? animatedImage.duration : options.duration)
             image?.kf.animatedImageData = data
-            return image
-        #else
-            
-            let image: Image?
-            if preloadAll || onlyFirstFrame {
-                guard let (images, gifDuration) = decode(from: imageSource, for: options) else { return nil }
-                image = onlyFirstFrame ? images.first : Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
-            } else {
-                image = Image(data: data)
-                image?.kf.imageSource = ImageSource(ref: imageSource)
-            }
-            image?.kf.animatedImageData = data
-            return image
+        } else {
+            image = Image(data: data)
+            let kf = image?.kf
+            kf?.imageSource = imageSource
+            kf?.animatedImageData = data
+        }
+        
+        return image
         #endif
+    }
+    
+    @available(*, deprecated, message: "Pass parameters with `AnimatedImageCreatingOptions` instead.")
+    public static func animated(
+        with data: Data,
+        scale: CGFloat = 1.0,
+        duration: TimeInterval = 0.0,
+        preloadAll: Bool,
+        onlyFirstFrame: Bool = false) -> Image?
+    {
+        let options = AnimatedImageCreatingOptions(
+            scale: scale, duration: duration, preloadAll: preloadAll, onlyFirstFrame: onlyFirstFrame)
+        return animated(with: data, options: options)
     }
 
     public static func image(data: Data, scale: CGFloat, preloadAllAnimationData: Bool, onlyFirstFrame: Bool) -> Image? {
@@ -303,12 +310,9 @@ extension KingfisherClass where Base: Image {
             case .PNG:
                 image = Image(data: data)
             case .GIF:
-                image = KingfisherClass<Image>.animated(
-                    with: data,
-                    scale: scale,
-                    duration: 0.0,
-                    preloadAll: preloadAllAnimationData,
-                    onlyFirstFrame: onlyFirstFrame)
+                let options = AnimatedImageCreatingOptions(
+                    scale: scale, duration: 0.0, preloadAll: preloadAllAnimationData, onlyFirstFrame: onlyFirstFrame)
+                image = KingfisherClass<Image>.animated(with: data, options: options)
             case .unknown:
                 image = Image(data: data)
             }
@@ -319,12 +323,9 @@ extension KingfisherClass where Base: Image {
             case .PNG:
                 image = Image(data: data, scale: scale)
             case .GIF:
-                image = Kingfisher<Image>.animated(
-                    with: data,
-                    scale: scale,
-                    duration: 0.0,
-                    preloadAll: preloadAllAnimationData,
-                    onlyFirstFrame: onlyFirstFrame)
+                let options = AnimatedImageCreatingOptions(
+                    scale: scale, duration: 0.0, preloadAll: preloadAllAnimationData, onlyFirstFrame: onlyFirstFrame)
+                image = KingfisherClass<Image>.animated(with: data, options: options)
             case .unknown:
                 image = Image(data: data, scale: scale)
             }
@@ -740,14 +741,6 @@ extension KingfisherClass where Base: Image {
     }
 }
 
-/// Reference the source image reference
-final class ImageSource {
-    var imageRef: CGImageSource?
-    init(ref: CGImageSource) {
-        self.imageRef = ref
-    }
-}
-
 // MARK: - Image format
 private struct ImageHeaderData {
     static var PNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
@@ -762,21 +755,8 @@ public enum ImageFormat {
 
 
 // MARK: - Misc Helpers
-public struct DataProxy {
-    fileprivate let base: Data
-    init(proxy: Data) {
-        base = proxy
-    }
-}
-
-extension Data: KingfisherStructCompatible {
-    public typealias CompatibleType = DataProxy
-    public var kf: DataProxy {
-        return DataProxy(proxy: self)
-    }
-}
-
-extension DataProxy {
+extension Data: KingfisherStructCompatible {}
+extension KingfisherStruct where Base == Data {
     public var imageFormat: ImageFormat {
         var buffer = [UInt8](repeating: 0, count: 8)
         (base as NSData).getBytes(&buffer, length: 8)
@@ -798,22 +778,9 @@ extension DataProxy {
     }
 }
 
-public struct CGSizeProxy {
-    fileprivate let base: CGSize
-    init(proxy: CGSize) {
-        base = proxy
-    }
-}
+extension CGSize: KingfisherStructCompatible {}
+extension KingfisherStruct where Base == CGSize {
 
-extension CGSize: KingfisherStructCompatible {
-    public typealias CompatibleType = CGSizeProxy
-    public var kf: CGSizeProxy {
-        return CGSizeProxy(proxy: self)
-    }
-}
-
-extension CGSizeProxy {
-    
     public func resize(to size: CGSize, for contentMode: ContentMode) -> CGSize {
         switch contentMode {
         case .aspectFit:
@@ -916,7 +883,7 @@ extension KingfisherClass where Base: Image {
         #endif
     }
     
-    func draw(cgImage: CGImage?, to size: CGSize, draw: ()->()) -> Image {
+    func draw(cgImage: CGImage? = nil, to size: CGSize, draw: ()->()) -> Image {
         #if os(macOS)
         guard let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil,
