@@ -1,1 +1,5 @@
-../../../Nocilla/Nocilla/Hooks/NSURLRequest/LSHTTPStubURLProtocol.h
+#import <Foundation/Foundation.h>
+
+@interface LSHTTPStubURLProtocol : NSURLProtocol
+
+@end

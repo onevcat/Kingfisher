@@ -1,1 +1,7 @@
-../../../Nocilla/Nocilla/Matchers/LSRegexMatcher.h
+#import "LSMatcher.h"
+
+@interface LSRegexMatcher : LSMatcher
+
+- (instancetype)initWithRegex:(NSRegularExpression *)regex;
+
+@end

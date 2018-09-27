@@ -1,1 +1,5 @@
-../../../Nocilla/Nocilla/Hooks/ASIHTTPRequest/LSASIHTTPRequestHook.h
+#import "LSHTTPClientHook.h"
+
+@interface LSASIHTTPRequestHook : LSHTTPClientHook
+
+@end

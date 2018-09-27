@@ -1,1 +1,5 @@
-../../../Nocilla/Nocilla/Hooks/NSURLRequest/NSURLRequest+DSL.h
+#import <Foundation/Foundation.h>
+
+@interface NSURLRequest (DSL)
+- (NSString *)toNocillaDSL;
+@end

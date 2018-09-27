@@ -52,36 +52,12 @@ public protocol Indicator {
     func startAnimatingView()
     func stopAnimatingView()
 
-    var viewCenter: CGPoint { get set }
+    var centerOffset: CGPoint { get }
     var view: IndicatorView { get }
 }
 
 extension Indicator {
-    #if os(macOS)
-    public var viewCenter: CGPoint {
-        get {
-            let frame = view.frame
-            return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
-        }
-        set {
-            let frame = view.frame
-            let newFrame = CGRect(x: newValue.x - frame.size.width / 2.0,
-                                  y: newValue.y - frame.size.height / 2.0,
-                                  width: frame.size.width,
-                                  height: frame.size.height)
-            view.frame = newFrame
-        }
-    }
-    #else
-    public var viewCenter: CGPoint {
-        get {
-            return view.center
-        }
-        set {
-            view.center = newValue
-        }
-    }
-    #endif
+    public var centerOffset: CGPoint { return .zero }
 }
 
 // MARK: - ActivityIndicator
@@ -100,16 +76,15 @@ final class ActivityIndicator: Indicator {
     }
 
     func startAnimatingView() {
-        animatingCount += 1
-        // Already animating
-        if animatingCount == 1 {
+        if animatingCount == 0 {
             #if os(macOS)
-                activityIndicatorView.startAnimation(nil)
+            activityIndicatorView.startAnimation(nil)
             #else
-                activityIndicatorView.startAnimating()
+            activityIndicatorView.startAnimating()
             #endif
             activityIndicatorView.isHidden = false
         }
+        animatingCount += 1
     }
 
     func stopAnimatingView() {
@@ -135,8 +110,7 @@ final class ActivityIndicator: Indicator {
             #else
                 let indicatorStyle = UIActivityIndicatorView.Style.gray
             #endif
-            activityIndicatorView = UIActivityIndicatorView(style:indicatorStyle)
-            activityIndicatorView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleTopMargin]
+            activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
         #endif
     }
 }
@@ -150,8 +124,11 @@ final class ImageIndicator: Indicator {
         return animatedImageIndicatorView
     }
 
-    init?(imageData data: Data, processor: ImageProcessor = DefaultImageProcessor.default, options: KingfisherOptionsInfo = KingfisherEmptyOptionsInfo) {
-
+    init?(
+        imageData data: Data,
+        processor: ImageProcessor = DefaultImageProcessor.default,
+        options: KingfisherOptionsInfo = .empty)
+    {
         var options = options
         // Use normal image view to show animations, so we need to preload all animation data.
         if !options.preloadAllAnimationData {
@@ -164,7 +141,6 @@ final class ImageIndicator: Indicator {
 
         animatedImageIndicatorView = ImageView()
         animatedImageIndicatorView.image = image
-        animatedImageIndicatorView.frame = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
         
         #if os(macOS)
             // Need for gif to animate on macOS
@@ -172,10 +148,6 @@ final class ImageIndicator: Indicator {
             self.animatedImageIndicatorView.canDrawSubviewsIntoLayer = true
         #else
             animatedImageIndicatorView.contentMode = .center
-            animatedImageIndicatorView.autoresizingMask = [.flexibleLeftMargin,
-                                                           .flexibleRightMargin,
-                                                           .flexibleBottomMargin,
-                                                           .flexibleTopMargin]
         #endif
     }
 
