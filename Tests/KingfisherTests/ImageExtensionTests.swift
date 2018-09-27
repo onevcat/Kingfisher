@@ -58,7 +58,8 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGenerateGIFImage() {
-        let image = KingfisherClass<Image>.animated(with: testImageGIFData, preloadAll: false)
+        let options = ImageCreatingOptions()
+        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf.imageSource!)
@@ -70,20 +71,23 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testGIFRepresentation() {
-        let image = KingfisherClass<Image>.animated(with: testImageGIFData, preloadAll: false)!
+        let options = ImageCreatingOptions()
+        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)!
         let data = image.kf.gifRepresentation()
         
         XCTAssertNotNil(data, "Data should not be nil")
         XCTAssertEqual(data?.kf.imageFormat, ImageFormat.GIF)
         
-        let allLoadImage = KingfisherClass<Image>.animated(with: data!, preloadAll: true)!
+        let preloadOptions = ImageCreatingOptions(preloadAll: true)
+        let allLoadImage = KingfisherClass<Image>.animatedImage(data: data!, options: preloadOptions)!
         let allLoadData = allLoadImage.kf.gifRepresentation()
         XCTAssertNotNil(allLoadData, "Data1 should not be nil")
         XCTAssertEqual(allLoadData?.kf.imageFormat, ImageFormat.GIF)
     }
     
     func testGenerateSingleFrameGIFImage() {
-        let image = KingfisherClass<Image>.animated(with: testImageSingleFrameGIFData, preloadAll: false)
+        let options = ImageCreatingOptions()
+        let image = KingfisherClass<Image>.animatedImage(data: testImageSingleFrameGIFData, options: options)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf.imageSource!)
@@ -96,7 +100,8 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testPreloadAllAnimationData() {
-        let image = KingfisherClass<Image>.animated(with: testImageSingleFrameGIFData, preloadAll: true)!
+        let preloadOptions = ImageCreatingOptions(preloadAll: true)
+        let image = KingfisherClass<Image>.animatedImage(data: testImageSingleFrameGIFData, options: preloadOptions)!
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         XCTAssertNil(image.kf.imageSource, "Image source should be nil")
@@ -106,11 +111,8 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testLoadOnlyFirstFrame() {
-        let image = KingfisherClass<Image>.animated(with: testImageGIFData,
-                                               scale: 1.0,
-                                               duration: 0.0,
-                                               preloadAll: true,
-                                               onlyFirstFrame: true)!
+        let preloadOptions = ImageCreatingOptions(preloadAll: true, onlyFirstFrame: true)
+        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: preloadOptions)!
         XCTAssertNotNil(image, "The image should be initiated.")
         XCTAssertNil(image.kf.images, "The image should be nil")
     }
