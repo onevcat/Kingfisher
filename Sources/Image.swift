@@ -254,7 +254,7 @@ extension KingfisherClass where Base: Image {
         return animatedImage(data: data, options: options)
     }
 
-    public static func image(with data: Data, options: ImageCreatingOptions) -> Image? {
+    public static func image(data: Data, options: ImageCreatingOptions) -> Image? {
         var image: Image?
         switch data.kf.imageFormat {
         case .JPEG:
@@ -282,7 +282,7 @@ extension KingfisherClass where Base: Image {
             duration: 0.0,
             preloadAll: preloadAllAnimationData,
             onlyFirstFrame: onlyFirstFrame)
-        return KingfisherClass.image(with: data, options: options)
+        return KingfisherClass.image(data: data, options: options)
     }
 }
 
