@@ -35,6 +35,16 @@ import UIKit
 *	KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoItem]. You can use the enum of option item with value to control some behaviors of Kingfisher.
 */
 public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
+extension Array where Element == KingfisherOptionsInfoItem {
+    static var empty: KingfisherOptionsInfo = []
+    var imageCreatingOptions: ImageCreatingOptions {
+        return ImageCreatingOptions(
+            scale: scaleFactor,
+            duration: 0.0,
+            preloadAll: preloadAllAnimationData,
+            onlyFirstFrame: onlyLoadFirstFrame)
+    }
+}
 let KingfisherEmptyOptionsInfo = [KingfisherOptionsInfoItem]()
 
 /**

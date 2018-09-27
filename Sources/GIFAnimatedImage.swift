@@ -28,7 +28,7 @@ import Foundation
 import CoreGraphics
 import ImageIO
 
-public struct AnimatedImageCreatingOptions {
+public struct ImageCreatingOptions {
     public let scale: CGFloat
     public let duration: TimeInterval
     public let preloadAll: Bool
@@ -47,11 +47,11 @@ public struct AnimatedImageCreatingOptions {
     }
 }
 
-class AnimatedImage {
+class GIFAnimatedImage {
     let images: [Image]
     let duration: TimeInterval
     
-    init?(from imageSource: CGImageSource, for info: [String: Any], options: AnimatedImageCreatingOptions) {
+    init?(from imageSource: CGImageSource, for info: [String: Any], options: ImageCreatingOptions) {
         let frameCount = CGImageSourceGetCount(imageSource)
         var images = [Image]()
         var gifDuration = 0.0
@@ -65,14 +65,16 @@ class AnimatedImage {
                 gifDuration = .infinity
             } else {
                 // Get current animated GIF frame duration
-                guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) else {
+                guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil)
+                    as? [String: Any] else
+                {
                     return nil
                 }
                 
-                let gifInfo = (properties as? [String: Any])?[kCGImagePropertyGIFDictionary as String] as? [String: Any]
-                gifDuration += AnimatedImage.getFrameDuration(from: gifInfo)
+                let gifInfo = properties[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+                gifDuration += GIFAnimatedImage.getFrameDuration(from: gifInfo)
             }
-            images.append(KingfisherClass<Image>.image(cgImage: imageRef, scale: options.scale, refImage: nil))
+            images.append(KingfisherClass.image(cgImage: imageRef, scale: options.scale, refImage: nil))
             if options.onlyFirstFrame { break }
         }
         self.images = images

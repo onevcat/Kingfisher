@@ -211,14 +211,18 @@ extension KingfisherClass where Base: ImageView {
             }
             
             // Add new
-            if var newIndicator = newValue {
-                // Set default indicator frame if the view's frame not set.
-                if newIndicator.view.frame == .zero {
-                    newIndicator.view.frame = base.frame
-                }
-                newIndicator.viewCenter = CGPoint(x: base.bounds.midX, y: base.bounds.midY)
+            if let newIndicator = newValue {
+                // Set default indicator layout
+                let view = newIndicator.view
+                
+                base.addSubview(view)
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.centerXAnchor.constraint(
+                    equalTo: base.centerXAnchor, constant: newIndicator.centerOffset.x).isActive = true
+                view.centerYAnchor.constraint(
+                    equalTo: base.centerYAnchor, constant: newIndicator.centerOffset.y).isActive = true
+                
                 newIndicator.view.isHidden = true
-                base.addSubview(newIndicator.view)
             }
             
             // Save in associated object
