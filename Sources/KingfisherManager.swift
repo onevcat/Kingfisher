@@ -163,9 +163,9 @@ public class KingfisherManager {
                 if let error = error, error.code == KingfisherError.notModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
-                    targetCache.retrieveImage(forKey: key, options: options, completionHandler: { (cacheImage, cacheType) -> Void in
+                    targetCache.retrieveImage(forKey: key, options: options) { cacheImage, cacheType in
                         completionHandler?(cacheImage, nil, cacheType, url)
-                    })
+                    }
                     return
                 }
                 
@@ -214,7 +214,7 @@ public class KingfisherManager {
                                         options: KingfisherOptionsInfo)
     {
 
-        let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> Void in
+        let diskTaskCompletionHandler: CompletionHandler = { image, error, cacheType, imageURL in
             completionHandler?(image, error, cacheType, imageURL)
         }
         

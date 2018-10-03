@@ -83,9 +83,9 @@ extension Kingfisher where Base: Image {
     }
     
     var size: CGSize {
-        return base.representations.reduce(CGSize.zero, { size, rep in
+        return base.representations.reduce(CGSize.zero) { size, rep in
             return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
-        })
+        }
     }
     
     #else
