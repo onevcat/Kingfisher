@@ -123,7 +123,7 @@ public class KingfisherManager {
         let task = RetrieveImageTask()
         let options = currentDefaultOptions + (options ?? KingfisherEmptyOptionsInfo)
         if options.forceRefresh {
-            _ = downloadAndCacheImage(
+            downloadAndCacheImage(
                 with: resource.downloadURL,
                 forKey: resource.cacheKey,
                 retrieveImageTask: task,
@@ -224,7 +224,7 @@ public class KingfisherManager {
                 diskTaskCompletionHandler(nil, error, .none, url)
                 return
             }
-            self.downloadAndCacheImage(
+            downloadAndCacheImage(
                 with: url,
                 forKey: key,
                 retrieveImageTask: retrieveImageTask,

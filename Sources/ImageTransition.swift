@@ -100,12 +100,12 @@ public enum ImageTransition {
     var animationOptions: UIView.AnimationOptions {
         switch self {
         case .none:                         return []
-        case .fade(_):                      return .transitionCrossDissolve
+        case .fade:                         return .transitionCrossDissolve
             
-        case .flipFromLeft(_):              return .transitionFlipFromLeft
-        case .flipFromRight(_):             return .transitionFlipFromRight
-        case .flipFromTop(_):               return .transitionFlipFromTop
-        case .flipFromBottom(_):            return .transitionFlipFromBottom
+        case .flipFromLeft:                 return .transitionFlipFromLeft
+        case .flipFromRight:                return .transitionFlipFromRight
+        case .flipFromTop:                  return .transitionFlipFromTop
+        case .flipFromBottom:               return .transitionFlipFromBottom
             
         case .custom(_, let options, _, _): return options
         }
