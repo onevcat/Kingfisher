@@ -71,9 +71,9 @@ class NSButtonExtensionTests: XCTestCase {
 
         cleanDefaultCache()
 
-        button.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
+        button.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
             progressBlockIsCalled = true
-        }) { (image, error, cacheType, imageURL) -> Void in
+        }) { image, error, cacheType, imageURL in
             expectation.fulfill()
 
             XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
@@ -94,9 +94,9 @@ class NSButtonExtensionTests: XCTestCase {
         let url = URL(string: URLString)!
 
         var progressBlockIsCalled = false
-        button.kf.setAlternateImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
+        button.kf.setAlternateImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
             progressBlockIsCalled = true
-        }) { (image, error, cacheType, imageURL) -> Void in
+        }) { image, error, cacheType, imageURL in
             expectation.fulfill()
 
             XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
@@ -117,9 +117,9 @@ class NSButtonExtensionTests: XCTestCase {
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
 
-        button.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
+        button.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
             
-        }) { (image, error, cacheType, imageURL) -> Void in
+        }) { image, error, cacheType, imageURL in
             XCTAssertNotNil(error)
             XCTAssertEqual(error?.code, NSURLErrorCancelled)
 
@@ -141,9 +141,9 @@ class NSButtonExtensionTests: XCTestCase {
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
 
-        _ = button.kf.setAlternateImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
+        _ = button.kf.setAlternateImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
             XCTFail("Progress block should not be called.")
-        }) { (image, error, cacheType, imageURL) -> Void in
+        }) { image, error, cacheType, imageURL in
             XCTAssertNotNil(error)
             XCTAssertEqual(error?.code, NSURLErrorCancelled)
 
@@ -162,9 +162,9 @@ class NSButtonExtensionTests: XCTestCase {
         let expectation = self.expectation(description: "wait for downloading image")
         
         let url: URL? = nil
-        button.kf.setAlternateImage(with: url, placeholder: nil, options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
+        button.kf.setAlternateImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
             XCTFail("Progress block should not be called.")
-        }) { (image, error, cacheType, imageURL) -> Void in
+        }) { image, error, cacheType, imageURL in
             XCTAssertNil(image)
             XCTAssertNil(error)
             XCTAssertEqual(cacheType, CacheType.none)

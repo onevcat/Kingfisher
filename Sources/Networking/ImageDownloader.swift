@@ -355,7 +355,7 @@ open class ImageDownloader {
         }
         
         var downloadTask: RetrieveImageDownloadTask?
-        setup(progressBlock: progressBlock, with: completionHandler, for: url, options: options) {(session, fetchLoad) -> Void in
+        setup(progressBlock: progressBlock, with: completionHandler, for: url, options: options) { session, fetchLoad in
             if fetchLoad.downloadTask == nil {
                 let dataTask = session.dataTask(with: request)
                 
