@@ -41,7 +41,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
     }
     
     func testEmptyOptionsShouldParseCorrectly() {
-        let options = KingfisherEmptyOptionsInfo
+        let options = KingfisherOptionsInfo.empty
         XCTAssertTrue(options.targetCache === nil)
         XCTAssertTrue(options.downloader === nil)
 

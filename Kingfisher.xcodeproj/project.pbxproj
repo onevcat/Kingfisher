@@ -367,13 +367,13 @@
 			children = (
 				D12AB6A9215D2BB50013BA68 /* Info.plist */,
 				D12AB6AA215D2BB50013BA68 /* Kingfisher.h */,
-				D12AB6B5215D2BB50013BA68 /* Cache */,
-				D12AB6AB215D2BB50013BA68 /* Extensions */,
 				D12AB6B0215D2BB50013BA68 /* General */,
 				D12AB6A2215D2BB50013BA68 /* Image */,
 				D12AB69C215D2BB50013BA68 /* Networking */,
-				D12AB6B9215D2BB50013BA68 /* Utility */,
+				D12AB6B5215D2BB50013BA68 /* Cache */,
 				D12AB6BD215D2BB50013BA68 /* Views */,
+				D12AB6AB215D2BB50013BA68 /* Extensions */,
+				D12AB6B9215D2BB50013BA68 /* Utility */,
 			);
 			path = Sources;
 			sourceTree = "<group>";

@@ -35,8 +35,11 @@ import UIKit
 *	KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoItem]. You can use the enum of option item with value to control some behaviors of Kingfisher.
 */
 public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
+
 extension Array where Element == KingfisherOptionsInfoItem {
+    
     static var empty: KingfisherOptionsInfo = []
+    
     var imageCreatingOptions: ImageCreatingOptions {
         return ImageCreatingOptions(
             scale: scaleFactor,
@@ -45,7 +48,6 @@ extension Array where Element == KingfisherOptionsInfoItem {
             onlyFirstFrame: onlyLoadFirstFrame)
     }
 }
-let KingfisherEmptyOptionsInfo = [KingfisherOptionsInfoItem]()
 
 /**
 Items could be added into KingfisherOptionsInfo.
@@ -169,11 +171,11 @@ infix operator <== : ItemComparisonPrecedence
 // This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
 func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
     switch (lhs, rhs) {
-    case (.targetCache(_), .targetCache(_)): return true
-    case (.originalCache(_), .originalCache(_)): return true
-    case (.downloader(_), .downloader(_)): return true
-    case (.transition(_), .transition(_)): return true
-    case (.downloadPriority(_), .downloadPriority(_)): return true
+    case (.targetCache, .targetCache): return true
+    case (.originalCache, .originalCache): return true
+    case (.downloader, .downloader): return true
+    case (.transition, .transition): return true
+    case (.downloadPriority, .downloadPriority): return true
     case (.forceRefresh, .forceRefresh): return true
     case (.fromMemoryCacheOrRefresh, .fromMemoryCacheOrRefresh): return true
     case (.forceTransition, .forceTransition): return true
@@ -181,13 +183,13 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.waitForCache, .waitForCache): return true
     case (.onlyFromCache, .onlyFromCache): return true
     case (.backgroundDecode, .backgroundDecode): return true
-    case (.callbackDispatchQueue(_), .callbackDispatchQueue(_)): return true
-    case (.scaleFactor(_), .scaleFactor(_)): return true
+    case (.callbackDispatchQueue, .callbackDispatchQueue): return true
+    case (.scaleFactor, .scaleFactor): return true
     case (.preloadAllAnimationData, .preloadAllAnimationData): return true
-    case (.requestModifier(_), .requestModifier(_)): return true
-    case (.processor(_), .processor(_)): return true
-    case (.cacheSerializer(_), .cacheSerializer(_)): return true
-    case (.imageModifier(_), .imageModifier(_)): return true
+    case (.requestModifier, .requestModifier): return true
+    case (.processor, .processor): return true
+    case (.cacheSerializer, .cacheSerializer): return true
+    case (.imageModifier, .imageModifier): return true
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true

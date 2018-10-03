@@ -26,9 +26,6 @@
 
 #if os(macOS)
 // Not implemented for macOS and watchOS yet.
-    
-import AppKit
-
 /// Image transition is not supported on macOS.
 public enum ImageTransition {
     case none
@@ -38,7 +35,6 @@ public enum ImageTransition {
 }
 
 #elseif os(watchOS)
-import UIKit
 /// Image transition is not supported on watchOS.
 public enum ImageTransition {
     case none
@@ -49,35 +45,39 @@ public enum ImageTransition {
 #else
 import UIKit
 
-/**
-Transition effect which will be used when an image downloaded and set by `UIImageView` extension API in Kingfisher.
-You can assign an enum value with transition duration as an item in `KingfisherOptionsInfo` 
-to enable the animation transition.
-
-Apple's UIViewAnimationOptions is used under the hood.
-For custom transition, you should specified your own transition options, animations and 
-completion handler as well.
-*/
+/// Transition effect which will be used when an image downloaded and set by `UIImageView` extension API in Kingfisher.
+/// You can assign an enum value with transition duration as an item in `KingfisherOptionsInfo`
+/// to enable the animation transition.
+///
+/// Apple's UIViewAnimationOptions is used under the hood.
+/// For custom transition, you should specified your own transition options, animations and
+/// completion handler as well.
+///
+/// - none: No animation transition.
+/// - fade: Fade in the loaded image in a given duration.
+/// - flipFromLeft: Flip from left transition.
+/// - flipFromRight: Flip from right transition.
+/// - flipFromTop: Flip from top transition.
+/// - flipFromBottom: Flip from bottom transition.
+/// - customduration: Custom transition.
 public enum ImageTransition {
-    ///  No animation transition.
+    /// No animation transition.
     case none
-    
-    /// Fade in the loaded image.
+    /// Fade in the loaded image in a given duration.
     case fade(TimeInterval)
-
     /// Flip from left transition.
     case flipFromLeft(TimeInterval)
-
     /// Flip from right transition.
     case flipFromRight(TimeInterval)
-    
     /// Flip from top transition.
     case flipFromTop(TimeInterval)
-    
     /// Flip from bottom transition.
     case flipFromBottom(TimeInterval)
-    
-    /// Custom transition.
+    /// Custom transition defined by a general animation block.
+    ///    - duration: The time duration of this custom transition.
+    ///    - options: `UIView.AnimationOptions` should be used in the transition.
+    ///    - animations: The animation block will be applied when setting image.
+    ///    - completion: A block called when the transition animation finishes.
     case custom(duration: TimeInterval,
                  options: UIView.AnimationOptions,
               animations: ((UIImageView, UIImage) -> Void)?,

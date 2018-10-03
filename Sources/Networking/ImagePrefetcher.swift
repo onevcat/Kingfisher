@@ -132,7 +132,7 @@ public class ImagePrefetcher {
         prefetchQueue = DispatchQueue(label: prefetchQueueName)
         
         // We want all callbacks from our prefetch queue, so we should ignore the call back queue in options
-        var optionsInfoWithoutQueue = options?.removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil)) ?? KingfisherEmptyOptionsInfo
+        var optionsInfoWithoutQueue = options?.removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil)) ?? .empty
         
         // Add our own callback dispatch queue to make sure all callbacks are coming back in our expected queue
         optionsInfoWithoutQueue.append(.callbackDispatchQueue(prefetchQueue))

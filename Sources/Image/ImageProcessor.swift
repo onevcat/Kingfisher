@@ -27,16 +27,23 @@
 import Foundation
 import CoreGraphics
 
-#if os(macOS)
+#if canImport(AppKit)
 import AppKit
 #endif
 
-/// The item which could be processed by an `ImageProcessor`
+/// Represents an item which could be processed by an `ImageProcessor`
 ///
-/// - image: Input image
-/// - data:  Input data
+/// - image: Input image. The processor should provide a way to apply
+///          processing on this `image` and return the result image.
+/// - data:  Input data. The processor should provide a way to apply
+///          processing on this `image` and return the result image.
 public enum ImageProcessItem {
+    /// Input image. The processor should provide a way to apply
+    /// processing on this `image` and return the result image.
     case image(Image)
+    
+    /// Input data. The processor should provide a way to apply
+    /// processing on this `image` and return the result image.
     case data(Data)
 }
 
