@@ -75,7 +75,7 @@ public class ImagePrefetcher {
     private let manager: KingfisherManager
     
     private var finished: Bool {
-        return failedResources.count + skippedResources.count + completedResources.count == prefetchResources.count && self.tasks.isEmpty
+        return failedResources.count + skippedResources.count + completedResources.count == prefetchResources.count && tasks.isEmpty
     }
     
     /**
@@ -137,10 +137,10 @@ public class ImagePrefetcher {
         // Add our own callback dispatch queue to make sure all callbacks are coming back in our expected queue
         optionsInfoWithoutQueue.append(.callbackDispatchQueue(prefetchQueue))
         
-        self.optionsInfo = optionsInfoWithoutQueue
+        optionsInfo = optionsInfoWithoutQueue
         
-        let cache = self.optionsInfo.targetCache ?? .default
-        let downloader = self.optionsInfo.downloader ?? .default
+        let cache = optionsInfo.targetCache ?? .default
+        let downloader = optionsInfo.downloader ?? .default
         manager = KingfisherManager(downloader: downloader, cache: cache)
         
         self.progressBlock = progressBlock
