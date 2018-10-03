@@ -175,13 +175,12 @@ public class KingfisherManager {
                                       forKey: key,
                                       processorIdentifier:options.processor.identifier,
                                       cacheSerializer: options.cacheSerializer,
-                                      toDisk: !options.cacheMemoryOnly,
-                                      completionHandler: {
+                                      toDisk: !options.cacheMemoryOnly) {
                                         guard options.waitForCache else { return }
                                         
                                         let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
                                         completionHandler?(image, nil, cacheType, url)
-                    })
+                    }
                     
                     if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
                         let originalCache = options.originalCache ?? targetCache
@@ -275,15 +274,14 @@ public class KingfisherManager {
                                       forKey: key,
                                       processorIdentifier:options.processor.identifier,
                                       cacheSerializer: options.cacheSerializer,
-                                      toDisk: !options.cacheMemoryOnly,
-                                      completionHandler: {
+                                      toDisk: !options.cacheMemoryOnly) {
                                         guard options.waitForCache else { return }
 
                                         let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
                                         options.callbackDispatchQueue.safeAsync {
                                             diskTaskCompletionHandler(processedImage, nil, cacheType, url)
                                         }
-                    })
+                    }
 
                     if options.waitForCache == false {
                         options.callbackDispatchQueue.safeAsync {
