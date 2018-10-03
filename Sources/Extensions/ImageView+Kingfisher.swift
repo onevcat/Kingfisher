@@ -94,7 +94,7 @@ extension KingfisherClass where Base: ImageView {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: {[weak base] image, error, cacheType, imageURL in
+            completionHandler: { [weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     maybeIndicator?.stopAnimatingView()
                     guard let strongBase = base, imageURL == self.webURL else {

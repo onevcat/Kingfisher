@@ -305,7 +305,7 @@ open class ImageCache {
             }
         } else {
             var sSelf: ImageCache! = self
-            block = DispatchWorkItem(block: {
+            block = DispatchWorkItem {
                 // Begin to load image from disk
                 if let image = sSelf.retrieveImageInDiskCache(forKey: key, options: options) {
                     if options.backgroundDecode {
@@ -344,7 +344,7 @@ open class ImageCache {
                         sSelf = nil
                     }
                 }
-            })
+            }
             
             sSelf.ioQueue.async(execute: block!)
         }
