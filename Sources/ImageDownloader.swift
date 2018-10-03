@@ -334,7 +334,7 @@ open class ImageDownloader {
             return nil
         }
         
-        let timeout = self.downloadTimeout == 0.0 ? 15.0 : self.downloadTimeout
+        let timeout = downloadTimeout == 0.0 ? 15.0 : downloadTimeout
         
         // We need to set the URL as the load key. So before setup progress, we need to ask the `requestModifier` for a final URL.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: timeout)
@@ -355,7 +355,7 @@ open class ImageDownloader {
         }
         
         var downloadTask: RetrieveImageDownloadTask?
-        setup(progressBlock: progressBlock, with: completionHandler, for: url, options: options) {(session, fetchLoad) -> Void in
+        setup(progressBlock: progressBlock, with: completionHandler, for: url, options: options) { session, fetchLoad in
             if fetchLoad.downloadTask == nil {
                 let dataTask = session.dataTask(with: request)
                 
@@ -418,7 +418,7 @@ extension ImageDownloader {
         
         func getFetchLoad(from task: RetrieveImageDownloadTask) -> ImageFetchLoad? {
             guard let URL = task.internalTask.originalRequest?.url,
-                  let imageFetchLoad = self.fetchLoads[URL] else
+                  let imageFetchLoad = fetchLoads[URL] else
             {
                 return nil
             }

@@ -83,9 +83,9 @@ extension Kingfisher where Base: Image {
     }
     
     var size: CGSize {
-        return base.representations.reduce(CGSize.zero, { size, rep in
+        return base.representations.reduce(CGSize.zero) { size, rep in
             return CGSize(width: max(size.width, CGFloat(rep.pixelsWide)), height: max(size.height, CGFloat(rep.pixelsHigh)))
-        })
+        }
     }
     
     #else
@@ -1021,10 +1021,10 @@ extension RectCorner {
         
         var result: UIRectCorner = []
         
-        if self.contains(.topLeft) { result.insert(.topLeft) }
-        if self.contains(.topRight) { result.insert(.topRight) }
-        if self.contains(.bottomLeft) { result.insert(.bottomLeft) }
-        if self.contains(.bottomRight) { result.insert(.bottomRight) }
+        if contains(.topLeft) { result.insert(.topLeft) }
+        if contains(.topRight) { result.insert(.topRight) }
+        if contains(.bottomLeft) { result.insert(.bottomLeft) }
+        if contains(.bottomRight) { result.insert(.bottomRight) }
         
         return result
     }

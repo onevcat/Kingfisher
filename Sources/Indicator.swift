@@ -168,8 +168,8 @@ final class ImageIndicator: Indicator {
         
         #if os(macOS)
             // Need for gif to animate on macOS
-            self.animatedImageIndicatorView.imageScaling = .scaleNone
-            self.animatedImageIndicatorView.canDrawSubviewsIntoLayer = true
+            animatedImageIndicatorView.imageScaling = .scaleNone
+            animatedImageIndicatorView.canDrawSubviewsIntoLayer = true
         #else
             animatedImageIndicatorView.contentMode = .center
             animatedImageIndicatorView.autoresizingMask = [.flexibleLeftMargin,

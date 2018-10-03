@@ -40,7 +40,7 @@ extension Notification.Name {
      
      The main purpose of this notification is supplying a chance to maintain some necessary information on the cached files. See [this wiki](https://github.com/onevcat/Kingfisher/wiki/How-to-implement-ETag-based-304-(Not-Modified)-handling-in-Kingfisher) for a use case on it.
      */
-    public static let KingfisherDidCleanDiskCache = Notification.Name.init("com.onevcat.Kingfisher.KingfisherDidCleanDiskCache")
+    public static let KingfisherDidCleanDiskCache = Notification.Name("com.onevcat.Kingfisher.KingfisherDidCleanDiskCache")
 }
 
 /**
@@ -84,7 +84,7 @@ open class ImageCache {
     /// memory warning notification is received.
     open var maxMemoryCost: UInt = 0 {
         didSet {
-            self.memoryCache.totalCostLimit = Int(maxMemoryCost)
+            memoryCache.totalCostLimit = Int(maxMemoryCost)
         }
     }
     
@@ -295,7 +295,7 @@ open class ImageCache {
         let options = options ?? KingfisherEmptyOptionsInfo
         let imageModifier = options.imageModifier
 
-        if let image = self.retrieveImageInMemoryCache(forKey: key, options: options) {
+        if let image = retrieveImageInMemoryCache(forKey: key, options: options) {
             options.callbackDispatchQueue.safeAsync {
                 completionHandler(imageModifier.modify(image), .memory)
             }
@@ -650,7 +650,7 @@ extension ImageCache {
     }
     
     func cacheFileName(forComputedKey key: String) -> String {
-        if let ext = self.pathExtension {
+        if let ext = pathExtension {
           return (key.kf.md5 as NSString).appendingPathExtension(ext)!
         }
         return key.kf.md5
