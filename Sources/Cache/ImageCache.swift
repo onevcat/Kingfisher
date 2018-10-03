@@ -292,7 +292,7 @@ open class ImageCache {
         }
         
         var block: RetrieveImageDiskTask?
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = options ?? .empty
         let imageModifier = options.imageModifier
 
         if let image = self.retrieveImageInMemoryCache(forKey: key, options: options) {
@@ -362,7 +362,7 @@ open class ImageCache {
     */
     open func retrieveImageInMemoryCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
         
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
         
         return memoryCache.object(forKey: computedKey as NSString) as? Image
@@ -379,7 +379,7 @@ open class ImageCache {
     */
     open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
         
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
         
         return diskImage(forComputedKey: computedKey, serializer: options.cacheSerializer, options: options)

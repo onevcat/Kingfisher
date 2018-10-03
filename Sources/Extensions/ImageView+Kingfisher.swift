@@ -67,7 +67,7 @@ extension KingfisherClass where Base: ImageView {
             return .empty
         }
         
-        var options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
+        var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
         let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
         
         if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet { // Always set placeholder while there is no image/placehoer yet.

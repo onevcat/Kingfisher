@@ -77,7 +77,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
     }
     
     public func image(with data: Data, options: KingfisherOptionsInfo?) -> Image? {
-        let options = options ?? KingfisherEmptyOptionsInfo
+        let options = options ?? .empty
         return KingfisherClass.image(data: data, options: options.imageCreatingOptions)
     }
 }

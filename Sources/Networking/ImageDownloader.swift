@@ -390,7 +390,7 @@ extension ImageDownloader {
                 let loadObjectForURL = fetchLoads[url] ?? ImageFetchLoad()
                 let callbackPair = (progressBlock: progressBlock, completionHandler: completionHandler)
                 
-                loadObjectForURL.contents.append((callbackPair, options ?? KingfisherEmptyOptionsInfo))
+                loadObjectForURL.contents.append((callbackPair, options ?? .empty))
                 
                 fetchLoads[url] = loadObjectForURL
                 
