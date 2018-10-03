@@ -123,7 +123,7 @@ public class KingfisherManager {
         let task = RetrieveImageTask()
         let options = currentDefaultOptions + (options ?? .empty)
         if options.forceRefresh {
-            _ = downloadAndCacheImage(
+            downloadAndCacheImage(
                 with: resource.downloadURL,
                 forKey: resource.cacheKey,
                 retrieveImageTask: task,
@@ -163,9 +163,9 @@ public class KingfisherManager {
                 if let error = error, error.code == KingfisherError.notModified.rawValue {
                     // Not modified. Try to find the image from cache.
                     // (The image should be in cache. It should be guaranteed by the framework users.)
-                    targetCache.retrieveImage(forKey: key, options: options, completionHandler: { (cacheImage, cacheType) -> Void in
+                    targetCache.retrieveImage(forKey: key, options: options) { cacheImage, cacheType in
                         completionHandler?(cacheImage, nil, cacheType, url)
-                    })
+                    }
                     return
                 }
                 
@@ -175,13 +175,12 @@ public class KingfisherManager {
                                       forKey: key,
                                       processorIdentifier:options.processor.identifier,
                                       cacheSerializer: options.cacheSerializer,
-                                      toDisk: !options.cacheMemoryOnly,
-                                      completionHandler: {
+                                      toDisk: !options.cacheMemoryOnly) {
                                         guard options.waitForCache else { return }
                                         
                                         let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
                                         completionHandler?(image, nil, cacheType, url)
-                    })
+                    }
                     
                     if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
                         let originalCache = options.originalCache ?? targetCache
@@ -214,7 +213,7 @@ public class KingfisherManager {
                                         options: KingfisherOptionsInfo)
     {
 
-        let diskTaskCompletionHandler: CompletionHandler = { (image, error, cacheType, imageURL) -> Void in
+        let diskTaskCompletionHandler: CompletionHandler = { image, error, cacheType, imageURL in
             completionHandler?(image, error, cacheType, imageURL)
         }
         
@@ -224,7 +223,7 @@ public class KingfisherManager {
                 diskTaskCompletionHandler(nil, error, .none, url)
                 return
             }
-            self.downloadAndCacheImage(
+            downloadAndCacheImage(
                 with: url,
                 forKey: key,
                 retrieveImageTask: retrieveImageTask,
@@ -275,15 +274,14 @@ public class KingfisherManager {
                                       forKey: key,
                                       processorIdentifier:options.processor.identifier,
                                       cacheSerializer: options.cacheSerializer,
-                                      toDisk: !options.cacheMemoryOnly,
-                                      completionHandler: {
+                                      toDisk: !options.cacheMemoryOnly) {
                                         guard options.waitForCache else { return }
 
                                         let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
                                         options.callbackDispatchQueue.safeAsync {
                                             diskTaskCompletionHandler(processedImage, nil, cacheType, url)
                                         }
-                    })
+                    }
 
                     if options.waitForCache == false {
                         options.callbackDispatchQueue.safeAsync {

@@ -66,7 +66,7 @@ extension Placeholder where Self: View {
     public func add(to imageView: ImageView) {
         imageView.addSubview(self)
 
-        self.translatesAutoresizingMaskIntoConstraints = false
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             NSLayoutConstraint(item: self, attribute: .centerX, relatedBy: .equal, toItem: imageView, attribute: .centerX, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: self, attribute: .centerY, relatedBy: .equal, toItem: imageView, attribute: .centerY, multiplier: 1, constant: 0),
@@ -77,6 +77,6 @@ extension Placeholder where Self: View {
 
     /// How the placeholder should be removed from a given image view.
     public func remove(from imageView: ImageView) {
-        self.removeFromSuperview()
+        removeFromSuperview()
     }
 }

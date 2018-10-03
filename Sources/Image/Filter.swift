@@ -45,7 +45,7 @@ extension CIImageProcessor {
         switch item {
         case .image(let image):
             return image.kf.apply(filter)
-        case .data(_):
+        case .data:
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
     }

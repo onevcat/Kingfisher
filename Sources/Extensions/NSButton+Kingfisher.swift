@@ -80,7 +80,7 @@ extension KingfisherClass where Base: NSButton {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: {[weak base] image, error, cacheType, imageURL in
+            completionHandler: { [weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.webURL else {
                         completionHandler?(image, error, cacheType, imageURL)
@@ -155,7 +155,7 @@ extension KingfisherClass where Base: NSButton {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: {[weak base] image, error, cacheType, imageURL in
+            completionHandler: { [weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.alternateWebURL else {
                         completionHandler?(image, error, cacheType, imageURL)
