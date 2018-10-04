@@ -26,5 +26,8 @@
 
 import Foundation
 
+/// Error domain of Kingfisher
+public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
+
 struct KingfisherPlaceholderError: Error {
 }

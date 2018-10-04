@@ -61,3 +61,40 @@ extension KingfisherClass where Base: Image {
         return animatedImage(data: data, options: options)
     }
 }
+
+@available(*, deprecated, message: "Use `Result<ImageResult>` based callback instead")
+public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
+
+extension RetrieveImageTask {
+    @available(*, deprecated, message: "RetrieveImageTask.empty will be removed soon. Use `nil` to represnt a no task.")
+    public static let empty = RetrieveImageTask()
+}
+
+extension KingfisherManager {
+    /// Get an image with resource.
+    /// If `.empty` is used as `options`, Kingfisher will seek the image in memory and disk first.
+    /// If not found, it will download the image at `resource.downloadURL` and cache it with `resource.cacheKey`.
+    /// These default behaviors could be adjusted by passing different options. See `KingfisherOptions` for more.
+    ///
+    /// - Parameters:
+    ///   - resource: Resource object contains information such as `cacheKey` and `downloadURL`.
+    ///   - options: A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called every time downloaded data changed. This could be used as a progress UI.
+    ///   - completionHandler: Called when the whole retrieving process finished.
+    /// - Returns: A `RetrieveImageTask` task object. You can use this object to cancel the task.
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    @discardableResult
+    public func retrieveImage(with resource: Resource,
+                              options: KingfisherOptionsInfo?,
+                              progressBlock: DownloadProgressBlock?,
+                              completionHandler: CompletionHandler?) -> RetrieveImageTask
+    {
+        return retrieveImage(with: resource, options: options, progressBlock: progressBlock) {
+            result in
+            switch result {
+            case .success(let value): completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error): completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+}

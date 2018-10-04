@@ -149,41 +149,6 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testRetrieveImageNotModified() {
-        let expectation = self.expectation(description: "wait for downloading image")
-        let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-        
-        let url = URL(string: URLString)!
-        
-        manager.retrieveImage(with: url, options: nil, progressBlock: nil) {
-            image, error, cacheType, imageURL in
-            XCTAssertNotNil(image)
-            XCTAssertEqual(cacheType, CacheType.none)
-            
-            self.manager.cache.clearMemoryCache()
-            
-            _ = stubRequest("GET", URLString).andReturn(304)?.withBody("12345" as NSString)
-            
-            var progressCalled = false
-            
-            self.manager.retrieveImage(with: url, options: [.forceRefresh], progressBlock: {
-                _, _ in
-                progressCalled = true
-            }) {
-                image, error, cacheType, imageURL in
-                XCTAssertNotNil(image)
-                XCTAssertEqual(cacheType, CacheType.disk)
-                
-                XCTAssertTrue(progressCalled, "The progress callback should be called at least once since network connecting happens.")
-                
-                expectation.fulfill()
-            }
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
-    }
-    
     func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {
         let progressExpectation = expectation(description: "progressBlock running on main queue")
         let completionExpectation = expectation(description: "completionHandler running on main queue")
@@ -295,9 +260,9 @@ class KingfisherManagerTests: XCTestCase {
         let url = URL(string: URLString)!
         
         manager.defaultOptions = [.scaleFactor(2)]
-        manager.retrieveImage(with: url, options: nil, progressBlock: nil, completionHandler: { image, _, _, _ in
+        manager.retrieveImage(with: url, options: nil, progressBlock: nil, completionHandler: { result in
             #if !os(macOS)
-            XCTAssertEqual(image!.scale, 2.0)
+            XCTAssertEqual(result.value!.image.scale, 2.0)
             #endif
             expectation.fulfill()
         })
@@ -314,7 +279,7 @@ class KingfisherManagerTests: XCTestCase {
         let p = SimpleProcessor()
         let options: KingfisherOptionsInfo = [.processor(p), .cacheOriginalImage]
         self.manager.downloadAndCacheImage(with: url, forKey: URLString, retrieveImageTask: RetrieveImageTask(), progressBlock: nil, completionHandler: {
-            (image, error, cacheType, url) in
+            result in
             delay(0.1) {
                 var imageCached = self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: p.identifier)
                 var originalCached = self.manager.cache.imageCachedType(forKey: URLString)
@@ -346,7 +311,7 @@ class KingfisherManagerTests: XCTestCase {
         let p = SimpleProcessor()
         let options: KingfisherOptionsInfo = [.processor(p)]
         manager.downloadAndCacheImage(with: url, forKey: URLString, retrieveImageTask: RetrieveImageTask(), progressBlock: nil, completionHandler: {
-            (image, error, cacheType, url) in
+            result in
             delay(0.1) {
                 var imageCached = self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: p.identifier)
                 var originalCached = self.manager.cache.imageCachedType(forKey: URLString)
