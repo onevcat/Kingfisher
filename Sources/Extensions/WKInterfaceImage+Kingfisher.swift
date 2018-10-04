@@ -56,7 +56,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
 
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
-            options: KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo),
+            options: KingfisherManager.shared.defaultOptions + (options ?? .empty),
             progressBlock: { receivedSize, totalSize in
                 guard resource.downloadURL == self.webURL else {
                     return
