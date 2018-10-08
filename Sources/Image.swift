@@ -285,7 +285,7 @@ extension Kingfisher where Base: Image {
                 guard let (images, gifDuration) = decode(from: imageSource, for: options) else { return nil }
                 image = onlyFirstFrame ? images.first : Kingfisher<Image>.animated(with: images, forDuration: duration <= 0.0 ? gifDuration : duration)
             } else {
-                image = Image(data: data)
+                image = Image(data: data, scale: scale)
                 image?.kf.imageSource = ImageSource(ref: imageSource)
             }
             image?.kf.animatedImageData = data
