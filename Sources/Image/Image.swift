@@ -229,7 +229,7 @@ extension KingfisherClass where Base: Image {
             }
             image?.kf.animatedImageData = data
         } else {
-            image = Image(data: data)
+            image = Image(data: data, scale: options.scale)
             let kf = image?.kf
             kf?.imageSource = imageSource
             kf?.animatedImageData = data
