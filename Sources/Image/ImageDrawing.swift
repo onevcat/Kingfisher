@@ -50,13 +50,13 @@ extension KingfisherClass where Base: Image {
                       alpha: CGFloat = 1.0,
                       backgroundColor: Color? = nil) -> Image
     {
-        guard let cgImage = cgImage else {
+        guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Blend mode image only works for CG-based image.")
             return base
         }
         
         let rect = CGRect(origin: .zero, size: size)
-        return draw(cgImage: cgImage, to: rect.size) {
+        return draw(to: rect.size) { _ in
             if let backgroundColor = backgroundColor {
                 backgroundColor.setFill()
                 UIRectFill(rect)
@@ -82,18 +82,17 @@ extension KingfisherClass where Base: Image {
                       alpha: CGFloat = 1.0,
                       backgroundColor: Color? = nil) -> Image
     {
-        guard let cgImage = cgImage else {
+        guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Compositing Operation image only works for CG-based image.")
             return base
         }
         
         let rect = CGRect(origin: .zero, size: size)
-        return draw(cgImage: cgImage, to: rect.size) {
+        return draw(to: rect.size) { _ in
             if let backgroundColor = backgroundColor {
                 backgroundColor.setFill()
                 rect.fill()
             }
-            
             base.draw(in: rect, from: .zero, operation: compositingOperation, fraction: alpha)
         }
     }
@@ -116,13 +115,13 @@ extension KingfisherClass where Base: Image {
                       roundingCorners corners: RectCorner = .all,
                       backgroundColor: Color? = nil) -> Image
     {
-        guard let cgImage = cgImage else {
+        guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Round corner image only works for CG-based image.")
             return base
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
-        return draw(cgImage: cgImage, to: size) {
+        return draw(to: size) { _ in
             #if os(macOS)
             if let backgroundColor = backgroundColor {
                 let rectPath = NSBezierPath(rect: rect)
@@ -177,13 +176,13 @@ extension KingfisherClass where Base: Image {
     /// - Note: This method only works for CG-based image. The current image scale is kept.
     ///         For any non-CG-based image, `base` itself is returned.
     public func resize(to size: CGSize) -> Image {
-        guard let cgImage = cgImage else {
+        guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Resize only works for CG-based image.")
             return base
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
-        return draw(cgImage: cgImage, to: size) {
+        return draw(to: size) { _ in
             #if os(macOS)
             base.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
             #else
@@ -291,7 +290,7 @@ extension KingfisherClass where Base: Image {
             return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
         }
         
-        guard let context = beginContext(size: size, scale: scale) else {
+        guard let context = beginContext(size: size, scale: scale, translated: true) else {
             assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
             return base
         }
@@ -301,7 +300,7 @@ extension KingfisherClass where Base: Image {
         
         var inBuffer = createEffectBuffer(context)
         
-        guard let outContext = beginContext(size: size, scale: scale) else {
+        guard let outContext = beginContext(size: size, scale: scale, translated: true) else {
             assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
             return base
         }
@@ -346,13 +345,13 @@ extension KingfisherClass where Base: Image {
     ///         For any non-CG-based image, `base` itself is returned.
     public func overlaying(with color: Color, fraction: CGFloat) -> Image {
         
-        guard let cgImage = cgImage else {
+        guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Overlaying only works for CG-based image.")
             return base
         }
         
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        return draw(cgImage: cgImage, to: rect.size) {
+        return draw(to: rect.size) { context in
             #if os(macOS)
             base.draw(in: rect)
             if fraction > 0 {
@@ -453,7 +452,7 @@ extension KingfisherClass where Base: Image {
         
         // Draw CGImage in a plain context with scale of 1.0.
         guard let context = beginContext(
-            size: CGSize(width: imageRef.width, height: imageRef.height), scale: 1.0) else
+            size: CGSize(width: imageRef.width, height: imageRef.height), scale: 1.0, translated: true) else
         {
             assertionFailure("[Kingfisher] Decoding fails to create a valid context.")
             return base
@@ -470,7 +469,7 @@ extension KingfisherClass where Base: Image {
 
 extension KingfisherClass where Base: Image {
     
-    func beginContext(size: CGSize, scale: CGFloat) -> CGContext? {
+    func beginContext(size: CGSize, scale: CGFloat, translated: Bool = false) -> CGContext? {
         #if os(macOS)
         guard let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil,
@@ -499,8 +498,10 @@ extension KingfisherClass where Base: Image {
         #else
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        context.scaleBy(x: 1.0, y: -1.0)
-        context.translateBy(x: 0, y: -size.height)
+        if translated { // If drawing a CGImage, we need to make context flipped.
+            context.scaleBy(x: 1.0, y: -1.0)
+            context.translateBy(x: 0, y: -size.height)
+        }
         return context
         #endif
     }
@@ -513,42 +514,17 @@ extension KingfisherClass where Base: Image {
         #endif
     }
     
-    func draw(cgImage: CGImage? = nil, to size: CGSize, draw: ()->()) -> Image {
-        #if os(macOS)
-        guard let rep = NSBitmapImageRep(
-            bitmapDataPlanes: nil,
-            pixelsWide: Int(size.width),
-            pixelsHigh: Int(size.height),
-            bitsPerSample: cgImage?.bitsPerComponent ?? 8,
-            samplesPerPixel: 4,
-            hasAlpha: true,
-            isPlanar: false,
-            colorSpaceName: .calibratedRGB,
-            bytesPerRow: 0,
-            bitsPerPixel: 0) else
-        {
-            assertionFailure("[Kingfisher] Image representation cannot be created.")
+    func draw(to size: CGSize, draw: (CGContext)->()) -> Image {
+        guard let context = beginContext(size: size, scale: scale) else {
+            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
             return base
         }
-        rep.size = size
-        NSGraphicsContext.saveGraphicsState()
-        
-        let context = NSGraphicsContext(bitmapImageRep: rep)
-        NSGraphicsContext.current = context
-        draw()
-        NSGraphicsContext.restoreGraphicsState()
-        
-        let outputImage = Image(size: size)
-        outputImage.addRepresentation(rep)
-        return outputImage
-        #else
-        
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        defer { UIGraphicsEndImageContext() }
-        draw()
-        return UIGraphicsGetImageFromCurrentImageContext() ?? base
-        
-        #endif
+        defer { endContext() }
+        draw(context)
+        guard let cgImage = context.makeImage() else {
+            return base
+        }
+        return KingfisherClass.image(cgImage: cgImage, scale: scale, refImage: base)
     }
     
     #if os(macOS)
@@ -557,7 +533,7 @@ extension KingfisherClass where Base: Image {
         let image = Image(cgImage: cgImage, size: base.size)
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
-        return draw(cgImage: cgImage, to: self.size) {
+        return draw(to: self.size) { context in
             image.draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
         }
     }
