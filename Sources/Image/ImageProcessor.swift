@@ -70,11 +70,10 @@ public protocol ImageProcessor {
     ///         If input item is already an image and there is any errors in processing, the input 
     ///         image itself will be returned.
     /// - Note: Most processor only supports CG-based images. 
-    ///         watchOS is not supported for processors containing filter, the input image will be returned directly on watchOS.
+    ///         watchOS is not supported for processors containing filter, the input image will be
+    ///         returned directly on watchOS.
     func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image?
 }
-
-typealias ProcessorImp = ((ImageProcessItem, KingfisherOptionsInfo) -> Image?)
 
 public extension ImageProcessor {
     
@@ -106,7 +105,8 @@ func !=(left: ImageProcessor, right: ImageProcessor) -> Bool {
     return !(left == right)
 }
 
-fileprivate struct GeneralProcessor: ImageProcessor {
+typealias ProcessorImp = ((ImageProcessItem, KingfisherOptionsInfo) -> Image?)
+struct GeneralProcessor: ImageProcessor {
     let identifier: String
     let p: ProcessorImp
     func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
@@ -177,6 +177,7 @@ public struct BlendImageProcessor: ImageProcessor {
 
     /// Blend Mode will be used to blend the input image.
     public let blendMode: CGBlendMode
+
     /// Alpha will be used when blend image.
     public let alpha: CGFloat
 
@@ -271,7 +272,10 @@ public struct CompositingImageProcessor: ImageProcessor {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
-                        .kf.image(withCompositingOperation: compositingOperation, alpha: alpha, backgroundColor: backgroundColor)
+                        .kf.image(
+                            withCompositingOperation: compositingOperation,
+                            alpha: alpha,
+                            backgroundColor: backgroundColor)
         case .data:
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }
@@ -307,7 +311,12 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     ///                              Default is `nil`.
     /// - parameter corners:         The target corners which will be applied rounding. Default is `.all`.
     /// - parameter backgroundColor: Background color to apply for the output image. Default is `nil`.
-    public init(cornerRadius: CGFloat, targetSize: CGSize? = nil, roundingCorners corners: RectCorner = .all, backgroundColor: Color? = nil) {
+    public init(
+        cornerRadius: CGFloat,
+        targetSize: CGSize? = nil,
+        roundingCorners corners: RectCorner = .all,
+        backgroundColor: Color? = nil)
+    {
         self.cornerRadius = cornerRadius
         self.targetSize = targetSize
         self.roundingCorners = corners
@@ -342,7 +351,11 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         case .image(let image):
             let size = targetSize ?? image.kf.size
             return image.kf.scaled(to: options.scaleFactor)
-                        .kf.image(withRoundRadius: cornerRadius, fit: size, roundingCorners: roundingCorners, backgroundColor: backgroundColor)
+                        .kf.image(
+                            withRoundRadius: cornerRadius,
+                            fit: size,
+                            roundingCorners: roundingCorners,
+                            backgroundColor: backgroundColor)
         case .data:
             return (DefaultImageProcessor.default >> self).process(item: item, options: options)
         }

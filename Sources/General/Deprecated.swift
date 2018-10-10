@@ -65,6 +65,9 @@ extension KingfisherClass where Base: Image {
 @available(*, deprecated, message: "Use `Result<ImageResult>` based callback instead")
 public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
 
+@available(*, deprecated, message: "Use `Result<ImageDownloadResult>` based callback instead")
+public typealias ImageDownloaderCompletionHandler = ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
+
 extension RetrieveImageTask {
     @available(*, deprecated, message: "RetrieveImageTask.empty will be removed soon. Use `nil` to represnt a no task.")
     public static let empty = RetrieveImageTask()
