@@ -266,7 +266,7 @@ extension KingfisherClass where Base: Image {
         var targetRadius = floor(s * 3.0 * sqrtPi2 / 4.0 + 0.5)
         
         if targetRadius.isEven { targetRadius += 1 }
-        
+
         // Determine necessary iteration count by blur radius.
         let iterations: Int
         if radius < 0.5 {
@@ -290,17 +290,16 @@ extension KingfisherClass where Base: Image {
             return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
         }
         
-        guard let context = beginContext(size: size, scale: scale, translated: true) else {
+        guard let context = beginContext(size: size, scale: scale, inverting: true) else {
             assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
             return base
         }
-        defer { endContext() }
-        
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
+        endContext()
         
         var inBuffer = createEffectBuffer(context)
         
-        guard let outContext = beginContext(size: size, scale: scale, translated: true) else {
+        guard let outContext = beginContext(size: size, scale: scale, inverting: true) else {
             assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
             return base
         }
@@ -444,32 +443,22 @@ extension KingfisherClass where Base: Image {
         #else
         if images != nil { return base }
         #endif
-        
-        guard let imageRef = self.cgImage else {
+
+        guard let imageRef = cgImage else {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
             return base
         }
-        
-        // Draw CGImage in a plain context with scale of 1.0.
-        guard let context = beginContext(
-            size: CGSize(width: imageRef.width, height: imageRef.height), scale: 1.0, translated: true) else
-        {
-            assertionFailure("[Kingfisher] Decoding fails to create a valid context.")
-            return base
+
+        let size = CGSize(width: CGFloat(imageRef.width) / scale, height: CGFloat(imageRef.height) / scale)
+        return draw(to: size, inverting: true, scale: scale) { context in
+            context.draw(imageRef, in: CGRect(origin: .zero, size: size))
         }
-        
-        defer { endContext() }
-        
-        let rect = CGRect(x: 0, y: 0, width: CGFloat(imageRef.width), height: CGFloat(imageRef.height))
-        context.draw(imageRef, in: rect)
-        let decompressedImageRef = context.makeImage()
-        return KingfisherClass.image(cgImage: decompressedImageRef!, scale: scale, refImage: base)
     }
 }
 
 extension KingfisherClass where Base: Image {
     
-    func beginContext(size: CGSize, scale: CGFloat, translated: Bool = false) -> CGContext? {
+    func beginContext(size: CGSize, scale: CGFloat, inverting: Bool = false) -> CGContext? {
         #if os(macOS)
         guard let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil,
@@ -498,7 +487,7 @@ extension KingfisherClass where Base: Image {
         #else
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        if translated { // If drawing a CGImage, we need to make context flipped.
+        if inverting { // If drawing a CGImage, we need to make context flipped.
             context.scaleBy(x: 1.0, y: -1.0)
             context.translateBy(x: 0, y: -size.height)
         }
@@ -514,8 +503,9 @@ extension KingfisherClass where Base: Image {
         #endif
     }
     
-    func draw(to size: CGSize, draw: (CGContext)->()) -> Image {
-        guard let context = beginContext(size: size, scale: scale) else {
+    func draw(to size: CGSize, inverting: Bool = false, scale: CGFloat? = nil, draw: (CGContext) -> Void) -> Image {
+        let targetScale = scale ?? self.scale
+        guard let context = beginContext(size: size, scale: targetScale, inverting: inverting) else {
             assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
             return base
         }
@@ -524,7 +514,7 @@ extension KingfisherClass where Base: Image {
         guard let cgImage = context.makeImage() else {
             return base
         }
-        return KingfisherClass.image(cgImage: cgImage, scale: scale, refImage: base)
+        return KingfisherClass.image(cgImage: cgImage, scale: targetScale, refImage: base)
     }
     
     #if os(macOS)
@@ -534,7 +524,7 @@ extension KingfisherClass where Base: Image {
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
         return draw(to: self.size) { context in
-            image.draw(in: rect, from: NSRect.zero, operation: .copy, fraction: 1.0)
+            image.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
         }
     }
     #endif

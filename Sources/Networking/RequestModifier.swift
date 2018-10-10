@@ -47,7 +47,7 @@ public struct AnyModifier: ImageDownloadRequestModifier {
         return block(request)
     }
     
-    public init(modify: @escaping (URLRequest) -> URLRequest? ) {
+    public init(modify: @escaping (URLRequest) -> URLRequest?) {
         block = modify
     }
 }
