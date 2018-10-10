@@ -71,11 +71,7 @@ public struct Filter {
             let filter = CIFilter(name: "CISourceOverCompositing")!
             filter.setValue(colorImage, forKey: kCIInputImageKey)
             filter.setValue(input, forKey: kCIInputBackgroundImageKey)
-            #if swift(>=4.0)
             return filter.outputImage?.cropped(to: input.extent)
-            #else
-            return filter.outputImage?.cropping(to: input.extent)
-            #endif
         })
     }
     
@@ -88,15 +84,9 @@ public struct Filter {
             let paramsColor = [kCIInputBrightnessKey: brightness,
                                kCIInputContrastKey: contrast,
                                kCIInputSaturationKey: saturation]
-            
             let paramsExposure = [kCIInputEVKey: inputEV]
-            #if swift(>=4.0)
             let blackAndWhite = input.applyingFilter("CIColorControls", parameters: paramsColor)
             return blackAndWhite.applyingFilter("CIExposureAdjust", parameters: paramsExposure)
-            #else
-            let blackAndWhite = input.applyingFilter("CIColorControls", withInputParameters: paramsColor)
-            return blackAndWhite.applyingFilter("CIExposureAdjust", withInputParameters: paramsExposure)
-            #endif
         })
     }
 }
@@ -128,7 +118,7 @@ extension KingfisherClass where Base: Image {
         guard let outputImage = filter.transform(inputImage) else {
             return base
         }
-        
+
         guard let result = ciContext.createCGImage(outputImage, from: outputImage.extent) else {
             assertionFailure("[Kingfisher] Can not make an tint image within context.")
             return base
