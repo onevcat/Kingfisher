@@ -124,7 +124,7 @@ extension KingfisherClass where Base: Image {
         // No need to do anything if already up
         guard base.imageOrientation != .up else { return base }
     
-        return draw(to: size) {
+        return draw(to: size) { _ in
             base.draw(in: CGRect(origin: .zero, size: size))
         }
     }
