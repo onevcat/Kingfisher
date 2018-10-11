@@ -90,7 +90,7 @@ extension KingfisherManager {
     public func retrieveImage(with resource: Resource,
                               options: KingfisherOptionsInfo?,
                               progressBlock: DownloadProgressBlock?,
-                              completionHandler: CompletionHandler?) -> RetrieveImageTask
+                              completionHandler: CompletionHandler?) -> SessionDataTask?
     {
         return retrieveImage(with: resource, options: options, progressBlock: progressBlock) {
             result in
@@ -101,3 +101,33 @@ extension KingfisherManager {
         }
     }
 }
+
+extension ImageDownloader {
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    @discardableResult
+    open func downloadImage(with url: URL,
+                            retrieveImageTask: RetrieveImageTask? = nil,
+                            options: KingfisherOptionsInfo? = nil,
+                            progressBlock: ImageDownloaderProgressBlock? = nil,
+                            completionHandler: ImageDownloaderCompletionHandler? = nil) -> SessionDataTask?
+    {
+        return downloadImage(with: url, options: options, progressBlock: progressBlock) {
+            result in
+            switch result {
+            case .success(let value): completionHandler?(value.image, nil, value.url, value.originalData)
+            case .failure(let error): completionHandler?(nil, error as NSError, nil, nil)
+            }
+        }
+    }
+}
+
+@available(*, deprecated, message: "RetrieveImageDownloadTask is removed. Use `SessionDataTask` to cancel a task.")
+public struct RetrieveImageDownloadTask {
+}
+
+@available(*, deprecated, message: "RetrieveImageTask is removed. Use `SessionDataTask` to cancel a task.")
+public final class RetrieveImageTask {
+}
+
+@available(*, deprecated, message: "Use `DownloadProgressBlock` instead.", renamed: "DownloadProgressBlock")
+public typealias ImageDownloaderProgressBlock = DownloadProgressBlock

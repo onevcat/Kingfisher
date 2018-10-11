@@ -56,13 +56,13 @@ extension KingfisherClass where Base: UIButton {
                          placeholder: UIImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+                         completionHandler: CompletionHandler? = nil) -> SessionDataTask?
     {
         guard let resource = resource else {
             base.setImage(placeholder, for: state)
             setWebURL(nil, for: state)
             completionHandler?(nil, nil, .none, nil)
-            return .empty
+            return nil
         }
         
         let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
@@ -134,13 +134,13 @@ extension KingfisherClass where Base: UIButton {
                                    placeholder: UIImage? = nil,
                                    options: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+                                   completionHandler: CompletionHandler? = nil) -> SessionDataTask?
     {
         guard let resource = resource else {
             base.setBackgroundImage(placeholder, for: state)
             setBackgroundWebURL(nil, for: state)
             completionHandler?(nil, nil, .none, nil)
-            return .empty
+            return nil
         }
         
         let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
@@ -221,11 +221,11 @@ extension KingfisherClass where Base: UIButton {
         objc_setAssociatedObject(base, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate var imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? RetrieveImageTask
+    fileprivate var imageTask: SessionDataTask? {
+        return objc_getAssociatedObject(base, &imageTaskKey) as? SessionDataTask
     }
     
-    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func setImageTask(_ task: SessionDataTask?) {
         objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
@@ -264,11 +264,11 @@ extension KingfisherClass where Base: UIButton {
         objc_setAssociatedObject(base, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate var backgroundImageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(base, &backgroundImageTaskKey) as? RetrieveImageTask
+    fileprivate var backgroundImageTask: SessionDataTask? {
+        return objc_getAssociatedObject(base, &backgroundImageTaskKey) as? SessionDataTask
     }
     
-    fileprivate func setBackgroundImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func setBackgroundImageTask(_ task: SessionDataTask?) {
         objc_setAssociatedObject(base, &backgroundImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }

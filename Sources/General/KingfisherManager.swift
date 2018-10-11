@@ -39,30 +39,6 @@ public struct RetrieveImageResult {
     public let imageURL: URL
 }
 
-/// RetrieveImageTask represents a task of image retrieving process.
-/// It contains an async task of getting image from disk and from network.
-public final class RetrieveImageTask {
-    
-    // If task is canceled before the download task started (which means the `downloadTask` is nil),
-    // the download task should not begin.
-    var cancelledBeforeDownloadStarting: Bool = false
-    
-    /// The network retrieve task in this image task if exist. If the task does not need download (since the requested
-    /// image is found in cache), or the download is already finished, it is `nil`,
-    public var downloadTask: RetrieveImageDownloadTask?
-    
-    /**
-    Cancel current task. If this task is already done, do nothing.
-    */
-    public func cancel() {
-        if let downloadTask = downloadTask {
-            downloadTask.cancel()
-        } else {
-            cancelledBeforeDownloadStarting = true
-        }
-    }
-}
-
 /// Main manager class of Kingfisher. It connects Kingfisher downloader and cache.
 /// You can use this class to retrieve an image via a specified URL from web or cache.
 public class KingfisherManager {
@@ -108,15 +84,13 @@ public class KingfisherManager {
     public func retrieveImage(with resource: Resource,
                               options: KingfisherOptionsInfo?,
                               progressBlock: DownloadProgressBlock?,
-                              completionHandler: ResultCompletionHandler?) -> RetrieveImageTask
+                              completionHandler: ResultCompletionHandler?) -> SessionDataTask?
     {
-        let task = RetrieveImageTask()
         let options = currentDefaultOptions + (options ?? .empty)
         if options.forceRefresh {
-            downloadAndCacheImage(
+            return downloadAndCacheImage(
                 with: resource.downloadURL,
                 forKey: resource.cacheKey,
-                retrieveImageTask: task,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
                 options: options)
@@ -124,77 +98,66 @@ public class KingfisherManager {
             tryToRetrieveImageFromCache(
                 forKey: resource.cacheKey,
                 with: resource.downloadURL,
-                retrieveImageTask: task,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
                 options: options)
+            return nil
         }
-        
-        return task
     }
 
     @discardableResult
     func downloadAndCacheImage(with url: URL,
                              forKey key: String,
-                      retrieveImageTask: RetrieveImageTask,
                           progressBlock: DownloadProgressBlock?,
                       completionHandler: ResultCompletionHandler?,
-                                options: KingfisherOptionsInfo) -> RetrieveImageDownloadTask?
+                                options: KingfisherOptionsInfo) -> SessionDataTask?
     {
         let downloader = options.downloader ?? self.downloader
         let processQueue = self.processQueue
-        return downloader.downloadImage(with: url, retrieveImageTask: retrieveImageTask, options: options,
-            progressBlock: { receivedSize, totalSize in
-                progressBlock?(receivedSize, totalSize)
-            },
-            completionHandler: { image, error, imageURL, originalData in
+
+        return downloader.downloadImage(
+            with: url,
+            options: options,
+            progressBlock: { receivedSize, totalSize in progressBlock?(receivedSize, totalSize)})
+        {
+            result in
+            switch result {
+            case .success(let value):
                 let targetCache = options.targetCache ?? self.cache
-                if let image = image, let originalData = originalData {
-                    targetCache.store(image,
-                                      original: originalData,
-                                      forKey: key,
-                                      processorIdentifier:options.processor.identifier,
-                                      cacheSerializer: options.cacheSerializer,
-                                      toDisk: !options.cacheMemoryOnly) {
-                                        
-                                        guard options.waitForCache else { return }
-                                        
-                                        let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
-                                        let result = RetrieveImageResult(image: image, cacheType: cacheType, imageURL: url)
-                                        completionHandler?(.success(result))
-                    }
-                    
-                    if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
-                        let originalCache = options.originalCache ?? targetCache
-                        let defaultProcessor = DefaultImageProcessor.default
-                        processQueue.async {
-                            if let originalImage = defaultProcessor.process(item: .data(originalData), options: options) {
-                                originalCache.store(originalImage,
-                                                    original: originalData,
-                                                    forKey: key,
-                                                    processorIdentifier: defaultProcessor.identifier,
-                                                    cacheSerializer: options.cacheSerializer,
-                                                    toDisk: !options.cacheMemoryOnly,
-                                                    completionHandler: nil)
-                            }
+                targetCache.store(value.image, original: value.originalData, forKey: key, processorIdentifier: options.processor.identifier, cacheSerializer: options.cacheSerializer, toDisk: !options.cacheMemoryOnly) {
+                    guard options.waitForCache else { return }
+
+                    let cacheType = targetCache.imageCachedType(forKey: key, processorIdentifier: options.processor.identifier)
+                    let result = RetrieveImageResult(image: value.image, cacheType: cacheType, imageURL: url)
+                    completionHandler?(.success(result))
+                }
+                if options.cacheOriginalImage && options.processor != DefaultImageProcessor.default {
+                    let originalCache = options.originalCache ?? targetCache
+                    let defaultProcessor = DefaultImageProcessor.default
+                    processQueue.async {
+                        if let originalImage = defaultProcessor.process(item: .data(value.originalData), options: options) {
+                            originalCache.store(originalImage,
+                                                original: value.originalData,
+                                                forKey: key,
+                                                processorIdentifier: defaultProcessor.identifier,
+                                                cacheSerializer: options.cacheSerializer,
+                                                toDisk: !options.cacheMemoryOnly,
+                                                completionHandler: nil)
                         }
                     }
                 }
-
-                if options.waitForCache == false {
-                    if let error = error {
-                        completionHandler?(.failure(error))
-                    } else {
-                        let result = RetrieveImageResult(image: image!, cacheType: .none, imageURL: url)
-                        completionHandler?(.success(result))
-                    }
+                if !options.waitForCache {
+                    let result = RetrieveImageResult(image: value.image, cacheType: .none, imageURL: url)
+                    completionHandler?(.success(result))
                 }
-            })
+            case .failure(let error):
+                completionHandler?(.failure(error))
+            }
+        }
     }
     
     func tryToRetrieveImageFromCache(forKey key: String,
                                        with url: URL,
-                              retrieveImageTask: RetrieveImageTask,
                                   progressBlock: DownloadProgressBlock?,
                               completionHandler: ResultCompletionHandler?,
                                         options: KingfisherOptionsInfo)
@@ -208,7 +171,6 @@ public class KingfisherManager {
             downloadAndCacheImage(
                 with: url,
                 forKey: key,
-                retrieveImageTask: retrieveImageTask,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler,
                 options: options)

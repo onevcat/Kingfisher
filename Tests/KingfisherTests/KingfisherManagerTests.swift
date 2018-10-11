@@ -278,7 +278,7 @@ class KingfisherManagerTests: XCTestCase {
 
         let p = SimpleProcessor()
         let options: KingfisherOptionsInfo = [.processor(p), .cacheOriginalImage]
-        self.manager.downloadAndCacheImage(with: url, forKey: URLString, retrieveImageTask: RetrieveImageTask(), progressBlock: nil, completionHandler: {
+        self.manager.downloadAndCacheImage(with: url, forKey: URLString, progressBlock: nil, completionHandler: {
             result in
             delay(0.1) {
                 var imageCached = self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: p.identifier)
@@ -310,7 +310,7 @@ class KingfisherManagerTests: XCTestCase {
         
         let p = SimpleProcessor()
         let options: KingfisherOptionsInfo = [.processor(p)]
-        manager.downloadAndCacheImage(with: url, forKey: URLString, retrieveImageTask: RetrieveImageTask(), progressBlock: nil, completionHandler: {
+        manager.downloadAndCacheImage(with: url, forKey: URLString, progressBlock: nil, completionHandler: {
             result in
             delay(0.1) {
                 var imageCached = self.manager.cache.imageCachedType(forKey: URLString, processorIdentifier: p.identifier)
