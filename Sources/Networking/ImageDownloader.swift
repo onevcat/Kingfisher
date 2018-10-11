@@ -278,7 +278,13 @@ class SessionDelegate: NSObject {
         guard let url = task.originalRequest?.url else {
             return nil
         }
-        return tasks[url]
+        guard let sessionTask = tasks[url] else {
+            return nil
+        }
+        guard sessionTask.task.taskIdentifier == task.taskIdentifier else {
+            return nil
+        }
+        return sessionTask
     }
 
     func cancelAll() {
@@ -395,7 +401,7 @@ public class SessionDataTask {
     
     var mutableData: Data
     let task: URLSessionDataTask
-
+    
     var callbacks = [TaskCallback]()
 
     let onTaskDone = Delegate<(Result<(Data, URLResponse?)>, [TaskCallback]), Void>()
