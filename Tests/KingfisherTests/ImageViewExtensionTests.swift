@@ -151,7 +151,7 @@ class ImageViewExtensionTests: XCTestCase {
             expectation.fulfill()
         }
 
-        task.cancel()
+        task?.cancel()
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -176,7 +176,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         delay(0.1) { 
-            task.cancel()
+            task?.cancel()
             _ = stub!.go()
         }
 
@@ -217,7 +217,7 @@ class ImageViewExtensionTests: XCTestCase {
                 group.leave()
         }
         
-        task1.cancel()
+        task1?.cancel()
         delay(0.1) { _ = stub!.go() }
         
         group.notify(queue: .main, execute: expectation.fulfill)
@@ -258,7 +258,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         delay(0.1) { 
-            task1.cancel()
+            task1?.cancel()
             _ = stub!.go()
         }
         
@@ -304,9 +304,9 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         delay(0.1) { 
-            task1.cancel()
-            task2.cancel()
-            task3.cancel()
+            task1?.cancel()
+            task2?.cancel()
+            task3?.cancel()
             _ = stub!.go()
         }
         

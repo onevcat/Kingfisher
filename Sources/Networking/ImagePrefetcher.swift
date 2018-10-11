@@ -64,7 +64,7 @@ public class ImagePrefetcher {
     private var progressBlock: PrefetcherProgressBlock?
     private var completionHandler: PrefetcherCompletionHandler?
     
-    private var tasks = [URL: RetrieveImageDownloadTask]()
+    private var tasks = [URL: SessionDataTask]()
     
     private var pendingResources: ArraySlice<Resource>
     private var skippedResources = [Resource]()
@@ -196,7 +196,8 @@ public class ImagePrefetcher {
         prefetchQueue.async {
             if self.finished { return }
             self.stopped = true
-            self.tasks.values.forEach { $0.cancel() }
+            #warning("Stop download.")
+//            self.tasks.values.forEach { $0.cancel() }
         }
     }
     
@@ -224,7 +225,6 @@ public class ImagePrefetcher {
         let downloadTask = manager.downloadAndCacheImage(
             with: resource.downloadURL,
             forKey: resource.cacheKey,
-            retrieveImageTask: RetrieveImageTask(),
             progressBlock: nil,
             completionHandler: downloadTaskCompletionHandler,
             options: optionsInfo)

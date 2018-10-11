@@ -58,13 +58,13 @@ extension KingfisherClass where Base: ImageView {
                          placeholder: Placeholder? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+                         completionHandler: CompletionHandler? = nil) -> SessionDataTask?
     {
         guard let resource = resource else {
             self.placeholder = placeholder
             setWebURL(nil)
             completionHandler?(nil, nil, .none, nil)
-            return .empty
+            return nil
         }
         
         var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
@@ -232,11 +232,11 @@ extension KingfisherClass where Base: ImageView {
         }
     }
     
-    fileprivate var imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? RetrieveImageTask
+    fileprivate var imageTask: SessionDataTask? {
+        return objc_getAssociatedObject(base, &imageTaskKey) as? SessionDataTask
     }
     
-    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
+    fileprivate func setImageTask(_ task: SessionDataTask?) {
         objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
