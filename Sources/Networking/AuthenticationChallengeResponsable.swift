@@ -2,7 +2,7 @@
 //  AuthenticationChallengeResponsable.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2018/10/11.
+//  Created by Wei Wang on 2018/10/11.
 //
 //  Copyright (c) 2018年 Wei Wang <onevcat@gmail.com>
 //

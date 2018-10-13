@@ -37,50 +37,52 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     override class func tearDown() {
-        super.tearDown()
         LSNocilla.sharedInstance().stop()
+        super.tearDown()
     }
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+
         imageView = ImageView()
         KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
         cleanDefaultCache()
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         LSNocilla.sharedInstance().clearStubs()
         imageView = nil
-        
         cleanDefaultCache()
         
         super.tearDown()
     }
 
     func testImageDownloadForImageView() {
-        let expectation = self.expectation(description: "wait for downloading image")
-        
-        let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-        let url = URL(string: URLString)!
-        
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData2, length: 123)
+
         var progressBlockIsCalled = false
         
-        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
-            progressBlockIsCalled = true
-            XCTAssertTrue(Thread.isMainThread)
-        }) { image, error, cacheType, imageURL in
-            expectation.fulfill()
+        imageView.kf.setImage(
+            with: url,
+            progressBlock: { _, _ in
+                progressBlockIsCalled = true
+                XCTAssertTrue(Thread.isMainThread)
+            })
+        {
+            result in
+            exp.fulfill()
             
-            XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
-            XCTAssert(image != nil, "Downloaded image should exist.")
-            XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
-            XCTAssert(self.imageView.image! == testImage, "Downloaded image should be already set to the image property.")
-            XCTAssert(self.imageView.kf.webURL == imageURL, "Web URL should equal to the downloaded url.")
+            XCTAssertTrue(progressBlockIsCalled)
+            XCTAssertNotNil(result.value)
+
+            let value = result.value!
+            XCTAssertTrue(value.image.renderEqual(to: testImage))
+            XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
+            XCTAssertEqual(self.imageView.kf.webURL, url)
             
-            XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded.")
+            XCTAssertEqual(value.cacheType, .none)
             XCTAssertTrue(Thread.isMainThread)
         }
         
@@ -88,96 +90,90 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testImageDownloadCompletionHandlerRunningOnMainQueue() {
-        let expectation = self.expectation(description: "wait for downloading image")
-        
-        let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-        let url = URL(string: URLString)!
-        
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData2)
+
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        imageView.kf.setImage(with: url, placeholder: nil, options: [.callbackDispatchQueue(customQueue)], progressBlock: { receivedSize, totalSize in
+        imageView.kf.setImage(
+            with: url,
+            options: [.callbackDispatchQueue(customQueue)],
+            progressBlock: { _, _ in XCTAssertTrue(Thread.isMainThread) })
+        {
+            result in
             XCTAssertTrue(Thread.isMainThread)
-        }) { image, error, cacheType, imageURL in
-            XCTAssertTrue(Thread.isMainThread, "The image extension callback should be always in main queue.")
-            expectation.fulfill()
+            exp.fulfill()
         }
-        
         waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadWithResourceForImageView() {
-        let expectation = self.expectation(description: "wait for downloading image")
-        
-        let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-        let url = URL(string: URLString)!
-        let resource = ImageResource(downloadURL: url)
-        
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData2, length: 123)
+
         var progressBlockIsCalled = false
-        
-        cleanDefaultCache()
-        
-        _ = imageView.kf.setImage(with: resource, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
-            progressBlockIsCalled = true
-            }) { image, error, cacheType, imageURL in
-                expectation.fulfill()
-                
-                XCTAssert(progressBlockIsCalled, "progressBlock should be called at least once.")
-                XCTAssert(image != nil, "Downloaded image should exist.")
-                XCTAssert(image! == testImage, "Downloaded image should be the same as test image.")
-                XCTAssert(self.imageView.image! == testImage, "Downloaded image should be already set to the image property.")
-                XCTAssert(self.imageView.kf.webURL == imageURL, "Web URL should equal to the downloaded url.")
-                
-                XCTAssert(cacheType == .none, "The cache type should be none here. This image was just downloaded. But now is: \(cacheType)")
+
+        let resource = ImageResource(downloadURL: url)
+        imageView.kf.setImage(
+            with: resource,
+            progressBlock: { _, _ in progressBlockIsCalled = true })
+        {
+            result in
+            XCTAssertTrue(progressBlockIsCalled)
+            XCTAssertNotNil(result.value)
+
+            let value = result.value!
+            XCTAssertTrue(value.image.renderEqual(to: testImage))
+            XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
+            XCTAssertEqual(self.imageView.kf.webURL, url)
+
+            XCTAssertEqual(value.cacheType, .none)
+            XCTAssertTrue(Thread.isMainThread)
+
+            exp.fulfill()
         }
         
         waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCancelForImageView() {
-        let expectation = self.expectation(description: "wait for downloading image")
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData2, length: 123)
 
-        let URLString = testKeys[0]
-        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
-        let url = URL(string: URLString)!
-        
-        var progressBlockIsCalled = false
-
-        let task = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
-            progressBlockIsCalled = true
-        }) { image, error, cacheType, imageURLin in
-            XCTAssertEqual(error?.code, KingfisherError.downloadCancelledBeforeStarting.rawValue, "The error should be downloadCancelledBeforeStarting")
-            XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-            expectation.fulfill()
+        let task = imageView.kf.setImage(
+            with: url,
+            progressBlock: { _, _ in XCTFail() })
+        {
+            result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
         }
 
+        XCTAssertNotNil(task)
         task?.cancel()
         waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testImageDownloadCancelForImageViewAfterRequestStarted() {
-        let expectation = self.expectation(description: "wait for downloading image")
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData2, length: 123)
         
-        let URLString = testKeys[0]
-        let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
-        let url = URL(string: URLString)!
-        
-        var progressBlockIsCalled = false
-        
-        cleanDefaultCache()
-        
-        let task = imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: { receivedSize, totalSize in
-            progressBlockIsCalled = true
-            }) { image, error, cacheType, imageURL in
-                XCTAssertNotNil(error)
-                XCTAssertEqual(error?.code, NSURLErrorCancelled)
-                XCTAssert(progressBlockIsCalled == false, "ProgressBlock should not be called since it is canceled.")
-                expectation.fulfill()
+        let task = imageView.kf.setImage(
+            with: url,
+            progressBlock: { _, _ in XCTFail() })
+        {
+            result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
         }
-        
+
+        XCTAssertNotNil(task)
         delay(0.1) { 
             task?.cancel()
-            _ = stub!.go()
+            _ = stub.go()
         }
 
         waitForExpectations(timeout: 5, handler: nil)
@@ -272,7 +268,6 @@ class ImageViewExtensionTests: XCTestCase {
         let URLString = testKeys[0]
         let stub = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)?.delay()
         let url = URL(string: URLString)!
-        
         
         let group = DispatchGroup()
         
@@ -513,11 +508,11 @@ class ImageViewExtensionTests: XCTestCase {
         let url = URL(string: URLString)!
         
         imageView.image = testImage
-        imageView.kf.setImage(with: url, placeholder: nil, options: nil)
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil) { result in }
         XCTAssertNil(imageView.image)
         
         imageView.image = testImage
-        imageView.kf.setImage(with: url, placeholder: nil, options: [.keepCurrentImageWhileLoading])
+        imageView.kf.setImage(with: url, placeholder: nil, options: [.keepCurrentImageWhileLoading]) { result in }
         XCTAssertEqual(testImage, imageView.image)
         
         // Wait request finished. Ensure tests timing order.
@@ -532,14 +527,14 @@ class ImageViewExtensionTests: XCTestCase {
         let url = URL(string: URLString)!
         
         // While current image is nil, set placeholder
-        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading])
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in }
         XCTAssertNotNil(imageView.image)
         XCTAssertEqual(testImage, imageView.image)
         
         // While current image is not nil, keep it
         let anotherImage = Image(data: testImageJEPGData)
         imageView.image = anotherImage
-        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading])
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in }
         XCTAssertNotNil(imageView.image)
         XCTAssertEqual(anotherImage, imageView.image)
 

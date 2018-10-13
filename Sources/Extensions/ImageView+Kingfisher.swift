@@ -58,26 +58,27 @@ extension KingfisherClass where Base: ImageView {
                          placeholder: Placeholder? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> SessionDataTask?
+                         completionHandler: ResultCompletionHandler? = nil) -> SessionDataTask?
     {
         guard let resource = resource else {
             self.placeholder = placeholder
-            setWebURL(nil)
-            completionHandler?(nil, nil, .none, nil)
+            webURL = nil
+            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
         var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
         let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
         
-        if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet { // Always set placeholder while there is no image/placehoer yet.
+        if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
+            // Always set placeholder while there is no image/placehoer yet.
             self.placeholder = placeholder
         }
 
         let maybeIndicator = indicator
         maybeIndicator?.startAnimatingView()
-        
-        setWebURL(resource.downloadURL)
+
+        webURL = resource.downloadURL
 
         if base.shouldPreloadAllAnimation() {
             options.append(.preloadAllAnimationData)
@@ -87,68 +88,81 @@ extension KingfisherClass where Base: ImageView {
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else {
-                    return
-                }
+                guard resource.downloadURL == self.webURL else { return }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     maybeIndicator?.stopAnimatingView()
-                    guard let strongBase = base, imageURL == self.webURL else {
-                        completionHandler?(image, error, cacheType, imageURL)
+                    guard resource.downloadURL == self.webURL else {
+                        let error = KingfisherError2.imageSettingError(
+                            reason: .resourceNotInUse(result: result, resource: resource))
+                        completionHandler?(.failure(error))
                         return
                     }
-                    
-                    self.setImageTask(nil)
-                    guard let image = image else {
-                        completionHandler?(nil, error, cacheType, imageURL)
-                        return
-                    }
-                    
-                    guard let transitionItem = options.lastMatchIgnoringAssociatedValue(.transition(.none)),
-                        case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) else
-                    {
-                        self.placeholder = nil
-                        strongBase.image = image
-                        completionHandler?(image, error, cacheType, imageURL)
-                        return
-                    }
-                    
-                    #if !os(macOS)
-                        UIView.transition(with: strongBase, duration: 0.0, options: [],
-                                          animations: { maybeIndicator?.stopAnimatingView() },
-                                          completion: { _ in
 
-                                            self.placeholder = nil
-                                            UIView.transition(with: strongBase, duration: transition.duration,
-                                                              options: [transition.animationOptions, .allowUserInteraction],
-                                                              animations: {
-                                                                // Set image property in the animation.
-                                                                transition.animations?(strongBase, image)
-                                                              },
-                                                              completion: { finished in
-                                                                transition.completion?(finished)
-                                                                completionHandler?(image, error, cacheType, imageURL)
-                                                              })
-                                          })
-                    #endif
+                    self.imageTask = nil
+
+                    switch result {
+                    case .success(let value):
+                        guard self.needsTransition(options: options, cacheType: value.cacheType) else {
+                            self.placeholder = nil
+                            self.base.image = value.image
+                            completionHandler?(result)
+                            return
+                        }
+
+                        #if !os(macOS)
+                        let transition = options.transition
+                        UIView.transition(
+                            with: self.base,
+                            duration: 0.0,
+                            options: [],
+                            animations: { maybeIndicator?.stopAnimatingView() },
+                            completion: { _ in
+                                self.placeholder = nil
+                                UIView.transition(
+                                    with: self.base,
+                                    duration: transition.duration,
+                                    options: [transition.animationOptions, .allowUserInteraction],
+                                    animations: { transition.animations?(self.base, value.image) },
+                                    completion: { finished in
+                                        transition.completion?(finished)
+                                        completionHandler?(result)
+                                    }
+                                )
+                            }
+                        )
+                        #endif
+                    case .failure:
+                        completionHandler?(result)
+                    }
                 }
-            })
+        })
         
-        setImageTask(task)
-        
+        imageTask = task
         return task
     }
-    
-    /**
-     Cancel the image download task bounded to the image view if it is running.
-     Nothing will happen if the downloading has already finished.
-     */
+
+    /// Cancel the image download task bounded to the image view if it is running.
+    /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
+    }
+
+    private func needsTransition(options: KingfisherOptionsInfo, cacheType: CacheType) -> Bool {
+        guard let _ = options.lastMatchIgnoringAssociatedValue(.transition(.none)) else {
+            return false
+        }
+        if options.forceTransition {
+            return true
+        }
+        if cacheType == .none {
+            return true
+        }
+        return false
     }
 }
 
@@ -161,48 +175,35 @@ private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: ImageView {
     /// Get the image URL binded to this image view.
-    public var webURL: URL? {
-        return objc_getAssociatedObject(base, &lastURLKey) as? URL
+    public private(set) var webURL: URL? {
+        get { return getAssociatedObject(base, &lastURLKey) }
+        set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
     }
-    
-    fileprivate func setWebURL(_ url: URL?) {
-        objc_setAssociatedObject(base, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
+
     /// Holds which indicator type is going to be used.
     /// Default is .none, means no indicator will be shown.
     public var indicatorType: IndicatorType {
         get {
-            let indicator = objc_getAssociatedObject(base, &indicatorTypeKey) as? IndicatorType
-            return indicator ?? .none
+            return getAssociatedObject(base, &indicatorTypeKey) ?? .none
         }
         
         set {
             switch newValue {
-            case .none:
-                indicator = nil
-            case .activity:
-                indicator = ActivityIndicator()
-            case .image(let data):
-                indicator = ImageIndicator(imageData: data)
-            case .custom(let anIndicator):
-                indicator = anIndicator
+            case .none: indicator = nil
+            case .activity: indicator = ActivityIndicator()
+            case .image(let data): indicator = ImageIndicator(imageData: data)
+            case .custom(let anIndicator): indicator = anIndicator
             }
-            
-            objc_setAssociatedObject(base, &indicatorTypeKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+            setRetainedAssociatedObject(base, &indicatorTypeKey, newValue)
         }
     }
     
     /// Holds any type that conforms to the protocol `Indicator`.
     /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
     /// It will be `nil` if `indicatorType` is `.none`.
-    public fileprivate(set) var indicator: Indicator? {
-        get {
-            guard let box = objc_getAssociatedObject(base, &indicatorKey) as? Box<Indicator> else {
-                return nil
-            }
-            return box.value
-        }
+    public private(set) var indicator: Indicator? {
+        get { return getAssociatedObject(base, &indicatorKey) }
         
         set {
             // Remove previous
@@ -224,27 +225,18 @@ extension KingfisherClass where Base: ImageView {
                 
                 newIndicator.view.isHidden = true
             }
-            
-            // Save in associated object
-            // Wrap newValue with Box to workaround an issue that Swift does not recognize
-            // and casting protocol for associate object correctly. https://github.com/onevcat/Kingfisher/issues/872
-            objc_setAssociatedObject(base, &indicatorKey, newValue.map(Box.init), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+            setRetainedAssociatedObject(base, &indicatorKey, newValue)
         }
     }
     
-    fileprivate var imageTask: SessionDataTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? SessionDataTask
+    private var imageTask: SessionDataTask? {
+        get { return getAssociatedObject(base, &imageTaskKey) }
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
-    
-    fileprivate func setImageTask(_ task: SessionDataTask?) {
-        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    public fileprivate(set) var placeholder: Placeholder? {
-        get {
-            return objc_getAssociatedObject(base, &placeholderKey) as? Placeholder
-        }
-        
+
+    public private(set) var placeholder: Placeholder? {
+        get { return getAssociatedObject(base, &placeholderKey) }
         set {
             if let previousPlaceholder = placeholder {
                 previousPlaceholder.remove(from: base)
@@ -255,8 +247,7 @@ extension KingfisherClass where Base: ImageView {
             } else {
                 base.image = nil
             }
-            
-            objc_setAssociatedObject(base, &placeholderKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            setRetainedAssociatedObject(base, &placeholderKey, newValue)
         }
     }
 }

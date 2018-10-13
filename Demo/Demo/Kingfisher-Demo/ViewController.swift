@@ -68,15 +68,19 @@ extension ViewController {
         
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
 
-        _ = (cell as! CollectionViewCell).cellImageView.kf.setImage(with: url,
-                                           placeholder: nil,
-                                           options: [.transition(ImageTransition.fade(1))],
-                                           progressBlock: { receivedSize, totalSize in
-                                            print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
+        let imageView = (cell as! CollectionViewCell).cellImageView!
+        imageView.kf.setImage(
+            with: url,
+            placeholder: nil,
+            options: [.transition(ImageTransition.fade(1))],
+            progressBlock: { receivedSize, totalSize in
+                print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
             },
-                                           completionHandler: { image, error, cacheType, imageURL in
-                                            print("\(indexPath.row + 1): Finished")
-        })
+            completionHandler: { result in
+                print(result)
+                print("\(indexPath.row + 1): Finished")
+            }
+        )
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -95,15 +99,3 @@ extension ViewController: UICollectionViewDataSourcePrefetching {
         ImagePrefetcher(urls: urls).start()
     }
 }
-
-
-// Inspired by: https://fdp.io/blog/2018/03/22/supporting-compactmap-in-swift-4/
-#if swift(>=4.1)
-    // This is provided by the stdlib
-#else
-    extension Sequence {
-        func compactMap<T>(_ transform: (Self.Element) throws -> T?) rethrows -> [T] {
-            return try flatMap(transform)
-        }
-    }
-#endif

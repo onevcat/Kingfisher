@@ -196,8 +196,7 @@ public class ImagePrefetcher {
         prefetchQueue.async {
             if self.finished { return }
             self.stopped = true
-            #warning("Stop download.")
-//            self.tasks.values.forEach { $0.cancel() }
+            self.tasks.values.forEach { $0.cancel() }
         }
     }
     
