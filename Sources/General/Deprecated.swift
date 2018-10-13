@@ -96,7 +96,7 @@ extension KingfisherManager {
             result in
             switch result {
             case .success(let value): completionHandler?(value.image, nil, value.cacheType, value.imageURL)
-            case .failure(let error): completionHandler?(nil, error as NSError, .none, nil)
+            case .failure(let error): completionHandler?(nil, error as NSError, .none, resource.downloadURL)
             }
         }
     }
@@ -131,3 +131,26 @@ public final class RetrieveImageTask {
 
 @available(*, deprecated, message: "Use `DownloadProgressBlock` instead.", renamed: "DownloadProgressBlock")
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
+
+#if !os(watchOS)
+extension KingfisherClass where Base: ImageView {
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    @discardableResult
+    public func setImage(with resource: Resource?,
+                         placeholder: Placeholder? = nil,
+                         options: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                         completionHandler: CompletionHandler? = nil) -> SessionDataTask?
+    {
+        return setImage(with: resource, placeholder: placeholder, options: options, progressBlock: progressBlock) {
+            result in
+            switch result {
+            case .success(let value):
+                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error):
+                completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+}
+#endif

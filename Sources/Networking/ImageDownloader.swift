@@ -108,6 +108,19 @@ open class ImageDownloader {
         sessionHandler.onValidStatusCode.delegate(on: self) { (self, code) in
             return (self.delegate ?? self).isValidStatusCode(code, for: self)
         }
+        sessionHandler.onDownloadingFinished.delegate(on: self) { (self, result) in
+//            self.delegate?.imageDownloader(
+//                self, didFinishDownloadingImageForURL: result.value?.0, with: result.value?.1, error: result.error)
+        }
+        sessionHandler.onDidDownloadData.delegate(on: self) { (self, task) in
+            guard let url = task.task.originalRequest?.url else {
+                return task.mutableData
+            }
+            guard let delegate = self.delegate else {
+                return task.mutableData
+            }
+            return delegate.imageDownloader(self, didDownload: task.mutableData, for: url)
+        }
     }
 
     /// Download an image with a URL and option.
@@ -130,14 +143,14 @@ open class ImageDownloader {
         let options = options ?? .empty
 
         guard let r = options.modifier.modified(for: request) else {
-            completionHandler?(.failure(KingfisherPlaceholderError()))
+            completionHandler?(.failure(KingfisherError2.requestError(reason: .emptyRequest)))
             return nil
         }
         request = r
         
         // There is a possibility that request modifier changed the url to `nil` or empty.
         guard let url = request.url, !url.absoluteString.isEmpty else {
-            completionHandler?(.failure(KingfisherPlaceholderError()))
+            completionHandler?(.failure(KingfisherError2.requestError(reason: .invalidURL(request: request))))
             return nil
         }
 
@@ -224,7 +237,7 @@ class SessionDelegate: NSObject {
 
     let onValidStatusCode = Delegate<Int, Bool>()
     let onDownloadingFinished = Delegate<Result<(URL, URLResponse)>, Void>()
-    let onDidDownloadData = Delegate<Data, Data>()
+    let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
     let onReceiveSessionChallenge = Delegate<(
             URLSession,
@@ -257,7 +270,8 @@ class SessionDelegate: NSObject {
         } else {
             let task = SessionDataTask(session: session, request: requst)
             task.onTaskCancelled.delegate(on: self) { [unowned task] (self, _) in
-                self.onCompleted(sessionTask: task, result: .failure(KingfisherPlaceholderError()))
+                let error = KingfisherError2.requestError(reason: .taskCancelled(task: task))
+                self.onCompleted(sessionTask: task, result: .failure(error))
             }
             task.callbacks.append(callback)
             tasks[url] = task
@@ -307,15 +321,17 @@ extension SessionDelegate: URLSessionDataDelegate {
         lock.lock()
         defer { lock.unlock() }
 
-        guard let response = response as? HTTPURLResponse else {
-            onCompleted(task: dataTask, result: .failure(KingfisherPlaceholderError()))
+        guard let httpResponse = response as? HTTPURLResponse else {
+            let error = KingfisherError2.responseError(reason: .invalidURLResponse(response: response))
+            onCompleted(task: dataTask, result: .failure(error))
             completionHandler(.cancel)
             return
         }
 
-        let httpStatusCode = response.statusCode
+        let httpStatusCode = httpResponse.statusCode
         guard onValidStatusCode.call(httpStatusCode) == true else {
-            onCompleted(task: dataTask, result: .failure(KingfisherPlaceholderError()))
+            let error = KingfisherError2.responseError(reason: .invalidHTTPStatusCode(response: httpResponse))
+            onCompleted(task: dataTask, result: .failure(error))
             completionHandler(.cancel)
             return
         }
@@ -350,10 +366,13 @@ extension SessionDelegate: URLSessionDataDelegate {
 
         let result: Result<(Data, URLResponse?)>
         if let error = error {
-            result = .failure(error)
+            result = .failure(KingfisherError2.responseError(reason: .URLSessionError(error: error)))
         } else {
-            let finalData = onDidDownloadData.call(sessionTask.mutableData) ?? sessionTask.mutableData
-            result = .success((finalData, task.response))
+            if let data = onDidDownloadData.call(sessionTask), let finalData = data {
+                result = .success((finalData, task.response))
+            } else {
+                result = .failure(KingfisherError2.responseError(reason: .dataModifyingFailed(task: sessionTask)))
+            }
         }
         onCompleted(task: task, result: result)
     }
@@ -399,8 +418,8 @@ public class SessionDataTask {
         let options: KingfisherOptionsInfo
     }
     
-    var mutableData: Data
-    let task: URLSessionDataTask
+    public private(set) var mutableData: Data
+    public let task: URLSessionDataTask
     
     var callbacks = [TaskCallback]()
 
@@ -426,6 +445,7 @@ public class SessionDataTask {
     func cancel(force: Bool = false) {
         if force {
             task.cancel()
+            onTaskCancelled.call()
         } else {
             downloadTaskCount -= 1
             if downloadTaskCount == 0 {

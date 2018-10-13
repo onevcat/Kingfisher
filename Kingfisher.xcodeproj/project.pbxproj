@@ -14,6 +14,13 @@
 		4B10480F216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B104810216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D13F49D61BEDA67C00CE335D /* Kingfisher.framework */; };
+		4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351C7217066580081EED8 /* StubHelpers.swift */; };
+		4B8351C9217066580081EED8 /* StubHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351C7217066580081EED8 /* StubHelpers.swift */; };
+		4B8351CA217066580081EED8 /* StubHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351C7217066580081EED8 /* StubHelpers.swift */; };
+		4B8351CC217084660081EED8 /* Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351CB217084660081EED8 /* Runtime.swift */; };
+		4B8351CD217084660081EED8 /* Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351CB217084660081EED8 /* Runtime.swift */; };
+		4B8351CE217084660081EED8 /* Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351CB217084660081EED8 /* Runtime.swift */; };
+		4B8351CF217084660081EED8 /* Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351CB217084660081EED8 /* Runtime.swift */; };
 		4B8E2917216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */; };
 		4B8E2918216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */; };
 		4B8E2919216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */; };
@@ -229,6 +236,8 @@
 		4B37669F1C4794460001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3766A11C47944D0001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
+		4B8351C7217066580081EED8 /* StubHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubHelpers.swift; sourceTree = "<group>"; };
+		4B8351CB217084660081EED8 /* Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runtime.swift; sourceTree = "<group>"; };
 		4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloaderDelegate.swift; sourceTree = "<group>"; };
 		4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationChallengeResponsable.swift; sourceTree = "<group>"; };
 		4BCCF3441D5B0457003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -355,6 +364,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B8351C6217066400081EED8 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				4B8351C7217066580081EED8 /* StubHelpers.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		4BCCF3431D5B0457003387C2 /* KingfisherTests-macOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -476,6 +493,7 @@
 				D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */,
 				D1A37BF1215D3850009B39B7 /* SizeExtensions.swift */,
 				D1839844216E333E003927D3 /* Delegate.swift */,
+				4B8351CB217084660081EED8 /* Runtime.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -492,6 +510,7 @@
 		D12E0C431C47F23500AC98AD /* KingfisherTests */ = {
 			isa = PBXGroup;
 			children = (
+				4B8351C6217066400081EED8 /* Utils */,
 				D12E0C491C47F23500AC98AD /* Info.plist */,
 				D12E0C441C47F23500AC98AD /* dancing-banana.gif */,
 				D1D2C3291C70A3230018F2F9 /* single-frame.gif */,
@@ -969,6 +988,7 @@
 				D13646762165A1A100A33652 /* Result.swift in Sources */,
 				D1A37BCA215D2DBA009B39B7 /* NSButton+Kingfisher.swift in Sources */,
 				D1A37BCB215D2DBA009B39B7 /* Kingfisher.swift in Sources */,
+				4B8351CE217084660081EED8 /* Runtime.swift in Sources */,
 				D1839847216E333E003927D3 /* Delegate.swift in Sources */,
 				D1A37BCC215D2DBA009B39B7 /* KingfisherError.swift in Sources */,
 				D1A37BCD215D2DBA009B39B7 /* KingfisherManager.swift in Sources */,
@@ -1010,6 +1030,7 @@
 				D12E0C721C47F6FE00AC98AD /* KingfisherManagerTests.swift in Sources */,
 				F72CE9CF1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C731C47F6FE00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
+				4B8351C9217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B421D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C741C47F6FE00AC98AD /* UIButtonExtensionTests.swift in Sources */,
 			);
@@ -1028,6 +1049,7 @@
 				D12E0C851C47F7AF00AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				F72CE9D01FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C861C47F7AF00AC98AD /* KingfisherManagerTests.swift in Sources */,
+				4B8351CA217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B431D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C871C47F7AF00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
 			);
@@ -1053,6 +1075,7 @@
 				D12AB71D215D2BB50013BA68 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				D1A37BF3215D3850009B39B7 /* SizeExtensions.swift in Sources */,
 				D12AB70D215D2BB50013BA68 /* KingfisherManager.swift in Sources */,
+				4B8351CD217084660081EED8 /* Runtime.swift in Sources */,
 				D12AB6C1215D2BB50013BA68 /* RequestModifier.swift in Sources */,
 				4B10480E216F157000300C61 /* ImageDataProcessor.swift in Sources */,
 				D12AB72D215D2BB50013BA68 /* Indicator.swift in Sources */,
@@ -1095,6 +1118,7 @@
 				D1839848216E333E003927D3 /* Delegate.swift in Sources */,
 				D12AB70F215D2BB50013BA68 /* KingfisherManager.swift in Sources */,
 				D1A37BF0215D375F009B39B7 /* Deprecated.swift in Sources */,
+				4B8351CF217084660081EED8 /* Runtime.swift in Sources */,
 				D13646772165A1A100A33652 /* Result.swift in Sources */,
 				D12AB6C3215D2BB50013BA68 /* RequestModifier.swift in Sources */,
 				4B8E291F216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */,
@@ -1132,6 +1156,7 @@
 				D12AB71C215D2BB50013BA68 /* FormatIndicatedCacheSerializer.swift in Sources */,
 				D1A37BF2215D3850009B39B7 /* SizeExtensions.swift in Sources */,
 				D12AB70C215D2BB50013BA68 /* KingfisherManager.swift in Sources */,
+				4B8351CC217084660081EED8 /* Runtime.swift in Sources */,
 				D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */,
 				4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */,
 				D12AB72C215D2BB50013BA68 /* Indicator.swift in Sources */,
@@ -1167,6 +1192,7 @@
 				D12E0C521C47F23500AC98AD /* ImageExtensionTests.swift in Sources */,
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
+				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C501C47F23500AC98AD /* ImageCacheTests.swift in Sources */,
 			);

@@ -29,7 +29,53 @@ import Foundation
 /// Error domain of Kingfisher
 public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 
-struct KingfisherPlaceholderError: Error {
+public enum KingfisherError2: Error {
+    
+    public enum RequestErrorReason {
+        case emptyRequest
+        case invalidURL(request: URLRequest)
+        case taskCancelled(task: SessionDataTask)
+    }
+    
+    public enum ResponseErrorReason {
+        case invalidURLResponse(response: URLResponse)
+        case invalidHTTPStatusCode(response: HTTPURLResponse)
+        case URLSessionError(error: Error)
+        case dataModifyingFailed(task: SessionDataTask)
+    }
+    
+    public enum CacheErrorReason {
+        
+    }
+    
+    public enum ProcessorErrorReason {
+        case processingFailed(processor: ImageProcessor, data: Data)
+    }
+
+    public enum ImageSettingErrorReason {
+        case emptyResource
+        case resourceNotInUse(result: Result<RetrieveImageResult>, resource: Resource)
+    }
+    
+    case requestError(reason: RequestErrorReason)
+    case responseError(reason: ResponseErrorReason)
+    case cacheError(reason: CacheErrorReason)
+    case processorError(reason: ProcessorErrorReason)
+    case imageSettingError(reason: ImageSettingErrorReason)
+    
+    var isTaskCancelled: Bool {
+        if case KingfisherError2.requestError(reason: .taskCancelled) = self {
+            return true
+        }
+        return false
+    }
+
+    func isInvalidResponseStatusCode(_ code: Int) -> Bool {
+        if case .responseError(reason: .invalidHTTPStatusCode(let response)) = self {
+            return response.statusCode == code
+        }
+        return false
+    }
 }
 
 

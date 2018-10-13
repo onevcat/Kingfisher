@@ -54,13 +54,13 @@ extension KingfisherClass where Base: NSButton {
                          placeholder: Image? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+                         completionHandler: ResultCompletionHandler? = nil) -> SessionDataTask?
     {
         guard let resource = resource else {
             base.image = placeholder
             setWebURL(nil)
-            completionHandler?(nil, nil, .none, nil)
-            return .empty
+            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            return nil
         }
         
         let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
