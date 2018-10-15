@@ -1,8 +1,8 @@
 //
-//  ThreadHelper.swift
+//  CallbackQueue.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 15/10/9.
+//  Created by onevcat on 2018/10/15.
 //
 //  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
@@ -25,6 +25,33 @@
 //  THE SOFTWARE.
 
 import Foundation
+
+/// Represents callback queue behaviors when an calling of closure be dispatched.
+///
+/// - asyncMain: Dispatch the calling to `DispatchQueue.main` with an `async` behavior.
+/// - currentMainOrAsync: Dispatch the calling to `DispatchQueue.main` with an `async` behavior if current queue is not
+///                       `.main`. Otherwise, call the closure immediately in current main queue.
+/// - untouch: Do not change the calling queue for closure.
+/// - dispatch: Dispatches to a specified `DispatchQueue`.
+public enum CallbackQueue {
+    case mainAsync
+    case mainCurrentOrAsync
+    case current
+    case dispatch(DispatchQueue)
+    
+    func execute(_ block: @escaping () -> Void) {
+        switch self {
+        case .mainAsync:
+            DispatchQueue.main.async { block() }
+        case .mainCurrentOrAsync:
+            DispatchQueue.main.safeAsync { block() }
+        case .current:
+            block()
+        case .dispatch(let queue):
+            queue.async { block() }
+        }
+    }
+}
 
 extension DispatchQueue {
     // This method will dispatch the `block` to self.

@@ -45,7 +45,9 @@ public enum KingfisherError2: Error {
     }
     
     public enum CacheErrorReason {
-        
+        case fileEnumeratorCreationFailed(url: URL)
+        case invalidFileEnumeratorContent(url: URL)
+        case invalidFileAttribute(key: String, path: String, attribute: FileAttributeKey, got: Any?)
     }
     
     public enum ProcessorErrorReason {
