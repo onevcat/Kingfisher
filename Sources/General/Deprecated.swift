@@ -154,3 +154,88 @@ extension KingfisherClass where Base: ImageView {
     }
 }
 #endif
+
+extension ImageCache {
+    /// The largest cache cost of memory cache. The total cost is pixel count of
+    /// all cached images in memory.
+    /// Default is unlimited. Memory cache will be purged automatically when a
+    /// memory warning notification is received.
+    @available(*, deprecated, message: "Use `memoryStorage.config.totalCostLimit` instead.",
+    renamed: "memoryStorage.config.totalCostLimit")
+    open var maxMemoryCost: Int {
+        get { return memoryStorage.config.totalCostLimit }
+        set { memoryStorage.config.totalCostLimit = maxMemoryCost }
+    }
+
+    /// The default DiskCachePathClosure
+    @available(*, deprecated, message: "Not needed anymore.")
+    public final class func defaultDiskCachePathClosure(path: String?, cacheName: String) -> String {
+        let dstPath = path ?? NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+        return (dstPath as NSString).appendingPathComponent(cacheName)
+    }
+
+    /// The default file extension appended to cached files.
+    @available(*, deprecated, message: "Use `diskStorage.config.pathExtension` instead.",
+    renamed: "diskStorage.config.pathExtension")
+    open var pathExtension: String? {
+        get { return diskStorage.config.pathExtension }
+        set { diskStorage.config.pathExtension = newValue }
+    }
+    
+    ///The disk cache location.
+    @available(*, deprecated, message: "Use `diskStorage.directoryURL.absoluteString` instead.",
+    renamed: "diskStorage.directoryURL.absoluteString")
+    public var diskCachePath: String {
+        return diskStorage.directoryURL.absoluteString
+    }
+    
+    /// The largest disk size can be taken for the cache. It is the total
+    /// allocated size of cached files in bytes.
+    /// Default is no limit.
+    @available(*, deprecated, message: "Use `diskStorage.config.sizeLimit` instead.",
+    renamed: "diskStorage.config.sizeLimit")
+    open var maxDiskCacheSize: UInt {
+        get { return UInt(diskStorage.config.sizeLimit) }
+        set { diskStorage.config.sizeLimit = Int(newValue) }
+    }
+    
+    @available(*, deprecated, message: "Use `diskStorage.cacheFileURL(forKey:).absoluteString` instead.",
+    renamed: "diskStorage.cacheFileURL(forKey:)")
+    open func cachePath(forComputedKey key: String) -> String {
+        return diskStorage.cacheFileURL(forKey: key).absoluteString
+    }
+    
+    /**
+     Get an image for a key from disk.
+     
+     - parameter key:     Key for the image.
+     - parameter options: Options of retrieving image. If you need to retrieve an image which was
+     stored with a specified `ImageProcessor`, pass the processor in the option too.
+     
+     - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
+     */
+    open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
+        let options = options ?? .empty
+        let computedKey = key.computedKey(with: options.processor.identifier)
+        do {
+            if let data = try diskStorage.value(forKey: computedKey) {
+                return options.cacheSerializer.image(with: data, options: options)
+            }
+        } catch {}
+        return nil
+    }
+    
+    open func retrieveImage(forKey key: String,
+                            options: KingfisherOptionsInfo?,
+                            completionHandler: ((Image?, CacheType) -> Void)?)
+    {
+        retrieveImage(
+            forKey: key,
+            options: options,
+            callbackQueue: .dispatch((options ?? .empty).callbackDispatchQueue))
+        {
+            result in
+            completionHandler?(result.value?.image, result.value?.cacheType ?? .none)
+        }
+    }
+}

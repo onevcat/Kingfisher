@@ -98,3 +98,13 @@ extension RectCorner {
     }
 }
 #endif
+
+extension Date {
+    var isPast: Bool {
+        return timeIntervalSinceNow < 0
+    }
+
+    var isFuture: Bool {
+        return timeIntervalSinceNow > 0
+    }
+}

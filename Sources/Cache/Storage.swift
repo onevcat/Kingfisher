@@ -2,7 +2,7 @@
 //  Storage.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2018/10/15.
+//  Created by Wei Wang on 2018/10/15.
 //
 //  Copyright (c) 2018年 Wei Wang <onevcat@gmail.com>
 //
@@ -25,3 +25,58 @@
 //  THE SOFTWARE.
 
 import Foundation
+
+public enum StorageExpiration {
+    case never
+    case seconds(TimeInterval)
+    case days(Int)
+    case date(Date)
+
+    func dateSince(_ date: Date) -> Date {
+        switch self {
+        case .never: return .distantFuture
+        case .seconds(let seconds): return date.addingTimeInterval(seconds)
+        case .days(let days): return date.addingTimeInterval(TimeInterval(60 * 60 * 24 * days))
+        case .date(let ref): return ref
+        }
+    }
+}
+
+protocol Storage {
+    associatedtype ValueType
+    associatedtype KeyType
+    func store(
+        value: ValueType,
+        forKey key: KeyType,
+        expiration: StorageExpiration?) throws
+    func value(forKey key: KeyType) throws -> ValueType?
+    func remove(forKey key: String) throws
+    func removeAll() throws
+}
+
+class StorageObject<T> {
+    let value: T
+    let expiration: StorageExpiration
+
+    private(set) var estimatedExpiration: Date
+
+    init(_ value: T, expiration: StorageExpiration) {
+        self.value = value
+        self.expiration = expiration
+
+        self.estimatedExpiration = expiration.dateSince(Date())
+    }
+
+    func extendExpiration() {
+        self.estimatedExpiration = expiration.dateSince(Date())
+    }
+}
+
+public protocol CacheCostCalculatable {
+    var cost: Int { get }
+}
+
+public protocol DataTransformable {
+    func toData() throws -> Data
+    static func fromData(_ data: Data) throws -> Self
+}
