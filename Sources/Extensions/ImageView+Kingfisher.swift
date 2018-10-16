@@ -58,7 +58,7 @@ extension KingfisherClass where Base: ImageView {
                          placeholder: Placeholder? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ResultCompletionHandler? = nil) -> SessionDataTask?
+                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> SessionDataTask?
     {
         guard let resource = resource else {
             self.placeholder = placeholder

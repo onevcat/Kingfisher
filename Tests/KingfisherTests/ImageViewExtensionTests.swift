@@ -311,8 +311,8 @@ class ImageViewExtensionTests: XCTestCase {
     
     func testImageDownloadMultipleCaches() {
         
-        let cache1 = ImageCache(name: "cache1")
-        let cache2 = ImageCache(name: "cache2")
+        let cache1 = try! ImageCache(name: "cache1")
+        let cache2 = try! ImageCache(name: "cache2")
         
         cache1.clearDiskCache()
         cache2.clearDiskCache()

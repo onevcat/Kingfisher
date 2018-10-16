@@ -40,6 +40,15 @@ public enum StorageExpiration {
         case .date(let ref): return ref
         }
     }
+
+    var timeInterval: TimeInterval {
+        switch self {
+        case .never: return .infinity
+        case .seconds(let seconds): return seconds
+        case .days(let days): return TimeInterval(60 * 60 * 24 * days)
+        case .date(let ref): return ref.timeIntervalSinceNow
+        }
+    }
 }
 
 protocol Storage {
@@ -52,6 +61,7 @@ protocol Storage {
     func value(forKey key: KeyType) throws -> ValueType?
     func remove(forKey key: String) throws
     func removeAll() throws
+    func isCached(forKey key: String) -> Bool
 }
 
 class StorageObject<T> {
@@ -73,10 +83,11 @@ class StorageObject<T> {
 }
 
 public protocol CacheCostCalculatable {
-    var cost: Int { get }
+    var cacheCost: Int { get }
 }
 
 public protocol DataTransformable {
     func toData() throws -> Data
     static func fromData(_ data: Data) throws -> Self
+    static var empty: Self { get }
 }

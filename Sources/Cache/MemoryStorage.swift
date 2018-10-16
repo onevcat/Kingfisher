@@ -87,22 +87,27 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         lock.lock()
         defer { lock.unlock() }
         let object = StorageObject(value, expiration: expiration ?? config.expiration)
-        storage.setObject(object, forKey: key as NSString, cost: value.cost)
+        storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
         keys.insert(key)
     }
 
     func value(forKey key: String) throws -> T? {
-        lock.lock()
-        defer { lock.unlock() }
         guard let object = storage.object(forKey: key as NSString) else {
             return nil
         }
         guard object.estimatedExpiration.isFuture else {
             return nil
         }
-
-        object.extendExpiration()
         return object.value
+    }
+
+    func isCached(forKey key: String) -> Bool {
+        do {
+            guard let _ = try value(forKey: key) else { return false }
+            return true
+        } catch {
+            return false
+        }
     }
 
     func remove(forKey key: String) throws {
