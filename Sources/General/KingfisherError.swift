@@ -47,11 +47,14 @@ public enum KingfisherError2: Error {
     public enum CacheErrorReason {
         case fileEnumeratorCreationFailed(url: URL)
         case invalidFileEnumeratorContent(url: URL)
-        case invalidFileAttribute(key: String, path: String, attribute: FileAttributeKey, got: Any?)
+        case invalidURLResource(error: Error, key: String, url: URL, resourceKeys: Set<URLResourceKey>)
+        case invalidModificationDate(key: String, url: URL)
+        case cannotCreateDirectory(error: Error, path: String)
+        case imageNotExisting(key: String)
     }
     
     public enum ProcessorErrorReason {
-        case processingFailed(processor: ImageProcessor, data: Data)
+        case processingFailed(processor: ImageProcessor, item: ImageProcessItem)
     }
 
     public enum ImageSettingErrorReason {

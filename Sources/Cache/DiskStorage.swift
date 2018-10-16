@@ -36,7 +36,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         let name: String
         let fileManager: FileManager
         let directory: URL?
-        var expiration: StorageExpiration
+        public var expiration: StorageExpiration
 
         var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
             (directory, cacheName) in
@@ -91,10 +91,18 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
 
     func prepareDirectory() throws {
         let fileManager = config.fileManager
-        guard !config.fileManager.fileExists(atPath: directoryURL.path) else { return }
+        let path = directoryURL.path
 
-        try fileManager.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true,
-                                        attributes: nil)
+        guard !config.fileManager.fileExists(atPath: path) else { return }
+
+        do {
+            try fileManager.createDirectory(
+                atPath: path,
+                withIntermediateDirectories: true,
+                attributes: nil)
+        } catch {
+            throw KingfisherError2.cacheError(reason: .cannotCreateDirectory(error: error, path: path))
+        }
     }
 
     func store(
@@ -115,6 +123,10 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
     }
 
     func value(forKey key: String) throws -> T? {
+        return try value(forKey: key, actuallyLoad: true)
+    }
+
+    func value(forKey key: String, actuallyLoad: Bool) throws -> T? {
         let fileManager = config.fileManager
         let fileURL = cacheFileURL(forKey: key)
         let filePath = fileURL.path
@@ -122,17 +134,34 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
             return nil
         }
 
-        let attributes = try config.fileManager.attributesOfItem(atPath: filePath)
-        guard let expiration = attributes[.modificationDate] as? Date else {
+        let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey]
+        do {
+            let meta = try fileURL.resourceValues(forKeys: resourceKeys)
+            guard let expiration = meta.contentModificationDate else {
+                throw KingfisherError2.cacheError(reason: .invalidModificationDate(key: key, url: fileURL))
+            }
+            guard expiration.isFuture else {
+                return nil
+            }
+            if actuallyLoad {
+                let data = try Data(contentsOf: fileURL)
+                return try T.fromData(data)
+            } else {
+                return T.empty
+            }
+        } catch {
             throw KingfisherError2.cacheError(
-                reason: .invalidFileAttribute(
-                    key: key, path: filePath, attribute: .modificationDate, got: attributes[.modificationDate]))
+                reason: .invalidURLResource(error: error, key: key, url: fileURL, resourceKeys: resourceKeys))
         }
-        guard expiration.isFuture else {
-            return nil
+    }
+
+    func isCached(forKey key: String) -> Bool {
+        do {
+            guard let _ = try value(forKey: key, actuallyLoad: false) else { return false }
+            return true
+        } catch {
+            return false
         }
-        let data = try Data(contentsOf: fileURL)
-        return try T.fromData(data)
     }
 
     func extendExpriration(forKey key: String, lastAccessDate: Date, nextExpiration: StorageExpiration) throws {
@@ -155,9 +184,15 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
     }
 
     func removeAll() throws {
+        try removeAll(skipCreatingDirectory: false)
+    }
+
+    func removeAll(skipCreatingDirectory: Bool) throws {
         try config.fileManager.removeItem(at: directoryURL)
         onCacheRemoved.call()
-        try prepareDirectory()
+        if !skipCreatingDirectory {
+            try prepareDirectory()
+        }
     }
 
     func cacheFileURL(forKey key: String) -> URL {
@@ -187,7 +222,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         return urls
     }
 
-    func removeExpiredValues() throws {
+    func removeExpiredValues() throws -> [URL] {
         let propertyKeys: [URLResourceKey] = [
             .isDirectoryKey,
             .contentModificationDateKey
@@ -212,14 +247,15 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         try expiredFiles.forEach { url in
             try removeFile(at: url)
         }
+        return expiredFiles
     }
 
-    func removeSizeExceededValues() throws {
+    func removeSizeExceededValues() throws -> [URL] {
 
-        if config.sizeLimit == 0 { return } // Back compatible. 0 means no limit.
+        if config.sizeLimit == 0 { return [] } // Back compatible. 0 means no limit.
         
         var size = try totalSize()
-        if size < config.sizeLimit { return }
+        if size < config.sizeLimit { return [] }
 
         let propertyKeys: [URLResourceKey] = [
             .isDirectoryKey,
@@ -239,11 +275,14 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         pendings.sort {
             $0.meta.creationDate ?? distancePast > $1.meta.creationDate ?? distancePast
         }
+        var removed: [URL] = []
         let target = config.sizeLimit / 2
         while size >= target, let item = pendings.popLast() {
             size -= (item.meta.totalFileAllocatedSize ?? 0)
             try removeFile(at: item.url)
+            removed.append(item.url)
         }
+        return removed
     }
 
     func totalSize() throws -> Int {

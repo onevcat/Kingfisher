@@ -164,7 +164,7 @@ extension ImageCache {
     renamed: "memoryStorage.config.totalCostLimit")
     open var maxMemoryCost: Int {
         get { return memoryStorage.config.totalCostLimit }
-        set { memoryStorage.config.totalCostLimit = maxMemoryCost }
+        set { memoryStorage.config.totalCostLimit = newValue }
     }
 
     /// The default DiskCachePathClosure
@@ -199,10 +199,10 @@ extension ImageCache {
         set { diskStorage.config.sizeLimit = Int(newValue) }
     }
     
-    @available(*, deprecated, message: "Use `diskStorage.cacheFileURL(forKey:).absoluteString` instead.",
+    @available(*, deprecated, message: "Use `diskStorage.cacheFileURL(forKey:).path` instead.",
     renamed: "diskStorage.cacheFileURL(forKey:)")
     open func cachePath(forComputedKey key: String) -> String {
-        return diskStorage.cacheFileURL(forKey: key).absoluteString
+        return diskStorage.cacheFileURL(forKey: key).path
     }
     
     /**
@@ -214,6 +214,8 @@ extension ImageCache {
      
      - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
      */
+    @available(*, deprecated, message: "Use `Result` based `retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)` instead.",
+    renamed: "retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)")
     open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
         let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
@@ -224,7 +226,9 @@ extension ImageCache {
         } catch {}
         return nil
     }
-    
+
+    @available(*, deprecated, message: "Use `Result` based `retrieveImage(forKey:options:callbackQueue:completionHandler:)` instead.",
+    renamed: "retrieveImage(forKey:options:callbackQueue:completionHandler:)")
     open func retrieveImage(forKey key: String,
                             options: KingfisherOptionsInfo?,
                             completionHandler: ((Image?, CacheType) -> Void)?)
@@ -237,5 +241,14 @@ extension ImageCache {
             result in
             completionHandler?(result.value?.image, result.value?.cacheType ?? .none)
         }
+    }
+
+    /// The longest time duration in second of the cache being stored in disk.
+    /// Default is 1 week (60 * 60 * 24 * 7 seconds).
+    /// Setting this to a negative value will make the disk cache never expiring.
+    @available(*, deprecated, message: "Deprecated. Use `diskStorage.config.expiration` instead")
+    open var maxCachePeriodInSecond: TimeInterval {
+        get { return diskStorage.config.expiration.timeInterval }
+        set { diskStorage.config.expiration = .seconds(newValue) }
     }
 }

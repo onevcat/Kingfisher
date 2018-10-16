@@ -58,7 +58,7 @@ class ImageDataProcessor {
                 onImageProcessed.call((.success(finalImage), callback))
             } else {
                 let error = KingfisherError2.processorError(
-                    reason: .processingFailed(processor: processor, data: data))
+                    reason: .processingFailed(processor: processor, item: .data(data)))
                 onImageProcessed.call((.failure(error), callback))
             }
         }

@@ -56,7 +56,7 @@ func cleanDefaultCache() {
 func clearCaches(_ caches: [ImageCache]) {
     for c in caches {
         c.clearMemoryCache()
-        c.clearDiskCache()
+        try? c.diskStorage.removeAll(skipCreatingDirectory: true)
     }
 }
 
