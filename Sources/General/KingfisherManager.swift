@@ -51,7 +51,7 @@ public class KingfisherManager {
     /// Downloader used by this manager
     public var downloader: ImageDownloader
     
-    /// Default options used by the manager. This option will be used in 
+    /// Default options used by the manager. This option will be used in
     /// Kingfisher manager related methods, and all image view and
     /// button extension methods. You can also passing other options for each image task by
     /// sending an `options` parameter to Kingfisher's APIs, the per image options
@@ -83,7 +83,8 @@ public class KingfisherManager {
     public func retrieveImage(with resource: Resource,
                               options: KingfisherOptionsInfo? = nil,
                               progressBlock: DownloadProgressBlock? = nil,
-                              completionHandler: ((Result<RetrieveImageResult>) -> Void)?) -> SessionDataTask?
+                              completionHandler: ((Result<RetrieveImageResult>) -> Void)?)
+        -> DownloadTask?
     {
         let options = currentDefaultOptions + (options ?? .empty)
         if options.forceRefresh {
@@ -125,7 +126,8 @@ public class KingfisherManager {
                              forKey key: String,
                              options: KingfisherOptionsInfo,
                           progressBlock: DownloadProgressBlock? = nil,
-                      completionHandler: ((Result<RetrieveImageResult>) -> Void)?) -> SessionDataTask?
+                      completionHandler: ((Result<RetrieveImageResult>) -> Void)?)
+        -> DownloadTask?
     {
         let downloader = options.downloader ?? self.downloader
         let processQueue = self.processQueue

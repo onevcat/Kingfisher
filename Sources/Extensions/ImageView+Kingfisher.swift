@@ -58,7 +58,7 @@ extension KingfisherClass where Base: ImageView {
                          placeholder: Placeholder? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> SessionDataTask?
+                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             self.placeholder = placeholder
@@ -98,7 +98,7 @@ extension KingfisherClass where Base: ImageView {
                     maybeIndicator?.stopAnimatingView()
                     guard resource.downloadURL == self.webURL else {
                         let error = KingfisherError2.imageSettingError(
-                            reason: .resourceNotInUse(result: result, resource: resource))
+                            reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -203,7 +203,10 @@ extension KingfisherClass where Base: ImageView {
     /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
     /// It will be `nil` if `indicatorType` is `.none`.
     public private(set) var indicator: Indicator? {
-        get { return getAssociatedObject(base, &indicatorKey) }
+        get {
+            let box: Box<Indicator>? = getAssociatedObject(base, &indicatorKey)
+            return box?.value
+        }
         
         set {
             // Remove previous
@@ -226,11 +229,14 @@ extension KingfisherClass where Base: ImageView {
                 newIndicator.view.isHidden = true
             }
 
-            setRetainedAssociatedObject(base, &indicatorKey, newValue)
+            // Save in associated object
+            // Wrap newValue with Box to workaround an issue that Swift does not recognize
+            // and casting protocol for associate object correctly. https://github.com/onevcat/Kingfisher/issues/872
+            setRetainedAssociatedObject(base, &indicatorKey, newValue.map(Box.init))
         }
     }
     
-    private var imageTask: SessionDataTask? {
+    private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }

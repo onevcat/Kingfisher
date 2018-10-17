@@ -50,7 +50,9 @@ func == (left: Image, right: Image) -> Bool {
 }
 
 func cleanDefaultCache() {
-    clearCaches([KingfisherManager.shared.cache])
+    let cache = KingfisherManager.shared.cache
+    cache.clearMemoryCache()
+    try? cache.diskStorage.removeAll()
 }
 
 func clearCaches(_ caches: [ImageCache]) {

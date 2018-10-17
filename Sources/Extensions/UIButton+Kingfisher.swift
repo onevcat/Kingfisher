@@ -56,7 +56,7 @@ extension KingfisherClass where Base: UIButton {
                          placeholder: UIImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> SessionDataTask?
+                         completionHandler: CompletionHandler? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             base.setImage(placeholder, for: state)
@@ -106,7 +106,8 @@ extension KingfisherClass where Base: UIButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelImageDownloadTask() {
-        imageTask?.cancel()
+        #warning("Cancel proper task with token")
+//        imageTask?.cancel()
     }
     
     /**
@@ -134,7 +135,7 @@ extension KingfisherClass where Base: UIButton {
                                    placeholder: UIImage? = nil,
                                    options: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: CompletionHandler? = nil) -> SessionDataTask?
+                                   completionHandler: CompletionHandler? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             base.setBackgroundImage(placeholder, for: state)
@@ -183,7 +184,8 @@ extension KingfisherClass where Base: UIButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelBackgroundImageDownloadTask() {
-        backgroundImageTask?.cancel()
+        #warning("Cancel proper task with token")
+//        backgroundImageTask?.cancel()
     }
 
 }
@@ -221,11 +223,11 @@ extension KingfisherClass where Base: UIButton {
         objc_setAssociatedObject(base, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate var imageTask: SessionDataTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? SessionDataTask
+    fileprivate var imageTask: DownloadTask? {
+        return objc_getAssociatedObject(base, &imageTaskKey) as? DownloadTask
     }
     
-    fileprivate func setImageTask(_ task: SessionDataTask?) {
+    fileprivate func setImageTask(_ task: DownloadTask?) {
         objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
@@ -264,11 +266,11 @@ extension KingfisherClass where Base: UIButton {
         objc_setAssociatedObject(base, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate var backgroundImageTask: SessionDataTask? {
-        return objc_getAssociatedObject(base, &backgroundImageTaskKey) as? SessionDataTask
+    fileprivate var backgroundImageTask: DownloadTask? {
+        return objc_getAssociatedObject(base, &backgroundImageTaskKey) as? DownloadTask
     }
     
-    fileprivate func setBackgroundImageTask(_ task: SessionDataTask?) {
+    fileprivate func setBackgroundImageTask(_ task: DownloadTask?) {
         objc_setAssociatedObject(base, &backgroundImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
