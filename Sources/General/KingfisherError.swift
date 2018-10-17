@@ -34,7 +34,7 @@ public enum KingfisherError2: Error {
     public enum RequestErrorReason {
         case emptyRequest
         case invalidURL(request: URLRequest)
-        case taskCancelled(task: SessionDataTask)
+        case taskCancelled(task: SessionDataTask, token: SessionDataTask.CancelToken?)
     }
     
     public enum ResponseErrorReason {
@@ -59,7 +59,7 @@ public enum KingfisherError2: Error {
 
     public enum ImageSettingErrorReason {
         case emptyResource
-        case resourceNotInUse(result: Result<RetrieveImageResult>, resource: Resource)
+        case notCurrentResource(result: Result<RetrieveImageResult>, resource: Resource)
     }
     
     case requestError(reason: RequestErrorReason)

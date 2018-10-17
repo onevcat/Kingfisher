@@ -196,7 +196,7 @@ public class ImagePrefetcher {
         prefetchQueue.async {
             if self.finished { return }
             self.stopped = true
-            self.tasks.values.forEach { $0.cancel() }
+            self.tasks.values.forEach { $0.forceCancel() }
         }
     }
     
@@ -229,7 +229,7 @@ public class ImagePrefetcher {
             completionHandler: downloadTaskCompletionHandler)
         
         if let downloadTask = downloadTask {
-            tasks[resource.downloadURL] = downloadTask
+            tasks[resource.downloadURL] = downloadTask.sessionTask
         }
     }
     

@@ -38,7 +38,7 @@ class ImageCacheTests: XCTestCase {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let uuid = UUID().uuidString
         cacheName = "test-\(uuid)"
-        cache = try! ImageCache(name: cacheName)
+        cache = ImageCache(name: cacheName)
     }
     
     override func tearDown() {
@@ -299,6 +299,19 @@ class ImageCacheTests: XCTestCase {
                 XCTAssertNotNil(result.value?.image)
                 exp.fulfill()
             }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testDefaultCache() {
+        let exp = expectation(description: #function)
+        let key = testKeys[0]
+        let cache = ImageCache.default
+        cache.store(testImage, forKey: key) {
+            XCTAssertTrue(cache.memoryStorage.isCached(forKey: key))
+            XCTAssertTrue(cache.diskStorage.isCached(forKey: key))
+            cleanDefaultCache()
+            exp.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
     }

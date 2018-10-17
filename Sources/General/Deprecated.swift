@@ -90,7 +90,7 @@ extension KingfisherManager {
     public func retrieveImage(with resource: Resource,
                               options: KingfisherOptionsInfo?,
                               progressBlock: DownloadProgressBlock?,
-                              completionHandler: CompletionHandler?) -> SessionDataTask?
+                              completionHandler: CompletionHandler?) -> DownloadTask?
     {
         return retrieveImage(with: resource, options: options, progressBlock: progressBlock) {
             result in
@@ -109,7 +109,7 @@ extension ImageDownloader {
                             retrieveImageTask: RetrieveImageTask? = nil,
                             options: KingfisherOptionsInfo? = nil,
                             progressBlock: ImageDownloaderProgressBlock? = nil,
-                            completionHandler: ImageDownloaderCompletionHandler? = nil) -> SessionDataTask?
+                            completionHandler: ImageDownloaderCompletionHandler?) -> DownloadTask?
     {
         return downloadImage(with: url, options: options, progressBlock: progressBlock) {
             result in
@@ -140,7 +140,7 @@ extension KingfisherClass where Base: ImageView {
                          placeholder: Placeholder? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> SessionDataTask?
+                         completionHandler: CompletionHandler?) -> DownloadTask?
     {
         return setImage(with: resource, placeholder: placeholder, options: options, progressBlock: progressBlock) {
             result in

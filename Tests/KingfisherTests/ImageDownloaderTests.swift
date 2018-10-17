@@ -240,6 +240,30 @@ class ImageDownloaderTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+    func testCancelOneDownloadTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData2)
+
+        let group = DispatchGroup()
+
+        group.enter()
+        let task1 = downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.error)
+            group.leave()
+        }
+
+        group.enter()
+        _ = downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.value?.image)
+            group.leave()
+        }
+
+        task1?.cancel()
+        group.notify(queue: .main, execute: exp.fulfill)
+        waitForExpectations(timeout: 1, handler: nil)
+    }
     
     func testCancelAllDownloadTasks() {
         let exp = expectation(description: #function)
@@ -360,7 +384,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         XCTAssertNotNil(task1)
-        XCTAssertEqual(task1?.task, task2?.task)
+        XCTAssertEqual(task1?.sessionTask.task, task2?.sessionTask.task)
 
         group.notify(queue: .main, execute: exp.fulfill)
         waitForExpectations(timeout: 5, handler: nil)

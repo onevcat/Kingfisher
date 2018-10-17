@@ -36,6 +36,15 @@ public struct ImageDownloadResult {
     public let originalData: Data
 }
 
+public struct DownloadTask {
+    let sessionTask: SessionDataTask
+    let cancelToken: SessionDataTask.CancelToken
+
+    public func cancel() {
+        sessionTask.cancel(token: cancelToken)
+    }
+}
+
 /// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
 open class ImageDownloader {
 
@@ -135,7 +144,7 @@ open class ImageDownloader {
     open func downloadImage(with url: URL,
                             options: KingfisherOptionsInfo? = nil,
                             progressBlock: DownloadProgressBlock? = nil,
-                            completionHandler: ((Result<ImageDownloadResult>) -> Void)? = nil) -> SessionDataTask?
+                            completionHandler: ((Result<ImageDownloadResult>) -> Void)? = nil) -> DownloadTask?
     {
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
         request.httpShouldUsePipelining = requestsUsePipelining
@@ -168,8 +177,8 @@ open class ImageDownloader {
         let callback = SessionDataTask.TaskCallback(
             onProgress: onProgress, onCompleted: onCompleted, options: options)
 
-        let task = sessionHandler.add(request, in: session, callback: callback)
-
+        let downloadTask = sessionHandler.add(request, in: session, callback: callback)
+        let task = downloadTask.sessionTask
         task.onTaskDone.delegate(on: self) { (self, done) in
             let (result, callbacks) = done
             self.delegate?.imageDownloader(
@@ -203,12 +212,11 @@ open class ImageDownloader {
             }
         }
 
-        if !task.downloadStarted {
+        if !task.running {
             delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
             task.resume()
         }
-        task.increseDownloadCount()
-        return task
+        return downloadTask
     }
 }
 
@@ -257,7 +265,7 @@ class SessionDelegate: NSObject {
     func add(
         _ requst: URLRequest,
         in session: URLSession,
-        callback: SessionDataTask.TaskCallback) -> SessionDataTask
+        callback: SessionDataTask.TaskCallback) -> DownloadTask
     {
 
         lock.lock()
@@ -265,17 +273,21 @@ class SessionDelegate: NSObject {
 
         let url = requst.url!
         if let task = tasks[url] {
-            task.callbacks.append(callback)
-            return task
+            let token = task.addCallback(callback)
+            return DownloadTask(sessionTask: task, cancelToken: token)
         } else {
             let task = SessionDataTask(session: session, request: requst)
-            task.onTaskCancelled.delegate(on: self) { [unowned task] (self, _) in
-                let error = KingfisherError2.requestError(reason: .taskCancelled(task: task))
-                self.onCompleted(sessionTask: task, result: .failure(error))
+            task.onTaskCancelled.delegate(on: self) { [unowned task] (self, value) in
+                let (token, callback) = value
+                let error = KingfisherError2.requestError(reason: .taskCancelled(task: task, token: token))
+                task.onTaskDone.call((.failure(error), [callback]))
+                if !task.running {
+                    self.tasks[url] = nil
+                }
             }
-            task.callbacks.append(callback)
+            let token = task.addCallback(callback)
             tasks[url] = task
-            return task
+            return DownloadTask(sessionTask: task, cancelToken: token)
         }
     }
     
@@ -305,7 +317,7 @@ class SessionDelegate: NSObject {
         lock.lock()
         defer { lock.unlock() }
         for task in tasks.values {
-            task.cancel(force: true)
+            task.forceCancel()
         }
     }
 }
@@ -406,12 +418,14 @@ extension SessionDelegate: URLSessionDataDelegate {
             return
         }
         tasks[url] = nil
-        sessionTask.onTaskDone.call((result, sessionTask.callbacks))
+        sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
     }
 }
 
 public class SessionDataTask {
-    
+
+    public typealias CancelToken = Int
+
     struct TaskCallback {
         let onProgress: Delegate<(Int64, Int64), Void>?
         let onCompleted: Delegate<Result<ImageDownloadResult>, Void>?
@@ -421,37 +435,63 @@ public class SessionDataTask {
     public private(set) var mutableData: Data
     public let task: URLSessionDataTask
     
-    var callbacks = [TaskCallback]()
+    private var callbacksStore = [CancelToken: TaskCallback]()
+
+    var callbacks: Dictionary<SessionDataTask.CancelToken, SessionDataTask.TaskCallback>.Values {
+        return callbacksStore.values
+    }
+
+    var currentToken = 0
+
+    private let lock = NSLock()
 
     let onTaskDone = Delegate<(Result<(Data, URLResponse?)>, [TaskCallback]), Void>()
-    let onTaskCancelled = Delegate<(), Void>()
+    let onTaskCancelled = Delegate<(CancelToken, TaskCallback), Void>()
 
-    var downloadStarted: Bool { return downloadTaskCount > 0 }
-    private var downloadTaskCount = 0
+    var running: Bool { return task.state == .running }
     
     init(session: URLSession, request: URLRequest) {
         task = session.dataTask(with: request)
         mutableData = Data()
+    }
+
+    func addCallback(_ callback: TaskCallback) -> CancelToken {
+        lock.lock()
+        defer { lock.unlock() }
+        callbacksStore[currentToken] = callback
+        defer { currentToken += 1 }
+        return currentToken
+    }
+
+    func removeCallback(_ token: CancelToken) -> TaskCallback? {
+        lock.lock()
+        defer { lock.unlock() }
+        if let callback = callbacksStore[token] {
+            callbacksStore[token] = nil
+            return callback
+        }
+        return nil
     }
     
     func resume() {
         task.resume()
     }
 
-    func increseDownloadCount() {
-        downloadTaskCount += 1
-    }
-    
-    func cancel(force: Bool = false) {
-        if force {
-            task.cancel()
-            onTaskCancelled.call()
-        } else {
-            downloadTaskCount -= 1
-            if downloadTaskCount == 0 {
+    func cancel(token: CancelToken) {
+        let result = removeCallback(token)
+        if let callback = result {
+
+            if callbacksStore.count == 0 {
                 task.cancel()
-                onTaskCancelled.call()
             }
+
+            onTaskCancelled.call((token, callback))
+        }
+    }
+
+    func forceCancel() {
+        for token in callbacksStore.keys {
+            cancel(token: token)
         }
     }
     
