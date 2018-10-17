@@ -97,8 +97,7 @@ public class ImagePrefetcher {
     public convenience init(urls: [URL],
                          options: KingfisherOptionsInfo? = nil,
                    progressBlock: PrefetcherProgressBlock? = nil,
-               completionHandler: PrefetcherCompletionHandler? = nil)
-    {
+               completionHandler: PrefetcherCompletionHandler? = nil) {
         let resources: [Resource] = urls.map { $0 }
         self.init(resources: resources, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
     }
@@ -122,8 +121,7 @@ public class ImagePrefetcher {
     public init(resources: [Resource],
                   options: KingfisherOptionsInfo? = nil,
             progressBlock: PrefetcherProgressBlock? = nil,
-        completionHandler: PrefetcherCompletionHandler? = nil)
-    {
+        completionHandler: PrefetcherCompletionHandler? = nil) {
         prefetchResources = resources
         pendingResources = ArraySlice(resources)
         
@@ -152,8 +150,7 @@ public class ImagePrefetcher {
      of assets that are required for later use in an app. This code will not try and update any UI
      with the results of the process.
      */
-    public func start()
-    {
+    public func start() {
         // Since we want to handle the resources cancellation in the prefetch queue only.
         prefetchQueue.async {
             
@@ -236,16 +233,34 @@ public class ImagePrefetcher {
         reportCompletionOrStartNext()
     }
     
-    func startPrefetching(_ resource: Resource)
-    {
+    func startPrefetching(_ resource: Resource) {
         if optionsInfo.forceRefresh {
             downloadAndCache(resource)
         } else {
-            let alreadyInCache = manager.cache.imageCachedType(forKey: resource.cacheKey,
-                                                             processorIdentifier: optionsInfo.processor.identifier).cached
-            if alreadyInCache {
+            let cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey,
+                                                          processorIdentifier: optionsInfo.processor.identifier)
+
+            switch cacheType {
+            case .memory:
                 append(cached: resource)
-            } else {
+            case .disk:
+                if optionsInfo.preloadDiskCacheToMemory {
+                    let retrieveTaskCompletionHandler: CompletionHandler = { (image, error, _, _) -> Void in
+                        self.append(cached: resource)
+                    }
+
+                    let task = RetrieveImageTask()
+                    manager.tryToRetrieveImageFromCache(
+                        forKey: resource.cacheKey,
+                        with: resource.downloadURL,
+                        retrieveImageTask: task,
+                        progressBlock: nil,
+                        completionHandler: retrieveTaskCompletionHandler,
+                        options: optionsInfo)
+                } else {
+                    append(cached: resource)
+                }
+            case .none:
                 downloadAndCache(resource)
             }
         }

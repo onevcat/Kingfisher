@@ -147,6 +147,9 @@ public enum KingfisherOptionsInfoItem {
     /// the original image when another processor is applied to the same resource,
     /// instead of downloading it again.
     case cacheOriginalImage
+
+    /// If set, `Kingfisher` will preload disk cache to memory with prefetcher.
+    case preloadDiskCacheToMemory
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -181,6 +184,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true
+    case (.preloadDiskCacheToMemory, .preloadDiskCacheToMemory): return true
     default: return false
     }
 }
@@ -360,5 +364,9 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     
     public var cacheOriginalImage: Bool {
         return contains { $0 <== .cacheOriginalImage }
+    }
+
+    public var preloadDiskCacheToMemory: Bool {
+        return contains { $0 <== .preloadDiskCacheToMemory }
     }
 }
