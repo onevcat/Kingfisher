@@ -212,7 +212,7 @@ open class ImageDownloader {
             }
         }
 
-        if !task.running {
+        if !task.started {
             delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
             task.resume()
         }
@@ -281,7 +281,7 @@ class SessionDelegate: NSObject {
                 let (token, callback) = value
                 let error = KingfisherError2.requestError(reason: .taskCancelled(task: task, token: token))
                 task.onTaskDone.call((.failure(error), [callback]))
-                if !task.running {
+                if !task.containsCallbacks {
                     self.tasks[url] = nil
                 }
             }
@@ -448,7 +448,15 @@ public class SessionDataTask {
     let onTaskDone = Delegate<(Result<(Data, URLResponse?)>, [TaskCallback]), Void>()
     let onTaskCancelled = Delegate<(CancelToken, TaskCallback), Void>()
 
-    var running: Bool { return task.state == .running }
+    var started = false
+    var containsCallbacks: Bool {
+        // We should be able to use `task.state != .running` to check it.
+        // However, in some rare cases, cancelling the task does not change
+        // task state to `.cancelling`, but still in `.running`. So we need
+        // to check callbacks count to for sure that it is safe to remove the
+        // task in delegate.
+        return !callbacks.isEmpty
+    }
     
     init(session: URLSession, request: URLRequest) {
         task = session.dataTask(with: request)
@@ -474,6 +482,7 @@ public class SessionDataTask {
     }
     
     func resume() {
+        started = true
         task.resume()
     }
 

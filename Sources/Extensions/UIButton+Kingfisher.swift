@@ -56,12 +56,12 @@ extension KingfisherClass where Base: UIButton {
                          placeholder: UIImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> DownloadTask?
+                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             base.setImage(placeholder, for: state)
             setWebURL(nil, for: state)
-            completionHandler?(nil, nil, .none, nil)
+            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -75,25 +75,29 @@ extension KingfisherClass where Base: UIButton {
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL(for: state) else {
-                    return
-                }
+                guard resource.downloadURL == self.webURL(for: state) else { return }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.webURL(for: state) else {
-                        completionHandler?(image, error, cacheType, imageURL)
+                    guard resource.downloadURL == self.webURL(for: state) else {
+                        let error = KingfisherError2.imageSettingError(
+                            reason: .notCurrentResource(result: result, resource: resource))
+                        completionHandler?(.failure(error))
                         return
                     }
+                    
                     self.setImageTask(nil)
-                    if image != nil {
-                        strongBase.setImage(image, for: state)
-                    }
 
-                    completionHandler?(image, error, cacheType, imageURL)
+                    switch result {
+                    case .success(let value):
+                        self.base.setImage(value.image, for: state)
+                        completionHandler?(result)
+                    case .failure:
+                        completionHandler?(result)
+                    }
                 }
             })
         
@@ -106,8 +110,7 @@ extension KingfisherClass where Base: UIButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelImageDownloadTask() {
-        #warning("Cancel proper task with token")
-//        imageTask?.cancel()
+        imageTask?.cancel()
     }
     
     /**
@@ -135,12 +138,12 @@ extension KingfisherClass where Base: UIButton {
                                    placeholder: UIImage? = nil,
                                    options: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: CompletionHandler? = nil) -> DownloadTask?
+                                   completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             base.setBackgroundImage(placeholder, for: state)
             setBackgroundWebURL(nil, for: state)
-            completionHandler?(nil, nil, .none, nil)
+            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -161,17 +164,24 @@ extension KingfisherClass where Base: UIButton {
                     progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.backgroundWebURL(for: state) else {
-                        completionHandler?(image, error, cacheType, imageURL)
+                    guard resource.downloadURL == self.backgroundWebURL(for: state) else {
+                        let error = KingfisherError2.imageSettingError(
+                            reason: .notCurrentResource(result: result, resource: resource))
+                        completionHandler?(.failure(error))
                         return
                     }
+                    
                     self.setBackgroundImageTask(nil)
-                    if image != nil {
-                        strongBase.setBackgroundImage(image, for: state)
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.setBackgroundImage(value.image, for: state)
+                        completionHandler?(result)
+                    case .failure:
+                        completionHandler?(result)
                     }
-                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
@@ -184,8 +194,7 @@ extension KingfisherClass where Base: UIButton {
      Nothing will happen if the downloading has already finished.
      */
     public func cancelBackgroundImageDownloadTask() {
-        #warning("Cancel proper task with token")
-//        backgroundImageTask?.cancel()
+        backgroundImageTask?.cancel()
     }
 
 }
@@ -195,22 +204,20 @@ private var lastURLKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: UIButton {
-    /**
-     Get the image URL binded to this button for a specified state.
-     
-     - parameter state: The state that uses the specified image.
-     
-     - returns: Current URL for image.
-     */
+
+    /// Gets the image URL binded to this button for a specified state.
+    ///
+    /// - Parameter state: The state that uses the specified image.
+    /// - Returns: Current URL for image.
     public func webURL(for state: UIControl.State) -> URL? {
         return webURLs[NSNumber(value:state.rawValue)] as? URL
     }
     
-    fileprivate func setWebURL(_ url: URL?, for state: UIControl.State) {
+    private func setWebURL(_ url: URL?, for state: UIControl.State) {
         webURLs[NSNumber(value:state.rawValue)] = url
     }
     
-    fileprivate var webURLs: NSMutableDictionary {
+    private var webURLs: NSMutableDictionary {
         var dictionary = objc_getAssociatedObject(base, &lastURLKey) as? NSMutableDictionary
         if dictionary == nil {
             dictionary = NSMutableDictionary()

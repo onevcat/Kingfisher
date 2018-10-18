@@ -67,7 +67,7 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         var progressCalledCount = 0
-        let prefetcher = ImagePrefetcher(urls: urls, options: nil,
+        let prefetcher = ImagePrefetcher(urls: urls, options: [.waitForCache],
                             progressBlock: { skippedResources, failedResources, completedResources in
                                 progressCalledCount += 1
                             },
@@ -98,7 +98,7 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         let maxConcurrentCount = 2
-        let prefetcher = ImagePrefetcher(urls: urls, options: nil,
+        let prefetcher = ImagePrefetcher(urls: urls, options: [.waitForCache],
                             progressBlock: { skippedResources, failedResources, completedResources in
                             },
                             completionHandler: { skippedResources, failedResources, completedResources in
@@ -128,7 +128,7 @@ class ImagePrefetcherTests: XCTestCase {
             urls.append(URL(string: URLString)!)
         }
         
-        let prefetcher = ImagePrefetcher(urls: urls, options: nil, progressBlock: { skippedResources, failedResources, completedResources in
+        let prefetcher = ImagePrefetcher(urls: urls, options: [.waitForCache], progressBlock: { skippedResources, failedResources, completedResources in
 
             }) { skippedResources, failedResources, completedResources in
                 expectation.fulfill()
@@ -174,7 +174,7 @@ class ImagePrefetcherTests: XCTestCase {
     
     func testPrefetchWithWrongInitParameters() {
         let expectation = self.expectation(description: "wait for prefetching images")
-        let prefetcher = ImagePrefetcher(urls: [], options: nil, progressBlock: nil) { skippedResources, failedResources, completedResources in
+        let prefetcher = ImagePrefetcher(urls: [], options: [.waitForCache], progressBlock: nil) { skippedResources, failedResources, completedResources in
             expectation.fulfill()
             
             XCTAssertEqual(skippedResources.count, 0, "There should be no item skipped.")
