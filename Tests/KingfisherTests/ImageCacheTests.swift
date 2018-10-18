@@ -66,11 +66,11 @@ class ImageCacheTests: XCTestCase {
             for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let subFolder = cacheURL.appendingPathComponent("temp")
 
-        let customPath = subFolder.absoluteString
+        let customPath = subFolder.path
         let cache = try! ImageCache(name: "test", path: customPath)
         XCTAssertEqual(
-            cache.diskStorage.directoryURL.absoluteString,
-            customPath + "com.onevcat.Kingfisher.ImageCache.test/")
+            cache.diskStorage.directoryURL.path,
+            (customPath as NSString).appendingPathComponent("com.onevcat.Kingfisher.ImageCache.test"))
     }
     
     func testMaxCachePeriodInSecond() {

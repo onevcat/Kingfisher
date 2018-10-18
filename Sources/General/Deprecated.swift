@@ -62,7 +62,7 @@ extension KingfisherClass where Base: Image {
     }
 }
 
-@available(*, deprecated, message: "Use `Result<ImageResult>` based callback instead")
+@available(*, deprecated, message: "Use `Result<RetrieveImageResult>` based callback instead")
 public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
 
 @available(*, deprecated, message: "Use `Result<ImageDownloadResult>` based callback instead")
@@ -153,6 +153,63 @@ extension KingfisherClass where Base: ImageView {
         }
     }
 }
+
+extension KingfisherClass where Base: UIButton {
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    @discardableResult
+    public func setImage(
+        with resource: Resource?,
+        for state: UIControl.State,
+        placeholder: UIImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: CompletionHandler?) -> DownloadTask?
+    {
+        return setImage(
+            with: resource,
+            for: state,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock)
+        {
+            result in
+            switch result {
+            case .success(let value):
+                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error):
+                completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+    
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    @discardableResult
+    public func setBackgroundImage(
+        with resource: Resource?,
+        for state: UIControl.State,
+        placeholder: UIImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: CompletionHandler?) -> DownloadTask?
+    {
+        return setBackgroundImage(
+            with: resource,
+            for: state,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock)
+        {
+            result in
+            switch result {
+            case .success(let value):
+                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error):
+                completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+}
+
 #endif
 
 extension ImageCache {

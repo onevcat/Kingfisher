@@ -324,11 +324,14 @@ class ImageDownloaderTests: XCTestCase {
         downloader.downloadImage(with: url) {
             result in
             XCTAssertNotNil(result.value)
+            if let error = result.error {
+                print(error)
+            }
             group.leave()
         }
         
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadTaskNil() {
