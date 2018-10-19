@@ -64,9 +64,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.cacheOriginalImage)
     }
     
-
     func testSetOptionsShouldParseCorrectly() {
-        let cache = try! ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
+        let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
 #if os(macOS)

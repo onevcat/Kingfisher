@@ -89,6 +89,14 @@ extension KingfisherClass where Base: Image {
         set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
     }
     #endif
+    
+    var cost: Int {
+        let pixel = Int(size.width * size.height * scale * scale)
+        guard let cgImage = cgImage else {
+            return pixel * 4 / 1024
+        }
+        return pixel * cgImage.bitsPerPixel / 8 / 1024
+    }
 }
 
 // MARK: - Image Conversion

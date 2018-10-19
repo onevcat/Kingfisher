@@ -42,48 +42,54 @@ extension KingfisherClass where Base: WKInterfaceImage {
      - returns: A task represents the retrieving process.
      */
     @discardableResult
-    public func setImage(_ resource: Resource?,
+    public func setImage(with resource: Resource?,
+                         placeholder: Image? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: CompletionHandler? = nil) -> SessionDataTask? {
+                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
+    {
         guard let resource = resource else {
-            setWebURL(nil)
-            completionHandler?(nil, nil, .none, nil)
+            base.setImage(placeholder)
+            webURL = nil
+            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
             return nil
         }
 
-        setWebURL(resource.downloadURL)
+        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        if !options.keepCurrentImageWhileLoading {
+            base.setImage(placeholder)
+        }
 
+        webURL = resource.downloadURL
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
-            options: KingfisherManager.shared.defaultOptions + (options ?? .empty),
+            options: options,
             progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else {
-                    return
-                }
-
+                guard resource.downloadURL == self.webURL else { return }
                 progressBlock?(receivedSize, totalSize)
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.webURL else {
-                        completionHandler?(image, error, cacheType, imageURL)
+                    guard resource.downloadURL == self.webURL else {
+                        let error = KingfisherError2.imageSettingError(
+                            reason: .notCurrentResource(result: result, resource: resource))
+                        completionHandler?(.failure(error))
                         return
                     }
 
-                    self.setImageTask(nil)
-                    guard let image = image else {
-                        completionHandler?(nil, error, cacheType, imageURL)
-                        return
+                    self.imageTask = nil
+
+                    switch result {
+                    case .success(let value):
+                        self.base.setImage(value.image)
+                        completionHandler?(result)
+                    case .failure:
+                        completionHandler?(result)
                     }
-                
-                    strongBase.setImage(image)
-                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
 
-        setImageTask(task)
-
+        imageTask = task
         return task
     }
 
@@ -101,21 +107,15 @@ private var lastURLKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: WKInterfaceImage {
-    /// Get the image URL binded to this image view.
-    public var webURL: URL? {
-        return objc_getAssociatedObject(base, &lastURLKey) as? URL
+    /// Get the image URL bound to this image view.
+    public private(set) var webURL: URL? {
+        get { return getAssociatedObject(base, &lastURLKey) }
+        set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
     }
 
-    fileprivate func setWebURL(_ url: URL?) {
-        objc_setAssociatedObject(base, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-
-    fileprivate var imageTask: SessionDataTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? SessionDataTask
-    }
-
-    fileprivate func setImageTask(_ task: SessionDataTask?) {
-        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private var imageTask: DownloadTask? {
+        get { return getAssociatedObject(base, &imageTaskKey) }
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 }
 

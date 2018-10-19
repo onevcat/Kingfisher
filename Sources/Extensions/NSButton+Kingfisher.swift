@@ -27,10 +27,6 @@
 
 import AppKit
 
-// MARK: - Set Images
-/**
- *	Set image to use from web.
- */
 extension KingfisherClass where Base: NSButton {
     /**
      Set an image with a resource, a placeholder image, options, progress handler and completion handler.
@@ -54,11 +50,11 @@ extension KingfisherClass where Base: NSButton {
                          placeholder: Image? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ResultCompletionHandler? = nil) -> SessionDataTask?
+                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             base.image = placeholder
-            setWebURL(nil)
+            webURL = nil
             completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
             return nil
         }
@@ -68,34 +64,36 @@ extension KingfisherClass where Base: NSButton {
             base.image = placeholder
         }
         
-        setWebURL(resource.downloadURL)
+        webURL = resource.downloadURL
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else {
-                    return
-                }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
+                guard resource.downloadURL == self.webURL else { return }
+                progressBlock?(receivedSize, totalSize)
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.webURL else {
-                        completionHandler?(image, error, cacheType, imageURL)
+                    guard resource.downloadURL == self.webURL else {
+                        let error = KingfisherError2.imageSettingError(
+                            reason: .notCurrentResource(result: result, resource: resource))
+                        completionHandler?(.failure(error))
                         return
                     }
-                    self.setImageTask(nil)
                     
-                    if image != nil {
-                        strongBase.image = image
+                    self.imageTask = nil
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.image = value.image
+                        completionHandler?(result)
+                    case .failure:
+                        completionHandler?(result)
                     }
-                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
-        setImageTask(task)
+        imageTask = task
         return task
     }
     
@@ -129,13 +127,13 @@ extension KingfisherClass where Base: NSButton {
                                   placeholder: Image? = nil,
                                   options: KingfisherOptionsInfo? = nil,
                                   progressBlock: DownloadProgressBlock? = nil,
-                                  completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+                                  completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
     {
         guard let resource = resource else {
             base.alternateImage = placeholder
-            setAlternateWebURL(nil)
-            completionHandler?(nil, nil, .none, nil)
-            return .empty
+            alternateWebURL = nil
+            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            return nil
         }
         
         let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
@@ -143,35 +141,36 @@ extension KingfisherClass where Base: NSButton {
             base.alternateImage = placeholder
         }
         
-        setAlternateWebURL(resource.downloadURL)
+        alternateWebURL = resource.downloadURL
         let task = KingfisherManager.shared.retrieveImage(
             with: resource,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.alternateWebURL else {
-                    return
-                }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
+                guard resource.downloadURL == self.alternateWebURL else { return }
+                progressBlock?(receivedSize, totalSize)
             },
-            completionHandler: { [weak base] image, error, cacheType, imageURL in
+            completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard let strongBase = base, imageURL == self.alternateWebURL else {
-                        completionHandler?(image, error, cacheType, imageURL)
+                    guard resource.downloadURL == self.alternateWebURL else {
+                        let error = KingfisherError2.imageSettingError(
+                            reason: .notCurrentResource(result: result, resource: resource))
+                        completionHandler?(.failure(error))
                         return
                     }
-                    self.setAlternateImageTask(nil)
                     
-                    if image != nil {
-                        strongBase.alternateImage = image
+                    self.alternateImageTask = nil
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.alternateImage = value.image
+                        completionHandler?(result)
+                    case .failure:
+                        completionHandler?(result)
                     }
-                    
-                    completionHandler?(image, error, cacheType, imageURL)
                 }
             })
         
-        setAlternateImageTask(task)
+        alternateImageTask = task
         return task
     }
     
@@ -192,37 +191,23 @@ private var lastAlternateURLKey: Void?
 private var alternateImageTaskKey: Void?
 
 extension KingfisherClass where Base: NSButton {
-    /// Get the image URL binded to this image view.
-    public var webURL: URL? {
-        return objc_getAssociatedObject(base, &lastURLKey) as? URL
+    public private(set) var webURL: URL? {
+        get { return getAssociatedObject(base, &lastURLKey) }
+        set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
     }
     
-    fileprivate func setWebURL(_ url: URL?) {
-        objc_setAssociatedObject(base, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private var imageTask: DownloadTask? {
+        get { return getAssociatedObject(base, &imageTaskKey) }
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
     
-    fileprivate var imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? RetrieveImageTask
+    public private(set) var alternateWebURL: URL? {
+        get { return getAssociatedObject(base, &lastAlternateURLKey) }
+        set { setRetainedAssociatedObject(base, &lastAlternateURLKey, newValue) }
     }
     
-    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
-        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    /// Get the alternate image URL binded to this button.
-    public var alternateWebURL: URL? {
-        return objc_getAssociatedObject(base, &lastAlternateURLKey) as? URL
-    }
-    
-    fileprivate func setAlternateWebURL(_ url: URL?) {
-        objc_setAssociatedObject(base, &lastAlternateURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    fileprivate var alternateImageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(base, &alternateImageTaskKey) as? RetrieveImageTask
-    }
-    
-    fileprivate func setAlternateImageTask(_ task: RetrieveImageTask?) {
-        objc_setAssociatedObject(base, &alternateImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private var alternateImageTask: DownloadTask? {
+        get { return getAssociatedObject(base, &alternateImageTaskKey) }
+        set { setRetainedAssociatedObject(base, &alternateImageTaskKey, newValue)}
     }
 }

@@ -62,14 +62,7 @@ public enum CacheType {
 }
 
 extension Image: CacheCostCalculatable {
-    public var cacheCost: Int {
-        let pixel = Int(size.width * size.height * scale * scale)
-        guard let cgImage = cgImage else {
-            return pixel * 4 / 1024
-        }
-
-        return pixel * cgImage.bitsPerPixel / 8 / 1024
-    }
+    public var cacheCost: Int { return kf.cost }
 }
 
 extension Data: DataTransformable {
@@ -150,7 +143,6 @@ open class ImageCache {
 
         #warning("Choose a proper init cost limit.")
         memoryStorage = MemoryStorage(config: .init(totalCostLimit: 0))
-        #warning("Choose a proper init cost limit.")
 
         var diskConfig = DiskStorage<Data>.Config(
             name: name,

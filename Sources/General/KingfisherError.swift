@@ -42,6 +42,7 @@ public enum KingfisherError2: Error {
         case invalidHTTPStatusCode(response: HTTPURLResponse)
         case URLSessionError(error: Error)
         case dataModifyingFailed(task: SessionDataTask)
+        case noURLResponse
     }
     
     public enum CacheErrorReason {
