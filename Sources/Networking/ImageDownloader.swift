@@ -117,9 +117,10 @@ open class ImageDownloader {
         sessionHandler.onValidStatusCode.delegate(on: self) { (self, code) in
             return (self.delegate ?? self).isValidStatusCode(code, for: self)
         }
-        sessionHandler.onDownloadingFinished.delegate(on: self) { (self, result) in
-//            self.delegate?.imageDownloader(
-//                self, didFinishDownloadingImageForURL: result.value?.0, with: result.value?.1, error: result.error)
+        sessionHandler.onDownloadingFinished.delegate(on: self) { (self, value) in
+            let (url, result) = value
+            self.delegate?.imageDownloader(
+                self, didFinishDownloadingImageForURL: url, with: result.value, error: result.error)
         }
         sessionHandler.onDidDownloadData.delegate(on: self) { (self, task) in
             guard let url = task.task.originalRequest?.url else {
@@ -244,7 +245,7 @@ class SessionDelegate: NSObject {
     private let lock = NSLock()
 
     let onValidStatusCode = Delegate<Int, Bool>()
-    let onDownloadingFinished = Delegate<Result<(URL, URLResponse)>, Void>()
+    let onDownloadingFinished = Delegate<(URL, Result<URLResponse>), Void>()
     let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
     let onReceiveSessionChallenge = Delegate<(
@@ -374,6 +375,18 @@ extension SessionDelegate: URLSessionDataDelegate {
 
         guard let sessionTask = self.task(for: task) else {
             return
+        }
+
+        if let url = task.originalRequest?.url {
+            let result: Result<(URLResponse)>
+            if let error = error {
+                result = .failure(KingfisherError2.responseError(reason: .URLSessionError(error: error)))
+            } else if let response = task.response {
+                result = .success(response)
+            } else {
+                result = .failure(KingfisherError2.responseError(reason: .noURLResponse))
+            }
+            onDownloadingFinished.call((url, result))
         }
 
         let result: Result<(Data, URLResponse?)>

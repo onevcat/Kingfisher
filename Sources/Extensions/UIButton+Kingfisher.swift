@@ -76,9 +76,7 @@ extension KingfisherClass where Base: UIButton {
             options: options,
             progressBlock: { receivedSize, totalSize in
                 guard resource.downloadURL == self.webURL(for: state) else { return }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
+                progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {

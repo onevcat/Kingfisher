@@ -31,28 +31,23 @@ import AppKit
 import UIKit
 #endif
 
-// MARK: - Extension methods.
-/**
- *    Set image to use from web.
- */
 extension KingfisherClass where Base: ImageView {
-    /**
-     Set an image with a resource, a placeholder image, options, progress handler and completion handler.
-     
-     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter placeholder:       A placeholder image when retrieving the image at URL.
-     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-     
-     - returns: A task represents the retrieving process.
-     
-     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     
-     If `resource` is `nil`, the `placeholder` image will be set and
-     `completionHandler` will be called with both `error` and `image` being `nil`.
-     */
+
+    /// Set an image with a resource, a placeholder image, options, progress handler and completion handler.
+    ///
+    /// Internally, this method will use KingfisherManager to get the requested resource, from either cache
+    /// or network. Since this methos will perform UI changes, you must call this method from the UI thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the UI thread.
+    ///
+    /// - Parameters:
+    ///   - resource: The Resource object contains information about the resource.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
     @discardableResult
     public func setImage(with resource: Resource?,
                          placeholder: Placeholder? = nil,
@@ -174,7 +169,7 @@ private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: ImageView {
-    /// Get the image URL binded to this image view.
+    /// Gets the image URL binded to this image view.
     public private(set) var webURL: URL? {
         get { return getAssociatedObject(base, &lastURLKey) }
         set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }

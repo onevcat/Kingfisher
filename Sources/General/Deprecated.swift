@@ -32,7 +32,7 @@ import UIKit
 
 extension KingfisherClass where Base: Image {
     @available(*, deprecated, message:
-    "Pass parameters with `ImageCreatingOptions`, use `image(with:options:)` instead.")
+    "Will be removed soon. Pass parameters with `ImageCreatingOptions`, use `image(with:options:)` instead.")
     public static func image(
         data: Data,
         scale: CGFloat,
@@ -48,7 +48,7 @@ extension KingfisherClass where Base: Image {
     }
     
     @available(*, deprecated, message:
-    "Pass parameters with `ImageCreatingOptions`, use `animatedImage(with:options:)` instead.")
+    "Will be removed soon. Pass parameters with `ImageCreatingOptions`, use `animatedImage(with:options:)` instead.")
     public static func animated(
         with data: Data,
         scale: CGFloat = 1.0,
@@ -62,12 +62,15 @@ extension KingfisherClass where Base: Image {
     }
 }
 
-@available(*, deprecated, message: "Use `Result<RetrieveImageResult>` based callback instead")
-public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
+@available(*, deprecated, message: "Will be removed soon. Use `Result<RetrieveImageResult>` based callback instead")
+public typealias CompletionHandler =
+    ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
 
-@available(*, deprecated, message: "Use `Result<ImageDownloadResult>` based callback instead")
-public typealias ImageDownloaderCompletionHandler = ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
+@available(*, deprecated, message: "Will be removed soon. Use `Result<ImageDownloadResult>` based callback instead")
+public typealias ImageDownloaderCompletionHandler =
+    ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
 
+@available(*, deprecated, message: "Will be removed soon. Use `DownloadTask` to cancel a task.")
 extension RetrieveImageTask {
     @available(*, deprecated, message: "RetrieveImageTask.empty will be removed soon. Use `nil` to represnt a no task.")
     public static let empty = RetrieveImageTask()
@@ -121,11 +124,11 @@ extension ImageDownloader {
     }
 }
 
-@available(*, deprecated, message: "RetrieveImageDownloadTask is removed. Use `SessionDataTask` to cancel a task.")
+@available(*, deprecated, message: "RetrieveImageDownloadTask is removed. Use `DownloadTask` to cancel a task.")
 public struct RetrieveImageDownloadTask {
 }
 
-@available(*, deprecated, message: "RetrieveImageTask is removed. Use `SessionDataTask` to cancel a task.")
+@available(*, deprecated, message: "RetrieveImageTask is removed. Use `DownloadTask` to cancel a task.")
 public final class RetrieveImageTask {
 }
 
@@ -153,7 +156,9 @@ extension KingfisherClass where Base: ImageView {
         }
     }
 }
+#endif
 
+#if canImport(UIKit)
 extension KingfisherClass where Base: UIButton {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
@@ -209,7 +214,87 @@ extension KingfisherClass where Base: UIButton {
         }
     }
 }
+#endif
 
+#if os(watchOS)
+import WatchKit
+extension KingfisherClass where Base: WKInterfaceImage {
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    @discardableResult
+    public func setImage(_ resource: Resource?,
+                         placeholder: Image? = nil,
+                         options: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                         completionHandler: CompletionHandler?) -> DownloadTask?
+    {
+        return setImage(
+            with: resource,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock)
+        {
+            result in
+            switch result {
+            case .success(let value):
+                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error):
+                completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+}
+#endif
+
+#if os(macOS)
+extension KingfisherClass where Base: NSButton {
+    @discardableResult
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    public func setImage(with resource: Resource?,
+                         placeholder: Image? = nil,
+                         options: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                         completionHandler: CompletionHandler?) -> DownloadTask?
+    {
+        return setImage(
+            with: resource,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock)
+        {
+            result in
+            switch result {
+            case .success(let value):
+                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error):
+                completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+    
+    @discardableResult
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    public func setAlternateImage(with resource: Resource?,
+                                  placeholder: Image? = nil,
+                                  options: KingfisherOptionsInfo? = nil,
+                                  progressBlock: DownloadProgressBlock? = nil,
+                                  completionHandler: CompletionHandler?) -> DownloadTask?
+    {
+        return setAlternateImage(
+            with: resource,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock)
+        {
+            result in
+            switch result {
+            case .success(let value):
+                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .failure(let error):
+                completionHandler?(nil, error as NSError, .none, nil)
+            }
+        }
+    }
+}
 #endif
 
 extension ImageCache {
@@ -309,3 +394,4 @@ extension ImageCache {
         set { diskStorage.config.expiration = .seconds(newValue) }
     }
 }
+
