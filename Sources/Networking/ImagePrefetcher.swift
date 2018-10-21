@@ -26,11 +26,10 @@
 
 
 #if os(macOS)
-    import AppKit
+import AppKit
 #else
-    import UIKit
+import UIKit
 #endif
-
 
 /// Progress update block of prefetcher. 
 ///
@@ -64,7 +63,7 @@ public class ImagePrefetcher {
     private var progressBlock: PrefetcherProgressBlock?
     private var completionHandler: PrefetcherCompletionHandler?
     
-    private var tasks = [URL: SessionDataTask]()
+    private var tasks = [URL: DownloadTask]()
     
     private var pendingResources: ArraySlice<Resource>
     private var skippedResources = [Resource]()
@@ -137,7 +136,8 @@ public class ImagePrefetcher {
         prefetchQueue = DispatchQueue(label: prefetchQueueName)
         
         // We want all callbacks from our prefetch queue, so we should ignore the call back queue in options
-        var optionsInfoWithoutQueue = options?.removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil)) ?? .empty
+        var optionsInfoWithoutQueue = (options ?? .empty)
+            .removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
         
         // Add our own callback dispatch queue to make sure all callbacks are coming back in our expected queue
         optionsInfoWithoutQueue.append(.callbackDispatchQueue(prefetchQueue))
@@ -152,11 +152,10 @@ public class ImagePrefetcher {
         self.completionHandler = completionHandler
     }
     
-    /**
-     Start to download the resources and cache them. This can be useful for background downloading
-     of assets that are required for later use in an app. This code will not try and update any UI
-     with the results of the process.
-     */
+    
+    /// Start to download the resources and cache them. This can be useful for background downloading
+    /// of assets that are required for later use in an app. This code will not try and update any UI
+    /// with the results of the process.
     public func start()
     {
         // Since we want to handle the resources cancellation in the prefetch queue only.
@@ -179,8 +178,8 @@ public class ImagePrefetcher {
                 return
             }
             
-            let initialConcurentDownloads = min(self.prefetchResources.count, self.maxConcurrentDownloads)
-            for _ in 0 ..< initialConcurentDownloads {
+            let initialConcurrentDownloads = min(self.prefetchResources.count, self.maxConcurrentDownloads)
+            for _ in 0 ..< initialConcurrentDownloads {
                 if let resource = self.pendingResources.popFirst() {
                     self.startPrefetching(resource)
                 }
@@ -188,15 +187,12 @@ public class ImagePrefetcher {
         }
     }
 
-   
-    /**
-     Stop current downloading progress, and cancel any future prefetching activity that might be occuring.
-     */
+    /// Stop current downloading progress, and cancel any future prefetching activity that might be occuring.
     public func stop() {
         prefetchQueue.async {
             if self.finished { return }
             self.stopped = true
-            self.tasks.values.forEach { $0.forceCancel() }
+            self.tasks.values.forEach { $0.cancel() }
         }
     }
     
@@ -229,7 +225,7 @@ public class ImagePrefetcher {
             completionHandler: downloadTaskCompletionHandler)
         
         if let downloadTask = downloadTask {
-            tasks[resource.downloadURL] = downloadTask.sessionTask
+            tasks[resource.downloadURL] = downloadTask
         }
     }
     
@@ -245,8 +241,10 @@ public class ImagePrefetcher {
         if optionsInfo.forceRefresh {
             downloadAndCache(resource)
         } else {
-            let alreadyInCache = manager.cache.imageCachedType(forKey: resource.cacheKey,
-                                                             processorIdentifier: optionsInfo.processor.identifier).cached
+            let alreadyInCache = manager.cache.imageCachedType(
+                forKey: resource.cacheKey,
+                processorIdentifier: optionsInfo.processor.identifier).cached
+            
             if alreadyInCache {
                 append(cached: resource)
             } else {

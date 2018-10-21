@@ -94,7 +94,8 @@ open class ImageDownloader {
     /// - Parameter name: The name for the downloader. It should not be empty.
     public init(name: String) {
         if name.isEmpty {
-            fatalError("[Kingfisher] You should specify a name for the downloader. A downloader with empty name is not permitted.")
+            fatalError("[Kingfisher] You should specify a name for the downloader. "
+                + "A downloader with empty name is not permitted.")
         }
         
         processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process.\(name)")
