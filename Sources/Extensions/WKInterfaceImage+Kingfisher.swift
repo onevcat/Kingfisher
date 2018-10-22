@@ -51,7 +51,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
         guard let resource = resource else {
             base.setImage(placeholder)
             webURL = nil
-            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
             return nil
         }
 
@@ -71,7 +71,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL else {
-                        let error = KingfisherError2.imageSettingError(
+                        let error = KingfisherError.imageSettingError(
                             reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return

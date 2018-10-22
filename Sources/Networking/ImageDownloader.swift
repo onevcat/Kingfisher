@@ -154,14 +154,14 @@ open class ImageDownloader {
         let options = options ?? .empty
 
         guard let r = options.modifier.modified(for: request) else {
-            completionHandler?(.failure(KingfisherError2.requestError(reason: .emptyRequest)))
+            completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
             return nil
         }
         request = r
         
         // There is a possibility that request modifier changed the url to `nil` or empty.
         guard let url = request.url, !url.absoluteString.isEmpty else {
-            completionHandler?(.failure(KingfisherError2.requestError(reason: .invalidURL(request: request))))
+            completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
             return nil
         }
 
@@ -281,7 +281,7 @@ class SessionDelegate: NSObject {
             let task = SessionDataTask(session: session, request: requst)
             task.onTaskCancelled.delegate(on: self) { [unowned task] (self, value) in
                 let (token, callback) = value
-                let error = KingfisherError2.requestError(reason: .taskCancelled(task: task, token: token))
+                let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
                 task.onTaskDone.call((.failure(error), [callback]))
                 if !task.containsCallbacks {
                     self.tasks[url] = nil
@@ -336,7 +336,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         defer { lock.unlock() }
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            let error = KingfisherError2.responseError(reason: .invalidURLResponse(response: response))
+            let error = KingfisherError.responseError(reason: .invalidURLResponse(response: response))
             onCompleted(task: dataTask, result: .failure(error))
             completionHandler(.cancel)
             return
@@ -344,7 +344,7 @@ extension SessionDelegate: URLSessionDataDelegate {
 
         let httpStatusCode = httpResponse.statusCode
         guard onValidStatusCode.call(httpStatusCode) == true else {
-            let error = KingfisherError2.responseError(reason: .invalidHTTPStatusCode(response: httpResponse))
+            let error = KingfisherError.responseError(reason: .invalidHTTPStatusCode(response: httpResponse))
             onCompleted(task: dataTask, result: .failure(error))
             completionHandler(.cancel)
             return
@@ -381,23 +381,23 @@ extension SessionDelegate: URLSessionDataDelegate {
         if let url = task.originalRequest?.url {
             let result: Result<(URLResponse)>
             if let error = error {
-                result = .failure(KingfisherError2.responseError(reason: .URLSessionError(error: error)))
+                result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
             } else if let response = task.response {
                 result = .success(response)
             } else {
-                result = .failure(KingfisherError2.responseError(reason: .noURLResponse))
+                result = .failure(KingfisherError.responseError(reason: .noURLResponse))
             }
             onDownloadingFinished.call((url, result))
         }
 
         let result: Result<(Data, URLResponse?)>
         if let error = error {
-            result = .failure(KingfisherError2.responseError(reason: .URLSessionError(error: error)))
+            result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
         } else {
             if let data = onDidDownloadData.call(sessionTask), let finalData = data {
                 result = .success((finalData, task.response))
             } else {
-                result = .failure(KingfisherError2.responseError(reason: .dataModifyingFailed(task: sessionTask)))
+                result = .failure(KingfisherError.responseError(reason: .dataModifyingFailed(task: sessionTask)))
             }
         }
         onCompleted(task: task, result: result)

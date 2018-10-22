@@ -62,7 +62,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testImageDownloadForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2, length: 123)
+        stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
         
@@ -93,7 +93,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testImageDownloadCompletionHandlerRunningOnMainQueue() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         imageView.kf.setImage(
@@ -111,7 +111,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testImageDownloadWithResourceForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2, length: 123)
+        stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
 
@@ -141,7 +141,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testImageDownloadCancelForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2, length: 123)
+        let stub = delayedStub(url, data: testImageData, length: 123)
 
         let task = imageView.kf.setImage(
             with: url,
@@ -161,7 +161,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testImageDownloadCancelPartialTaskBeforeRequest() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
 
         let group = DispatchGroup()
         
@@ -194,7 +194,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testImageDownloadCancelAllTasksAfterRequestStarted() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
 
         let group = DispatchGroup()
         
@@ -235,7 +235,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         let key = url.cacheKey
 
@@ -287,7 +287,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
         
         imageView.kf.setImage(with: url, progressBlock: { receivedSize, totalSize in
             let indicator = self.imageView.kf.indicator
@@ -306,7 +306,7 @@ class ImageViewExtensionTests: XCTestCase {
     
     func testCanUseImageIndicatorViewAnimating() {
         
-        imageView.kf.indicatorType = .image(imageData: testImageData2)
+        imageView.kf.indicatorType = .image(imageData: testImageData)
         XCTAssertTrue(imageView.kf.indicator is ImageIndicator)
         let image = (imageView.kf.indicator?.view as? ImageView)?.image
         XCTAssertNotNil(image)
@@ -314,7 +314,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
         
         imageView.kf.setImage(with: url, progressBlock: { receivedSize, totalSize in
             let indicator = self.imageView.kf.indicator
@@ -333,11 +333,11 @@ class ImageViewExtensionTests: XCTestCase {
     func testCacnelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
 
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
         }
 
         self.imageView.kf.cancelDownloadTask()
@@ -353,8 +353,8 @@ class ImageViewExtensionTests: XCTestCase {
     func testDownloadForMutipleURLs() {
         let exp = expectation(description: #function)
 
-        stub(testURLs[0], data: testImageData2)
-        stub(testURLs[1], data: testImageData2)
+        stub(testURLs[0], data: testImageData)
+        stub(testURLs[1], data: testImageData)
 
         let group = DispatchGroup()
         
@@ -362,7 +362,7 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: testURLs[0]) { result in
             // The download successed, but not the resource we want.
             XCTAssertNotNil(result.error)
-            if case KingfisherError2.imageSettingError(
+            if case KingfisherError.imageSettingError(
                 reason: .notCurrentResource(let result, let resource)) = result.error!
             {
                 XCTAssertEqual(resource.downloadURL, testURLs[0])
@@ -391,7 +391,7 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) {
             result in
             XCTAssertNotNil(result.error)
-            guard case KingfisherError2.imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case KingfisherError.imageSettingError(reason: .emptyResource) = result.error! else {
                 XCTFail()
                 fatalError()
             }
@@ -404,7 +404,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testSettingImageWhileKeepingCurrentOne() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
         
         imageView.image = testImage
         imageView.kf.setImage(with: url) { result in }
@@ -424,7 +424,7 @@ class ImageViewExtensionTests: XCTestCase {
     func testSettingImageKeepingRespectingPlaceholder() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         // While current image is nil, set placeholder
         imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in }
@@ -500,8 +500,8 @@ class ImageViewExtensionTests: XCTestCase {
     func testIssue665() {
         let exp = expectation(description: #function)
 
-        stub(testURLs[0], data: testImageData2)
-        stub(testURLs[1], data: testImageData2)
+        stub(testURLs[0], data: testImageData)
+        stub(testURLs[1], data: testImageData)
 
         let group = DispatchGroup()
         

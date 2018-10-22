@@ -58,7 +58,7 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.value)
@@ -73,7 +73,7 @@ class ImageDownloaderTests: XCTestCase {
         
         for url in testURLs {
             group.enter()
-            stub(url, data: testImageData2)
+            stub(url, data: testImageData)
             downloader.downloadImage(with: url) { result in
                 XCTAssertNotNil(result.value)
                 group.leave()
@@ -89,7 +89,7 @@ class ImageDownloaderTests: XCTestCase {
         
         let group = DispatchGroup()
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         for _ in 0...5 {
             group.enter()
@@ -107,7 +107,7 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
 
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
         
         modifier.url = url
         
@@ -124,11 +124,11 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
-        stub(url, data: testImageData2, statusCode: 404)
+        stub(url, data: testImageData, statusCode: 404)
         
         downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isInvalidResponseStatusCode(404))
+            XCTAssertTrue((result.error as! KingfisherError).isInvalidResponseStatusCode(404))
             exp.fulfill()
         }
         
@@ -147,7 +147,7 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            if case KingfisherError2.responseError(reason: .URLSessionError(let error)) = result.error! {
+            if case KingfisherError.responseError(reason: .URLSessionError(let error)) = result.error! {
                 let nsError = error as NSError
                 XCTAssert(nsError.code == NSURLErrorServerCertificateUntrusted ||
                           nsError.code == NSURLErrorSecureConnectionFailed,
@@ -177,7 +177,7 @@ class ImageDownloaderTests: XCTestCase {
             
             LSNocilla.sharedInstance().clearStubs()
 
-            stub(url, data: testImageData2)
+            stub(url, data: testImageData)
             // Retry the download
             self.downloader.downloadImage(with: url) { result in
                 XCTAssertNil(result.error)
@@ -201,7 +201,7 @@ class ImageDownloaderTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            if case KingfisherError2.requestError(reason: .invalidURL(let request)) = result.error! {
+            if case KingfisherError.requestError(reason: .invalidURL(let request)) = result.error! {
                 XCTAssertNil(request.url)
             } else {
                 XCTFail()
@@ -220,7 +220,7 @@ class ImageDownloaderTests: XCTestCase {
     func testCancelDownloadTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2, length: 123)
+        let stub = delayedStub(url, data: testImageData, length: 123)
         
         let task = downloader.downloadImage(
             with: url,
@@ -228,7 +228,7 @@ class ImageDownloaderTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
             
             exp.fulfill()
         }
@@ -244,7 +244,7 @@ class ImageDownloaderTests: XCTestCase {
     func testCancelOneDownloadTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         let group = DispatchGroup()
 
@@ -269,10 +269,10 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
 
         let url1 = testURLs[0]
-        let stub1 = delayedStub(url1, data: testImageData2)
+        let stub1 = delayedStub(url1, data: testImageData)
 
         let url2 = testURLs[1]
-        let stub2 = delayedStub(url2, data: testImageData2)
+        let stub2 = delayedStub(url2, data: testImageData)
 
         let group = DispatchGroup()
 
@@ -281,7 +281,7 @@ class ImageDownloaderTests: XCTestCase {
             group.enter()
             downloader.downloadImage(with: $0) { result in
                 XCTAssertNotNil(result.error)
-                XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+                XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
                 group.leave()
             }
         }
@@ -300,7 +300,7 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2, length: 123)
+        let stub = delayedStub(url, data: testImageData, length: 123)
 
         let group = DispatchGroup()
         
@@ -311,7 +311,7 @@ class ImageDownloaderTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
             group.leave()
         }
         
@@ -344,7 +344,7 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         let p = RoundCornerImageProcessor(cornerRadius: 40)
         let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
@@ -354,7 +354,7 @@ class ImageDownloaderTests: XCTestCase {
             let image = result.value!.image
             XCTAssertFalse(image.renderEqual(to: testImage))
             XCTAssertTrue(image.renderEqual(to: roundcornered))
-            XCTAssertEqual(result.value!.originalData, testImageData2)
+            XCTAssertEqual(result.value!.originalData, testImageData)
             exp.fulfill()
         }
         
@@ -364,7 +364,7 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadWithDifferentProcessors() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         let p1 = RoundCornerImageProcessor(cornerRadius: 40)
         let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
@@ -397,13 +397,13 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         downloader.delegate = self
         downloader.downloadImage(with: url) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
-            if case KingfisherError2.responseError(reason: .dataModifyingFailed) = result.error! {
+            if case KingfisherError.responseError(reason: .dataModifyingFailed) = result.error! {
             } else {
                 XCTFail()
             }
@@ -418,7 +418,7 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
 
         let url = testURLs[0]
-        stub(url, data: testImageData2)
+        stub(url, data: testImageData)
 
         var modifierCalled = false
         let modifier = AnyImageModifier { image in

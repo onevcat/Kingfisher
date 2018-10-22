@@ -158,7 +158,7 @@ extension KingfisherClass where Base: ImageView {
 }
 #endif
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 extension KingfisherClass where Base: UIButton {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
@@ -395,3 +395,32 @@ extension ImageCache {
     }
 }
 
+extension ImageCache {
+    @available(*, deprecated, message: "Use `Result` based callback instead.")
+    open func store(_ image: Image,
+                    original: Data? = nil,
+                    forKey key: String,
+                    processorIdentifier identifier: String = "",
+                    cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
+                    toDisk: Bool = true,
+                    completionHandler: (() -> Void)?)
+    {
+        store(
+            image,
+            original: original,
+            forKey: key,
+            processorIdentifier: identifier,
+            cacheSerializer: serializer,
+            toDisk: toDisk)
+        {
+            _ in
+            completionHandler?()
+        }
+    }
+
+    open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> Void)) {
+        calculateDiskCacheSize { result in
+            handler(result.value ?? 0)
+        }
+    }
+}

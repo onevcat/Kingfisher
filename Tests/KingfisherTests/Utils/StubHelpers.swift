@@ -28,7 +28,7 @@ import Foundation
 
 @discardableResult
 func stub(_ url: URL, data: Data, statusCode: Int = 200, length: Int? = nil) -> LSStubResponseDSL {
-    var stubResult = stubRequest("GET", url.absoluteString).andReturn(statusCode)?.withBody(data as NSData)
+    var stubResult = stubRequest("GET", url.absoluteString as NSString).andReturn(statusCode)?.withBody(data as NSData)
     if let length = length {
         stubResult = stubResult?.withHeader("Content-Length", "\(length)")
     }
@@ -42,5 +42,5 @@ func delayedStub(_ url: URL, data: Data, statusCode: Int = 200, length: Int? = n
 
 func stub(_ url: URL, errorCode: Int) {
     let error = NSError(domain: "stubError", code: errorCode, userInfo: nil)
-    return stubRequest("GET", url.absoluteString).andFailWithError(error)
+    return stubRequest("GET", url.absoluteString as NSString).andFailWithError(error)
 }

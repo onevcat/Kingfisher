@@ -61,6 +61,11 @@ public enum CacheType {
     }
 }
 
+public struct CacheStoreResult {
+    let memoryCacheResult: Result<()>
+    let diskCacheResult: Result<()>
+}
+
 extension Image: CacheCostCalculatable {
     public var cacheCost: Int { return kf.cost }
 }
@@ -141,8 +146,9 @@ open class ImageCache {
         
         let cacheName = "com.onevcat.Kingfisher.ImageCache.\(name)"
 
-        #warning("Choose a proper init cost limit.")
-        memoryStorage = MemoryStorage(config: .init(totalCostLimit: 0))
+        let totalMemory = ProcessInfo.processInfo.physicalMemory
+        let costLimit = totalMemory / 4
+        memoryStorage = MemoryStorage(config: .init(totalCostLimit: costLimit > .max ? .max : Int(costLimit)))
 
         var diskConfig = DiskStorage<Data>.Config(
             name: name,
@@ -196,24 +202,37 @@ open class ImageCache {
                       processorIdentifier identifier: String = "",
                       cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
                       toDisk: Bool = true,
-                      completionHandler: (() -> Void)? = nil)
+                      completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
-        try? memoryStorage.store(value: image, forKey: computedKey)
+        // Memory storage should not throw.
+        memoryStorage.storeNoThrow(value: image, forKey: computedKey)
 
         if toDisk {
             ioQueue.async {
+                let result: CacheStoreResult
                 if let data = serializer.data(with: image, original: original) {
                     do {
                         try self.diskStorage.store(value: data, forKey: computedKey)
+                        result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
                     } catch {
-                        #warning("TODO: handle error")
+                        let diskError = KingfisherError.cacheError(
+                            reason: .cannotConvertToData(object: data, error: error))
+                        result = CacheStoreResult(
+                            memoryCacheResult: .success(()),
+                            diskCacheResult: .failure(diskError)
+                        )
                     }
+                } else {
+                    let diskError = KingfisherError.cacheError(
+                        reason: .cannotSerializeImage(image: image, original: original, serializer: serializer))
+                    result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .failure(diskError))
                 }
-                completionHandler?()
+                completionHandler?(result)
             }
         } else {
-            completionHandler?()
+            let result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
+            completionHandler?(result)
         }
     }
     
@@ -300,6 +319,7 @@ open class ImageCache {
                             cacheSerializer: options.cacheSerializer,
                             toDisk: false)
                         {
+                            _ in
                             completionHandler(.success(.disk(image)))
                         }
                     case .failure(let error):
@@ -472,16 +492,15 @@ open class ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> Void)) {
+    open func calculateDiskCacheSize(completion handler: @escaping ((Result<UInt>) -> Void)) {
         ioQueue.async {
             do {
                 let size = try self.diskStorage.totalSize()
                 DispatchQueue.main.async {
-                    handler(UInt(size))
+                    handler(.success(size))
                 }
             } catch {
-                #warning("TODO: Call handler with an error.")
-                handler(0)
+                handler(.failure(error))
             }
         }
     }

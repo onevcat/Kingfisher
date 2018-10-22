@@ -62,7 +62,7 @@ class UIButtonExtensionTests: XCTestCase {
     func testDownloadAndSetImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2, length: 123)
+        stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
         
@@ -89,7 +89,7 @@ class UIButtonExtensionTests: XCTestCase {
     func testDownloadAndSetBackgroundImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2, length: 123)
+        stub(url, data: testImageData, length: 123)
         
         var progressBlockIsCalled = false
         button.kf.setBackgroundImage(with: url, for: .normal, progressBlock: { _, _ in
@@ -114,11 +114,11 @@ class UIButtonExtensionTests: XCTestCase {
     func testCacnelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
 
         button.kf.setImage(with: url, for: .highlighted) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
         }
         
         self.button.kf.cancelImageDownloadTask()
@@ -132,11 +132,11 @@ class UIButtonExtensionTests: XCTestCase {
     func testCacnelBackgroundImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
         
         button.kf.setBackgroundImage(with: url, for: .highlighted) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
         }
         
         self.button.kf.cancelBackgroundImageDownloadTask()
@@ -153,7 +153,7 @@ class UIButtonExtensionTests: XCTestCase {
         button.kf.setBackgroundImage(with: url, for: .normal) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
-            guard case KingfisherError2.imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case KingfisherError.imageSettingError(reason: .emptyResource) = result.error! else {
                 XCTFail()
                 return
             }

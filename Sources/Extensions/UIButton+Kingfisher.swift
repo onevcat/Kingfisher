@@ -61,7 +61,7 @@ extension KingfisherClass where Base: UIButton {
         guard let resource = resource else {
             base.setImage(placeholder, for: state)
             setWebURL(nil, for: state)
-            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -81,7 +81,7 @@ extension KingfisherClass where Base: UIButton {
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL(for: state) else {
-                        let error = KingfisherError2.imageSettingError(
+                        let error = KingfisherError.imageSettingError(
                             reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return
@@ -141,7 +141,7 @@ extension KingfisherClass where Base: UIButton {
         guard let resource = resource else {
             base.setBackgroundImage(placeholder, for: state)
             setBackgroundWebURL(nil, for: state)
-            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -165,7 +165,7 @@ extension KingfisherClass where Base: UIButton {
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.backgroundWebURL(for: state) else {
-                        let error = KingfisherError2.imageSettingError(
+                        let error = KingfisherError.imageSettingError(
                             reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return
