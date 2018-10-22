@@ -101,7 +101,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
                 withIntermediateDirectories: true,
                 attributes: nil)
         } catch {
-            throw KingfisherError2.cacheError(reason: .cannotCreateDirectory(error: error, path: path))
+            throw KingfisherError.cacheError(reason: .cannotCreateDirectory(error: error, path: path))
         }
     }
 
@@ -111,7 +111,13 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         expiration: StorageExpiration? = nil) throws
     {
         let object = StorageObject(value, expiration: expiration ?? config.expiration)
-        let data = try value.toData()
+        let data: Data
+        do {
+            data = try value.toData()
+        } catch {
+            throw KingfisherError.cacheError(reason: .cannotConvertToData(object: value, error: error))
+        }
+
         let fileURL = cacheFileURL(forKey: key)
 
         let now = Date()
@@ -138,7 +144,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         do {
             let meta = try fileURL.resourceValues(forKeys: resourceKeys)
             guard let expiration = meta.contentModificationDate else {
-                throw KingfisherError2.cacheError(reason: .invalidModificationDate(key: key, url: fileURL))
+                throw KingfisherError.cacheError(reason: .invalidModificationDate(key: key, url: fileURL))
             }
             guard expiration.isFuture else {
                 return nil
@@ -150,7 +156,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
                 return T.empty
             }
         } catch {
-            throw KingfisherError2.cacheError(
+            throw KingfisherError.cacheError(
                 reason: .invalidURLResource(error: error, key: key, url: fileURL, resourceKeys: resourceKeys))
         }
     }
@@ -213,11 +219,11 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         guard let directoryEnumerator = fileManager.enumerator(
             at: directoryURL, includingPropertiesForKeys: propertyKeys, options: .skipsHiddenFiles) else
         {
-            throw KingfisherError2.cacheError(reason: .fileEnumeratorCreationFailed(url: directoryURL))
+            throw KingfisherError.cacheError(reason: .fileEnumeratorCreationFailed(url: directoryURL))
         }
 
         guard let urls = directoryEnumerator.allObjects as? [URL] else {
-            throw KingfisherError2.cacheError(reason: .invalidFileEnumeratorContent(url: directoryURL))
+            throw KingfisherError.cacheError(reason: .invalidFileEnumeratorContent(url: directoryURL))
         }
         return urls
     }
@@ -278,24 +284,24 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         var removed: [URL] = []
         let target = config.sizeLimit / 2
         while size >= target, let item = pendings.popLast() {
-            size -= (item.meta.totalFileAllocatedSize ?? 0)
+            size -= UInt(item.meta.totalFileAllocatedSize ?? 0)
             try removeFile(at: item.url)
             removed.append(item.url)
         }
         return removed
     }
 
-    func totalSize() throws -> Int {
+    func totalSize() throws -> UInt {
         let propertyKeys: [URLResourceKey] = [
             .isDirectoryKey,
             .totalFileAllocatedSizeKey
         ]
         let urls = try allFileURLs(for: propertyKeys)
         let keys = Set(propertyKeys)
-        let totalSize = urls.reduce(0) { size, fileURL in
+        let totalSize: UInt = urls.reduce(0) { size, fileURL in
             do {
                 let resourceValues = try fileURL.resourceValues(forKeys: keys)
-                return size + (resourceValues.totalFileAllocatedSize ?? 0)
+                return size + UInt(resourceValues.totalFileAllocatedSize ?? 0)
             } catch {
                 return size
             }

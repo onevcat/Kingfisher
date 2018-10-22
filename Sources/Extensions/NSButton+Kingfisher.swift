@@ -55,7 +55,7 @@ extension KingfisherClass where Base: NSButton {
         guard let resource = resource else {
             base.image = placeholder
             webURL = nil
-            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -75,7 +75,7 @@ extension KingfisherClass where Base: NSButton {
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL else {
-                        let error = KingfisherError2.imageSettingError(
+                        let error = KingfisherError.imageSettingError(
                             reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return
@@ -132,7 +132,7 @@ extension KingfisherClass where Base: NSButton {
         guard let resource = resource else {
             base.alternateImage = placeholder
             alternateWebURL = nil
-            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -152,7 +152,7 @@ extension KingfisherClass where Base: NSButton {
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.alternateWebURL else {
-                        let error = KingfisherError2.imageSettingError(
+                        let error = KingfisherError.imageSettingError(
                             reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return

@@ -79,10 +79,20 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         }
     }
 
+    // Storing in memory will not throw. It is just for meeting protocol requirement and
+    // forwarding to no throwing method.
     func store(
         value: T,
         forKey key: String,
         expiration: StorageExpiration? = nil) throws
+    {
+        storeNoThrow(value: value, forKey: key, expiration: expiration)
+    }
+
+    func storeNoThrow(
+        value: T,
+        forKey key: String,
+        expiration: StorageExpiration? = nil)
     {
         lock.lock()
         defer { lock.unlock() }

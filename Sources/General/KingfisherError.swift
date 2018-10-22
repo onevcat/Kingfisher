@@ -29,7 +29,7 @@ import Foundation
 /// Error domain of Kingfisher
 public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 
-public enum KingfisherError2: Error {
+public enum KingfisherError: Error {
     
     public enum RequestErrorReason {
         case emptyRequest
@@ -52,6 +52,8 @@ public enum KingfisherError2: Error {
         case invalidModificationDate(key: String, url: URL)
         case cannotCreateDirectory(error: Error, path: String)
         case imageNotExisting(key: String)
+        case cannotConvertToData(object: Any, error: Error)
+        case cannotSerializeImage(image: Image, original: Data?, serializer: CacheSerializer)
     }
     
     public enum ProcessorErrorReason {
@@ -70,7 +72,7 @@ public enum KingfisherError2: Error {
     case imageSettingError(reason: ImageSettingErrorReason)
     
     var isTaskCancelled: Bool {
-        if case KingfisherError2.requestError(reason: .taskCancelled) = self {
+        if case KingfisherError.requestError(reason: .taskCancelled) = self {
             return true
         }
         return false
@@ -82,31 +84,6 @@ public enum KingfisherError2: Error {
         }
         return false
     }
-}
-
-
-///The code of errors which `ImageDownloader` might encountered.
-public enum KingfisherError: Int {
-
-    /// badData: The downloaded data is not an image or the data is corrupted.
-    case badData = 10000
-
-    /// notModified: The remote server responded a 304 code. No image data downloaded.
-    case notModified = 10001
-
-    /// The HTTP status code in response is not valid. If an invalid
-    /// code error received, you could check the value under `KingfisherErrorStatusCodeKey`
-    /// in `userInfo` to see the code.
-    case invalidStatusCode = 10002
-
-    /// notCached: The image requested is not in cache but .onlyFromCache is activated.
-    case notCached = 10003
-
-    /// The URL is invalid.
-    case invalidURL = 20000
-
-    /// The downloading task is cancelled before started.
-    case downloadCancelledBeforeStarting = 30000
 }
 
 /// Key will be used in the `userInfo` of `.invalidStatusCode`

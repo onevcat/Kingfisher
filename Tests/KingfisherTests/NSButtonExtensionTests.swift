@@ -64,7 +64,7 @@ class NSButtonExtensionTests: XCTestCase {
     func testDownloadAndSetImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2, length: 123)
+        stub(url, data: testImageData, length: 123)
         
         var progressBlockIsCalled = false
 
@@ -87,7 +87,7 @@ class NSButtonExtensionTests: XCTestCase {
     func testDownloadAndSetAlternateImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData2, length: 123)
+        stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
         button.kf.setAlternateImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) {
@@ -110,11 +110,11 @@ class NSButtonExtensionTests: XCTestCase {
     func testCacnelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
         
         button.kf.setImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
         }
         
         self.button.kf.cancelImageDownloadTask()
@@ -129,11 +129,11 @@ class NSButtonExtensionTests: XCTestCase {
     func testCacnelAlternateImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData2)
+        let stub = delayedStub(url, data: testImageData)
         
         button.kf.setAlternateImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError2).isTaskCancelled)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
         }
         
         self.button.kf.cancelAlternateImageDownloadTask()
@@ -153,7 +153,7 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             
-            guard case KingfisherError2.imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case KingfisherError.imageSettingError(reason: .emptyResource) = result.error! else {
                 XCTFail()
                 fatalError()
             }

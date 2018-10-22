@@ -35,25 +35,24 @@ class ImageCacheTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+
         let uuid = UUID().uuidString
         cacheName = "test-\(uuid)"
         cache = ImageCache(name: cacheName)
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-        
         clearCaches([cache])
         cache = nil
         observer = nil
+
+        super.tearDown()
     }
     
     func testInvalidCustomCachePath() {
         let customPath = "/path/to/image/cache"
         XCTAssertThrowsError(try ImageCache(name: "test", path: customPath)) { error in
-            guard case KingfisherError2.cacheError(reason: .cannotCreateDirectory(_, let path)) = error else {
+            guard case KingfisherError.cacheError(reason: .cannotCreateDirectory(_, let path)) = error else {
                 XCTFail("Should be KingfisherError with cacheError reason.")
                 return
             }
@@ -91,7 +90,7 @@ class ImageCacheTests: XCTestCase {
     func testClearDiskCache() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
-        cache.store(testImage, original: testImageData2, forKey: key, toDisk: true) {
+        cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             self.cache.clearMemoryCache()
             let cacheResult = self.cache.imageCachedType(forKey: key)
             XCTAssertTrue(cacheResult.cached)
@@ -109,7 +108,7 @@ class ImageCacheTests: XCTestCase {
     func testClearMemoryCache() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
-        cache.store(testImage, original: testImageData2, forKey: key, toDisk: true) {
+        cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             self.cache.clearMemoryCache()
             self.cache.retrieveImage(forKey: key) { result in
                 XCTAssertNotNil(result.value?.image)
@@ -141,7 +140,7 @@ class ImageCacheTests: XCTestCase {
     func testStoreImageInMemory() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
-        cache.store(testImage, forKey: key, toDisk: false) {
+        cache.store(testImage, forKey: key, toDisk: false) { _ in
             self.cache.retrieveImage(forKey: key) { result in
                 XCTAssertNotNil(result.value?.image)
                 XCTAssertEqual(result.value?.cacheType, .memory)
@@ -185,7 +184,7 @@ class ImageCacheTests: XCTestCase {
                 return
             }
 
-            self.cache.store(testImage, forKey: key, toDisk: true) {
+            self.cache.store(testImage, forKey: key, toDisk: true) { _ in
                 self.cache.retrieveImage(forKey: key) { result in
 
                     XCTAssertNotNil(result.value?.image)
@@ -212,7 +211,7 @@ class ImageCacheTests: XCTestCase {
         let key = testKeys[0]
         let url = URL(string: key)!
 
-        cache.store(testImage, forKey: key, toDisk: true) {
+        cache.store(testImage, forKey: key, toDisk: true) { _ in
             let cachePath = self.cache.cachePath(forKey: url.cacheKey)
             XCTAssertTrue(cachePath.hasSuffix(".jpg"))
             exp.fulfill()
@@ -235,7 +234,7 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
         XCTAssertFalse(cache.imageCachedType(forKey: key).cached)
-        cache.store(testImage, original: testImageData2, forKey: key, toDisk: true) {
+        cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             XCTAssertTrue(self.cache.imageCachedType(forKey: key).cached)
             exp.fulfill()
         }
@@ -248,7 +247,7 @@ class ImageCacheTests: XCTestCase {
 
         cache.diskStorage.config.expiration = .seconds(0)
 
-        cache.store(testImage, original: testImageData2, forKey: key, toDisk: true) {
+        cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             self.observer = NotificationCenter.default.addObserver(
                 forName: .KingfisherDidCleanDiskCache,
                 object: self.cache,
@@ -280,7 +279,7 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
         let p = RoundCornerImageProcessor(cornerRadius: 40)
-        cache.store(testImage, original: testImageData2, forKey: key, toDisk: true) {
+        cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             self.cache.retrieveImage(forKey: key, options: [.processor(p)]) { result in
                 XCTAssertNotNil(result.value)
                 XCTAssertNil(result.value!.image)
@@ -294,7 +293,14 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
         let p = RoundCornerImageProcessor(cornerRadius: 40)
-        cache.store(testImage, original: testImageData2, forKey: key, processorIdentifier: p.identifier, toDisk: true) {
+        cache.store(
+            testImage,
+            original: testImageData,
+            forKey: key,
+            processorIdentifier: p.identifier,
+            toDisk: true)
+        {
+            _ in
             self.cache.retrieveImage(forKey: key, options: [.processor(p)]) { result in
                 XCTAssertNotNil(result.value?.image)
                 exp.fulfill()
@@ -307,7 +313,7 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
         let cache = ImageCache.default
-        cache.store(testImage, forKey: key) {
+        cache.store(testImage, forKey: key) { _ in
             XCTAssertTrue(cache.memoryStorage.isCached(forKey: key))
             XCTAssertTrue(cache.diskStorage.isCached(forKey: key))
             cleanDefaultCache()
@@ -327,7 +333,7 @@ class ImageCacheTests: XCTestCase {
             return image.withRenderingMode(.alwaysTemplate)
         }
 
-        cache.store(testImage, original: testImageData2, forKey: key) {
+        cache.store(testImage, original: testImageData, forKey: key) { _ in
             self.cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)]) { result in
                 XCTAssertTrue(modifierCalled)
                 XCTAssertEqual(result.value?.image?.renderingMode, .alwaysTemplate)
@@ -347,7 +353,7 @@ class ImageCacheTests: XCTestCase {
             return image.withRenderingMode(.alwaysTemplate)
         }
 
-        cache.store(testImage, original: testImageData2, forKey: key) {
+        cache.store(testImage, original: testImageData, forKey: key) { _ in
             self.cache.clearMemoryCache()
             self.cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)]) { result in
                 XCTAssertTrue(modifierCalled)
@@ -364,7 +370,7 @@ class ImageCacheTests: XCTestCase {
         let group = DispatchGroup()
         testKeys.forEach {
             group.enter()
-            cache.store(testImage, original: testImageData2, forKey: $0, toDisk: true) {
+            cache.store(testImage, original: testImageData, forKey: $0, toDisk: true) { _ in
                 group.leave()
             }
         }

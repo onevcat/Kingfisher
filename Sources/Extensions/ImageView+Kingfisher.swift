@@ -58,7 +58,7 @@ extension KingfisherClass where Base: ImageView {
         guard let resource = resource else {
             self.placeholder = placeholder
             webURL = nil
-            completionHandler?(.failure(KingfisherError2.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
             return nil
         }
         
@@ -92,7 +92,7 @@ extension KingfisherClass where Base: ImageView {
                 DispatchQueue.main.safeAsync {
                     maybeIndicator?.stopAnimatingView()
                     guard resource.downloadURL == self.webURL else {
-                        let error = KingfisherError2.imageSettingError(
+                        let error = KingfisherError.imageSettingError(
                             reason: .notCurrentResource(result: result, resource: resource))
                         completionHandler?(.failure(error))
                         return

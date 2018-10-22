@@ -107,7 +107,7 @@ public class KingfisherManager {
             }
 
             if options.onlyFromCache {
-                let error = KingfisherError2.cacheError(reason: .imageNotExisting(key: resource.cacheKey))
+                let error = KingfisherError.cacheError(reason: .imageNotExisting(key: resource.cacheKey))
                 completionHandler?(.failure(error))
                 return nil
             }
@@ -149,6 +149,7 @@ public class KingfisherManager {
                     cacheSerializer: options.cacheSerializer,
                     toDisk: !options.cacheMemoryOnly)
                 {
+                    _ in
                     guard options.waitForCache else { return }
                     let result = RetrieveImageResult(image: value.image, cacheType: .none, imageURL: url)
                     options.callbackDispatchQueue.async { completionHandler?(.success(result)) }
@@ -164,8 +165,7 @@ public class KingfisherManager {
                                                 forKey: key,
                                                 processorIdentifier: defaultProcessor.identifier,
                                                 cacheSerializer: options.cacheSerializer,
-                                                toDisk: !options.cacheMemoryOnly,
-                                                completionHandler: nil)
+                                                toDisk: !options.cacheMemoryOnly)
                         }
                     }
                 }
@@ -200,7 +200,7 @@ public class KingfisherManager {
                     }
                     completionHandler?(value)
                 } else {
-                    completionHandler?(.failure(KingfisherError2.cacheError(reason: .imageNotExisting(key: key))))
+                    completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
                 }
             }
             return true
@@ -224,7 +224,7 @@ public class KingfisherManager {
                     processQueue.async {
                         let item = ImageProcessItem.image(image)
                         guard let processedImage = processor.process(item: item, options: options) else {
-                            let error = KingfisherError2.processorError(
+                            let error = KingfisherError.processorError(
                                             reason: .processingFailed(processor: processor, item: item))
                             completionHandler?(.failure(error))
                             return
@@ -237,6 +237,7 @@ public class KingfisherManager {
                             cacheSerializer: options.cacheSerializer,
                             toDisk: !options.onlyFromCache)
                         {
+                            _ in
                             if options.waitForCache {
                                 let value = RetrieveImageResult(image: processedImage, cacheType: .none, imageURL: url)
                                 completionHandler?(.success(value))
@@ -249,7 +250,7 @@ public class KingfisherManager {
                         }
                     }
                 } else {
-                    completionHandler?(.failure(KingfisherError2.cacheError(reason: .imageNotExisting(key: key))))
+                    completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
                 }
             }
             return true

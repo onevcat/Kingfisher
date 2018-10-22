@@ -58,7 +58,7 @@ class ImagePrefetcherTests: XCTestCase {
     func testPrefetchingImages() {
         let exp = expectation(description: #function)
         
-        testURLs.forEach { stub($0, data: testImageData2) }
+        testURLs.forEach { stub($0, data: testImageData) }
         var progressCalledCount = 0
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
@@ -81,7 +81,7 @@ class ImagePrefetcherTests: XCTestCase {
     
     func testCancelPrefetching() {
         let exp = expectation(description: #function)
-        let stubs = testURLs.map { delayedStub($0, data: testImageData2) }
+        let stubs = testURLs.map { delayedStub($0, data: testImageData) }
         
         let maxConcurrentCount = 2
         let prefetcher = ImagePrefetcher(
@@ -93,7 +93,9 @@ class ImagePrefetcherTests: XCTestCase {
             XCTAssertEqual(skippedResources.count, 0)
             XCTAssertEqual(failedResources.count, testURLs.count)
             XCTAssertEqual(completedResources.count, 0)
-            exp.fulfill()
+            delay(0.1) {
+                exp.fulfill()
+            }
         }
         
         prefetcher.maxConcurrentDownloads = maxConcurrentCount
@@ -102,7 +104,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         DispatchQueue.main.async {
             prefetcher.stop()
-            delay(0.1) { stubs.forEach { _ = $0.go() } }
+            stubs.forEach { _ = $0.go() }
         }
         waitForExpectations(timeout: 1, handler: nil)
     }
@@ -112,7 +114,7 @@ class ImagePrefetcherTests: XCTestCase {
         let exp = expectation(description: #function)
         KingfisherManager.shared.cache.store(Image(), forKey: testKeys[0])
         
-        testURLs.forEach { stub($0, data: testImageData2) }
+        testURLs.forEach { stub($0, data: testImageData) }
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
             options: [.waitForCache])
@@ -134,7 +136,7 @@ class ImagePrefetcherTests: XCTestCase {
         let exp = expectation(description: #function)
         KingfisherManager.shared.cache.store(Image(), forKey: testKeys[0])
         
-        testURLs.forEach { stub($0, data: testImageData2) }
+        testURLs.forEach { stub($0, data: testImageData) }
         let prefetcher = ImagePrefetcher(urls: testURLs, options: [.forceRefresh, .waitForCache]) {
             skippedResources, failedResources, completedResources in
             XCTAssertEqual(skippedResources.count, 0)
@@ -163,7 +165,7 @@ class ImagePrefetcherTests: XCTestCase {
     
     func testFetchWithProcessor() {
         let exp = expectation(description: #function)
-        testURLs.forEach { stub($0, data: testImageData2, length: 123) }
+        testURLs.forEach { stub($0, data: testImageData, length: 123) }
         
         let p = RoundCornerImageProcessor(cornerRadius: 20)
         
