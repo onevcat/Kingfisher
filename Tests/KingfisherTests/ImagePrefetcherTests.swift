@@ -93,9 +93,7 @@ class ImagePrefetcherTests: XCTestCase {
             XCTAssertEqual(skippedResources.count, 0)
             XCTAssertEqual(failedResources.count, testURLs.count)
             XCTAssertEqual(completedResources.count, 0)
-            delay(0.1) {
-                exp.fulfill()
-            }
+            delay(0.1) { exp.fulfill() }
         }
         
         prefetcher.maxConcurrentDownloads = maxConcurrentCount

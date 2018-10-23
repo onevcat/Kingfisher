@@ -115,13 +115,11 @@ class NSButtonExtensionTests: XCTestCase {
         button.kf.setImage(with: url) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            delay(0.1) { exp.fulfill() }
         }
         
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
-        delay(0.1) {
-            exp.fulfill()
-        }
 
         waitForExpectations(timeout: 1, handler: nil)
     }
@@ -134,13 +132,11 @@ class NSButtonExtensionTests: XCTestCase {
         button.kf.setAlternateImage(with: url) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            delay(0.1) { exp.fulfill() }
         }
         
         self.button.kf.cancelAlternateImageDownloadTask()
         _ = stub.go()
-        delay(0.1) {
-            exp.fulfill()
-        }
         
         waitForExpectations(timeout: 1, handler: nil)
     }

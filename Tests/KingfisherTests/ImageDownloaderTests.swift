@@ -229,8 +229,7 @@ class ImageDownloaderTests: XCTestCase {
             result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
-            
-            exp.fulfill()
+            delay(0.1) { exp.fulfill() }
         }
         
         XCTAssertNotNil(task)
@@ -261,7 +260,9 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         task1?.cancel()
-        group.notify(queue: .main, execute: exp.fulfill)
+        group.notify(queue: .main) {
+            delay(0.1) { exp.fulfill() }
+        }
         waitForExpectations(timeout: 1, handler: nil)
     }
     
@@ -291,7 +292,9 @@ class ImageDownloaderTests: XCTestCase {
             _ = stub1.go()
             _ = stub2.go()
         }
-        group.notify(queue: .main, execute: exp.fulfill)
+        group.notify(queue: .main) {
+            delay(0.1) { exp.fulfill() }
+        }
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -330,7 +333,9 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
         
-        group.notify(queue: .main, execute: exp.fulfill)
+        group.notify(queue: .main) {
+            delay(0.1) { exp.fulfill() }
+        }
         waitForExpectations(timeout: 1, handler: nil)
     }
     
