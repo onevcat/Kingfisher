@@ -149,7 +149,7 @@ class ImageViewExtensionTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            exp.fulfill()
+            delay(0.1) { exp.fulfill() }
         }
 
         XCTAssertNotNil(task)
@@ -187,7 +187,9 @@ class ImageViewExtensionTests: XCTestCase {
         task1?.cancel()
         _ = stub.go()
         
-        group.notify(queue: .main, execute: exp.fulfill)
+        group.notify(queue: .main) {
+            delay(0.1) { exp.fulfill() }
+        }
         waitForExpectations(timeout: 1, handler: nil)
     }
     
@@ -221,7 +223,9 @@ class ImageViewExtensionTests: XCTestCase {
         task3?.cancel()
         _ = stub.go()
         
-        group.notify(queue: .main, execute: exp.fulfill)
+        group.notify(queue: .main) {
+            delay(0.1) { exp.fulfill() }
+        }
         waitForExpectations(timeout: 1, handler: nil)
     }
     
@@ -338,14 +342,11 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            delay(0.1) { exp.fulfill() }
         }
 
         self.imageView.kf.cancelDownloadTask()
         _ = stub.go()
-        
-        delay(0.1) {
-            exp.fulfill()
-        }
 
         waitForExpectations(timeout: 1, handler: nil)
     }

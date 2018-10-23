@@ -119,12 +119,11 @@ class UIButtonExtensionTests: XCTestCase {
         button.kf.setImage(with: url, for: .highlighted) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            delay(0.1) { exp.fulfill() }
         }
         
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
-        
-        delay(0.1) { exp.fulfill() }
 
         waitForExpectations(timeout: 1, handler: nil)
     }
@@ -137,11 +136,11 @@ class UIButtonExtensionTests: XCTestCase {
         button.kf.setBackgroundImage(with: url, for: .highlighted) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            delay(0.1) { exp.fulfill() }
         }
         
         self.button.kf.cancelBackgroundImageDownloadTask()
         _ = stub.go()
-        delay(0.1) { exp.fulfill() }
         
         waitForExpectations(timeout: 1, handler: nil)
     }
