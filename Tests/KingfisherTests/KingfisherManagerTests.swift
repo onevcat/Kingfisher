@@ -354,6 +354,39 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
+    func testFailingProcessOnOriginalImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        
+        manager.cache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            cacheSerializer: DefaultCacheSerializer.default,
+            toDisk: true)
+        {
+            _ in
+            let p = FailingProcessor()
+            
+            let cached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
+            XCTAssertFalse(cached.cached)
+            
+            // No downloading will happen
+            self.manager.retrieveImage(with: url, options: [.processor(p), .waitForCache]) { result in
+                XCTAssertNotNil(result.error)
+                XCTAssertTrue(p.processed)
+                if case KingfisherError.processorError(reason: .processingFailed(let processor, _)) = result.error! {
+                    XCTAssertEqual(processor.identifier, p.identifier)
+                } else {
+                    XCTFail()
+                }
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
     func testCacheOriginalImageWithOriginalCache() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -369,7 +402,10 @@ class KingfisherManagerTests: XCTestCase {
             stub(url, data: testImageData)
             
             let p = RoundCornerImageProcessor(cornerRadius: 20)
-            self.manager.retrieveImage(with: url, options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache), .waitForCache]) {
+            self.manager.retrieveImage(
+                with: url,
+                options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache), .waitForCache])
+            {
                 result in
                 let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
                 XCTAssertEqual(originalCached, .memory)
@@ -644,3 +680,12 @@ class SimpleProcessor: ImageProcessor {
     }
 }
 
+class FailingProcessor: ImageProcessor {
+    public let identifier = "FailingProcessor"
+    var processed = false
+    public init() {}
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        processed = true
+        return nil
+    }
+}
