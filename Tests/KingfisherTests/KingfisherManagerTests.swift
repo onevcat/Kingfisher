@@ -123,6 +123,57 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
+    func testRetrieveImageForceRefresh() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        manager.cache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            cacheSerializer: DefaultCacheSerializer.default,
+            toDisk: true)
+        {
+            _ in
+            XCTAssertTrue(self.manager.cache.imageCachedType(forKey: url.cacheKey).cached)
+            self.manager.retrieveImage(with: url, options: [.forceRefresh]) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(result.value!.cacheType, .none)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
+    func testRetrieveImageWithoutWaitForCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: []) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            
+            var cacheType = manager.cache.imageCachedType(forKey: url.cacheKey)
+            XCTAssertEqual(cacheType, .memory)
+            
+            manager.cache.clearMemoryCache()
+            cacheType = manager.cache.imageCachedType(forKey: url.cacheKey)
+            XCTAssertEqual(cacheType, .none)
+            
+            // Wait for disk cache finishes
+            delay(0.1) {
+                cacheType = manager.cache.imageCachedType(forKey: url.cacheKey)
+                XCTAssertEqual(cacheType, .disk)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
     func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {
         let progressExpectation = expectation(description: "progressBlock running on main queue")
         let completionExpectation = expectation(description: "completionHandler running on main queue")
