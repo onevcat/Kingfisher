@@ -202,6 +202,7 @@ open class ImageCache {
                       processorIdentifier identifier: String = "",
                       cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
                       toDisk: Bool = true,
+                      callbackQueue: CallbackQueue = .current,
                       completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
@@ -228,11 +229,15 @@ open class ImageCache {
                         reason: .cannotSerializeImage(image: image, original: original, serializer: serializer))
                     result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .failure(diskError))
                 }
-                completionHandler?(result)
+                if let completionHandler = completionHandler {
+                    callbackQueue.execute { completionHandler(result) }
+                }
             }
         } else {
-            let result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
-            completionHandler?(result)
+            if let completionHandler = completionHandler {
+                let result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
+                callbackQueue.execute { completionHandler(result) }
+            }
         }
     }
     
@@ -312,6 +317,7 @@ open class ImageCache {
                         }
                     
                         // Cache the disk image to memory.
+                        // Memory cache does not change callback queue, which is already which we want.
                         self.store(
                             image,
                             forKey: key,
