@@ -201,15 +201,15 @@ open class ImageDownloader {
                     }
 
                     let imageResult = result.map { ImageDownloadResult(image: $0, url: url, originalData: data) }
-                    let queue = callback.options.callbackDispatchQueue
-                    queue.async { callback.onCompleted?.call(imageResult) }
+                    let queue = callback.options.callbackQueue
+                    queue.execute { callback.onCompleted?.call(imageResult) }
                 }
                 self.processQueue.async { prosessor.process() }
 
             case .failure(let error):
                 callbacks.forEach { callback in
-                    let queue = callback.options.callbackDispatchQueue
-                    queue.async { callback.onCompleted?.call(.failure(error)) }
+                    let queue = callback.options.callbackQueue
+                    queue.execute { callback.onCompleted?.call(.failure(error)) }
                 }
             }
         }

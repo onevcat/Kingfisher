@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		008050DF31B6F246FFC8BEA1 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */; };
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B10480E216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
@@ -41,7 +40,6 @@
 		4B8E291D216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
 		4B8E291E216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
 		4B8E291F216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
-		B8BBB7092D89EAC97D6ED888 /* libPods-KingfisherTests-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0268A213AE27BC6133BC5E0F /* libPods-KingfisherTests-macOS.a */; };
 		D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
 		D114F36E215D2D0B00A01349 /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6BC215D2BB50013BA68 /* String+MD5.swift */; };
 		D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69D215D2BB50013BA68 /* RequestModifier.swift */; };
@@ -202,7 +200,6 @@
 		D1DC4B421D60996D00DFDFAA /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */; };
 		D1DC4B431D60996D00DFDFAA /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */; };
 		D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
-		D2F93EDA375F32898AFEE242 /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0E767B01589AA8BE21FFA6 /* libPods-KingfisherTests.a */; };
 		D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		D9638BA71C7DCF560046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		D9638BA81C7DCF570046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
@@ -236,17 +233,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0268A213AE27BC6133BC5E0F /* libPods-KingfisherTests-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		033CD4A1D8C6D03D7AC150BE /* Pods-KingfisherTests-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
 		4AB2628A580157ADADCE0011 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4B10480C216F157000300C61 /* ImageDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProcessor.swift; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B2944481C3D01B20088C3E7 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B37669F1C4794460001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
-		4B3766A11C47944D0001443F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
 		4B46CC5E217449C600D90C4A /* MemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStorage.swift; sourceTree = "<group>"; };
 		4B46CC63217449E000D90C4A /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -258,7 +251,6 @@
 		4BCCF3441D5B0457003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.debug.xcconfig"; sourceTree = "<group>"; };
-		9D0E767B01589AA8BE21FFA6 /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10EC2311C3D632300A4211C /* KingfisherTests-macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D12AB69D215D2BB50013BA68 /* RequestModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModifier.swift; sourceTree = "<group>"; };
 		D12AB69E215D2BB50013BA68 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
@@ -333,7 +325,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B3766841C478F940001443F /* Kingfisher.framework in Frameworks */,
-				008050DF31B6F246FFC8BEA1 /* libPods-KingfisherTests-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,7 +333,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */,
-				B8BBB7092D89EAC97D6ED888 /* libPods-KingfisherTests-macOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,7 +362,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */,
-				D2F93EDA375F32898AFEE242 /* libPods-KingfisherTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,13 +576,8 @@
 		EA99D30544BD22799F7A5367 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4B3766A11C47944D0001443F /* CFNetwork.framework */,
-				4B37669F1C4794460001443F /* CFNetwork.framework */,
 				4B164ACE1B8D554200768EC6 /* CFNetwork.framework */,
 				4B3E714D1B01FEB200F5AAED /* WatchKit.framework */,
-				9D0E767B01589AA8BE21FFA6 /* libPods-KingfisherTests.a */,
-				0268A213AE27BC6133BC5E0F /* libPods-KingfisherTests-macOS.a */,
-				1446B878F6627F0B79BB366C /* libPods-KingfisherTests-tvOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

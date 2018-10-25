@@ -38,7 +38,8 @@ public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
 extension Array where Element == KingfisherOptionsInfoItem {
     
     static var empty: KingfisherOptionsInfo = []
-    
+
+    // A connivence property to generate an image creating option with current `KingfisherOptionsInfo`.
     var imageCreatingOptions: ImageCreatingOptions {
         return ImageCreatingOptions(
             scale: scaleFactor,
@@ -102,7 +103,12 @@ public enum KingfisherOptionsInfoItem {
     
     /// The associated value of this member will be used as the target queue of dispatch callbacks when
     /// retrieving images from cache. If not set, `Kingfisher` will use main queue for callbacks.
+    @available(*, deprecated, message: "Use `.callbackQueue(CallbackQueue)` instead.")
     case callbackDispatchQueue(DispatchQueue?)
+
+    /// The associated value of this member will be used as the target queue of dispatch callbacks when
+    /// retrieving images from cache. If not set, `Kingfisher` will use `.mainCurrentOrAsync` for callbacks.
+    case callbackQueue(CallbackQueue)
     
     /// The associated value of this member will be used as the scale factor when converting retrieved data to an image.
     /// It is the image scale, instead of your screen scale. You may need to specify the correct scale when you dealing 
@@ -110,9 +116,9 @@ public enum KingfisherOptionsInfoItem {
     case scaleFactor(CGFloat)
 
     /// Whether all the animated image data should be preloaded. Default it false, which means following frames will be
-    /// loaded on need. If true, all the animated image data will be loaded and decoded into memory. This option is mainly
-    /// used for back compatibility internally. You should not set it directly. `AnimatedImageView` will not preload
-    /// all data, while a normal image view (`UIImageView` or `NSImageView`) will load all data. Choose to use
+    /// loaded on need. If true, all the animated image data will be loaded and decoded into memory. This option is
+    /// mainly used for back compatibility internally. You should not set it directly. `AnimatedImageView` will not
+    /// preload all data, while a normal image view (`UIImageView` or `NSImageView`) will load all data. Choose to use
     /// corresponding image view type instead of setting this option.
     case preloadAllAnimationData
     
@@ -133,11 +139,10 @@ public enum KingfisherOptionsInfoItem {
     /// `DefaultCacheSerializer.default` will be used by default.
     case cacheSerializer(CacheSerializer)
 
-    /// Modifier for modifying an image right before it is used.
-    /// If the image was fetched directly from the downloader, the modifier will
-    /// run directly after the processor.
-    /// If the image is being fetched from a cache, the modifier will run after
-    /// the cacheSerializer.
+    /// Modifier for modifying an image right before it is used. If the image was fetched directly from the downloader,
+    /// the modifier will run directly after the processor. If the image is being fetched from a cache, the modifier
+    /// will run after the cacheSerializer.
+    ///
     /// Use `ImageModifier` when you need to set properties on a concrete type
     /// of `Image`, such as a `UIImage`, that do not persist when caching the image.
     case imageModifier(ImageModifier)
@@ -150,6 +155,7 @@ public enum KingfisherOptionsInfoItem {
     /// If set, Kingfisher will only load the first frame from a animated image data file as a single image.
     /// Loading a lot of animated images may take too much memory. It will be useful when you want to display a
     /// static preview of the first frame from a animated image.
+    ///
     /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
     
@@ -167,7 +173,8 @@ precedencegroup ItemComparisonPrecedence {
 
 infix operator <== : ItemComparisonPrecedence
 
-// This operator returns true if two `KingfisherOptionsInfoItem` enum is the same, without considering the associated values.
+// This operator returns true if two `KingfisherOptionsInfoItem` enum is the same,
+// without considering the associated values.
 func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
     switch (lhs, rhs) {
     case (.targetCache, .targetCache): return true
@@ -183,6 +190,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.onlyFromCache, .onlyFromCache): return true
     case (.backgroundDecode, .backgroundDecode): return true
     case (.callbackDispatchQueue, .callbackDispatchQueue): return true
+    case (.callbackQueue, .callbackQueue): return true
     case (.scaleFactor, .scaleFactor): return true
     case (.preloadAllAnimationData, .preloadAllAnimationData): return true
     case (.requestModifier, .requestModifier): return true
@@ -298,15 +306,14 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     public var preloadAllAnimationData: Bool {
         return contains { $0 <== .preloadAllAnimationData }
     }
-    
-    /// The queue of callbacks should happen from Kingfisher.
-    public var callbackDispatchQueue: DispatchQueue {
-        if let item = lastMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
-            case .callbackDispatchQueue(let queue) = item
+
+    public var callbackQueue: CallbackQueue {
+        if let item = lastMatchIgnoringAssociatedValue(.callbackQueue(.untouch)),
+            case .callbackQueue(let queue) = item
         {
-            return queue ?? DispatchQueue.main
+            return queue
         }
-        return DispatchQueue.main
+        return .mainCurrentOrAsync
     }
     
     /// The scale factor which should be used for the image.

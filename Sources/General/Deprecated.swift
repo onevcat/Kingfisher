@@ -424,3 +424,16 @@ extension ImageCache {
         }
     }
 }
+
+public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+    /// The queue of callbacks should happen from Kingfisher.
+    @available(*, deprecated, message: "Use `callbackQueue` instead.", renamed: "callbackQueue")
+    public var callbackDispatchQueue: DispatchQueue {
+        if let item = lastMatchIgnoringAssociatedValue(.callbackDispatchQueue(nil)),
+            case .callbackDispatchQueue(let queue) = item
+        {
+            return queue ?? DispatchQueue.main
+        }
+        return callbackQueue.queue
+    }
+}

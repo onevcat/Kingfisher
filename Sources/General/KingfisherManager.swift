@@ -189,7 +189,7 @@ public class KingfisherManager {
                     processorIdentifier: options.processor.identifier,
                     cacheSerializer: options.cacheSerializer,
                     toDisk: !options.cacheMemoryOnly,
-                    callbackQueue: .dispatch(options.callbackDispatchQueue))
+                    callbackQueue: options.callbackQueue)
                 {
                     _ in
                     if options.waitForCache {

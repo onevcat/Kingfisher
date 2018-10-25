@@ -29,17 +29,7 @@ import XCTest
 @testable import Kingfisher
 
 class KingfisherOptionsInfoTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
+
     func testEmptyOptionsShouldParseCorrectly() {
         let options = KingfisherOptionsInfo.empty
         XCTAssertTrue(options.targetCache === nil)
@@ -57,7 +47,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.fromMemoryCacheOrRefresh)
         XCTAssertFalse(options.cacheMemoryOnly)
         XCTAssertFalse(options.backgroundDecode)
-        XCTAssertEqual(options.callbackDispatchQueue.label, DispatchQueue.main.label)
+        XCTAssertEqual(options.callbackQueue.queue.label, DispatchQueue.main.label)
         XCTAssertEqual(options.scaleFactor, 1.0)
         XCTAssertFalse(options.keepCurrentImageWhileLoading)
         XCTAssertFalse(options.onlyLoadFirstFrame)
@@ -77,27 +67,36 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
-        
+        let serializer = FormatIndicatedCacheSerializer.png
+        let modifier = DefaultImageModifier.default
+
         let options: KingfisherOptionsInfo = [
             .targetCache(cache),
             .downloader(downloader),
+            .originalCache(cache),
             .transition(transition),
             .downloadPriority(0.8),
             .forceRefresh,
+            .forceTransition,
             .fromMemoryCacheOrRefresh,
             .cacheMemoryOnly,
+            .waitForCache,
             .onlyFromCache,
             .backgroundDecode,
-            .callbackDispatchQueue(queue),
+            .callbackQueue(.dispatch(queue)),
             KingfisherOptionsInfoItem.scaleFactor(2.0),
+            .preloadAllAnimationData,
             .requestModifier(testModifier),
             .processor(processor),
+            .cacheSerializer(serializer),
+            .imageModifier(modifier),
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
             .cacheOriginalImage
         ]
         
         XCTAssertTrue(options.targetCache === cache)
+        XCTAssertTrue(options.originalCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
 #if !os(macOS)
@@ -110,14 +109,19 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
         XCTAssertTrue(options.fromMemoryCacheOrRefresh)
+        XCTAssertTrue(options.forceTransition)
         XCTAssertTrue(options.cacheMemoryOnly)
+        XCTAssertTrue(options.waitForCache)
         XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
         
-        XCTAssertEqual(options.callbackDispatchQueue.label, queue.label)
+        XCTAssertEqual(options.callbackQueue.queue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
+        XCTAssertTrue(options.preloadAllAnimationData)
         XCTAssertTrue(options.modifier is TestModifier)
         XCTAssertEqual(options.processor.identifier, processor.identifier)
+        XCTAssertTrue(options.cacheSerializer is FormatIndicatedCacheSerializer)
+        XCTAssertTrue(options.imageModifier is DefaultImageModifier)
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)

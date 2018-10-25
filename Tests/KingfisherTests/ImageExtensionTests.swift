@@ -47,6 +47,13 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(format, .unknown)
     }
     
+    func testGenerateJPEGImage() {
+        let options = ImageCreatingOptions()
+        let image = KingfisherClass<Image>.image(data: testImageJEPGData, options: options)
+        XCTAssertNotNil(image)
+        XCTAssertTrue(image!.renderEqual(to: Image(data: testImageJEPGData)!))
+    }
+    
     func testGenerateGIFImage() {
         let options = ImageCreatingOptions()
         let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)
@@ -96,6 +103,13 @@ class ImageExtensionTests: XCTestCase {
         
         XCTAssertEqual(image!.kf.duration, Double.infinity)
 #endif
+    }
+    
+    func testGenerateFromNonImage() {
+        let data = "hello".data(using: .utf8)!
+        let options = ImageCreatingOptions()
+        let image = KingfisherClass<Image>.image(data: data, options: options)
+        XCTAssertNil(image)
     }
     
     func testPreloadAllAnimationData() {
@@ -257,6 +271,19 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(decoded_2x.size, CGSize(width: 32, height: 32))
         XCTAssertEqual(decoded_2x.scale, 2.0)
         #endif
+    }
+    
+    func testNormalized() {
+        // Full loaded GIF image should not be normalized since it is a set of images.
+        let options = ImageCreatingOptions()
+        let gifImage = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)
         
+        XCTAssertNotNil(gifImage)
+        XCTAssertEqual(gifImage!.kf.normalized, gifImage!)
+        
+        // No need to normalize up orientation image.
+        let normalImage = testImage
+        XCTAssertEqual(normalImage.imageOrientation, .up)
+        XCTAssertEqual(normalImage, testImage)
     }
 }

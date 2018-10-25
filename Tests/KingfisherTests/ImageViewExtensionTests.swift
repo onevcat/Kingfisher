@@ -98,7 +98,7 @@ class ImageViewExtensionTests: XCTestCase {
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
         imageView.kf.setImage(
             with: url,
-            options: [.callbackDispatchQueue(customQueue)],
+            options: [.callbackQueue(.dispatch(customQueue))],
             progressBlock: { _, _ in XCTAssertTrue(Thread.isMainThread) })
         {
             result in
