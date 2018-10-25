@@ -202,7 +202,7 @@ open class ImageCache {
                       processorIdentifier identifier: String = "",
                       cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
                       toDisk: Bool = true,
-                      callbackQueue: CallbackQueue = .current,
+                      callbackQueue: CallbackQueue = .untouch,
                       completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
@@ -289,7 +289,7 @@ open class ImageCache {
     */
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo? = nil,
-                        callbackQueue: CallbackQueue = .current,
+                        callbackQueue: CallbackQueue = .untouch,
                      completionHandler: ((Result<(ImageCacheResult)>) -> Void)?)
     {
         // No completion handler. Not start working and early return.
@@ -360,7 +360,7 @@ open class ImageCache {
     open func retrieveImageInDiskCache(
         forKey key: String,
         options: KingfisherOptionsInfo? = nil,
-        callbackQueue: CallbackQueue = .current,
+        callbackQueue: CallbackQueue = .untouch,
         completionHandler: @escaping (Result<Image?>) -> Void)
     {
         let options = options ?? .empty

@@ -233,7 +233,8 @@ class KingfisherManagerTests: XCTestCase {
         stub(url, data: testImageData, length: 123)
 
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        manager.retrieveImage(with: url, options: [.callbackDispatchQueue(customQueue)], progressBlock: { _, _ in
+        let options: KingfisherOptionsInfo = [.callbackQueue(.dispatch(customQueue))]
+        manager.retrieveImage(with: url, options: options, progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
         })

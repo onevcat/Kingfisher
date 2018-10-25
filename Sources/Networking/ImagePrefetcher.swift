@@ -137,10 +137,10 @@ public class ImagePrefetcher {
         
         // We want all callbacks from our prefetch queue, so we should ignore the call back queue in options
         var optionsInfoWithoutQueue = (options ?? .empty)
-            .removeAllMatchesIgnoringAssociatedValue(.callbackDispatchQueue(nil))
+            .removeAllMatchesIgnoringAssociatedValue(.callbackQueue(.untouch))
         
         // Add our own callback dispatch queue to make sure all callbacks are coming back in our expected queue
-        optionsInfoWithoutQueue.append(.callbackDispatchQueue(prefetchQueue))
+        optionsInfoWithoutQueue.append(.callbackQueue(.dispatch(prefetchQueue)))
         
         optionsInfo = optionsInfoWithoutQueue
         

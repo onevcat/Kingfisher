@@ -89,7 +89,8 @@ extension KingfisherClass where Base: Image {
         set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
     }
     #endif
-    
+
+    // Bitmap memory cost with KB.
     var cost: Int {
         let pixel = Int(size.width * size.height * scale * scale)
         guard let cgImage = cgImage else {
@@ -116,7 +117,7 @@ extension KingfisherClass where Base: Image {
         return Image(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
     }
     
-    /// Normalized image of current `base`.
+    /// Returns normalized image for current `base` image.
     /// This method will try to redraw an image with orientation and scale considered.
     public var normalized: Image {
         // prevent animated image (GIF) lose it's images
@@ -134,7 +135,6 @@ extension KingfisherClass where Base: Image {
 // MARK: - Image Representation
 extension KingfisherClass where Base: Image {
     // MARK: - PNG
-    
     /// Returns PNG representation of `base` image.
     ///
     /// - Returns: PNG data of image.
@@ -151,7 +151,6 @@ extension KingfisherClass where Base: Image {
     }
     
     // MARK: - JPEG
-    
     /// Returns JPEG representation of `base` image.
     ///
     /// - Parameter compressionQuality: The compression quality when converting image to JPEG data.
@@ -169,7 +168,6 @@ extension KingfisherClass where Base: Image {
     }
     
     // MARK: - GIF
-    
     /// Returns GIF representation of `base` image.
     ///
     /// - Returns: Original GIF data of image.
@@ -239,6 +237,15 @@ extension KingfisherClass where Base: Image {
         #endif
     }
 
+    /// Creates an image from a given data and options. `.JPEG`, `.PNG` or `.GIF` is supported. For other
+    /// image format, image initilizer from system will be used. If no image object could be created from
+    /// the given `data`, `nil` will be returned.
+    ///
+    /// - Parameters:
+    ///   - data: The image data representation.
+    ///   - options: Options to use when creating the image.
+    /// - Returns: An `Image` object represents the image if created. If the `data` is invalid or not supported, `nil`
+    ///            will be returned.
     public static func image(data: Data, options: ImageCreatingOptions) -> Image? {
         var image: Image?
         switch data.kf.imageFormat {

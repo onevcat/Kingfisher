@@ -36,19 +36,28 @@ import Foundation
 public enum CallbackQueue {
     case mainAsync
     case mainCurrentOrAsync
-    case current
+    case untouch
     case dispatch(DispatchQueue)
     
-    func execute(_ block: @escaping () -> Void) {
+    public func execute(_ block: @escaping () -> Void) {
         switch self {
         case .mainAsync:
             DispatchQueue.main.async { block() }
         case .mainCurrentOrAsync:
             DispatchQueue.main.safeAsync { block() }
-        case .current:
+        case .untouch:
             block()
         case .dispatch(let queue):
             queue.async { block() }
+        }
+    }
+
+    var queue: DispatchQueue {
+        switch self {
+        case .mainAsync: return .main
+        case .mainCurrentOrAsync: return .main
+        case .untouch: return OperationQueue.current?.underlyingQueue ?? .main
+        case .dispatch(let queue): return queue
         }
     }
 }
