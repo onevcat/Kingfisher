@@ -134,6 +134,9 @@ extension KingfisherClass where Base: ImageView {
                         )
                         #endif
                     case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.image = image
+                        }
                         completionHandler?(result)
                     }
                 }
