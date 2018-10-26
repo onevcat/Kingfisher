@@ -53,116 +53,128 @@ extension Array where Element == KingfisherOptionsInfoItem {
 Items could be added into KingfisherOptionsInfo.
 */
 public enum KingfisherOptionsInfoItem {
-    /// The associated value of this member should be an ImageCache object. Kingfisher will use the specified
-    /// cache object when handling related operations, including trying to retrieve the cached images and store
-    /// the downloaded image to it.
+    /// Kingfisher will use the associated `ImageCache` object when handling related operations,
+    /// including trying to retrieve the cached images and store the downloaded image to it.
     case targetCache(ImageCache)
     
-    /// Cache for storing and retrieving original image.
-    /// Preferred prior to targetCache for storing and retrieving original images if specified.
-    /// Only used if a non-default image processor is involved.
+    /// The `ImageCache` for storing and retrieving original images. If `originalCache` is
+    /// contained in the options, it will be preferred for storing and retrieving original images.
+    /// If there is no `.originalCache` in the options, `.targetCache` will be used to store original images.
+    ///
+    /// When using KingfisherManager to download and store an image, if `cacheOriginalImage` is
+    /// applied in the option, the original image will be stored to this `originalCache`. At the
+    /// same time, if a requested final image (with processor applied) cannot be found in `targetCache`,
+    /// Kingfisher will try to search the original image to check whether it is already there. If found,
+    /// it will be used and applied with the given processor. It is an optimization for not downloading
+    /// the same image for multiple times.
     case originalCache(ImageCache)
     
-    /// The associated value of this member should be an ImageDownloader object. Kingfisher will use this
-    /// downloader to download the images.
+    /// Kingfisher will use the associated `ImageDownloader` object to download the requested images.
     case downloader(ImageDownloader)
     
     /// Member for animation transition when using UIImageView. Kingfisher will use the `ImageTransition` of
     /// this enum to animate the image in if it is downloaded from web. The transition will not happen when the
     /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
-    /// the image being retrieved from cache, set `ForceTransition` as well.
+    /// the image being retrieved from cache, set `.forceRefresh` as well.
     case transition(ImageTransition)
     
     /// Associated `Float` value will be set as the priority of image download task. The value for it should be
-    /// between 0.0~1.0. If this option not set, the default value (`NSURLSessionTaskPriorityDefault`) will be used.
+    /// between 0.0~1.0. If this option not set, the default value (`URLSessionTask.defaultPriority`) will be used.
     case downloadPriority(Float)
     
-    /// If set, `Kingfisher` will ignore the cache and try to fire a download task for the resource.
+    /// If set, Kingfisher will ignore the cache and try to fire a download task for the resource.
     case forceRefresh
 
-    /// If set, `Kingfisher` will try to retrieve the image from memory cache first. If the image is not in memory
+    /// If set, Kingfisher will try to retrieve the image from memory cache first. If the image is not in memory
     /// cache, then it will ignore the disk cache but download the image again from network. This is useful when
-    /// you want to display a changeable image behind the same url, while avoiding download it again and again.
+    /// you want to display a changeable image behind the same url at the same app session, while avoiding download
+    /// it for multiple times.
     case fromMemoryCacheOrRefresh
     
     /// If set, setting the image to an image view will happen with transition even when retrieved from cache.
-    /// See `Transition` option for more.
+    /// See `.transition` option for more.
     case forceTransition
     
-    ///  If set, `Kingfisher` will only cache the value in memory but not in disk.
+    ///  If set, Kingfisher will only cache the value in memory but not in disk.
     case cacheMemoryOnly
     
-    ///  If set, `Kingfisher` will wait for caching operation to be completed before calling the completion block.
+    ///  If set, Kingfisher will wait for caching operation to be completed before calling the completion block.
     case waitForCache
     
-    /// If set, `Kingfisher` will only try to retrieve the image from cache not from network.
+    /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is
+    /// not in cache, the image retrieving will fail with an error.
     case onlyFromCache
     
-    /// Decode the image in background thread before using.
+    /// Decode the image in background thread before using. It will decode the downloaded image data and do a offscreen
+    /// rendering to extract pixel information in background. This can speed up display, but will cost more time to
+    /// prepare the image for using.
     case backgroundDecode
     
     /// The associated value of this member will be used as the target queue of dispatch callbacks when
-    /// retrieving images from cache. If not set, `Kingfisher` will use main queue for callbacks.
+    /// retrieving images from cache. If not set, Kingfisher will use main queue for callbacks.
     @available(*, deprecated, message: "Use `.callbackQueue(CallbackQueue)` instead.")
     case callbackDispatchQueue(DispatchQueue?)
 
-    /// The associated value of this member will be used as the target queue of dispatch callbacks when
-    /// retrieving images from cache. If not set, `Kingfisher` will use `.mainCurrentOrAsync` for callbacks.
+    /// The associated value will be used as the target queue of dispatch callbacks when retrieving images from
+    /// cache. If not set, Kingfisher will use `.mainCurrentOrAsync` for callbacks.
     case callbackQueue(CallbackQueue)
     
-    /// The associated value of this member will be used as the scale factor when converting retrieved data to an image.
-    /// It is the image scale, instead of your screen scale. You may need to specify the correct scale when you dealing 
-    /// with 2x or 3x retina images.
+    /// The associated value will be used as the scale factor when converting retrieved data to an image.
+    /// Specify the image scale, instead of your screen scale. You may need to set the correct scale when you dealing
+    /// with 2x or 3x retina images. Otherwise, Kingfisher will convert the data to image object at `scale` 1.0.
     case scaleFactor(CGFloat)
 
-    /// Whether all the animated image data should be preloaded. Default it false, which means following frames will be
-    /// loaded on need. If true, all the animated image data will be loaded and decoded into memory. This option is
-    /// mainly used for back compatibility internally. You should not set it directly. `AnimatedImageView` will not
-    /// preload all data, while a normal image view (`UIImageView` or `NSImageView`) will load all data. Choose to use
-    /// corresponding image view type instead of setting this option.
+    /// Whether all the animated image data should be preloaded. Default is `false`, which means only following frames
+    /// will be loaded on need. If `true`, all the animated image data will be loaded and decoded into memory.
+    ///
+    /// This option is mainly used for back compatibility internally. You should not set it directly. Instead,
+    /// you should choose the image view class to control the GIF data loading. There are two classes in Kingfisher
+    /// support to display a GIF image. `AnimatedImageView` does not preload all data, it takes much less memory, but
+    /// uses more CPU when display. While a normal image view (`UIImageView` or `NSImageView`) loads all data at once,
+    /// which uses more memory but only decode image frames once.
     case preloadAllAnimationData
     
     /// The `ImageDownloadRequestModifier` contained will be used to change the request before it being sent.
-    /// This is the last chance you can modify the request. You can modify the request for some customizing purpose,
-    /// such as adding auth token to the header, do basic HTTP auth or something like url mapping. The original request
-    /// will be sent without any modification by default.
+    /// This is the last chance you can modify the image download request. You can modify the request for some
+    /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
+    /// The original request will be sent without any modification by default.
     case requestModifier(ImageDownloadRequestModifier)
     
     /// Processor for processing when the downloading finishes, a processor will convert the downloaded data to an image
     /// and/or apply some filter on it. If a cache is connected to the downloader (it happens when you are using
-    /// KingfisherManager or the image extension methods), the converted image will also be sent to cache as well as the
-    /// image view. `DefaultImageProcessor.default` will be used by default.
+    /// KingfisherManager or any of the view extension methods), the converted image will also be sent to cache as well.
+    /// If not set, the `DefaultImageProcessor.default` will be used.
     case processor(ImageProcessor)
     
-    /// Supply an `CacheSerializer` to convert some data to an image object for
+    /// Supplies a `CacheSerializer` to convert some data to an image object for
     /// retrieving from disk cache or vice versa for storing to disk cache.
-    /// `DefaultCacheSerializer.default` will be used by default.
+    /// If not set, the `DefaultCacheSerializer.default` will be used.
     case cacheSerializer(CacheSerializer)
 
-    /// Modifier for modifying an image right before it is used. If the image was fetched directly from the downloader,
-    /// the modifier will run directly after the processor. If the image is being fetched from a cache, the modifier
-    /// will run after the cacheSerializer.
+    /// An `ImageModifier` is for modifying an image as needed right before it is used. If the image was fetched
+    /// directly from the downloader, the modifier will run directly after the `ImageProcessor`. If the image is being
+    /// fetched from a cache, the modifier will run after the `CacheSerializer`.
     ///
-    /// Use `ImageModifier` when you need to set properties on a concrete type
-    /// of `Image`, such as a `UIImage`, that do not persist when caching the image.
+    /// Use `ImageModifier` when you need to set properties that do not persist when caching the image on a concrete
+    /// type of `Image`, such as the `renderingMode` or the `alignmentInsets` of `UIImage`.
     case imageModifier(ImageModifier)
     
-    /// Keep the existing image while setting another image to an image view.
-    /// By setting this option, the placeholder image parameter of imageview extension method
+    /// Keep the existing image of image view while setting another image to it.
+    /// By setting this option, the placeholder image parameter of image view extension method
     /// will be ignored and the current image will be kept while loading or downloading the new image.
     case keepCurrentImageWhileLoading
     
-    /// If set, Kingfisher will only load the first frame from a animated image data file as a single image.
-    /// Loading a lot of animated images may take too much memory. It will be useful when you want to display a
+    /// If set, Kingfisher will only load the first frame from an animated image file as a single image.
+    /// Loading an animated images may take too much memory. It will be useful when you want to display a
     /// static preview of the first frame from a animated image.
     ///
     /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
     
-    /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both 
-    /// the final result and original image. Kingfisher will have a chance to use 
-    /// the original image when another processor is applied to the same resource,
-    /// instead of downloading it again.
+    /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both  the final result and original
+    /// image. Kingfisher will have a chance to use the original image when another processor is applied to the same
+    /// resource, instead of downloading it again. You can use `.originalCache` to specify a cache or the original
+    /// images if neccessary.
     case cacheOriginalImage
 }
 
@@ -307,6 +319,8 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .preloadAllAnimationData }
     }
 
+    /// The `CallbackQueue` on which completion handler should be invoked.
+    /// If not set in the options, `.mainCurrentOrAsync` will be used.
     public var callbackQueue: CallbackQueue {
         if let item = lastMatchIgnoringAssociatedValue(.callbackQueue(.untouch)),
             case .callbackQueue(let queue) = item
@@ -372,10 +386,12 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .keepCurrentImageWhileLoading }
     }
     
+    /// Whether the options contains `.onlyLoadFirstFrame`.
     public var onlyLoadFirstFrame: Bool {
         return contains { $0 <== .onlyLoadFirstFrame }
     }
     
+    /// Whether the options contains `.cacheOriginalImage`.
     public var cacheOriginalImage: Bool {
         return contains { $0 <== .cacheOriginalImage }
     }
