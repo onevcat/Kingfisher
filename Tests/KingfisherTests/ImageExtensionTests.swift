@@ -281,9 +281,11 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertNotNil(gifImage)
         XCTAssertEqual(gifImage!.kf.normalized, gifImage!)
         
+        #if os(iOS) || os(tvOS)
         // No need to normalize up orientation image.
         let normalImage = testImage
         XCTAssertEqual(normalImage.imageOrientation, .up)
         XCTAssertEqual(normalImage, testImage)
+        #endif
     }
 }

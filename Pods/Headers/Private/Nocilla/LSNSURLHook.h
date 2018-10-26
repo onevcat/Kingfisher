@@ -1,5 +1,1 @@
-#import "LSHTTPClientHook.h"
-
-@interface LSNSURLHook : LSHTTPClientHook
-
-@end
+../../../Nocilla/Nocilla/Hooks/NSURLRequest/LSNSURLHook.h
