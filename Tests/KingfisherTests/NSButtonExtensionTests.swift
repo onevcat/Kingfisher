@@ -158,5 +158,35 @@ class NSButtonExtensionTests: XCTestCase {
         
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testSettingNonWorkingImageWithFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+        
+        button.kf.setImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        
+        XCTAssertNil(button.image)
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertEqual(testImage, button.image)
+    }
+    
+    func testSettingNonWorkingAlternateImageWithFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+        
+        button.kf.setAlternateImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        
+        XCTAssertNil(button.alternateImage)
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertEqual(testImage, button.alternateImage)
+    }
 
 }
