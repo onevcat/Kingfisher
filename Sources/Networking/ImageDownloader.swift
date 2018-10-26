@@ -179,7 +179,10 @@ open class ImageDownloader {
         let callback = SessionDataTask.TaskCallback(
             onProgress: onProgress, onCompleted: onCompleted, options: options)
 
-        let downloadTask = sessionHandler.add(request, in: session, callback: callback)
+        let downloadTask = sessionHandler.add(
+            request, in: session,
+            priority: options.downloadPriority,
+            callback: callback)
         let task = downloadTask.sessionTask
         task.onTaskDone.delegate(on: self) { (self, done) in
             let (result, callbacks) = done
@@ -267,6 +270,7 @@ class SessionDelegate: NSObject {
     func add(
         _ requst: URLRequest,
         in session: URLSession,
+        priority: Float,
         callback: SessionDataTask.TaskCallback) -> DownloadTask
     {
 
@@ -278,7 +282,7 @@ class SessionDelegate: NSObject {
             let token = task.addCallback(callback)
             return DownloadTask(sessionTask: task, cancelToken: token)
         } else {
-            let task = SessionDataTask(session: session, request: requst)
+            let task = SessionDataTask(session: session, request: requst, priority: priority)
             task.onTaskCancelled.delegate(on: self) { [unowned task] (self, value) in
                 let (token, callback) = value
                 let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
@@ -472,8 +476,9 @@ public class SessionDataTask {
         return !callbacks.isEmpty
     }
     
-    init(session: URLSession, request: URLRequest) {
+    init(session: URLSession, request: URLRequest, priority: Float) {
         task = session.dataTask(with: request)
+        task.priority = priority
         mutableData = Data()
     }
 

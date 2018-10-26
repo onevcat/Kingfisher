@@ -64,7 +64,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertNotNil(result.value)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadMultipleImages() {
@@ -81,7 +81,7 @@ class ImageDownloaderTests: XCTestCase {
         }
         
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadAnImageWithMultipleCallback() {
@@ -100,7 +100,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadWithModifyingRequest() {
@@ -117,7 +117,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(result.value?.url, url)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testServerInvalidStatusCode() {
@@ -132,7 +132,7 @@ class ImageDownloaderTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     // Since we could not receive one challage, no test for trusted hosts currently.
@@ -185,7 +185,7 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadEmptyURL() {
@@ -209,7 +209,7 @@ class ImageDownloaderTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadTaskProperty() {
@@ -237,7 +237,7 @@ class ImageDownloaderTests: XCTestCase {
 
         _ = stub.go()
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
 
     func testCancelOneDownloadTask() {
@@ -295,7 +295,7 @@ class ImageDownloaderTests: XCTestCase {
         group.notify(queue: .main) {
             delay(0.1) { exp.fulfill() }
         }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     // Issue 532 https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305644311
@@ -363,7 +363,7 @@ class ImageDownloaderTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadWithDifferentProcessors() {
@@ -395,7 +395,7 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertEqual(task1?.sessionTask.task, task2?.sessionTask.task)
 
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testDownloadedDataCouldBeModified() {
@@ -415,7 +415,7 @@ class ImageDownloaderTests: XCTestCase {
             self.downloader.delegate = nil
             exp.fulfill()
         }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -437,9 +437,23 @@ class ImageDownloaderTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
 #endif
+    
+    func testDownloadTaskTakePriorityOption() {
+        let exp = expectation(description: #function)
+        
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        let task = downloader.downloadImage(with: url, options: [.downloadPriority(URLSessionTask.highPriority)])
+        {
+            _ in
+            exp.fulfill()
+        }
+        XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 extension ImageDownloaderTests: ImageDownloaderDelegate {
