@@ -1,6 +1,1 @@
-#import <Foundation/Foundation.h>
-#import "LSHTTPRequest.h"
-
-@interface NSURLRequest (LSHTTPRequest)<LSHTTPRequest>
-
-@end
+../../../Nocilla/Nocilla/Hooks/NSURLRequest/NSURLRequest+LSHTTPRequest.h
