@@ -496,6 +496,8 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             return
         }
         
+        var disposition = URLSession.ResponseDisposition.allow
+        
         if let statusCode = (response as? HTTPURLResponse)?.statusCode,
            let url = dataTask.originalRequest?.url,
             !(downloader.delegate ?? downloader).isValidStatusCode(statusCode, for: downloader)
@@ -510,9 +512,10 @@ final class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, URL
             }
             
             callCompletionHandlerFailure(error: error, url: url)
+            disposition = .cancel
         }
-
-        completionHandler(.allow)
+        
+        completionHandler(disposition)
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
