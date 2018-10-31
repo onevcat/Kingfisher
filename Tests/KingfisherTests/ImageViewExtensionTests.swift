@@ -519,4 +519,60 @@ class ImageViewExtensionTests: XCTestCase {
         group.notify(queue: .main, execute: exp.fulfill)
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    func testImageSettingWithPlaceholder() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        stub(url, data: testImageData, length: 123)
+
+        let emptyImage = Image()
+        var processBlockCalled = false
+
+        imageView.kf.setImage(
+            with: url,
+            placeholder: emptyImage,
+            progressBlock: { _, _ in
+                processBlockCalled = true
+                XCTAssertEqual(self.imageView.image, emptyImage)
+            })
+        {
+            result in
+            XCTAssertTrue(processBlockCalled)
+            XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testImageSettingWithCustomizePlaceholder() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        stub(url, data: testImageData, length: 123)
+
+        let view = View()
+        var processBlockCalled = false
+
+        imageView.kf.setImage(
+            with: url,
+            placeholder: view,
+            progressBlock: { _, _ in
+                processBlockCalled = true
+                XCTAssertNil(self.imageView.image)
+                XCTAssertTrue(self.imageView.subviews.contains(view))
+            })
+        {
+            result in
+            XCTAssertTrue(processBlockCalled)
+            XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
+            XCTAssertFalse(self.imageView.subviews.contains(view))
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
+
+extension View: Placeholder {}

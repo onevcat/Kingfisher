@@ -171,7 +171,7 @@ extension KingfisherClass where Base: Image {
     // MARK: - Resize
     /// Resizes `base` image to an image with new size.
     ///
-    /// - Parameter size: The target size.
+    /// - Parameter size: The target size in point.
     /// - Returns: An image with new size.
     /// - Note: This method only works for CG-based image. The current image scale is kept.
     ///         For any non-CG-based image, `base` itself is returned.
@@ -194,7 +194,7 @@ extension KingfisherClass where Base: Image {
     /// Resizes `base` image to an image of new size, respecting the given content mode.
     ///
     /// - Parameters:
-    ///   - size: The target size.
+    ///   - size: The target size in point.
     ///   - contentMode: Content mode of output image should be.
     /// - Returns: An image with new size.
     ///
@@ -212,7 +212,6 @@ extension KingfisherClass where Base: Image {
             return resize(to: size)
         }
     }
-    
     
     /// Crops `base` image to a new size with a given anchor.
     ///

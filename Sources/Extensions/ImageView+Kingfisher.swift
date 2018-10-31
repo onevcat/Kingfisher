@@ -111,6 +111,8 @@ extension KingfisherClass where Base: ImageView {
 
                         #if !os(macOS)
                         let transition = options.transition
+
+                        // Force hiding the indicator without transition first.
                         UIView.transition(
                             with: self.base,
                             duration: 0.0,

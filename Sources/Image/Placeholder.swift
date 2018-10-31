@@ -31,7 +31,7 @@ import UIKit
 #endif
 
 
-/// Represent a placeholder type which could be set while loading as well as
+/// Represents a placeholder type which could be set while loading as well as
 /// loading finished without getting an image.
 public protocol Placeholder {
     
