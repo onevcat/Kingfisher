@@ -26,6 +26,7 @@
 
 import Foundation
 
+// Represents the delegate object of downloader session. It also behave like a task manager for downloading.
 class SessionDelegate: NSObject {
 
     typealias SessionChallengeFunc = (
@@ -66,10 +67,13 @@ class SessionDelegate: NSObject {
             let task = SessionDataTask(task: dataTask)
             task.onTaskCancelled.delegate(on: self) { [unowned task] (self, value) in
                 let (token, callback) = value
+
                 let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
                 task.onTaskDone.call((.failure(error), [callback]))
+                // No other callbacks waiting, we can clear the task now.
                 if !task.containsCallbacks {
-                    self.tasks[url] = nil
+                    let dataTask = task.task
+                    self.remove(dataTask, acquireLock: true)
                 }
             }
             let token = task.addCallback(callback)
@@ -78,12 +82,14 @@ class SessionDelegate: NSObject {
         }
     }
 
-    func remove(_ task: URLSessionTask) {
+    func remove(_ task: URLSessionTask, acquireLock: Bool) {
         guard let url = task.originalRequest?.url else {
             return
         }
-        lock.lock()
-        defer { lock.unlock() }
+        if acquireLock {
+            lock.lock()
+            defer { lock.unlock() }
+        }
         tasks[url] = nil
     }
 
@@ -101,16 +107,12 @@ class SessionDelegate: NSObject {
     }
 
     func cancelAll() {
-        lock.lock()
-        defer { lock.unlock() }
         for task in tasks.values {
             task.forceCancel()
         }
     }
 
     func cancel(url: URL) {
-        lock.lock()
-        defer { lock.unlock() }
         let task = tasks[url]
         task?.forceCancel()
     }
@@ -166,9 +168,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         lock.lock()
         defer { lock.unlock() }
 
-        guard let sessionTask = self.task(for: task) else {
-            return
-        }
+        guard let sessionTask = self.task(for: task) else { return }
 
         if let url = task.originalRequest?.url {
             let result: Result<(URLResponse)>
@@ -220,10 +220,9 @@ extension SessionDelegate: URLSessionDataDelegate {
     }
 
     private func onCompleted(sessionTask: SessionDataTask, result: Result<(Data, URLResponse?)>) {
-        guard let url = sessionTask.task.originalRequest?.url else {
-            return
-        }
-        tasks[url] = nil
+        // The lock should be already acquired in the session delege queue
+        // by the caller `urlSession(_:task:didCompleteWithError:)`.
+        remove(sessionTask.task, acquireLock: false)
         sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
     }
 }
