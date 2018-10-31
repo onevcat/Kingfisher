@@ -41,6 +41,14 @@
 		4B8E291D216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
 		4B8E291E216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
 		4B8E291F216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
+		4BD821622189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
+		4BD821632189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
+		4BD821642189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
+		4BD821652189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
+		4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
+		4BD821682189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
+		4BD821692189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
+		4BD8216A2189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
 		AE1D6776DC6183B84B561961 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 124FABC032484C46AC221D0C /* libPods-KingfisherTests-tvOS.a */; };
 		D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
 		D114F36E215D2D0B00A01349 /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6BC215D2BB50013BA68 /* String+MD5.swift */; };
@@ -257,6 +265,8 @@
 		4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloaderDelegate.swift; sourceTree = "<group>"; };
 		4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationChallengeResponsable.swift; sourceTree = "<group>"; };
 		4BCCF3441D5B0457003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BD821612189FC0C0084CC21 /* SessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
+		4BD821662189FD330084CC21 /* SessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDataTask.swift; sourceTree = "<group>"; };
 		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
 		7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		CCDD057F8DA8D24EE701CF98 /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -443,6 +453,8 @@
 				D12AB69D215D2BB50013BA68 /* RequestModifier.swift */,
 				D12AB69E215D2BB50013BA68 /* Resource.swift */,
 				D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */,
+				4BD821612189FC0C0084CC21 /* SessionDelegate.swift */,
+				4BD821662189FD330084CC21 /* SessionDataTask.swift */,
 				4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */,
 				4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */,
 				4B10480C216F157000300C61 /* ImageDataProcessor.swift */,
@@ -1023,11 +1035,13 @@
 				D1BA781F2174D07800C69D7B /* CallbackQueue.swift in Sources */,
 				D1A37BD2215D2DBA009B39B7 /* Filter.swift in Sources */,
 				D1A37BD3215D2DBA009B39B7 /* Placeholder.swift in Sources */,
+				4BD821692189FD330084CC21 /* SessionDataTask.swift in Sources */,
 				D1A37BE0215D34E8009B39B7 /* ImageDrawing.swift in Sources */,
 				D1A37BD4215D2DBA009B39B7 /* GIFAnimatedImage.swift in Sources */,
 				4B46CC61217449C600D90C4A /* MemoryStorage.swift in Sources */,
 				D1A37BD5215D2DBA009B39B7 /* RequestModifier.swift in Sources */,
 				D1A37BEA215D365A009B39B7 /* ExtenionHelpers.swift in Sources */,
+				4BD821642189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D1A37BD6215D2DBA009B39B7 /* Resource.swift in Sources */,
 				D1A37BD7215D2DBA009B39B7 /* ImageDownloader.swift in Sources */,
 				D1A37BD8215D2DBA009B39B7 /* ImageModifier.swift in Sources */,
@@ -1114,9 +1128,11 @@
 				D12AB6FD215D2BB50013BA68 /* UIButton+Kingfisher.swift in Sources */,
 				D12AB6E9215D2BB50013BA68 /* GIFAnimatedImage.swift in Sources */,
 				D13646752165A1A100A33652 /* Result.swift in Sources */,
+				4BD821632189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D12AB6E1215D2BB50013BA68 /* Filter.swift in Sources */,
 				D12AB6C5215D2BB50013BA68 /* Resource.swift in Sources */,
 				D1A37BDF215D34E8009B39B7 /* ImageDrawing.swift in Sources */,
+				4BD821682189FD330084CC21 /* SessionDataTask.swift in Sources */,
 				D12AB709215D2BB50013BA68 /* KingfisherError.swift in Sources */,
 				D1A37BEE215D375F009B39B7 /* Deprecated.swift in Sources */,
 				D12AB725215D2BB50013BA68 /* Box.swift in Sources */,
@@ -1135,8 +1151,10 @@
 				D12AB71B215D2BB50013BA68 /* CacheSerializer.swift in Sources */,
 				4B46CC6C21744AC500D90C4A /* DiskStorage.swift in Sources */,
 				D12AB6DB215D2BB50013BA68 /* ImageTransition.swift in Sources */,
+				4BD821652189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D1BA78202174D07800C69D7B /* CallbackQueue.swift in Sources */,
 				4B8E291A216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift in Sources */,
+				4BD8216A2189FD330084CC21 /* SessionDataTask.swift in Sources */,
 				D12AB6DF215D2BB50013BA68 /* ImageProcessor.swift in Sources */,
 				D12AB6D7215D2BB50013BA68 /* Image.swift in Sources */,
 				D12AB72B215D2BB50013BA68 /* String+MD5.swift in Sources */,
@@ -1201,9 +1219,11 @@
 				D12AB6FC215D2BB50013BA68 /* UIButton+Kingfisher.swift in Sources */,
 				D12AB6E8215D2BB50013BA68 /* GIFAnimatedImage.swift in Sources */,
 				D13646742165A1A100A33652 /* Result.swift in Sources */,
+				4BD821622189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D12AB6E0215D2BB50013BA68 /* Filter.swift in Sources */,
 				D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */,
 				D1A37BDE215D34E8009B39B7 /* ImageDrawing.swift in Sources */,
+				4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */,
 				D12AB708215D2BB50013BA68 /* KingfisherError.swift in Sources */,
 				D1A37BED215D375F009B39B7 /* Deprecated.swift in Sources */,
 				D12AB724215D2BB50013BA68 /* Box.swift in Sources */,

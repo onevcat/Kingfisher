@@ -30,17 +30,24 @@ class ImageDataProcessor {
     let data: Data
     let callbacks: [SessionDataTask.TaskCallback]
 
+    // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
+    // queue settings in each option...
     let onImageProcessed = Delegate<(Result<Image>, SessionDataTask.TaskCallback), Void>()
 
-    init(data: Data, callbacks: [SessionDataTask.TaskCallback]) {
+    private let processQueue: DispatchQueue
+
+    init(name: String, data: Data, callbacks: [SessionDataTask.TaskCallback]) {
+        self.processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process.\(name)")
         self.data = data
         self.callbacks = callbacks
     }
 
     func process() {
+        processQueue.async(execute: doProcess)
+    }
 
+    private func doProcess() {
         var processedImages = [String: Image]()
-
         for callback in callbacks {
             let processor = callback.options.processor
             var image = processedImages[processor.identifier]
@@ -62,7 +69,5 @@ class ImageDataProcessor {
                 onImageProcessed.call((.failure(error), callback))
             }
         }
-
-
     }
 }

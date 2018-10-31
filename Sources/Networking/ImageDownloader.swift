@@ -30,29 +30,53 @@ import AppKit
 import UIKit
 #endif
 
+/// Represents a success result of an image downloading progess.
 public struct ImageDownloadResult {
+
+    /// The downloaded image.
     public let image: Image
+
+    /// Original URL of the image request.
     public let url: URL
+
+    /// The raw data received from downloader.
     public let originalData: Data
 }
 
+/// Represents a task of an image downloading process.
 public struct DownloadTask {
+
+    // Multiple `DownloadTask`s could refer to a same `sessionTask`. This is an optimization in Kingfisher to
+    // prevent multiple downloading task for the same URL resource at the same time.
     let sessionTask: SessionDataTask
+
+    // Callbacks for this `DownloadTask` needs to be identified with the `CancelToken`.
     let cancelToken: SessionDataTask.CancelToken
 
+    /// Cancel this task if it is running. It will do nothing if this task is not running.
+    ///
+    /// - Note:
+    /// In Kingfisher, there is an optimization to prevent starting another download task if the target URL is being
+    /// downloading. However, even when internally no new session task created, a `DownloadTask` will be still created
+    /// and returned when you call related methods, but it will share the session downloading task with a previous task.
+    /// In this case, if multiple `DownloadTask`s share a single session download task, cancelling a `DownloadTask`
+    /// does not affect other `DownloadTask`s.
+    ///
+    /// If you need to cancel all `DownloadTask`s of a url, use `ImageDownloader.cancel(url:)`. If you need to cancel
+    /// all downloading tasks of an `ImageDownloader`, use `ImageDownloader.cancelAll()`.
     public func cancel() {
         sessionTask.cancel(token: cancelToken)
     }
 }
 
-/// `ImageDownloader` represents a downloading manager for requesting the image with a URL from server.
+/// Represents a downloading manager for requesting the image with a URL from server.
 open class ImageDownloader {
 
     /// The default downloader.
     public static let `default` = ImageDownloader(name: "default")
 
     // MARK: - Public property
-    /// The duration before the download is timeout. Default is 15 seconds.
+    /// The duration before the downloading is timeout. Default is 15 seconds.
     open var downloadTimeout: TimeInterval = 15.0
     
     /// A set of trusted hosts when receiving server trust challenges. A challenge with host name contained in this
@@ -85,7 +109,7 @@ open class ImageDownloader {
     /// Downloader will forward the received authentication challenge for the downloading session to this responder.
     open weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
 
-    let processQueue: DispatchQueue
+    private let name: String
     private let sessionHandler: SessionDelegate
     private var session: URLSession
 
@@ -97,8 +121,8 @@ open class ImageDownloader {
             fatalError("[Kingfisher] You should specify a name for the downloader. "
                 + "A downloader with empty name is not permitted.")
         }
-        
-        processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process.\(name)")
+
+        self.name = name
         sessionHandler = SessionDelegate()
         session = URLSession(configuration: sessionConfiguration, delegate: sessionHandler, delegateQueue: nil)
         authenticationChallengeResponder = self
@@ -134,58 +158,82 @@ open class ImageDownloader {
         }
     }
 
-    /// Download an image with a URL and option.
+    /// Downloads an image with a URL and option.
     ///
     /// - Parameters:
     ///   - url: Target URL.
     ///   - options: The options could control download behavior. See `KingfisherOptionsInfo`.
-    ///   - progressBlock: Called when the download progress updated.
-    ///   - completionHandler: Called when the download progress finishes.
-    /// - Returns: A downloading task. You could call `cancel` on it to stop the downloading process.
+    ///   - progressBlock: Called when the download progress updated. This block will be always be called in main queue.
+    ///   - completionHandler: Called when the download progress finishes. This block will be called in the queue
+    ///                        defined in `.callbackQueue` in `options` parameter.
+    /// - Returns: A downloading task. You could call `cancel` on it to stop the download task.
     @discardableResult
     open func downloadImage(with url: URL,
                             options: KingfisherOptionsInfo? = nil,
                             progressBlock: DownloadProgressBlock? = nil,
                             completionHandler: ((Result<ImageDownloadResult>) -> Void)? = nil) -> DownloadTask?
     {
+        // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
         request.httpShouldUsePipelining = requestsUsePipelining
 
         let options = options ?? .empty
 
+        // Modifies request before sending.
         guard let r = options.modifier.modified(for: request) else {
-            completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
+            options.callbackQueue.execute {
+                completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
+            }
             return nil
         }
         request = r
         
         // There is a possibility that request modifier changed the url to `nil` or empty.
+        // In this case, throw an error.
         guard let url = request.url, !url.absoluteString.isEmpty else {
-            completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
+            options.callbackQueue.execute {
+                completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
+            }
             return nil
         }
 
-        let onProgress = Delegate<(Int64, Int64), Void>()
-        onProgress.delegate(on: self) { (_, progress) in
-            let (downloaded, total) = progress
-            progressBlock?(downloaded, total)
+        // Wraps `progressBlock` and `completionHandler` to `onProgress` and `onCompleted` respectively.
+        let onProgress = progressBlock.map {
+            block -> Delegate<(Int64, Int64), Void> in
+            let delegate = Delegate<(Int64, Int64), Void>()
+            delegate.delegate(on: self) { (_, progress) in
+                let (downloaded, total) = progress
+                block(downloaded, total)
+            }
+            return delegate
         }
 
-        let onCompleted = Delegate<Result<ImageDownloadResult>, Void>()
-        onCompleted.delegate(on: self) { (_, result) in
-            completionHandler?(result)
+        let onCompleted = completionHandler.map {
+            block -> Delegate<Result<ImageDownloadResult>, Void> in
+            let delegate =  Delegate<Result<ImageDownloadResult>, Void>()
+            delegate.delegate(on: self) { (_, result) in
+                block(result)
+            }
+            return delegate
         }
 
+        // SessionDataTask.TaskCallback is a wrapper for `onProgress`, `onCompleted` and `options` (for processor info)
         let callback = SessionDataTask.TaskCallback(
             onProgress: onProgress, onCompleted: onCompleted, options: options)
 
-        let downloadTask = sessionHandler.add(
-            request, in: session,
-            priority: options.downloadPriority,
-            callback: callback)
-        let task = downloadTask.sessionTask
-        task.onTaskDone.delegate(on: self) { (self, done) in
+        // Ready to start download. Add it to session task manager (`sessionHandler`)
+        let dataTask = session.dataTask(with: request)
+        dataTask.priority = options.downloadPriority
+
+        let downloadTask = sessionHandler.add(dataTask, url: url, callback: callback)
+
+        let sessionTask = downloadTask.sessionTask
+        sessionTask.onTaskDone.delegate(on: self) { (self, done) in
+            // Underlying downloading finishes.
+            // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
             let (result, callbacks) = done
+
+            // Before processing the downloaded data.
             self.delegate?.imageDownloader(
                 self,
                 didFinishDownloadingImageForURL: url,
@@ -193,10 +241,13 @@ open class ImageDownloader {
                 error: result.error)
 
             switch result {
+            // Download finished. Now process the data to an image.
             case .success(let (data, response)):
-                let prosessor = ImageDataProcessor(data: data, callbacks: callbacks)
+                let prosessor = ImageDataProcessor(name: self.name, data: data, callbacks: callbacks)
                 prosessor.onImageProcessed.delegate(on: self) { (self, result) in
-
+                    // `onImageProcessed` will be called for `callbacks.count` times, with each
+                    // `SessionDataTask.TaskCallback` as the input parameter.
+                    // result: Result<Image>, callback: SessionDataTask.TaskCallback
                     let (result, callback) = result
 
                     if let image = result.value {
@@ -207,7 +258,7 @@ open class ImageDownloader {
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }
-                self.processQueue.async { prosessor.process() }
+                prosessor.process()
 
             case .failure(let error):
                 callbacks.forEach { callback in
@@ -217,9 +268,10 @@ open class ImageDownloader {
             }
         }
 
-        if !task.started {
+        // Start the session task if not started yet.
+        if !sessionTask.started {
             delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
-            task.resume()
+            sessionTask.resume()
         }
         return downloadTask
     }
@@ -228,302 +280,27 @@ open class ImageDownloader {
 // MARK: - Download method
 extension ImageDownloader {
 
-    /// Cancel all downloading tasks. It will trigger the completion handlers for all not-yet-finished
-    /// downloading tasks with an NSURLErrorCancelled error.
+    /// Cancel all downloading tasks for this `ImageDownloader`. It will trigger the completion handlers
+    /// for all not-yet-finished downloading tasks.
     ///
-    /// If you need to only cancel a certain task, call `cancel()` on the `RetrieveImageDownloadTask`
-    /// returned by the downloading methods.
+    /// If you need to only cancel a certain task, call `cancel()` on the `DownloadTask`
+    /// returned by the downloading methods. If you need to cancel all `DownloadTask`s of a certain url,
+    /// use `ImageDownloader.cancel(url:)`.
     public func cancelAll() {
         sessionHandler.cancelAll()
     }
+
+    /// Cancel all downloading tasks for a given URL. It will trigger the completion handlers for
+    /// all not-yet-finished downloading tasks for the URL.
+    ///
+    /// - Parameter url: The URL which you want to cancel downloading.
+    public func cancel(url: URL) {
+        sessionHandler.cancel(url: url)
+    }
 }
 
+// Use the default implementation from extension of `AuthenticationChallengeResponsable`.
 extension ImageDownloader: AuthenticationChallengeResponsable {}
 
 // Placeholder. For retrieving extension methods of ImageDownloaderDelegate
 extension ImageDownloader: ImageDownloaderDelegate {}
-
-class SessionDelegate: NSObject {
-
-    private var tasks: [URL: SessionDataTask] = [:]
-    private let lock = NSLock()
-
-    let onValidStatusCode = Delegate<Int, Bool>()
-    let onDownloadingFinished = Delegate<(URL, Result<URLResponse>), Void>()
-    let onDidDownloadData = Delegate<SessionDataTask, Data?>()
-
-    let onReceiveSessionChallenge = Delegate<(
-            URLSession,
-            URLAuthenticationChallenge,
-            (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-        ),
-        Void>()
-
-    let onReceiveSessionTaskChallenge = Delegate<(
-            URLSession,
-            URLSessionTask,
-            URLAuthenticationChallenge,
-            (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-        ),
-        Void>()
-
-    func add(
-        _ requst: URLRequest,
-        in session: URLSession,
-        priority: Float,
-        callback: SessionDataTask.TaskCallback) -> DownloadTask
-    {
-
-        lock.lock()
-        defer { lock.unlock() }
-
-        let url = requst.url!
-        if let task = tasks[url] {
-            let token = task.addCallback(callback)
-            return DownloadTask(sessionTask: task, cancelToken: token)
-        } else {
-            let task = SessionDataTask(session: session, request: requst, priority: priority)
-            task.onTaskCancelled.delegate(on: self) { [unowned task] (self, value) in
-                let (token, callback) = value
-                let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
-                task.onTaskDone.call((.failure(error), [callback]))
-                if !task.containsCallbacks {
-                    self.tasks[url] = nil
-                }
-            }
-            let token = task.addCallback(callback)
-            tasks[url] = task
-            return DownloadTask(sessionTask: task, cancelToken: token)
-        }
-    }
-    
-    func remove(_ task: URLSessionTask) {
-        guard let url = task.originalRequest?.url else {
-            return
-        }
-        lock.lock()
-        defer { lock.unlock() }
-        tasks[url] = nil
-    }
-    
-    func task(for task: URLSessionTask) -> SessionDataTask? {
-        guard let url = task.originalRequest?.url else {
-            return nil
-        }
-        guard let sessionTask = tasks[url] else {
-            return nil
-        }
-        guard sessionTask.task.taskIdentifier == task.taskIdentifier else {
-            return nil
-        }
-        return sessionTask
-    }
-
-    func cancelAll() {
-        lock.lock()
-        defer { lock.unlock() }
-        for task in tasks.values {
-            task.forceCancel()
-        }
-    }
-}
-
-extension SessionDelegate: URLSessionDataDelegate {
-
-    func urlSession(
-        _ session: URLSession,
-        dataTask: URLSessionDataTask,
-        didReceive response: URLResponse,
-        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void)
-    {
-        lock.lock()
-        defer { lock.unlock() }
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            let error = KingfisherError.responseError(reason: .invalidURLResponse(response: response))
-            onCompleted(task: dataTask, result: .failure(error))
-            completionHandler(.cancel)
-            return
-        }
-
-        let httpStatusCode = httpResponse.statusCode
-        guard onValidStatusCode.call(httpStatusCode) == true else {
-            let error = KingfisherError.responseError(reason: .invalidHTTPStatusCode(response: httpResponse))
-            onCompleted(task: dataTask, result: .failure(error))
-            completionHandler(.cancel)
-            return
-        }
-        completionHandler(.allow)
-    }
-
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        lock.lock()
-        defer { lock.unlock() }
-
-        guard let task = self.task(for: dataTask) else {
-            return
-        }
-        task.didReceiveData(data)
-
-        if let expectedContentLength = dataTask.response?.expectedContentLength, expectedContentLength != -1 {
-            DispatchQueue.main.async {
-                task.callbacks.forEach { callback in
-                    callback.onProgress?.call((Int64(task.mutableData.count), expectedContentLength))
-                }
-            }
-        }
-    }
-
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        lock.lock()
-        defer { lock.unlock() }
-
-        guard let sessionTask = self.task(for: task) else {
-            return
-        }
-
-        if let url = task.originalRequest?.url {
-            let result: Result<(URLResponse)>
-            if let error = error {
-                result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
-            } else if let response = task.response {
-                result = .success(response)
-            } else {
-                result = .failure(KingfisherError.responseError(reason: .noURLResponse))
-            }
-            onDownloadingFinished.call((url, result))
-        }
-
-        let result: Result<(Data, URLResponse?)>
-        if let error = error {
-            result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
-        } else {
-            if let data = onDidDownloadData.call(sessionTask), let finalData = data {
-                result = .success((finalData, task.response))
-            } else {
-                result = .failure(KingfisherError.responseError(reason: .dataModifyingFailed(task: sessionTask)))
-            }
-        }
-        onCompleted(task: task, result: result)
-    }
-
-    func urlSession(
-        _ session: URLSession,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
-        onReceiveSessionChallenge.call((session, challenge, completionHandler))
-    }
-
-    func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
-        onReceiveSessionTaskChallenge.call((session, task, challenge, completionHandler))
-    }
-
-    private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?)>) {
-        guard let sessionTask = self.task(for: task) else {
-            return
-        }
-        onCompleted(sessionTask: sessionTask, result: result)
-    }
-
-    private func onCompleted(sessionTask: SessionDataTask, result: Result<(Data, URLResponse?)>) {
-        guard let url = sessionTask.task.originalRequest?.url else {
-            return
-        }
-        tasks[url] = nil
-        sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
-    }
-}
-
-public class SessionDataTask {
-
-    public typealias CancelToken = Int
-
-    struct TaskCallback {
-        let onProgress: Delegate<(Int64, Int64), Void>?
-        let onCompleted: Delegate<Result<ImageDownloadResult>, Void>?
-        let options: KingfisherOptionsInfo
-    }
-    
-    public private(set) var mutableData: Data
-    public let task: URLSessionDataTask
-    
-    private var callbacksStore = [CancelToken: TaskCallback]()
-
-    var callbacks: Dictionary<SessionDataTask.CancelToken, SessionDataTask.TaskCallback>.Values {
-        return callbacksStore.values
-    }
-
-    var currentToken = 0
-
-    private let lock = NSLock()
-
-    let onTaskDone = Delegate<(Result<(Data, URLResponse?)>, [TaskCallback]), Void>()
-    let onTaskCancelled = Delegate<(CancelToken, TaskCallback), Void>()
-
-    var started = false
-    var containsCallbacks: Bool {
-        // We should be able to use `task.state != .running` to check it.
-        // However, in some rare cases, cancelling the task does not change
-        // task state to `.cancelling`, but still in `.running`. So we need
-        // to check callbacks count to for sure that it is safe to remove the
-        // task in delegate.
-        return !callbacks.isEmpty
-    }
-    
-    init(session: URLSession, request: URLRequest, priority: Float) {
-        task = session.dataTask(with: request)
-        task.priority = priority
-        mutableData = Data()
-    }
-
-    func addCallback(_ callback: TaskCallback) -> CancelToken {
-        lock.lock()
-        defer { lock.unlock() }
-        callbacksStore[currentToken] = callback
-        defer { currentToken += 1 }
-        return currentToken
-    }
-
-    func removeCallback(_ token: CancelToken) -> TaskCallback? {
-        lock.lock()
-        defer { lock.unlock() }
-        if let callback = callbacksStore[token] {
-            callbacksStore[token] = nil
-            return callback
-        }
-        return nil
-    }
-    
-    func resume() {
-        started = true
-        task.resume()
-    }
-
-    func cancel(token: CancelToken) {
-        let result = removeCallback(token)
-        if let callback = result {
-
-            if callbacksStore.count == 0 {
-                task.cancel()
-            }
-
-            onTaskCancelled.call((token, callback))
-        }
-    }
-
-    func forceCancel() {
-        for token in callbacksStore.keys {
-            cancel(token: token)
-        }
-    }
-    
-    func didReceiveData(_ data: Data) {
-        mutableData.append(data)
-    }
-}
