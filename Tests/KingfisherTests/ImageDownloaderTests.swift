@@ -119,6 +119,24 @@ class ImageDownloaderTests: XCTestCase {
         }
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    func testDownloadWithModifyingRequestToNil() {
+        let nilModifier = AnyModifier { _ in
+            return nil
+        }
+
+        let exp = expectation(description: #function)
+        let someURL = URL(string: "some_strange_url")!
+        downloader.downloadImage(with: someURL, options: [.requestModifier(nilModifier)]) { result in
+            XCTAssertNotNil(result.error)
+            guard case KingfisherError.requestError(reason: .emptyRequest) = result.error! else {
+                XCTFail()
+                fatalError()
+            }
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
     
     func testServerInvalidStatusCode() {
         let exp = expectation(description: #function)
@@ -470,3 +488,4 @@ class URLModifier: ImageDownloadRequestModifier {
         return r
     }
 }
+

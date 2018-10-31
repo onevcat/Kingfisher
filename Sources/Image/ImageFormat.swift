@@ -33,7 +33,14 @@ import Foundation
 /// - JPEG: JPEG image format.
 /// - GIF: GIF image format.
 public enum ImageFormat {
-    case unknown, PNG, JPEG, GIF
+    /// The format cannot be recognized or not supported yet.
+    case unknown
+    /// PNG image format.
+    case PNG
+    /// JPEG image format.
+    case JPEG
+    /// GIF image format.
+    case GIF
     
     struct HeaderData {
         static var PNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]

@@ -149,6 +149,9 @@
 		D1839846216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D1839847216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D1839848216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
+		D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
+		D186696E21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
+		D186696F21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
 		D1A37BC6215D2DBA009B39B7 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6B6215D2BB50013BA68 /* ImageCache.swift */; };
 		D1A37BC7215D2DBA009B39B7 /* CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6B7215D2BB50013BA68 /* CacheSerializer.swift */; };
 		D1A37BC8215D2DBA009B39B7 /* FormatIndicatedCacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6B8215D2BB50013BA68 /* FormatIndicatedCacheSerializer.swift */; };
@@ -302,6 +305,7 @@
 		D13F49D61BEDA67C00CE335D /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D16799EB1C4E74460020FD12 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1839844216E333E003927D3 /* Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delegate.swift; sourceTree = "<group>"; };
+		D186696C21834261002B502E /* ImageDrawingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDrawingTests.swift; sourceTree = "<group>"; };
 		D1A37BDD215D34E8009B39B7 /* ImageDrawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDrawing.swift; sourceTree = "<group>"; };
 		D1A37BE2215D359F009B39B7 /* ImageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFormat.swift; sourceTree = "<group>"; };
 		D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtenionHelpers.swift; sourceTree = "<group>"; };
@@ -534,6 +538,7 @@
 				D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */,
 				D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */,
 				D12E0C471C47F23500AC98AD /* ImageExtensionTests.swift */,
+				D186696C21834261002B502E /* ImageDrawingTests.swift */,
 				D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */,
 				D12E0C481C47F23500AC98AD /* ImageViewExtensionTests.swift */,
 				D12E0C4A1C47F23500AC98AD /* KingfisherManagerTests.swift */,
@@ -1047,6 +1052,7 @@
 				D12E0C721C47F6FE00AC98AD /* KingfisherManagerTests.swift in Sources */,
 				F72CE9CF1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C731C47F6FE00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
+				D186696E21834261002B502E /* ImageDrawingTests.swift in Sources */,
 				4B8351C9217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B421D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C741C47F6FE00AC98AD /* UIButtonExtensionTests.swift in Sources */,
@@ -1066,6 +1072,7 @@
 				D12E0C851C47F7AF00AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				F72CE9D01FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C861C47F7AF00AC98AD /* KingfisherManagerTests.swift in Sources */,
+				D186696F21834261002B502E /* ImageDrawingTests.swift in Sources */,
 				4B8351CA217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B431D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C871C47F7AF00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
@@ -1218,6 +1225,7 @@
 				D12E0C521C47F23500AC98AD /* ImageExtensionTests.swift in Sources */,
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
+				D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */,
 				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C501C47F23500AC98AD /* ImageCacheTests.swift in Sources */,

@@ -45,9 +45,9 @@ public enum ImageTransition {
 #else
 import UIKit
 
-/// Transition effect which will be used when an image downloaded and set by `UIImageView` extension API in Kingfisher.
-/// You can assign an enum value with transition duration as an item in `KingfisherOptionsInfo`
-/// to enable the animation transition.
+/// Transition effect which will be used when an image downloaded and set by `UIImageView`
+/// extension API in Kingfisher. You can assign an enum value with transition duration as
+/// an item in `KingfisherOptionsInfo` to enable the animation transition.
 ///
 /// Apple's UIViewAnimationOptions is used under the hood.
 /// For custom transition, you should specified your own transition options, animations and
