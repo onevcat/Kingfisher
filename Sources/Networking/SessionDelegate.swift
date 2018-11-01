@@ -60,12 +60,14 @@ class SessionDelegate: NSObject {
         lock.lock()
         defer { lock.unlock() }
 
+        // Try to reuse existing task.
         if let task = tasks[url] {
             let token = task.addCallback(callback)
             return DownloadTask(sessionTask: task, cancelToken: token)
         } else {
+            // Create a new task if necessary.
             let task = SessionDataTask(task: dataTask)
-            task.onTaskCancelled.delegate(on: self) { [unowned task] (self, value) in
+            task.onCallbackCancelled.delegate(on: self) { [unowned task] (self, value) in
                 let (token, callback) = value
 
                 let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
@@ -216,13 +218,9 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
-        onCompleted(sessionTask: sessionTask, result: result)
-    }
-
-    private func onCompleted(sessionTask: SessionDataTask, result: Result<(Data, URLResponse?)>) {
         // The lock should be already acquired in the session delege queue
         // by the caller `urlSession(_:task:didCompleteWithError:)`.
-        remove(sessionTask.task, acquireLock: false)
+        remove(task, acquireLock: false)
         sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
     }
 }

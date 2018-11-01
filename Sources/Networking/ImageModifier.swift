@@ -52,60 +52,35 @@ extension ImageModifier {
     }
 }
 
-typealias ModifierImp = ((Image) -> Image)
-
-fileprivate struct GeneralModifier: ImageModifier {
-    let identifier: String
-    let m: ModifierImp
-    func modify(_ image: Image) -> Image {
-        return m(image)
-    }
-}
-
 /// The default modifier.
-/// Does nothing and returns the image it was given
+/// It does nothing and returns the image as is.
 public struct DefaultImageModifier: ImageModifier {
 
     /// A default `DefaultImageModifier` which can be used everywhere.
     public static let `default` = DefaultImageModifier()
-
-    /// Initialize a `DefaultImageModifier`
     private init() {}
 
-    /// Modify an input `Image`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image {
-        return image
-    }
+    /// Modifie an input `Image`. See `ImageModifier` protocol for more.
+    public func modify(_ image: Image) -> Image { return image }
 }
 
-/// A custom modifier.
-/// Can be initialized with a block to modify images in a custom way
+/// A wrapper for creating an `ImageModifier` easier.
+/// This type conforms to `ImageModifier` and wraps an image modify block.
+/// If the `block` throws an error, the original image will be used.
 public struct AnyImageModifier: ImageModifier {
 
     /// A block which modifies images, or returns the original image
-    /// if modification cannot be performed.
-    let block: (Image) -> Image
+    /// if modification cannot be performed with an error.
+    let block: (Image) throws -> Image
 
-    /// Initialize an `AnyImageModifier`
-    public init(modify: @escaping (Image) -> Image) {
+    /// Creates an `AnyImageModifier` with a given `modify` block.
+    public init(modify: @escaping (Image) throws -> Image) {
         block = modify
     }
 
-    /// Modifies an input `Image` using this `AnyImageModifier`'s `block`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
+    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: Image) -> Image {
-        return block(image)
+        return (try? block(image)) ?? image
     }
 }
 
@@ -113,79 +88,48 @@ public struct AnyImageModifier: ImageModifier {
 import UIKit
 
 /// Modifier for setting the rendering mode of images.
-/// Only UI-based images are supported; if a non-UI image is passed in, the
-/// modifier will do nothing.
 public struct RenderingModeImageModifier: ImageModifier {
 
     /// The rendering mode to apply to the image.
     public let renderingMode: UIImage.RenderingMode
 
-    /// Initialize a `RenderingModeImageModifier`
+    /// Creates a `RenderingModeImageModifier`.
     ///
-    /// - parameter renderingMode: The rendering mode to apply to the image.
-    ///                            Default is .automatic
+    /// - Parameter renderingMode: The rendering mode to apply to the image. Default is `.automatic`.
     public init(renderingMode: UIImage.RenderingMode = .automatic) {
         self.renderingMode = renderingMode
     }
 
-    /// Modify an input `Image`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
+    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: Image) -> Image {
         return image.withRenderingMode(renderingMode)
     }
 }
 
 /// Modifier for setting the `flipsForRightToLeftLayoutDirection` property of images.
-/// Only UI-based images are supported; if a non-UI image is passed in, the
-/// modifier will do nothing.
 public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
-    /// Initialize a `FlipsForRightToLeftLayoutDirectionImageModifier`
-    ///
-    /// - Note: On versions of iOS lower than 9.0, the image will be returned
-    ///         unmodified.
+
+    /// Creates a `FlipsForRightToLeftLayoutDirectionImageModifier`.
     public init() {}
 
-    /// Modify an input `Image`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
+    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: Image) -> Image {
-        if #available(iOS 9.0, *) {
-            return image.imageFlippedForRightToLeftLayoutDirection()
-        } else {
-            return image
-        }
+        return image.imageFlippedForRightToLeftLayoutDirection()
     }
 }
 
 /// Modifier for setting the `alignmentRectInsets` property of images.
-/// Only UI-based images are supported; if a non-UI image is passed in, the
-/// modifier will do nothing.
 public struct AlignmentRectInsetsImageModifier: ImageModifier {
 
     /// The alignment insets to apply to the image
     public let alignmentInsets: UIEdgeInsets
 
-    /// Initialize a `AlignmentRectInsetsImageModifier`
+    /// Creates an `AlignmentRectInsetsImageModifier`.
     public init(alignmentInsets: UIEdgeInsets) {
         self.alignmentInsets = alignmentInsets
     }
 
-    /// Modify an input `Image`.
-    ///
-    /// - parameter image:   Image which will be modified by `self`
-    ///
-    /// - returns: The modified image.
-    ///
-    /// - Note: See documentation of `ImageModifier` protocol for more.
+    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: Image) -> Image {
         return image.withAlignmentRectInsets(alignmentInsets)
     }

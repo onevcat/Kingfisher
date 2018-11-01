@@ -29,7 +29,7 @@ import Foundation
 /// Protocol indicates that an authentication challenge could be handled.
 public protocol AuthenticationChallengeResponsable: AnyObject {
 
-    /// Called when an session level authentication challenge is received.
+    /// Called when a session level authentication challenge is received.
     /// This method provide a chance to handle and response to the authentication
     /// challenge before downloading could start.
     ///
@@ -45,7 +45,7 @@ public protocol AuthenticationChallengeResponsable: AnyObject {
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 
-    /// Called when an session level authentication challenge is received.
+    /// Called when a task level authentication challenge is received.
     /// This method provide a chance to handle and response to the authentication
     /// challenge before downloading could start.
     ///
