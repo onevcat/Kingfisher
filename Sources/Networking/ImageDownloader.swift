@@ -46,12 +46,17 @@ public struct ImageDownloadResult {
 /// Represents a task of an image downloading process.
 public struct DownloadTask {
 
-    // Multiple `DownloadTask`s could refer to a same `sessionTask`. This is an optimization in Kingfisher to
-    // prevent multiple downloading task for the same URL resource at the same time.
-    let sessionTask: SessionDataTask
+    /// The `SessionDataTask` object bounded to this download task. Multiple `DownloadTask`s could refer
+    /// to a same `sessionTask`. This is an optimization in Kingfisher to prevent multiple downloading task
+    /// for the same URL resource at the same time.
+    ///
+    /// When you `cancel` a `DownloadTask`, this `SessionDataTask` and its cancel token will be pass through.
+    /// You can use them to identify the cancelled task.
+    public let sessionTask: SessionDataTask
 
-    // Callbacks for this `DownloadTask` needs to be identified with the `CancelToken`.
-    let cancelToken: SessionDataTask.CancelToken
+    /// The cancel token which is used to cancel the task. This is only for identify the task when it is cancelled.
+    /// To cancel a `DownloadTask`, use `cancel` instead.
+    public let cancelToken: SessionDataTask.CancelToken
 
     /// Cancel this task if it is running. It will do nothing if this task is not running.
     ///

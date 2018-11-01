@@ -26,14 +26,15 @@
 
 import Foundation
 
-/// Protocol of `ImageDownloader`.
+/// Protocol of `ImageDownloader`. This protocol provides a set of methods which are related to image downloader
+/// working stages and rules.
 public protocol ImageDownloaderDelegate: AnyObject {
 
-    /// Called when the `ImageDownloader` object will start downloading an image from specified URL.
+    /// Called when the `ImageDownloader` object will start downloading an image from a specified URL.
     ///
     /// - Parameters:
     ///   - downloader: The `ImageDownloader` object which is used for the downloading operation.
-    ///   - url: URL of the original request URL.
+    ///   - url: URL of the starting request.
     ///   - request: The request object for the download process.
     ///
     func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?)
@@ -49,9 +50,28 @@ public protocol ImageDownloaderDelegate: AnyObject {
     func imageDownloader(
         _ downloader: ImageDownloader,
         didFinishDownloadingImageForURL url: URL,
-        with response: URLResponse?, error: Error?)
+        with response: URLResponse?,
+        error: Error?)
 
-    /// Called when the `ImageDownloader` object successfully downloaded and processed an image from specified URL.
+    /// Called when the `ImageDownloader` object successfully downloaded image data from specified URL. This is
+    /// your last chance to verify or modify the downloaded data before Kingfisher tries to perform addition
+    /// processing on the image data.
+    ///
+    /// - Parameters:
+    ///   - downloader: The `ImageDownloader` object which is used for the downloading operation.
+    ///   - data: The original downloaded data.
+    ///   - url: The URL of the original request URL.
+    /// - Returns: The data from which Kingfisher should use to create an image. You need to provide valid data
+    ///            which content is one of the supported image file format. Kingfisher will perform process on this
+    ///            data and try to convert it to an image object.
+    /// - Note:
+    ///   This can be used to pre-process raw image data before creation of `Image` instance (i.e.
+    ///   decrypting or verification). If `nil` returned, the processing is interrupted and a `KingfisherError` with
+    ///   `ResponseErrorReason.dataModifyingFailed` will be raised. You could use this fact to stop the image
+    ///   processing flow if you find the data is corrupted or malformed.
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
+
+    /// Called when the `ImageDownloader` object successfully downloads and processes an image from specified URL.
     ///
     /// - Parameters:
     ///   - downloader: The `ImageDownloader` object which is used for the downloading operation.
@@ -66,8 +86,9 @@ public protocol ImageDownloaderDelegate: AnyObject {
         with response: URLResponse?)
 
     /// Checks if a received HTTP status code is valid or not.
-    /// By default, a status code between 200 to 400 (excluded) is considered as valid.
-    /// If an invalid code is received, the downloader will raise an .invalidStatusCode error.
+    /// By default, a status code in range 200..<400 is considered as valid.
+    /// If an invalid code is received, the downloader will raise an `KingfisherError` with
+    /// `ResponseErrorReason.invalidHTTPStatusCode` as its reason.
     ///
     /// - Parameters:
     ///   - code: The received HTTP status code.
@@ -76,21 +97,9 @@ public protocol ImageDownloaderDelegate: AnyObject {
     /// - Note: If the default 200 to 400 valid code does not suit your need,
     ///         you can implement this method to change that behavior.
     func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool
-
-    /// Called when the `ImageDownloader` object successfully downloaded image data from specified URL. This is
-    /// your last chance to modify the downloaded data before Kingfisher tries to perform addition processing on
-    /// the image data.
-    ///
-    /// - Parameters:
-    ///   - downloader: The `ImageDownloader` object which is used for the downloading operation.
-    ///   - data: Original downloaded data.
-    ///   - url: URL of the original request URL.
-    /// - Returns: The data from which Kingfisher would use to create an image.
-    /// - Note: This callback can be used to preprocess raw image data before creation of
-    ///         Image instance (i.e. decrypting or verification).
-    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
 }
 
+// Default implementation for `ImageDownloaderDelegate`.
 extension ImageDownloaderDelegate {
     public func imageDownloader(
         _ downloader: ImageDownloader,

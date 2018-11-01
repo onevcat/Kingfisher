@@ -26,6 +26,7 @@
 
 import Foundation
 
+// Handles image processing work on an own process queue.
 class ImageDataProcessor {
     let data: Data
     let callbacks: [SessionDataTask.TaskCallback]
@@ -56,18 +57,20 @@ class ImageDataProcessor {
                 processedImages[processor.identifier] = image
             }
 
+            let result: Result<Image>
             if let image = image {
                 let imageModifier = callback.options.imageModifier
                 var finalImage = imageModifier.modify(image)
                 if callback.options.backgroundDecode {
                     finalImage = finalImage.kf.decoded
                 }
-                onImageProcessed.call((.success(finalImage), callback))
+                result = .success(finalImage)
             } else {
                 let error = KingfisherError.processorError(
                     reason: .processingFailed(processor: processor, item: .data(data)))
-                onImageProcessed.call((.failure(error), callback))
+                result = .failure(error)
             }
+            onImageProcessed.call((result, callback))
         }
     }
 }

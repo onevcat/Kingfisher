@@ -26,8 +26,11 @@
 
 import Foundation
 
+/// Represents a session data task in `ImageDownloader`. It consists of an underlying `URLSessionDataTask` and
+/// an array of `TaskCallback`. Multiple `TaskCallback`s could be added for a single downloading data task.
 public class SessionDataTask {
 
+    /// Represents the type of token which used for cancelling a task.
     public typealias CancelToken = Int
 
     struct TaskCallback {
@@ -36,28 +39,29 @@ public class SessionDataTask {
         let options: KingfisherOptionsInfo
     }
 
+    /// Downloaded raw data of current task.
     public private(set) var mutableData: Data
-    public let task: URLSessionDataTask
 
+    // The underlying download task.
+    let task: URLSessionDataTask
     private var callbacksStore = [CancelToken: TaskCallback]()
 
     var callbacks: Dictionary<SessionDataTask.CancelToken, SessionDataTask.TaskCallback>.Values {
         return callbacksStore.values
     }
 
-    var currentToken = 0
-
+    private var currentToken = 0
     private let lock = NSLock()
 
     let onTaskDone = Delegate<(Result<(Data, URLResponse?)>, [TaskCallback]), Void>()
-    let onTaskCancelled = Delegate<(CancelToken, TaskCallback), Void>()
+    let onCallbackCancelled = Delegate<(CancelToken, TaskCallback), Void>()
 
     var started = false
     var containsCallbacks: Bool {
         // We should be able to use `task.state != .running` to check it.
         // However, in some rare cases, cancelling the task does not change
-        // task state to `.cancelling`, but still in `.running`. So we need
-        // to check callbacks count to for sure that it is safe to remove the
+        // task state to `.cancelling` immediately, but still in `.running`.
+        // So we need to check callbacks count to for sure that it is safe to remove the
         // task in delegate.
         return !callbacks.isEmpty
     }
@@ -86,20 +90,19 @@ public class SessionDataTask {
     }
 
     func resume() {
+        guard !started else { return }
         started = true
         task.resume()
     }
 
     func cancel(token: CancelToken) {
-        let result = removeCallback(token)
-        if let callback = result {
-
-            if callbacksStore.count == 0 {
-                task.cancel()
-            }
-
-            onTaskCancelled.call((token, callback))
+        guard let callback = removeCallback(token) else {
+            return
         }
+        if callbacksStore.count == 0 {
+            task.cancel()
+        }
+        onCallbackCancelled.call((token, callback))
     }
 
     func forceCancel() {
