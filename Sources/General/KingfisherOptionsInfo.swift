@@ -177,10 +177,10 @@ public enum KingfisherOptionsInfoItem {
     /// images if neccessary.
     case cacheOriginalImage
     
-    /// If set and a downloading error occurred Kingfisher will set provided image
+    /// If set and a downloading error occurred Kingfisher will set provided image (or empty)
     /// in place of requested one. It's useful when you don't want to show placeholder
     /// during loading time but wants to use some default image when requests will be failed.
-    case onFailureImage(Image)
+    case onFailureImage(Image?)
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -402,13 +402,14 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .cacheOriginalImage }
     }
     
-    public var onFailureImage: Image? {
+    /// Use provided or empty image when download image request will failed.
+    public var onFailureImage: Optional<Image?> {
         if let item = lastMatchIgnoringAssociatedValue(.onFailureImage(Image())),
             case .onFailureImage(let image) = item
         {
-            return image
+            return .some(image)
         }
         
-        return nil
+        return .none
     }
 }
