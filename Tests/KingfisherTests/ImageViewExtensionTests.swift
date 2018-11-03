@@ -341,7 +341,7 @@ class ImageViewExtensionTests: XCTestCase {
 
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
         }
 
@@ -363,11 +363,11 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: testURLs[0]) { result in
             // The download successed, but not the resource we want.
             XCTAssertNotNil(result.error)
-            if case KingfisherError.imageSettingError(
-                reason: .notCurrentResource(let result, let resource)) = result.error!
+            if case .imageSettingError(
+                reason: .notCurrentResource(let result, _, let resource)) = result.error!
             {
                 XCTAssertEqual(resource.downloadURL, testURLs[0])
-                XCTAssertNotEqual(result.value!.image, self.imageView.image)
+                XCTAssertNotEqual(result!.image, self.imageView.image)
             } else {
                 XCTFail()
             }
@@ -392,7 +392,7 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) {
             result in
             XCTAssertNotNil(result.error)
-            guard case KingfisherError.imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case .imageSettingError(reason: .emptyResource) = result.error! else {
                 XCTFail()
                 fatalError()
             }

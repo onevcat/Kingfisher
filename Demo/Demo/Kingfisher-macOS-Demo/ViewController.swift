@@ -62,7 +62,7 @@ extension ViewController: NSCollectionViewDataSource {
                                                    progressBlock: { receivedSize, totalSize in
                                                     print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")
                                                     },
-                                              completionHandler: { image, error, cacheType, imageURL in
+                                              completionHandler: { result in
                                                     print("\(indexPath.item + 1): Finished")
                                                     })
         

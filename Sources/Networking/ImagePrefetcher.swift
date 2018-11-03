@@ -199,7 +199,7 @@ public class ImagePrefetcher {
     
     func downloadAndCache(_ resource: Resource) {
 
-        let downloadTaskCompletionHandler: ((Result<RetrieveImageResult>) -> Void) = { result in
+        let downloadTaskCompletionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { result in
             self.tasks.removeValue(forKey: resource.downloadURL)
             if let _ = result.error {
                 self.failedResources.append(resource)

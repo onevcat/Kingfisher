@@ -46,7 +46,7 @@ class SessionDelegate: NSObject {
     private let lock = NSLock()
 
     let onValidStatusCode = Delegate<Int, Bool>()
-    let onDownloadingFinished = Delegate<(URL, Result<URLResponse>), Void>()
+    let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
     let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
     let onReceiveSessionChallenge = Delegate<SessionChallengeFunc, Void>()
@@ -173,7 +173,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else { return }
 
         if let url = task.originalRequest?.url {
-            let result: Result<(URLResponse)>
+            let result: Result<URLResponse, KingfisherError>
             if let error = error {
                 result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
             } else if let response = task.response {
@@ -184,7 +184,7 @@ extension SessionDelegate: URLSessionDataDelegate {
             onDownloadingFinished.call((url, result))
         }
 
-        let result: Result<(Data, URLResponse?)>
+        let result: Result<(Data, URLResponse?), KingfisherError>
         if let error = error {
             result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
         } else {
@@ -214,7 +214,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onReceiveSessionTaskChallenge.call((session, task, challenge, completionHandler))
     }
 
-    private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?)>) {
+    private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?), KingfisherError>) {
         guard let sessionTask = self.task(for: task) else {
             return
         }

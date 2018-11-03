@@ -178,7 +178,8 @@ open class ImageDownloader {
     open func downloadImage(with url: URL,
                             options: KingfisherOptionsInfo? = nil,
                             progressBlock: DownloadProgressBlock? = nil,
-                            completionHandler: ((Result<ImageDownloadResult>) -> Void)? = nil) -> DownloadTask?
+                            completionHandler: ((Result<ImageDownloadResult, KingfisherError>) -> Void)? = nil)
+        -> DownloadTask?
     {
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
@@ -216,8 +217,8 @@ open class ImageDownloader {
         }
 
         let onCompleted = completionHandler.map {
-            block -> Delegate<Result<ImageDownloadResult>, Void> in
-            let delegate =  Delegate<Result<ImageDownloadResult>, Void>()
+            block -> Delegate<Result<ImageDownloadResult, KingfisherError>, Void> in
+            let delegate =  Delegate<Result<ImageDownloadResult, KingfisherError>, Void>()
             delegate.delegate(on: self) { (_, result) in
                 block(result)
             }

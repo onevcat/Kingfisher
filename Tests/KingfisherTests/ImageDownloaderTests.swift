@@ -129,7 +129,7 @@ class ImageDownloaderTests: XCTestCase {
         let someURL = URL(string: "some_strange_url")!
         downloader.downloadImage(with: someURL, options: [.requestModifier(nilModifier)]) { result in
             XCTAssertNotNil(result.error)
-            guard case KingfisherError.requestError(reason: .emptyRequest) = result.error! else {
+            guard case .requestError(reason: .emptyRequest) = result.error! else {
                 XCTFail()
                 fatalError()
             }
@@ -146,7 +146,7 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isInvalidResponseStatusCode(404))
+            XCTAssertTrue(result.error!.isInvalidResponseStatusCode(404))
             exp.fulfill()
         }
         
@@ -165,7 +165,7 @@ class ImageDownloaderTests: XCTestCase {
         
         downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            if case KingfisherError.responseError(reason: .URLSessionError(let error)) = result.error! {
+            if case .responseError(reason: .URLSessionError(let error)) = result.error! {
                 let nsError = error as NSError
                 XCTAssert(nsError.code == NSURLErrorServerCertificateUntrusted ||
                           nsError.code == NSURLErrorSecureConnectionFailed,
@@ -219,7 +219,7 @@ class ImageDownloaderTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            if case KingfisherError.requestError(reason: .invalidURL(let request)) = result.error! {
+            if case .requestError(reason: .invalidURL(let request)) = result.error! {
                 XCTAssertNil(request.url)
             } else {
                 XCTFail()
@@ -246,7 +246,7 @@ class ImageDownloaderTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
         }
         
@@ -300,7 +300,7 @@ class ImageDownloaderTests: XCTestCase {
             group.enter()
             downloader.downloadImage(with: $0) { result in
                 XCTAssertNotNil(result.error)
-                XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+                XCTAssertTrue(result.error!.isTaskCancelled)
                 group.leave()
             }
         }
@@ -330,14 +330,14 @@ class ImageDownloaderTests: XCTestCase {
         group.enter()
         downloader.downloadImage(with: url1) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             group.leave()
         }
         
         group.enter()
         downloader.downloadImage(with: url1) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             group.leave()
         }
         
@@ -375,7 +375,7 @@ class ImageDownloaderTests: XCTestCase {
         {
             result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             group.leave()
         }
         
@@ -469,7 +469,7 @@ class ImageDownloaderTests: XCTestCase {
         downloader.downloadImage(with: url) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
-            if case KingfisherError.responseError(reason: .dataModifyingFailed) = result.error! {
+            if case .responseError(reason: .dataModifyingFailed) = result.error! {
             } else {
                 XCTFail()
             }

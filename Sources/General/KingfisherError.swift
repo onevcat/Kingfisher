@@ -29,6 +29,8 @@ import Foundation
 /// Error domain of Kingfisher
 public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 
+extension Never: Error {}
+
 public enum KingfisherError: Error {
     
     public enum RequestErrorReason {
@@ -62,7 +64,7 @@ public enum KingfisherError: Error {
 
     public enum ImageSettingErrorReason {
         case emptyResource
-        case notCurrentResource(result: Result<RetrieveImageResult>, resource: Resource)
+        case notCurrentResource(result: RetrieveImageResult?, error: Error?, resource: Resource)
     }
     
     case requestError(reason: RequestErrorReason)
@@ -72,7 +74,7 @@ public enum KingfisherError: Error {
     case imageSettingError(reason: ImageSettingErrorReason)
     
     var isTaskCancelled: Bool {
-        if case KingfisherError.requestError(reason: .taskCancelled) = self {
+        if case .requestError(reason: .taskCancelled) = self {
             return true
         }
         return false

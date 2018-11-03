@@ -114,7 +114,7 @@ public class KingfisherManager {
         with resource: Resource,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult>) -> Void)?) -> DownloadTask?
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = currentDefaultOptions + (options ?? .empty)
         if options.forceRefresh {
@@ -168,7 +168,7 @@ public class KingfisherManager {
         forKey key: String,
         options: KingfisherOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult>) -> Void)?) -> DownloadTask?
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let downloader = options.downloader ?? self.downloader
 
@@ -251,7 +251,7 @@ public class KingfisherManager {
         forKey key: String,
         with url: URL,
         options: KingfisherOptionsInfo,
-        completionHandler: ((Result<RetrieveImageResult>) -> Void)?) -> Bool
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
     {
         // 1. Check whether the image was already in target cache. If so, just get it.
         let targetCache = options.targetCache ?? cache

@@ -33,7 +33,7 @@ class ImageDataProcessor {
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
     // queue settings in each option...
-    let onImageProcessed = Delegate<(Result<Image>, SessionDataTask.TaskCallback), Void>()
+    let onImageProcessed = Delegate<(Result<Image, KingfisherError>, SessionDataTask.TaskCallback), Void>()
 
     private let processQueue: DispatchQueue
 
@@ -57,7 +57,7 @@ class ImageDataProcessor {
                 processedImages[processor.identifier] = image
             }
 
-            let result: Result<Image>
+            let result: Result<Image, KingfisherError>
             if let image = image {
                 let imageModifier = callback.options.imageModifier
                 var finalImage = imageModifier.modify(image)

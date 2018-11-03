@@ -35,7 +35,7 @@ public class SessionDataTask {
 
     struct TaskCallback {
         let onProgress: Delegate<(Int64, Int64), Void>?
-        let onCompleted: Delegate<Result<ImageDownloadResult>, Void>?
+        let onCompleted: Delegate<Result<ImageDownloadResult, KingfisherError>, Void>?
         let options: KingfisherOptionsInfo
     }
 
@@ -53,7 +53,7 @@ public class SessionDataTask {
     private var currentToken = 0
     private let lock = NSLock()
 
-    let onTaskDone = Delegate<(Result<(Data, URLResponse?)>, [TaskCallback]), Void>()
+    let onTaskDone = Delegate<(Result<(Data, URLResponse?), KingfisherError>, [TaskCallback]), Void>()
     let onCallbackCancelled = Delegate<(CancelToken, TaskCallback), Void>()
 
     var started = false
