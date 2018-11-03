@@ -2,6 +2,14 @@
 
 -----
 
+## [4.10.1 - Time Machine](https://github.com/onevcat/Kingfisher/releases/tag/4.10.1) (2018-11-03)
+
+#### Fix
+* Add Swift 4 compatibility back.
+* Increase watchOS target to 3.0 in podspec.
+
+---
+
 ## [4.10.0 - Swift 4.2](https://github.com/onevcat/Kingfisher/releases/tag/4.10.0) (2018-09-20)
 
 #### Add
