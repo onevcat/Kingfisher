@@ -114,7 +114,7 @@ class NSButtonExtensionTests: XCTestCase {
         
         button.kf.setImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
         }
         
@@ -131,7 +131,7 @@ class NSButtonExtensionTests: XCTestCase {
         
         button.kf.setAlternateImage(with: url) { result in
             XCTAssertNotNil(result.error)
-            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
         }
         
@@ -149,7 +149,7 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             
-            guard case KingfisherError.imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case .imageSettingError(reason: .emptyResource) = result.error! else {
                 XCTFail()
                 fatalError()
             }

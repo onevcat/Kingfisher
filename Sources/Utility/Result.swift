@@ -30,7 +30,7 @@ import Foundation
 ///
 /// - success: The operation is successful and an associated value could be provided.
 /// - failure: An error happens during the operation.
-public enum Result<Value> {
+public enum Result<Value, Error: Swift.Error> {
     case success(Value)
     case failure(Error)
     
@@ -70,7 +70,7 @@ public enum Result<Value> {
     /// - Parameter transform: A closure that takes the success value of the instance.
     /// - Returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    public func map<T>(_ transform: (Value) -> T) -> Result<T> {
+    public func map<T>(_ transform: (Value) -> T) -> Result<T, Error> {
         switch self {
         case .success(let value): return .success(transform(value))
         case .failure(let error): return .failure(error)

@@ -46,7 +46,8 @@ extension KingfisherClass where Base: WKInterfaceImage {
                          placeholder: Image? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
+                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
+        -> DownloadTask?
     {
         guard let resource = resource else {
             base.setImage(placeholder)
@@ -72,7 +73,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result, resource: resource))
+                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
                         completionHandler?(.failure(error))
                         return
                     }

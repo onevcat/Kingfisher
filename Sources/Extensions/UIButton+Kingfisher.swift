@@ -56,7 +56,8 @@ extension KingfisherClass where Base: UIButton {
                          placeholder: UIImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
+                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
+        -> DownloadTask?
     {
         guard let resource = resource else {
             base.setImage(placeholder, for: state)
@@ -82,7 +83,7 @@ extension KingfisherClass where Base: UIButton {
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL(for: state) else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result, resource: resource))
+                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -136,7 +137,8 @@ extension KingfisherClass where Base: UIButton {
                                    placeholder: UIImage? = nil,
                                    options: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: ((Result<RetrieveImageResult>) -> Void)? = nil) -> DownloadTask?
+                                   completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
+        -> DownloadTask?
     {
         guard let resource = resource else {
             base.setBackgroundImage(placeholder, for: state)
@@ -166,7 +168,7 @@ extension KingfisherClass where Base: UIButton {
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.backgroundWebURL(for: state) else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result, resource: resource))
+                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
                         completionHandler?(.failure(error))
                         return
                     }

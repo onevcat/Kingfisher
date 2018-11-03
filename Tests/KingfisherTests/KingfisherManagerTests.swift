@@ -201,7 +201,7 @@ class KingfisherManagerTests: XCTestCase {
         manager.retrieveImage(with: url, options: [.onlyFromCache]) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
-            if case KingfisherError.cacheError(reason: .imageNotExisting(let key)) = result.error! {
+            if case .cacheError(reason: .imageNotExisting(let key)) = result.error! {
                 XCTAssertEqual(key, url.cacheKey)
             } else {
                 XCTFail()
@@ -219,7 +219,7 @@ class KingfisherManagerTests: XCTestCase {
         manager.retrieveImage(with: url) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(Thread.isMainThread)
-            XCTAssertTrue((result.error as! KingfisherError).isInvalidResponseStatusCode(404))
+            XCTAssertTrue(result.error!.isInvalidResponseStatusCode(404))
             exp.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
@@ -377,7 +377,7 @@ class KingfisherManagerTests: XCTestCase {
             self.manager.retrieveImage(with: url, options: [.processor(p), .waitForCache]) { result in
                 XCTAssertNotNil(result.error)
                 XCTAssertTrue(p.processed)
-                if case KingfisherError.processorError(reason: .processingFailed(let processor, _)) = result.error! {
+                if case .processorError(reason: .processingFailed(let processor, _)) = result.error! {
                     XCTAssertEqual(processor.identifier, p.identifier)
                 } else {
                     XCTFail()

@@ -62,8 +62,8 @@ public enum CacheType {
 }
 
 public struct CacheStoreResult {
-    let memoryCacheResult: Result<()>
-    let diskCacheResult: Result<()>
+    let memoryCacheResult: Result<(), Never>
+    let diskCacheResult: Result<(), KingfisherError>
 }
 
 extension Image: CacheCostCalculatable {
@@ -290,7 +290,7 @@ open class ImageCache {
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo? = nil,
                         callbackQueue: CallbackQueue = .untouch,
-                     completionHandler: ((Result<(ImageCacheResult)>) -> Void)?)
+                     completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
     {
         // No completion handler. Not start working and early return.
         guard let completionHandler = completionHandler else { return }
@@ -361,7 +361,7 @@ open class ImageCache {
         forKey key: String,
         options: KingfisherOptionsInfo? = nil,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: @escaping (Result<Image?>) -> Void)
+        completionHandler: @escaping (Result<Image?, KingfisherError>) -> Void)
     {
         let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
@@ -373,7 +373,11 @@ open class ImageCache {
                 }
                 callbackQueue.execute { completionHandler(.success(image)) }
             } catch {
-                callbackQueue.execute { completionHandler(.failure(error)) }
+                if let error = error as? KingfisherError {
+                    callbackQueue.execute { completionHandler(.failure(error)) }
+                } else {
+                    assertionFailure("The internal thrown error should be a `KingfisherError`.")
+                }
             }
         }
     }
@@ -498,7 +502,7 @@ open class ImageCache {
     
     - parameter completionHandler: Called with the calculated size when finishes.
     */
-    open func calculateDiskCacheSize(completion handler: @escaping ((Result<UInt>) -> Void)) {
+    open func calculateDiskCacheSize(completion handler: @escaping ((Result<UInt, KingfisherError>) -> Void)) {
         ioQueue.async {
             do {
                 let size = try self.diskStorage.totalSize()
@@ -506,7 +510,12 @@ open class ImageCache {
                     handler(.success(size))
                 }
             } catch {
-                handler(.failure(error))
+                if let error = error as? KingfisherError {
+                    handler(.failure(error))
+                } else {
+                    assertionFailure("The internal thrown error should be a `KingfisherError`.")
+                }
+                
             }
         }
     }
