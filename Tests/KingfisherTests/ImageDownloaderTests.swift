@@ -316,6 +316,49 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
+    func testCancelDownloadTaskForURL() {
+        let exp = expectation(description: #function)
+        
+        let url1 = testURLs[0]
+        let stub1 = delayedStub(url1, data: testImageData)
+        
+        let url2 = testURLs[1]
+        let stub2 = delayedStub(url2, data: testImageData)
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        downloader.downloadImage(with: url1) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            group.leave()
+        }
+        
+        group.enter()
+        downloader.downloadImage(with: url1) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue((result.error as! KingfisherError).isTaskCancelled)
+            group.leave()
+        }
+        
+        group.enter()
+        downloader.downloadImage(with: url2) { result in
+            XCTAssertNotNil(result.value)
+            group.leave()
+        }
+        
+        delay(0.1) {
+            self.downloader.cancel(url: url1)
+            _ = stub1.go()
+            _ = stub2.go()
+        }
+        
+        group.notify(queue: .main) {
+            delay(0.1) { exp.fulfill() }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
     // Issue 532 https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305644311
     func testCancelThenRestartSameDownload() {
         let exp = expectation(description: #function)
