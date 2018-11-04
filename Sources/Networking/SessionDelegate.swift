@@ -179,7 +179,7 @@ extension SessionDelegate: URLSessionDataDelegate {
             } else if let response = task.response {
                 result = .success(response)
             } else {
-                result = .failure(KingfisherError.responseError(reason: .noURLResponse))
+                result = .failure(KingfisherError.responseError(reason: .noURLResponse(task: sessionTask)))
             }
             onDownloadingFinished.call((url, result))
         }

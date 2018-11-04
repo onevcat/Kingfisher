@@ -148,7 +148,7 @@ open class ImageCache {
 
         let totalMemory = ProcessInfo.processInfo.physicalMemory
         let costLimit = totalMemory / 4
-        memoryStorage = MemoryStorage(config: .init(totalCostLimit: costLimit > .max ? .max : Int(costLimit)))
+        memoryStorage = MemoryStorage(config: .init(totalCostLimit: costLimit > Int.max ? Int.max : Int(costLimit)))
 
         var diskConfig = DiskStorage<Data>.Config(
             name: name,
@@ -217,8 +217,13 @@ open class ImageCache {
                         try self.diskStorage.store(value: data, forKey: computedKey)
                         result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
                     } catch {
-                        let diskError = KingfisherError.cacheError(
-                            reason: .cannotConvertToData(object: data, error: error))
+                        let diskError: KingfisherError
+                        if let error = error as? KingfisherError {
+                            diskError = error
+                        } else {
+                            diskError = .cacheError(reason: .cannotConvertToData(object: data, error: error))
+                        }
+                        
                         result = CacheStoreResult(
                             memoryCacheResult: .success(()),
                             diskCacheResult: .failure(diskError)

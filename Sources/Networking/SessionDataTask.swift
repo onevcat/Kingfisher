@@ -42,8 +42,9 @@ public class SessionDataTask {
     /// Downloaded raw data of current task.
     public private(set) var mutableData: Data
 
-    // The underlying download task.
-    let task: URLSessionDataTask
+    /// The underlying download task. It is only for debugging purpose when you encountered an error. You should not
+    /// modify the content of this task or start it yourself.
+    public let task: URLSessionDataTask
     private var callbacksStore = [CancelToken: TaskCallback]()
 
     var callbacks: Dictionary<SessionDataTask.CancelToken, SessionDataTask.TaskCallback>.Values {
