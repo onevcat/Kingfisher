@@ -356,7 +356,8 @@ extension ImageCache {
      
      - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
      */
-    @available(*, deprecated, message: "Use `Result` based `retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)` instead.",
+    @available(*, deprecated,
+    message: "Use `Result` based `retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)` instead.",
     renamed: "retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)")
     open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
         let options = options ?? .empty
@@ -369,7 +370,8 @@ extension ImageCache {
         return nil
     }
 
-    @available(*, deprecated, message: "Use `Result` based `retrieveImage(forKey:options:callbackQueue:completionHandler:)` instead.",
+    @available(*, deprecated,
+    message: "Use `Result` based `retrieveImage(forKey:options:callbackQueue:completionHandler:)` instead.",
     renamed: "retrieveImage(forKey:options:callbackQueue:completionHandler:)")
     open func retrieveImage(forKey key: String,
                             options: KingfisherOptionsInfo?,
@@ -437,3 +439,12 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return callbackQueue.queue
     }
 }
+
+/// Error domain of Kingfisher
+@available(*, deprecated, message: "Use `KingfisherError.domain` instead.", renamed: "KingfisherError.domain")
+public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
+
+/// Key will be used in the `userInfo` of `.invalidStatusCode`
+@available(*, unavailable,
+message: "Use `.invalidHTTPStatusCode` or `isInvalidResponseStatusCode` of `KingfisherError` instead for the status code.")
+public let KingfisherErrorStatusCodeKey = "statusCode"

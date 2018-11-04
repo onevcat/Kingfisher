@@ -143,15 +143,16 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
         let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey]
         do {
             let meta = try fileURL.resourceValues(forKeys: resourceKeys)
-            guard let expiration = meta.contentModificationDate else {
-                throw KingfisherError.cacheError(reason: .invalidModificationDate(key: key, url: fileURL))
-            }
-            guard expiration.isFuture else {
+            guard let expiration = meta.contentModificationDate, expiration.isFuture else {
                 return nil
             }
             if actuallyLoad {
-                let data = try Data(contentsOf: fileURL)
-                return try T.fromData(data)
+                do {
+                    let data = try Data(contentsOf: fileURL)
+                    return try T.fromData(data)
+                } catch {
+                    throw KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: fileURL, error: error))
+                }
             } else {
                 return T.empty
             }
@@ -216,6 +217,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
 
     func allFileURLs(for propertyKeys: [URLResourceKey]) throws -> [URL] {
         let fileManager = config.fileManager
+
         guard let directoryEnumerator = fileManager.enumerator(
             at: directoryURL, includingPropertiesForKeys: propertyKeys, options: .skipsHiddenFiles) else
         {
