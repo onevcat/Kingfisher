@@ -101,7 +101,7 @@ public class DiskStorage<T: DataTransformable>: ExtendingStorage {
                 withIntermediateDirectories: true,
                 attributes: nil)
         } catch {
-            throw KingfisherError.cacheError(reason: .cannotCreateDirectory(error: error, path: path))
+            throw KingfisherError.cacheError(reason: .cannotCreateDirectory(path: path, error: error))
         }
     }
 

@@ -29,51 +29,160 @@ import Foundation
 extension Never: Error {}
 
 /// Represents all the errors which can happen in Kingfisher framework.
+/// Kingfisher related methods always throw a `KingfisherError` or invoke the callback with `KingfisherError`
+/// as its error type. To handle errors from Kingfisher, you switch over the error to get a reason cateklog,
+/// then switch over the reason to know error detail.
 public enum KingfisherError: Error {
     
     /// The error domain of Kingfisher.
     public static let domain = "com.onevcat.Kingfisher.Error"
     
+    /// Represents the error reason during networking request phase.
+    ///
+    /// - emptyRequest: The request is empty. Code 1001.
+    /// - invalidURL: The URL of request is invalid. Code 1002.
+    /// - taskCancelled: The downloading task is cancelled by user. Code 1003.
     public enum RequestErrorReason {
+        
+        /// The request is empty. Code 1001.
         case emptyRequest
+        
+        /// The URL of request is invalid. Code 1002.
+        /// - request: The request is tend to be sent but its URL is invalid.
         case invalidURL(request: URLRequest)
+        
+        /// The downloading task is cancelled by user. Code 1003.
+        /// - task: The session data task which is cancelled.
+        /// - token: The cancel token which is used for cancelling the task.
         case taskCancelled(task: SessionDataTask, token: SessionDataTask.CancelToken)
     }
     
+    /// Represents the error reason during networking response phase.
+    ///
+    /// - invalidURLResponse: The response is not a valid URL response. Code 2001.
+    /// - invalidHTTPStatusCode: The response contains an invalid HTTP status code. Code 2002.
+    /// - URLSessionError: An error happens in the system URL session. Code 2003.
+    /// - dataModifyingFailed: Data modifying fails on returning a valid data. Code 2004.
+    /// - noURLResponse: The task is done but no URL response found. Code 2005.
     public enum ResponseErrorReason {
+        
+        /// The response is not a valid URL response. Code 2001.
+        /// - response: The received invalid URL response.
+        ///             The response is expected to be an HTTP response, but it is not.
         case invalidURLResponse(response: URLResponse)
+        
+        /// The response contains an invalid HTTP status code. Code 2002.
+        /// - Note:
+        ///   By defalt, status code 200..<400 is recognized as valid. You can override
+        ///   this behavior by conforming to the `ImageDownloaderDelegate`.
+        /// - response: The received response.
         case invalidHTTPStatusCode(response: HTTPURLResponse)
+        
+        /// An error happens in the system URL session. Code 2003.
+        /// - error: The underlying URLSession error object.
         case URLSessionError(error: Error)
+        
+        /// Data modifying fails on returning a valid data. Code 2004.
+        /// - task: The failed task.
         case dataModifyingFailed(task: SessionDataTask)
+        
+        /// The task is done but no URL response found. Code 2005.
+        /// - task: The failed task.
         case noURLResponse(task: SessionDataTask)
     }
     
+    /// Represents the error reason during Kingfisher caching system.
+    ///
+    /// - fileEnumeratorCreationFailed: Cannot create a file enumerator for a certain disk URL. Code 3001.
+    /// - invalidFileEnumeratorContent: Cannot get correct file contents from a file enumerator. Code 3002.
+    /// - invalidURLResource: The file at target URL exists, but its URL resource is unavailable. Code 3003.
+    /// - cannotLoadDataFromDisk: The file at target URL exists, but the data cannot be loaded from it. Code 3004.
+    /// - cannotCreateDirectory: Cannot create a folder at a given path. Code 3005.
+    /// - imageNotExisting: The requested image does not exist in cache. Code 3006.
+    /// - cannotConvertToData: Cannot convert an object to data for storing. Code 3007.
+    /// - cannotSerializeImage: Cannot serialize an image to data for storing. Code 3008.
     public enum CacheErrorReason {
+        
+        /// Cannot create a file enumerator for a certain disk URL. Code 3001.
+        /// - url: The target disk URL from which the file enumerator should be created.
         case fileEnumeratorCreationFailed(url: URL)
+        
+        /// Cannot get correct file contents from a file enumerator. Code 3002.
+        /// - url: The target disk URL from which the content of a file enumerator should be got.
         case invalidFileEnumeratorContent(url: URL)
+        
+        /// The file at target URL exists, but its URL resource is unavailable. Code 3003.
+        /// - error: The underlying error thrown by file manager.
+        /// - key: The key used to getting the resource from cache.
+        /// - url: The disk URL where the target cached file exists.
+        /// - resourceKeys: The required keys of URL resource.
         case invalidURLResource(error: Error, key: String, url: URL, resourceKeys: Set<URLResourceKey>)
+        
+        /// The file at target URL exists, but the data cannot be loaded from it. Code 3004.
+        /// - url: The disk URL where the target cached file exists.
+        /// - error: The underlying error which describes why this error happens.
         case cannotLoadDataFromDisk(url: URL, error: Error)
-        case cannotCreateDirectory(error: Error, path: String)
+        
+        /// Cannot create a folder at a given path. Code 3005.
+        /// - path: The disk path where the directory creating operation fails.
+        /// - error: The underlying error which describes why this error happens.
+        case cannotCreateDirectory(path: String, error: Error)
+        
+        /// The requested image does not exist in cache. Code 3006.
+        /// - key: Key of the requested image in cache.
         case imageNotExisting(key: String)
+        
+        /// Cannot convert an object to data for storing. Code 3007.
+        /// - object: The object which needs be convert to data.
         case cannotConvertToData(object: Any, error: Error)
+        
+        /// Cannot serialize an image to data for storing. Code 3008.
+        /// - image: The input image needs to be serialized to cache.
+        /// - original: The original image data, if exists.
+        /// - serializer: The `CacheSerializer` used for the image serializing.
         case cannotSerializeImage(image: Image, original: Data?, serializer: CacheSerializer)
     }
     
+    
+    /// Represents the error reason during image processing phase.
+    ///
+    /// - processingFailed: Image processing fails. There is no valid output image from the processor. Code 4001.
     public enum ProcessorErrorReason {
+        /// Image processing fails. There is no valid output image from the processor. Code 4001.
+        /// - processor: The `ImageProcessor` used to process the image or its data in `item`.
+        /// - item: The image or its data content.
         case processingFailed(processor: ImageProcessor, item: ImageProcessItem)
     }
 
+    /// Represnts the error reason duting image setting in a view related class.
+    ///
+    /// - emptyResource: The input resource is empty or `nil`. Code 5001.
+    /// - notCurrentResource: The resource task is finished, but it is not the one expected now. Code 5002.
+    
     public enum ImageSettingErrorReason {
+        
+        /// The input resource is empty or `nil`. Code 5001.
         case emptyResource
+        
+        /// The resource task is finished, but it is not the one expected now. This usually happens when you set another
+        /// resource on the view without cancelling the current on-going one. The previous setting task will fail with
+        /// this `.notCurrentResource` error when a result got, regardless of it being successful or not for that task.
+        /// Code 5002.
         case notCurrentResource(result: RetrieveImageResult?, error: Error?, resource: Resource)
     }
     
+    /// Represents the error reason during networking request phase.
     case requestError(reason: RequestErrorReason)
+    /// Represents the error reason during networking response phase.
     case responseError(reason: ResponseErrorReason)
+    /// Represents the error reason during Kingfisher caching system.
     case cacheError(reason: CacheErrorReason)
+    /// Represents the error reason during image processing phase.
     case processorError(reason: ProcessorErrorReason)
+    /// Represnts the error reason duting image setting in a view related class.
     case imageSettingError(reason: ImageSettingErrorReason)
     
+    /// Helper property to check whether this error is a `RequestErrorReason.taskCancelled` or not.
     public var isTaskCancelled: Bool {
         if case .requestError(reason: .taskCancelled) = self {
             return true
@@ -81,6 +190,12 @@ public enum KingfisherError: Error {
         return false
     }
 
+    /// Helper method to check whether this error is a `ResponseErrorReason.invalidHTTPStatusCode` and the
+    /// associated value is a given status code.
+    ///
+    /// - Parameter code: The given status code.
+    /// - Returns: If `self` is a `ResponseErrorReason.invalidHTTPStatusCode` error
+    ///            and its status code equals to `code`, `true` is returned. Otherwise, `false`.
     public func isInvalidResponseStatusCode(_ code: Int) -> Bool {
         if case .responseError(reason: .invalidHTTPStatusCode(let response)) = self {
             return response.statusCode == code
@@ -173,7 +288,7 @@ extension KingfisherError.CacheErrorReason {
                    "Cache key: \(key). Requested resource keys: \(resourceKeys). Underlying error: \(error)"
         case .cannotLoadDataFromDisk(let url, let error):
             return "Cannot load data from disk at URL: \(url). Underlying error: \(error)"
-        case .cannotCreateDirectory(let error, let path):
+        case .cannotCreateDirectory(let path, let error):
             return "Cannot create directory at given path: Path: \(path). Underlying error: \(error)"
         case .imageNotExisting(let key):
             return "The image is not in cache, but you requires it should only be " +

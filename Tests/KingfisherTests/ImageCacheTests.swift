@@ -52,7 +52,7 @@ class ImageCacheTests: XCTestCase {
     func testInvalidCustomCachePath() {
         let customPath = "/path/to/image/cache"
         XCTAssertThrowsError(try ImageCache(name: "test", path: customPath)) { error in
-            guard case KingfisherError.cacheError(reason: .cannotCreateDirectory(_, let path)) = error else {
+            guard case KingfisherError.cacheError(reason: .cannotCreateDirectory(let path, _)) = error else {
                 XCTFail("Should be KingfisherError with cacheError reason.")
                 return
             }
