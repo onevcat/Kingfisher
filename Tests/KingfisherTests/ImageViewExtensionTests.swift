@@ -573,6 +573,48 @@ class ImageViewExtensionTests: XCTestCase {
 
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testSettingNonWorkingImageWithFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+
+        imageView.kf.setImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        XCTAssertNil(imageView.image)
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertEqual(testImage, imageView.image)
+    }
+    
+    func testSettingNonWorkingImageWithEmptyFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+        
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.onFailureImage(nil)]) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        XCTAssertEqual(testImage, imageView.image)
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertNil(imageView.image)
+    }
+    
+    func testSettingNonWorkingImageWithoutFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+        
+        imageView.kf.setImage(with: url, placeholder: testImage) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        XCTAssertEqual(testImage, imageView.image)
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertEqual(testImage, imageView.image)
+    }
 }
 
 extension View: Placeholder {}

@@ -85,6 +85,9 @@ extension KingfisherClass where Base: WKInterfaceImage {
                         self.base.setImage(value.image)
                         completionHandler?(result)
                     case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setImage(image)
+                        }
                         completionHandler?(result)
                     }
                 }
