@@ -95,6 +95,9 @@ extension KingfisherClass where Base: UIButton {
                         self.base.setImage(value.image, for: state)
                         completionHandler?(result)
                     case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setImage(image, for: state)
+                        }
                         completionHandler?(result)
                     }
                 }
@@ -180,6 +183,9 @@ extension KingfisherClass where Base: UIButton {
                         self.base.setBackgroundImage(value.image, for: state)
                         completionHandler?(result)
                     case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setBackgroundImage(image, for: state)
+                        }
                         completionHandler?(result)
                     }
                 }

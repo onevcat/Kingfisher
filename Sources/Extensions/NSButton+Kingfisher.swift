@@ -89,6 +89,9 @@ extension KingfisherClass where Base: NSButton {
                         self.base.image = value.image
                         completionHandler?(result)
                     case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.image = image
+                        }
                         completionHandler?(result)
                     }
                 }
@@ -167,6 +170,9 @@ extension KingfisherClass where Base: NSButton {
                         self.base.alternateImage = value.image
                         completionHandler?(result)
                     case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.alternateImage = image
+                        }
                         completionHandler?(result)
                     }
                 }

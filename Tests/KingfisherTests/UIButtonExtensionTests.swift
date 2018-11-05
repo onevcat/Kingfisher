@@ -161,4 +161,34 @@ class UIButtonExtensionTests: XCTestCase {
         
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testSettingNonWorkingImageWithFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+        let state = UIControl.State()
+        
+        button.kf.setImage(with: url, for: state, options: [.onFailureImage(testImage)]) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        XCTAssertNil(button.image(for: state))
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertEqual(testImage, button.image(for: state))
+    }
+    
+    func testSettingNonWorkingBackgroundImageWithFailureImage() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+        let state = UIControl.State()
+        
+        button.kf.setBackgroundImage(with: url, for: state, options: [.onFailureImage(testImage)]) { (result) -> Void in
+            XCTAssertNil(result.value)
+            expectation.fulfill()
+        }
+        XCTAssertNil(button.backgroundImage(for: state))
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertEqual(testImage, button.backgroundImage(for: state))
+    }
 }
