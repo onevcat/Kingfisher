@@ -52,7 +52,7 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         }
     }
 
-    init(config: Config) {
+    public init(config: Config) {
         self.config = config
         storage.totalCostLimit = config.totalCostLimit
         storage.countLimit = config.countLimit

@@ -51,8 +51,14 @@ public let KingfisherDiskCacheCleanedHashKey = "com.onevcat.Kingfisher.cleanedHa
 /// - memory: The image is cached in memory.
 /// - disk: The image is cached in disk.
 public enum CacheType {
-    case none, memory, disk
+    /// The image is not cached yet when retrieving it.
+    case none
+    /// The image is cached in memory.
+    case memory
+    /// The image is cached in disk.
+    case disk
     
+    /// Whether the cache type represents the image is already cached or not.
     public var cached: Bool {
         switch self {
         case .memory, .disk: return true
@@ -61,12 +67,19 @@ public enum CacheType {
     }
 }
 
+/// Represents the caching operation result.
 public struct CacheStoreResult {
-    let memoryCacheResult: Result<(), Never>
-    let diskCacheResult: Result<(), KingfisherError>
+    
+    /// The cache result for memory cache. Caching an image to memory will never fail.
+    public let memoryCacheResult: Result<(), Never>
+    
+    /// The cache result for disk cache. If an error happens during caching operation,
+    /// you can get it from `.failure` case of this `diskCacheResult`.
+    public let diskCacheResult: Result<(), KingfisherError>
 }
 
 extension Image: CacheCostCalculatable {
+    /// Cost of an image
     public var cacheCost: Int { return kf.cost }
 }
 
@@ -82,11 +95,25 @@ extension Data: DataTransformable {
     public static let empty = Data()
 }
 
+
+/// Represents the getting image operation from the cache.
+///
+/// - disk: The image can be retrieved from disk cache.
+/// - memory: The image can be retrieved memory cache.
+/// - none: The image does not exist in the cache.
 public enum ImageCacheResult {
+    
+    /// The image can be retrieved from disk cache.
     case disk(Image)
+    
+    /// The image can be retrieved memory cache.
     case memory(Image)
+    
+    /// The image does not exist in the cache.
     case none
     
+    /// Extracts the image from cache result. It returns the associated `Image` value for
+    /// `.disk` and `.memory` case. For `.none` case, `nil` is returned.
     public var image: Image? {
         switch self {
         case .disk(let image): return image
@@ -95,6 +122,7 @@ public enum ImageCacheResult {
         }
     }
     
+    /// Returns the corresponding `CacheType` value based on the result type of `self`.
     public var cacheType: CacheType {
         switch self {
         case .disk: return .disk
@@ -104,41 +132,86 @@ public enum ImageCacheResult {
     }
 }
 
-/// `ImageCache` represents both the memory and disk cache system of Kingfisher. 
-/// While a default image cache object will be used if you prefer the extension methods of Kingfisher, 
-/// you can create your own cache object and configure it as your need. You could use an `ImageCache`
-/// object to manipulate memory and disk cache for Kingfisher.
+/// Represents a hybrid caching system which is composed by a `MemoryStorage` and a `DiskStorage`. `ImageCache` is a
+/// high level abstract for storing an image as well as its data to disk memory and disk, and retrieving them back.
+/// While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create
+/// your own cache object and configure its storages as your need. This class also provide an interface for you to set
+/// the memory and disk storage config.
 open class ImageCache {
-
+    
+    /// The `MemoryStorage` object used in this cache. This storage holds loaded images in memory with a reasonable
+    /// expire duration and a maximum memory usage. To modify the configuration of a storage, just set the storage
+    /// `config` and its properties.
     public let memoryStorage: MemoryStorage<Image>
+    
+    /// The `DiskStorage` object used in this cache. This storage stores loaded images in disk with a reasonable
+    /// expire duration and a maximum disk usage. To modify the configuration of a storage, just set the storage
+    /// `config` and its properties.
     public let diskStorage: DiskStorage<Data>
     
-    //Disk
-    fileprivate let ioQueue: DispatchQueue
+    private let ioQueue: DispatchQueue
 
-    /// The default cache.
+    /// The default `ImageCache` object. Kingfisher will use this cache for its related methods if there is no
+    /// other cache specified.
     public static let `default` = ImageCache(name: "default")
     
     /// Closure that defines the disk cache path from a given path and cacheName.
     public typealias DiskCachePathClosure = (URL, String) -> URL
 
+    /// Creates an `ImageCache` from a customized `MemoryStorage` and `DiskStorage`.
+    ///
+    /// - Parameters:
+    ///   - memoryStorage: The `MemoryStorage` object to use in the image cache.
+    ///   - diskStorage: The `DiskStorage` object to use in the image cache.
+    ///   - name: A name used as a part of the bound IO queue.
+    public init(memoryStorage: MemoryStorage<Image>, diskStorage: DiskStorage<Data>, name: String = "") {
+        self.memoryStorage = memoryStorage
+        self.diskStorage = diskStorage
+        var ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue"
+        if !name.isEmpty {
+            ioQueueName.append(".\(name)")
+        }
+        ioQueue = DispatchQueue(label: ioQueueName)
+        
+        #if !os(macOS) && !os(watchOS)
+        let notifications: [(Notification.Name, Selector)] = [
+            (UIApplication.didReceiveMemoryWarningNotification, #selector(clearMemoryCache)),
+            (UIApplication.willTerminateNotification, #selector(cleanExpiredDiskCache)),
+            (UIApplication.didEnterBackgroundNotification, #selector(backgroundCleanExpiredDiskCache))
+        ]
+        notifications.forEach {
+            NotificationCenter.default.addObserver(self, selector: $0.1, name: $0.0, object: nil)
+        }
+        #endif
+    }
+    
+    /// Creates an `ImageCache` with a given `name`. Both `MemoryStorage` and `DiskStorage` will be created
+    /// with a default config based on the `name`.
+    ///
+    /// - Parameter name: The name of cache object. It is used to setup disk cache directories and IO queue.
+    ///                   You should not use the same `name` for different caches, otherwise, the disk storage would
+    ///                   be conflicting to each other. The `name` should not be an empty string.
     public convenience init(name: String) {
         try! self.init(name: name, path: nil, diskCachePathClosure: nil)
     }
-    
-    /**
-    Init method. Passing a name for the cache. It represents a cache folder in the memory and disk.
-    
-    - parameter name: Name of the cache. It will be used as the memory cache name and the disk cache folder name 
-                      appending to the cache path. This value should not be an empty string.
-    - parameter path: Optional - Location of cache path on disk. If `nil` is passed in (the default value),
-                      the `.cachesDirectory` in of your app will be used.
-    - parameter diskCachePathClosure: Closure that takes in an optional initial path string and generates
-                      the final disk cache path. You could use it to fully customize your cache path.
-    */
-    public init(name: String,
-                path: String?,
-                diskCachePathClosure: DiskCachePathClosure? = nil) throws
+
+    /// Creates an `ImageCache` with a given `name`, cache directory `path`
+    /// and a closure to modify the cache directory.
+    ///
+    /// - Parameters:
+    ///   - name: The name of cache object. It is used to setup disk cache directories and IO queue.
+    ///           You should not use the same `name` for different caches, otherwise, the disk storage would
+    ///           be conflicting to each other.
+    ///   - path: Location of cache path on disk. It will be internally pass to the initializer of `DiskStorage` as the
+    ///           disk cache directory.
+    ///   - diskCachePathClosure: Closure that takes in an optional initial path string and generates
+    ///                           the final disk cache path. You could use it to fully customize your cache path.
+    /// - Throws: An error that happens during image cache creating, such as unable to create a directory at the given
+    ///           path.
+    public convenience init(
+        name: String,
+        path: String?,
+        diskCachePathClosure: DiskCachePathClosure? = nil) throws
     {
         if name.isEmpty {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
@@ -148,7 +221,8 @@ open class ImageCache {
 
         let totalMemory = ProcessInfo.processInfo.physicalMemory
         let costLimit = totalMemory / 4
-        memoryStorage = MemoryStorage(config: .init(totalCostLimit: costLimit > Int.max ? Int.max : Int(costLimit)))
+        let memoryStorage = MemoryStorage<Image>(config:
+            .init(totalCostLimit: (costLimit > Int.max) ? Int.max : Int(costLimit)))
 
         var diskConfig = DiskStorage<Data>.Config(
             name: name,
@@ -158,44 +232,37 @@ open class ImageCache {
             diskConfig.cachePathBlock = diskCachePathClosure
             defer { diskConfig.cachePathBlock = nil }
         }
-
-        diskStorage = try DiskStorage(config: diskConfig)
+        let diskStorage = try DiskStorage(config: diskConfig)
         
-        let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue.\(name)"
-        ioQueue = DispatchQueue(label: ioQueueName)
-
-#if !os(macOS) && !os(watchOS)
-        NotificationCenter.default.addObserver(
-            self, selector: #selector(clearMemoryCache), name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
-        NotificationCenter.default.addObserver(
-            self, selector: #selector(cleanExpiredDiskCache), name: UIApplication.willTerminateNotification, object: nil)
-        NotificationCenter.default.addObserver(
-            self, selector: #selector(backgroundCleanExpiredDiskCache), name: UIApplication.didEnterBackgroundNotification, object: nil)
-#endif
+        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage, name: name)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
-
     // MARK: - Store & Remove
-
-    /**
-    Store an image to cache. It will be saved to both memory and disk. It is an async operation.
-    
-    - parameter image:             The image to be stored.
-    - parameter original:          The original data of the image.
-                                   Kingfisher will use it to check the format of the image and optimize cache size on disk.
-                                   If `nil` is supplied, the image data will be saved as a normalized PNG file.
-                                   It is strongly suggested to supply it whenever possible, to get a better performance and disk usage.
-    - parameter key:               Key for the image.
-    - parameter identifier:        The identifier of processor used. If you are using a processor for the image, pass the identifier of
-                                   processor to it.
-                                   This identifier will be used to generate a corresponding key for the combination of `key` and processor.
-    - parameter toDisk:            Whether this image should be cached to disk or not. If false, the image will be only cached in memory.
-    - parameter completionHandler: Called when store operation completes.
-    */
+    /// Stores an image to the cache.
+    ///
+    /// - Parameters:
+    ///   - image: The image to be stored.
+    ///   - original: The original data of the image. This value will be forwarded to the provided `serializer` for
+    ///               further use. By default, Kingfisher uses a `DefaultCacheSerializer` to serialize the image to
+    ///               data for caching in disk, it checks the image format based on `original` data to determine in
+    ///               which image format should be used. For other types of `serializer`, it depends on thier
+    ///               implemetation detail on how to use this original data.
+    ///   - key: The key used for caching the image.
+    ///   - identifier: The identifier of processor being used for caching. If you are using a processor for the
+    ///                 image, pass the identifier of processor to this parameter.
+    ///   - serializer: The `CacheSerializer`
+    ///   - toDisk: Whether this image should be cached to disk or not. If `false`, the image is only cached in memory.
+    ///             Otherwise, it is cached in both memory storage and disk storage. Default is `true`.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`. For case
+    ///                    that `toDisk` is `false`, a `.untouch` queue means `callbackQueue` will be invoked from the
+    ///                    caller queue of this method. If `toDisk` is `true`, the `completionHandler` will be called
+    ///                    from an internal file IO queue. To change this behavior, specify another `CallbackQueue`
+    ///                    value.
+    ///   - completionHandler: A closure which is invoked when the cache operation finishes.
     open func store(_ image: Image,
                       original: Data? = nil,
                       forKey key: String,
@@ -246,21 +313,23 @@ open class ImageCache {
         }
     }
     
-    /**
-    Remove the image for key for the cache. It will be opted out from both memory and disk. 
-    It is an async operation.
-    
-    - parameter key:               Key for the image.
-    - parameter identifier:        The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
-                                   This identifier will be used to generate a corresponding key for the combination of `key` and processor.
-    - parameter fromMemory:        Whether this image should be removed from memory or not. If false, the image won't be removed from memory.
-    - parameter fromDisk:          Whether this image should be removed from disk or not. If false, the image won't be removed from disk.
-    - parameter completionHandler: Called when removal operation completes.
-    */
+    /// Removes the image for the given key from the cache.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: The identifier of processor being used for caching. If you are using a processor for the
+    ///                 image, pass the identifier of processor to this parameter.
+    ///   - fromMemory: Whether this image should be removed from memory storage or not.
+    ///                 If `false`, the image won't be removed from the memory storage. Default is `true`.
+    ///   - fromDisk: Whether this image should be removed from disk storage or not.
+    ///               If `false`, the image won't be removed from the disk storage. Default is `true`.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
+    ///   - completionHandler: A closure which is invoked when the cache removing operation finishes.
     open func removeImage(forKey key: String,
                           processorIdentifier identifier: String = "",
                           fromMemory: Bool = true,
                           fromDisk: Bool = true,
+                          callbackQueue: CallbackQueue = .untouch,
                           completionHandler: (() -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
@@ -272,43 +341,46 @@ open class ImageCache {
         if fromDisk {
             ioQueue.async{
                 try? self.diskStorage.remove(forKey: computedKey)
-                completionHandler?()
+                if let completionHandler = completionHandler {
+                    callbackQueue.execute { completionHandler() }
+                }
             }
         } else {
-            completionHandler?()
+            if let completionHandler = completionHandler {
+                callbackQueue.execute { completionHandler() }
+            }
         }
     }
 
-    // MARK: - Get data from cache
-
-    /**
-    Get an image for a key from memory or disk.
-    
-    - parameter key:               Key for the image.
-    - parameter options:           Options of retrieving image. If you need to retrieve an image which was 
-                                   stored with a specified `ImageProcessor`, pass the processor in the option too.
-    - parameter completionHandler: Called when getting operation completes with image result and cached type of 
-                                   this image. If there is no such key cached, the image will be `nil`.
-    
-    - returns: The retrieving task.
-    */
+    /// Gets an image for a given key from the cache, either from memory storage or disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
+    ///   - completionHandler: A closure which is invoked when the image getting operation finishes. If the
+    ///                        image retrieving operation finishes without problem, an `ImageCacheResult` value
+    ///                        will be sent to this closuer as result. Otherwise, a `KingfisherError` result
+    ///                        with detail failing reason will be sent.
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo? = nil,
                         callbackQueue: CallbackQueue = .untouch,
                      completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
     {
-        // No completion handler. Not start working and early return.
+        // No completion handler. No need to start working and early return.
         guard let completionHandler = completionHandler else { return }
         
         let options = options ?? .empty
         let imageModifier = options.imageModifier
         
+        // Try to check the image from memory cache first.
         if let image = retrieveImageInMemoryCache(forKey: key, options: options) {
             let image = imageModifier.modify(image)
             callbackQueue.execute { completionHandler(.success(.memory(image))) }
         } else if options.fromMemoryCacheOrRefresh {
             callbackQueue.execute { completionHandler(.success(.none)) }
         } else {
+            // Begin to disk search.
             ioQueue.async {
                 self.retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
                     result in
@@ -322,7 +394,8 @@ open class ImageCache {
                         }
                     
                         // Cache the disk image to memory.
-                        // Memory cache does not change callback queue, which is already which we want.
+                        // We are passing `false` to `toDisk`, the memory cache does not change
+                        // callback queue, we can call `completionHandler` without another dispatch.
                         self.store(
                             image,
                             forKey: key,
@@ -341,14 +414,13 @@ open class ImageCache {
         }
     }
     
-    /**
-    Get an image for a key from memory.
-    
-    - parameter key:     Key for the image.
-    - parameter options: Options of retrieving image. If you need to retrieve an image which was 
-                         stored with a specified `ImageProcessor`, pass the processor in the option too.
-    - returns: The image object if it is cached, or `nil` if there is no such key in the cache.
-    */
+    /// Gets an image for a given key from the memory storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    /// - Returns: The image stored in memory cache, if exists and valid. Otherwise, if the image does not exist or
+    ///            has already expired, `nil` is returned.
     open func retrieveImageInMemoryCache(
         forKey key: String,
         options: KingfisherOptionsInfo? = nil) -> Image?
@@ -362,6 +434,13 @@ open class ImageCache {
         }
     }
     
+    /// Gets an image for a given key from the disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
+    ///   - completionHandler: A closure which is invoked when the operation finishes.
     open func retrieveImageInDiskCache(
         forKey key: String,
         options: KingfisherOptionsInfo? = nil,
@@ -388,40 +467,35 @@ open class ImageCache {
     }
 
     // MARK: - Clear & Clean
-
-    /**
-    Clear memory cache.
-    */
+    /// Clears the memory storage of this cache.
     @objc public func clearMemoryCache() {
         try? memoryStorage.removeAll()
     }
     
-    /**
-    Clear disk cache. This is an async operation.
-    
-    - parameter completionHander: Called after the operation completes.
-    */
+    /// Clears the disk storage of this cache. This is an async operation.
+    ///
+    /// - Parameter handler: A closure which is invoked when the cache clearing operation finishes.
+    ///                      This `handler` will be called from the main queue.
     open func clearDiskCache(completion handler: (()->())? = nil) {
         ioQueue.async {
             do {
                 try self.diskStorage.removeAll()
             } catch _ { }
-            handler?()
+            if let handler = handler {
+                DispatchQueue.main.async { handler() }
+            }
         }
     }
     
-    /**
-    Clean expired disk cache. This is an async operation.
-    */
-    @objc fileprivate func cleanExpiredDiskCache() {
+    /// Clears the expired images from disk storage. This is an async operation.
+    @objc func cleanExpiredDiskCache() {
         cleanExpiredDiskCache(completion: nil)
     }
-    
-    /**
-    Clean expired disk cache. This is an async operation.
-    
-    - parameter completionHandler: Called after the operation completes.
-    */
+
+    /// Clears the expired images from disk storage. This is an async operation.
+    ///
+    /// - Parameter handler: A closure which is invoked when the cache clearing operation finishes.
+    ///                      This `handler` will be called from the main queue.
     open func cleanExpiredDiskCache(completion handler: (() -> Void)? = nil) {
         ioQueue.async {
             do {
@@ -442,17 +516,17 @@ open class ImageCache {
                     }
                 }
 
-                handler?()
+                if let handler = handler {
+                    DispatchQueue.main.async { handler() }
+                }
             } catch {}
         }
     }
 
 #if !os(macOS) && !os(watchOS)
-    /**
-    Clean expired disk cache when app in background. This is an async operation.
-    In most cases, you should not call this method explicitly. 
-    It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.
-    */
+    /// Clears the expired images from disk storage when app is in background. This is an async operation.
+    /// In most cases, you should not call this method explicitly.
+    /// It will be called automatically when `UIApplicationDidEnterBackgroundNotification` received.
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
         guard let sharedApplication = KingfisherClass<UIApplication>.shared else { return }
@@ -473,30 +547,61 @@ open class ImageCache {
     }
 #endif
 
-
-    // MARK: - Check cache status
-    /// Cache type for checking whether an image is cached for a key in current cache.
+    /// Returns the cache type for a given `key` and `identifier` combination.
+    /// This method is used for checking whether an image is cached in current cache.
+    /// It also provides information on which kind of cache can it be found in the return value.
     ///
     /// - Parameters:
-    ///   - key: Key for the image.
-    ///   - identifier: Processor identifier which used for this image. Default is empty string.
-    /// - Returns: A `CacheType` instance which indicates the cache status. `.none` means the image is not in cache yet.
-    open func imageCachedType(forKey key: String, processorIdentifier identifier: String = "") -> CacheType {
+    ///   - key: The key used for caching the image.
+    ///   - identifier: Processor identifier which used for this image. Default is the `identifier` of
+    ///                 `DefaultImageProcessor.default`.
+    /// - Returns: A `CacheType` instance which indicates the cache status.
+    ///            `.none` means the image is not in cache or it is already expired.
+    open func imageCachedType(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> CacheType
+    {
         let computedKey = key.computedKey(with: identifier)
         if memoryStorage.isCached(forKey: computedKey) { return .memory }
         if diskStorage.isCached(forKey: computedKey) { return .disk }
         return .none
     }
     
-    /**
-    Get the hash for the key. This could be used for matching files.
+    /// Returns whether the file exists in cache for a given `key` and `identifier` combination.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: Processor identifier which used for this image. Default is the `identifier` of
+    ///                 `DefaultImageProcessor.default`.
+    /// - Returns: A `Bool` which indicates whether a cache could match the given `key` and `identifier` combination.
+    ///
+    /// - Note:
+    /// The return value does not contain information about from which kind of storage the cache matches.
+    /// To get the information about cache type according `CacheType`,
+    /// use `imageCachedType(forKey:processorIdentifier:)` instead.
+    public func isCached(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> Bool
+    {
+        return imageCachedType(forKey: key, processorIdentifier: identifier).cached
+    }
     
-    - parameter key:        The key which is used for caching.
-    - parameter identifier: The identifier of processor used. If you are using a processor for the image, pass the identifier of processor to it.
-    
-     - returns: Corresponding hash.
-    */
-    open func hash(forKey key: String, processorIdentifier identifier: String = "") -> String {
+    /// Gets the hash used as cache file name for the key.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: Processor identifier which used for this image. Default is the `identifier` of
+    ///                 `DefaultImageProcessor.default`.
+    /// - Returns: The hash which is used as the cache file name.
+    ///
+    /// - Note:
+    /// By default, for a given combination of `key` and `identifier`, `ImageCache` will use the value
+    /// returned by this method as the cache file name. You can use this value to check and match cache file
+    /// if you need.
+    open func hash(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> String
+    {
         let computedKey = key.computedKey(with: identifier)
         return diskStorage.cacheFileName(forKey: computedKey)
     }
