@@ -606,12 +606,10 @@ open class ImageCache {
         return diskStorage.cacheFileName(forKey: computedKey)
     }
     
-    /**
-    Calculate the disk size taken by cache. 
-    It is the total allocated size of the cached files in bytes.
-    
-    - parameter completionHandler: Called with the calculated size when finishes.
-    */
+    /// Calculates the disk size taken by cache.
+    /// It is the total allocated size of the cached files on disk in bytes.
+    ///
+    /// - Parameter handler: Called with the size calculating finishes. This closure is invoked from the main queue.
     open func calculateDiskCacheSize(completion handler: @escaping ((Result<UInt, KingfisherError>) -> Void)) {
         ioQueue.async {
             do {
@@ -630,19 +628,28 @@ open class ImageCache {
         }
     }
     
-    /**
-    Get the cache path for the key.
-    It is useful for projects with UIWebView or anyone that needs access to the local file path.
-    
-    i.e. Replace the `<img src='path_for_key'>` tag in your HTML.
-     
-    - Note: This method does not guarantee there is an image already cached in the path. It just returns the path
-      that the image should be.
-      You could use `isImageCached(forKey:)` method to check whether the image is cached under that key.
-    */
-    open func cachePath(forKey key: String, processorIdentifier identifier: String = "") -> String {
+    /// Gets the cache path for the key.
+    /// It is useful for projects with web view or anyone that needs access to the local file path.
+    ///
+    /// i.e. Replacing the `<img src='path_for_key'>` tag in your HTML.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: Processor identifier which used for this image. Default is the `identifier` of
+    ///                 `DefaultImageProcessor.default`.
+    /// - Returns: The disk path of cached image under the given `key` and `identifier`.
+    ///
+    /// - Note:
+    /// This method does not guarantee there is an image already cached in the returned path. It just gives your
+    /// the path that the image should be, if it exists in disk storage.
+    ///
+    /// You could use `isImageCached(forKey:)` method to check whether the image is cached under that key in disk.
+    open func cachePath(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> String
+    {
         let computedKey = key.computedKey(with: identifier)
-        return diskStorage.cacheFileURL(forKey: computedKey).absoluteString
+        return diskStorage.cacheFileURL(forKey: computedKey).path
     }
 }
 
