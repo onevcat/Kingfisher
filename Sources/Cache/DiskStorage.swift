@@ -26,11 +26,7 @@
 
 import Foundation
 
-protocol ExtendingStorage: Storage {
-    func extendExpriration(forKey key: KeyType, lastAccessDate: Date, nextExpiration: StorageExpiration) throws
-}
-
-public class DiskStorage<T: DataTransformable>: ExtendingStorage {
+public class DiskStorage<T: DataTransformable> {
 
     public struct Config {
         let name: String

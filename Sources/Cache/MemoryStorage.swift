@@ -26,14 +26,41 @@
 
 import Foundation
 
+/// Represents a storage which stores a certain type of value in memory. It provides fast access,
+/// but limited storing size. The stored value type needs to conform to `CacheCostCalculatable`,
+/// and its `cacheCost` will be used to determine the cost of size for the cache item.
+///
+/// You can config a `MemoryStorage` in its initializer by passing a `MemoryStorage.Config` value.
+/// or modifying the `config` property after it being created. The backend of `MemoryStorage` has
+/// upper limitaion on cost size in memory and item count. All items in the storage has an expiration
+/// date. When retrieved, if the target item is already expired, it will be recognized as it does not
+/// exist in the storage. The `MemoryStorage` also contains a scheduled self clean task, to evict expired
+/// items from memory.
 public class MemoryStorage<T: CacheCostCalculatable>: Storage {
 
+    /// Represents the config used in a `MemoryStorage`.
     public struct Config {
+        
+        /// Total cost limit of the storage in bytes.
         public var totalCostLimit: Int
+        
+        /// The item count limit of the memory storage.
         public var countLimit: Int = .max
+        
+        /// The `StorageExpiration` used in this memory storage. Default is `.seconds(300)`,
+        /// means that the memory cache would expire in 5 minutes.
         public var expiration: StorageExpiration = .seconds(300)
+        
+        /// The time interval between the storage do clean work for swiping expired items.
+        /// Default is 120, means the auto eviction happens once per two minutes.
         public var cleanInterval: TimeInterval = 120
 
+        /// Creates a config from a given `totalCostLimit` value.
+        ///
+        /// - Parameter totalCostLimit: Total cost limit of the storage in bytes.
+        ///
+        /// - Note:
+        /// Other members of `MemoryStorage.Config` will use their default values when created.
         public init(totalCostLimit: Int) {
             self.totalCostLimit = totalCostLimit
         }
@@ -45,6 +72,8 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
     var cleanTimer: Timer? = nil
     let lock = NSLock()
 
+    /// The config used in this storage. It is a setable value and you can
+    /// use it to config the storage in air.
     public var config: Config {
         didSet {
             storage.totalCostLimit = config.totalCostLimit
@@ -52,6 +81,10 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         }
     }
 
+    /// Creates a `MemoryStorage` with a given `config`.
+    ///
+    /// - Parameter config: The config used to create the storage. It determines the max size limitation,
+    ///                     default expiration setting and more.
     public init(config: Config) {
         self.config = config
         storage.totalCostLimit = config.totalCostLimit
@@ -102,18 +135,26 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
     }
 
     func value(forKey key: String) throws -> T? {
+        return try value(forKey: key, extendingExpiration: true)
+    }
+    
+    func value(forKey key: String, extendingExpiration: Bool) throws -> T? {
         guard let object = storage.object(forKey: key as NSString) else {
             return nil
         }
         guard object.estimatedExpiration.isFuture else {
             return nil
         }
+        
+        if extendingExpiration { object.extendExpiration() }
         return object.value
     }
 
     func isCached(forKey key: String) -> Bool {
         do {
-            guard let _ = try value(forKey: key) else { return false }
+            guard let _ = try value(forKey: key, extendingExpiration: false) else {
+                return false
+            }
             return true
         } catch {
             return false
