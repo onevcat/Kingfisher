@@ -26,38 +26,49 @@
 
 import Foundation
 
-/// `FormatIndicatedCacheSerializer` let you indicate an image format for serialized caches.
+/// `FormatIndicatedCacheSerializer` lets you indicate an image format for serialized caches.
 ///
 /// It could serialize and deserialize PNG, JEPG and GIF images. For
 /// image other than these formats, a normalized `pngRepresentation` will be used.
 ///
 /// Example:
 /// ````
-/// private let profileImageSize = CGSize(width: 44, height: 44)
+/// let profileImageSize = CGSize(width: 44, height: 44)
 ///
-/// private let imageProcessor = RoundCornerImageProcessor(
+/// // A round corner image.
+/// let imageProcessor = RoundCornerImageProcessor(
 ///     cornerRadius: profileImageSize.width / 2, targetSize: profileImageSize)
 ///
-/// private let optionsInfo: KingfisherOptionsInfo = [
+/// let optionsInfo: KingfisherOptionsInfo = [
 ///     .cacheSerializer(FormatIndicatedCacheSerializer.png), 
-///     .backgroundDecode, .processor(imageProcessor), .scaleFactor(UIScreen.main.scale)]
+///     .processor(imageProcessor)]
 ///
-/// extension UIImageView {
-///    func setProfileImage(with url: URL) {
-///        // Image will always cached as PNG format to preserve alpha channel for round rect.
-///        _ = kf.setImage(with: url, options: optionsInfo)
-///    }
-///}
+/// A URL pointing to a JPEG image.
+/// let url = URL(string: "https://example.com/image.jpg")!
+///
+/// // Image will be always cached as PNG format to preserve alpha channel for round rect.
+/// // So when you load it from cache again later, it will be still round cornered.
+/// // Otherwise, the corner part would be filled by white color (since JPEG does not contain an alpha channel).
+/// imageView.kf.setImage(with: url, options: optionsInfo)
 /// ````
 public struct FormatIndicatedCacheSerializer: CacheSerializer {
     
+    /// A `FormatIndicatedCacheSerializer` which converts image from and to PNG format. If the image cannot be
+    /// represented by PNG format, it will fallback to its real format which is determined by `original` data.
     public static let png = FormatIndicatedCacheSerializer(imageFormat: .PNG)
+    
+    /// A `FormatIndicatedCacheSerializer` which converts image from and to JPRG format. If the image cannot be
+    /// represented by JPRG format, it will fallback to its real format which is determined by `original` data.
     public static let jpeg = FormatIndicatedCacheSerializer(imageFormat: .JPEG)
+    
+    /// A `FormatIndicatedCacheSerializer` which converts image from and to GIF format. If the image cannot be
+    /// represented by GIF format, it will fallback to its real format which is determined by `original` data.
     public static let gif = FormatIndicatedCacheSerializer(imageFormat: .GIF)
     
     /// The indicated image format.
     private let imageFormat: ImageFormat
     
+    /// Creates data which represents the given `image` under a format.
     public func data(with image: Image, original: Data?) -> Data? {
         
         func imageData(withFormat imageFormat: ImageFormat) -> Data? {

@@ -26,42 +26,56 @@
 
 import Foundation
 
-/// An `CacheSerializer` would be used to convert some data to an image object for 
-/// retrieving from disk cache and vice versa for storing to disk cache.
+/// An `CacheSerializer` is used to convert some data to an image object after
+/// retrieving it from disk storage, and vice versa, to convert an image to data object
+/// for storing to the disk storage.
 public protocol CacheSerializer {
     
-    /// Get the serialized data from a provided image
+    /// Gets the serialized data from a provided image
     /// and optional original data for caching to disk.
     ///
-    ///
-    /// - parameter image:    The image needed to be serialized.
-    /// - parameter original: The original data which is just downloaded. 
-    ///                       If the image is retrieved from cache instead of
-    ///                       downloaded, it will be `nil`.
-    ///
-    /// - returns: A data which will be stored to cache, or `nil` when no valid
+    /// - Parameters:
+    ///   - image: The image needed to be serialized.
+    ///   - original: The original data which is just downloaded.
+    ///               If the image is retrieved from cache instead of
+    ///               downloaded, it will be `nil`.
+    /// - Returns: The data object for storing to disk, or `nil` when no valid
     ///            data could be serialized.
     func data(with image: Image, original: Data?) -> Data?
     
-    /// Get an image deserialized from provided data.
+    /// Gets an image deserialized from provided data.
     ///
-    /// - parameter data:    The data from which an image should be deserialized.
-    /// - parameter options: Options for deserialization.
-    ///
-    /// - returns: An image deserialized or `nil` when no valid image 
+    /// - Parameters:
+    ///   - data: The data from which an image should be deserialized.
+    ///   - options: Options for deserialization.
+    /// - Returns: An image deserialized or `nil` when no valid image
     ///            could be deserialized.
     func image(with data: Data, options: KingfisherOptionsInfo?) -> Image?
 }
 
-
-/// `DefaultCacheSerializer` is a basic `CacheSerializer` used in default cache of
-/// Kingfisher. It could serialize and deserialize PNG, JEPG and GIF images. For 
+/// Represents a basic and default `CacheSerializer` used in Kingfisher disk cache system.
+/// It could serialize and deserialize images in PNG, JEPG and GIF format. For
 /// image other than these formats, a normalized `pngRepresentation` will be used.
 public struct DefaultCacheSerializer: CacheSerializer {
     
+    /// The default general cache serializer used across Kingfisher's cache.
     public static let `default` = DefaultCacheSerializer()
     private init() {}
     
+    /// - Parameters:
+    ///   - image: The image needed to be serialized.
+    ///   - original: The original data which is just downloaded.
+    ///               If the image is retrieved from cache instead of
+    ///               downloaded, it will be `nil`.
+    /// - Returns: The data object for storing to disk, or `nil` when no valid
+    ///            data could be serialized.
+    ///
+    /// - Note:
+    /// Only when `original` contains valid PNG, JEPG and GIF format data, the `image` will be
+    /// converted to the corresponding data type. Otherwise, if the `original` is provided but it is not
+    /// a valid format, the `original` data will be used for cache.
+    ///
+    /// If `original` is `nil`, the input `image` will be encoded as PNG data.
     public func data(with image: Image, original: Data?) -> Data? {
         let imageFormat = original?.kf.imageFormat ?? .unknown
 
@@ -76,6 +90,13 @@ public struct DefaultCacheSerializer: CacheSerializer {
         return data
     }
     
+    /// Gets an image deserialized from provided data.
+    ///
+    /// - Parameters:
+    ///   - data: The data from which an image should be deserialized.
+    ///   - options: Options for deserialization.
+    /// - Returns: An image deserialized or `nil` when no valid image
+    ///            could be deserialized.
     public func image(with data: Data, options: KingfisherOptionsInfo?) -> Image? {
         let options = options ?? .empty
         return KingfisherClass.image(data: data, options: options.imageCreatingOptions)
