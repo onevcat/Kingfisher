@@ -26,10 +26,20 @@
 
 import Foundation
 
+/// Represents the expiration strategy used in storage.
+///
+/// - never: The item never expires.
+/// - seconds: The item expires after a time duration of given seconds from now.
+/// - days: The item expires after a time duration of given days from now.
+/// - date: The item expires after a given date.
 public enum StorageExpiration {
+    /// The item never expires.
     case never
+    /// The item expires after a time duration of given seconds from now.
     case seconds(TimeInterval)
+    /// The item expires after a time duration of given days from now.
     case days(Int)
+    /// The item expires after a given date.
     case date(Date)
 
     func dateSince(_ date: Date) -> Date {
@@ -82,10 +92,12 @@ class StorageObject<T> {
     }
 }
 
+/// Represents types which cost in memory can be calculated.
 public protocol CacheCostCalculatable {
     var cacheCost: Int { get }
 }
 
+/// Represents types which can be converted to and from data.
 public protocol DataTransformable {
     func toData() throws -> Data
     static func fromData(_ data: Data) throws -> Self
