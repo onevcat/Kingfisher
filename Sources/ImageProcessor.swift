@@ -678,7 +678,7 @@ public struct CroppingImageProcessor: ImageProcessor {
     }
 }
 
-/// Concatenate two `ImageProcessor`s. `ImageProcessor.appen(another:)` is used internally.
+/// Concatenate two `ImageProcessor`s. `ImageProcessor.append(another:)` is used internally.
 ///
 /// - parameter left:  First processor.
 /// - parameter right: Second processor.
