@@ -42,13 +42,17 @@ public enum StorageExpiration {
     /// The item expires after a given date.
     case date(Date)
 
-    func dateSince(_ date: Date) -> Date {
+    func estimatedExpirationSince(_ date: Date) -> Date {
         switch self {
         case .never: return .distantFuture
         case .seconds(let seconds): return date.addingTimeInterval(seconds)
         case .days(let days): return date.addingTimeInterval(TimeInterval(60 * 60 * 24 * days))
         case .date(let ref): return ref
         }
+    }
+    
+    var estimatedExpirationSinceNow: Date {
+        return estimatedExpirationSince(Date())
     }
 
     var timeInterval: TimeInterval {
@@ -72,24 +76,6 @@ protocol Storage {
     func remove(forKey key: String) throws
     func removeAll() throws
     func isCached(forKey key: String) -> Bool
-}
-
-class StorageObject<T> {
-    let value: T
-    let expiration: StorageExpiration
-
-    private(set) var estimatedExpiration: Date
-
-    init(_ value: T, expiration: StorageExpiration) {
-        self.value = value
-        self.expiration = expiration
-
-        self.estimatedExpiration = expiration.dateSince(Date())
-    }
-
-    func extendExpiration() {
-        self.estimatedExpiration = expiration.dateSince(Date())
-    }
 }
 
 /// Represents types which cost in memory can be calculated.

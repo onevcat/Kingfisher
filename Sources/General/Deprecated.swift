@@ -338,7 +338,7 @@ extension ImageCache {
     renamed: "diskStorage.config.sizeLimit")
     open var maxDiskCacheSize: UInt {
         get { return UInt(diskStorage.config.sizeLimit) }
-        set { diskStorage.config.sizeLimit = Int(newValue) }
+        set { diskStorage.config.sizeLimit = newValue }
     }
     
     @available(*, deprecated, message: "Use `diskStorage.cacheFileURL(forKey:).path` instead.",
