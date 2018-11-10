@@ -115,8 +115,7 @@ public enum KingfisherError: Error {
         /// - error: The underlying error thrown by file manager.
         /// - key: The key used to getting the resource from cache.
         /// - url: The disk URL where the target cached file exists.
-        /// - resourceKeys: The required keys of URL resource.
-        case invalidURLResource(error: Error, key: String, url: URL, resourceKeys: Set<URLResourceKey>)
+        case invalidURLResource(error: Error, key: String, url: URL)
         
         /// The file at target URL exists, but the data cannot be loaded from it. Code 3004.
         /// - url: The disk URL where the target cached file exists.
@@ -283,9 +282,9 @@ extension KingfisherError.CacheErrorReason {
             return "Cannot create file enumerator for URL: \(url)."
         case .invalidFileEnumeratorContent(let url):
             return "Cannot get contents from the file enumerator at URL: \(url)."
-        case .invalidURLResource(let error, let key, let url, let resourceKeys):
+        case .invalidURLResource(let error, let key, let url):
             return "Cannot get URL resource values or data for the given URL: \(url). " +
-                   "Cache key: \(key). Requested resource keys: \(resourceKeys). Underlying error: \(error)"
+                   "Cache key: \(key). Underlying error: \(error)"
         case .cannotLoadDataFromDisk(let url, let error):
             return "Cannot load data from disk at URL: \(url). Underlying error: \(error)"
         case .cannotCreateDirectory(let path, let error):

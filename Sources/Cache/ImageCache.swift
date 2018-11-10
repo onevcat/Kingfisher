@@ -152,7 +152,8 @@ open class ImageCache {
     private let ioQueue: DispatchQueue
 
     /// The default `ImageCache` object. Kingfisher will use this cache for its related methods if there is no
-    /// other cache specified.
+    /// other cache specified. The `name` of this default cache is "default", and you should not use this name
+    /// for any of your customize cache.
     public static let `default` = ImageCache(name: "default")
     
     /// Closure that defines the disk cache path from a given path and cacheName.
@@ -226,8 +227,9 @@ open class ImageCache {
 
         var diskConfig = DiskStorage<Data>.Config(
             name: name,
-            directory: path.flatMap { URL(string: $0) },
-            sizeLimit: 0)
+            sizeLimit: 0,
+            directory: path.flatMap { URL(string: $0) }
+        )
         if let closure = diskCachePathClosure {
             diskConfig.cachePathBlock = diskCachePathClosure
             defer { diskConfig.cachePathBlock = nil }

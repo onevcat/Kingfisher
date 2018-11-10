@@ -122,6 +122,8 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         storeNoThrow(value: value, forKey: key, expiration: expiration)
     }
 
+    // The no throw version for storing value in cache. Kingfisher knows the detail so it
+    // could use this version to make syntax simpler internally.
     func storeNoThrow(
         value: T,
         forKey key: String,
@@ -134,31 +136,26 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         keys.insert(key)
     }
 
+    // Use this when you actually access the memory cached item.
+    // This will extend the expired data for the accessed item.
     func value(forKey key: String) throws -> T? {
-        return try value(forKey: key, extendingExpiration: true)
+        return value(forKey: key, extendingExpiration: true)
     }
     
-    func value(forKey key: String, extendingExpiration: Bool) throws -> T? {
+    func value(forKey key: String, extendingExpiration: Bool) -> T? {
         guard let object = storage.object(forKey: key as NSString) else {
             return nil
         }
-        guard object.estimatedExpiration.isFuture else {
-            return nil
-        }
-        
+        if object.expired { return nil }
         if extendingExpiration { object.extendExpiration() }
         return object.value
     }
 
     func isCached(forKey key: String) -> Bool {
-        do {
-            guard let _ = try value(forKey: key, extendingExpiration: false) else {
-                return false
-            }
-            return true
-        } catch {
+        guard let _ = value(forKey: key, extendingExpiration: false) else {
             return false
         }
+        return true
     }
 
     func remove(forKey key: String) throws {
@@ -174,4 +171,29 @@ public class MemoryStorage<T: CacheCostCalculatable>: Storage {
         storage.removeAllObjects()
         keys.removeAll()
     }
+}
+
+extension MemoryStorage {
+    class StorageObject<T> {
+        let value: T
+        let expiration: StorageExpiration
+        
+        private(set) var estimatedExpiration: Date
+        
+        init(_ value: T, expiration: StorageExpiration) {
+            self.value = value
+            self.expiration = expiration
+            
+            self.estimatedExpiration = expiration.estimatedExpirationSince(Date())
+        }
+        
+        func extendExpiration() {
+            self.estimatedExpiration = expiration.estimatedExpirationSince(Date())
+        }
+        
+        var expired: Bool {
+            return estimatedExpiration.isPast
+        }
+    }
+
 }

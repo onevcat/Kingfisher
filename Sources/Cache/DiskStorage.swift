@@ -26,46 +26,74 @@
 
 import Foundation
 
+/// Represents a storage which stores a certain type of value in disk. The value is serialized to data
+/// and stored as file in the file system under a specified location.
+///
+/// You can config a `DiskStorage` in its initializer by passing a `DiskStorage.Config` value.
+/// or modifying the `config` property after it being created. `DiskStorage` will use file's attributes to keep
+/// track of a file for its expiration or size limitation.
 public class DiskStorage<T: DataTransformable> {
 
+    /// Represents the config used in a `DiskStorage`.
     public struct Config {
+        
+        /// The allocated size limit on disk of the storage in bytes. 0 means no limit.
+        public var sizeLimit: UInt
+        
+        /// The `StorageExpiration` used in this disk storage. Default is `.days(7)`,
+        /// means that the disk cache would expire in one week.
+        public var expiration: StorageExpiration = .days(7)
+        
+        /// The preferred extension of cache item. It will be appended to the file name as its extension.
+        /// Default is `nil`, means that the cache file does not contain a file extension.
+        public var pathExtension: String? = nil
+        
         let name: String
         let fileManager: FileManager
         let directory: URL?
-        public var expiration: StorageExpiration
-
+        
         var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
             (directory, cacheName) in
             return directory.appendingPathComponent(cacheName, isDirectory: true)
         }
 
-        var pathExtension: String?
-        var sizeLimit: Int
-
-        init(
+        /// Creates a config value based on given parameters.
+        ///
+        /// - Parameters:
+        ///   - name: The name of cache. It is used as a part of storage folder. It is used to identify the disk
+        ///           storage. Two storages with the same `name` would share the same folder in disk, and it should
+        ///           be prevented.
+        ///   - sizeLimit: The size limit in bytes for all existing allocated files in the disk storage.
+        ///   - fileManager: The `FileManager` used to manipulate files on disk. Default is `FileManager.default`.
+        ///   - directory: The URL where the disk storage should live. The storage will use this as the root folder,
+        ///                and append a path which is constructed by input `name`. Default is `nil`, indicates that
+        ///                the cache directory under user domain mask will be used.
+        public init(
             name: String,
+            sizeLimit: UInt,
             fileManager: FileManager = .default,
-            directory: URL? = nil,
-            expiration: StorageExpiration = .days(7),
-            pathExtension: String? = nil,
-            sizeLimit: Int)
+            directory: URL? = nil)
         {
             self.name = name
             self.fileManager = fileManager
             self.directory = directory
-            self.expiration = expiration
-            self.pathExtension = pathExtension
             self.sizeLimit = sizeLimit
         }
     }
-
-    var config: Config
+    
+    /// The config used for this disk storage.
+    public var config: Config
+    
+    // The final storage URL on disk, with `name` and `cachePathBlock` considered.
     let directoryURL: URL
-
-    let onFileRemoved = Delegate<URL, Void>()
-    let onCacheRemoved = Delegate<(), Void>()
-
-    init(config: Config) throws {
+    
+    let metaChangingQueue: DispatchQueue
+    
+    /// Creates a disk storage with the given `DiskStorage.Config`.
+    ///
+    /// - Parameter config: The config used for this disk storage.
+    /// - Throws: An error if the folder for storage cannot be got or created.
+    public init(config: Config) throws {
 
         self.config = config
 
@@ -82,14 +110,18 @@ public class DiskStorage<T: DataTransformable> {
 
         let cacheName = "com.onevcat.Kingfisher.ImageCache.\(config.name)"
         directoryURL = config.cachePathBlock(url, cacheName)
+        
+        metaChangingQueue = DispatchQueue(label: cacheName)
+        
         try prepareDirectory()
     }
 
+    // Creates the storage folder.
     func prepareDirectory() throws {
         let fileManager = config.fileManager
         let path = directoryURL.path
 
-        guard !config.fileManager.fileExists(atPath: path) else { return }
+        guard !fileManager.fileExists(atPath: path) else { return }
 
         do {
             try fileManager.createDirectory(
@@ -106,7 +138,6 @@ public class DiskStorage<T: DataTransformable> {
         forKey key: String,
         expiration: StorageExpiration? = nil) throws
     {
-        let object = StorageObject(value, expiration: expiration ?? config.expiration)
         let data: Data
         do {
             data = try value.toData()
@@ -118,8 +149,10 @@ public class DiskStorage<T: DataTransformable> {
 
         let now = Date()
         let attributes: [FileAttributeKey : Any] = [
+            // The last access date.
             .creationDate: now,
-            .modificationDate: object.estimatedExpiration
+            // The estimated expiration date.
+            .modificationDate: (expiration ?? config.expiration).estimatedExpirationSinceNow
         ]
         config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
     }
@@ -136,25 +169,27 @@ public class DiskStorage<T: DataTransformable> {
             return nil
         }
 
-        let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey]
+        let meta: FileMeta
         do {
-            let meta = try fileURL.resourceValues(forKeys: resourceKeys)
-            guard let expiration = meta.contentModificationDate, expiration.isFuture else {
-                return nil
-            }
-            if actuallyLoad {
-                do {
-                    let data = try Data(contentsOf: fileURL)
-                    return try T.fromData(data)
-                } catch {
-                    throw KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: fileURL, error: error))
-                }
-            } else {
-                return T.empty
-            }
+            let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey, .creationDateKey]
+            meta = try FileMeta(fileURL: fileURL, resourceKeys: resourceKeys)
         } catch {
             throw KingfisherError.cacheError(
-                reason: .invalidURLResource(error: error, key: key, url: fileURL, resourceKeys: resourceKeys))
+                reason: .invalidURLResource(error: error, key: key, url: fileURL))
+        }
+        
+        if meta.expired { return nil }
+        if !actuallyLoad { return T.empty }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            let obj = try T.fromData(data)
+            metaChangingQueue.async {
+                meta.extendExpiration(with: fileManager)
+            }
+            return obj
+        } catch {
+            throw KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: fileURL, error: error))
         }
     }
 
@@ -167,15 +202,6 @@ public class DiskStorage<T: DataTransformable> {
         }
     }
 
-    func extendExpriration(forKey key: String, lastAccessDate: Date, nextExpiration: StorageExpiration) throws {
-        let fileURL = cacheFileURL(forKey: key)
-        let attributes: [FileAttributeKey : Any] = [
-            .creationDate: lastAccessDate,
-            .modificationDate: nextExpiration.dateSince(lastAccessDate)
-        ]
-        try config.fileManager.setAttributes(attributes, ofItemAtPath: fileURL.path)
-    }
-
     func remove(forKey key: String) throws {
         let fileURL = cacheFileURL(forKey: key)
         try removeFile(at: fileURL)
@@ -183,7 +209,6 @@ public class DiskStorage<T: DataTransformable> {
 
     func removeFile(at url: URL) throws {
         try config.fileManager.removeItem(at: url)
-        onFileRemoved.call(url)
     }
 
     func removeAll() throws {
@@ -192,7 +217,6 @@ public class DiskStorage<T: DataTransformable> {
 
     func removeAll(skipCreatingDirectory: Bool) throws {
         try config.fileManager.removeItem(at: directoryURL)
-        onCacheRemoved.call()
         if !skipCreatingDirectory {
             try prepareDirectory()
         }
@@ -236,14 +260,11 @@ public class DiskStorage<T: DataTransformable> {
         let keys = Set(propertyKeys)
         let expiredFiles = urls.filter { fileURL in
             do {
-                let resourceValues = try fileURL.resourceValues(forKeys: keys)
-                if resourceValues.isDirectory == true {
+                let meta = try FileMeta(fileURL: fileURL, resourceKeys: keys)
+                if meta.isDirectory {
                     return false
                 }
-                if let modificationDate = resourceValues.contentModificationDate {
-                    return modificationDate.isPast
-                }
-                return true
+                return meta.expired
             } catch {
                 return true
             }
@@ -269,37 +290,35 @@ public class DiskStorage<T: DataTransformable> {
         let keys = Set(propertyKeys)
 
         let urls = try allFileURLs(for: propertyKeys)
-        var pendings: [(url: URL, meta: URLResourceValues)] = urls.compactMap { fileURL in
-            guard let resourceValues = try? fileURL.resourceValues(forKeys: keys) else {
+        var pendings: [FileMeta] = urls.compactMap { fileURL in
+            guard let meta = try? FileMeta(fileURL: fileURL, resourceKeys: keys) else {
                 return nil
             }
-            return (url: fileURL, meta: resourceValues)
+            return meta
         }
-        let distancePast = Date.distantPast
-        pendings.sort {
-            $0.meta.creationDate ?? distancePast > $1.meta.creationDate ?? distancePast
-        }
+        pendings.sort(by: FileMeta.lastAccessDate)
+        
         var removed: [URL] = []
         let target = config.sizeLimit / 2
-        while size >= target, let item = pendings.popLast() {
-            size -= UInt(item.meta.totalFileAllocatedSize ?? 0)
-            try removeFile(at: item.url)
-            removed.append(item.url)
+        while size >= target, let meta = pendings.popLast() {
+            size -= UInt(meta.totalFileAllocatedSize)
+            try removeFile(at: meta.url)
+            removed.append(meta.url)
         }
         return removed
     }
 
+    // Get the total allocated size of the folder in bytes.
     func totalSize() throws -> UInt {
         let propertyKeys: [URLResourceKey] = [
-            .isDirectoryKey,
             .totalFileAllocatedSizeKey
         ]
         let urls = try allFileURLs(for: propertyKeys)
         let keys = Set(propertyKeys)
         let totalSize: UInt = urls.reduce(0) { size, fileURL in
             do {
-                let resourceValues = try fileURL.resourceValues(forKeys: keys)
-                return size + UInt(resourceValues.totalFileAllocatedSize ?? 0)
+                let meta = try FileMeta(fileURL: fileURL, resourceKeys: keys)
+                return size + UInt(meta.totalFileAllocatedSize)
             } catch {
                 return size
             }
@@ -307,3 +326,69 @@ public class DiskStorage<T: DataTransformable> {
         return totalSize
     }
 }
+
+extension DiskStorage {
+    struct FileMeta {
+    
+        let url: URL
+        
+        let lastAccessDate: Date?
+        let estimatedExpirationDate: Date?
+        let isDirectory: Bool
+        let totalFileAllocatedSize: Int
+        
+        static func lastAccessDate(lhs: FileMeta, rhs: FileMeta) -> Bool {
+            return lhs.lastAccessDate ?? .distantPast > rhs.lastAccessDate ?? .distantPast
+        }
+        
+        init(fileURL: URL, resourceKeys: Set<URLResourceKey>) throws {
+            let meta = try fileURL.resourceValues(forKeys: resourceKeys)
+            self.init(
+                fileURL: fileURL,
+                lastAccessDate: meta.creationDate,
+                estimatedExpirationDate: meta.contentModificationDate,
+                isDirectory: meta.isDirectory ?? false,
+                totalFileAllocatedSize: meta.totalFileAllocatedSize ?? 0)
+        }
+        
+        init(
+            fileURL: URL,
+            lastAccessDate: Date?,
+            estimatedExpirationDate: Date?,
+            isDirectory: Bool,
+            totalFileAllocatedSize: Int)
+        {
+            self.url = fileURL
+            self.lastAccessDate = lastAccessDate
+            self.estimatedExpirationDate = estimatedExpirationDate
+            self.isDirectory = isDirectory
+            self.totalFileAllocatedSize = totalFileAllocatedSize
+        }
+        
+        var expired: Bool {
+            return estimatedExpirationDate?.isPast ?? true
+        }
+        
+        func extendExpiration(with fileManager: FileManager) {
+            guard let lastAccessDate = lastAccessDate,
+                  let lastEstimatedExpiration = estimatedExpirationDate else
+            {
+                return
+            }
+            
+            let originalExpiration: StorageExpiration =
+                .seconds(lastEstimatedExpiration.timeIntervalSince(lastAccessDate))
+            let attributes: [FileAttributeKey : Any] = [
+                .creationDate: Date(),
+                .modificationDate: originalExpiration.estimatedExpirationSinceNow
+            ]
+            do {
+                try fileManager.setAttributes(attributes, ofItemAtPath: url.path)
+            } catch {
+                assertionFailure("[Kingfisher] Updating cache attributes fails at path: \(url), " +
+                    "target attributes: \(attributes)")
+            }
+        }
+    }
+}
+
