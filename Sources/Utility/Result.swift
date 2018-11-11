@@ -26,54 +26,233 @@
 
 import Foundation
 
-/// Represents a result of some operation, whether it is successful or an error happens.
-///
-/// - success: The operation is successful and an associated value could be provided.
-/// - failure: An error happens during the operation.
-public enum Result<Value, Error: Swift.Error> {
+// This is a copy from https://github.com/apple/swift/pull/19982
+// If this PR is merged to stblib later, we may need to remove these content by a Swift version flag.
+
+/// A value that represents either a success or failure, capturing associated
+/// values in both cases.
+public enum Result<Value, Error> {
+    /// A success, storing a `Value`.
     case success(Value)
+    
+    /// A failure, storing an `Error`.
     case failure(Error)
     
-    /// Returns `true` if the result is a success, `false` otherwise.
-    public var isSuccess: Bool {
-        if case .success = self {
-            return true
-        }
-        return false
-    }
-    
-    /// Returns the associated value if the result is a success, `nil` otherwise.
+    /// The stored value of a successful `Result`. `nil` if the `Result` was a
+    /// failure.
     public var value: Value? {
-        if case .success(let v) = self {
-            return v
-        }
-        return nil
-    }
-    
-    /// Returns `true` if the result is a failure, `false` otherwise.
-    public var failure: Bool {
-        return !isSuccess
-    }
-    
-    /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: Error? {
-        if case .failure(let e) = self {
-            return e
-        }
-        return nil
-    }
-    
-    /// Map over the `Result` value. If it was a `.success`, `transform` closure will be applied to associated value
-    /// and a new `.success` with transformed value will be returned. If it was a `.failure`, the same error will be
-    /// returned.
-    ///
-    /// - Parameter transform: A closure that takes the success value of the instance.
-    /// - Returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
-    ///            same failure.
-    public func map<T>(_ transform: (Value) -> T) -> Result<T, Error> {
         switch self {
-        case .success(let value): return .success(transform(value))
-        case .failure(let error): return .failure(error)
+        case let .success(value):
+            return value
+        case .failure:
+            return nil
         }
+    }
+    
+    /// The stored value of a failure `Result`. `nil` if the `Result` was a
+    /// success.
+    public var error: Error? {
+        switch self {
+        case let .failure(error):
+            return error
+        case .success:
+            return nil
+        }
+    }
+    
+    /// A Boolean value indicating whether the `Result` as a success.
+    public var isSuccess: Bool {
+        switch self {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    /// Evaluates the given transform closure when this `Result` instance is
+    /// `.success`, passing the value as a parameter.
+    ///
+    /// Use the `map` method with a closure that returns a non-`Result` value.
+    ///
+    /// - Parameter transform: A closure that takes the successful value of the
+    ///   instance.
+    /// - Returns: A new `Result` instance with the result of the transform, if
+    ///   it was applied.
+    public func map<NewValue>(
+        _ transform: (Value) -> NewValue
+        ) -> Result<NewValue, Error> {
+        switch self {
+        case let .success(value):
+            return .success(transform(value))
+        case let .failure(error):
+            return .failure(error)
+        }
+    }
+    
+    /// Evaluates the given transform closure when this `Result` instance is
+    /// `.failure`, passing the error as a parameter.
+    ///
+    /// Use the `mapError` method with a closure that returns a non-`Result`
+    /// value.
+    ///
+    /// - Parameter transform: A closure that takes the failure value of the
+    ///   instance.
+    /// - Returns: A new `Result` instance with the result of the transform, if
+    ///   it was applied.
+    public func mapError<NewError>(
+        _ transform: (Error) -> NewError
+        ) -> Result<Value, NewError> {
+        switch self {
+        case let .success(value):
+            return .success(value)
+        case let .failure(error):
+            return .failure(transform(error))
+        }
+    }
+    
+    /// Evaluates the given transform closure when this `Result` instance is
+    /// `.success`, passing the value as a parameter and flattening the result.
+    ///
+    /// - Parameter transform: A closure that takes the successful value of the
+    ///   instance.
+    /// - Returns: A new `Result` instance, either from the transform or from
+    ///   the previous error value.
+    public func flatMap<NewValue>(
+        _ transform: (Value) -> Result<NewValue, Error>
+        ) -> Result<NewValue, Error> {
+        switch self {
+        case let .success(value):
+            return transform(value)
+        case let .failure(error):
+            return .failure(error)
+        }
+    }
+    
+    /// Evaluates the given transform closure when this `Result` instance is
+    /// `.failure`, passing the error as a parameter and flattening the result.
+    ///
+    /// - Parameter transform: A closure that takes the error value of the
+    ///   instance.
+    /// - Returns: A new `Result` instance, either from the transform or from
+    ///   the previous success value.
+    public func flatMapError<NewError>(
+        _ transform: (Error) -> Result<Value, NewError>
+        ) -> Result<Value, NewError> {
+        switch self {
+        case let .success(value):
+            return .success(value)
+        case let .failure(error):
+            return transform(error)
+        }
+    }
+    
+    /// Evaluates the given transform closures to create a single output value.
+    ///
+    /// - Parameters:
+    ///   - onSuccess: A closure that transforms the success value.
+    ///   - onFailure: A closure that transforms the error value.
+    /// - Returns: A single `Output` value.
+    public func fold<Output>(
+        onSuccess: (Value) -> Output,
+        onFailure: (Error) -> Output
+        ) -> Output {
+        switch self {
+        case let .success(value):
+            return onSuccess(value)
+        case let .failure(error):
+            return onFailure(error)
+        }
+    }
+}
+
+extension Result where Error : Swift.Error {
+    /// Unwraps the `Result` into a throwing expression.
+    ///
+    /// - Returns: The success value, if the instance is a success.
+    /// - Throws:  The error value, if the instance is a failure.
+    public func unwrapped() throws -> Value {
+        switch self {
+        case let .success(value):
+            return value
+        case let .failure(error):
+            throw error
+        }
+    }
+}
+
+extension Result where Error == Swift.Error {
+    /// Create an instance by capturing the output of a throwing closure.
+    ///
+    /// - Parameter throwing: A throwing closure to evaluate.
+    @_transparent
+    public init(_ throwing: () throws -> Value) {
+        do {
+            let value = try throwing()
+            self = .success(value)
+        } catch {
+            self = .failure(error)
+        }
+    }
+    
+    /// Unwraps the `Result` into a throwing expression.
+    ///
+    /// - Returns: The success value, if the instance is a success.
+    /// - Throws:  The error value, if the instance is a failure.
+    public func unwrapped() throws -> Value {
+        switch self {
+        case let .success(value):
+            return value
+        case let .failure(error):
+            throw error
+        }
+    }
+    
+    /// Evaluates the given transform closure when this `Result` instance is
+    /// `.success`, passing the value as a parameter and flattening the result.
+    ///
+    /// - Parameter transform: A closure that takes the successful value of the
+    ///   instance.
+    /// - Returns: A new `Result` instance, either from the transform or from
+    ///   the previous error value.
+    public func flatMap<NewValue>(
+        _ transform: (Value) throws -> NewValue
+        ) -> Result<NewValue, Error> {
+        switch self {
+        case let .success(value):
+            do {
+                return .success(try transform(value))
+            } catch {
+                return .failure(error)
+            }
+        case let .failure(error):
+            return .failure(error)
+        }
+    }
+}
+
+extension Result : Equatable where Value : Equatable, Error : Equatable { }
+
+extension Result : Hashable where Value : Hashable, Error : Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(value)
+        hasher.combine(error)
+    }
+}
+
+extension Result : CustomDebugStringConvertible {
+    public var debugDescription: String {
+        var output = "Result."
+        switch self {
+        case let .success(value):
+            output += "success("
+            debugPrint(value, terminator: "", to: &output)
+        case let .failure(error):
+            output += "failure("
+            debugPrint(error, terminator: "", to: &output)
+        }
+        output += ")"
+        
+        return output
     }
 }
