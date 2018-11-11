@@ -194,14 +194,14 @@ extension KingfisherClass where Base: Image {
     /// Resizes `base` image to an image of new size, respecting the given content mode.
     ///
     /// - Parameters:
-    ///   - size: The target size in point.
+    ///   - targetSize: The target size in point.
     ///   - contentMode: Content mode of output image should be.
     /// - Returns: An image with new size.
     ///
     /// - Note: This method only works for CG-based image. The current image scale is kept.
     ///         For any non-CG-based image, `base` itself is returned.
-    public func resize(to size: CGSize, for contentMode: ContentMode) -> Image {
-        let newSize = size.kf.resize(to: size, for: contentMode)
+    public func resize(to targetSize: CGSize, for contentMode: ContentMode) -> Image {
+        let newSize = size.kf.resize(to: targetSize, for: contentMode)
         return resize(to: newSize)
     }
     
