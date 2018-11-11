@@ -33,20 +33,29 @@ import UIKit
 
 extension KingfisherClass where Base: ImageView {
 
-    /// Set an image with a resource, a placeholder image, options, progress handler and completion handler.
-    ///
-    /// Internally, this method will use KingfisherManager to get the requested resource, from either cache
-    /// or network. Since this methos will perform UI changes, you must call this method from the UI thread.
-    /// Both `progressBlock` and `completionHandler` will be also executed in the UI thread.
+    /// Sets an image to the image view with a requested resource.
     ///
     /// - Parameters:
-    ///   - resource: The Resource object contains information about the resource.
+    ///   - resource: The `Resource` object contains information about the resource.
     ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
     ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
     ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
     ///   - completionHandler: Called when the image retrieved and set finished.
     /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// This is the easist way to use Kingfisher to boost the image setting process from network. Since all parameters
+    /// have a default value except the `resource`, you can set an image from a certain URL to an image view like this:
+    ///
+    /// ```
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: URL(string: url))
+    /// ```
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
+    /// or network. Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
     public func setImage(with resource: Resource?,
@@ -65,7 +74,6 @@ extension KingfisherClass where Base: ImageView {
         
         var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
         let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
-        
         if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
             // Always set placeholder while there is no image/placehoer yet.
             self.placeholder = placeholder
@@ -103,14 +111,15 @@ extension KingfisherClass where Base: ImageView {
 
                     switch result {
                     case .success(let value):
+                        
+                        #if !os(macOS)
                         guard self.needsTransition(options: options, cacheType: value.cacheType) else {
                             self.placeholder = nil
                             self.base.image = value.image
                             completionHandler?(result)
                             return
                         }
-
-                        #if !os(macOS)
+                        
                         let transition = options.transition
 
                         // Force hiding the indicator without transition first.
@@ -133,6 +142,10 @@ extension KingfisherClass where Base: ImageView {
                                 )
                             }
                         )
+                        #else
+                        self.placeholder = nil
+                        self.base.image = value.image
+                        completionHandler?(result)
                         #endif
                     case .failure:
                         if let image = options.onFailureImage {
@@ -147,12 +160,13 @@ extension KingfisherClass where Base: ImageView {
         return task
     }
 
-    /// Cancel the image download task bounded to the image view if it is running.
+    /// Cancels the image download task of the image view if it is running.
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
     }
 
+    #if os(iOS) || os(tvOS)
     private func needsTransition(options: KingfisherOptionsInfo, cacheType: CacheType) -> Bool {
         guard let _ = options.lastMatchIgnoringAssociatedValue(.transition(.none)) else {
             return false
@@ -165,6 +179,7 @@ extension KingfisherClass where Base: ImageView {
         }
         return false
     }
+    #endif
 }
 
 // MARK: - Associated Object
@@ -175,6 +190,7 @@ private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: ImageView {
+    
     /// Gets the image URL binded to this image view.
     public private(set) var webURL: URL? {
         get { return getAssociatedObject(base, &lastURLKey) }
@@ -182,7 +198,7 @@ extension KingfisherClass where Base: ImageView {
     }
 
     /// Holds which indicator type is going to be used.
-    /// Default is .none, means no indicator will be shown.
+    /// Default is `.none`, means no indicator will be shown while downloading.
     public var indicatorType: IndicatorType {
         get {
             return getAssociatedObject(base, &indicatorTypeKey) ?? .none
@@ -242,6 +258,8 @@ extension KingfisherClass where Base: ImageView {
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 
+    /// Represents the `Placeholder` used for this image view. A `Placeholder` will be shown in the view while
+    /// it is downloading an image.
     public private(set) var placeholder: Placeholder? {
         get { return getAssociatedObject(base, &placeholderKey) }
         set {
