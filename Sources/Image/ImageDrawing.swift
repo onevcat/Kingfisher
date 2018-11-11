@@ -201,16 +201,8 @@ extension KingfisherClass where Base: Image {
     /// - Note: This method only works for CG-based image. The current image scale is kept.
     ///         For any non-CG-based image, `base` itself is returned.
     public func resize(to size: CGSize, for contentMode: ContentMode) -> Image {
-        switch contentMode {
-        case .aspectFit:
-            let newSize = self.size.kf.constrained(size)
-            return resize(to: newSize)
-        case .aspectFill:
-            let newSize = self.size.kf.filling(size)
-            return resize(to: newSize)
-        case .none:
-            return resize(to: size)
-        }
+        let newSize = size.kf.resize(to: size, for: contentMode)
+        return resize(to: newSize)
     }
     
     /// Crops `base` image to a new size with a given anchor.

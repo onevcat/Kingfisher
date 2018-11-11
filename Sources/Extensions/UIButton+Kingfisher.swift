@@ -266,6 +266,6 @@ extension KingfisherClass where Base: UIButton {
     
     private var backgroundImageTask: DownloadTask? {
         get { return getAssociatedObject(base, &backgroundImageTaskKey) }
-        set { setAssignAssociatedObject(base, &backgroundImageTaskKey, newValue) }
+        set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
     }
 }
