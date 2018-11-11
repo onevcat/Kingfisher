@@ -35,7 +35,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.targetCache === nil)
         XCTAssertTrue(options.downloader === nil)
 
-#if !os(macOS)
+#if os(iOS) || os(tvOS)
         switch options.transition {
         case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
@@ -58,23 +58,16 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
-#if os(macOS)
-        let transition = ImageTransition.none
-#else
-        let transition = ImageTransition.fade(0.5)
-#endif
-            
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         let serializer = FormatIndicatedCacheSerializer.png
         let modifier = DefaultImageModifier.default
 
-        let options: KingfisherOptionsInfo = [
+        var options: KingfisherOptionsInfo = [
             .targetCache(cache),
             .downloader(downloader),
             .originalCache(cache),
-            .transition(transition),
             .downloadPriority(0.8),
             .forceRefresh,
             .forceTransition,
@@ -84,6 +77,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .onlyFromCache,
             .backgroundDecode,
             .callbackQueue(.dispatch(queue)),
+            // Not sure why but we need `KingfisherOptionsInfoItem` to compile...
             KingfisherOptionsInfoItem.scaleFactor(2.0),
             .preloadAllAnimationData,
             .requestModifier(testModifier),
@@ -99,12 +93,14 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.originalCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
-#if !os(macOS)
+        #if os(iOS) || os(tvOS)
+        let transition = ImageTransition.fade(0.5)
+        options.append(.transition(transition))
         switch options.transition {
         case .fade(let duration): XCTAssertEqual(duration, 0.5)
         default: XCTFail()
         }
-#endif
+        #endif
         
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
