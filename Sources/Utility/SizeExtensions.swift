@@ -29,6 +29,12 @@ import CoreGraphics
 extension CGSize: KingfisherStructCompatible {}
 extension KingfisherStruct where Base == CGSize {
     
+    /// Returns a size by resizing the `base` size to a target size under a given content mode.
+    ///
+    /// - Parameters:
+    ///   - size: The target size to resize to.
+    ///   - contentMode: Content mode of the target size should be when resizing.
+    /// - Returns: The resized size under the given `ContentMode`.
     public func resize(to size: CGSize, for contentMode: ContentMode) -> CGSize {
         switch contentMode {
         case .aspectFit:
@@ -36,10 +42,14 @@ extension KingfisherStruct where Base == CGSize {
         case .aspectFill:
             return filling(size)
         case .none:
-            return base
+            return size
         }
     }
     
+    /// Returns a size by resizing the `base` size by making it aspect fitting the given `size`.
+    ///
+    /// - Parameter size: The size in which the `base` should fit in.
+    /// - Returns: The size fitted in by the input `size`, while keeps `base` aspect.
     public func constrained(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
@@ -49,6 +59,10 @@ extension KingfisherStruct where Base == CGSize {
             CGSize(width: aspectWidth, height: size.height)
     }
     
+    /// Returns a size by resizing the `base` size by making it aspect filling the given `size`.
+    ///
+    /// - Parameter size: The size in which the `base` should fill.
+    /// - Returns: The size be filled by the input `size`, while keeps `base` aspect.
     public func filling(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
@@ -58,6 +72,12 @@ extension KingfisherStruct where Base == CGSize {
             CGSize(width: aspectWidth, height: size.height)
     }
     
+    /// Returns a `CGRect` for which the `base` size is constrained to an input `size` at a given `anchor` point.
+    ///
+    /// - Parameters:
+    ///   - size: The size in which the `base` should be constrainted to.
+    ///   - anchor: An anchor point in which the size constrainting should happen.
+    /// - Returns: The result `CGRect` for the constrainting operation.
     public func constrainedRect(for size: CGSize, anchor: CGPoint) -> CGRect {
         
         let unifiedAnchor = CGPoint(x: anchor.x.clamped(to: 0.0...1.0),

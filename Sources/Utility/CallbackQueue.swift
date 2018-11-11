@@ -34,9 +34,14 @@ import Foundation
 /// - untouch: Do not change the calling queue for closure.
 /// - dispatch: Dispatches to a specified `DispatchQueue`.
 public enum CallbackQueue {
+    /// Dispatch the calling to `DispatchQueue.main` with an `async` behavior.
     case mainAsync
+    /// Dispatch the calling to `DispatchQueue.main` with an `async` behavior if current queue is not
+    /// `.main`. Otherwise, call the closure immediately in current main queue.
     case mainCurrentOrAsync
+    /// Do not change the calling queue for closure.
     case untouch
+    /// Dispatches to a specified `DispatchQueue`.
     case dispatch(DispatchQueue)
     
     public func execute(_ block: @escaping () -> Void) {
