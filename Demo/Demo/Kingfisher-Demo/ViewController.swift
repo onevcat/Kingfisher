@@ -71,8 +71,8 @@ extension ViewController {
         let imageView = (cell as! CollectionViewCell).cellImageView!
         imageView.kf.setImage(
             with: url,
-            placeholder: nil,
-            options: [.transition(ImageTransition.fade(1))],
+            placeholder: imageView.image,
+            options: [.transition(.fade(1))],
             progressBlock: { receivedSize, totalSize in
                 print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
             },

@@ -24,39 +24,55 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(macOS)
-    import AppKit
+#if canImport(AppKit)
+import AppKit
+public typealias IndicatorView = NSView
 #else
-    import UIKit
+import UIKit
+public typealias IndicatorView = UIView
 #endif
 
-#if os(macOS)
-    public typealias IndicatorView = NSView
-#else
-    public typealias IndicatorView = UIView
-#endif
-
+/// Represents the activty indicator type which should be added to
+/// an image view when an image is being downloaded.
+///
+/// - none: No indicator.
+/// - activity: Uses the system activity indicator.
+/// - image: Uses an image as indicator. GIF is supported.
+/// - custom: Uses a custom indicator. The type of associated value should conform to the `Indicator` protocol.
 public enum IndicatorType {
     /// No indicator.
     case none
-    /// Use system activity indicator.
+    /// Uses the system activity indicator.
     case activity
-    /// Use an image as indicator. GIF is supported.
+    /// Uses an image as indicator. GIF is supported.
     case image(imageData: Data)
-    /// Use a custom indicator, which conforms to the `Indicator` protocol.
+    /// Uses a custom indicator. The type of associated value should conform to the `Indicator` protocol.
     case custom(indicator: Indicator)
 }
 
 // MARK: - Indicator Protocol
+
+/// An indicator type which can be used to show the download task is in progress.
 public protocol Indicator {
+    
+    /// Called when the indicator should start animating.
     func startAnimatingView()
+    
+    /// Called when the indicator should stop animating.
     func stopAnimatingView()
 
+    /// Center offset of the indicator. Kingfisher will use this value to determine the position of
+    /// indicator in the super view.
     var centerOffset: CGPoint { get }
+    
+    /// The indicator view which would be added to the super view.
     var view: IndicatorView { get }
 }
 
 extension Indicator {
+    
+    /// Default implementation of `centerOffset` of `Indicator`. The default value is `.zero`, means that there is
+    /// no offset for the indicator view.
     public var centerOffset: CGPoint { return .zero }
 }
 

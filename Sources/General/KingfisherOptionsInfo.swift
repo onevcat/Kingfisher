@@ -72,11 +72,13 @@ public enum KingfisherOptionsInfoItem {
     /// Kingfisher will use the associated `ImageDownloader` object to download the requested images.
     case downloader(ImageDownloader)
     
+    #if os(iOS) || os(tvOS)
     /// Member for animation transition when using UIImageView. Kingfisher will use the `ImageTransition` of
     /// this enum to animate the image in if it is downloaded from web. The transition will not happen when the
     /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
     /// the image being retrieved from cache, set `.forceRefresh` as well.
     case transition(ImageTransition)
+    #endif
     
     /// Associated `Float` value will be set as the priority of image download task. The value for it should be
     /// between 0.0~1.0. If this option not set, the default value (`URLSessionTask.defaultPriority`) will be used.
@@ -197,7 +199,9 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.targetCache, .targetCache): return true
     case (.originalCache, .originalCache): return true
     case (.downloader, .downloader): return true
+    #if os(iOS) || os(tvOS)
     case (.transition, .transition): return true
+    #endif
     case (.downloadPriority, .downloadPriority): return true
     case (.forceRefresh, .forceRefresh): return true
     case (.fromMemoryCacheOrRefresh, .fromMemoryCacheOrRefresh): return true
@@ -264,6 +268,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return nil
     }
     
+    #if os(iOS) || os(tvOS)
     /// Member for animation transition when using UIImageView.
     public var transition: ImageTransition {
         if let item = lastMatchIgnoringAssociatedValue(.transition(.none)),
@@ -273,6 +278,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         }
         return ImageTransition.none
     }
+    #endif
     
     /// A `Float` value set as the priority of image download task. The value for it should be
     /// between 0.0~1.0.

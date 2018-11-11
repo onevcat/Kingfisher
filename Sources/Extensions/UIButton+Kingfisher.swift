@@ -26,30 +26,25 @@
 
 import UIKit
 
-// MARK: - Set Images
-/**
- *	Set image to use in button from web for a specified state.
- */
 extension KingfisherClass where Base: UIButton {
-    /**
-     Set an image to use for a specified state with a resource, a placeholder image, options, progress handler and
-     completion handler.
-     
-     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter state:             The state that uses the specified image.
-     - parameter placeholder:       A placeholder image when retrieving the image at URL.
-     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-     
-     - returns: A task represents the retrieving process.
-     
-     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     
-     If `resource` is `nil`, the `placeholder` image will be set and
-     `completionHandler` will be called with both `error` and `image` being `nil`.
-     */
+    
+    /// Sets an image to the button for a specified state with a requested resource.
+    ///
+    /// - Parameters:
+    ///   - resource: The `Resource` object contains information about the resource.
+    ///   - state: The button state to which the image should be set.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
+    /// or network. Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
     @discardableResult
     public func setImage(with resource: Resource?,
                          for state: UIControl.State,
@@ -88,7 +83,7 @@ extension KingfisherClass where Base: UIButton {
                         return
                     }
                     
-                    self.setImageTask(nil)
+                    self.imageTask = nil
 
                     switch result {
                     case .success(let value):
@@ -103,37 +98,33 @@ extension KingfisherClass where Base: UIButton {
                 }
             })
         
-        setImageTask(task)
+        imageTask = task
         return task
     }
     
-    /**
-     Cancel the image download task bounded to the image view if it is running.
-     Nothing will happen if the downloading has already finished.
-     */
+    /// Cancels the image download task of the button if it is running.
+    /// Nothing will happen if the downloading has already finished.
     public func cancelImageDownloadTask() {
         imageTask?.cancel()
     }
     
-    /**
-     Set the background image to use for a specified state with a resource,
-     a placeholder image, options progress handler and completion handler.
-     
-     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter state:             The state that uses the specified image.
-     - parameter placeholder:       A placeholder image when retrieving the image at URL.
-     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-     
-     - returns: A task represents the retrieving process.
-     
-     - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     
-     If `resource` is `nil`, the `placeholder` image will be set and
-     `completionHandler` will be called with both `error` and `image` being `nil`.
-     */
+    /// Sets a background image to the button for a specified state with a requested resource.
+    ///
+    /// - Parameters:
+    ///   - resource: The `Resource` object contains information about the resource.
+    ///   - state: The button state to which the image should be set.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
+    /// or network. Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
     @discardableResult
     public func setBackgroundImage(with resource: Resource?,
                                    for state: UIControl.State,
@@ -175,8 +166,7 @@ extension KingfisherClass where Base: UIButton {
                         completionHandler?(.failure(error))
                         return
                     }
-                    
-                    self.setBackgroundImageTask(nil)
+                    self.backgroundImageTask = nil
                     
                     switch result {
                     case .success(let value):
@@ -191,14 +181,12 @@ extension KingfisherClass where Base: UIButton {
                 }
             })
         
-        setBackgroundImageTask(task)
+        backgroundImageTask = task
         return task
     }
     
-    /**
-     Cancel the background image download task bounded to the image view if it is running.
-     Nothing will happen if the downloading has already finished.
-     */
+    /// Cancels the background image download task of the button if it is running.
+    /// Nothing will happen if the downloading has already finished.
     public func cancelBackgroundImageDownloadTask() {
         backgroundImageTask?.cancel()
     }
@@ -211,7 +199,7 @@ private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: UIButton {
 
-    /// Gets the image URL binded to this button for a specified state.
+    /// Gets the image URL of this button for a specified state.
     ///
     /// - Parameter state: The state that uses the specified image.
     /// - Returns: Current URL for image.
@@ -224,24 +212,22 @@ extension KingfisherClass where Base: UIButton {
     }
     
     private var webURLs: NSMutableDictionary {
-        var dictionary = objc_getAssociatedObject(base, &lastURLKey) as? NSMutableDictionary
-        if dictionary == nil {
-            dictionary = NSMutableDictionary()
-            setWebURLs(dictionary!)
+        get {
+            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &lastURLKey) else {
+                let dic = NSMutableDictionary()
+                self.webURLs = dic
+                return dic
+            }
+            return dictionary
         }
-        return dictionary!
+        set {
+            setRetainedAssociatedObject(base, &lastURLKey, newValue)
+        }
     }
     
-    fileprivate func setWebURLs(_ URLs: NSMutableDictionary) {
-        objc_setAssociatedObject(base, &lastURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    fileprivate var imageTask: DownloadTask? {
-        return objc_getAssociatedObject(base, &imageTaskKey) as? DownloadTask
-    }
-    
-    fileprivate func setImageTask(_ task: DownloadTask?) {
-        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private var imageTask: DownloadTask? {
+        get { return getAssociatedObject(base, &imageTaskKey) }
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 }
 
@@ -251,39 +237,35 @@ private var backgroundImageTaskKey: Void?
 
 
 extension KingfisherClass where Base: UIButton {
-    /**
-     Get the background image URL binded to this button for a specified state.
-     
-     - parameter state: The state that uses the specified background image.
-     
-     - returns: Current URL for background image.
-     */
+    
+    /// Gets the background image URL of this button for a specified state.
+    ///
+    /// - Parameter state: The state that uses the specified background image.
+    /// - Returns: Current URL for image.
     public func backgroundWebURL(for state: UIControl.State) -> URL? {
         return backgroundWebURLs[NSNumber(value:state.rawValue)] as? URL
     }
     
-    fileprivate func setBackgroundWebURL(_ url: URL?, for state: UIControl.State) {
+    private func setBackgroundWebURL(_ url: URL?, for state: UIControl.State) {
         backgroundWebURLs[NSNumber(value:state.rawValue)] = url
     }
     
-    fileprivate var backgroundWebURLs: NSMutableDictionary {
-        var dictionary = objc_getAssociatedObject(base, &lastBackgroundURLKey) as? NSMutableDictionary
-        if dictionary == nil {
-            dictionary = NSMutableDictionary()
-            setBackgroundWebURLs(dictionary!)
+    private var backgroundWebURLs: NSMutableDictionary {
+        get {
+            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &lastBackgroundURLKey) else {
+                let dic = NSMutableDictionary()
+                self.backgroundWebURLs = dic
+                return dic
+            }
+            return dictionary
         }
-        return dictionary!
+        set {
+            setRetainedAssociatedObject(base, &lastBackgroundURLKey, newValue)
+        }
     }
     
-    fileprivate func setBackgroundWebURLs(_ URLs: NSMutableDictionary) {
-        objc_setAssociatedObject(base, &lastBackgroundURLKey, URLs, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    fileprivate var backgroundImageTask: DownloadTask? {
-        return objc_getAssociatedObject(base, &backgroundImageTaskKey) as? DownloadTask
-    }
-    
-    fileprivate func setBackgroundImageTask(_ task: DownloadTask?) {
-        objc_setAssociatedObject(base, &backgroundImageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    private var backgroundImageTask: DownloadTask? {
+        get { return getAssociatedObject(base, &backgroundImageTaskKey) }
+        set { setAssignAssociatedObject(base, &backgroundImageTaskKey, newValue) }
     }
 }

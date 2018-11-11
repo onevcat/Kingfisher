@@ -26,21 +26,26 @@
 
 import WatchKit
 
-// MARK: - Extension methods.
-/**
- *    Set image to use from web.
- */
 extension KingfisherClass where Base: WKInterfaceImage {
-    /**
-     Set an image with a resource.
-
-     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-     - parameter progressBlock:     Called when the image downloading progress gets updated.
-     - parameter completionHandler: Called when the image retrieved and set.
-
-     - returns: A task represents the retrieving process.
-     */
+    
+    /// Sets an image to the image view with a requested resource.
+    ///
+    /// - Parameters:
+    ///   - resource: The `Resource` object contains information about the resource.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
+    /// or network. Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
+    @discar
     @discardableResult
     public func setImage(with resource: Resource?,
                          placeholder: Image? = nil,
@@ -111,7 +116,8 @@ private var lastURLKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: WKInterfaceImage {
-    /// Get the image URL bound to this image view.
+    
+    /// Gets the image URL binded to this image view.
     public private(set) var webURL: URL? {
         get { return getAssociatedObject(base, &lastURLKey) }
         set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
