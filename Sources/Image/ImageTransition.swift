@@ -24,25 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(macOS)
-// Not implemented for macOS and watchOS yet.
-/// Image transition is not supported on macOS.
-public enum ImageTransition {
-    case none
-    var duration: TimeInterval {
-        return 0
-    }
-}
-
-#elseif os(watchOS)
-/// Image transition is not supported on watchOS.
-public enum ImageTransition {
-    case none
-    var duration: TimeInterval {
-        return 0
-    }
-}
-#else
+#if os(iOS) || os(tvOS)
 import UIKit
 
 /// Transition effect which will be used when an image downloaded and set by `UIImageView`
