@@ -387,34 +387,32 @@ open class ImageCache {
             callbackQueue.execute { completionHandler(.success(.none)) }
         } else {
             // Begin to disk search.
-            ioQueue.async {
-                self.retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
-                    result in
-                    // The callback queue is already correct in this closure.
-                    switch result {
-                    case .success(let image):
-                        guard let image = imageModifier.modify(image) else {
-                            // No image found in disk storage.
-                            completionHandler(.success(.none))
-                            return
-                        }
-                    
-                        // Cache the disk image to memory.
-                        // We are passing `false` to `toDisk`, the memory cache does not change
-                        // callback queue, we can call `completionHandler` without another dispatch.
-                        self.store(
-                            image,
-                            forKey: key,
-                            processorIdentifier: options.processor.identifier,
-                            cacheSerializer: options.cacheSerializer,
-                            toDisk: false)
-                        {
-                            _ in
-                            completionHandler(.success(.disk(image)))
-                        }
-                    case .failure(let error):
-                        completionHandler(.failure(error))
+            self.retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
+                result in
+                // The callback queue is already correct in this closure.
+                switch result {
+                case .success(let image):
+                    guard let image = imageModifier.modify(image) else {
+                        // No image found in disk storage.
+                        completionHandler(.success(.none))
+                        return
                     }
+                
+                    // Cache the disk image to memory.
+                    // We are passing `false` to `toDisk`, the memory cache does not change
+                    // callback queue, we can call `completionHandler` without another dispatch.
+                    self.store(
+                        image,
+                        forKey: key,
+                        processorIdentifier: options.processor.identifier,
+                        cacheSerializer: options.cacheSerializer,
+                        toDisk: false)
+                    {
+                        _ in
+                        completionHandler(.success(.disk(image)))
+                    }
+                case .failure(let error):
+                    completionHandler(.failure(error))
                 }
             }
         }

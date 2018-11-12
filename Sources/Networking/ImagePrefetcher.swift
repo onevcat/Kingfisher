@@ -37,7 +37,8 @@ import UIKit
 /// - `failedResources`: An array of resources that fail to be downloaded. It could because of being cancelled while
 ///                      downloading, encountered an error when downloading or the download not being started at all.
 /// - `completedResources`: An array of resources that are downloaded and cached successfully.
-public typealias PrefetcherProgressBlock = ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
+public typealias PrefetcherProgressBlock =
+    ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
 
 /// Completion block of prefetcher.
 ///
@@ -45,7 +46,8 @@ public typealias PrefetcherProgressBlock = ((_ skippedResources: [Resource], _ f
 /// - `failedResources`: An array of resources that fail to be downloaded. It could because of being cancelled while
 ///                      downloading, encountered an error when downloading or the download not being started at all.
 /// - `completedResources`: An array of resources that are downloaded and cached successfully.
-public typealias PrefetcherCompletionHandler = ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
+public typealias PrefetcherCompletionHandler =
+    ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
 
 /// `ImagePrefetcher` represents a downloading manager for requesting many images via URLs, then caching them.
 /// This is useful when you know a list of image resources and want to download them before showing. It also works with
@@ -107,7 +109,11 @@ public class ImagePrefetcher {
                completionHandler: PrefetcherCompletionHandler? = nil)
     {
         let resources: [Resource] = urls.map { $0 }
-        self.init(resources: resources, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+        self.init(
+            resources: resources,
+            options: options,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
 
     /// Creates an image prefetcher with an array of resources.
