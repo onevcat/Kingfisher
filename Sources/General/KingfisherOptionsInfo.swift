@@ -37,7 +37,7 @@ public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
 
 extension Array where Element == KingfisherOptionsInfoItem {
     
-    static var empty: KingfisherOptionsInfo = []
+    static let empty: KingfisherOptionsInfo = []
 
     // A connivence property to generate an image creating option with current `KingfisherOptionsInfo`.
     var imageCreatingOptions: ImageCreatingOptions {
@@ -49,10 +49,9 @@ extension Array where Element == KingfisherOptionsInfoItem {
     }
 }
 
-/**
-Items could be added into KingfisherOptionsInfo.
-*/
+/// Represents the available option items could be used in `KingfisherOptionsInfo`.
 public enum KingfisherOptionsInfoItem {
+    
     /// Kingfisher will use the associated `ImageCache` object when handling related operations,
     /// including trying to retrieve the cached images and store the downloaded image to it.
     case targetCache(ImageCache)
@@ -73,7 +72,7 @@ public enum KingfisherOptionsInfoItem {
     case downloader(ImageDownloader)
     
     #if os(iOS) || os(tvOS)
-    /// Member for animation transition when using UIImageView. Kingfisher will use the `ImageTransition` of
+    /// Member for animation transition when using `UIImageView`. Kingfisher will use the `ImageTransition` of
     /// this enum to animate the image in if it is downloaded from web. The transition will not happen when the
     /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
     /// the image being retrieved from cache, set `.forceRefresh` as well.
@@ -183,6 +182,11 @@ public enum KingfisherOptionsInfoItem {
     /// in place of requested one. It's useful when you don't want to show placeholder
     /// during loading time but wants to use some default image when requests will be failed.
     case onFailureImage(Image?)
+    
+    /// If set and used in `ImagePrefetcher`, the prefetching operation will load the images into memory storage
+    /// aggressively. By default this is not contained in the options, that means if the requested image is already
+    /// in disk cache, Kingfisher will not try to load it to memory.
+    case alsoPrefetchToMemory
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -221,7 +225,8 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
     case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
     case (.cacheOriginalImage, .cacheOriginalImage): return true
-    case (.onFailureImage(_), .onFailureImage(_)): return true
+    case (.onFailureImage, .onFailureImage): return true
+    case (.alsoPrefetchToMemory, .alsoPrefetchToMemory): return true
     default: return false
     }
 }
@@ -417,5 +422,10 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         }
         
         return .none
+    }
+    
+    /// Whether the `ImagePrefetcher` should load images to memory in an aggressive way.
+    public var alsoPrefetchToMemory: Bool {
+        return contains { $0 <== .alsoPrefetchToMemory }
     }
 }
