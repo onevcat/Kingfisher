@@ -69,6 +69,20 @@ class ImageCacheTests: XCTestCase {
         XCTAssertEqual(
             cache.diskStorage.directoryURL.path,
             (customPath as NSString).appendingPathComponent("com.onevcat.Kingfisher.ImageCache.test"))
+        clearCaches([cache])
+    }
+    
+    func testCustomCachePathByBlock() {
+        let cache = try! ImageCache(name: "test", path: nil, diskCachePathClosure: { (url, path) -> URL in
+            let modifiedPath = path + "-modified"
+            return url.appendingPathComponent(modifiedPath, isDirectory: true)
+        })
+        let cacheURL = try! FileManager.default.url(
+            for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        XCTAssertEqual(
+            cache.diskStorage.directoryURL.path,
+            (cacheURL.path as NSString).appendingPathComponent("com.onevcat.Kingfisher.ImageCache.test-modified"))
+        clearCaches([cache])
     }
     
     func testMaxCachePeriodInSecond() {
