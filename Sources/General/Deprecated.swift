@@ -420,8 +420,9 @@ extension ImageCache {
         }
     }
 
+    @available(*, deprecated, message: "Use the `Result`-based `calculateDiskStorageSize` instead.")
     open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> Void)) {
-        calculateDiskCacheSize { result in
+        calculateDiskStorageSize { result in
             handler(result.value ?? 0)
         }
     }

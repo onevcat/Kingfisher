@@ -65,7 +65,7 @@ public enum StorageExpiration {
     }
 }
 
-protocol Storage {
+protocol StorageBackend {
     associatedtype ValueType
     associatedtype KeyType
     func store(

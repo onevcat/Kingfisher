@@ -132,22 +132,24 @@ public enum ImageCacheResult {
     }
 }
 
-/// Represents a hybrid caching system which is composed by a `MemoryStorage` and a `DiskStorage`. `ImageCache` is a
-/// high level abstract for storing an image as well as its data to disk memory and disk, and retrieving them back.
+/// Represents a hybrid caching system which is composed by a `MemoryStorage.Backend` and a `DiskStorage.Backend`.
+/// `ImageCache` is a high level abstract for storing an image as well as its data to disk memory and disk, and
+/// retrieving them back.
+///
 /// While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create
 /// your own cache object and configure its storages as your need. This class also provide an interface for you to set
 /// the memory and disk storage config.
 open class ImageCache {
     
-    /// The `MemoryStorage` object used in this cache. This storage holds loaded images in memory with a reasonable
-    /// expire duration and a maximum memory usage. To modify the configuration of a storage, just set the storage
-    /// `config` and its properties.
-    public let memoryStorage: MemoryStorage<Image>
+    /// The `MemoryStorage.Backend` object used in this cache. This storage holds loaded images in memory with a
+    /// reasonable expire duration and a maximum memory usage. To modify the configuration of a storage, just set
+    /// the storage `config` and its properties.
+    public let memoryStorage: MemoryStorage.Backend<Image>
     
-    /// The `DiskStorage` object used in this cache. This storage stores loaded images in disk with a reasonable
-    /// expire duration and a maximum disk usage. To modify the configuration of a storage, just set the storage
-    /// `config` and its properties.
-    public let diskStorage: DiskStorage<Data>
+    /// The `DiskStorage.Backend` object used in this cache. This storage stores loaded images in disk with a
+    /// reasonable expire duration and a maximum disk usage. To modify the configuration of a storage, just set
+    /// the storage `config` and its properties.
+    public let diskStorage: DiskStorage.Backend<Data>
     
     private let ioQueue: DispatchQueue
 
@@ -163,9 +165,13 @@ open class ImageCache {
     ///
     /// - Parameters:
     ///   - memoryStorage: The `MemoryStorage` object to use in the image cache.
-    ///   - diskStorage: The `DiskStorage` object to use in the image cache.
+    ///   - diskStorage: The `DiskStorage.Backend` object to use in the image cache.
     ///   - name: A name used as a part of the bound IO queue.
-    public init(memoryStorage: MemoryStorage<Image>, diskStorage: DiskStorage<Data>, name: String = "") {
+    public init(
+        memoryStorage: MemoryStorage.Backend<Image>,
+        diskStorage: DiskStorage.Backend<Data>,
+        name: String = "")
+    {
         self.memoryStorage = memoryStorage
         self.diskStorage = diskStorage
         var ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue"
@@ -222,10 +228,10 @@ open class ImageCache {
 
         let totalMemory = ProcessInfo.processInfo.physicalMemory
         let costLimit = totalMemory / 4
-        let memoryStorage = MemoryStorage<Image>(config:
+        let memoryStorage = MemoryStorage.Backend<Image>(config:
             .init(totalCostLimit: (costLimit > Int.max) ? Int.max : Int(costLimit)))
 
-        var diskConfig = DiskStorage<Data>.Config(
+        var diskConfig = DiskStorage.Config(
             name: name,
             sizeLimit: 0,
             directory: path.flatMap { URL(string: $0) }
@@ -234,7 +240,7 @@ open class ImageCache {
             diskConfig.cachePathBlock = diskCachePathClosure
             defer { diskConfig.cachePathBlock = nil }
         }
-        let diskStorage = try DiskStorage(config: diskConfig)
+        let diskStorage = try DiskStorage.Backend<Data>(config: diskConfig)
         
         self.init(memoryStorage: memoryStorage, diskStorage: diskStorage, name: name)
     }
@@ -608,20 +614,18 @@ open class ImageCache {
         return diskStorage.cacheFileName(forKey: computedKey)
     }
     
-    /// Calculates the disk size taken by cache.
-    /// It is the total allocated size of the cached files on disk in bytes.
+    /// Calculates the size taken by the disk storage.
+    /// It is the total file size of all cached files in the `diskStorage` on disk in bytes.
     ///
     /// - Parameter handler: Called with the size calculating finishes. This closure is invoked from the main queue.
-    open func calculateDiskCacheSize(completion handler: @escaping ((Result<UInt, KingfisherError>) -> Void)) {
+    open func calculateDiskStorageSize(completion handler: @escaping ((Result<UInt, KingfisherError>) -> Void)) {
         ioQueue.async {
             do {
                 let size = try self.diskStorage.totalSize()
-                DispatchQueue.main.async {
-                    handler(.success(size))
-                }
+                DispatchQueue.main.async { handler(.success(size)) }
             } catch {
                 if let error = error as? KingfisherError {
-                    handler(.failure(error))
+                    DispatchQueue.main.async { handler(.failure(error)) }
                 } else {
                     assertionFailure("The internal thrown error should be a `KingfisherError`.")
                 }

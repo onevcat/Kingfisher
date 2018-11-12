@@ -41,6 +41,12 @@
 		4B8E291D216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
 		4B8E291E216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
 		4B8E291F216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */; };
+		4BCFF7A621990DB70055AAC4 /* MemoryStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */; };
+		4BCFF7A721990DB70055AAC4 /* MemoryStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */; };
+		4BCFF7A821990DB70055AAC4 /* MemoryStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */; };
+		4BCFF7AA219932390055AAC4 /* DiskStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */; };
+		4BCFF7AB219932390055AAC4 /* DiskStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */; };
+		4BCFF7AC219932390055AAC4 /* DiskStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */; };
 		4BD821622189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
 		4BD821632189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
 		4BD821642189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
@@ -265,6 +271,8 @@
 		4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloaderDelegate.swift; sourceTree = "<group>"; };
 		4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationChallengeResponsable.swift; sourceTree = "<group>"; };
 		4BCCF3441D5B0457003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStorageTests.swift; sourceTree = "<group>"; };
+		4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStorageTests.swift; sourceTree = "<group>"; };
 		4BD821612189FC0C0084CC21 /* SessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
 		4BD821662189FD330084CC21 /* SessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDataTask.swift; sourceTree = "<group>"; };
 		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -560,6 +568,8 @@
 				D12E0C4D1C47F23500AC98AD /* KingfisherTests-Bridging-Header.h */,
 				D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */,
 				185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */,
+				4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */,
+				4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */,
 			);
 			name = KingfisherTests;
 			path = Tests/KingfisherTests;
@@ -1059,6 +1069,7 @@
 			files = (
 				D12E0C761C47F71700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				D12E0C6E1C47F6FE00AC98AD /* ImageCacheTests.swift in Sources */,
+				4BCFF7A721990DB70055AAC4 /* MemoryStorageTests.swift in Sources */,
 				D12E0C6F1C47F6FE00AC98AD /* ImageDownloaderTests.swift in Sources */,
 				D9638BA71C7DCF560046523D /* ImagePrefetcherTests.swift in Sources */,
 				D12E0C701C47F6FE00AC98AD /* ImageExtensionTests.swift in Sources */,
@@ -1067,6 +1078,7 @@
 				F72CE9CF1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C731C47F6FE00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
 				D186696E21834261002B502E /* ImageDrawingTests.swift in Sources */,
+				4BCFF7AB219932390055AAC4 /* DiskStorageTests.swift in Sources */,
 				4B8351C9217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B421D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C741C47F6FE00AC98AD /* UIButtonExtensionTests.swift in Sources */,
@@ -1079,6 +1091,7 @@
 			files = (
 				D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */,
 				185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */,
+				4BCFF7A821990DB70055AAC4 /* MemoryStorageTests.swift in Sources */,
 				D12E0C821C47F7AF00AC98AD /* ImageCacheTests.swift in Sources */,
 				D12E0C831C47F7AF00AC98AD /* ImageDownloaderTests.swift in Sources */,
 				D9638BA81C7DCF570046523D /* ImagePrefetcherTests.swift in Sources */,
@@ -1087,6 +1100,7 @@
 				F72CE9D01FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C861C47F7AF00AC98AD /* KingfisherManagerTests.swift in Sources */,
 				D186696F21834261002B502E /* ImageDrawingTests.swift in Sources */,
+				4BCFF7AC219932390055AAC4 /* DiskStorageTests.swift in Sources */,
 				4B8351CA217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B431D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C871C47F7AF00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
@@ -1238,6 +1252,7 @@
 			files = (
 				D12E0C571C47F23500AC98AD /* KingfisherTestHelper.swift in Sources */,
 				D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */,
+				4BCFF7A621990DB70055AAC4 /* MemoryStorageTests.swift in Sources */,
 				D12E0C561C47F23500AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
 				D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */,
 				D12E0C551C47F23500AC98AD /* KingfisherManagerTests.swift in Sources */,
@@ -1246,6 +1261,7 @@
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */,
+				4BCFF7AA219932390055AAC4 /* DiskStorageTests.swift in Sources */,
 				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D12E0C501C47F23500AC98AD /* ImageCacheTests.swift in Sources */,

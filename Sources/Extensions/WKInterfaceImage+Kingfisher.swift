@@ -45,7 +45,6 @@ extension KingfisherClass where Base: WKInterfaceImage {
     /// or network. Since this method will perform UI changes, you must call it from the main thread.
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
-    @discar
     @discardableResult
     public func setImage(with resource: Resource?,
                          placeholder: Image? = nil,
