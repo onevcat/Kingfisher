@@ -575,45 +575,48 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     func testSettingNonWorkingImageWithFailureImage() {
-        let expectation = self.expectation(description: "wait for downloading image")
+        let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, errorCode: 404)
 
-        imageView.kf.setImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        imageView.kf.setImage(with: url, options: [.onFailureImage(testImage)]) {
+            result in
             XCTAssertNil(result.value)
-            expectation.fulfill()
+            XCTAssertEqual(self.imageView.image, testImage)
+            exp.fulfill()
         }
         XCTAssertNil(imageView.image)
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(testImage, imageView.image)
     }
     
     func testSettingNonWorkingImageWithEmptyFailureImage() {
-        let expectation = self.expectation(description: "wait for downloading image")
+        let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        imageView.kf.setImage(with: url, placeholder: testImage, options: [.onFailureImage(nil)]) { (result) -> Void in
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.onFailureImage(nil)]) {
+            result in
             XCTAssertNil(result.value)
-            expectation.fulfill()
+            XCTAssertNil(self.imageView.image)
+            exp.fulfill()
         }
         XCTAssertEqual(testImage, imageView.image)
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertNil(imageView.image)
     }
     
     func testSettingNonWorkingImageWithoutFailureImage() {
-        let expectation = self.expectation(description: "wait for downloading image")
+        let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        imageView.kf.setImage(with: url, placeholder: testImage) { (result) -> Void in
+        imageView.kf.setImage(with: url, placeholder: testImage) {
+            result in
             XCTAssertNil(result.value)
-            expectation.fulfill()
+            XCTAssertEqual(testImage, self.imageView.image)
+            exp.fulfill()
         }
         XCTAssertEqual(testImage, imageView.image)
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(testImage, imageView.image)
     }
 }
 
