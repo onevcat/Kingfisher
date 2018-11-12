@@ -224,8 +224,6 @@ open class ImageCache {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
         }
         
-        let cacheName = "com.onevcat.Kingfisher.ImageCache.\(name)"
-
         let totalMemory = ProcessInfo.processInfo.physicalMemory
         let costLimit = totalMemory / 4
         let memoryStorage = MemoryStorage.Backend<Image>(config:
@@ -237,10 +235,10 @@ open class ImageCache {
             directory: path.flatMap { URL(string: $0) }
         )
         if let closure = diskCachePathClosure {
-            diskConfig.cachePathBlock = diskCachePathClosure
-            defer { diskConfig.cachePathBlock = nil }
+            diskConfig.cachePathBlock = closure
         }
         let diskStorage = try DiskStorage.Backend<Data>(config: diskConfig)
+        diskConfig.cachePathBlock = nil
         
         self.init(memoryStorage: memoryStorage, diskStorage: diskStorage, name: name)
     }
