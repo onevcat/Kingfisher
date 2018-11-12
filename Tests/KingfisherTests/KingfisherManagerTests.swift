@@ -53,6 +53,7 @@ class KingfisherManagerTests: XCTestCase {
     
     override func tearDown() {
         LSNocilla.sharedInstance().clearStubs()
+        clearCaches([manager.cache])
         cleanDefaultCache()
         manager = nil
         super.tearDown()

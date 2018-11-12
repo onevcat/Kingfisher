@@ -31,13 +31,12 @@ class ImageCacheTests: XCTestCase {
 
     var cache: ImageCache!
     var observer: NSObjectProtocol!
-    private var cacheName = "com.onevcat.Kingfisher.ImageCache.test"
     
     override func setUp() {
         super.setUp()
 
         let uuid = UUID().uuidString
-        cacheName = "test-\(uuid)"
+        let cacheName = "test-\(uuid)"
         cache = ImageCache(name: cacheName)
     }
     
@@ -270,9 +269,11 @@ class ImageCacheTests: XCTestCase {
                     exp.fulfill()
                 }
 
-            self.cache.cleanExpiredDiskCache()
+            delay(1) {
+                self.cache.cleanExpiredDiskCache()
+            }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func testCannotRetrieveCacheWithProcessorIdentifier() {
