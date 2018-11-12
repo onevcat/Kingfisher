@@ -241,16 +241,30 @@ public class ImagePrefetcher {
     {
         if optionsInfo.forceRefresh {
             downloadAndCache(resource)
-        } else {
-            let alreadyInCache = manager.cache.imageCachedType(
-                forKey: resource.cacheKey,
-                processorIdentifier: optionsInfo.processor.identifier).cached
-            
-            if alreadyInCache {
-                append(cached: resource)
+            return
+        }
+        
+        let cacheType = manager.cache.imageCachedType(
+            forKey: resource.cacheKey,
+            processorIdentifier: optionsInfo.processor.identifier)
+        switch cacheType {
+        case .memory:
+            append(cached: resource)
+        case .disk:
+            if optionsInfo.alsoPrefetchToMemory {
+                _ = manager.retrieveImageFromCache(
+                    forKey: resource.cacheKey,
+                    with: resource.downloadURL,
+                    options: optionsInfo)
+                {
+                    _ in
+                    self.append(cached: resource)
+                }
             } else {
-                downloadAndCache(resource)
+                append(cached: resource)
             }
+        case .none:
+            downloadAndCache(resource)
         }
     }
     
