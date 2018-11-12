@@ -378,10 +378,6 @@ extension DiskStorage {
             self.fileSize = fileSize
         }
 
-        var expired: Bool {
-            return expired(referenceDate: Date())
-        }
-
         func expired(referenceDate: Date) -> Bool {
             return estimatedExpirationDate?.isPast(referenceDate: referenceDate) ?? true
         }
