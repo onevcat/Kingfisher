@@ -187,6 +187,8 @@ public enum KingfisherOptionsInfoItem {
     /// aggressively. By default this is not contained in the options, that means if the requested image is already
     /// in disk cache, Kingfisher will not try to load it to memory.
     case alsoPrefetchToMemory
+    
+    case loadDiskFileSynchronously
 }
 
 precedencegroup ItemComparisonPrecedence {
@@ -227,6 +229,7 @@ func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Boo
     case (.cacheOriginalImage, .cacheOriginalImage): return true
     case (.onFailureImage, .onFailureImage): return true
     case (.alsoPrefetchToMemory, .alsoPrefetchToMemory): return true
+    case (.loadDiskFileSynchronously, .loadDiskFileSynchronously): return true
     default: return false
     }
 }
@@ -427,5 +430,9 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     /// Whether the `ImagePrefetcher` should load images to memory in an aggressive way.
     public var alsoPrefetchToMemory: Bool {
         return contains { $0 <== .alsoPrefetchToMemory }
+    }
+    
+    public var loadDiskFileSynchronously: Bool {
+        return contains { $0 <== .loadDiskFileSynchronously }
     }
 }
