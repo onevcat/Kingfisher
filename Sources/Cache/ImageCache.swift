@@ -453,7 +453,8 @@ open class ImageCache {
     {
         let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
-        ioQueue.async {
+        let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
+        loadingQueue.execute {
             do {
                 var image: Image? = nil
                 if let data = try self.diskStorage.value(forKey: computedKey) {
