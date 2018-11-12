@@ -112,7 +112,6 @@ public enum DiskStorage {
                 // The estimated expiration date.
                 .modificationDate: (expiration ?? config.expiration).estimatedExpirationSinceNow.fileAttributeDate
             ]
-            print("Set: \(attributes)")
             config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
         }
 
@@ -401,14 +400,7 @@ extension DiskStorage {
                 .modificationDate: originalExpiration.estimatedExpirationSinceNow.fileAttributeDate
             ]
 
-            do {
-                if fileManager.fileExists(atPath: url.path) {
-                    try fileManager.setAttributes(attributes, ofItemAtPath: url.path)
-                }
-            } catch {
-                assertionFailure("[Kingfisher] Updating cache attributes fails at path: \(url), " +
-                    "target attributes: \(attributes). Error: \(error)")
-            }
+            try? fileManager.setAttributes(attributes, ofItemAtPath: url.path)
         }
     }
 }

@@ -88,11 +88,9 @@ class SessionDelegate: NSObject {
         guard let url = task.originalRequest?.url else {
             return
         }
-        if acquireLock {
-            lock.lock()
-            defer { lock.unlock() }
-        }
+        if acquireLock { lock.lock() }
         tasks[url] = nil
+        if acquireLock { lock.unlock() }
     }
 
     func task(for task: URLSessionTask) -> SessionDataTask? {
