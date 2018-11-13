@@ -188,6 +188,13 @@ public enum KingfisherOptionsInfoItem {
     /// in disk cache, Kingfisher will not try to load it to memory.
     case alsoPrefetchToMemory
     
+    /// If set, the disk storage loading will happen in the same calling queue. By default, disk storage file loading
+    /// happens in its own queue with an asynchronous dispatch behavior. Although it provides better non-blocking disk
+    /// loading performance, it also causes a flickering when you reload an image from disk, if the image view already
+    /// has an image set.
+    ///
+    /// Set this options will stop that flickering by keeping all loading in the same queue (typically the UI queue
+    /// if you are using Kingfisher's extension methods to set an image), with a tradeoff of loading performance.
     case loadDiskFileSynchronously
 }
 
@@ -416,7 +423,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return contains { $0 <== .cacheOriginalImage }
     }
     
-    /// Use provided or empty image when download image request will failed.
+    /// The image which should be used when download image request fails.
     public var onFailureImage: Optional<Image?> {
         if let item = lastMatchIgnoringAssociatedValue(.onFailureImage(Image())),
             case .onFailureImage(let image) = item
@@ -427,11 +434,12 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
         return .none
     }
     
-    /// Whether the `ImagePrefetcher` should load images to memory in an aggressive way.
+    /// Whether the `ImagePrefetcher` should load images to memory in an aggressive way or not.
     public var alsoPrefetchToMemory: Bool {
         return contains { $0 <== .alsoPrefetchToMemory }
     }
     
+    /// Whether the disk storage file loading should happen in a synchronous behavior or not.
     public var loadDiskFileSynchronously: Bool {
         return contains { $0 <== .loadDiskFileSynchronously }
     }

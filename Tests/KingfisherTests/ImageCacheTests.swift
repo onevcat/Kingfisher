@@ -336,6 +336,52 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testRetrieveDiskCacheSynchronously() {
+        let exp = expectation(description: #function)
+        let key = testKeys[0]
+        cache.store(testImage, forKey: key, toDisk: true) { _ in
+            var cacheType = self.cache.imageCachedType(forKey: key)
+            XCTAssertEqual(cacheType, .memory)
+            
+            try! self.cache.memoryStorage.remove(forKey: key)
+            cacheType = self.cache.imageCachedType(forKey: key)
+            XCTAssertEqual(cacheType, .disk)
+            
+            var dispatched = false
+            self.cache.retrieveImageInDiskCache(forKey: key, options:  [.loadDiskFileSynchronously]) {
+                result in
+                XCTAssertFalse(dispatched)
+                exp.fulfill()
+            }
+            // This should be called after the completion handler above.
+            dispatched = true
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
+    func testRetrieveDiskCacheAsynchronously() {
+        let exp = expectation(description: #function)
+        let key = testKeys[0]
+        cache.store(testImage, forKey: key, toDisk: true) { _ in
+            var cacheType = self.cache.imageCachedType(forKey: key)
+            XCTAssertEqual(cacheType, .memory)
+            
+            try! self.cache.memoryStorage.remove(forKey: key)
+            cacheType = self.cache.imageCachedType(forKey: key)
+            XCTAssertEqual(cacheType, .disk)
+            
+            var dispatched = false
+            self.cache.retrieveImageInDiskCache(forKey: key, options:  nil) {
+                result in
+                XCTAssertTrue(dispatched)
+                exp.fulfill()
+            }
+            // This should be called before the completion handler above.
+            dispatched = true
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
     func testGettingMemoryCachedImageCouldBeModified() {

@@ -72,7 +72,7 @@ extension ViewController {
         imageView.kf.setImage(
             with: url,
             placeholder: nil,
-            options: [.transition(.fade(1))],
+            options: [.transition(.fade(1)), .loadDiskFileSynchronously],
             progressBlock: { receivedSize, totalSize in
                 print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
             },
