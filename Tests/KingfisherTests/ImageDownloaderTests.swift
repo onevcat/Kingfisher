@@ -430,7 +430,7 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadWithDifferentProcessors() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        let stub = delayedStub(url, data: testImageData)
 
         let p1 = RoundCornerImageProcessor(cornerRadius: 40)
         let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
@@ -455,6 +455,8 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertNotNil(task1)
         XCTAssertEqual(task1?.sessionTask.task, task2?.sessionTask.task)
 
+        _ = stub.go()
+        
         group.notify(queue: .main, execute: exp.fulfill)
         waitForExpectations(timeout: 1, handler: nil)
     }
