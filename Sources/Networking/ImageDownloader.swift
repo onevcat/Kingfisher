@@ -175,11 +175,11 @@ open class ImageDownloader {
     ///                        defined in `.callbackQueue` in `options` parameter.
     /// - Returns: A downloading task. You could call `cancel` on it to stop the download task.
     @discardableResult
-    open func downloadImage(with url: URL,
-                            options: KingfisherOptionsInfo? = nil,
-                            progressBlock: DownloadProgressBlock? = nil,
-                            completionHandler: ((Result<ImageDownloadResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    open func downloadImage(
+        with url: URL,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<ImageDownloadResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
