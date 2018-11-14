@@ -61,7 +61,7 @@ public protocol Resource {
     /// The target image URL.
     var downloadURL: URL { get }
 
-    var identifier: String {get }
+    var identifier: String { get }
 }
 
 extension Resource {

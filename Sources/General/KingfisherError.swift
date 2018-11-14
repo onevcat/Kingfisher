@@ -156,7 +156,7 @@ public enum KingfisherError: Error {
     /// Represnts the error reason duting image setting in a view related class.
     ///
     /// - emptyResource: The input resource is empty or `nil`. Code 5001.
-    /// - notCurrentResource: The resource task is finished, but it is not the one expected now. Code 5002.
+    /// - notCurrentSource: The source task is finished, but it is not the one expected now. Code 5002.
     /// - dataProviderError: An error happens during getting data from an `ImageDataProvider`. Code 5003.
     public enum ImageSettingErrorReason {
         
@@ -165,9 +165,9 @@ public enum KingfisherError: Error {
         
         /// The resource task is finished, but it is not the one expected now. This usually happens when you set another
         /// resource on the view without cancelling the current on-going one. The previous setting task will fail with
-        /// this `.notCurrentResource` error when a result got, regardless of it being successful or not for that task.
+        /// this `.notCurrentSource` error when a result got, regardless of it being successful or not for that task.
         /// Code 5002.
-        case notCurrentResource(result: RetrieveImageResult?, error: Error?, resource: Resource)
+        case notCurrentSource(result: RetrieveImageResult?, error: Error?, source: Source)
 
         /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
         case dataProviderError(provider: ImageDataProvider, error: Error)
@@ -338,7 +338,7 @@ extension KingfisherError.ImageSettingErrorReason {
         switch self {
         case .emptyResource:
             return "The input resource is empty."
-        case .notCurrentResource(let result, let error, let resource):
+        case .notCurrentSource(let result, let error, let resource):
             if let result = result {
                 return "Retrieving resource succeeded, but this resource is " +
                        "not the one currently expected. Result: \(result). Resource: \(resource)."
@@ -356,7 +356,7 @@ extension KingfisherError.ImageSettingErrorReason {
     var errorCode: Int {
         switch self {
         case .emptyResource: return 5001
-        case .notCurrentResource: return 5002
+        case .notCurrentSource: return 5002
         case .dataProviderError: return 5003
         }
     }

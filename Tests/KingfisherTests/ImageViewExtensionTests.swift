@@ -80,7 +80,7 @@ class ImageViewExtensionTests: XCTestCase {
             let value = result.value!
             XCTAssertTrue(value.image.renderEqual(to: testImage))
             XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
-            XCTAssertEqual(self.imageView.kf.webURL, url)
+            XCTAssertEqual(self.imageView.kf.taskIdentifier, url.absoluteString)
             
             XCTAssertEqual(value.cacheType, .none)
             XCTAssertTrue(Thread.isMainThread)
@@ -127,7 +127,7 @@ class ImageViewExtensionTests: XCTestCase {
             let value = result.value!
             XCTAssertTrue(value.image.renderEqual(to: testImage))
             XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
-            XCTAssertEqual(self.imageView.kf.webURL, url)
+            XCTAssertEqual(self.imageView.kf.taskIdentifier, url.absoluteString)
 
             XCTAssertEqual(value.cacheType, .none)
             XCTAssertTrue(Thread.isMainThread)
@@ -364,9 +364,9 @@ class ImageViewExtensionTests: XCTestCase {
             // The download successed, but not the resource we want.
             XCTAssertNotNil(result.error)
             if case .imageSettingError(
-                reason: .notCurrentResource(let result, _, let resource)) = result.error!
+                reason: .notCurrentSource(let result, _, let source)) = result.error!
             {
-                XCTAssertEqual(resource.downloadURL, testURLs[0])
+                XCTAssertEqual(source.url, testURLs[0])
                 XCTAssertNotEqual(result!.image, self.imageView.image)
             } else {
                 XCTFail()
