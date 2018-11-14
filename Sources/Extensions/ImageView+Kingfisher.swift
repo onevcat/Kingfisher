@@ -297,3 +297,12 @@ extension KingfisherClass where Base: ImageView {
 @objc extension ImageView {
     func shouldPreloadAllAnimation() -> Bool { return true }
 }
+
+extension KingfisherClass where Base: ImageView {
+    /// Gets the image URL binded to this image view.
+    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    public private(set) var webURL: URL? {
+        get { return taskIdentifier.flatMap { URL(string: $0) } }
+        set { taskIdentifier = newValue?.absoluteString }
+    }
+}
