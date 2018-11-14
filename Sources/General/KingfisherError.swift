@@ -157,7 +157,7 @@ public enum KingfisherError: Error {
     ///
     /// - emptyResource: The input resource is empty or `nil`. Code 5001.
     /// - notCurrentResource: The resource task is finished, but it is not the one expected now. Code 5002.
-    
+    /// - dataProviderError: An error happens during getting data from an `ImageDataProvider`. Code 5003.
     public enum ImageSettingErrorReason {
         
         /// The input resource is empty or `nil`. Code 5001.
@@ -168,6 +168,9 @@ public enum KingfisherError: Error {
         /// this `.notCurrentResource` error when a result got, regardless of it being successful or not for that task.
         /// Code 5002.
         case notCurrentResource(result: RetrieveImageResult?, error: Error?, resource: Resource)
+
+        /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
+        case dataProviderError(provider: ImageDataProvider, error: Error)
     }
     
     /// Represents the error reason during networking request phase.
@@ -345,6 +348,8 @@ extension KingfisherError.ImageSettingErrorReason {
             } else {
                 return nil
             }
+        case .dataProviderError(let provider, let error):
+            return "Image data provider fails to provide data. Provider: \(provider), error: \(error)"
         }
     }
     
@@ -352,6 +357,7 @@ extension KingfisherError.ImageSettingErrorReason {
         switch self {
         case .emptyResource: return 5001
         case .notCurrentResource: return 5002
+        case .dataProviderError: return 5003
         }
     }
 }

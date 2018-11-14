@@ -223,12 +223,10 @@ public class ImagePrefetcher {
                 self.reportCompletionOrStartNext()
             }
         }
-        
-        let downloadTask = manager.downloadAndCacheImage(
-            with: resource.downloadURL,
-            forKey: resource.cacheKey,
+
+        let downloadTask = manager.loadAndCacheImage(
+            source: .network(resource),
             options: optionsInfo,
-            progressBlock: nil,
             completionHandler: downloadTaskCompletionHandler)
         
         if let downloadTask = downloadTask {
