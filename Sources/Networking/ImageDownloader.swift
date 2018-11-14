@@ -31,13 +31,13 @@ import UIKit
 #endif
 
 /// Represents a success result of an image downloading progess.
-public struct ImageDownloadResult {
+public struct ImageLoadingResult {
 
     /// The downloaded image.
     public let image: Image
 
     /// Original URL of the image request.
-    public let url: URL
+    public let url: URL?
 
     /// The raw data received from downloader.
     public let originalData: Data
@@ -179,7 +179,7 @@ open class ImageDownloader {
         with url: URL,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<ImageDownloadResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
@@ -217,8 +217,8 @@ open class ImageDownloader {
         }
 
         let onCompleted = completionHandler.map {
-            block -> Delegate<Result<ImageDownloadResult, KingfisherError>, Void> in
-            let delegate =  Delegate<Result<ImageDownloadResult, KingfisherError>, Void>()
+            block -> Delegate<Result<ImageLoadingResult, KingfisherError>, Void> in
+            let delegate =  Delegate<Result<ImageLoadingResult, KingfisherError>, Void>()
             delegate.delegate(on: self) { (_, result) in
                 block(result)
             }
@@ -262,7 +262,7 @@ open class ImageDownloader {
                         self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
                     }
 
-                    let imageResult = result.map { ImageDownloadResult(image: $0, url: url, originalData: data) }
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }

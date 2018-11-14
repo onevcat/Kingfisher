@@ -26,6 +26,31 @@
 
 import Foundation
 
+public enum Source {
+    case network(Resource)
+    case provider(ImageDataProvider)
+
+    var identifier: String {
+        switch self {
+        case .network(let resource): return resource.identifier
+        case .provider(let provider): return provider.identifier
+        }
+    }
+
+    var cacheKey: String {
+        switch self {
+        case .network(let resource): return resource.cacheKey
+        case .provider(let provider): return provider.cacheKey
+        }
+    }
+
+    var url: URL? {
+        switch self {
+        case .network(let resource): return resource.downloadURL
+        case .provider(_): return nil
+        }
+    }
+}
 
 /// Represents an image resource at a certain url and a given cache key.
 /// Kingfisher will use a `Resource` to download a resource from network and cache it with the cache key.
@@ -35,6 +60,12 @@ public protocol Resource {
     
     /// The target image URL.
     var downloadURL: URL { get }
+
+    var identifier: String {get }
+}
+
+extension Resource {
+    public var identifier: String { return downloadURL.absoluteString }
 }
 
 /// ImageResource is a simple combination of `downloadURL` and `cacheKey`.

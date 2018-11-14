@@ -273,7 +273,7 @@ class KingfisherManagerTests: XCTestCase {
         let manager = self.manager!
         let p = SimpleProcessor()
         let options: KingfisherOptionsInfo = [.processor(p), .cacheOriginalImage, .waitForCache]
-        manager.downloadAndCacheImage(with: url, forKey: url.cacheKey, options: options) { result in
+        manager.loadAndCacheImage(source: .network(url), options: options) { result in
             
             var imageCached = manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
             var originalCached = manager.cache.imageCachedType(forKey: url.cacheKey)
@@ -303,7 +303,7 @@ class KingfisherManagerTests: XCTestCase {
 
         let p = SimpleProcessor()
         let options: KingfisherOptionsInfo = [.processor(p), .waitForCache]
-        manager.downloadAndCacheImage(with: url, forKey: url.cacheKey, options: options) {
+        manager.loadAndCacheImage(source: .network(url), options: options) {
             result in
             var imageCached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
             var originalCached = self.manager.cache.imageCachedType(forKey: url.cacheKey)

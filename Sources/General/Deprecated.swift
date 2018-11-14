@@ -66,7 +66,7 @@ extension KingfisherClass where Base: Image {
 public typealias CompletionHandler =
     ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
 
-@available(*, deprecated, message: "Will be removed soon. Use `Result<ImageDownloadResult>` based callback instead")
+@available(*, deprecated, message: "Will be removed soon. Use `Result<ImageLoadingResult>` based callback instead")
 public typealias ImageDownloaderCompletionHandler =
     ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
 
