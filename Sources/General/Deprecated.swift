@@ -449,3 +449,12 @@ public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 @available(*, unavailable,
 message: "Use `.invalidHTTPStatusCode` or `isInvalidResponseStatusCode` of `KingfisherError` instead for the status code.")
 public let KingfisherErrorStatusCodeKey = "statusCode"
+
+extension KingfisherClass where Base: ImageView {
+    /// Gets the image URL binded to this image view.
+    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    public private(set) var webURL: URL? {
+        get { return taskIdentifier.flatMap { URL(string: $0) } }
+        set { taskIdentifier = newValue?.absoluteString }
+    }
+}

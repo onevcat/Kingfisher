@@ -78,7 +78,7 @@ extension KingfisherClass where Base: UIButton {
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL(for: state) else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -162,7 +162,7 @@ extension KingfisherClass where Base: UIButton {
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.backgroundWebURL(for: state) else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
                         completionHandler?(.failure(error))
                         return
                     }

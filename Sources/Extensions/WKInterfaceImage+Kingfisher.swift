@@ -77,7 +77,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
                 DispatchQueue.main.safeAsync {
                     guard resource.downloadURL == self.webURL else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
+                            reason: .notCurrentSource(result: result.value, error: result.error, resource: resource))
                         completionHandler?(.failure(error))
                         return
                     }

@@ -33,6 +33,110 @@ import UIKit
 
 extension KingfisherClass where Base: ImageView {
 
+    @discardableResult
+    public func setImage(with source: Source?,
+                         placeholder: Placeholder? = nil,
+                         options: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
+        -> DownloadTask?
+    {
+        guard let source = source else {
+            self.placeholder = placeholder
+            taskIdentifier = nil
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
+            return nil
+        }
+
+        var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
+        if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
+            // Always set placeholder while there is no image/placehoer yet.
+            self.placeholder = placeholder
+        }
+
+        let maybeIndicator = indicator
+        maybeIndicator?.startAnimatingView()
+
+        taskIdentifier = source.identifier
+
+        if base.shouldPreloadAllAnimation() {
+            options.append(.preloadAllAnimationData)
+        }
+
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            progressBlock: { receivedSize, totalSize in
+                guard source.identifier == self.taskIdentifier else { return }
+                if let progressBlock = progressBlock {
+                    progressBlock(receivedSize, totalSize)
+                }
+        },
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    maybeIndicator?.stopAnimatingView()
+                    guard source.identifier == self.taskIdentifier else {
+                        let error = KingfisherError.imageSettingError(
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                        completionHandler?(.failure(error))
+                        return
+                    }
+
+                    self.imageTask = nil
+
+                    switch result {
+                    case .success(let value):
+
+                        #if !os(macOS)
+                        guard self.needsTransition(options: options, cacheType: value.cacheType) else {
+                            self.placeholder = nil
+                            self.base.image = value.image
+                            completionHandler?(result)
+                            return
+                        }
+
+                        let transition = options.transition
+
+                        // Force hiding the indicator without transition first.
+                        UIView.transition(
+                            with: self.base,
+                            duration: 0.0,
+                            options: [],
+                            animations: { maybeIndicator?.stopAnimatingView() },
+                            completion: { _ in
+                                self.placeholder = nil
+                                UIView.transition(
+                                    with: self.base,
+                                    duration: transition.duration,
+                                    options: [transition.animationOptions, .allowUserInteraction],
+                                    animations: { transition.animations?(self.base, value.image) },
+                                    completion: { finished in
+                                        transition.completion?(finished)
+                                        completionHandler?(result)
+                                }
+                                )
+                        }
+                        )
+                        #else
+                        self.placeholder = nil
+                        self.base.image = value.image
+                        completionHandler?(result)
+                        #endif
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.image = image
+                        }
+                        completionHandler?(result)
+                    }
+                }
+        })
+
+        imageTask = task
+        return task
+    }
+
+
     /// Sets an image to the image view with a requested resource.
     ///
     /// - Parameters:
@@ -65,99 +169,12 @@ extension KingfisherClass where Base: ImageView {
                          completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
         -> DownloadTask?
     {
-        guard let resource = resource else {
-            self.placeholder = placeholder
-            webURL = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
-            return nil
-        }
-        
-        var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
-        let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
-        if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
-            // Always set placeholder while there is no image/placehoer yet.
-            self.placeholder = placeholder
-        }
-
-        let maybeIndicator = indicator
-        maybeIndicator?.startAnimatingView()
-
-        webURL = resource.downloadURL
-
-        if base.shouldPreloadAllAnimation() {
-            options.append(.preloadAllAnimationData)
-        }
-        
-        let task = KingfisherManager.shared.retrieveImage(
-            with: resource,
+        return setImage(
+            with: resource.map { .network($0) },
+            placeholder: placeholder,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else { return }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
-            },
-            completionHandler: { result in
-                DispatchQueue.main.safeAsync {
-                    maybeIndicator?.stopAnimatingView()
-                    guard resource.downloadURL == self.webURL else {
-                        let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentResource(result: result.value, error: result.error, resource: resource))
-                        completionHandler?(.failure(error))
-                        return
-                    }
-
-                    self.imageTask = nil
-
-                    switch result {
-                    case .success(let value):
-                        
-                        #if !os(macOS)
-                        guard self.needsTransition(options: options, cacheType: value.cacheType) else {
-                            self.placeholder = nil
-                            self.base.image = value.image
-                            completionHandler?(result)
-                            return
-                        }
-                        
-                        let transition = options.transition
-
-                        // Force hiding the indicator without transition first.
-                        UIView.transition(
-                            with: self.base,
-                            duration: 0.0,
-                            options: [],
-                            animations: { maybeIndicator?.stopAnimatingView() },
-                            completion: { _ in
-                                self.placeholder = nil
-                                UIView.transition(
-                                    with: self.base,
-                                    duration: transition.duration,
-                                    options: [transition.animationOptions, .allowUserInteraction],
-                                    animations: { transition.animations?(self.base, value.image) },
-                                    completion: { finished in
-                                        transition.completion?(finished)
-                                        completionHandler?(result)
-                                    }
-                                )
-                            }
-                        )
-                        #else
-                        self.placeholder = nil
-                        self.base.image = value.image
-                        completionHandler?(result)
-                        #endif
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.image = image
-                        }
-                        completionHandler?(result)
-                    }
-                }
-        })
-        
-        imageTask = task
-        return task
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
 
     /// Cancels the image download task of the image view if it is running.
@@ -183,18 +200,17 @@ extension KingfisherClass where Base: ImageView {
 }
 
 // MARK: - Associated Object
-private var lastURLKey: Void?
+private var taskIdentifierKey: Void?
 private var indicatorKey: Void?
 private var indicatorTypeKey: Void?
 private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: ImageView {
-    
-    /// Gets the image URL binded to this image view.
-    public private(set) var webURL: URL? {
-        get { return getAssociatedObject(base, &lastURLKey) }
-        set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
+
+    public internal(set) var taskIdentifier: String? {
+        get { return getAssociatedObject(base, &taskIdentifierKey) }
+        set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
     }
 
     /// Holds which indicator type is going to be used.
