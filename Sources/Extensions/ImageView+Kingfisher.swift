@@ -44,7 +44,7 @@ extension KingfisherClass where Base: ImageView {
         guard let source = source else {
             self.placeholder = placeholder
             taskIdentifier = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
 
@@ -72,7 +72,7 @@ extension KingfisherClass where Base: ImageView {
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
-        },
+            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     maybeIndicator?.stopAnimatingView()
@@ -87,8 +87,6 @@ extension KingfisherClass where Base: ImageView {
 
                     switch result {
                     case .success(let value):
-
-                        #if !os(macOS)
                         guard self.needsTransition(options: options, cacheType: value.cacheType) else {
                             self.placeholder = nil
                             self.base.image = value.image
@@ -96,33 +94,9 @@ extension KingfisherClass where Base: ImageView {
                             return
                         }
 
-                        let transition = options.transition
-
-                        // Force hiding the indicator without transition first.
-                        UIView.transition(
-                            with: self.base,
-                            duration: 0.0,
-                            options: [],
-                            animations: { maybeIndicator?.stopAnimatingView() },
-                            completion: { _ in
-                                self.placeholder = nil
-                                UIView.transition(
-                                    with: self.base,
-                                    duration: transition.duration,
-                                    options: [transition.animationOptions, .allowUserInteraction],
-                                    animations: { transition.animations?(self.base, value.image) },
-                                    completion: { finished in
-                                        transition.completion?(finished)
-                                        completionHandler?(result)
-                                }
-                                )
+                        self.makeTransition(image: value.image, transition: options.transition) {
+                            completionHandler?(result)
                         }
-                        )
-                        #else
-                        self.placeholder = nil
-                        self.base.image = value.image
-                        completionHandler?(result)
-                        #endif
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
@@ -135,7 +109,6 @@ extension KingfisherClass where Base: ImageView {
         imageTask = task
         return task
     }
-
 
     /// Sets an image to the image view with a requested resource.
     ///
@@ -183,20 +156,40 @@ extension KingfisherClass where Base: ImageView {
         imageTask?.cancel()
     }
 
-    #if os(iOS) || os(tvOS)
     private func needsTransition(options: KingfisherOptionsInfo, cacheType: CacheType) -> Bool {
-        guard let _ = options.lastMatchIgnoringAssociatedValue(.transition(.none)) else {
-            return false
-        }
-        if options.forceTransition {
-            return true
-        }
-        if cacheType == .none {
-            return true
-        }
+        guard let _ = options.lastMatchIgnoringAssociatedValue(.transition(.none)) else { return false }
+        if options.forceTransition { return true }
+        if cacheType == .none { return true }
         return false
     }
-    #endif
+
+
+    private func makeTransition(image: Image, transition: ImageTransition, done: @escaping () -> Void) {
+        #if !os(macOS)
+        // Force hiding the indicator without transition first.
+        UIView.transition(
+            with: self.base,
+            duration: 0.0,
+            options: [],
+            animations: { self.indicator?.stopAnimatingView() },
+            completion: { _ in
+                self.placeholder = nil
+                UIView.transition(
+                    with: self.base,
+                    duration: transition.duration,
+                    options: [transition.animationOptions, .allowUserInteraction],
+                    animations: { transition.animations?(self.base, image) },
+                    completion: { finished in
+                        transition.completion?(finished)
+                        done()
+                    }
+                )
+            }
+        )
+        #else
+        done()
+        #endif
+    }
 }
 
 // MARK: - Associated Object
@@ -208,7 +201,7 @@ private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: ImageView {
 
-    public internal(set) var taskIdentifier: String? {
+    public private(set) var taskIdentifier: String? {
         get { return getAssociatedObject(base, &taskIdentifierKey) }
         set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
     }

@@ -57,7 +57,7 @@ extension KingfisherClass where Base: UIButton {
         guard let resource = resource else {
             base.setImage(placeholder, for: state)
             setWebURL(nil, for: state)
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
         
@@ -137,7 +137,7 @@ extension KingfisherClass where Base: UIButton {
         guard let resource = resource else {
             base.setBackgroundImage(placeholder, for: state)
             setBackgroundWebURL(nil, for: state)
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
         

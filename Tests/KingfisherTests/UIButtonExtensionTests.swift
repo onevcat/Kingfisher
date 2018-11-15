@@ -152,7 +152,7 @@ class UIButtonExtensionTests: XCTestCase {
         button.kf.setBackgroundImage(with: url, for: .normal) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
-            guard case .imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case .imageSettingError(reason: .emptySource) = result.error! else {
                 XCTFail()
                 return
             }
