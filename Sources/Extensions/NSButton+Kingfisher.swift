@@ -28,7 +28,64 @@
 import AppKit
 
 extension KingfisherClass where Base: NSButton {
-    
+
+    @discardableResult
+    public func setImage(
+        with source: Source?,
+        placeholder: Image? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        guard let source = source else {
+            base.image = placeholder
+            taskIdentifier = nil
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+
+        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        if !options.keepCurrentImageWhileLoading {
+            base.image = placeholder
+        }
+
+        taskIdentifier = source.identifier
+
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            progressBlock: { receivedSize, totalSize in
+                guard source.identifier == self.taskIdentifier else { return }
+                progressBlock?(receivedSize, totalSize)
+        },
+            completionHandler: { result in
+                DispatchQueue.main.safeAsync {
+                    guard source.identifier == self.taskIdentifier else {
+                        let error = KingfisherError.imageSettingError(
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                        completionHandler?(.failure(error))
+                        return
+                    }
+
+                    self.imageTask = nil
+
+                    switch result {
+                    case .success(let value):
+                        self.base.image = value.image
+                        completionHandler?(result)
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.image = image
+                        }
+                        completionHandler?(result)
+                    }
+                }
+        })
+
+        imageTask = task
+        return task
+    }
+
     /// Sets an image to the button with a requested resource.
     ///
     /// - Parameters:
@@ -46,59 +103,19 @@ extension KingfisherClass where Base: NSButton {
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
-    public func setImage(with resource: Resource?,
-                         placeholder: Image? = nil,
-                         options: KingfisherOptionsInfo? = nil,
-                         progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setImage(
+        with resource: Resource?,
+        placeholder: Image? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        guard let resource = resource else {
-            base.image = placeholder
-            webURL = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
-            return nil
-        }
-        
-        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
-        if !options.keepCurrentImageWhileLoading {
-            base.image = placeholder
-        }
-        
-        webURL = resource.downloadURL
-        let task = KingfisherManager.shared.retrieveImage(
-            with: resource,
+        return setImage(
+            with: resource.map { .network($0) },
+            placeholder: placeholder,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
-            completionHandler: { result in
-                DispatchQueue.main.safeAsync {
-                    guard resource.downloadURL == self.webURL else {
-                        let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    
-                    self.imageTask = nil
-                    
-                    switch result {
-                    case .success(let value):
-                        self.base.image = value.image
-                        completionHandler?(result)
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.image = image
-                        }
-                        completionHandler?(result)
-                    }
-                }
-            })
-        
-        imageTask = task
-        return task
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
     
     /// Cancels the image download task of the button if it is running.
@@ -106,7 +123,63 @@ extension KingfisherClass where Base: NSButton {
     public func cancelImageDownloadTask() {
         imageTask?.cancel()
     }
-    
+
+    @discardableResult
+    public func setAlternateImage(
+        with source: Source?,
+        placeholder: Image? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        guard let source = source else {
+            base.alternateImage = placeholder
+            alternateTaskIdentifier = nil
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+
+        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        if !options.keepCurrentImageWhileLoading {
+            base.alternateImage = placeholder
+        }
+
+        alternateTaskIdentifier = source.identifier
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            progressBlock: { receivedSize, totalSize in
+                guard self.alternateTaskIdentifier == source.identifier else { return }
+                progressBlock?(receivedSize, totalSize)
+            },
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    guard self.alternateTaskIdentifier == source.identifier else {
+                        let error = KingfisherError.imageSettingError(
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                        completionHandler?(.failure(error))
+                        return
+                    }
+
+                    self.alternateImageTask = nil
+
+                    switch result {
+                    case .success(let value):
+                        self.base.alternateImage = value.image
+                        completionHandler?(result)
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.alternateImage = image
+                        }
+                        completionHandler?(result)
+                    }
+                }
+        })
+
+        alternateImageTask = task
+        return task
+    }
+
     /// Sets an alternate image to the button with a requested resource.
     ///
     /// - Parameters:
@@ -124,61 +197,20 @@ extension KingfisherClass where Base: NSButton {
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
-    public func setAlternateImage(with resource: Resource?,
-                                  placeholder: Image? = nil,
-                                  options: KingfisherOptionsInfo? = nil,
-                                  progressBlock: DownloadProgressBlock? = nil,
-                                  completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setAlternateImage(
+        with resource: Resource?,
+        placeholder: Image? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        guard let resource = resource else {
-            base.alternateImage = placeholder
-            alternateWebURL = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
-            return nil
-        }
-        
-        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
-        if !options.keepCurrentImageWhileLoading {
-            base.alternateImage = placeholder
-        }
-        
-        alternateWebURL = resource.downloadURL
-        let task = KingfisherManager.shared.retrieveImage(
-            with: resource,
+        return setAlternateImage(
+            with: resource.map { .network($0) },
+            placeholder: placeholder,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.alternateWebURL else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
-            completionHandler: { result in
-                DispatchQueue.main.safeAsync {
-                    guard resource.downloadURL == self.alternateWebURL else {
-                        let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    
-                    self.alternateImageTask = nil
-                    
-                    switch result {
-                    case .success(let value):
-                        self.base.alternateImage = value.image
-                        completionHandler?(result)
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.alternateImage = image
-                        }
-                        completionHandler?(result)
-                    }
-                }
-            })
-        
-        alternateImageTask = task
-        return task
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
-    
  
     /// Cancels the alternate image download task of the button if it is running.
     /// Nothing will happen if the downloading has already finished.
@@ -189,34 +221,49 @@ extension KingfisherClass where Base: NSButton {
 
 
 // MARK: - Associated Object
-private var lastURLKey: Void?
+private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
-private var lastAlternateURLKey: Void?
+private var alternateTaskIdentifierKey: Void?
 private var alternateImageTaskKey: Void?
 
 extension KingfisherClass where Base: NSButton {
-    
-    /// Gets the image URL binded to this button.
-    public private(set) var webURL: URL? {
-        get { return getAssociatedObject(base, &lastURLKey) }
-        set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
+
+    public private(set) var taskIdentifier: String? {
+        get { return getAssociatedObject(base, &taskIdentifierKey) }
+        set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
     }
     
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
-    
-    
-    /// Gets the image URL binded to this button.
-    public private(set) var alternateWebURL: URL? {
-        get { return getAssociatedObject(base, &lastAlternateURLKey) }
-        set { setRetainedAssociatedObject(base, &lastAlternateURLKey, newValue) }
+
+    public private(set) var alternateTaskIdentifier: String? {
+        get { return getAssociatedObject(base, &alternateTaskIdentifierKey) }
+        set { setRetainedAssociatedObject(base, &alternateTaskIdentifierKey, newValue) }
     }
-    
+
     private var alternateImageTask: DownloadTask? {
         get { return getAssociatedObject(base, &alternateImageTaskKey) }
         set { setRetainedAssociatedObject(base, &alternateImageTaskKey, newValue)}
+    }
+}
+
+extension KingfisherClass where Base: NSButton {
+
+    /// Gets the image URL binded to this button.
+    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    public private(set) var webURL: URL? {
+        get { return taskIdentifier.flatMap { URL(string: $0) } }
+        set { taskIdentifier = newValue?.absoluteString }
+    }
+
+
+    /// Gets the image URL binded to this button.
+    @available(*, deprecated, message: "Use `alternateTaskIdentifier` instead.", renamed: "alternateTaskIdentifier")
+    public private(set) var alternateWebURL: URL? {
+        get { return alternateTaskIdentifier.flatMap { URL(string: $0) } }
+        set { alternateTaskIdentifier = newValue?.absoluteString }
     }
 }

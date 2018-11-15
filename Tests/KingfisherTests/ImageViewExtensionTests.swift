@@ -392,7 +392,7 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) {
             result in
             XCTAssertNotNil(result.error)
-            guard case .imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case .imageSettingError(reason: .emptySource) = result.error! else {
                 XCTFail()
                 fatalError()
             }

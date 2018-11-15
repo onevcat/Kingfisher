@@ -107,4 +107,9 @@ public enum ImageTransition {
         }
     }
 }
+#else
+// Just a placeholder for compiling on macOS.
+public enum ImageTransition {
+    case none
+}
 #endif

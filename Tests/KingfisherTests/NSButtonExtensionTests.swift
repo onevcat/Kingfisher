@@ -76,7 +76,7 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNotNil(image)
             XCTAssertTrue(image!.renderEqual(to: testImage))
             XCTAssertTrue(self.button.image!.renderEqual(to: testImage))
-            XCTAssertEqual(result.value?.imageURL, self.button.kf.webURL)
+            XCTAssertEqual(result.value?.imageURL?.absoluteString, self.button.kf.taskIdentifier)
             XCTAssertEqual(result.value!.cacheType, .none)
             
             exp.fulfill()
@@ -98,7 +98,7 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNotNil(image)
             XCTAssertTrue(image!.renderEqual(to: testImage))
             XCTAssertTrue(self.button.alternateImage!.renderEqual(to: testImage))
-            XCTAssertEqual(result.value?.imageURL, self.button.kf.alternateWebURL)
+            XCTAssertEqual(result.value?.imageURL?.absoluteString, self.button.kf.alternateTaskIdentifier)
             XCTAssertEqual(result.value!.cacheType, .none)
             
             exp.fulfill()
@@ -149,7 +149,7 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             
-            guard case .imageSettingError(reason: .emptyResource) = result.error! else {
+            guard case .imageSettingError(reason: .emptySource) = result.error! else {
                 XCTFail()
                 fatalError()
             }

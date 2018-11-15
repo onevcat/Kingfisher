@@ -155,13 +155,13 @@ public enum KingfisherError: Error {
 
     /// Represnts the error reason duting image setting in a view related class.
     ///
-    /// - emptyResource: The input resource is empty or `nil`. Code 5001.
+    /// - emptySource: The input resource is empty or `nil`. Code 5001.
     /// - notCurrentSource: The source task is finished, but it is not the one expected now. Code 5002.
     /// - dataProviderError: An error happens during getting data from an `ImageDataProvider`. Code 5003.
     public enum ImageSettingErrorReason {
         
         /// The input resource is empty or `nil`. Code 5001.
-        case emptyResource
+        case emptySource
         
         /// The resource task is finished, but it is not the one expected now. This usually happens when you set another
         /// resource on the view without cancelling the current on-going one. The previous setting task will fail with
@@ -336,7 +336,7 @@ extension KingfisherError.ProcessorErrorReason {
 extension KingfisherError.ImageSettingErrorReason {
     var errorDescription: String? {
         switch self {
-        case .emptyResource:
+        case .emptySource:
             return "The input resource is empty."
         case .notCurrentSource(let result, let error, let resource):
             if let result = result {
@@ -355,7 +355,7 @@ extension KingfisherError.ImageSettingErrorReason {
     
     var errorCode: Int {
         switch self {
-        case .emptyResource: return 5001
+        case .emptySource: return 5001
         case .notCurrentSource: return 5002
         case .dataProviderError: return 5003
         }

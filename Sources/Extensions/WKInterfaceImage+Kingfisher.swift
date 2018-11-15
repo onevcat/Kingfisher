@@ -56,7 +56,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
         guard let resource = resource else {
             base.setImage(placeholder)
             webURL = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptyResource)))
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
 
