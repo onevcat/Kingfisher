@@ -34,12 +34,12 @@ import UIKit
 extension KingfisherClass where Base: ImageView {
 
     @discardableResult
-    public func setImage(with source: Source?,
-                         placeholder: Placeholder? = nil,
-                         options: KingfisherOptionsInfo? = nil,
-                         progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setImage(
+        with source: Source?,
+        placeholder: Placeholder? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         guard let source = source else {
             self.placeholder = placeholder
@@ -135,12 +135,12 @@ extension KingfisherClass where Base: ImageView {
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
-    public func setImage(with resource: Resource?,
-                         placeholder: Placeholder? = nil,
-                         options: KingfisherOptionsInfo? = nil,
-                         progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setImage(
+        with resource: Resource?,
+        placeholder: Placeholder? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         return setImage(
             with: resource.map { .network($0) },
