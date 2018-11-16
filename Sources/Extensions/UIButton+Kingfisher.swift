@@ -28,6 +28,63 @@ import UIKit
 
 extension KingfisherClass where Base: UIButton {
     
+    @discardableResult
+    public func setImage(
+        with source: Source?,
+        for state: UIControl.State,
+        placeholder: UIImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        guard let source = source else {
+            base.setImage(placeholder, for: state)
+            setTaskIdentifier(nil, for: state)
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+        
+        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        if !options.keepCurrentImageWhileLoading {
+            base.setImage(placeholder, for: state)
+        }
+        
+        setTaskIdentifier(source.identifier, for: state)
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            progressBlock: { receivedSize, totalSize in
+                guard source.identifier == self.taskIdentifier(for: state) else { return }
+                progressBlock?(receivedSize, totalSize)
+            },
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    guard source.identifier == self.taskIdentifier(for: state) else {
+                        let error = KingfisherError.imageSettingError(
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                        completionHandler?(.failure(error))
+                        return
+                    }
+                    
+                    self.imageTask = nil
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.setImage(value.image, for: state)
+                        completionHandler?(result)
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setImage(image, for: state)
+                        }
+                        completionHandler?(result)
+                    }
+                }
+        })
+        
+        imageTask = task
+        return task
+    }
+    
     /// Sets an image to the button for a specified state with a requested resource.
     ///
     /// - Parameters:
@@ -46,60 +103,21 @@ extension KingfisherClass where Base: UIButton {
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
-    public func setImage(with resource: Resource?,
-                         for state: UIControl.State,
-                         placeholder: UIImage? = nil,
-                         options: KingfisherOptionsInfo? = nil,
-                         progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setImage(
+        with resource: Resource?,
+        for state: UIControl.State,
+        placeholder: UIImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        guard let resource = resource else {
-            base.setImage(placeholder, for: state)
-            setWebURL(nil, for: state)
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
-        }
-        
-        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
-        if !options.keepCurrentImageWhileLoading {
-            base.setImage(placeholder, for: state)
-        }
-        
-        setWebURL(resource.downloadURL, for: state)
-        let task = KingfisherManager.shared.retrieveImage(
-            with: resource,
+        return setImage(
+            with: resource.map { Source.network($0) },
+            for: state,
+            placeholder: placeholder,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL(for: state) else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
-            completionHandler: { result in
-                DispatchQueue.main.safeAsync {
-                    guard resource.downloadURL == self.webURL(for: state) else {
-                        let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    
-                    self.imageTask = nil
-
-                    switch result {
-                    case .success(let value):
-                        self.base.setImage(value.image, for: state)
-                        completionHandler?(result)
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.setImage(image, for: state)
-                        }
-                        completionHandler?(result)
-                    }
-                }
-            })
-        
-        imageTask = task
-        return task
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
     
     /// Cancels the image download task of the button if it is running.
@@ -107,7 +125,67 @@ extension KingfisherClass where Base: UIButton {
     public func cancelImageDownloadTask() {
         imageTask?.cancel()
     }
-    
+
+    @discardableResult
+    public func setBackgroundImage(
+        with source: Source?,
+        for state: UIControl.State,
+        placeholder: UIImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        guard let source = source else {
+            base.setBackgroundImage(placeholder, for: state)
+            setBackgroundTaskIdentifier(nil, for: state)
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+
+        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        if !options.keepCurrentImageWhileLoading {
+            base.setBackgroundImage(placeholder, for: state)
+        }
+
+        setBackgroundTaskIdentifier(source.identifier, for: state)
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            progressBlock: { receivedSize, totalSize in
+                guard source.identifier == self.backgroundTaskIdentifier(for: state) else {
+                    return
+                }
+                if let progressBlock = progressBlock {
+                    progressBlock(receivedSize, totalSize)
+                }
+            },
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    guard source.identifier == self.backgroundTaskIdentifier(for: state) else {
+                        let error = KingfisherError.imageSettingError(
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                        completionHandler?(.failure(error))
+                        return
+                    }
+                    self.backgroundImageTask = nil
+
+                    switch result {
+                    case .success(let value):
+                        self.base.setBackgroundImage(value.image, for: state)
+                        completionHandler?(result)
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setBackgroundImage(image, for: state)
+                        }
+                        completionHandler?(result)
+                    }
+                }
+        })
+
+        backgroundImageTask = task
+        return task
+    }
+
     /// Sets a background image to the button for a specified state with a requested resource.
     ///
     /// - Parameters:
@@ -126,63 +204,21 @@ extension KingfisherClass where Base: UIButton {
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
-    public func setBackgroundImage(with resource: Resource?,
-                                   for state: UIControl.State,
-                                   placeholder: UIImage? = nil,
-                                   options: KingfisherOptionsInfo? = nil,
-                                   progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setBackgroundImage(
+        with resource: Resource?,
+        for state: UIControl.State,
+        placeholder: UIImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        guard let resource = resource else {
-            base.setBackgroundImage(placeholder, for: state)
-            setBackgroundWebURL(nil, for: state)
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
-        }
-        
-        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
-        if !options.keepCurrentImageWhileLoading {
-            base.setBackgroundImage(placeholder, for: state)
-        }
-        
-        setBackgroundWebURL(resource.downloadURL, for: state)
-        let task = KingfisherManager.shared.retrieveImage(
-            with: resource,
+        return setBackgroundImage(
+            with: resource.map { .network($0) },
+            for: state,
+            placeholder: placeholder,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.backgroundWebURL(for: state) else {
-                    return
-                }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
-            },
-            completionHandler: { result in
-                DispatchQueue.main.safeAsync {
-                    guard resource.downloadURL == self.backgroundWebURL(for: state) else {
-                        let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    self.backgroundImageTask = nil
-                    
-                    switch result {
-                    case .success(let value):
-                        self.base.setBackgroundImage(value.image, for: state)
-                        completionHandler?(result)
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.setBackgroundImage(image, for: state)
-                        }
-                        completionHandler?(result)
-                    }
-                }
-            })
-        
-        backgroundImageTask = task
-        return task
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
     
     /// Cancels the background image download task of the button if it is running.
@@ -190,38 +226,33 @@ extension KingfisherClass where Base: UIButton {
     public func cancelBackgroundImageDownloadTask() {
         backgroundImageTask?.cancel()
     }
-
 }
 
 // MARK: - Associated Object
-private var lastURLKey: Void?
+private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: UIButton {
 
-    /// Gets the image URL of this button for a specified state.
-    ///
-    /// - Parameter state: The state that uses the specified image.
-    /// - Returns: Current URL for image.
-    public func webURL(for state: UIControl.State) -> URL? {
-        return webURLs[NSNumber(value:state.rawValue)] as? URL
+    public func taskIdentifier(for state: UIControl.State) -> String? {
+        return taskIdentifierInfo[NSNumber(value:state.rawValue)] as? String
+    }
+
+    private func setTaskIdentifier(_ identifier: String?, for state: UIControl.State) {
+        taskIdentifierInfo[NSNumber(value:state.rawValue)] = identifier
     }
     
-    private func setWebURL(_ url: URL?, for state: UIControl.State) {
-        webURLs[NSNumber(value:state.rawValue)] = url
-    }
-    
-    private var webURLs: NSMutableDictionary {
+    private var taskIdentifierInfo: NSMutableDictionary {
         get {
-            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &lastURLKey) else {
+            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &taskIdentifierKey) else {
                 let dic = NSMutableDictionary()
-                self.webURLs = dic
+                self.taskIdentifierInfo = dic
                 return dic
             }
             return dictionary
         }
         set {
-            setRetainedAssociatedObject(base, &lastURLKey, newValue)
+            setRetainedAssociatedObject(base, &taskIdentifierKey, newValue)
         }
     }
     
@@ -232,40 +263,56 @@ extension KingfisherClass where Base: UIButton {
 }
 
 
-private var lastBackgroundURLKey: Void?
+private var backgroundTaskIdentifierKey: Void?
 private var backgroundImageTaskKey: Void?
 
-
 extension KingfisherClass where Base: UIButton {
-    
-    /// Gets the background image URL of this button for a specified state.
-    ///
-    /// - Parameter state: The state that uses the specified background image.
-    /// - Returns: Current URL for image.
-    public func backgroundWebURL(for state: UIControl.State) -> URL? {
-        return backgroundWebURLs[NSNumber(value:state.rawValue)] as? URL
+
+    public func backgroundTaskIdentifier(for state: UIControl.State) -> String? {
+        return backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] as? String
     }
     
-    private func setBackgroundWebURL(_ url: URL?, for state: UIControl.State) {
-        backgroundWebURLs[NSNumber(value:state.rawValue)] = url
+    private func setBackgroundTaskIdentifier(_ identifier: String?, for state: UIControl.State) {
+        backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] = identifier
     }
     
-    private var backgroundWebURLs: NSMutableDictionary {
+    private var backgroundTaskIdentifierInfo: NSMutableDictionary {
         get {
-            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &lastBackgroundURLKey) else {
+            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &backgroundTaskIdentifierKey) else {
                 let dic = NSMutableDictionary()
-                self.backgroundWebURLs = dic
+                self.backgroundTaskIdentifierInfo = dic
                 return dic
             }
             return dictionary
         }
         set {
-            setRetainedAssociatedObject(base, &lastBackgroundURLKey, newValue)
+            setRetainedAssociatedObject(base, &backgroundTaskIdentifierKey, newValue)
         }
     }
     
     private var backgroundImageTask: DownloadTask? {
         get { return getAssociatedObject(base, &backgroundImageTaskKey) }
         set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
+    }
+}
+
+extension KingfisherClass where Base: UIButton {
+
+    /// Gets the image URL of this button for a specified state.
+    ///
+    /// - Parameter state: The state that uses the specified image.
+    /// - Returns: Current URL for image.
+    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    public func webURL(for state: UIControl.State) -> URL? {
+        return taskIdentifier(for: state).flatMap { URL(string: $0) }
+    }
+
+    /// Gets the background image URL of this button for a specified state.
+    ///
+    /// - Parameter state: The state that uses the specified background image.
+    /// - Returns: Current URL for image.
+    @available(*, deprecated, message: "Use `backgroundTaskIdentifier` instead.", renamed: "backgroundTaskIdentifier")
+    public func backgroundWebURL(for state: UIControl.State) -> URL? {
+        return backgroundTaskIdentifier(for: state).flatMap { URL(string: $0) }
     }
 }

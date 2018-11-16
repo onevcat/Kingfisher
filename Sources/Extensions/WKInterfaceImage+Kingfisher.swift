@@ -28,6 +28,62 @@ import WatchKit
 
 extension KingfisherClass where Base: WKInterfaceImage {
     
+    @discardableResult
+    public func setImage(
+        with source: Source?,
+        placeholder: Image? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        guard let source = source else {
+            base.setImage(placeholder)
+            taskIdentifier = nil
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+        
+        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        if !options.keepCurrentImageWhileLoading {
+            base.setImage(placeholder)
+        }
+        
+        taskIdentifier = source.identifier
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            progressBlock: { receivedSize, totalSize in
+                guard source.identifier == self.taskIdentifier else { return }
+                progressBlock?(receivedSize, totalSize)
+            },
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    guard source.identifier == self.taskIdentifier else {
+                        let error = KingfisherError.imageSettingError(
+                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                        completionHandler?(.failure(error))
+                        return
+                    }
+                    
+                    self.imageTask = nil
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.setImage(value.image)
+                        completionHandler?(result)
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setImage(image)
+                        }
+                        completionHandler?(result)
+                    }
+                }
+        })
+        
+        imageTask = task
+        return task
+    }
+    
     /// Sets an image to the image view with a requested resource.
     ///
     /// - Parameters:
@@ -46,59 +102,19 @@ extension KingfisherClass where Base: WKInterfaceImage {
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
     @discardableResult
-    public func setImage(with resource: Resource?,
-                         placeholder: Image? = nil,
-                         options: KingfisherOptionsInfo? = nil,
-                         progressBlock: DownloadProgressBlock? = nil,
-                         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
-        -> DownloadTask?
+    public func setImage(
+        with resource: Resource?,
+        placeholder: Image? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        guard let resource = resource else {
-            base.setImage(placeholder)
-            webURL = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
-        }
-
-        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
-        if !options.keepCurrentImageWhileLoading {
-            base.setImage(placeholder)
-        }
-
-        webURL = resource.downloadURL
-        let task = KingfisherManager.shared.retrieveImage(
-            with: resource,
+        return setImage(
+            with: resource.map { .network($0) },
+            placeholder: placeholder,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard resource.downloadURL == self.webURL else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
-            completionHandler: { result in
-                DispatchQueue.main.safeAsync {
-                    guard resource.downloadURL == self.webURL else {
-                        let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: .network(resource)))
-                        completionHandler?(.failure(error))
-                        return
-                    }
-
-                    self.imageTask = nil
-
-                    switch result {
-                    case .success(let value):
-                        self.base.setImage(value.image)
-                        completionHandler?(result)
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.setImage(image)
-                        }
-                        completionHandler?(result)
-                    }
-                }
-            })
-
-        imageTask = task
-        return task
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
     }
 
     /**
@@ -111,15 +127,14 @@ extension KingfisherClass where Base: WKInterfaceImage {
 }
 
 // MARK: - Associated Object
-private var lastURLKey: Void?
+private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherClass where Base: WKInterfaceImage {
     
-    /// Gets the image URL binded to this image view.
-    public private(set) var webURL: URL? {
-        get { return getAssociatedObject(base, &lastURLKey) }
-        set { setRetainedAssociatedObject(base, &lastURLKey, newValue) }
+    public private(set) var taskIdentifier: String? {
+        get { return getAssociatedObject(base, &taskIdentifierKey) }
+        set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
     }
 
     private var imageTask: DownloadTask? {
@@ -128,3 +143,11 @@ extension KingfisherClass where Base: WKInterfaceImage {
     }
 }
 
+extension KingfisherClass where Base: WKInterfaceImage {
+    /// Gets the image URL binded to this image view.
+    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    public private(set) var webURL: URL? {
+        get { return taskIdentifier.flatMap { URL(string: $0) } }
+        set { taskIdentifier = newValue?.absoluteString }
+    }
+}
