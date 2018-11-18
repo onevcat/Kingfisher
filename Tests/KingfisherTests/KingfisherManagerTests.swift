@@ -655,6 +655,33 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 #endif
+    
+    func testRetrieveWithImageProvider() {
+        let provider = SimpleImageDataProvider { .success(testImageData) }
+        var called = false
+        _ = manager.retrieveImage(with: .provider(provider)) { result in
+            called = true
+            XCTAssertNotNil(result.value)
+            XCTAssertTrue(result.value!.image.renderEqual(to: testImage))
+        }
+        XCTAssertTrue(called)
+    }
+    
+    func testRetrieveWithImageProviderFail() {
+        let provider = SimpleImageDataProvider { .failure(SimpleImageDataProvider.E()) }
+        var called = false
+        _ = manager.retrieveImage(with: .provider(provider)) { result in
+            called = true
+            XCTAssertNotNil(result.error)
+            if case .imageSettingError(reason: .dataProviderError(let p, let error)) = result.error! {
+                XCTAssertEqual(provider.identifier, p.identifier)
+                XCTAssertTrue(error is SimpleImageDataProvider.E)
+            } else {
+                XCTFail()
+            }
+        }
+        XCTAssertTrue(called)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
@@ -690,4 +717,17 @@ class FailingProcessor: ImageProcessor {
         processed = true
         return nil
     }
+}
+
+struct SimpleImageDataProvider: ImageDataProvider {
+    let cacheKey = "simple_image"
+    let identifier = "simple_image"
+    
+    let provider: () -> (Result<Data, Error>)
+    
+    func data(handler: @escaping (Result<Data, Error>) -> Void) {
+        handler(provider())
+    }
+    
+    struct E: Error {}
 }
