@@ -1,8 +1,8 @@
 //
-//  ImageCollectionViewCell.swift
-//  Kingfisher-Demo
+//  ImageLoader.swift
+//  Kingfisher
 //
-//  Created by Wei Wang on 15/4/6.
+//  Created by onevcat on 2018/11/18.
 //
 //  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
@@ -24,18 +24,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
+import Foundation
 
-class ImageCollectionViewCell: UICollectionViewCell {
-    
-    @IBOutlet weak var cellImageView: UIImageView!
-    
-    #if os(tvOS)
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-        cellImageView.adjustsImageWhenAncestorFocused = true
-        cellImageView.clipsToBounds = false
+struct ImageLoader {
+    static func sampleImageURL(at index: Int) -> URL {
+        let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/"
+        return URL(string: "\(prefix)kingfisher-\(index + 1).jpg")!
     }
-    #endif
 }
