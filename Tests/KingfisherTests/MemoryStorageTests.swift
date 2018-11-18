@@ -2,7 +2,7 @@
 //  MemoryStorageTests.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2018/11/12.
+//  Created by Wei Wang on 2018/11/12.
 //
 //  Copyright (c) 2018年 Wei Wang <onevcat@gmail.com>
 //

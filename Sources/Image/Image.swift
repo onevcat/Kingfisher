@@ -90,13 +90,13 @@ extension KingfisherClass where Base: Image {
     }
     #endif
 
-    // Bitmap memory cost with KB.
+    // Bitmap memory cost with bytes.
     var cost: Int {
         let pixel = Int(size.width * size.height * scale * scale)
         guard let cgImage = cgImage else {
-            return pixel * 4 / 1024
+            return pixel * 4
         }
-        return pixel * cgImage.bitsPerPixel / 8 / 1024
+        return pixel * cgImage.bitsPerPixel / 8
     }
 }
 
