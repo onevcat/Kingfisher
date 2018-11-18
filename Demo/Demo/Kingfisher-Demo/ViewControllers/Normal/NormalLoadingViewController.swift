@@ -27,50 +27,44 @@
 import UIKit
 import Kingfisher
 
-class ViewController: UICollectionViewController {
+class NormalLoadingViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        title = "Kingfisher"
-        
+        setupOperationNavigationBar()
         if #available(iOS 10.0, tvOS 10.0, *) {
             collectionView?.prefetchDataSource = self
         }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    @IBAction func clearCache(sender: AnyObject) {
-        KingfisherManager.shared.cache.clearMemoryCache()
-        KingfisherManager.shared.cache.clearDiskCache()
-    }
-    
-    @IBAction func reload(sender: AnyObject) {
-        collectionView?.reloadData()
+    func imageURL(_ index: Int) -> URL {
+        let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/"
+        return URL(string: "\(prefix)kingfisher-\(index + 1).jpg")!
     }
 }
 
-extension ViewController {
+extension NormalLoadingViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 10
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {        
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplaying cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath)
+    {
         // This will cancel all unfinished downloading task when the cell disappearing.
-        (cell as! CollectionViewCell).cellImageView.kf.cancelDownloadTask()
+        (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
     
-    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        
-        let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.row + 1).jpg")!
-
-        let imageView = (cell as! CollectionViewCell).cellImageView!
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath)
+    {
+        let imageView = (cell as! ImageCollectionViewCell).cellImageView!
         imageView.kf.setImage(
-            with: url,
+            with: imageURL(indexPath.row),
             placeholder: nil,
             options: [.transition(.fade(1)), .loadDiskFileSynchronously],
             progressBlock: { receivedSize, totalSize in
@@ -83,19 +77,21 @@ extension ViewController {
         )
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! CollectionViewCell
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "collectionViewCell",
+            for: indexPath) as! ImageCollectionViewCell
         cell.cellImageView.kf.indicatorType = .activity
         return cell
     }
 }
 
-extension ViewController: UICollectionViewDataSourcePrefetching {
+extension NormalLoadingViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let urls = indexPaths.compactMap {
-            URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\($0.row + 1).jpg")
-        }
-        
-        ImagePrefetcher(urls: urls).start()
+        let prefetcher = ImagePrefetcher(urls: indexPaths.compactMap { imageURL($0.row) })
+        prefetcher.start()
     }
 }
