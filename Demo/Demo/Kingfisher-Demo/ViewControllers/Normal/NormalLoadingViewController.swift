@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  NormalLoadingViewController.swift
 //  Kingfisher-Demo
 //
 //  Created by Wei Wang on 15/4/6.
@@ -36,11 +36,6 @@ class NormalLoadingViewController: UICollectionViewController {
             collectionView?.prefetchDataSource = self
         }
     }
-
-    func imageURL(_ index: Int) -> URL {
-        let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/"
-        return URL(string: "\(prefix)kingfisher-\(index + 1).jpg")!
-    }
 }
 
 extension NormalLoadingViewController {
@@ -64,7 +59,7 @@ extension NormalLoadingViewController {
     {
         let imageView = (cell as! ImageCollectionViewCell).cellImageView!
         imageView.kf.setImage(
-            with: imageURL(indexPath.row),
+            with: ImageLoader.sampleImageURL(at: indexPath.row),
             placeholder: nil,
             options: [.transition(.fade(1)), .loadDiskFileSynchronously],
             progressBlock: { receivedSize, totalSize in
@@ -91,7 +86,7 @@ extension NormalLoadingViewController {
 
 extension NormalLoadingViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let prefetcher = ImagePrefetcher(urls: indexPaths.compactMap { imageURL($0.row) })
-        prefetcher.start()
+        let urls = indexPaths.compactMap { ImageLoader.sampleImageURL(at: $0.row) }
+        ImagePrefetcher(urls: urls).start()
     }
 }
