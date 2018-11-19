@@ -272,7 +272,7 @@ class KingfisherManagerTests: XCTestCase {
 
         let manager = self.manager!
         let p = SimpleProcessor()
-        let options: KingfisherOptionsInfo = [.processor(p), .cacheOriginalImage, .waitForCache]
+        let options = KingfisherParsedOptionsInfo([.processor(p), .cacheOriginalImage, .waitForCache])
         manager.loadAndCacheImage(source: .network(url), options: options) { result in
             
             var imageCached = manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
@@ -302,7 +302,7 @@ class KingfisherManagerTests: XCTestCase {
         stub(url, data: testImageData)
 
         let p = SimpleProcessor()
-        let options: KingfisherOptionsInfo = [.processor(p), .waitForCache]
+        let options = KingfisherParsedOptionsInfo([.processor(p), .waitForCache])
         manager.loadAndCacheImage(source: .network(url), options: options) {
             result in
             var imageCached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
@@ -698,7 +698,7 @@ class SimpleProcessor: ImageProcessor {
     /// - returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         processed = true
         switch item {
         case .image(let image):
@@ -713,7 +713,7 @@ class FailingProcessor: ImageProcessor {
     public let identifier = "FailingProcessor"
     var processed = false
     public init() {}
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         processed = true
         return nil
     }

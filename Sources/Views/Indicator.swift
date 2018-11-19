@@ -143,12 +143,12 @@ final class ImageIndicator: Indicator {
     init?(
         imageData data: Data,
         processor: ImageProcessor = DefaultImageProcessor.default,
-        options: KingfisherOptionsInfo = .empty)
+        options: KingfisherParsedOptionsInfo? = nil)
     {
-        var options = options
+        var options = options ?? KingfisherParsedOptionsInfo(nil)
         // Use normal image view to show animations, so we need to preload all animation data.
         if !options.preloadAllAnimationData {
-            options.append(.preloadAllAnimationData)
+            options.preloadAllAnimationData = true
         }
         
         guard let image = processor.process(item: .data(data), options: options) else {

@@ -122,13 +122,12 @@ public class KingfisherManager {
         )
     }
 
-    public func retrieveImage(
+    func retrieveImage(
         with source: Source,
-        options: KingfisherOptionsInfo? = nil,
+        options: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
-        let options = currentDefaultOptions + (options ?? .empty)
         if options.forceRefresh {
             return loadAndCacheImage(
                 source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
@@ -154,9 +153,40 @@ public class KingfisherManager {
         }
     }
 
+    /// Gets an image from a given resource.
+    ///
+    /// - Parameters:
+    ///   - resource: The `Source` object defines data information from network or a data provider.
+    ///   - options: Options to use when creating the animated image.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called. `progressBlock` is always called in
+    ///                    main queue.
+    ///   - completionHandler: Called when the image retrieved and set finished. This completion handler will be invoked
+    ///                        from the `options.callbackQueue`. If not specified, the main queue will be used.
+    /// - Returns: A task represents the image downloading. If there is no downloading starts, `nil` is returned.
+    ///
+    /// - Note:
+    ///    This method will first check whether the requested `source` is already in cache or not. If cached,
+    ///    it returns `nil` and invoke the `completionHandler` after the cached image retrieved. Otherwise, it
+    ///    will download the `resource`, store it in cache, then call `completionHandler`.
+    ///
+    public func retrieveImage(
+        with source: Source,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+    {
+        let options = currentDefaultOptions + (options ?? .empty)
+        return retrieveImage(
+            with: source,
+            options: KingfisherParsedOptionsInfo(options),
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
+    }
+
     func provideImage(
         provider: ImageDataProvider,
-        options: KingfisherOptionsInfo,
+        options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)?)
     {
         provider.data { result in
@@ -179,7 +209,7 @@ public class KingfisherManager {
     @discardableResult
     func loadAndCacheImage(
         source: Source,
-        options: KingfisherOptionsInfo,
+        options: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
@@ -270,7 +300,7 @@ public class KingfisherManager {
     func retrieveImageFromCache(
         forKey key: String,
         with url: URL?,
-        options: KingfisherOptionsInfo,
+        options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
     {
         // 1. Check whether the image was already in target cache. If so, just get it.
@@ -307,7 +337,8 @@ public class KingfisherManager {
         if originalImageCached {
             // Now we are ready to get found the original image from cache. We need the unprocessed image, so remove
             // any processor from options first.
-            let optionsWithoutProcessor = options.removeAllMatchesIgnoringAssociatedValue(.processor(options.processor))
+            var optionsWithoutProcessor = options
+            optionsWithoutProcessor.processor = DefaultImageProcessor.default
             originalCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { result in
                 if let image = result.value?.image {
                     let processor = options.processor

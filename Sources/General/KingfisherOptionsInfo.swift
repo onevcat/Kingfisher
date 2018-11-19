@@ -36,17 +36,7 @@ import UIKit
 public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
 
 extension Array where Element == KingfisherOptionsInfoItem {
-    
     static let empty: KingfisherOptionsInfo = []
-
-    // A connivence property to generate an image creating option with current `KingfisherOptionsInfo`.
-    var imageCreatingOptions: ImageCreatingOptions {
-        return ImageCreatingOptions(
-            scale: scaleFactor,
-            duration: 0.0,
-            preloadAll: preloadAllAnimationData,
-            onlyFirstFrame: onlyLoadFirstFrame)
-    }
 }
 
 /// Represents the available option items could be used in `KingfisherOptionsInfo`.
@@ -196,238 +186,6 @@ public enum KingfisherOptionsInfoItem {
     case loadDiskFileSynchronously
 }
 
-precedencegroup ItemComparisonPrecedence {
-    associativity: none
-    higherThan: LogicalConjunctionPrecedence
-}
-
-infix operator <== : ItemComparisonPrecedence
-
-// This operator returns true if two `KingfisherOptionsInfoItem` enum is the same,
-// without considering the associated values.
-func <== (lhs: KingfisherOptionsInfoItem, rhs: KingfisherOptionsInfoItem) -> Bool {
-    switch (lhs, rhs) {
-    case (.targetCache, .targetCache): return true
-    case (.originalCache, .originalCache): return true
-    case (.downloader, .downloader): return true
-    case (.transition, .transition): return true
-    case (.downloadPriority, .downloadPriority): return true
-    case (.forceRefresh, .forceRefresh): return true
-    case (.fromMemoryCacheOrRefresh, .fromMemoryCacheOrRefresh): return true
-    case (.forceTransition, .forceTransition): return true
-    case (.cacheMemoryOnly, .cacheMemoryOnly): return true
-    case (.waitForCache, .waitForCache): return true
-    case (.onlyFromCache, .onlyFromCache): return true
-    case (.backgroundDecode, .backgroundDecode): return true
-    case (.callbackDispatchQueue, .callbackDispatchQueue): return true
-    case (.callbackQueue, .callbackQueue): return true
-    case (.scaleFactor, .scaleFactor): return true
-    case (.preloadAllAnimationData, .preloadAllAnimationData): return true
-    case (.requestModifier, .requestModifier): return true
-    case (.processor, .processor): return true
-    case (.cacheSerializer, .cacheSerializer): return true
-    case (.imageModifier, .imageModifier): return true
-    case (.keepCurrentImageWhileLoading, .keepCurrentImageWhileLoading): return true
-    case (.onlyLoadFirstFrame, .onlyLoadFirstFrame): return true
-    case (.cacheOriginalImage, .cacheOriginalImage): return true
-    case (.onFailureImage, .onFailureImage): return true
-    case (.alsoPrefetchToMemory, .alsoPrefetchToMemory): return true
-    case (.loadDiskFileSynchronously, .loadDiskFileSynchronously): return true
-    default: return false
-    }
-}
-
-
-extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-    func lastMatchIgnoringAssociatedValue(_ target: Iterator.Element) -> Iterator.Element? {
-        return reversed().first { $0 <== target }
-    }
-    
-    func removeAllMatchesIgnoringAssociatedValue(_ target: Iterator.Element) -> [Iterator.Element] {
-        return filter { !($0 <== target) }
-    }
-}
-
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
-    /// The target `ImageCache` which is used.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `targetCache` instead.")
-    public var targetCache: ImageCache? {
-        return KingfisherParsedOptionsInfo(Array(self)).targetCache
-    }
-    
-    /// The original `ImageCache` which is used.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `originalCache` instead.")
-    public var originalCache: ImageCache? {
-        return KingfisherParsedOptionsInfo(Array(self)).originalCache
-    }
-    
-    /// The `ImageDownloader` which is specified.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `downloader` instead.")
-    public var downloader: ImageDownloader? {
-        return KingfisherParsedOptionsInfo(Array(self)).downloader
-    }
-
-    /// Member for animation transition when using UIImageView.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `transition` instead.")
-    public var transition: ImageTransition {
-        return KingfisherParsedOptionsInfo(Array(self)).transition
-    }
-    
-    /// A `Float` value set as the priority of image download task. The value for it should be
-    /// between 0.0~1.0.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `downloadPriority` instead.")
-    public var downloadPriority: Float {
-        return KingfisherParsedOptionsInfo(Array(self)).downloadPriority
-    }
-    
-    /// Whether an image will be always downloaded again or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `forceRefresh` instead.")
-    public var forceRefresh: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).forceRefresh
-    }
-
-    /// Whether an image should be got only from memory cache or download.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `fromMemoryCacheOrRefresh` instead.")
-    public var fromMemoryCacheOrRefresh: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).fromMemoryCacheOrRefresh
-    }
-    
-    /// Whether the transition should always happen or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `forceTransition` instead.")
-    public var forceTransition: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).forceTransition
-    }
-    
-    /// Whether cache the image only in memory or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `cacheMemoryOnly` instead.")
-    public var cacheMemoryOnly: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).cacheMemoryOnly
-    }
-    
-    /// Whether the caching operation will be waited or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `waitForCache` instead.")
-    public var waitForCache: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).waitForCache
-    }
-    
-    /// Whether only load the images from cache or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `onlyFromCache` instead.")
-    public var onlyFromCache: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).onlyFromCache
-    }
-    
-    /// Whether the image should be decoded in background or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `backgroundDecode` instead.")
-    public var backgroundDecode: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).backgroundDecode
-    }
-
-    /// Whether the image data should be all loaded at once if it is an animated image.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `preloadAllAnimationData` instead.")
-    public var preloadAllAnimationData: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).preloadAllAnimationData
-    }
-
-    /// The `CallbackQueue` on which completion handler should be invoked.
-    /// If not set in the options, `.mainCurrentOrAsync` will be used.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `callbackQueue` instead.")
-    public var callbackQueue: CallbackQueue {
-        return KingfisherParsedOptionsInfo(Array(self)).callbackQueue
-    }
-    
-    /// The scale factor which should be used for the image.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `scaleFactor` instead.")
-    public var scaleFactor: CGFloat {
-        return KingfisherParsedOptionsInfo(Array(self)).scaleFactor
-    }
-    
-    /// The `ImageDownloadRequestModifier` will be used before sending a download request.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `requestModifier` instead.")
-    public var modifier: ImageDownloadRequestModifier {
-        return KingfisherParsedOptionsInfo(Array(self)).requestModifier
-    }
-    
-    /// `ImageProcessor` for processing when the downloading finishes.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `processor` instead.")
-    public var processor: ImageProcessor {
-        return KingfisherParsedOptionsInfo(Array(self)).processor
-    }
-
-    /// `ImageModifier` for modifying right before the image is displayed.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `imageModifier` instead.")
-    public var imageModifier: ImageModifier {
-        return KingfisherParsedOptionsInfo(Array(self)).imageModifier
-    }
-    
-    /// `CacheSerializer` to convert image to data for storing in cache.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `cacheSerializer` instead.")
-    public var cacheSerializer: CacheSerializer {
-        return KingfisherParsedOptionsInfo(Array(self)).cacheSerializer
-    }
-    
-    /// Keep the existing image while setting another image to an image view. 
-    /// Or the placeholder will be used while downloading.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `keepCurrentImageWhileLoading` instead.")
-    public var keepCurrentImageWhileLoading: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).keepCurrentImageWhileLoading
-    }
-    
-    /// Whether the options contains `.onlyLoadFirstFrame`.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `onlyLoadFirstFrame` instead.")
-    public var onlyLoadFirstFrame: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).onlyLoadFirstFrame
-    }
-    
-    /// Whether the options contains `.cacheOriginalImage`.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `cacheOriginalImage` instead.")
-    public var cacheOriginalImage: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).cacheOriginalImage
-    }
-    
-    /// The image which should be used when download image request fails.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `onFailureImage` instead.")
-    public var onFailureImage: Optional<Image?> {
-        return KingfisherParsedOptionsInfo(Array(self)).onFailureImage
-    }
-    
-    /// Whether the `ImagePrefetcher` should load images to memory in an aggressive way or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `alsoPrefetchToMemory` instead.")
-    public var alsoPrefetchToMemory: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).alsoPrefetchToMemory
-    }
-    
-    /// Whether the disk storage file loading should happen in a synchronous behavior or not.
-    @available(*, deprecated,
-    message: "Create a `KingfisherParsedOptionsInfo` from `self` and use `loadDiskFileSynchronously` instead.")
-    public var loadDiskFileSynchronously: Bool {
-        return KingfisherParsedOptionsInfo(Array(self)).loadDiskFileSynchronously
-    }
-}
-
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
 // So we can prevent the iterating over the options array again and again.
 public struct KingfisherParsedOptionsInfo {
@@ -458,7 +216,8 @@ public struct KingfisherParsedOptionsInfo {
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
 
-    public init(_ info: KingfisherOptionsInfo) {
+    public init(_ info: KingfisherOptionsInfo?) {
+        guard let info = info else { return }
         for option in info {
             switch option {
             case .targetCache(let value): targetCache = value
@@ -493,5 +252,15 @@ public struct KingfisherParsedOptionsInfo {
         if originalCache == nil {
             originalCache = targetCache
         }
+    }
+}
+
+extension KingfisherParsedOptionsInfo {
+    var imageCreatingOptions: ImageCreatingOptions {
+        return ImageCreatingOptions(
+            scale: scaleFactor,
+            duration: 0.0,
+            preloadAll: preloadAllAnimationData,
+            onlyFirstFrame: onlyLoadFirstFrame)
     }
 }

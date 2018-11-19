@@ -31,7 +31,7 @@ import XCTest
 class KingfisherOptionsInfoTests: XCTestCase {
 
     func testEmptyOptionsShouldParseCorrectly() {
-        let options = KingfisherOptionsInfo.empty
+        let options = KingfisherParsedOptionsInfo(KingfisherOptionsInfo.empty)
         XCTAssertTrue(options.targetCache === nil)
         XCTAssertTrue(options.downloader === nil)
 
@@ -64,7 +64,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let serializer = FormatIndicatedCacheSerializer.png
         let modifier = DefaultImageModifier.default
 
-        var options: KingfisherOptionsInfo = [
+        var options = KingfisherParsedOptionsInfo([
             .targetCache(cache),
             .downloader(downloader),
             .originalCache(cache),
@@ -87,7 +87,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
             .cacheOriginalImage
-        ]
+        ])
         
         XCTAssertTrue(options.targetCache === cache)
         XCTAssertTrue(options.originalCache === cache)
@@ -95,7 +95,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
 
         #if os(iOS) || os(tvOS)
         let transition = ImageTransition.fade(0.5)
-        options.append(.transition(transition))
+        options.transition = transition
         switch options.transition {
         case .fade(let duration): XCTAssertEqual(duration, 0.5)
         default: XCTFail()
@@ -114,7 +114,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.callbackQueue.queue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
         XCTAssertTrue(options.preloadAllAnimationData)
-        XCTAssertTrue(options.modifier is TestModifier)
+        XCTAssertTrue(options.requestModifier is TestModifier)
         XCTAssertEqual(options.processor.identifier, processor.identifier)
         XCTAssertTrue(options.cacheSerializer is FormatIndicatedCacheSerializer)
         XCTAssertTrue(options.imageModifier is DefaultImageModifier)
@@ -124,14 +124,11 @@ class KingfisherOptionsInfoTests: XCTestCase {
     }
     
     func testOptionCouldBeOverwritten() {
-        var options: KingfisherOptionsInfo = [.downloadPriority(0.5), .onlyFromCache]
+        var options = KingfisherParsedOptionsInfo([.downloadPriority(0.5), .onlyFromCache])
         XCTAssertEqual(options.downloadPriority, 0.5)
-        
-        options.append(.downloadPriority(0.8))
+
+        options = KingfisherParsedOptionsInfo([.downloadPriority(0.5), .onlyFromCache, .downloadPriority(0.8)])
         XCTAssertEqual(options.downloadPriority, 0.8)
-        
-        options.append(.downloadPriority(1.0))
-        XCTAssertEqual(options.downloadPriority, 1.0)
     }
 }
 
