@@ -42,6 +42,7 @@ class TransitionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Transition"
         setupOperationNavigationBar()
         imageView.kf.indicatorType = .activity
     }
