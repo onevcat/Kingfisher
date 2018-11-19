@@ -66,7 +66,6 @@ class ProcessorCollectionViewController: UICollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImageCollectionViewCell
-        cell.backgroundColor = .red
         let url = ImageLoader.sampleImageURL(at: indexPath.row)
         var options: KingfisherOptionsInfo = [.processor(currentProcessor)]
         if currentProcessor is RoundCornerImageProcessor {
