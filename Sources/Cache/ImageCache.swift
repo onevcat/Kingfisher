@@ -358,27 +358,15 @@ open class ImageCache {
         }
     }
 
-    /// Gets an image for a given key from the cache, either from memory storage or disk storage.
-    ///
-    /// - Parameters:
-    ///   - key: The key used for caching the image.
-    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
-    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
-    ///   - completionHandler: A closure which is invoked when the image getting operation finishes. If the
-    ///                        image retrieving operation finishes without problem, an `ImageCacheResult` value
-    ///                        will be sent to this closuer as result. Otherwise, a `KingfisherError` result
-    ///                        with detail failing reason will be sent.
-    open func retrieveImage(forKey key: String,
-                               options: KingfisherOptionsInfo? = nil,
-                        callbackQueue: CallbackQueue = .untouch,
-                     completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
+    func retrieveImage(forKey key: String,
+                       options: KingfisherParsedOptionsInfo,
+                       callbackQueue: CallbackQueue = .untouch,
+                       completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
     {
         // No completion handler. No need to start working and early return.
         guard let completionHandler = completionHandler else { return }
-        
-        let options = options ?? .empty
         let imageModifier = options.imageModifier
-        
+
         // Try to check the image from memory cache first.
         if let image = retrieveImageInMemoryCache(forKey: key, options: options) {
             let image = imageModifier.modify(image)
@@ -397,7 +385,7 @@ open class ImageCache {
                         completionHandler(.success(.none))
                         return
                     }
-                
+
                     // Cache the disk image to memory.
                     // We are passing `false` to `toDisk`, the memory cache does not change
                     // callback queue, we can call `completionHandler` without another dispatch.
@@ -417,7 +405,41 @@ open class ImageCache {
             }
         }
     }
-    
+
+    /// Gets an image for a given key from the cache, either from memory storage or disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
+    ///   - completionHandler: A closure which is invoked when the image getting operation finishes. If the
+    ///                        image retrieving operation finishes without problem, an `ImageCacheResult` value
+    ///                        will be sent to this closuer as result. Otherwise, a `KingfisherError` result
+    ///                        with detail failing reason will be sent.
+    open func retrieveImage(forKey key: String,
+                               options: KingfisherOptionsInfo? = nil,
+                        callbackQueue: CallbackQueue = .untouch,
+                     completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
+    {
+        retrieveImage(
+            forKey: key,
+            options: KingfisherParsedOptionsInfo(options),
+            callbackQueue: callbackQueue,
+            completionHandler: completionHandler)
+    }
+
+    func retrieveImageInMemoryCache(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo) -> Image?
+    {
+        let computedKey = key.computedKey(with: options.processor.identifier)
+        do {
+            return try memoryStorage.value(forKey: computedKey)
+        } catch {
+            return nil
+        }
+    }
+
     /// Gets an image for a given key from the memory storage.
     ///
     /// - Parameters:
@@ -429,29 +451,15 @@ open class ImageCache {
         forKey key: String,
         options: KingfisherOptionsInfo? = nil) -> Image?
     {
-        let options = options ?? .empty
-        let computedKey = key.computedKey(with: options.processor.identifier)
-        do {
-            return try memoryStorage.value(forKey: computedKey)
-        } catch {
-            return nil
-        }
+        return retrieveImageInMemoryCache(forKey: key, options: KingfisherParsedOptionsInfo(options))
     }
-    
-    /// Gets an image for a given key from the disk storage.
-    ///
-    /// - Parameters:
-    ///   - key: The key used for caching the image.
-    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
-    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
-    ///   - completionHandler: A closure which is invoked when the operation finishes.
-    open func retrieveImageInDiskCache(
+
+    func retrieveImageInDiskCache(
         forKey key: String,
-        options: KingfisherOptionsInfo? = nil,
+        options: KingfisherParsedOptionsInfo,
         callbackQueue: CallbackQueue = .untouch,
         completionHandler: @escaping (Result<Image?, KingfisherError>) -> Void)
     {
-        let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
         loadingQueue.execute {
@@ -469,6 +477,26 @@ open class ImageCache {
                 }
             }
         }
+    }
+    
+    /// Gets an image for a given key from the disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
+    ///   - completionHandler: A closure which is invoked when the operation finishes.
+    open func retrieveImageInDiskCache(
+        forKey key: String,
+        options: KingfisherOptionsInfo? = nil,
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: @escaping (Result<Image?, KingfisherError>) -> Void)
+    {
+        retrieveImageInDiskCache(
+            forKey: key,
+            options: KingfisherParsedOptionsInfo(options),
+            callbackQueue: callbackQueue,
+            completionHandler: completionHandler)
     }
 
     // MARK: - Clear & Clean

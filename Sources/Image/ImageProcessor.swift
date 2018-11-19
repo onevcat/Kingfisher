@@ -74,7 +74,34 @@ public protocol ImageProcessor {
     ///         to keep the processing pipeline continuing.
     /// - Note: Most processor only supports CG-based images. watchOS is not supported for processors containing
     ///         a filter, the input image will be returned directly on watchOS.
+    /// - Note:
+    /// This method is deprecated. Please implement the version with
+    /// `KingfisherParsedOptionsInfo` as parameter instead.
+    @available(*, deprecated,
+    message: "Deprecated. Implement the method with same name but with `KingfisherParsedOptionsInfo` instead.")
     func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image?
+
+    /// Processes the input `ImageProcessItem` with this processor.
+    ///
+    /// - Parameters:
+    ///   - item: Input item which will be processed by `self`.
+    ///   - options: The parsed options when processing the item.
+    /// - Returns: The processed image.
+    ///
+    /// - Note: The return value should be `nil` if processing failed while converting an input item to image.
+    ///         If `nil` received by the processing caller, an error will be reported and the process flow stops.
+    ///         If the processing flow is not critical for your flow, then when the input item is already an image
+    ///         (`.image` case) and there is any errors in the processing, you could return the input image itself
+    ///         to keep the processing pipeline continuing.
+    /// - Note: Most processor only supports CG-based images. watchOS is not supported for processors containing
+    ///         a filter, the input image will be returned directly on watchOS.
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image?
+}
+
+extension ImageProcessor {
+    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+        return process(item: item, options: KingfisherParsedOptionsInfo(options))
+    }
 }
 
 public extension ImageProcessor {
@@ -106,11 +133,11 @@ func !=(left: ImageProcessor, right: ImageProcessor) -> Bool {
     return !(left == right)
 }
 
-typealias ProcessorImp = ((ImageProcessItem, KingfisherOptionsInfo) -> Image?)
+typealias ProcessorImp = ((ImageProcessItem, KingfisherParsedOptionsInfo) -> Image?)
 struct GeneralProcessor: ImageProcessor {
     let identifier: String
     let p: ProcessorImp
-    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         return p(item, options)
     }
 }
@@ -140,7 +167,7 @@ public struct DefaultImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -229,7 +256,7 @@ public struct BlendImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -288,7 +315,7 @@ public struct CompositingImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -376,7 +403,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             let size = targetSize ?? image.kf.size
@@ -459,7 +486,7 @@ public struct ResizingImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -497,7 +524,7 @@ public struct BlurImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             let radius = blurRadius * options.scaleFactor
@@ -541,7 +568,7 @@ public struct OverlayImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -578,7 +605,7 @@ public struct TintImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -632,7 +659,7 @@ public struct ColorControlsProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
@@ -662,7 +689,7 @@ public struct BlackWhiteProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         return ColorControlsProcessor(brightness: 0.0, contrast: 1.0, saturation: 0.0, inputEV: 0.7)
             .process(item: item, options: options)
     }
@@ -718,7 +745,7 @@ public struct CroppingImageProcessor: ImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
         switch item {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)

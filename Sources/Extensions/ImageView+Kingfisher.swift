@@ -48,7 +48,7 @@ extension KingfisherClass where Base: ImageView {
             return nil
         }
 
-        var options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
         if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
             // Always set placeholder while there is no image/placehoer yet.
@@ -61,7 +61,7 @@ extension KingfisherClass where Base: ImageView {
         taskIdentifier = source.identifier
 
         if base.shouldPreloadAllAnimation() {
-            options.append(.preloadAllAnimationData)
+            options.preloadAllAnimationData = true
         }
 
         let task = KingfisherManager.shared.retrieveImage(
@@ -156,11 +156,17 @@ extension KingfisherClass where Base: ImageView {
         imageTask?.cancel()
     }
 
-    private func needsTransition(options: KingfisherOptionsInfo, cacheType: CacheType) -> Bool {
-        guard let _ = options.lastMatchIgnoringAssociatedValue(.transition(.none)) else { return false }
-        if options.forceTransition { return true }
-        if cacheType == .none { return true }
-        return false
+    private func needsTransition(options: KingfisherParsedOptionsInfo, cacheType: CacheType) -> Bool {
+        switch options.transition {
+        case .none:
+            return false
+        #if !os(macOS)
+        default:
+            if options.forceTransition { return true }
+            if cacheType == .none { return true }
+            return false
+        #endif
+        }
     }
 
 

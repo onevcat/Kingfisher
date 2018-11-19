@@ -63,7 +63,7 @@ public class ImagePrefetcher {
     private var prefetchQueue: DispatchQueue
     
     private let prefetchResources: [Resource]
-    private let optionsInfo: KingfisherOptionsInfo
+    private let optionsInfo: KingfisherParsedOptionsInfo
 
     private var progressBlock: PrefetcherProgressBlock?
     private var completionHandler: PrefetcherCompletionHandler?
@@ -134,6 +134,7 @@ public class ImagePrefetcher {
             progressBlock: PrefetcherProgressBlock? = nil,
         completionHandler: PrefetcherCompletionHandler? = nil)
     {
+        var options = KingfisherParsedOptionsInfo(options)
         prefetchResources = resources
         pendingResources = ArraySlice(resources)
         
@@ -142,14 +143,10 @@ public class ImagePrefetcher {
         prefetchQueue = DispatchQueue(label: prefetchQueueName)
         
         // We want all callbacks from our prefetch queue, so we should ignore the callback queue in options.
-        var optionsInfoWithoutQueue = (options ?? .empty)
-            .removeAllMatchesIgnoringAssociatedValue(.callbackQueue(.untouch))
-        
         // Add our own callback dispatch queue to make sure all internal callbacks are
         // coming back in our expected queue.
-        optionsInfoWithoutQueue.append(.callbackQueue(.dispatch(prefetchQueue)))
-        
-        optionsInfo = optionsInfoWithoutQueue
+        options.callbackQueue = .untouch
+        optionsInfo = options
         
         let cache = optionsInfo.targetCache ?? .default
         let downloader = optionsInfo.downloader ?? .default
