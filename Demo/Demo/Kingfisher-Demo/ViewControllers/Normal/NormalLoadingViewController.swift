@@ -31,10 +31,9 @@ class NormalLoadingViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Loading"
         setupOperationNavigationBar()
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            collectionView?.prefetchDataSource = self
-        }
+        collectionView?.prefetchDataSource = self
     }
 }
 

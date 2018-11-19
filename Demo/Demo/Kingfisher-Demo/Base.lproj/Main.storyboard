@@ -111,7 +111,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="peg-r0-mlo" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ese-eO-cur">
-                        <rect key="frame" x="0.0" y="20" width="320" height="50"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -206,6 +206,30 @@
                                             <segue destination="cq4-4P-UWj" kind="show" id="tzK-i9-uC0"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Zeb-qW-dNH">
+                                        <rect key="frame" x="0.0" y="132" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Zeb-qW-dNH" id="nTg-bT-rHb">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Processor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y1Q-HH-CK6">
+                                                    <rect key="frame" x="20" y="11.5" width="77" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Y1Q-HH-CK6" firstAttribute="leading" secondItem="nTg-bT-rHb" secondAttribute="leading" constant="20" symbolic="YES" id="WjH-aQ-7ME"/>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Y1Q-HH-CK6" secondAttribute="trailing" constant="20" symbolic="YES" id="tCC-xt-RcW"/>
+                                                <constraint firstItem="Y1Q-HH-CK6" firstAttribute="centerY" secondItem="nTg-bT-rHb" secondAttribute="centerY" id="uiU-Cx-teZ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="Wo1-7c-HaW" kind="show" id="faG-K3-cUi"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -235,7 +259,7 @@
                             <inset key="sectionInset" minX="0.0" minY="10" maxX="0.0" maxY="10"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionViewCell" id="KrJ-Zp-fzY" customClass="ImageCollectionViewCell" customModule="Kingfisher_Demo" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="InfinityCell" id="KrJ-Zp-fzY" customClass="ImageCollectionViewCell" customModule="Kingfisher_Demo" customModuleProvider="target">
                                 <rect key="frame" x="35" y="10" width="250" height="250"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -269,6 +293,56 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UWY-iA-aq1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2061" y="1688"/>
+        </scene>
+        <!--Processor Collection View Controller-->
+        <scene sceneID="h0T-TL-iQv">
+            <objects>
+                <collectionViewController id="Wo1-7c-HaW" customClass="ProcessorCollectionViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="04w-FS-fin">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ZDR-WG-GcY">
+                            <size key="itemSize" width="250" height="250"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="10" maxX="0.0" maxY="10"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ProcessorCell" id="XQp-yE-aYb" customClass="ImageCollectionViewCell" customModule="Kingfisher_Demo" customModuleProvider="target">
+                                <rect key="frame" x="35" y="10" width="250" height="250"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="250" height="250"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="h53-3h-nDR">
+                                            <rect key="frame" x="0.0" y="0.0" width="250" height="250"/>
+                                        </imageView>
+                                    </subviews>
+                                </view>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="h53-3h-nDR" firstAttribute="leading" secondItem="XQp-yE-aYb" secondAttribute="leading" id="4pa-OL-LEW"/>
+                                    <constraint firstAttribute="trailing" secondItem="h53-3h-nDR" secondAttribute="trailing" id="7aL-Xj-TUb"/>
+                                    <constraint firstAttribute="bottom" secondItem="h53-3h-nDR" secondAttribute="bottom" id="qiI-2j-JRi"/>
+                                    <constraint firstItem="h53-3h-nDR" firstAttribute="top" secondItem="XQp-yE-aYb" secondAttribute="top" id="yB5-ZY-GM8"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="cellImageView" destination="h53-3h-nDR" id="2Pc-nF-eqL"/>
+                                </connections>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="Wo1-7c-HaW" id="k1T-i4-8LK"/>
+                            <outlet property="delegate" destination="Wo1-7c-HaW" id="8Li-em-4Nx"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="8iS-8I-zoQ"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DAi-LU-A26" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1344" y="1688"/>
         </scene>
     </scenes>
 </document>

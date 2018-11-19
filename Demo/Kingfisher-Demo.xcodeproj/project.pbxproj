@@ -22,6 +22,8 @@
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
 		4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF33A1D5B02F8003387C2 /* Cell.xib */; };
 		4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF33C1D5B02F8003387C2 /* ViewController.swift */; };
+		D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */; };
+		D10AC99921A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */; };
 		D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */; };
 		D12E0C961C47F91800AC98AD /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C8D1C47F91800AC98AD /* LaunchScreen.xib */; };
 		D12E0C971C47F91800AC98AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C8F1C47F91800AC98AD /* Main.storyboard */; };
@@ -144,6 +146,7 @@
 		4BCCF33A1D5B02F8003387C2 /* Cell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
 		4BCCF33B1D5B02F8003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BCCF33C1D5B02F8003387C2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessorCollectionViewController.swift; sourceTree = "<group>"; };
 		D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D12E0C8E1C47F91800AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		D12E0C901C47F91800AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -268,6 +271,14 @@
 			path = "Demo/Kingfisher-macOS-Demo";
 			sourceTree = "<group>";
 		};
+		D10AC99621A2FF35005F057C /* Processor */ = {
+			isa = PBXGroup;
+			children = (
+				D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */,
+			);
+			path = Processor;
+			sourceTree = "<group>";
+		};
 		D10EC22B1C3D62DE00A4211C /* Demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -319,6 +330,7 @@
 		D1A1CCA921A1936300263AD8 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				D10AC99621A2FF35005F057C /* Processor */,
 				4B1C7A3B21A2568100CE9D31 /* Infinity */,
 				D1CE1BCE21A19C3F00419000 /* Transitions */,
 				D1A1CCAA21A1937100263AD8 /* Normal */,
@@ -599,6 +611,7 @@
 				D1CE1BD421A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12E0CB51C47F9C100AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D1CE1BD121A1AFA300419000 /* TransitionViewController.swift in Sources */,
+				D10AC99921A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */,
 				D12E0CB61C47F9C100AC98AD /* NormalLoadingViewController.swift in Sources */,
 				D1A1CCA821A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
 				D12E0CA21C47F92200AC98AD /* AppDelegate.swift in Sources */,
@@ -623,6 +636,7 @@
 				D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12E0C9B1C47F91800AC98AD /* NormalLoadingViewController.swift in Sources */,
 				D1CE1BD021A1AFA300419000 /* TransitionViewController.swift in Sources */,
+				D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */,
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,

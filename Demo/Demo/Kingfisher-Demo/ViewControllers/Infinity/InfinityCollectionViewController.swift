@@ -27,12 +27,13 @@
 import UIKit
 import Kingfisher
 
-private let reuseIdentifier = "collectionViewCell"
+private let reuseIdentifier = "InfinityCell"
 
 class InfinityCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Infinity"
         setupOperationNavigationBar()
     }
 
