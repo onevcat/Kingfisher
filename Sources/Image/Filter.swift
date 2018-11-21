@@ -108,7 +108,7 @@ public struct Filter {
     }
 }
 
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
 
     /// Applies a `Filter` containing `CIImage` transformer to `self`.
     ///

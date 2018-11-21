@@ -395,7 +395,7 @@ class Animator {
         }
         
         let defaultGIFFrameDuration = 0.100
-        let frameDuration = imageSource.kf.gifProperties(at: index).map {
+        let frameDuration = imageSource.gifProperties(at: index).map {
             gifInfo -> Double in
             
             let unclampedDelayTime = gifInfo[kCGImagePropertyGIFUnclampedDelayTime as String] as Double?
@@ -468,10 +468,9 @@ class Animator {
     }
 }
 
-extension CGImageSource: KingfisherClassCompatible { }
-extension KingfisherClass where Base: CGImageSource {
+extension CGImageSource {
     func gifProperties(at index: Int) -> [String: Double]? {
-        let properties = CGImageSourceCopyPropertiesAtIndex(base, index, nil) as Dictionary?
+        let properties = CGImageSourceCopyPropertiesAtIndex(self, index, nil) as Dictionary?
         return properties?[kCGImagePropertyGIFDictionary] as? [String: Double]
     }
 }

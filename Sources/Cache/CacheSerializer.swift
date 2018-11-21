@@ -118,6 +118,6 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// - Returns: An image deserialized or `nil` when no valid image
     ///            could be deserialized.
     public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> Image? {
-        return KingfisherClass.image(data: data, options: options.imageCreatingOptions)
+        return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
     }
 }

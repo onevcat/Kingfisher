@@ -52,8 +52,8 @@ public enum ImageFormat {
 
 
 // MARK: - Misc Helpers
-extension Data: KingfisherStructCompatible {}
-extension KingfisherStruct where Base == Data {
+extension Data: KingfisherCompatible {}
+extension KingfisherWrapper where Base == Data {
     
     /// Gets the image format corresponding to the data.
     public var imageFormat: ImageFormat {

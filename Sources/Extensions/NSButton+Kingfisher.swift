@@ -27,7 +27,7 @@
 
 import AppKit
 
-extension KingfisherClass where Base: NSButton {
+extension KingfisherWrapper where Base: NSButton {
 
     @discardableResult
     public func setImage(
@@ -37,9 +37,10 @@ extension KingfisherClass where Base: NSButton {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        var mutatingSelf = self
         guard let source = source else {
             base.image = placeholder
-            taskIdentifier = nil
+            mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -49,7 +50,7 @@ extension KingfisherClass where Base: NSButton {
             base.image = placeholder
         }
 
-        taskIdentifier = source.identifier
+        mutatingSelf.taskIdentifier = source.identifier
 
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -57,7 +58,7 @@ extension KingfisherClass where Base: NSButton {
             progressBlock: { receivedSize, totalSize in
                 guard source.identifier == self.taskIdentifier else { return }
                 progressBlock?(receivedSize, totalSize)
-        },
+            },
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
                     guard source.identifier == self.taskIdentifier else {
@@ -67,7 +68,7 @@ extension KingfisherClass where Base: NSButton {
                         return
                     }
 
-                    self.imageTask = nil
+                    mutatingSelf.imageTask = nil
 
                     switch result {
                     case .success(let value):
@@ -80,9 +81,10 @@ extension KingfisherClass where Base: NSButton {
                         completionHandler?(result)
                     }
                 }
-        })
+            }
+        )
 
-        imageTask = task
+        mutatingSelf.imageTask = task
         return task
     }
 
@@ -132,9 +134,10 @@ extension KingfisherClass where Base: NSButton {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        var mutatingSelf = self
         guard let source = source else {
             base.alternateImage = placeholder
-            alternateTaskIdentifier = nil
+            mutatingSelf.alternateTaskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -144,7 +147,7 @@ extension KingfisherClass where Base: NSButton {
             base.alternateImage = placeholder
         }
 
-        alternateTaskIdentifier = source.identifier
+        mutatingSelf.alternateTaskIdentifier = source.identifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
@@ -161,7 +164,7 @@ extension KingfisherClass where Base: NSButton {
                         return
                     }
 
-                    self.alternateImageTask = nil
+                    mutatingSelf.alternateImageTask = nil
 
                     switch result {
                     case .success(let value):
@@ -174,9 +177,10 @@ extension KingfisherClass where Base: NSButton {
                         completionHandler?(result)
                     }
                 }
-        })
+            }
+        )
 
-        alternateImageTask = task
+        mutatingSelf.alternateImageTask = task
         return task
     }
 
@@ -227,7 +231,7 @@ private var imageTaskKey: Void?
 private var alternateTaskIdentifierKey: Void?
 private var alternateImageTaskKey: Void?
 
-extension KingfisherClass where Base: NSButton {
+extension KingfisherWrapper where Base: NSButton {
 
     public private(set) var taskIdentifier: String? {
         get { return getAssociatedObject(base, &taskIdentifierKey) }
@@ -250,7 +254,7 @@ extension KingfisherClass where Base: NSButton {
     }
 }
 
-extension KingfisherClass where Base: NSButton {
+extension KingfisherWrapper where Base: NSButton {
 
     /// Gets the image URL binded to this button.
     @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")

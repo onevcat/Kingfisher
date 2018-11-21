@@ -31,7 +31,7 @@ import AppKit
 import UIKit
 #endif
 
-extension KingfisherClass where Base: ImageView {
+extension KingfisherWrapper where Base: ImageView {
 
     @discardableResult
     public func setImage(
@@ -41,9 +41,10 @@ extension KingfisherClass where Base: ImageView {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        var mutatingSelf = self
         guard let source = source else {
-            self.placeholder = placeholder
-            taskIdentifier = nil
+            mutatingSelf.placeholder = placeholder
+            mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -52,13 +53,13 @@ extension KingfisherClass where Base: ImageView {
         let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
         if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
             // Always set placeholder while there is no image/placehoer yet.
-            self.placeholder = placeholder
+            mutatingSelf.placeholder = placeholder
         }
 
         let maybeIndicator = indicator
         maybeIndicator?.startAnimatingView()
 
-        taskIdentifier = source.identifier
+        mutatingSelf.taskIdentifier = source.identifier
 
         if base.shouldPreloadAllAnimation() {
             options.preloadAllAnimationData = true
@@ -83,12 +84,12 @@ extension KingfisherClass where Base: ImageView {
                         return
                     }
 
-                    self.imageTask = nil
+                    mutatingSelf.imageTask = nil
 
                     switch result {
                     case .success(let value):
                         guard self.needsTransition(options: options, cacheType: value.cacheType) else {
-                            self.placeholder = nil
+                            mutatingSelf.placeholder = nil
                             self.base.image = value.image
                             completionHandler?(result)
                             return
@@ -106,7 +107,7 @@ extension KingfisherClass where Base: ImageView {
                 }
         })
 
-        imageTask = task
+        mutatingSelf.imageTask = task
         return task
     }
 
@@ -179,7 +180,8 @@ extension KingfisherClass where Base: ImageView {
             options: [],
             animations: { self.indicator?.stopAnimatingView() },
             completion: { _ in
-                self.placeholder = nil
+                var mutatingSelf = self
+                mutatingSelf.placeholder = nil
                 UIView.transition(
                     with: self.base,
                     duration: transition.duration,
@@ -205,7 +207,7 @@ private var indicatorTypeKey: Void?
 private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
-extension KingfisherClass where Base: ImageView {
+extension KingfisherWrapper where Base: ImageView {
 
     public private(set) var taskIdentifier: String? {
         get { return getAssociatedObject(base, &taskIdentifierKey) }
@@ -297,7 +299,7 @@ extension KingfisherClass where Base: ImageView {
     func shouldPreloadAllAnimation() -> Bool { return true }
 }
 
-extension KingfisherClass where Base: ImageView {
+extension KingfisherWrapper where Base: ImageView {
     /// Gets the image URL binded to this image view.
     @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
     public private(set) var webURL: URL? {

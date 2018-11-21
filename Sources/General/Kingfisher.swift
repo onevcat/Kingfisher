@@ -47,46 +47,29 @@ import WatchKit
 #endif
 #endif
 
-public final class KingfisherClass<Base> {
+public struct KingfisherWrapper<Base> {
     public let base: Base
     public init(_ base: Base) {
         self.base = base
     }
 }
 
-public protocol KingfisherClassCompatible {
+public protocol KingfisherCompatible {
     associatedtype CompatibleType
     var kf: CompatibleType { get }
 }
 
-public extension KingfisherClassCompatible {
-    public var kf: KingfisherClass<Self> {
-        return KingfisherClass(self)
+public extension KingfisherCompatible {
+    public var kf: KingfisherWrapper<Self> {
+        get { return KingfisherWrapper(self) }
+        set { }
     }
 }
 
-public struct KingfisherStruct<Base> {
-    public let base: Base
-    public init(_ base: Base) {
-        self.base = base
-    }
-}
-
-public protocol KingfisherStructCompatible {
-    associatedtype CompatibleType
-    var kf: CompatibleType { get }
-}
-
-public extension KingfisherStructCompatible {
-    public var kf: KingfisherStruct<Self> {
-        return KingfisherStruct(self)
-    }
-}
-
-extension Image: KingfisherClassCompatible { }
+extension Image: KingfisherCompatible { }
 #if !os(watchOS)
-extension ImageView: KingfisherClassCompatible { }
-extension Button: KingfisherClassCompatible { }
+extension ImageView: KingfisherCompatible { }
+extension Button: KingfisherCompatible { }
 #else
-extension WKInterfaceImage: KingfisherClassCompatible { }
+extension WKInterfaceImage: KingfisherCompatible { }
 #endif

@@ -26,7 +26,7 @@
 
 import WatchKit
 
-extension KingfisherClass where Base: WKInterfaceImage {
+extension KingfisherWrapper where Base: WKInterfaceImage {
     
     @discardableResult
     public func setImage(
@@ -36,9 +36,10 @@ extension KingfisherClass where Base: WKInterfaceImage {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        var mutatingSelf = self
         guard let source = source else {
             base.setImage(placeholder)
-            taskIdentifier = nil
+            mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -48,7 +49,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
             base.setImage(placeholder)
         }
         
-        taskIdentifier = source.identifier
+        mutatingSelf.taskIdentifier = source.identifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
@@ -65,7 +66,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
                         return
                     }
                     
-                    self.imageTask = nil
+                    mutatingSelf.imageTask = nil
                     
                     switch result {
                     case .success(let value):
@@ -80,7 +81,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
                 }
         })
         
-        imageTask = task
+        mutatingSelf.imageTask = task
         return task
     }
     
@@ -130,7 +131,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
 private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
-extension KingfisherClass where Base: WKInterfaceImage {
+extension KingfisherWrapper where Base: WKInterfaceImage {
     
     public private(set) var taskIdentifier: String? {
         get { return getAssociatedObject(base, &taskIdentifierKey) }
@@ -143,7 +144,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
     }
 }
 
-extension KingfisherClass where Base: WKInterfaceImage {
+extension KingfisherWrapper where Base: WKInterfaceImage {
     /// Gets the image URL binded to this image view.
     @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
     public private(set) var webURL: URL? {
