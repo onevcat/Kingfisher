@@ -34,7 +34,7 @@ import UIKit
 #endif
 
 // MARK: - Image Transforming
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     // MARK: - Blend Mode
     /// Create image from `base` image and apply blend mode.
     ///
@@ -226,7 +226,7 @@ extension KingfisherClass where Base: Image {
             return base
         }
         
-        return KingfisherClass.image(cgImage: image, scale: scale, refImage: base)
+        return KingfisherWrapper.image(cgImage: image, scale: scale, refImage: base)
     }
     
     // MARK: - Blur
@@ -403,12 +403,12 @@ extension KingfisherClass where Base: Image {
             assertionFailure("[Kingfisher] Scaling only works for CG-based image.")
             return base
         }
-        return KingfisherClass.image(cgImage: cgImage, scale: scale, refImage: base)
+        return KingfisherWrapper.image(cgImage: cgImage, scale: scale, refImage: base)
     }
 }
 
 // MARK: - Decode
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     
     /// Returns the decoded image of the `base` image. It will draw the image in a plain context and return the data
     /// from it. This could improve the drawing performance when an image is just created from data but not yet
@@ -447,7 +447,7 @@ extension KingfisherClass where Base: Image {
     }
 }
 
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     
     func beginContext(size: CGSize, scale: CGFloat, inverting: Bool = false) -> CGContext? {
         #if os(macOS)
@@ -505,7 +505,7 @@ extension KingfisherClass where Base: Image {
         guard let cgImage = context.makeImage() else {
             return base
         }
-        return KingfisherClass.image(cgImage: cgImage, scale: targetScale, refImage: base)
+        return KingfisherWrapper.image(cgImage: cgImage, scale: targetScale, refImage: base)
     }
     
     #if os(macOS)

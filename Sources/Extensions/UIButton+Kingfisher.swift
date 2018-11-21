@@ -26,7 +26,7 @@
 
 import UIKit
 
-extension KingfisherClass where Base: UIButton {
+extension KingfisherWrapper where Base: UIButton {
     
     @discardableResult
     public func setImage(
@@ -49,6 +49,7 @@ extension KingfisherClass where Base: UIButton {
             base.setImage(placeholder, for: state)
         }
         
+        var mutatingSelf = self
         setTaskIdentifier(source.identifier, for: state)
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -66,7 +67,7 @@ extension KingfisherClass where Base: UIButton {
                         return
                     }
                     
-                    self.imageTask = nil
+                    mutatingSelf.imageTask = nil
                     
                     switch result {
                     case .success(let value):
@@ -81,7 +82,7 @@ extension KingfisherClass where Base: UIButton {
                 }
         })
         
-        imageTask = task
+        mutatingSelf.imageTask = task
         return task
     }
     
@@ -146,7 +147,8 @@ extension KingfisherClass where Base: UIButton {
         if !options.keepCurrentImageWhileLoading {
             base.setBackgroundImage(placeholder, for: state)
         }
-
+        
+        var mutatingSelf = self
         setBackgroundTaskIdentifier(source.identifier, for: state)
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -167,7 +169,7 @@ extension KingfisherClass where Base: UIButton {
                         completionHandler?(.failure(error))
                         return
                     }
-                    self.backgroundImageTask = nil
+                    mutatingSelf.backgroundImageTask = nil
 
                     switch result {
                     case .success(let value):
@@ -182,7 +184,7 @@ extension KingfisherClass where Base: UIButton {
                 }
         })
 
-        backgroundImageTask = task
+        mutatingSelf.backgroundImageTask = task
         return task
     }
 
@@ -232,7 +234,7 @@ extension KingfisherClass where Base: UIButton {
 private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
-extension KingfisherClass where Base: UIButton {
+extension KingfisherWrapper where Base: UIButton {
 
     public func taskIdentifier(for state: UIControl.State) -> String? {
         return taskIdentifierInfo[NSNumber(value:state.rawValue)] as? String
@@ -246,7 +248,8 @@ extension KingfisherClass where Base: UIButton {
         get {
             guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &taskIdentifierKey) else {
                 let dic = NSMutableDictionary()
-                self.taskIdentifierInfo = dic
+                var mutatingSelf = self
+                mutatingSelf.taskIdentifierInfo = dic
                 return dic
             }
             return dictionary
@@ -266,7 +269,7 @@ extension KingfisherClass where Base: UIButton {
 private var backgroundTaskIdentifierKey: Void?
 private var backgroundImageTaskKey: Void?
 
-extension KingfisherClass where Base: UIButton {
+extension KingfisherWrapper where Base: UIButton {
 
     public func backgroundTaskIdentifier(for state: UIControl.State) -> String? {
         return backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] as? String
@@ -280,7 +283,8 @@ extension KingfisherClass where Base: UIButton {
         get {
             guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &backgroundTaskIdentifierKey) else {
                 let dic = NSMutableDictionary()
-                self.backgroundTaskIdentifierInfo = dic
+                var mutatingSelf = self
+                mutatingSelf.backgroundTaskIdentifierInfo = dic
                 return dic
             }
             return dictionary
@@ -292,11 +296,11 @@ extension KingfisherClass where Base: UIButton {
     
     private var backgroundImageTask: DownloadTask? {
         get { return getAssociatedObject(base, &backgroundImageTaskKey) }
-        set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
+        mutating set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
     }
 }
 
-extension KingfisherClass where Base: UIButton {
+extension KingfisherWrapper where Base: UIButton {
 
     /// Gets the image URL of this button for a specified state.
     ///

@@ -30,7 +30,7 @@ import AppKit
 import UIKit
 #endif
 
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     @available(*, deprecated, message:
     "Will be removed soon. Pass parameters with `ImageCreatingOptions`, use `image(with:options:)` instead.")
     public static func image(
@@ -44,7 +44,7 @@ extension KingfisherClass where Base: Image {
             duration: 0.0,
             preloadAll: preloadAllAnimationData,
             onlyFirstFrame: onlyFirstFrame)
-        return KingfisherClass.image(data: data, options: options)
+        return KingfisherWrapper.image(data: data, options: options)
     }
     
     @available(*, deprecated, message:
@@ -136,7 +136,7 @@ public final class RetrieveImageTask {
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 
 #if !os(watchOS)
-extension KingfisherClass where Base: ImageView {
+extension KingfisherWrapper where Base: ImageView {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
     public func setImage(with resource: Resource?,
@@ -159,7 +159,7 @@ extension KingfisherClass where Base: ImageView {
 #endif
 
 #if canImport(UIKit) && !os(watchOS)
-extension KingfisherClass where Base: UIButton {
+extension KingfisherWrapper where Base: UIButton {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
     public func setImage(
@@ -218,7 +218,7 @@ extension KingfisherClass where Base: UIButton {
 
 #if os(watchOS)
 import WatchKit
-extension KingfisherClass where Base: WKInterfaceImage {
+extension KingfisherWrapper where Base: WKInterfaceImage {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
     public func setImage(_ resource: Resource?,
@@ -246,7 +246,7 @@ extension KingfisherClass where Base: WKInterfaceImage {
 #endif
 
 #if os(macOS)
-extension KingfisherClass where Base: NSButton {
+extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     public func setImage(with resource: Resource?,

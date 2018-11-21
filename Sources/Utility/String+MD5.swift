@@ -27,8 +27,8 @@
 import Foundation
 import CommonCrypto
 
-extension String: KingfisherStructCompatible { }
-extension KingfisherStruct where Base == String {
+extension String: KingfisherCompatible { }
+extension KingfisherWrapper where Base == String {
     var md5: String {
         guard let data = base.data(using: .utf8) else {
             return base

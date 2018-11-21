@@ -49,14 +49,14 @@ class ImageExtensionTests: XCTestCase {
     
     func testGenerateJPEGImage() {
         let options = ImageCreatingOptions()
-        let image = KingfisherClass<Image>.image(data: testImageJEPGData, options: options)
+        let image = KingfisherWrapper<Image>.image(data: testImageJEPGData, options: options)
         XCTAssertNotNil(image)
         XCTAssertTrue(image!.renderEqual(to: Image(data: testImageJEPGData)!))
     }
     
     func testGenerateGIFImage() {
         let options = ImageCreatingOptions()
-        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)
+        let image = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image)
 #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf.imageSource!)
@@ -70,7 +70,7 @@ class ImageExtensionTests: XCTestCase {
 #if os(iOS) || os(tvOS)
     func testScaleForGIFImage() {
         let options = ImageCreatingOptions(scale: 2.0, duration: 0.0, preloadAll: false, onlyFirstFrame: false)
-        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)
+        let image = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image)
         XCTAssertEqual(image!.scale, 2.0)
     }
@@ -78,14 +78,14 @@ class ImageExtensionTests: XCTestCase {
 
     func testGIFRepresentation() {
         let options = ImageCreatingOptions()
-        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)!
+        let image = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: options)!
         let data = image.kf.gifRepresentation()
         
         XCTAssertNotNil(data)
         XCTAssertEqual(data?.kf.imageFormat, ImageFormat.GIF)
         
         let preloadOptions = ImageCreatingOptions(preloadAll: true)
-        let allLoadImage = KingfisherClass<Image>.animatedImage(data: data!, options: preloadOptions)!
+        let allLoadImage = KingfisherWrapper<Image>.animatedImage(data: data!, options: preloadOptions)!
         let allLoadData = allLoadImage.kf.gifRepresentation()
         XCTAssertNotNil(allLoadData)
         XCTAssertEqual(allLoadData?.kf.imageFormat, ImageFormat.GIF)
@@ -93,7 +93,7 @@ class ImageExtensionTests: XCTestCase {
     
     func testGenerateSingleFrameGIFImage() {
         let options = ImageCreatingOptions()
-        let image = KingfisherClass<Image>.animatedImage(data: testImageSingleFrameGIFData, options: options)
+        let image = KingfisherWrapper<Image>.animatedImage(data: testImageSingleFrameGIFData, options: options)
         XCTAssertNotNil(image)
 #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf.imageSource!)
@@ -108,13 +108,13 @@ class ImageExtensionTests: XCTestCase {
     func testGenerateFromNonImage() {
         let data = "hello".data(using: .utf8)!
         let options = ImageCreatingOptions()
-        let image = KingfisherClass<Image>.image(data: data, options: options)
+        let image = KingfisherWrapper<Image>.image(data: data, options: options)
         XCTAssertNil(image)
     }
     
     func testPreloadAllAnimationData() {
         let preloadOptions = ImageCreatingOptions(preloadAll: true)
-        let image = KingfisherClass<Image>.animatedImage(data: testImageSingleFrameGIFData, options: preloadOptions)!
+        let image = KingfisherWrapper<Image>.animatedImage(data: testImageSingleFrameGIFData, options: preloadOptions)!
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
         XCTAssertNil(image.kf.imageSource, "Image source should be nil")
@@ -125,7 +125,7 @@ class ImageExtensionTests: XCTestCase {
     
     func testLoadOnlyFirstFrame() {
         let preloadOptions = ImageCreatingOptions(preloadAll: true, onlyFirstFrame: true)
-        let image = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: preloadOptions)!
+        let image = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: preloadOptions)!
         XCTAssertNotNil(image, "The image should be initiated.")
         XCTAssertNil(image.kf.images, "The image should be nil")
     }
@@ -255,7 +255,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(image.size, CGSize(width: 64, height: 64))
         XCTAssertEqual(image.scale, 1.0)
 
-        let image_2x = KingfisherClass<Image>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
+        let image_2x = KingfisherWrapper<Image>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
         XCTAssertEqual(image_2x.size, CGSize(width: 32, height: 32))
         XCTAssertEqual(image_2x.scale, 2.0)
         
@@ -276,7 +276,7 @@ class ImageExtensionTests: XCTestCase {
     func testNormalized() {
         // Full loaded GIF image should not be normalized since it is a set of images.
         let options = ImageCreatingOptions()
-        let gifImage = KingfisherClass<Image>.animatedImage(data: testImageGIFData, options: options)
+        let gifImage = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: options)
         
         XCTAssertNotNil(gifImage)
         XCTAssertEqual(gifImage!.kf.normalized, gifImage!)

@@ -45,7 +45,7 @@ import ImageIO
 private var animatedImageDataKey: Void?
 
 // MARK: - Image Properties
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     private(set) var animatedImageData: Data? {
         get { return getAssociatedObject(base, &animatedImageDataKey) }
         set { setRetainedAssociatedObject(base, &animatedImageDataKey, newValue) }
@@ -101,7 +101,7 @@ extension KingfisherClass where Base: Image {
 }
 
 // MARK: - Image Conversion
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     #if os(macOS)
     static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         return Image(cgImage: cgImage, size: .zero)
@@ -133,7 +133,7 @@ extension KingfisherClass where Base: Image {
 }
 
 // MARK: - Image Representation
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
     // MARK: - PNG
     /// Returns PNG representation of `base` image.
     ///
@@ -177,7 +177,7 @@ extension KingfisherClass where Base: Image {
 }
 
 // MARK: - Create images from data
-extension KingfisherClass where Base: Image {
+extension KingfisherWrapper where Base: Image {
 
     /// Creates an animated image from a given data and options. Currently only GIF data is supported.
     ///
@@ -205,7 +205,7 @@ extension KingfisherClass where Base: Image {
             image = animatedImage.images.first
         } else {
             image = Image(data: data)
-            let kf = image?.kf
+            var kf = image?.kf
             kf?.images = animatedImage.images
             kf?.duration = animatedImage.duration
         }
@@ -228,7 +228,7 @@ extension KingfisherClass where Base: Image {
             image?.kf.animatedImageData = data
         } else {
             image = Image(data: data, scale: options.scale)
-            let kf = image?.kf
+            var kf = image?.kf
             kf?.imageSource = imageSource
             kf?.animatedImageData = data
         }
@@ -254,7 +254,7 @@ extension KingfisherClass where Base: Image {
         case .PNG:
             image = Image(data: data, scale: options.scale)
         case .GIF:
-            image = KingfisherClass.animatedImage(data: data, options: options)
+            image = KingfisherWrapper.animatedImage(data: data, options: options)
         case .unknown:
             image = Image(data: data, scale: options.scale)
         }

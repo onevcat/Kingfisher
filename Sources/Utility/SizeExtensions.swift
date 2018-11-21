@@ -26,8 +26,8 @@
 
 import CoreGraphics
 
-extension CGSize: KingfisherStructCompatible {}
-extension KingfisherStruct where Base == CGSize {
+extension CGSize: KingfisherCompatible {}
+extension KingfisherWrapper where Base == CGSize {
     
     /// Returns a size by resizing the `base` size to a target size under a given content mode.
     ///

@@ -97,7 +97,7 @@ class GIFAnimatedImage {
                 let gifInfo = properties[kCGImagePropertyGIFDictionary as String] as? [String: Any]
                 gifDuration += GIFAnimatedImage.getFrameDuration(from: gifInfo)
             }
-            images.append(KingfisherClass.image(cgImage: imageRef, scale: options.scale, refImage: nil))
+            images.append(KingfisherWrapper.image(cgImage: imageRef, scale: options.scale, refImage: nil))
             if options.onlyFirstFrame { break }
         }
         self.images = images

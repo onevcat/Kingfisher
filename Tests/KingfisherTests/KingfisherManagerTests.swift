@@ -704,7 +704,7 @@ class SimpleProcessor: ImageProcessor {
         case .image(let image):
             return image
         case .data(let data):
-            return KingfisherClass<Image>.image(data: data, options: options.imageCreatingOptions)
+            return KingfisherWrapper<Image>.image(data: data, options: options.imageCreatingOptions)
         }
     }
 }
