@@ -435,6 +435,8 @@ public enum ContentMode {
 }
 
 /// Processor for resizing images.
+/// If you need to resize a data represented image to a smaller size, use `DownsamplingImageProcessor`
+/// instead, which is more efficient and takes less memory.
 public struct ResizingImageProcessor: ImageProcessor {
     
     /// Identifier of the processor.
@@ -712,7 +714,7 @@ public struct CroppingImageProcessor: ImageProcessor {
     /// See `CroppingImageProcessor.init(size:anchor:)` for more.
     public let anchor: CGPoint
     
-    /// Creates a `CroppingImageProcessor`
+    /// Creates a `CroppingImageProcessor`.
     ///
     /// - Parameters:
     ///   - size: Target size of output image should be.
@@ -751,6 +753,54 @@ public struct CroppingImageProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.crop(to: size, anchorOn: anchor)
         case .data: return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+        }
+    }
+}
+
+/// Processor for downsampling an image. Compared to `ResizingImageProcessor`, this processor
+/// does not render the images to resize. Instead, it downsample the input data directly to an
+/// image. It is a more efficient than `ResizingImageProcessor`.
+///
+/// - Note:
+/// Downsampling only happens when this processor used as the first processor in a processing
+/// pipeline, when the input `ImageProcessItem` is an `.data` value. If appending to anyother
+/// processor, it falls back to use the normal rendering resizing behavior.
+///
+/// Only CG-based images are supported. Animated images (like GIF) is not supported.
+public struct DownsamplingImageProcessor: ImageProcessor {
+    
+    /// Target size of output image should be. It should be smaller than the size of
+    /// input image. If it is larger, the result image will be the same size of input
+    /// data without downsampling.
+    public let size: CGSize
+    
+    /// Identifier of the processor.
+    /// - Note: See documentation of `ImageProcessor` protocol for more.
+    public let identifier: String
+    
+    /// Creates a `DownsamplingImageProcessor`.
+    ///
+    /// - Parameter size: The target size of the downsample operation.
+    public init(size: CGSize) {
+        self.size = size
+        self.identifier = "com.onevcat.Kingfisher.DownsamplingImageProcessor(\(size))"
+    }
+    
+    /// Processes the input `ImageProcessItem` with this processor.
+    ///
+    /// - Parameters:
+    ///   - item: Input item which will be processed by `self`.
+    ///   - options: Options when processing the item.
+    /// - Returns: The processed image.
+    ///
+    /// - Note: See documentation of `ImageProcessor` protocol for more.
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+        switch item {
+        case .image(let image):
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.resize(to: size, for: .none)
+        case .data(let data):
+            return KingfisherWrapper.downsampledImage(data: data, to: size, scale: options.scaleFactor)
         }
     }
 }

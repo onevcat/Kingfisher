@@ -260,4 +260,35 @@ extension KingfisherWrapper where Base: Image {
         }
         return image
     }
+    
+    /// Creates a downsampled image from given data to a certain size and scale.
+    ///
+    /// - Parameters:
+    ///   - data: The image data contains a JPEG or PNG image.
+    ///   - pointSize: The target size in point to which the image should be downsampled.
+    ///   - scale: The scale of result image.
+    /// - Returns: A downsampled `Image` object following the input conditions.
+    ///
+    /// - Note:
+    /// Different from image `resize` methods, downsampling will not render the original
+    /// input image in pixel format. It does downsampling from the image data, so it is much
+    /// more memory efficient and friendly. Choose to use downsampling as possible as you can.
+    ///
+    /// The input size should be smaller than the size of input image. If it is larger than the
+    /// original image size, the result image will be the same size of input without downsampling.
+    public static func downsampledImage(data: Data, to pointSize: CGSize, scale: CGFloat) -> Image? {
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
+            return nil
+        }
+        
+        let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
+        let downsampleOptions = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
+        let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions)!
+        return KingfisherWrapper.image(cgImage: downsampledImage, scale: scale, refImage: nil)
+    }
 }

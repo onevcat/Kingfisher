@@ -47,7 +47,9 @@ class ProcessorCollectionViewController: UICollectionViewController {
         (TintImageProcessor(tint: UIColor.red.withAlphaComponent(0.5)), "Tint"),
         (ColorControlsProcessor(brightness: 0.0, contrast: 1.1, saturation: 1.1, inputEV: 1.0), "Vibrancy"),
         (BlackWhiteProcessor(), "B&W"),
-        (CroppingImageProcessor(size: CGSize(width: 100, height: 100)), "Cropping")
+        (CroppingImageProcessor(size: CGSize(width: 100, height: 100)), "Cropping"),
+        (DownsamplingImageProcessor(size: CGSize(width: 25, height: 25)), "Downsampling"),
+        (BlurImageProcessor(blurRadius: 5) >> RoundCornerImageProcessor(cornerRadius: 20), "Blur + Round Corner")
     ]
     
     override func viewDidLoad() {
