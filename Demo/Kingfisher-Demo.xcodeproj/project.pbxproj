@@ -249,14 +249,6 @@
 			path = "Demo/Kingfisher-watchOS-Demo Extension";
 			sourceTree = "<group>";
 		};
-		4B1C7A3B21A2568100CE9D31 /* Infinity */ = {
-			isa = PBXGroup;
-			children = (
-				4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */,
-			);
-			path = Infinity;
-			sourceTree = "<group>";
-		};
 		4BCCF3351D5B02F8003387C2 /* Kingfisher-macOS-Demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,14 +261,6 @@
 			);
 			name = "Kingfisher-macOS-Demo";
 			path = "Demo/Kingfisher-macOS-Demo";
-			sourceTree = "<group>";
-		};
-		D10AC99621A2FF35005F057C /* Processor */ = {
-			isa = PBXGroup;
-			children = (
-				D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */,
-			);
-			path = Processor;
 			sourceTree = "<group>";
 		};
 		D10EC22B1C3D62DE00A4211C /* Demo */ = {
@@ -330,22 +314,14 @@
 		D1A1CCA921A1936300263AD8 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				D10AC99621A2FF35005F057C /* Processor */,
-				4B1C7A3B21A2568100CE9D31 /* Infinity */,
-				D1CE1BCE21A19C3F00419000 /* Transitions */,
-				D1A1CCAA21A1937100263AD8 /* Normal */,
+				D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */,
+				4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */,
+				D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */,
+				D12E0C941C47F91800AC98AD /* NormalLoadingViewController.swift */,
+				D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */,
 				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
 			);
 			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		D1A1CCAA21A1937100263AD8 /* Normal */ = {
-			isa = PBXGroup;
-			children = (
-				D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */,
-				D12E0C941C47F91800AC98AD /* NormalLoadingViewController.swift */,
-			);
-			path = Normal;
 			sourceTree = "<group>";
 		};
 		D1A1CCAB21A1939100263AD8 /* Resources */ = {
@@ -355,14 +331,6 @@
 				D1CE1BD221A1B45A00419000 /* ImageLoader.swift */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		D1CE1BCE21A19C3F00419000 /* Transitions */ = {
-			isa = PBXGroup;
-			children = (
-				D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */,
-			);
-			path = Transitions;
 			sourceTree = "<group>";
 		};
 		D1ED2D021AD2CFA600CFC3EB = {
