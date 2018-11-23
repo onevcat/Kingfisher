@@ -288,4 +288,30 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(normalImage, testImage)
         #endif
     }
+    
+    func testDownsampling() {
+        let size = CGSize(width: 15, height: 15)
+        XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
+        let image = KingfisherWrapper<Image>.downsampledImage(data: testImageData, to: size, scale: 1)
+        XCTAssertEqual(image?.size, size)
+        XCTAssertEqual(image?.kf.scale, 1.0)
+        
+        let largerSize = CGSize(width: 100, height: 100)
+        let largerImage = KingfisherWrapper<Image>.downsampledImage(data: testImageData, to: largerSize, scale: 1)
+        // You can not "downsample" an image to a larger size.
+        XCTAssertEqual(largerImage?.size, CGSize(width: 64, height: 64))
+    }
+    
+    func testDownsamplingWithScale() {
+        let size = CGSize(width: 15, height: 15)
+        XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
+        let image = KingfisherWrapper<Image>.downsampledImage(data: testImageData, to: size, scale: 2)
+        #if os(macOS)
+        XCTAssertEqual(image?.size, CGSize(width: 30, height: 30))
+        XCTAssertEqual(image?.kf.scale, 1.0)
+        #else
+        XCTAssertEqual(image?.size, size)
+        XCTAssertEqual(image?.kf.scale, 2.0)
+        #endif
+    }
 }
