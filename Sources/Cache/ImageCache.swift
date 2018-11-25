@@ -282,40 +282,79 @@ open class ImageCache {
         // Memory storage should not throw.
         memoryStorage.storeNoThrow(value: image, forKey: computedKey)
 
-        if toDisk {
-            ioQueue.async {
-                let result: CacheStoreResult
-                if let data = serializer.data(with: image, original: original) {
-                    do {
-                        try self.diskStorage.store(value: data, forKey: computedKey)
-                        result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
-                    } catch {
-                        let diskError: KingfisherError
-                        if let error = error as? KingfisherError {
-                            diskError = error
-                        } else {
-                            diskError = .cacheError(reason: .cannotConvertToData(object: data, error: error))
-                        }
-                        
-                        result = CacheStoreResult(
-                            memoryCacheResult: .success(()),
-                            diskCacheResult: .failure(diskError)
-                        )
-                    }
-                } else {
-                    let diskError = KingfisherError.cacheError(
-                        reason: .cannotSerializeImage(image: image, original: original, serializer: serializer))
-                    result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .failure(diskError))
-                }
-                if let completionHandler = completionHandler {
-                    callbackQueue.execute { completionHandler(result) }
-                }
-            }
-        } else {
+        guard toDisk else {
             if let completionHandler = completionHandler {
                 let result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
                 callbackQueue.execute { completionHandler(result) }
             }
+            return
+        }
+        
+        ioQueue.async {
+            if let data = serializer.data(with: image, original: original) {
+                self.syncStoreData(
+                    data,
+                    forKey: key,
+                    processorIdentifier: identifier,
+                    callbackQueue: callbackQueue,
+                    completionHandler: completionHandler)
+            } else {
+                guard let completionHandler = completionHandler else { return }
+                
+                let diskError = KingfisherError.cacheError(
+                    reason: .cannotSerializeImage(image: image, original: original, serializer: serializer))
+                let result = CacheStoreResult(
+                    memoryCacheResult: .success(()),
+                    diskCacheResult: .failure(diskError))
+                callbackQueue.execute { completionHandler(result) }
+            }
+        }
+    }
+    
+    open func storeToDisk(
+        _ data: Data,
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: ((CacheStoreResult) -> Void)? = nil)
+    {
+        ioQueue.async {
+            self.syncStoreData(
+                data,
+                forKey: key,
+                processorIdentifier: identifier,
+                callbackQueue: callbackQueue,
+                completionHandler: completionHandler)
+        }
+    }
+    
+    private func syncStoreData(
+        _ data: Data,
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: ((CacheStoreResult) -> Void)? = nil)
+    {
+        let computedKey = key.computedKey(with: identifier)
+        let result: CacheStoreResult
+        do {
+            try self.diskStorage.store(value: data, forKey: computedKey)
+            result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
+        } catch {
+            let diskError: KingfisherError
+            if let error = error as? KingfisherError {
+                diskError = error
+            } else {
+                diskError = .cacheError(reason: .cannotConvertToData(object: data, error: error))
+            }
+            
+            result = CacheStoreResult(
+                memoryCacheResult: .success(()),
+                diskCacheResult: .failure(diskError)
+            )
+        }
+        if let completionHandler = completionHandler {
+            callbackQueue.execute { completionHandler(result) }
         }
     }
     
