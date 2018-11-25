@@ -33,6 +33,7 @@ class StorageExpirationTests: XCTestCase {
         let e = StorageExpiration.never
         XCTAssertEqual(e.estimatedExpirationSinceNow, .distantFuture)
         XCTAssertEqual(e.timeInterval, .infinity)
+        XCTAssertFalse(e.isExpired)
     }
 
     func testExpirationSeconds() {
@@ -42,6 +43,7 @@ class StorageExpirationTests: XCTestCase {
             Date().timeIntervalSince1970 + 100,
             accuracy: 0.1)
         XCTAssertEqual(e.timeInterval, 100)
+        XCTAssertFalse(e.isExpired)
     }
     
     func testExpirationDays() {
@@ -52,6 +54,7 @@ class StorageExpirationTests: XCTestCase {
             Date().timeIntervalSince1970 + oneDayInSecond,
             accuracy: 0.1)
         XCTAssertEqual(e.timeInterval, oneDayInSecond, accuracy: 0.1)
+        XCTAssertFalse(e.isExpired)
     }
     
     func testExpirationDate() {
@@ -63,6 +66,12 @@ class StorageExpirationTests: XCTestCase {
             Date().timeIntervalSince1970 + oneDayInSecond,
             accuracy: 0.1)
         XCTAssertEqual(e.timeInterval, oneDayInSecond, accuracy: 0.1)
+        XCTAssertFalse(e.isExpired)
     }
-
+    
+    func testAlreadyExpired() {
+        let e = StorageExpiration.expired
+        XCTAssertTrue(e.isExpired)
+        XCTAssertEqual(e.estimatedExpirationSinceNow, .distantPast)
+    }
 }

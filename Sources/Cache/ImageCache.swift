@@ -246,6 +246,51 @@ open class ImageCache {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+    
+    open func store(_ image: Image,
+                    original: Data? = nil,
+                    forKey key: String,
+                    options: KingfisherParsedOptionsInfo,
+                    toDisk: Bool = true,
+                    completionHandler: ((CacheStoreResult) -> Void)? = nil)
+    {
+        let identifier = options.processor.identifier
+        let callbackQueue = options.callbackQueue
+        
+        let computedKey = key.computedKey(with: identifier)
+        // Memory storage should not throw.
+        memoryStorage.storeNoThrow(value: image, forKey: computedKey, expiration: options.memoryCacheExpiration)
+        
+        guard toDisk else {
+            if let completionHandler = completionHandler {
+                let result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
+                callbackQueue.execute { completionHandler(result) }
+            }
+            return
+        }
+        
+        ioQueue.async {
+            let serializer = options.cacheSerializer
+            if let data = serializer.data(with: image, original: original) {
+                self.syncStoreToDisk(
+                    data,
+                    forKey: key,
+                    processorIdentifier: identifier,
+                    callbackQueue: callbackQueue,
+                    expiration: options.diskCacheExpiration,
+                    completionHandler: completionHandler)
+            } else {
+                guard let completionHandler = completionHandler else { return }
+                
+                let diskError = KingfisherError.cacheError(
+                    reason: .cannotSerializeImage(image: image, original: original, serializer: serializer))
+                let result = CacheStoreResult(
+                    memoryCacheResult: .success(()),
+                    diskCacheResult: .failure(diskError))
+                callbackQueue.execute { completionHandler(result) }
+            }
+        }
+    }
 
     // MARK: - Store & Remove
     /// Stores an image to the cache.
@@ -278,67 +323,53 @@ open class ImageCache {
                       callbackQueue: CallbackQueue = .untouch,
                       completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
-        let computedKey = key.computedKey(with: identifier)
-        // Memory storage should not throw.
-        memoryStorage.storeNoThrow(value: image, forKey: computedKey)
-
-        guard toDisk else {
-            if let completionHandler = completionHandler {
-                let result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
-                callbackQueue.execute { completionHandler(result) }
+        struct TempProcessor: ImageProcessor {
+            let identifier: String
+            func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+                return nil
             }
-            return
         }
         
-        ioQueue.async {
-            if let data = serializer.data(with: image, original: original) {
-                self.syncStoreData(
-                    data,
-                    forKey: key,
-                    processorIdentifier: identifier,
-                    callbackQueue: callbackQueue,
-                    completionHandler: completionHandler)
-            } else {
-                guard let completionHandler = completionHandler else { return }
-                
-                let diskError = KingfisherError.cacheError(
-                    reason: .cannotSerializeImage(image: image, original: original, serializer: serializer))
-                let result = CacheStoreResult(
-                    memoryCacheResult: .success(()),
-                    diskCacheResult: .failure(diskError))
-                callbackQueue.execute { completionHandler(result) }
-            }
-        }
+        let options = KingfisherParsedOptionsInfo([
+            .processor(TempProcessor(identifier: identifier)),
+            .cacheSerializer(serializer),
+            .callbackQueue(callbackQueue)
+        ])
+        store(image, original: original, forKey: key, options: options,
+              toDisk: toDisk, completionHandler: completionHandler)
     }
     
     open func storeToDisk(
         _ data: Data,
         forKey key: String,
         processorIdentifier identifier: String = "",
+        expiration: StorageExpiration? = nil,
         callbackQueue: CallbackQueue = .untouch,
         completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
         ioQueue.async {
-            self.syncStoreData(
+            self.syncStoreToDisk(
                 data,
                 forKey: key,
                 processorIdentifier: identifier,
                 callbackQueue: callbackQueue,
+                expiration: expiration,
                 completionHandler: completionHandler)
         }
     }
     
-    private func syncStoreData(
+    private func syncStoreToDisk(
         _ data: Data,
         forKey key: String,
         processorIdentifier identifier: String = "",
         callbackQueue: CallbackQueue = .untouch,
+        expiration: StorageExpiration? = nil,
         completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
         let result: CacheStoreResult
         do {
-            try self.diskStorage.store(value: data, forKey: computedKey)
+            try self.diskStorage.store(value: data, forKey: computedKey, expiration: expiration)
             result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
         } catch {
             let diskError: KingfisherError
@@ -428,11 +459,12 @@ open class ImageCache {
                     // Cache the disk image to memory.
                     // We are passing `false` to `toDisk`, the memory cache does not change
                     // callback queue, we can call `completionHandler` without another dispatch.
+                    var cacheOptions = options
+                    cacheOptions.callbackQueue = .untouch
                     self.store(
                         image,
                         forKey: key,
-                        processorIdentifier: options.processor.identifier,
-                        cacheSerializer: options.cacheSerializer,
+                        options: cacheOptions,
                         toDisk: false)
                     {
                         _ in

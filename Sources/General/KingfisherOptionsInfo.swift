@@ -186,6 +186,16 @@ public enum KingfisherOptionsInfoItem {
     /// Set this options will stop that flickering by keeping all loading in the same queue (typically the UI queue
     /// if you are using Kingfisher's extension methods to set an image), with a tradeoff of loading performance.
     case loadDiskFileSynchronously
+    
+    /// The expiration setting for memory cache. By default, the underlying `MemoryStorage.Backend` uses the
+    /// expiration in its config for all items. If set, the `MemoryStorage.Backend` will use this associated
+    /// value to overwrite the config setting for this caching item.
+    case memoryCacheExpiration(StorageExpiration)
+    
+    /// The expiration setting for memory cache. By default, the underlying `DiskStorage.Backend` uses the
+    /// expiration in its config for all items. If set, the `DiskStorage.Backend` will use this associated
+    /// value to overwrite the config setting for this caching item.
+    case diskCacheExpiration(StorageExpiration)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -217,6 +227,8 @@ public struct KingfisherParsedOptionsInfo {
     public var onFailureImage: Optional<Image?> = .none
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
+    public var memoryCacheExpiration: StorageExpiration? = nil
+    public var diskCacheExpiration: StorageExpiration? = nil
 
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
@@ -248,6 +260,8 @@ public struct KingfisherParsedOptionsInfo {
             case .alsoPrefetchToMemory: alsoPrefetchToMemory = true
             case .loadDiskFileSynchronously: loadDiskFileSynchronously = true
             case .callbackDispatchQueue(let value): callbackQueue = value.map { .dispatch($0) } ?? .mainCurrentOrAsync
+            case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
+            case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
             }
         }
 

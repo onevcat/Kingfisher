@@ -223,10 +223,8 @@ public class KingfisherManager {
                     value.image,
                     original: value.originalData,
                     forKey: source.cacheKey,
-                    processorIdentifier: options.processor.identifier,
-                    cacheSerializer: options.cacheSerializer,
-                    toDisk: !options.cacheMemoryOnly,
-                    callbackQueue: options.callbackQueue)
+                    options: options,
+                    toDisk: !options.cacheMemoryOnly)
                 {
                     _ in
                     if options.waitForCache {
@@ -244,7 +242,8 @@ public class KingfisherManager {
                         originalCache.storeToDisk(
                             value.originalData,
                             forKey: source.cacheKey,
-                            processorIdentifier: DefaultImageProcessor.default.identifier)
+                            processorIdentifier: DefaultImageProcessor.default.identifier,
+                            expiration: options.diskCacheExpiration)
                     }
                 }
 
@@ -344,11 +343,12 @@ public class KingfisherManager {
                             return
                         }
 
+                        var cacheOptions = options
+                        cacheOptions.callbackQueue = .untouch
                         targetCache.store(
                             processedImage,
                             forKey: key,
-                            processorIdentifier: processor.identifier,
-                            cacheSerializer: options.cacheSerializer,
+                            options: cacheOptions,
                             toDisk: !options.cacheMemoryOnly)
                         {
                             _ in
