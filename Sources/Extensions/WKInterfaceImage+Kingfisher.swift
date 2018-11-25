@@ -44,7 +44,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             return nil
         }
         
-        let options = KingfisherManager.shared.defaultOptions + (options ?? .empty)
+        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         if !options.keepCurrentImageWhileLoading {
             base.setImage(placeholder)
         }
