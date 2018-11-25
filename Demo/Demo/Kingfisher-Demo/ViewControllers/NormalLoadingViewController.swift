@@ -39,7 +39,7 @@ class NormalLoadingViewController: UICollectionViewController {
 
 extension NormalLoadingViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return ImageLoader.sampleImageURLs.count
     }
     
     override func collectionView(
@@ -58,7 +58,7 @@ extension NormalLoadingViewController {
     {
         let imageView = (cell as! ImageCollectionViewCell).cellImageView!
         imageView.kf.setImage(
-            with: ImageLoader.sampleImageURL(at: indexPath.row),
+            with: ImageLoader.sampleImageURLs[indexPath.row],
             placeholder: nil,
             options: [.transition(.fade(1)), .loadDiskFileSynchronously],
             progressBlock: { receivedSize, totalSize in
@@ -85,7 +85,7 @@ extension NormalLoadingViewController {
 
 extension NormalLoadingViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let urls = indexPaths.compactMap { ImageLoader.sampleImageURL(at: $0.row) }
+        let urls = indexPaths.compactMap { ImageLoader.sampleImageURLs[$0.row] }
         ImagePrefetcher(urls: urls).start()
     }
 }

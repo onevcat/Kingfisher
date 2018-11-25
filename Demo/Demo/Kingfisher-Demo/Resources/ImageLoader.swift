@@ -27,8 +27,13 @@
 import Foundation
 
 struct ImageLoader {
-    static func sampleImageURL(at index: Int) -> URL {
+    static let sampleImageURLs: [URL] = {
         let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/"
-        return URL(string: "\(prefix)kingfisher-\(index + 1).jpg")!
-    }
+        return (1...10).map { URL(string: "\(prefix)kingfisher-\($0).jpg")! }
+    }()
+
+    static let highResolutionImageURLs: [URL] = {
+        let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/HighResolution/"
+        return (1...20).map { URL(string: "\(prefix)\($0).jpg")! }
+    }()
 }

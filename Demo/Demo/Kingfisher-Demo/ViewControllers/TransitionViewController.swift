@@ -68,7 +68,7 @@ class TransitionViewController: UIViewController {
         let duration = durations[durationIndex]
         
         let t = makeTransition(type: transitionType, duration: duration)
-        let url = ImageLoader.sampleImageURL(at: 0)
+        let url = ImageLoader.sampleImageURLs[0]
         imageView.kf.setImage(with: url, options: [.forceTransition, .transition(t)])
     }
 }
