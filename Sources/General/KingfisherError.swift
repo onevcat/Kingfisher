@@ -139,7 +139,7 @@ public enum KingfisherError: Error {
         /// - image: The input image needs to be serialized to cache.
         /// - original: The original image data, if exists.
         /// - serializer: The `CacheSerializer` used for the image serializing.
-        case cannotSerializeImage(image: Image, original: Data?, serializer: CacheSerializer)
+        case cannotSerializeImage(image: Image?, original: Data?, serializer: CacheSerializer)
     }
     
     
@@ -300,7 +300,7 @@ extension KingfisherError.CacheErrorReason {
                    "Object: \(object). Underlying error: \(error)"
         case .cannotSerializeImage(let image, let originalData, let serializer):
             return "Cannot serialize an image due to the cache serializer returning `nil`. " +
-                   "Image: \(image), original data: \(String(describing: originalData)), serializer: \(serializer)."
+                   "Image: \(String(describing:image)), original data: \(String(describing: originalData)), serializer: \(serializer)."
         }
     }
     

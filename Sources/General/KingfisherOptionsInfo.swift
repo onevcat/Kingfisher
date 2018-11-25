@@ -160,10 +160,12 @@ public enum KingfisherOptionsInfoItem {
     /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
     
-    /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both  the final result and original
+    /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both the final result and original
     /// image. Kingfisher will have a chance to use the original image when another processor is applied to the same
     /// resource, instead of downloading it again. You can use `.originalCache` to specify a cache or the original
     /// images if neccessary.
+    ///
+    /// The original image will be only cached to disk storage.
     case cacheOriginalImage
     
     /// If set and a downloading error occurred Kingfisher will set provided image (or empty)

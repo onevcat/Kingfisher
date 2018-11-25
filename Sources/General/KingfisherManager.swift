@@ -239,20 +239,12 @@ public class KingfisherManager {
                 let needToCacheOriginalImage = options.cacheOriginalImage &&
                     options.processor != DefaultImageProcessor.default
                 if needToCacheOriginalImage {
-                    let defaultProcessor = DefaultImageProcessor.default
                     self.processQueue.async {
-                        guard let originalImage =
-                            defaultProcessor.process(item: .data(value.originalData), options: options)
-                            else { return }
-
                         let originalCache = options.originalCache ?? targetCache
-                        originalCache.store(
-                            originalImage,
-                            original: value.originalData,
+                        originalCache.storeToDisk(
+                            value.originalData,
                             forKey: source.cacheKey,
-                            processorIdentifier: defaultProcessor.identifier,
-                            cacheSerializer: options.cacheSerializer,
-                            toDisk: !options.cacheMemoryOnly)
+                            processorIdentifier: DefaultImageProcessor.default.identifier)
                     }
                 }
 

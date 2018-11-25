@@ -67,18 +67,7 @@
                             <outlet property="delegate" destination="Oup-Jp-dod" id="jo9-Qc-n6o"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" title="Title" id="73M-Nr-0wa">
-                        <barButtonItem key="leftBarButtonItem" title="Clear Cache" id="DS6-ds-fQK">
-                            <connections>
-                                <action selector="clearCacheWithSender:" destination="Oup-Jp-dod" id="uyH-e1-e6Z"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Reload" id="vsy-2H-Xfb">
-                            <connections>
-                                <action selector="reloadWithSender:" destination="Oup-Jp-dod" id="oWW-jb-DIw"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Title" id="73M-Nr-0wa"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9sc-iK-DXi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
