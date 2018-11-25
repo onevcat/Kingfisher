@@ -41,6 +41,8 @@ public enum StorageExpiration {
     case days(Int)
     /// The item expires after a given date.
     case date(Date)
+    /// Indicates the item is already expired. Use this to skip cache.
+    case expired
 
     func estimatedExpirationSince(_ date: Date) -> Date {
         switch self {
@@ -48,11 +50,16 @@ public enum StorageExpiration {
         case .seconds(let seconds): return date.addingTimeInterval(seconds)
         case .days(let days): return date.addingTimeInterval(TimeInterval(60 * 60 * 24 * days))
         case .date(let ref): return ref
+        case .expired: return .distantPast
         }
     }
     
     var estimatedExpirationSinceNow: Date {
         return estimatedExpirationSince(Date())
+    }
+    
+    var isExpired: Bool {
+        return timeInterval <= 0
     }
 
     var timeInterval: TimeInterval {
@@ -61,6 +68,7 @@ public enum StorageExpiration {
         case .seconds(let seconds): return seconds
         case .days(let days): return TimeInterval(60 * 60 * 24 * days)
         case .date(let ref): return ref.timeIntervalSinceNow
+        case .expired: return -(.infinity)
         }
     }
 }

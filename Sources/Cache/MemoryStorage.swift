@@ -107,7 +107,11 @@ public enum MemoryStorage {
         {
             lock.lock()
             defer { lock.unlock() }
-            let object = StorageObject(value, expiration: expiration ?? config.expiration)
+            let expiration = expiration ?? config.expiration
+            // The expiration indicates that already expired, no need to store.
+            guard !expiration.isExpired else { return }
+            
+            let object = StorageObject(value, expiration: expiration)
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
         }

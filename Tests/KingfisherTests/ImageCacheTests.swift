@@ -258,7 +258,7 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
 
-        cache.diskStorage.config.expiration = .seconds(0)
+        cache.diskStorage.config.expiration = .seconds(0.01)
 
         cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             self.observer = NotificationCenter.default.addObserver(
@@ -425,6 +425,45 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 #endif
+    
+    func testStoreToMemoryWithExpiration() {
+        let exp = expectation(description: #function)
+        let key = testKeys[0]
+        cache.store(
+            testImage,
+            original: testImageData,
+            forKey: key,
+            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.2))]),
+            toDisk: true)
+        {
+            _ in
+            XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
+            delay(1) {
+                XCTAssertEqual(self.cache.imageCachedType(forKey: key), .disk)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1.5, handler: nil)
+    }
+    
+    func testStoreToDiskWithExpiration() {
+        let exp = expectation(description: #function)
+        let key = testKeys[0]
+        cache.store(
+            testImage,
+            original: testImageData,
+            forKey: key,
+            options: KingfisherParsedOptionsInfo([.diskCacheExpiration(.expired)]),
+            toDisk: true)
+        {
+            _ in
+            XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
+            self.cache.clearMemoryCache()
+            XCTAssertEqual(self.cache.imageCachedType(forKey: key), .none)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1.5, handler: nil)
+    }
 
     // MARK: - Helper
     func storeMultipleImages(_ completionHandler: @escaping () -> Void) {

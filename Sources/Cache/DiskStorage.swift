@@ -96,6 +96,10 @@ public enum DiskStorage {
             forKey key: String,
             expiration: StorageExpiration? = nil) throws
         {
+            let expiration = expiration ?? config.expiration
+            // The expiration indicates that already expired, no need to store.
+            guard !expiration.isExpired else { return }
+            
             let data: Data
             do {
                 data = try value.toData()
@@ -110,7 +114,7 @@ public enum DiskStorage {
                 // The last access date.
                 .creationDate: now.fileAttributeDate,
                 // The estimated expiration date.
-                .modificationDate: (expiration ?? config.expiration).estimatedExpirationSinceNow.fileAttributeDate
+                .modificationDate: expiration.estimatedExpirationSinceNow.fileAttributeDate
             ]
             config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
         }
