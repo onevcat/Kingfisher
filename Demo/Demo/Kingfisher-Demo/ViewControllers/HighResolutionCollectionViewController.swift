@@ -43,18 +43,38 @@ class HighResolutionCollectionViewController: UICollectionViewController {
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ImageLoader.highResolutionImageURLs.count
+        return ImageLoader.highResolutionImageURLs.count * 10
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImageCollectionViewCell
-        cell.cellImageView.kf.setImage(
-            with: ImageLoader.highResolutionImageURLs[indexPath.row],
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
+    {
+        (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
+    }
+    
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath)
+    {
+        let url = ImageLoader.highResolutionImageURLs[indexPath.row % 10]
+        // Use different cache key to prevent reuse the same image. It is just for
+        // this demo. Normally you can just use the URL to set image.
+        let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
+        
+        // This should crash most devices due to memory pressure.
+        // (cell as! ImageCollectionViewCell).cellImageView.kf.setImage(with: resource)
+        
+        // This would survive!
+        (cell as! ImageCollectionViewCell).cellImageView.kf.setImage(
+            with: resource,
             options: [
                 .processor(DownsamplingImageProcessor(size: CGSize(width: 250, height: 250))),
-                .scaleFactor(UIScreen.main.scale),
                 .cacheOriginalImage
-            ])
+        ])
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         return cell
     }
     
@@ -62,7 +82,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         if segue.identifier == "showImage" {
             let vc = segue.destination as! DetailImageViewController
             let index = collectionView.indexPathsForSelectedItems![0].row
-            vc.imageURL =  ImageLoader.highResolutionImageURLs[index]
+            vc.imageURL =  ImageLoader.highResolutionImageURLs[index % 10]
         }
     }
 }
