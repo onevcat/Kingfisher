@@ -1,5 +1,5 @@
 //
-//  DetailImageViewController.swift
+//  GIFViewController.swift
 //  Kingfisher
 //
 //  Created by onevcat on 2018/11/25.
@@ -25,38 +25,18 @@
 //  THE SOFTWARE.
 
 import UIKit
+import Kingfisher
 
-class DetailImageViewController: UIViewController {
+class GIFViewController: UIViewController {
 
-    var imageURL: URL!
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var infoLabel: UILabel!
+    @IBOutlet weak var animatedImageView: AnimatedImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        scrollView.delegate = self
+        let url = ImageLoader.gifImageURLs.last
         
-        imageView.kf.setImage(with: imageURL, options: [.memoryCacheExpiration(.expired)]) { result in
-            guard let image = result.value?.image else {
-                return
-            }
-            let scrollViewFrame = self.scrollView.frame
-            let scaleWidth = scrollViewFrame.size.width / image.size.width
-            let scaleHeight = scrollViewFrame.size.height / image.size.height
-            let minScale = min(scaleWidth, scaleHeight)
-            self.scrollView.minimumZoomScale = minScale
-            DispatchQueue.main.async {
-                self.scrollView.zoomScale = minScale
-            }
-            
-            self.infoLabel.text = "\(image.size)"
-        }
-    }
-}
-
-extension DetailImageViewController: UIScrollViewDelegate {
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
+        imageView.kf.setImage(with: url)
+        animatedImageView.kf.setImage(with: url)
     }
 }
