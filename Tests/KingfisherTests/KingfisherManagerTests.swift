@@ -279,7 +279,6 @@ class KingfisherManagerTests: XCTestCase {
             var originalCached = manager.cache.imageCachedType(forKey: url.cacheKey)
 
             XCTAssertEqual(imageCached, .memory)
-            XCTAssertEqual(originalCached, .memory)
 
             delay(0.1) {
                 manager.cache.clearMemoryCache()
@@ -410,7 +409,7 @@ class KingfisherManagerTests: XCTestCase {
             {
                 result in
                 let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
-                XCTAssertEqual(originalCached, .memory)
+                XCTAssertEqual(originalCached, .disk)
                 exp.fulfill()
             }
         }
