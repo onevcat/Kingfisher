@@ -63,12 +63,12 @@ class ProcessorCollectionViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return ImageLoader.sampleImageURLs.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImageCollectionViewCell
-        let url = ImageLoader.sampleImageURL(at: indexPath.row)
+        let url = ImageLoader.sampleImageURLs[indexPath.row]
         var options: KingfisherOptionsInfo = [.processor(currentProcessor)]
         if currentProcessor is RoundCornerImageProcessor {
             options.append(.cacheSerializer(FormatIndicatedCacheSerializer.png))

@@ -1,10 +1,10 @@
 //
-//  InfinityCollectionViewController.swift
+//  HighResolutionCollectionViewController.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 2018/11/19.
+//  Created by onevcat on 2018/11/24.
 //
-//  Copyright (c) 2018年 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,13 @@
 import UIKit
 import Kingfisher
 
-private let reuseIdentifier = "InfinityCell"
+private let reuseIdentifier = "HighResolution"
 
-class InfinityCollectionViewController: UICollectionViewController {
+class HighResolutionCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Infinity"
+        title = "High Resolution"
         setupOperationNavigationBar()
     }
 
@@ -41,20 +41,28 @@ class InfinityCollectionViewController: UICollectionViewController {
         return 1
     }
 
+
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10000000
+        return ImageLoader.highResolutionImageURLs.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView
-            .dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImageCollectionViewCell
-        let urls = ImageLoader.sampleImageURLs
-        let url = urls[indexPath.row % urls.count]
-
-        // Mark each row as a new image.
-        let resource = ImageResource(downloadURL: url, cacheKey: "key-\(indexPath.row)")
-        cell.cellImageView.kf.setImage(with: resource)
-
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImageCollectionViewCell
+        cell.cellImageView.kf.setImage(
+            with: ImageLoader.highResolutionImageURLs[indexPath.row],
+            options: [
+                .processor(DownsamplingImageProcessor(size: CGSize(width: 250, height: 250))),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ])
         return cell
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showImage" {
+            let vc = segue.destination as! DetailImageViewController
+            let index = collectionView.indexPathsForSelectedItems![0].row
+            vc.imageURL =  ImageLoader.highResolutionImageURLs[index]
+        }
     }
 }
