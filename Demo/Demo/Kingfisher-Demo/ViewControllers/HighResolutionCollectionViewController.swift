@@ -43,7 +43,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ImageLoader.highResolutionImageURLs.count * 10
+        return ImageLoader.highResolutionImageURLs.count * 30
     }
 
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
@@ -56,7 +56,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath)
     {
-        let url = ImageLoader.highResolutionImageURLs[indexPath.row % 10]
+        let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
         // Use different cache key to prevent reuse the same image. It is just for
         // this demo. Normally you can just use the URL to set image.
         let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
@@ -64,7 +64,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         // This should crash most devices due to memory pressure.
         // (cell as! ImageCollectionViewCell).cellImageView.kf.setImage(with: resource)
         
-        // This would survive!
+        // This would survive on even low spec devices!
         (cell as! ImageCollectionViewCell).cellImageView.kf.setImage(
             with: resource,
             options: [
@@ -82,7 +82,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         if segue.identifier == "showImage" {
             let vc = segue.destination as! DetailImageViewController
             let index = collectionView.indexPathsForSelectedItems![0].row
-            vc.imageURL =  ImageLoader.highResolutionImageURLs[index % 10]
+            vc.imageURL =  ImageLoader.highResolutionImageURLs[index % ImageLoader.highResolutionImageURLs.count]
         }
     }
 }
