@@ -21,7 +21,10 @@ platform :ios do
     else
         scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}")
     end
-    
+  end
+
+  lane :test_ci do
+    test(scheme: ENV["SCHEME"], swift_version: ENV["SWIFT_VERSION"])
   end
   
   desc "Lint"
