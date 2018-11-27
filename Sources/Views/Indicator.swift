@@ -126,7 +126,11 @@ final class ActivityIndicator: Indicator {
             #else
                 let indicatorStyle = UIActivityIndicatorView.Style.gray
             #endif
+            #if swift(>=4.2)
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
+            #else
+            activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: indicatorStyle)
+            #endif
         #endif
     }
 }

@@ -146,7 +146,11 @@ extension KingfisherWrapper where Base: Image {
             let rep = NSBitmapImageRep(cgImage: cgimage)
             return rep.representation(using: .png, properties: [:])
         #else
+            #if swift(>=4.2)
             return base.pngData()
+            #else
+            return UIImagePNGRepresentation(base)
+            #endif
         #endif
     }
     
@@ -163,7 +167,11 @@ extension KingfisherWrapper where Base: Image {
             let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using:.jpeg, properties: [.compressionFactor: compressionQuality])
         #else
+            #if swift(>=4.2)
             return base.jpegData(compressionQuality: compressionQuality)
+            #else
+            return UIImageJPEGRepresentation(base, compressionQuality)
+            #endif
         #endif
     }
     

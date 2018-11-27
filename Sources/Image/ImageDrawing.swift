@@ -130,7 +130,11 @@ extension KingfisherWrapper where Base: Image {
             }
             
             let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius)
+            #if swift(>=4.2)
             path.windingRule = .evenOdd
+            #else
+            path.windingRule = .evenOddWindingRule
+            #endif
             path.addClip()
             base.draw(in: rect)
             #else
