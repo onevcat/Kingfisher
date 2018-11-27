@@ -181,11 +181,19 @@ open class ImageCache {
         ioQueue = DispatchQueue(label: ioQueueName)
         
         #if !os(macOS) && !os(watchOS)
+        #if swift(>=4.2)
         let notifications: [(Notification.Name, Selector)] = [
             (UIApplication.didReceiveMemoryWarningNotification, #selector(clearMemoryCache)),
             (UIApplication.willTerminateNotification, #selector(cleanExpiredDiskCache)),
             (UIApplication.didEnterBackgroundNotification, #selector(backgroundCleanExpiredDiskCache))
         ]
+        #else
+        let notifications: [(Notification.Name, Selector)] = [
+            (NSNotification.Name.UIApplicationDidReceiveMemoryWarning, #selector(clearMemoryCache)),
+            (NSNotification.Name.UIApplicationWillTerminate, #selector(cleanExpiredDiskCache)),
+            (NSNotification.Name.UIApplicationDidEnterBackground, #selector(backgroundCleanExpiredDiskCache))
+        ]
+        #endif
         notifications.forEach {
             NotificationCenter.default.addObserver(self, selector: $0.1, name: $0.0, object: nil)
         }
@@ -637,7 +645,11 @@ open class ImageCache {
 
         func endBackgroundTask(_ task: inout UIBackgroundTaskIdentifier) {
             sharedApplication.endBackgroundTask(task)
+            #if swift(>=4.2)
             task = UIBackgroundTaskIdentifier.invalid
+            #else
+            task = UIBackgroundTaskInvalid
+            #endif
         }
         
         var backgroundTask: UIBackgroundTaskIdentifier!

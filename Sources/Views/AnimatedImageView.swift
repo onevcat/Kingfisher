@@ -55,6 +55,12 @@ extension AnimatedImageViewDelegate {
     public func animatedImageViewDidFinishAnimating(_ imageView: AnimatedImageView) {}
 }
 
+#if swift(>=4.2)
+let KFRunLoopModeCommon = RunLoop.Mode.common
+#else
+let KFRunLoopModeCommon = RunLoopMode.commonModes
+#endif
+
 /// Represents a subclass of `UIImageView` for displaying animated image.
 /// Different from showing animated image in a normal `UIImageView` (which load all frames at one time),
 /// `AnimatedImageView` only tries to load several frames (defined by `framePreloadCount`) to reduce memory usage.
@@ -113,10 +119,10 @@ open class AnimatedImageView: UIImageView {
     /// If the downloaded image is larger than the image view's size, it will help to reduce some memory use.
     /// Default is `true`.
     public var needsPrescaling = true
-    
+
     /// The animation timer's run loop mode. Default is `RunLoop.Mode.common`.
     /// Set this property to `RunLoop.Mode.default` will make the animation pause during UIScrollView scrolling.
-    public var runLoopMode = RunLoop.Mode.common {
+    public var runLoopMode = KFRunLoopModeCommon {
         willSet {
             guard runLoopMode == newValue else { return }
             stopAnimating()
