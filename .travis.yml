@@ -17,8 +17,6 @@ matrix:
     env: LANE=test_ci SCHEME=Kingfisher-macOS SWIFT_VERSION=4.0
   - name: tvOS | Swift 4.0
     env: LANE=test_ci SCHEME=Kingfisher-tvOS SWIFT_VERSION=4.0
-  - name: lint
-    env: LANE=lint
 
 script:
   - bundle exec fastlane $LANE

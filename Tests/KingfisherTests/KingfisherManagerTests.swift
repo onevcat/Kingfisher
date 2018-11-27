@@ -408,9 +408,11 @@ class KingfisherManagerTests: XCTestCase {
                 options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache), .waitForCache])
             {
                 result in
-                let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
-                XCTAssertEqual(originalCached, .disk)
-                exp.fulfill()
+                delay(0.2) { // .waitForCache only works for regular cache, not for original cache.
+                    let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
+                    XCTAssertEqual(originalCached, .disk)
+                    exp.fulfill()
+                }
             }
         }
         waitForExpectations(timeout: 1, handler: nil)
