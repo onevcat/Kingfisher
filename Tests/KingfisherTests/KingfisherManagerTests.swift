@@ -481,7 +481,7 @@ class KingfisherManagerTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
         
-        self.manager.retrieveImage(with: url, options: []) { result in
+        self.manager.retrieveImage(with: url, options: [.callbackQueue(.untouch)]) { result in
             XCTAssertNotNil(result.value?.image)
             XCTAssertEqual(result.value!.cacheType, .none)
             
