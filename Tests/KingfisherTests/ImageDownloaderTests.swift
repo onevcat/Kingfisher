@@ -261,7 +261,7 @@ class ImageDownloaderTests: XCTestCase {
     func testCancelOneDownloadTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        let stub = delayedStub(url, data: testImageData)
 
         let group = DispatchGroup()
 
@@ -278,6 +278,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         task1?.cancel()
+        delay(0.1) { _ = stub.go() }
         group.notify(queue: .main) {
             delay(0.1) { exp.fulfill() }
         }
