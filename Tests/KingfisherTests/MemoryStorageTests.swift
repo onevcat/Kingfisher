@@ -163,20 +163,25 @@ class MemoryStorageTests: XCTestCase {
     func testExtendExpirationByAccessing() {
         let exp = expectation(description: #function)
 
-        let expiration = StorageExpiration.seconds(0.2)
+        let expiration = StorageExpiration.seconds(0.5)
         try! storage.store(value: 1, forKey: "1", expiration: expiration)
 
-        delay(0.1) {
-            // This should extend the expiration to (0.1 + 0.2) from initially created.
+        delay(0.2) {
+            // This should extend the expiration to (0.5 + 0.2) from initially created.
             let v = try! self.storage.value(forKey: "1")
             XCTAssertEqual(v, 1)
         }
 
-        delay(0.25) {
+        delay(0.6) {
+            // Accessing `isCached` does not extend expiration
             XCTAssertTrue(self.storage.isCached(forKey: "1"))
+        }
+        
+        delay(0.8) {
+            XCTAssertFalse(self.storage.isCached(forKey: "1"))
             exp.fulfill()
         }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
     }
 
     func testAutoCleanExpiredMemory() {
