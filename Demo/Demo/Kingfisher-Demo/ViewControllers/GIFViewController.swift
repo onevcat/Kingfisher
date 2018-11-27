@@ -34,9 +34,14 @@ class GIFViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let url = ImageLoader.gifImageURLs.last
+        let url = ImageLoader.gifImageURLs.last!
         
-        imageView.kf.setImage(with: url)
-        animatedImageView.kf.setImage(with: url)
+        // Should need to use different cache key to prevent data overwritten by each other.
+        
+        let imageViewResource = ImageResource(downloadURL: url, cacheKey: "\(url)-imageview")
+        imageView.kf.setImage(with: imageViewResource)
+        
+        let animatedImageViewResource = ImageResource(downloadURL: url, cacheKey: "\(url)-animated_imageview")
+        animatedImageView.kf.setImage(with: animatedImageViewResource)
     }
 }
