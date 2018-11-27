@@ -219,7 +219,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cocoapods (~> 1.6.beta)
   fastlane
   jazzy
 
