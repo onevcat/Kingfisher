@@ -80,7 +80,7 @@ class ImageViewExtensionTests: XCTestCase {
             let value = result.value!
             XCTAssertTrue(value.image.renderEqual(to: testImage))
             XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
-            XCTAssertEqual(self.imageView.kf.taskIdentifier, url.absoluteString)
+            XCTAssertEqual(self.imageView.kf.taskIdentifier, issueSourceIdentifier() - 1)
             
             XCTAssertEqual(value.cacheType, .none)
             XCTAssertTrue(Thread.isMainThread)
@@ -127,7 +127,7 @@ class ImageViewExtensionTests: XCTestCase {
             let value = result.value!
             XCTAssertTrue(value.image.renderEqual(to: testImage))
             XCTAssertTrue(self.imageView.image!.renderEqual(to: testImage))
-            XCTAssertEqual(self.imageView.kf.taskIdentifier, url.absoluteString)
+            XCTAssertEqual(self.imageView.kf.taskIdentifier, issueSourceIdentifier() - 1)
 
             XCTAssertEqual(value.cacheType, .none)
             XCTAssertTrue(Thread.isMainThread)
@@ -179,7 +179,8 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.enter()
-        imageView.kf.setImage(with: url){ result in
+        let anotherImageView = ImageView()
+        anotherImageView.kf.setImage(with: url) { result in
             XCTAssertNotNil(result.value)
             group.leave()
         }
@@ -364,7 +365,7 @@ class ImageViewExtensionTests: XCTestCase {
             // The download successed, but not the resource we want.
             XCTAssertNotNil(result.error)
             if case .imageSettingError(
-                reason: .notCurrentSource(let result, _, let source)) = result.error!
+                reason: .notCurrentSourceTask(let result, _, let source)) = result.error!
             {
                 XCTAssertEqual(source.url, testURLs[0])
                 XCTAssertNotEqual(result!.image, self.imageView.image)
@@ -617,6 +618,39 @@ class ImageViewExtensionTests: XCTestCase {
         }
         XCTAssertEqual(testImage, imageView.image)
         waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    // https://github.com/onevcat/Kingfisher/issues/1053
+    func testSetSameURLWithDifferentProcessors() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        
+        stub(url, data: testImageData)
+        
+        let size1 = CGSize(width: 10, height: 10)
+        let p1 = ResizingImageProcessor(referenceSize: size1)
+        
+        let size2 = CGSize(width: 20, height: 20)
+        let p2 = ResizingImageProcessor(referenceSize: size2)
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        imageView.kf.setImage(with: url, options: [.processor(p1)]) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(result.error!.isNotCurrentTask)
+            group.leave()
+        }
+        
+        group.enter()
+        imageView.kf.setImage(with: url, options: [.processor(p2)]) { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(result.value!.image.size, size2)
+            group.leave()
+        }
+        
+        group.notify(queue: .main) { exp.fulfill() }
+        waitForExpectations(timeout: 1, handler: nil)
     }
 }
 

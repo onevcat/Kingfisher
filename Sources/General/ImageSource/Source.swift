@@ -26,16 +26,16 @@
 
 import Foundation
 
+public typealias SourceIdentifier = UInt
+var currentIdentifier: SourceIdentifier = 0
+func issueSourceIdentifier() -> SourceIdentifier {
+    currentIdentifier += 1
+    return currentIdentifier
+}
+
 public enum Source {
     case network(Resource)
     case provider(ImageDataProvider)
-    
-    var identifier: String {
-        switch self {
-        case .network(let resource): return resource.identifier
-        case .provider(let provider): return provider.identifier
-        }
-    }
     
     var cacheKey: String {
         switch self {

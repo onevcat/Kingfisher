@@ -49,19 +49,20 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             base.setImage(placeholder)
         }
         
-        mutatingSelf.taskIdentifier = source.identifier
+        let issuedTaskIdentifier = issueSourceIdentifier()
+        mutatingSelf.taskIdentifier = issuedTaskIdentifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard source.identifier == self.taskIdentifier else { return }
+                guard issuedTaskIdentifier == self.taskIdentifier else { return }
                 progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    guard source.identifier == self.taskIdentifier else {
+                    guard issuedTaskIdentifier == self.taskIdentifier else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                            reason: .notCurrentSourceTask(result: result.value, error: result.error, source: source))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -133,9 +134,15 @@ private var imageTaskKey: Void?
 
 extension KingfisherWrapper where Base: WKInterfaceImage {
     
-    public private(set) var taskIdentifier: String? {
-        get { return getAssociatedObject(base, &taskIdentifierKey) }
-        set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
+    public private(set) var taskIdentifier: SourceIdentifier? {
+        get {
+            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &taskIdentifierKey)
+            return box?.value
+        }
+        set {
+            let box = newValue.map { Box($0) }
+            setRetainedAssociatedObject(base, &taskIdentifierKey, box)
+        }
     }
 
     private var imageTask: DownloadTask? {
@@ -146,9 +153,9 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
 
 extension KingfisherWrapper where Base: WKInterfaceImage {
     /// Gets the image URL binded to this image view.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {
-        get { return taskIdentifier.flatMap { URL(string: $0) } }
-        set { taskIdentifier = newValue?.absoluteString }
+        get { return nil }
+        set { }
     }
 }
