@@ -54,10 +54,7 @@ public struct KingfisherWrapper<Base> {
     }
 }
 
-public protocol KingfisherCompatible {
-    associatedtype CompatibleType
-    var kf: CompatibleType { get }
-}
+public protocol KingfisherCompatible { }
 
 public extension KingfisherCompatible {
     public var kf: KingfisherWrapper<Self> {
