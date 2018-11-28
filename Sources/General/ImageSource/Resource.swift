@@ -35,12 +35,6 @@ public protocol Resource {
     
     /// The target image URL.
     var downloadURL: URL { get }
-
-    var identifier: String { get }
-}
-
-extension Resource {
-    public var identifier: String { return downloadURL.absoluteString }
 }
 
 /// ImageResource is a simple combination of `downloadURL` and `cacheKey`.

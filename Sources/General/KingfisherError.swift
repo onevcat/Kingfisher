@@ -156,7 +156,7 @@ public enum KingfisherError: Error {
     /// Represnts the error reason duting image setting in a view related class.
     ///
     /// - emptySource: The input resource is empty or `nil`. Code 5001.
-    /// - notCurrentSource: The source task is finished, but it is not the one expected now. Code 5002.
+    /// - notCurrentSourceTask: The source task is finished, but it is not the one expected now. Code 5002.
     /// - dataProviderError: An error happens during getting data from an `ImageDataProvider`. Code 5003.
     public enum ImageSettingErrorReason {
         
@@ -165,9 +165,9 @@ public enum KingfisherError: Error {
         
         /// The resource task is finished, but it is not the one expected now. This usually happens when you set another
         /// resource on the view without cancelling the current on-going one. The previous setting task will fail with
-        /// this `.notCurrentSource` error when a result got, regardless of it being successful or not for that task.
+        /// this `.notCurrentSourceTask` error when a result got, regardless of it being successful or not for that task.
         /// Code 5002.
-        case notCurrentSource(result: RetrieveImageResult?, error: Error?, source: Source)
+        case notCurrentSourceTask(result: RetrieveImageResult?, error: Error?, source: Source)
 
         /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
         case dataProviderError(provider: ImageDataProvider, error: Error)
@@ -201,6 +201,13 @@ public enum KingfisherError: Error {
     public func isInvalidResponseStatusCode(_ code: Int) -> Bool {
         if case .responseError(reason: .invalidHTTPStatusCode(let response)) = self {
             return response.statusCode == code
+        }
+        return false
+    }
+    
+    public var isNotCurrentTask: Bool {
+        if case .imageSettingError(reason: .notCurrentSourceTask(_, _, _)) = self {
+            return true
         }
         return false
     }
@@ -338,9 +345,9 @@ extension KingfisherError.ImageSettingErrorReason {
         switch self {
         case .emptySource:
             return "The input resource is empty."
-        case .notCurrentSource(let result, let error, let resource):
+        case .notCurrentSourceTask(let result, let error, let resource):
             if let result = result {
-                return "Retrieving resource succeeded, but this resource is " +
+                return "Retrieving resource succeeded, but this source is " +
                        "not the one currently expected. Result: \(result). Resource: \(resource)."
             } else if let error = error {
                 return "Retrieving resource failed, and this resource is " +
@@ -356,7 +363,7 @@ extension KingfisherError.ImageSettingErrorReason {
     var errorCode: Int {
         switch self {
         case .emptySource: return 5001
-        case .notCurrentSource: return 5002
+        case .notCurrentSourceTask: return 5002
         case .dataProviderError: return 5003
         }
     }

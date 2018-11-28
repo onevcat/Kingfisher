@@ -59,7 +59,8 @@ extension KingfisherWrapper where Base: ImageView {
         let maybeIndicator = indicator
         maybeIndicator?.startAnimatingView()
 
-        mutatingSelf.taskIdentifier = source.identifier
+        let issuedIdentifier = issueSourceIdentifier()
+        mutatingSelf.taskIdentifier = issuedIdentifier
 
         if base.shouldPreloadAllAnimation() {
             options.preloadAllAnimationData = true
@@ -69,7 +70,7 @@ extension KingfisherWrapper where Base: ImageView {
             with: source,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard source.identifier == self.taskIdentifier else { return }
+                guard issuedIdentifier == self.taskIdentifier else { return }
                 if let progressBlock = progressBlock {
                     progressBlock(receivedSize, totalSize)
                 }
@@ -77,9 +78,9 @@ extension KingfisherWrapper where Base: ImageView {
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     maybeIndicator?.stopAnimatingView()
-                    guard source.identifier == self.taskIdentifier else {
+                    guard issuedIdentifier == self.taskIdentifier else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                            reason: .notCurrentSourceTask(result: result.value, error: result.error, source: source))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -209,9 +210,15 @@ private var imageTaskKey: Void?
 
 extension KingfisherWrapper where Base: ImageView {
 
-    public private(set) var taskIdentifier: String? {
-        get { return getAssociatedObject(base, &taskIdentifierKey) }
-        set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
+    public private(set) var taskIdentifier: SourceIdentifier? {
+        get {
+            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &taskIdentifierKey)
+            return box?.value
+        }
+        set {
+            let box = newValue.map { Box($0) }
+            setRetainedAssociatedObject(base, &taskIdentifierKey, box)
+        }
     }
 
     /// Holds which indicator type is going to be used.
@@ -301,9 +308,9 @@ extension KingfisherWrapper where Base: ImageView {
 
 extension KingfisherWrapper where Base: ImageView {
     /// Gets the image URL binded to this image view.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {
-        get { return taskIdentifier.flatMap { URL(string: $0) } }
-        set { taskIdentifier = newValue?.absoluteString }
+        get { return nil }
+        set { }
     }
 }

@@ -50,20 +50,21 @@ extension KingfisherWrapper where Base: NSButton {
             base.image = placeholder
         }
 
-        mutatingSelf.taskIdentifier = source.identifier
+        let issuedIdentifier = issueSourceIdentifier()
+        mutatingSelf.taskIdentifier = issuedIdentifier
 
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard source.identifier == self.taskIdentifier else { return }
+                guard issuedIdentifier == self.taskIdentifier else { return }
                 progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard source.identifier == self.taskIdentifier else {
+                    guard issuedIdentifier == self.taskIdentifier else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                            reason: .notCurrentSourceTask(result: result.value, error: result.error, source: source))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -147,19 +148,20 @@ extension KingfisherWrapper where Base: NSButton {
             base.alternateImage = placeholder
         }
 
-        mutatingSelf.alternateTaskIdentifier = source.identifier
+        let issuedIdentifier = issueSourceIdentifier()
+        mutatingSelf.alternateTaskIdentifier = issuedIdentifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             progressBlock: { receivedSize, totalSize in
-                guard self.alternateTaskIdentifier == source.identifier else { return }
+                guard issuedIdentifier == self.alternateTaskIdentifier else { return }
                 progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    guard self.alternateTaskIdentifier == source.identifier else {
+                    guard issuedIdentifier == self.alternateTaskIdentifier else {
                         let error = KingfisherError.imageSettingError(
-                            reason: .notCurrentSource(result: result.value, error: result.error, source: source))
+                            reason: .notCurrentSourceTask(result: result.value, error: result.error, source: source))
                         completionHandler?(.failure(error))
                         return
                     }
@@ -233,9 +235,15 @@ private var alternateImageTaskKey: Void?
 
 extension KingfisherWrapper where Base: NSButton {
 
-    public private(set) var taskIdentifier: String? {
-        get { return getAssociatedObject(base, &taskIdentifierKey) }
-        set { setRetainedAssociatedObject(base, &taskIdentifierKey, newValue) }
+    public private(set) var taskIdentifier: SourceIdentifier? {
+        get {
+            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &taskIdentifierKey)
+            return box?.value
+        }
+        set {
+            let box = newValue.map { Box($0) }
+            setRetainedAssociatedObject(base, &taskIdentifierKey, box)
+        }
     }
     
     private var imageTask: DownloadTask? {
@@ -243,9 +251,15 @@ extension KingfisherWrapper where Base: NSButton {
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 
-    public private(set) var alternateTaskIdentifier: String? {
-        get { return getAssociatedObject(base, &alternateTaskIdentifierKey) }
-        set { setRetainedAssociatedObject(base, &alternateTaskIdentifierKey, newValue) }
+    public private(set) var alternateTaskIdentifier: SourceIdentifier? {
+        get {
+            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &alternateTaskIdentifierKey)
+            return box?.value
+        }
+        set {
+            let box = newValue.map { Box($0) }
+            setRetainedAssociatedObject(base, &alternateTaskIdentifierKey, box)
+        }
     }
 
     private var alternateImageTask: DownloadTask? {
@@ -257,17 +271,17 @@ extension KingfisherWrapper where Base: NSButton {
 extension KingfisherWrapper where Base: NSButton {
 
     /// Gets the image URL binded to this button.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead.", renamed: "taskIdentifier")
+    @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {
-        get { return taskIdentifier.flatMap { URL(string: $0) } }
-        set { taskIdentifier = newValue?.absoluteString }
+        get { return nil }
+        set { }
     }
 
 
     /// Gets the image URL binded to this button.
-    @available(*, deprecated, message: "Use `alternateTaskIdentifier` instead.", renamed: "alternateTaskIdentifier")
+    @available(*, obsoleted: 5.0, message: "Use `alternateTaskIdentifier` instead to identify a setting task.")
     public private(set) var alternateWebURL: URL? {
-        get { return alternateTaskIdentifier.flatMap { URL(string: $0) } }
-        set { alternateTaskIdentifier = newValue?.absoluteString }
+        get { return nil }
+        set { }
     }
 }
