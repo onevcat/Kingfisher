@@ -80,3 +80,7 @@ fastlane/.env
 pre-change.yml
 .build
 fastlane/README.md
+/Kingfisher-TestImages
+
+.bundle/
+vendor/

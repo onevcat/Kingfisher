@@ -4,7 +4,7 @@
 //
 //  Created by Wei Wang on 15/4/6.
 //
-//  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,28 +25,23 @@
 //  THE SOFTWARE.
 
 
-#if os(OSX)
+#if os(macOS)
 import AppKit
-typealias ImageView = NSImageView
-public typealias IndicatorView = NSProgressIndicator
 #else
 import UIKit
-typealias ImageView = UIImageView
-public typealias IndicatorView = UIActivityIndicatorView
 #endif
 
-// MARK: - Set Images
+// MARK: - Extension methods.
 /**
-*	Set image to use from web.
-*/
-extension ImageView {
-
+ *    Set image to use from web.
+ */
+extension Kingfisher where Base: ImageView {
     /**
-     Set an image with a URL, a placeholder image, options, progress handler and completion handler.
+     Set an image with a resource, a placeholder image, options, progress handler and completion handler.
      
-     - parameter URL:               The URL of image.
-     - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-     - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
+     - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
+     - parameter placeholder:       A placeholder image when retrieving the image at URL.
+     - parameter options:           A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
      - parameter progressBlock:     Called when the image downloading progress gets updated.
      - parameter completionHandler: Called when the image retrieved and set.
      
@@ -54,256 +49,215 @@ extension ImageView {
      
      - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread.
      The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-     */
-    
-    public func kf_setImageWithURL(URL: NSURL?,
-                                   placeholderImage: Image? = nil,
-                                   optionsInfo: KingfisherOptionsInfo? = nil,
-                                   progressBlock: DownloadProgressBlock? = nil,
-                                   completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
-    {
-        let resource = URL.map { Resource(downloadURL: $0) }
-        return kf_setImageWithResource(resource,
-                                       placeholderImage: placeholderImage,
-                                       optionsInfo: optionsInfo,
-                                       progressBlock: progressBlock,
-                                       completionHandler: completionHandler)
-    }
-    
-    
-    /**
-    Set an image with a URL, a placeholder image, options, progress handler and completion handler.
-    
-    - parameter resource:          Resource object contains information such as `cacheKey` and `downloadURL`.
-    - parameter placeholderImage:  A placeholder image when retrieving the image at URL.
-    - parameter optionsInfo:       A dictionary could control some behaviors. See `KingfisherOptionsInfo` for more.
-    - parameter progressBlock:     Called when the image downloading progress gets updated.
-    - parameter completionHandler: Called when the image retrieved and set.
-    
-    - returns: A task represents the retrieving process.
      
-    - note: Both the `progressBlock` and `completionHandler` will be invoked in main thread. 
-     The `CallbackDispatchQueue` specified in `optionsInfo` will not be used in callbacks of this method.
-    */
-    public func kf_setImageWithResource(resource: Resource?,
-                                placeholderImage: Image? = nil,
-                                     optionsInfo: KingfisherOptionsInfo? = nil,
-                                   progressBlock: DownloadProgressBlock? = nil,
-                               completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
+     If `resource` is `nil`, the `placeholder` image will be set and
+     `completionHandler` will be called with both `error` and `image` being `nil`.
+     */
+    @discardableResult
+    public func setImage(with resource: Resource?,
+                         placeholder: Placeholder? = nil,
+                         options: KingfisherOptionsInfo? = nil,
+                         progressBlock: DownloadProgressBlock? = nil,
+                         completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
-        image = placeholderImage
-        
         guard let resource = resource else {
-            completionHandler?(image: nil, error: nil, cacheType: .None, imageURL: nil)
-            return RetrieveImageTask.emptyTask
+            self.placeholder = placeholder
+            setWebURL(nil)
+            completionHandler?(nil, nil, .none, nil)
+            return .empty
         }
         
-        let showIndicatorWhenLoading = kf_showIndicatorWhenLoading
-        var indicator: IndicatorView? = nil
-        if showIndicatorWhenLoading {
-            indicator = kf_indicator
-            indicator?.hidden = false
-            indicator?.kf_startAnimating()
-        }
+        var options = KingfisherManager.shared.defaultOptions + (options ?? KingfisherEmptyOptionsInfo)
+        let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
         
-        kf_setWebURL(resource.downloadURL)
-        
-        var options = optionsInfo ?? []
-        if shouldPreloadAllGIF() {
-            options.append(.PreloadAllGIFData)
+        if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet { // Always set placeholder while there is no image/placehoer yet.
+            self.placeholder = placeholder
         }
 
-        let task = KingfisherManager.sharedManager.retrieveImageWithResource(resource, optionsInfo: options,
+        let maybeIndicator = indicator
+        maybeIndicator?.startAnimatingView()
+        
+        setWebURL(resource.downloadURL)
+
+        if base.shouldPreloadAllAnimation() {
+            options.append(.preloadAllAnimationData)
+        }
+        
+        let task = KingfisherManager.shared.retrieveImage(
+            with: resource,
+            options: options,
             progressBlock: { receivedSize, totalSize in
+                guard resource.downloadURL == self.webURL else {
+                    return
+                }
                 if let progressBlock = progressBlock {
-                    progressBlock(receivedSize: receivedSize, totalSize: totalSize)
+                    progressBlock(receivedSize, totalSize)
                 }
             },
-            completionHandler: {[weak self] image, error, cacheType, imageURL in
-                
-                dispatch_async_safely_to_main_queue {
-                    guard let sSelf = self where imageURL == sSelf.kf_webURL else {
+            completionHandler: {[weak base] image, error, cacheType, imageURL in
+                DispatchQueue.main.safeAsync {
+                    maybeIndicator?.stopAnimatingView()
+                    guard let strongBase = base, imageURL == self.webURL else {
+                        completionHandler?(image, error, cacheType, imageURL)
                         return
                     }
                     
-                    sSelf.kf_setImageTask(nil)
-                    
+                    self.setImageTask(nil)
                     guard let image = image else {
-                        indicator?.kf_stopAnimating()
-                        completionHandler?(image: nil, error: error, cacheType: cacheType, imageURL: imageURL)
+                        completionHandler?(nil, error, cacheType, imageURL)
                         return
                     }
                     
-                    if let transitionItem = options.kf_firstMatchIgnoringAssociatedValue(.Transition(.None)),
-                        case .Transition(let transition) = transitionItem where ( options.forceTransition || cacheType == .None) {
-                            #if !os(OSX)
-                                UIView.transitionWithView(sSelf, duration: 0.0, options: [],
-                                    animations: {
-                                        indicator?.kf_stopAnimating()
-                                    },
-                                    completion: { finished in
-                                        UIView.transitionWithView(sSelf, duration: transition.duration,
-                                            options: [transition.animationOptions, .AllowUserInteraction],
-                                            animations: {
-                                                // Set image property in the animation.
-                                                transition.animations?(sSelf, image)
-                                            },
-                                            completion: { finished in
-                                                transition.completion?(finished)
-                                                completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
-                                        })
-                                })
-                            #endif
-                    } else {
-                        indicator?.kf_stopAnimating()
-                        sSelf.image = image
-                        completionHandler?(image: image, error: error, cacheType: cacheType, imageURL: imageURL)
+                    guard let transitionItem = options.lastMatchIgnoringAssociatedValue(.transition(.none)),
+                        case .transition(let transition) = transitionItem, ( options.forceTransition || cacheType == .none) else
+                    {
+                        self.placeholder = nil
+                        strongBase.image = image
+                        completionHandler?(image, error, cacheType, imageURL)
+                        return
                     }
+                    
+                    #if !os(macOS)
+                        UIView.transition(with: strongBase, duration: 0.0, options: [],
+                                          animations: { maybeIndicator?.stopAnimatingView() },
+                                          completion: { _ in
+
+                                            self.placeholder = nil
+                                            UIView.transition(with: strongBase, duration: transition.duration,
+                                                              options: [transition.animationOptions, .allowUserInteraction],
+                                                              animations: {
+                                                                // Set image property in the animation.
+                                                                transition.animations?(strongBase, image)
+                                                              },
+                                                              completion: { finished in
+                                                                transition.completion?(finished)
+                                                                completionHandler?(image, error, cacheType, imageURL)
+                                                              })
+                                          })
+                    #endif
                 }
             })
         
-        kf_setImageTask(task)
+        setImageTask(task)
         
         return task
     }
-}
-
-extension ImageView {
-    func shouldPreloadAllGIF() -> Bool {
-        return true
-    }
-}
-
-extension ImageView {
+    
     /**
      Cancel the image download task bounded to the image view if it is running.
      Nothing will happen if the downloading has already finished.
      */
-    public func kf_cancelDownloadTask() {
-        kf_imageTask?.downloadTask?.cancel()
+    public func cancelDownloadTask() {
+        imageTask?.cancel()
     }
 }
 
 // MARK: - Associated Object
 private var lastURLKey: Void?
 private var indicatorKey: Void?
-private var showIndicatorWhenLoadingKey: Void?
+private var indicatorTypeKey: Void?
+private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
-extension ImageView {
+extension Kingfisher where Base: ImageView {
     /// Get the image URL binded to this image view.
-    public var kf_webURL: NSURL? {
-        return objc_getAssociatedObject(self, &lastURLKey) as? NSURL
+    public var webURL: URL? {
+        return objc_getAssociatedObject(base, &lastURLKey) as? URL
     }
     
-    private func kf_setWebURL(URL: NSURL) {
-        objc_setAssociatedObject(self, &lastURLKey, URL, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    fileprivate func setWebURL(_ url: URL?) {
+        objc_setAssociatedObject(base, &lastURLKey, url, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    /// Whether show an animating indicator when the image view is loading an image or not.
-    /// Default is false.
-    public var kf_showIndicatorWhenLoading: Bool {
+    /// Holds which indicator type is going to be used.
+    /// Default is .none, means no indicator will be shown.
+    public var indicatorType: IndicatorType {
         get {
-            if let result = objc_getAssociatedObject(self, &showIndicatorWhenLoadingKey) as? NSNumber {
-                return result.boolValue
-            } else {
-                return false
-            }
+            let indicator = objc_getAssociatedObject(base, &indicatorTypeKey) as? IndicatorType
+            return indicator ?? .none
         }
         
         set {
-            if kf_showIndicatorWhenLoading == newValue {
-                return
-            } else {
-                if newValue {
-                    
-#if os(OSX)
-                    let indicator = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
-                    indicator.controlSize = .SmallControlSize
-                    indicator.style = .SpinningStyle
-#else
-    #if os(tvOS)
-                    let indicatorStyle = UIActivityIndicatorViewStyle.White
-    #else
-                    let indicatorStyle = UIActivityIndicatorViewStyle.Gray
-    #endif
-                    let indicator = UIActivityIndicatorView(activityIndicatorStyle:indicatorStyle)
-                    indicator.autoresizingMask = [.FlexibleLeftMargin, .FlexibleRightMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
-#endif
-
-                    indicator.kf_center = CGPoint(x: CGRectGetMidX(bounds), y: CGRectGetMidY(bounds))
-                    indicator.hidden = true
-
-                    self.addSubview(indicator)
-                    
-                    kf_setIndicator(indicator)
-                } else {
-                    kf_indicator?.removeFromSuperview()
-                    kf_setIndicator(nil)
-                }
-                
-                objc_setAssociatedObject(self, &showIndicatorWhenLoadingKey, NSNumber(bool: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            switch newValue {
+            case .none:
+                indicator = nil
+            case .activity:
+                indicator = ActivityIndicator()
+            case .image(let data):
+                indicator = ImageIndicator(imageData: data)
+            case .custom(let anIndicator):
+                indicator = anIndicator
             }
+            
+            objc_setAssociatedObject(base, &indicatorTypeKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
-    /// The indicator view showing when loading. This will be `nil` if `kf_showIndicatorWhenLoading` is false.
-    /// You may want to use this to set the indicator style or color when you set `kf_showIndicatorWhenLoading` to true.
-    public var kf_indicator: IndicatorView? {
-        return objc_getAssociatedObject(self, &indicatorKey) as? IndicatorView
+    /// Holds any type that conforms to the protocol `Indicator`.
+    /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
+    /// It will be `nil` if `indicatorType` is `.none`.
+    public fileprivate(set) var indicator: Indicator? {
+        get {
+            guard let box = objc_getAssociatedObject(base, &indicatorKey) as? Box<Indicator> else {
+                return nil
+            }
+            return box.value
+        }
+        
+        set {
+            // Remove previous
+            if let previousIndicator = indicator {
+                previousIndicator.view.removeFromSuperview()
+            }
+            
+            // Add new
+            if var newIndicator = newValue {
+                // Set default indicator frame if the view's frame not set.
+                if newIndicator.view.frame == .zero {
+                    newIndicator.view.frame = base.frame
+                }
+                newIndicator.viewCenter = CGPoint(x: base.bounds.midX, y: base.bounds.midY)
+                newIndicator.view.isHidden = true
+                base.addSubview(newIndicator.view)
+            }
+            
+            // Save in associated object
+            // Wrap newValue with Box to workaround an issue that Swift does not recognize
+            // and casting protocol for associate object correctly. https://github.com/onevcat/Kingfisher/issues/872
+            objc_setAssociatedObject(base, &indicatorKey, newValue.map(Box.init), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
-    private func kf_setIndicator(indicator: IndicatorView?) {
-        objc_setAssociatedObject(self, &indicatorKey, indicator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    fileprivate var imageTask: RetrieveImageTask? {
+        return objc_getAssociatedObject(base, &imageTaskKey) as? RetrieveImageTask
     }
     
-    private var kf_imageTask: RetrieveImageTask? {
-        return objc_getAssociatedObject(self, &imageTaskKey) as? RetrieveImageTask
+    fileprivate func setImageTask(_ task: RetrieveImageTask?) {
+        objc_setAssociatedObject(base, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    private func kf_setImageTask(task: RetrieveImageTask?) {
-        objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    public fileprivate(set) var placeholder: Placeholder? {
+        get {
+            return objc_getAssociatedObject(base, &placeholderKey) as? Placeholder
+        }
+        
+        set {
+            if let previousPlaceholder = placeholder {
+                previousPlaceholder.remove(from: base)
+            }
+            
+            if let newPlaceholder = newValue {
+                newPlaceholder.add(to: base)
+            } else {
+                base.image = nil
+            }
+            
+            objc_setAssociatedObject(base, &placeholderKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 }
 
 
-extension IndicatorView {
-    func kf_startAnimating() {
-        #if os(OSX)
-            startAnimation(nil)
-        #else
-            startAnimating()
-        #endif
-        hidden = false
-    }
-    
-    func kf_stopAnimating() {
-        #if os(OSX)
-            stopAnimation(nil)
-        #else
-            stopAnimating()
-        #endif
-        hidden = true
-    }
-    
-    #if os(OSX)
-    var kf_center: CGPoint {
-    get {
-    return CGPoint(x: frame.origin.x + frame.size.width / 2.0, y: frame.origin.y + frame.size.height / 2.0 )
-    }
-    set {
-    let newFrame = CGRect(x: newValue.x - frame.size.width / 2.0, y: newValue.y - frame.size.height / 2.0, width: frame.size.width, height: frame.size.height)
-    frame = newFrame
-    }
-    }
-    #else
-    var kf_center: CGPoint {
-        get {
-            return center
-        }
-        set {
-            center = newValue
-        }
-    }
-    #endif
+@objc extension ImageView {
+    func shouldPreloadAllAnimation() -> Bool { return true }
 }

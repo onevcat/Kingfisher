@@ -8,7 +8,7 @@
 typedef LSStubResponseDSL *(^ResponseWithBodyMethod)(id<LSHTTPBody>);
 typedef LSStubResponseDSL *(^ResponseWithHeaderMethod)(NSString *, NSString *);
 typedef LSStubResponseDSL *(^ResponseWithHeadersMethod)(NSDictionary *);
-typedef LSStubResponseDSL *(^ResponseVoidMethod)();
+typedef LSStubResponseDSL *(^ResponseVoidMethod)(void);
 
 @interface LSStubResponseDSL : NSObject
 - (id)initWithResponse:(LSStubResponse *)response;

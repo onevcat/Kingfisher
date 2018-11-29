@@ -4,7 +4,7 @@
 //
 //  Created by Wei Wang on 16/1/4.
 //
-//  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -42,22 +42,26 @@ class KingfisherOptionsInfoTests: XCTestCase {
     
     func testEmptyOptionsShouldParseCorrectly() {
         let options = KingfisherEmptyOptionsInfo
-        XCTAssertNil(options.targetCache)
-        XCTAssertNil(options.downloader)
+        XCTAssertTrue(options.targetCache === nil)
+        XCTAssertTrue(options.downloader === nil)
 
-#if !os(OSX)
+#if !os(macOS)
         switch options.transition {
-        case .None: break
+        case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
         }
 #endif
         
-        XCTAssertEqual(options.downloadPriority, NSURLSessionTaskPriorityDefault)
+        XCTAssertEqual(options.downloadPriority, URLSessionTask.defaultPriority)
         XCTAssertFalse(options.forceRefresh)
+        XCTAssertFalse(options.fromMemoryCacheOrRefresh)
         XCTAssertFalse(options.cacheMemoryOnly)
         XCTAssertFalse(options.backgroundDecode)
-        XCTAssertEqual(dispatch_queue_get_label(options.callbackDispatchQueue), dispatch_queue_get_label(dispatch_get_main_queue()))
+        XCTAssertEqual(options.callbackDispatchQueue.label, DispatchQueue.main.label)
         XCTAssertEqual(options.scaleFactor, 1.0)
+        XCTAssertFalse(options.keepCurrentImageWhileLoading)
+        XCTAssertFalse(options.onlyLoadFirstFrame)
+        XCTAssertFalse(options.cacheOriginalImage)
     }
     
 
@@ -65,44 +69,75 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
-#if os(OSX)
-        let transition = ImageTransition.None
+#if os(macOS)
+        let transition = ImageTransition.none
 #else
-        let transition = ImageTransition.Fade(0.5)
+        let transition = ImageTransition.fade(0.5)
 #endif
             
-        let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+        let queue = DispatchQueue.global(qos: .default)
+        let testModifier = TestModifier()
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
         
         let options: KingfisherOptionsInfo = [
-            .TargetCache(cache),
-            .Downloader(downloader),
-            .Transition(transition),
-            .DownloadPriority(0.8),
-            .ForceRefresh,
-            .CacheMemoryOnly,
-            .BackgroundDecode,
-            .CallbackDispatchQueue(queue),
-            .ScaleFactor(2.0)
+            .targetCache(cache),
+            .downloader(downloader),
+            .transition(transition),
+            .downloadPriority(0.8),
+            .forceRefresh,
+            .fromMemoryCacheOrRefresh,
+            .cacheMemoryOnly,
+            .onlyFromCache,
+            .backgroundDecode,
+            .callbackDispatchQueue(queue),
+            KingfisherOptionsInfoItem.scaleFactor(2.0),
+            .requestModifier(testModifier),
+            .processor(processor),
+            .keepCurrentImageWhileLoading,
+            .onlyLoadFirstFrame,
+            .cacheOriginalImage
         ]
         
         XCTAssertTrue(options.targetCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
-#if !os(OSX)
+#if !os(macOS)
         switch options.transition {
-        case .Fade(let duration): XCTAssertEqual(duration, 0.5)
+        case .fade(let duration): XCTAssertEqual(duration, 0.5)
         default: XCTFail()
         }
 #endif
         
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
+        XCTAssertTrue(options.fromMemoryCacheOrRefresh)
         XCTAssertTrue(options.cacheMemoryOnly)
+        XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
         
-        XCTAssertEqual(dispatch_queue_get_label(options.callbackDispatchQueue), dispatch_queue_get_label(queue))
+        XCTAssertEqual(options.callbackDispatchQueue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
-        
+        XCTAssertTrue(options.modifier is TestModifier)
+        XCTAssertEqual(options.processor.identifier, processor.identifier)
+        XCTAssertTrue(options.keepCurrentImageWhileLoading)
+        XCTAssertTrue(options.onlyLoadFirstFrame)
+        XCTAssertTrue(options.cacheOriginalImage)
     }
     
+    func testOptionCouldBeOverwritten() {
+        var options: KingfisherOptionsInfo = [.downloadPriority(0.5), .onlyFromCache]
+        XCTAssertEqual(options.downloadPriority, 0.5)
+        
+        options.append(.downloadPriority(0.8))
+        XCTAssertEqual(options.downloadPriority, 0.8)
+        
+        options.append(.downloadPriority(1.0))
+        XCTAssertEqual(options.downloadPriority, 1.0)
+    }
+}
+
+class TestModifier: ImageDownloadRequestModifier {
+    func modified(for request: URLRequest) -> URLRequest? {
+        return nil
+    }
 }

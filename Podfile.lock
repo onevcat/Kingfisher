@@ -2,18 +2,21 @@ PODS:
   - Nocilla (0.10.0)
 
 DEPENDENCIES:
-  - Nocilla (from `https://github.com/onevcat/Nocilla.git`)
+  - Nocilla (from `https://github.com/onevcat/Nocilla.git`, branch `swift4`)
 
 EXTERNAL SOURCES:
   Nocilla:
+    :branch: swift4
     :git: https://github.com/onevcat/Nocilla.git
 
 CHECKOUT OPTIONS:
   Nocilla:
-    :commit: 4e3ec2dac36ea2a6f7c57f089cfb47081fd5cd24
+    :commit: 9207f9ec0e84d56eed117b37a99b091677c78fe2
     :git: https://github.com/onevcat/Nocilla.git
 
 SPEC CHECKSUMS:
   Nocilla: c31f714d1f0a24a983c430e99a1283908ed9c1d7
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: ea1221c4d8585d2adbae5801003918efbc0c3079
+
+COCOAPODS: 1.4.0

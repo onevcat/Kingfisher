@@ -4,7 +4,7 @@
 //
 //  Created by Wei Wang on 15/10/24.
 //
-//  Copyright (c) 2016 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 //  THE SOFTWARE.
 
 import XCTest
+import ImageIO
 @testable import Kingfisher
 
 class ImageExtensionTests: XCTestCase {
@@ -41,66 +42,178 @@ class ImageExtensionTests: XCTestCase {
     
     func testImageFormat() {
         var format: ImageFormat
-        format = testImageJEPGData.kf_imageFormat
+        format = testImageJEPGData.kf.imageFormat
         XCTAssertEqual(format, ImageFormat.JPEG)
         
-        format = testImagePNGData.kf_imageFormat
+        format = testImagePNGData.kf.imageFormat
         XCTAssertEqual(format, ImageFormat.PNG)
         
-        format = testImageGIFData.kf_imageFormat
+        format = testImageGIFData.kf.imageFormat
         XCTAssertEqual(format, ImageFormat.GIF)
         
-        let raw = [1, 2, 3, 4, 5, 6, 7, 8]
-        format = NSData(bytes: raw, length: 8) .kf_imageFormat
-        XCTAssertEqual(format, ImageFormat.Unknown)
+        let raw: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8]
+        
+        format = Data(bytes: raw).kf.imageFormat
+        XCTAssertEqual(format, ImageFormat.unknown)
     }
     
     func testGenerateGIFImage() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData, preloadAll: false)
+        let image = Kingfisher<Image>.animated(with: testImageGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
-        let count = ImagesCountWithImageSource(image!.kf_imageSource!.imageRef!)
+        let count = CGImageSourceGetCount(image!.kf.imageSource!.imageRef!)
         XCTAssertEqual(count, 8, "There should be 8 frames.")
 #else
-        XCTAssertEqual(image!.kf_images!.count, 8, "There should be 8 frames.")
-        
-        XCTAssertEqualWithAccuracy(image!.kf_duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
+        XCTAssertEqual(image!.kf.images!.count, 8, "There should be 8 frames.")
+        XCTAssertEqual(image!.kf.duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
 #endif
     }
-    
+
+#if os(iOS) || os(tvOS)
+    func testScaleForGIFImage() {
+        let image = Kingfisher<Image>.animated(with: testImageGIFData, scale: 2.0, duration: 0.0, preloadAll: false, onlyFirstFrame: false)
+        XCTAssertNotNil(image, "The image should be initiated.")
+        XCTAssertEqual(image!.scale, 2.0, "should have correct scale")
+    }
+#endif
+
     func testGIFRepresentation() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageGIFData, preloadAll: false)!
-        let data = ImageGIFRepresentation(image)
+        let image = Kingfisher<Image>.animated(with: testImageGIFData, preloadAll: false)!
+        let data = image.kf.gifRepresentation()
         
         XCTAssertNotNil(data, "Data should not be nil")
-        XCTAssertEqual(data?.kf_imageFormat, ImageFormat.GIF)
+        XCTAssertEqual(data?.kf.imageFormat, ImageFormat.GIF)
         
-        let allLoadImage = Image.kf_animatedImageWithGIFData(gifData: data!, preloadAll: true)!
-        let allLoadData = ImageGIFRepresentation(allLoadImage)
+        let allLoadImage = Kingfisher<Image>.animated(with: data!, preloadAll: true)!
+        let allLoadData = allLoadImage.kf.gifRepresentation()
         XCTAssertNotNil(allLoadData, "Data1 should not be nil")
-        XCTAssertEqual(allLoadData?.kf_imageFormat, ImageFormat.GIF)
+        XCTAssertEqual(allLoadData?.kf.imageFormat, ImageFormat.GIF)
     }
     
     func testGenerateSingleFrameGIFImage() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageSingleFrameGIFData, preloadAll: false)
+        let image = Kingfisher<Image>.animated(with: testImageSingleFrameGIFData, preloadAll: false)
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
-        let count = ImagesCountWithImageSource(image!.kf_imageSource!.imageRef!)
+        let count = CGImageSourceGetCount(image!.kf.imageSource!.imageRef!)
         XCTAssertEqual(count, 1, "There should be 1 frames.")
 #else
-        XCTAssertEqual(image!.kf_images!.count, 1, "There should be 1 frames.")
+        XCTAssertEqual(image!.kf.images!.count, 1, "There should be 1 frames.")
         
-        XCTAssertEqual(image!.kf_duration, Double.infinity, "The image duration should be 0 since it is not animated image.")
+        XCTAssertEqual(image!.kf.duration, Double.infinity, "The image duration should be 0 since it is not animated image.")
 #endif
     }
     
-    func testPreloadAllGIFData() {
-        let image = Image.kf_animatedImageWithGIFData(gifData: testImageSingleFrameGIFData, preloadAll: true)!
+    func testPreloadAllAnimationData() {
+        let image = Kingfisher<Image>.animated(with: testImageSingleFrameGIFData, preloadAll: true)!
         XCTAssertNotNil(image, "The image should be initiated.")
 #if os(iOS) || os(tvOS)
-        XCTAssertNil(image.kf_imageSource, "Image source should be nil")
+        XCTAssertNil(image.kf.imageSource, "Image source should be nil")
 #endif
-        XCTAssertEqual(image.kf_duration, image.kf_duration)
-        XCTAssertEqual(image.kf_images!.count, image.kf_images!.count)
+        XCTAssertEqual(image.kf.duration, image.kf.duration)
+        XCTAssertEqual(image.kf.images!.count, image.kf.images!.count)
+    }
+    
+    func testLoadOnlyFirstFrame() {
+        let image = Kingfisher<Image>.animated(with: testImageGIFData,
+                                               scale: 1.0,
+                                               duration: 0.0,
+                                               preloadAll: true,
+                                               onlyFirstFrame: true)!
+        XCTAssertNotNil(image, "The image should be initiated.")
+        XCTAssertNil(image.kf.images, "The image should be nil")
+    }
+    
+    func testSizeContent() {
+        func getRatio(image: Image) -> CGFloat {
+            return image.size.height / image.size.width
+        }
+        
+        let image = testImage
+        let ratio = getRatio(image: image)
+        
+        let targetSize = CGSize(width: 100, height: 50)
+        
+        let fillImage = image.kf.resize(to: targetSize, for: .aspectFill)
+        XCTAssertEqual(getRatio(image: fillImage), ratio)
+        XCTAssertEqual(max(fillImage.size.width, fillImage.size.height), 100)
+        
+        let fitImage = image.kf.resize(to: targetSize, for: .aspectFit)
+        XCTAssertEqual(getRatio(image: fitImage), ratio)
+        XCTAssertEqual(max(fitImage.size.width, fitImage.size.height), 50)
+        
+        let resizeImage = image.kf.resize(to: targetSize)
+        XCTAssertEqual(resizeImage.size.width, 100)
+        XCTAssertEqual(resizeImage.size.height, 50)
+    }
+    
+    func testSizeConstraintByAnchor() {
+        let size = CGSize(width: 100, height: 100)
+        
+        let topLeft = CGPoint(x: 0, y: 0)
+        let top = CGPoint(x: 0.5, y: 0)
+        let topRight = CGPoint(x: 1, y: 0)
+        let center = CGPoint(x: 0.5, y: 0.5)
+        let bottomRight = CGPoint(x: 1, y: 1)
+        let invalidAnchor = CGPoint(x: -1, y: 2)
+        
+        let inSize = CGSize(width: 20, height: 20)
+        let outX = CGSize(width: 120, height: 20)
+        let outY = CGSize(width: 20, height: 120)
+        let outSize = CGSize(width: 120, height: 120)
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: topLeft), CGRect(x: 0, y: 0, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: topLeft), CGRect(x: 0, y: 0, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: topLeft), CGRect(x: 0, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: topLeft), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: top), CGRect(x: 40, y: 0, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: top), CGRect(x: 0, y: 0, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: top), CGRect(x: 40, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: top), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: topRight), CGRect(x: 80, y: 0, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: topRight), CGRect(x: 0, y: 0, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: topRight), CGRect(x: 80, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: topRight), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: center), CGRect(x: 40, y: 40, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: center), CGRect(x: 0, y: 40, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: center), CGRect(x: 40, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: center), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: bottomRight), CGRect(x: 80, y: 80, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: bottomRight), CGRect(x: 0, y: 80, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: bottomRight), CGRect(x:80, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: bottomRight), CGRect(x: 0, y: 0, width: 100, height: 100))
+        
+        XCTAssertEqual(size.kf.constrainedRect(for: inSize, anchor: invalidAnchor), CGRect(x: 0, y: 80, width: 20, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: invalidAnchor), CGRect(x: 0, y: 80, width: 100, height: 20))
+        XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: invalidAnchor), CGRect(x:0, y: 0, width: 20, height: 100))
+        XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: invalidAnchor), CGRect(x: 0, y: 0, width: 100, height: 100))
+    }
+    
+    func testDecodeScale() {
+        #if os(iOS) || os(tvOS)
+        let image = testImage
+        XCTAssertEqual(image.size, CGSize(width: 64, height: 64))
+        XCTAssertEqual(image.scale, 1.0)
+
+        let image_2x = Kingfisher<Image>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
+        XCTAssertEqual(image_2x.size, CGSize(width: 32, height: 32))
+        XCTAssertEqual(image_2x.scale, 2.0)
+        
+        let decoded = image.kf.decoded
+        XCTAssertEqual(decoded.size, CGSize(width: 64, height: 64))
+        XCTAssertEqual(decoded.scale, 1.0)
+        
+        let decodedDifferentScale = image.kf.decoded(scale: 2.0)
+        XCTAssertEqual(decodedDifferentScale.size, CGSize(width: 32, height: 32))
+        XCTAssertEqual(decodedDifferentScale.scale, 2.0)
+        
+        let decoded_2x = image_2x.kf.decoded
+        XCTAssertEqual(decoded_2x.size, CGSize(width: 32, height: 32))
+        XCTAssertEqual(decoded_2x.scale, 2.0)
+        #endif
+        
     }
 }

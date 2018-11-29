@@ -1,0 +1,1007 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		277EAE8D2045B39C00547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE892045B39C00547CD3 /* Assets.xcassets */; };
+		277EAE8E2045B39C00547CD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE8A2045B39C00547CD3 /* Interface.storyboard */; };
+		277EAE9D2045B4D500547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE962045B4D500547CD3 /* Assets.xcassets */; };
+		277EAEA12045B52800547CD3 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277EAE9E2045B52800547CD3 /* InterfaceController.swift */; };
+		277EAEA32045B52800547CD3 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277EAEA02045B52800547CD3 /* ExtensionDelegate.swift */; };
+		4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
+		4B7742471D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
+		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
+		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
+		4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3371D5B02F8003387C2 /* Assets.xcassets */; };
+		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
+		4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF33A1D5B02F8003387C2 /* Cell.xib */; };
+		4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF33C1D5B02F8003387C2 /* ViewController.swift */; };
+		D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */; };
+		D12E0C961C47F91800AC98AD /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C8D1C47F91800AC98AD /* LaunchScreen.xib */; };
+		D12E0C971C47F91800AC98AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C8F1C47F91800AC98AD /* Main.storyboard */; };
+		D12E0C981C47F91800AC98AD /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C911C47F91800AC98AD /* CollectionViewCell.swift */; };
+		D12E0C991C47F91800AC98AD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C921C47F91800AC98AD /* Images.xcassets */; };
+		D12E0C9B1C47F91800AC98AD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C941C47F91800AC98AD /* ViewController.swift */; };
+		D12E0CA21C47F92200AC98AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C9D1C47F92200AC98AD /* AppDelegate.swift */; };
+		D12E0CA31C47F92200AC98AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C9E1C47F92200AC98AD /* Assets.xcassets */; };
+		D12E0CA41C47F92200AC98AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C9F1C47F92200AC98AD /* Main.storyboard */; };
+		D12E0CB51C47F9C100AC98AD /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C911C47F91800AC98AD /* CollectionViewCell.swift */; };
+		D12E0CB61C47F9C100AC98AD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C941C47F91800AC98AD /* ViewController.swift */; };
+		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D1679A531C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */; };
+		D17176322047826A00EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D17176332047826A00EFC8C5 /* Kingfisher.framework */; };
+		D17176342047827300EFC8C5 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D17176332047826A00EFC8C5 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D1717635204782AE00EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1717636204782AE00EFC8C5 /* Kingfisher.framework */; };
+		D1717637204782B800EFC8C5 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D1717636204782AE00EFC8C5 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D1717638204782D500EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1717639204782D500EFC8C5 /* Kingfisher.framework */; };
+		D171763E204782F300EFC8C5 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D1717639204782D500EFC8C5 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D171763F2047837900EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D17176402047837900EFC8C5 /* Kingfisher.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D1679A471C4E78B20020FD12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1679A441C4E78B20020FD12;
+			remoteInfo = "Kingfisher-watchOS-Demo Extension";
+		};
+		D1679A511C4E78B20020FD12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1679A381C4E78B20020FD12;
+			remoteInfo = "Kingfisher-watchOS-Demo";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4BE2C9E61B381D42005313E5 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				D1679A531C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D12F2EEC1C4E7CF500B8054D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D1717637204782B800EFC8C5 /* Kingfisher.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49ED1BEDA82000CE335D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D171763E204782F300EFC8C5 /* Kingfisher.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1679A571C4E78B20020FD12 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1ED2D511AD2D09F00CFC3EB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D17176342047827300EFC8C5 /* Kingfisher.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		277EAE892045B39C00547CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		277EAE8B2045B39C00547CD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		277EAE8C2045B39C00547CD3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		277EAE962045B4D500547CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		277EAE9E2045B52800547CD3 /* InterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		277EAE9F2045B52800547CD3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		277EAEA02045B52800547CD3 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
+		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4BCCF3391D5B02F8003387C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4BCCF33A1D5B02F8003387C2 /* Cell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
+		4BCCF33B1D5B02F8003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BCCF33C1D5B02F8003387C2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D12E0C8E1C47F91800AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		D12E0C901C47F91800AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D12E0C911C47F91800AC98AD /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		D12E0C921C47F91800AC98AD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D12E0C931C47F91800AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D12E0C941C47F91800AC98AD /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D12E0C9D1C47F92200AC98AD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D12E0C9E1C47F92200AC98AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D12E0CA01C47F92200AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D12E0CA11C47F92200AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-tvOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D17176332047826A00EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1717636204782AE00EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1717639204782D500EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D17176402047837900EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B2944521C3D03880088C3E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D171763F2047837900EFC8C5 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		60796AE9A717329E55ACCCC7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1717635204782AE00EFC8C5 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49BF1BEDA53F00CE335D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1717638204782D500EFC8C5 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1679A421C4E78B20020FD12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1ED2D081AD2CFA600CFC3EB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D17176322047826A00EFC8C5 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		277EAE762045ADE700547CD3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D17176402047837900EFC8C5 /* Kingfisher.framework */,
+				D1717639204782D500EFC8C5 /* Kingfisher.framework */,
+				D1717636204782AE00EFC8C5 /* Kingfisher.framework */,
+				D17176332047826A00EFC8C5 /* Kingfisher.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		277EAE882045B39C00547CD3 /* Kingfisher-watchOS-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				277EAE892045B39C00547CD3 /* Assets.xcassets */,
+				277EAE8A2045B39C00547CD3 /* Interface.storyboard */,
+				277EAE8C2045B39C00547CD3 /* Info.plist */,
+			);
+			name = "Kingfisher-watchOS-Demo";
+			path = "Demo/Kingfisher-watchOS-Demo";
+			sourceTree = "<group>";
+		};
+		277EAE952045B4D500547CD3 /* Kingfisher-watchOS-Demo Extension */ = {
+			isa = PBXGroup;
+			children = (
+				277EAE962045B4D500547CD3 /* Assets.xcassets */,
+				277EAEA02045B52800547CD3 /* ExtensionDelegate.swift */,
+				277EAE9F2045B52800547CD3 /* Info.plist */,
+				277EAE9E2045B52800547CD3 /* InterfaceController.swift */,
+			);
+			name = "Kingfisher-watchOS-Demo Extension";
+			path = "Demo/Kingfisher-watchOS-Demo Extension";
+			sourceTree = "<group>";
+		};
+		4BCCF3351D5B02F8003387C2 /* Kingfisher-macOS-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */,
+				4BCCF3371D5B02F8003387C2 /* Assets.xcassets */,
+				4BCCF3381D5B02F8003387C2 /* Main.storyboard */,
+				4BCCF33A1D5B02F8003387C2 /* Cell.xib */,
+				4BCCF33B1D5B02F8003387C2 /* Info.plist */,
+				4BCCF33C1D5B02F8003387C2 /* ViewController.swift */,
+			);
+			name = "Kingfisher-macOS-Demo";
+			path = "Demo/Kingfisher-macOS-Demo";
+			sourceTree = "<group>";
+		};
+		D10EC22B1C3D62DE00A4211C /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				D12E0C8B1C47F91800AC98AD /* Kingfisher-Demo */,
+				4BCCF3351D5B02F8003387C2 /* Kingfisher-macOS-Demo */,
+				D12E0C9C1C47F92200AC98AD /* Kingfisher-tvOS-Demo */,
+				277EAE952045B4D500547CD3 /* Kingfisher-watchOS-Demo Extension */,
+				277EAE882045B39C00547CD3 /* Kingfisher-watchOS-Demo */,
+			);
+			name = Demo;
+			sourceTree = "<group>";
+		};
+		D12E0C8B1C47F91800AC98AD /* Kingfisher-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				4B7742461D87E42E0077024E /* loader.gif */,
+				D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */,
+				D12E0C8D1C47F91800AC98AD /* LaunchScreen.xib */,
+				D12E0C8F1C47F91800AC98AD /* Main.storyboard */,
+				D12E0C911C47F91800AC98AD /* CollectionViewCell.swift */,
+				D12E0C921C47F91800AC98AD /* Images.xcassets */,
+				D12E0C931C47F91800AC98AD /* Info.plist */,
+				D12E0C941C47F91800AC98AD /* ViewController.swift */,
+			);
+			name = "Kingfisher-Demo";
+			path = "Demo/Kingfisher-Demo";
+			sourceTree = "<group>";
+		};
+		D12E0C9C1C47F92200AC98AD /* Kingfisher-tvOS-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				D12E0C9D1C47F92200AC98AD /* AppDelegate.swift */,
+				D12E0C9E1C47F92200AC98AD /* Assets.xcassets */,
+				D12E0C9F1C47F92200AC98AD /* Main.storyboard */,
+				D12E0CA11C47F92200AC98AD /* Info.plist */,
+			);
+			name = "Kingfisher-tvOS-Demo";
+			path = "Demo/Kingfisher-tvOS-Demo";
+			sourceTree = "<group>";
+		};
+		D1ED2D021AD2CFA600CFC3EB = {
+			isa = PBXGroup;
+			children = (
+				D10EC22B1C3D62DE00A4211C /* Demo */,
+				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
+				277EAE762045ADE700547CD3 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D1ED2D0C1AD2CFA600CFC3EB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */,
+				D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */,
+				4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */,
+				D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */,
+				D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4B2944541C3D03880088C3E7 /* Kingfisher-macOS-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B2944611C3D03880088C3E7 /* Build configuration list for PBXNativeTarget "Kingfisher-macOS-Demo" */;
+			buildPhases = (
+				4B2944511C3D03880088C3E7 /* Sources */,
+				4B2944521C3D03880088C3E7 /* Frameworks */,
+				4B2944531C3D03880088C3E7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-macOS-Demo";
+			productName = "Kingfisher-OSX-Demo";
+			productReference = 4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */;
+			buildPhases = (
+				D13F49BE1BEDA53F00CE335D /* Sources */,
+				D13F49BF1BEDA53F00CE335D /* Frameworks */,
+				D13F49C01BEDA53F00CE335D /* Resources */,
+				D13F49ED1BEDA82000CE335D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-tvOS-Demo";
+			productName = "Kingfisher-tvOS-Demo";
+			productReference = D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D1679A381C4E78B20020FD12 /* Kingfisher-watchOS-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1679A581C4E78B20020FD12 /* Build configuration list for PBXNativeTarget "Kingfisher-watchOS-Demo" */;
+			buildPhases = (
+				D1679A371C4E78B20020FD12 /* Resources */,
+				D1679A571C4E78B20020FD12 /* Embed App Extensions */,
+				60796AE9A717329E55ACCCC7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D1679A481C4E78B20020FD12 /* PBXTargetDependency */,
+			);
+			name = "Kingfisher-watchOS-Demo";
+			productName = "Kingfisher-watchOS-Demo";
+			productReference = D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		D1679A441C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1679A541C4E78B20020FD12 /* Build configuration list for PBXNativeTarget "Kingfisher-watchOS-Demo Extension" */;
+			buildPhases = (
+				D1679A411C4E78B20020FD12 /* Sources */,
+				D1679A421C4E78B20020FD12 /* Frameworks */,
+				D1679A431C4E78B20020FD12 /* Resources */,
+				D12F2EEC1C4E7CF500B8054D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-watchOS-Demo Extension";
+			productName = "Kingfisher-watchOS-Demo Extension";
+			productReference = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
+		D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1ED2D2A1AD2CFA600CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher-Demo" */;
+			buildPhases = (
+				D1ED2D071AD2CFA600CFC3EB /* Sources */,
+				D1ED2D081AD2CFA600CFC3EB /* Frameworks */,
+				D1ED2D091AD2CFA600CFC3EB /* Resources */,
+				D1ED2D511AD2D09F00CFC3EB /* Embed Frameworks */,
+				4BE2C9E61B381D42005313E5 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D1679A521C4E78B20020FD12 /* PBXTargetDependency */,
+			);
+			name = "Kingfisher-Demo";
+			productName = "Kingfisher-Demo";
+			productReference = D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D1ED2D031AD2CFA600CFC3EB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0930;
+				ORGANIZATIONNAME = "Wei Wang";
+				TargetAttributes = {
+					4B2944541C3D03880088C3E7 = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = T499X543T7;
+						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
+					};
+					D13F49C11BEDA53F00CE335D = {
+						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = T499X543T7;
+						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
+					};
+					D1679A381C4E78B20020FD12 = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = T499X543T7;
+						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
+					};
+					D1679A441C4E78B20020FD12 = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = T499X543T7;
+						LastSwiftMigration = 0920;
+					};
+					D1ED2D0A1AD2CFA600CFC3EB = {
+						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = T499X543T7;
+						LastSwiftMigration = 0900;
+					};
+				};
+			};
+			buildConfigurationList = D1ED2D061AD2CFA600CFC3EB /* Build configuration list for PBXProject "Kingfisher-Demo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D1ED2D021AD2CFA600CFC3EB;
+			productRefGroup = D1ED2D0C1AD2CFA600CFC3EB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
+				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
+				4B2944541C3D03880088C3E7 /* Kingfisher-macOS-Demo */,
+				D1679A381C4E78B20020FD12 /* Kingfisher-watchOS-Demo */,
+				D1679A441C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4B2944531C3D03880088C3E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */,
+				4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */,
+				4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */,
+				4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49C01BEDA53F00CE335D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7742481D87E42E0077024E /* loader.gif in Resources */,
+				D12E0CA31C47F92200AC98AD /* Assets.xcassets in Resources */,
+				D12E0CA41C47F92200AC98AD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1679A371C4E78B20020FD12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				277EAE8E2045B39C00547CD3 /* Interface.storyboard in Resources */,
+				277EAE8D2045B39C00547CD3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1679A431C4E78B20020FD12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				277EAE9D2045B4D500547CD3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1ED2D091AD2CFA600CFC3EB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D12E0C991C47F91800AC98AD /* Images.xcassets in Resources */,
+				4B7742471D87E42E0077024E /* loader.gif in Resources */,
+				D12E0C961C47F91800AC98AD /* LaunchScreen.xib in Resources */,
+				D12E0C971C47F91800AC98AD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4B2944511C3D03880088C3E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */,
+				4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D13F49BE1BEDA53F00CE335D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D12E0CB51C47F9C100AC98AD /* CollectionViewCell.swift in Sources */,
+				D12E0CB61C47F9C100AC98AD /* ViewController.swift in Sources */,
+				D12E0CA21C47F92200AC98AD /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1679A411C4E78B20020FD12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				277EAEA32045B52800547CD3 /* ExtensionDelegate.swift in Sources */,
+				277EAEA12045B52800547CD3 /* InterfaceController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1ED2D071AD2CFA600CFC3EB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D12E0C9B1C47F91800AC98AD /* ViewController.swift in Sources */,
+				D12E0C981C47F91800AC98AD /* CollectionViewCell.swift in Sources */,
+				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D1679A481C4E78B20020FD12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1679A441C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension */;
+			targetProxy = D1679A471C4E78B20020FD12 /* PBXContainerItemProxy */;
+		};
+		D1679A521C4E78B20020FD12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1679A381C4E78B20020FD12 /* Kingfisher-watchOS-Demo */;
+			targetProxy = D1679A511C4E78B20020FD12 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		277EAE8A2045B39C00547CD3 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				277EAE8B2045B39C00547CD3 /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
+		4BCCF3381D5B02F8003387C2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BCCF3391D5B02F8003387C2 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D12E0C8D1C47F91800AC98AD /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D12E0C8E1C47F91800AC98AD /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		D12E0C8F1C47F91800AC98AD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D12E0C901C47F91800AC98AD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D12E0C9F1C47F92200AC98AD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D12E0CA01C47F92200AC98AD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4B2944621C3D03880088C3E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Demo/Kingfisher-macOS-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		4B2944631C3D03880088C3E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Demo/Kingfisher-macOS-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-OSX-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+		D13F49CE1BEDA53F00CE335D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Demo/Kingfisher-tvOS-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-tvOS-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		D13F49CF1BEDA53F00CE335D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Demo/Kingfisher-tvOS-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-tvOS-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		D1679A551C4E78B20020FD12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-Demo.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		D1679A561C4E78B20020FD12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-Demo.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		D1679A591C4E78B20020FD12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IBSC_MODULE = Kingfisher_watchOS_Demo_Extension;
+				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-Demo.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		D1679A5A1C4E78B20020FD12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = T499X543T7;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IBSC_MODULE = Kingfisher_watchOS_Demo_Extension;
+				INFOPLIST_FILE = "Demo/Kingfisher-watchOS-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-Demo.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		D1ED2D281AD2CFA600CFC3EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D1ED2D291AD2CFA600CFC3EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D1ED2D2B1AD2CFA600CFC3EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = T499X543T7;
+				INFOPLIST_FILE = "Demo/Kingfisher-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		D1ED2D2C1AD2CFA600CFC3EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = T499X543T7;
+				INFOPLIST_FILE = "Demo/Kingfisher-Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4B2944611C3D03880088C3E7 /* Build configuration list for PBXNativeTarget "Kingfisher-macOS-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B2944621C3D03880088C3E7 /* Debug */,
+				4B2944631C3D03880088C3E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D13F49D01BEDA53F00CE335D /* Build configuration list for PBXNativeTarget "Kingfisher-tvOS-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D13F49CE1BEDA53F00CE335D /* Debug */,
+				D13F49CF1BEDA53F00CE335D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1679A541C4E78B20020FD12 /* Build configuration list for PBXNativeTarget "Kingfisher-watchOS-Demo Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1679A551C4E78B20020FD12 /* Debug */,
+				D1679A561C4E78B20020FD12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1679A581C4E78B20020FD12 /* Build configuration list for PBXNativeTarget "Kingfisher-watchOS-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1679A591C4E78B20020FD12 /* Debug */,
+				D1679A5A1C4E78B20020FD12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1ED2D061AD2CFA600CFC3EB /* Build configuration list for PBXProject "Kingfisher-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1ED2D281AD2CFA600CFC3EB /* Debug */,
+				D1ED2D291AD2CFA600CFC3EB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1ED2D2A1AD2CFA600CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1ED2D2B1AD2CFA600CFC3EB /* Debug */,
+				D1ED2D2C1AD2CFA600CFC3EB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D1ED2D031AD2CFA600CFC3EB /* Project object */;
+}
