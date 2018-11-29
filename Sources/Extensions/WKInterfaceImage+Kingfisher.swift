@@ -49,7 +49,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             base.setImage(placeholder)
         }
         
-        let issuedTaskIdentifier = issueSourceIdentifier()
+        let issuedTaskIdentifier = SourceIdentifier.next()
         mutatingSelf.taskIdentifier = issuedTaskIdentifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -134,9 +134,9 @@ private var imageTaskKey: Void?
 
 extension KingfisherWrapper where Base: WKInterfaceImage {
     
-    public private(set) var taskIdentifier: SourceIdentifier? {
+    public private(set) var taskIdentifier: SourceIdentifier.Value? {
         get {
-            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &taskIdentifierKey)
+            let box: Box<SourceIdentifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
         set {

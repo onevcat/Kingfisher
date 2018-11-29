@@ -50,7 +50,7 @@ extension KingfisherWrapper where Base: NSButton {
             base.image = placeholder
         }
 
-        let issuedIdentifier = issueSourceIdentifier()
+        let issuedIdentifier = SourceIdentifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
 
         let task = KingfisherManager.shared.retrieveImage(
@@ -148,7 +148,7 @@ extension KingfisherWrapper where Base: NSButton {
             base.alternateImage = placeholder
         }
 
-        let issuedIdentifier = issueSourceIdentifier()
+        let issuedIdentifier = SourceIdentifier.next()
         mutatingSelf.alternateTaskIdentifier = issuedIdentifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -235,9 +235,9 @@ private var alternateImageTaskKey: Void?
 
 extension KingfisherWrapper where Base: NSButton {
 
-    public private(set) var taskIdentifier: SourceIdentifier? {
+    public private(set) var taskIdentifier: SourceIdentifier.Value? {
         get {
-            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &taskIdentifierKey)
+            let box: Box<SourceIdentifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
         set {
@@ -251,9 +251,9 @@ extension KingfisherWrapper where Base: NSButton {
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 
-    public private(set) var alternateTaskIdentifier: SourceIdentifier? {
+    public private(set) var alternateTaskIdentifier: SourceIdentifier.Value? {
         get {
-            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &alternateTaskIdentifierKey)
+            let box: Box<SourceIdentifier.Value>? = getAssociatedObject(base, &alternateTaskIdentifierKey)
             return box?.value
         }
         set {

@@ -59,7 +59,7 @@ extension KingfisherWrapper where Base: ImageView {
         let maybeIndicator = indicator
         maybeIndicator?.startAnimatingView()
 
-        let issuedIdentifier = issueSourceIdentifier()
+        let issuedIdentifier = SourceIdentifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
 
         if base.shouldPreloadAllAnimation() {
@@ -210,9 +210,9 @@ private var imageTaskKey: Void?
 
 extension KingfisherWrapper where Base: ImageView {
 
-    public private(set) var taskIdentifier: SourceIdentifier? {
+    public private(set) var taskIdentifier: SourceIdentifier.Value? {
         get {
-            let box: Box<SourceIdentifier>? = getAssociatedObject(base, &taskIdentifierKey)
+            let box: Box<SourceIdentifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
         set {
