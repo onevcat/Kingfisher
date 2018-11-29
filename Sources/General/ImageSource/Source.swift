@@ -26,11 +26,14 @@
 
 import Foundation
 
-public typealias SourceIdentifier = UInt
-var currentIdentifier: SourceIdentifier = 0
-func issueSourceIdentifier() -> SourceIdentifier {
-    currentIdentifier += 1
-    return currentIdentifier
+/// Represents the source task identifier when setting an image to a view with extension methods.
+public enum SourceIdentifier {
+    public typealias Value = UInt
+    static var current: Value = 0
+    static func next() -> Value {
+        current += 1
+        return current
+    }
 }
 
 public enum Source {
