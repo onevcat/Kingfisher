@@ -71,7 +71,7 @@ let KFRunLoopModeCommon = RunLoopMode.commonModes
 /// it would be fairly easy to switch between them.
 open class AnimatedImageView: UIImageView {
     
-    /// Proxy object for prevending a reference cycle between the `CADDisplayLink` and `AnimatedImageView`.
+    /// Proxy object for preventing a reference cycle between the `CADDisplayLink` and `AnimatedImageView`.
     class TargetProxy {
         private weak var target: AnimatedImageView?
         
@@ -135,7 +135,7 @@ open class AnimatedImageView: UIImageView {
     /// The repeat count. The animated image will keep animate until it the loop count reaches this value.
     /// Setting this value to another one will reset current animation.
     ///
-    /// Default is `.infinite`, which means the aniamtion will last forever.
+    /// Default is `.infinite`, which means the animation will last forever.
     public var repeatCount = RepeatCount.infinite {
         didSet {
             if oldValue != repeatCount {

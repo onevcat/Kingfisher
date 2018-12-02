@@ -763,8 +763,8 @@ public struct CroppingImageProcessor: ImageProcessor {
 ///
 /// - Note:
 /// Downsampling only happens when this processor used as the first processor in a processing
-/// pipeline, when the input `ImageProcessItem` is an `.data` value. If appending to anyother
-/// processor, it falls back to use the normal rendering resizing behavior.
+/// pipeline, when the input `ImageProcessItem` is an `.data` value. If appending to any other
+/// processors, it falls back to use the normal rendering resizing behavior.
 ///
 /// Only CG-based images are supported. Animated images (like GIF) is not supported.
 public struct DownsamplingImageProcessor: ImageProcessor {

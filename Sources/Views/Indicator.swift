@@ -32,7 +32,7 @@ import UIKit
 public typealias IndicatorView = UIView
 #endif
 
-/// Represents the activty indicator type which should be added to
+/// Represents the activity indicator type which should be added to
 /// an image view when an image is being downloaded.
 ///
 /// - none: No indicator.

@@ -254,8 +254,7 @@ public class ImagePrefetcher {
         case .disk:
             if optionsInfo.alsoPrefetchToMemory {
                 _ = manager.retrieveImageFromCache(
-                    forKey: resource.cacheKey,
-                    with: resource.downloadURL,
+                    source: .network(resource),
                     options: optionsInfo)
                 {
                     _ in

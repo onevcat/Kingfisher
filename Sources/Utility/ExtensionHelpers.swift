@@ -1,5 +1,5 @@
 //
-//  ExtenionHelpers.swift
+//  ExtensionHelpers.swift
 //  Kingfisher
 //
 //  Created by onevcat on 2018/09/28.
@@ -47,7 +47,7 @@ extension NSBezierPath {
         let radiusBottomLeft = min(maxCorner, max(0, bottomLeftRadius))
         let radiusBottomRight = min(maxCorner, max(0, bottomRightRadius))
         
-        guard !NSIsEmptyRect(rect) else {
+        guard !rect.isEmpty else {
             return
         }
         
@@ -75,7 +75,7 @@ extension NSBezierPath {
 }
 
 extension Image {
-    // macOS does not support scale. This is just for code compatibility accross platforms.
+    // macOS does not support scale. This is just for code compatibility across platforms.
     convenience init?(data: Data, scale: CGFloat) {
         self.init(data: data)
     }

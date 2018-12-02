@@ -28,7 +28,7 @@ import Foundation
 
 /// `FormatIndicatedCacheSerializer` lets you indicate an image format for serialized caches.
 ///
-/// It could serialize and deserialize PNG, JEPG and GIF images. For
+/// It could serialize and deserialize PNG, JPEG and GIF images. For
 /// image other than these formats, a normalized `pngRepresentation` will be used.
 ///
 /// Example:
@@ -46,7 +46,7 @@ import Foundation
 /// A URL pointing to a JPEG image.
 /// let url = URL(string: "https://example.com/image.jpg")!
 ///
-/// // Image will be always cached as PNG format to preserve alpha channel for round rect.
+/// // Image will be always cached as PNG format to preserve alpha channel for round rectangle.
 /// // So when you load it from cache again later, it will be still round cornered.
 /// // Otherwise, the corner part would be filled by white color (since JPEG does not contain an alpha channel).
 /// imageView.kf.setImage(with: url, options: optionsInfo)
@@ -57,8 +57,8 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     /// represented by PNG format, it will fallback to its real format which is determined by `original` data.
     public static let png = FormatIndicatedCacheSerializer(imageFormat: .PNG)
     
-    /// A `FormatIndicatedCacheSerializer` which converts image from and to JPRG format. If the image cannot be
-    /// represented by JPRG format, it will fallback to its real format which is determined by `original` data.
+    /// A `FormatIndicatedCacheSerializer` which converts image from and to JPEG format. If the image cannot be
+    /// represented by JPEG format, it will fallback to its real format which is determined by `original` data.
     public static let jpeg = FormatIndicatedCacheSerializer(imageFormat: .JPEG)
     
     /// A `FormatIndicatedCacheSerializer` which converts image from and to GIF format. If the image cannot be

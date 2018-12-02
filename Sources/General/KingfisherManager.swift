@@ -43,12 +43,12 @@ public struct RetrieveImageResult {
     /// If the image is just downloaded from network, `.none` will be returned.
     public let cacheType: CacheType
 
-    /// The resource URL of image.
-    public let imageURL: URL?
+    /// The `Source` from which the retrieve task begins.
+    public let source: Source?
 }
 
 /// Main manager class of Kingfisher. It connects Kingfisher downloader and cache,
-/// to provide a set of connivence methods to use Kingfisher for tasks.
+/// to provide a set of convenience methods to use Kingfisher for tasks.
 /// You can use this class to retrieve an image via a specified URL from web or cache.
 public class KingfisherManager {
     
@@ -102,7 +102,8 @@ public class KingfisherManager {
     ///                    main queue.
     ///   - completionHandler: Called when the image retrieved and set finished. This completion handler will be invoked
     ///                        from the `options.callbackQueue`. If not specified, the main queue will be used.
-    /// - Returns: A task represents the image downloading. If there is no downloading starts, `nil` is returned.
+    /// - Returns: A task represents the image downloading. If there is a download task starts for `.network` resource,
+    ///            the started `DownloadTask` is returned. Otherwise, `nil` is returned.
     ///
     /// - Note:
     ///    This method will first check whether the requested `resource` is already in cache or not. If cached,
@@ -122,53 +123,23 @@ public class KingfisherManager {
         )
     }
 
-    func retrieveImage(
-        with source: Source,
-        options: KingfisherParsedOptionsInfo,
-        progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
-    {
-        if options.forceRefresh {
-            return loadAndCacheImage(
-                source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
-        } else {
-            let loadedFromCache = retrieveImageFromCache(
-                forKey: source.cacheKey,
-                with: source.url,
-                options: options,
-                completionHandler: completionHandler)
-
-            if loadedFromCache {
-                return nil
-            }
-
-            if options.onlyFromCache {
-                let error = KingfisherError.cacheError(reason: .imageNotExisting(key: source.cacheKey))
-                completionHandler?(.failure(error))
-                return nil
-            }
-
-            return loadAndCacheImage(
-                source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
-        }
-    }
-
     /// Gets an image from a given resource.
     ///
     /// - Parameters:
-    ///   - resource: The `Source` object defines data information from network or a data provider.
+    ///   - source: The `Source` object defines data information from network or a data provider.
     ///   - options: Options to use when creating the animated image.
     ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called. `progressBlock` is always called in
     ///                    main queue.
     ///   - completionHandler: Called when the image retrieved and set finished. This completion handler will be invoked
     ///                        from the `options.callbackQueue`. If not specified, the main queue will be used.
-    /// - Returns: A task represents the image downloading. If there is no downloading starts, `nil` is returned.
+    /// - Returns: A task represents the image downloading. If there is a download task starts for `.network` resource,
+    ///            the started `DownloadTask` is returned. Otherwise, `nil` is returned.
     ///
     /// - Note:
     ///    This method will first check whether the requested `source` is already in cache or not. If cached,
     ///    it returns `nil` and invoke the `completionHandler` after the cached image retrieved. Otherwise, it
-    ///    will download the `resource`, store it in cache, then call `completionHandler`.
+    ///    will try to load the `source`, store it in cache, then call `completionHandler`.
     ///
     public func retrieveImage(
         with source: Source,
@@ -182,6 +153,36 @@ public class KingfisherManager {
             options: KingfisherParsedOptionsInfo(options),
             progressBlock: progressBlock,
             completionHandler: completionHandler)
+    }
+    
+    func retrieveImage(
+        with source: Source,
+        options: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+    {
+        if options.forceRefresh {
+            return loadAndCacheImage(
+                source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+        } else {
+            let loadedFromCache = retrieveImageFromCache(
+                source: source,
+                options: options,
+                completionHandler: completionHandler)
+            
+            if loadedFromCache {
+                return nil
+            }
+            
+            if options.onlyFromCache {
+                let error = KingfisherError.cacheError(reason: .imageNotExisting(key: source.cacheKey))
+                completionHandler?(.failure(error))
+                return nil
+            }
+            
+            return loadAndCacheImage(
+                source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+        }
     }
 
     func provideImage(
@@ -228,7 +229,7 @@ public class KingfisherManager {
                 {
                     _ in
                     if options.waitForCache {
-                        let result = RetrieveImageResult(image: value.image, cacheType: .none, imageURL: value.url)
+                        let result = RetrieveImageResult(image: value.image, cacheType: .none, source: source)
                         completionHandler?(.success(result))
                     }
                 }
@@ -248,7 +249,7 @@ public class KingfisherManager {
                 }
 
                 if !options.waitForCache {
-                    let result = RetrieveImageResult(image: value.image, cacheType: .none, imageURL: value.url)
+                    let result = RetrieveImageResult(image: value.image, cacheType: .none, source: source)
                     completionHandler?(.success(result))
                 }
             case .failure(let error):
@@ -273,6 +274,7 @@ public class KingfisherManager {
     /// Retrieves image from memory or disk cache.
     ///
     /// - Parameters:
+    ///   - source: The target source from which to get image.
     ///   - key: The key to use when caching the image.
     ///   - url: Image request URL. This is not used when retrieving image from cache. It is just used for
     ///          `RetrieveImageResult` callback compatibility.
@@ -289,13 +291,13 @@ public class KingfisherManager {
     ///    original, Kingfisher retrieves it from cache and processes it. Then, the processed image will be store
     ///    back to cache for later use.
     func retrieveImageFromCache(
-        forKey key: String,
-        with url: URL?,
+        source: Source,
         options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
     {
         // 1. Check whether the image was already in target cache. If so, just get it.
         let targetCache = options.targetCache ?? cache
+        let key = source.cacheKey
         let targetImageCached = targetCache.imageCachedType(
             forKey: key, processorIdentifier: options.processor.identifier)
         
@@ -305,7 +307,7 @@ public class KingfisherManager {
             targetCache.retrieveImage(forKey: key, options: options) { result in
                 if let image = result.value?.image {
                     let value = result.map {
-                        RetrieveImageResult(image: image, cacheType: $0.cacheType, imageURL: url)
+                        RetrieveImageResult(image: image, cacheType: $0.cacheType, source: source)
                     }
                     completionHandler?(value)
                 } else {
@@ -353,13 +355,13 @@ public class KingfisherManager {
                         {
                             _ in
                             if options.waitForCache {
-                                let value = RetrieveImageResult(image: processedImage, cacheType: .none, imageURL: url)
+                                let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
                                 completionHandler?(.success(value))
                             }
                         }
 
                         if !options.waitForCache {
-                            let value = RetrieveImageResult(image: processedImage, cacheType: .none, imageURL: url)
+                            let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
                             completionHandler?(.success(value))
                         }
                     }

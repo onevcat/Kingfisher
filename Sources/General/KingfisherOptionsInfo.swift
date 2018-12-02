@@ -94,7 +94,7 @@ public enum KingfisherOptionsInfoItem {
     /// not in cache, the image retrieving will fail with an error.
     case onlyFromCache
     
-    /// Decode the image in background thread before using. It will decode the downloaded image data and do a offscreen
+    /// Decode the image in background thread before using. It will decode the downloaded image data and do a off-screen
     /// rendering to extract pixel information in background. This can speed up display, but will cost more time to
     /// prepare the image for using.
     case backgroundDecode
@@ -163,7 +163,7 @@ public enum KingfisherOptionsInfoItem {
     /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both the final result and original
     /// image. Kingfisher will have a chance to use the original image when another processor is applied to the same
     /// resource, instead of downloading it again. You can use `.originalCache` to specify a cache or the original
-    /// images if neccessary.
+    /// images if necessary.
     ///
     /// The original image will be only cached to disk storage.
     case cacheOriginalImage
@@ -200,6 +200,9 @@ public enum KingfisherOptionsInfoItem {
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
 // So we can prevent the iterating over the options array again and again.
+/// The parsed options info used across Kingfisher methods. Each property in this type corresponds a case member
+/// in `KingfisherOptionsInfoItem`. When a `KingfisherOptionsInfo` sent to Kingfisher related methods, it will be
+/// parsed and converted to a `KingfisherParsedOptionsInfo` first, and pass through the internal methods.
 public struct KingfisherParsedOptionsInfo {
 
     public var targetCache: ImageCache? = nil

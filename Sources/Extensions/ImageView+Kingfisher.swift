@@ -52,7 +52,7 @@ extension KingfisherWrapper where Base: ImageView {
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
         if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
-            // Always set placeholder while there is no image/placehoer yet.
+            // Always set placeholder while there is no image/placeholder yet.
             mutatingSelf.placeholder = placeholder
         }
 
@@ -124,7 +124,7 @@ extension KingfisherWrapper where Base: ImageView {
     /// - Returns: A task represents the image downloading.
     ///
     /// - Note:
-    /// This is the easist way to use Kingfisher to boost the image setting process from network. Since all parameters
+    /// This is the easiest way to use Kingfisher to boost the image setting process from network. Since all parameters
     /// have a default value except the `resource`, you can set an image from a certain URL to an image view like this:
     ///
     /// ```
@@ -307,7 +307,7 @@ extension KingfisherWrapper where Base: ImageView {
 }
 
 extension KingfisherWrapper where Base: ImageView {
-    /// Gets the image URL binded to this image view.
+    /// Gets the image URL bound to this image view.
     @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {
         get { return nil }

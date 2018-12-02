@@ -43,7 +43,7 @@ public protocol CacheSerializer {
     ///            data could be serialized.
     func data(with image: Image, original: Data?) -> Data?
 
-    /// Gets an image deserialized from provided data.
+    /// Gets an image from provided serialized data.
     ///
     /// - Parameters:
     ///   - data: The data from which an image should be deserialized.
@@ -74,7 +74,7 @@ extension CacheSerializer {
 }
 
 /// Represents a basic and default `CacheSerializer` used in Kingfisher disk cache system.
-/// It could serialize and deserialize images in PNG, JEPG and GIF format. For
+/// It could serialize and deserialize images in PNG, JPEG and GIF format. For
 /// image other than these formats, a normalized `pngRepresentation` will be used.
 public struct DefaultCacheSerializer: CacheSerializer {
     
@@ -91,7 +91,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
     ///            data could be serialized.
     ///
     /// - Note:
-    /// Only when `original` contains valid PNG, JEPG and GIF format data, the `image` will be
+    /// Only when `original` contains valid PNG, JPEG and GIF format data, the `image` will be
     /// converted to the corresponding data type. Otherwise, if the `original` is provided but it is not
     /// a valid format, the `original` data will be used for cache.
     ///

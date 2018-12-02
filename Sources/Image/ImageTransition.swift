@@ -41,7 +41,7 @@ import UIKit
 /// - flipFromRight: Flip from right transition.
 /// - flipFromTop: Flip from top transition.
 /// - flipFromBottom: Flip from bottom transition.
-/// - customduration: Custom transition.
+/// - custom: Custom transition.
 public enum ImageTransition {
     /// No animation transition.
     case none

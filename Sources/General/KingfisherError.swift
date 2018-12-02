@@ -30,11 +30,11 @@ extension Never: Error {}
 
 /// Represents all the errors which can happen in Kingfisher framework.
 /// Kingfisher related methods always throw a `KingfisherError` or invoke the callback with `KingfisherError`
-/// as its error type. To handle errors from Kingfisher, you switch over the error to get a reason cateklog,
+/// as its error type. To handle errors from Kingfisher, you switch over the error to get a reason catalog,
 /// then switch over the reason to know error detail.
 public enum KingfisherError: Error {
     
-    /// The error domain of Kingfisher.
+    /// The error domain of `KingfisherError`. All errors from Kingfisher is under this domain.
     public static let domain = "com.onevcat.Kingfisher.Error"
     
     /// Represents the error reason during networking request phase.
@@ -73,7 +73,7 @@ public enum KingfisherError: Error {
         
         /// The response contains an invalid HTTP status code. Code 2002.
         /// - Note:
-        ///   By defalt, status code 200..<400 is recognized as valid. You can override
+        ///   By default, status code 200..<400 is recognized as valid. You can override
         ///   this behavior by conforming to the `ImageDownloaderDelegate`.
         /// - response: The received response.
         case invalidHTTPStatusCode(response: HTTPURLResponse)
@@ -153,7 +153,7 @@ public enum KingfisherError: Error {
         case processingFailed(processor: ImageProcessor, item: ImageProcessItem)
     }
 
-    /// Represnts the error reason duting image setting in a view related class.
+    /// Represents the error reason during image setting in a view related class.
     ///
     /// - emptySource: The input resource is empty or `nil`. Code 5001.
     /// - notCurrentSourceTask: The source task is finished, but it is not the one expected now. Code 5002.
@@ -181,7 +181,7 @@ public enum KingfisherError: Error {
     case cacheError(reason: CacheErrorReason)
     /// Represents the error reason during image processing phase.
     case processorError(reason: ProcessorErrorReason)
-    /// Represnts the error reason duting image setting in a view related class.
+    /// Represents the error reason during image setting in a view related class.
     case imageSettingError(reason: ImageSettingErrorReason)
     
     /// Helper property to check whether this error is a `RequestErrorReason.taskCancelled` or not.
@@ -205,6 +205,10 @@ public enum KingfisherError: Error {
         return false
     }
     
+    /// Helper property to check whether this error is a `ImageSettingErrorReason.notCurrentSourceTask` or not.
+    /// When a new image setting task starts while the old one is still running, the new task identifier will be
+    /// set and the old one is overwritten. A `.notCurrentSourceTask` error will be raised when the old task finishes
+    /// to let you know the setting process finishes with a certain result, but the image view or button is not set.
     public var isNotCurrentTask: Bool {
         if case .imageSettingError(reason: .notCurrentSourceTask(_, _, _)) = self {
             return true
@@ -245,7 +249,7 @@ extension KingfisherError.RequestErrorReason {
         case .invalidURL(let request):
             return "The request contains an invalid or empty URL. Request: \(request)."
         case .taskCancelled(let task, let token):
-            return "The session task was canncelled. Task: \(task), cancel token: \(token)."
+            return "The session task was cancelled. Task: \(task), cancel token: \(token)."
         }
     }
     

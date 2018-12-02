@@ -216,7 +216,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
-        // The lock should be already acquired in the session delege queue
+        // The lock should be already acquired in the session delegate queue
         // by the caller `urlSession(_:task:didCompleteWithError:)`.
         remove(task, acquireLock: false)
         sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
