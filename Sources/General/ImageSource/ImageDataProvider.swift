@@ -27,7 +27,7 @@
 import Foundation
 
 /// Represents a data provider to provide image data to Kingfisher when setting with
-/// `Source.provider` source. Compared to `Source.network` memeber, it gives a chance
+/// `Source.provider` source. Compared to `Source.network` member, it gives a chance
 /// to load some image data in your own way, as long as you can provide the data
 /// representation for the image.
 public protocol ImageDataProvider {
@@ -53,9 +53,9 @@ public protocol ImageDataProvider {
     ///                      with a `.failure` and pass the error.
     ///
     /// - Note:
-    /// If the `handler` is called with a `.failure` and error, a `dataProviderError` of
+    /// If the `handler` is called with a `.failure` with error, a `dataProviderError` of
     /// `ImageSettingErrorReason` will be finally thrown out to you as the `KingfisherError`
-    /// accrossing the framework.
+    /// from the framework.
     func data(handler: @escaping (Result<Data, Error>) -> Void)
 }
 
@@ -91,7 +91,7 @@ public struct Base64ImageDataProvider: ImageDataProvider {
     
     let base64String: String
     
-    /// Creates an umage data provider by supplying the Base64 encoded string.
+    /// Creates an image data provider by supplying the Base64 encoded string.
     ///
     /// - Parameters:
     ///   - base64String: The Base64 encoded string for an image.

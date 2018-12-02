@@ -112,7 +112,7 @@ extension KingfisherWrapper where Base: Image {
 
     #else
     /// Creating an image from a give `CGImage` at scale and orientation for refImage. The method signature is for
-    /// compability of macOS version.
+    /// compatibility of macOS version.
     static func image(cgImage: CGImage, scale: CGFloat, refImage: Image?) -> Image {
         return Image(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
     }
@@ -140,10 +140,10 @@ extension KingfisherWrapper where Base: Image {
     /// - Returns: PNG data of image.
     public func pngRepresentation() -> Data? {
         #if os(macOS)
-            guard let cgimage = cgImage else {
+            guard let cgImage = cgImage else {
                 return nil
             }
-            let rep = NSBitmapImageRep(cgImage: cgimage)
+            let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using: .png, properties: [:])
         #else
             #if swift(>=4.2)
@@ -246,7 +246,7 @@ extension KingfisherWrapper where Base: Image {
     }
 
     /// Creates an image from a given data and options. `.JPEG`, `.PNG` or `.GIF` is supported. For other
-    /// image format, image initilizer from system will be used. If no image object could be created from
+    /// image format, image initializer from system will be used. If no image object could be created from
     /// the given `data`, `nil` will be returned.
     ///
     /// - Parameters:

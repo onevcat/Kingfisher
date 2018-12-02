@@ -60,7 +60,7 @@ public struct DefaultImageModifier: ImageModifier {
     public static let `default` = DefaultImageModifier()
     private init() {}
 
-    /// Modifie an input `Image`. See `ImageModifier` protocol for more.
+    /// Modifies an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: Image) -> Image { return image }
 }
 

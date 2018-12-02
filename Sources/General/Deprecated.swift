@@ -72,7 +72,7 @@ public typealias ImageDownloaderCompletionHandler =
 
 @available(*, deprecated, message: "Will be removed soon. Use `DownloadTask` to cancel a task.")
 extension RetrieveImageTask {
-    @available(*, deprecated, message: "RetrieveImageTask.empty will be removed soon. Use `nil` to represnt a no task.")
+    @available(*, deprecated, message: "RetrieveImageTask.empty will be removed soon. Use `nil` to represent a no task.")
     public static let empty = RetrieveImageTask()
 }
 
@@ -98,7 +98,7 @@ extension KingfisherManager {
         return retrieveImage(with: resource, options: options, progressBlock: progressBlock) {
             result in
             switch result {
-            case .success(let value): completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+            case .success(let value): completionHandler?(value.image, nil, value.cacheType, value.source?.url)
             case .failure(let error): completionHandler?(nil, error as NSError, .none, resource.downloadURL)
             }
         }
@@ -149,7 +149,7 @@ extension KingfisherWrapper where Base: ImageView {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -180,7 +180,7 @@ extension KingfisherWrapper where Base: UIButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -207,7 +207,7 @@ extension KingfisherWrapper where Base: UIButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -264,7 +264,7 @@ extension KingfisherWrapper where Base: NSButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -288,7 +288,7 @@ extension KingfisherWrapper where Base: NSButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.imageURL)
+                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }

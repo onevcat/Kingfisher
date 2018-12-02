@@ -84,3 +84,4 @@ fastlane/README.md
 
 .bundle/
 vendor/
+.vscode/settings.json

@@ -78,7 +78,7 @@ public struct CacheStoreResult {
     public let diskCacheResult: Result<(), KingfisherError>
 }
 
-extension Image: CacheCostCalculatable {
+extension Image: CacheCostCalculable {
     /// Cost of an image
     public var cacheCost: Int { return kf.cost }
 }
@@ -308,8 +308,8 @@ open class ImageCache {
     ///   - original: The original data of the image. This value will be forwarded to the provided `serializer` for
     ///               further use. By default, Kingfisher uses a `DefaultCacheSerializer` to serialize the image to
     ///               data for caching in disk, it checks the image format based on `original` data to determine in
-    ///               which image format should be used. For other types of `serializer`, it depends on thier
-    ///               implemetation detail on how to use this original data.
+    ///               which image format should be used. For other types of `serializer`, it depends on their
+    ///               implementation detail on how to use this original data.
     ///   - key: The key used for caching the image.
     ///   - identifier: The identifier of processor being used for caching. If you are using a processor for the
     ///                 image, pass the identifier of processor to this parameter.
@@ -493,7 +493,7 @@ open class ImageCache {
     ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.untouch`.
     ///   - completionHandler: A closure which is invoked when the image getting operation finishes. If the
     ///                        image retrieving operation finishes without problem, an `ImageCacheResult` value
-    ///                        will be sent to this closuer as result. Otherwise, a `KingfisherError` result
+    ///                        will be sent to this closure as result. Otherwise, a `KingfisherError` result
     ///                        with detail failing reason will be sent.
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo? = nil,

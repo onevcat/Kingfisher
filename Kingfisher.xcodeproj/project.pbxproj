@@ -203,10 +203,10 @@
 		D1A37BE4215D359F009B39B7 /* ImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE2215D359F009B39B7 /* ImageFormat.swift */; };
 		D1A37BE5215D359F009B39B7 /* ImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE2215D359F009B39B7 /* ImageFormat.swift */; };
 		D1A37BE6215D359F009B39B7 /* ImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE2215D359F009B39B7 /* ImageFormat.swift */; };
-		D1A37BE8215D365A009B39B7 /* ExtenionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */; };
-		D1A37BE9215D365A009B39B7 /* ExtenionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */; };
-		D1A37BEA215D365A009B39B7 /* ExtenionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */; };
-		D1A37BEB215D365A009B39B7 /* ExtenionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */; };
+		D1A37BE8215D365A009B39B7 /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */; };
+		D1A37BE9215D365A009B39B7 /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */; };
+		D1A37BEA215D365A009B39B7 /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */; };
+		D1A37BEB215D365A009B39B7 /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */; };
 		D1A37BED215D375F009B39B7 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BEC215D375F009B39B7 /* Deprecated.swift */; };
 		D1A37BEE215D375F009B39B7 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BEC215D375F009B39B7 /* Deprecated.swift */; };
 		D1A37BEF215D375F009B39B7 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BEC215D375F009B39B7 /* Deprecated.swift */; };
@@ -342,7 +342,7 @@
 		D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderTests.swift; sourceTree = "<group>"; };
 		D1A37BDD215D34E8009B39B7 /* ImageDrawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDrawing.swift; sourceTree = "<group>"; };
 		D1A37BE2215D359F009B39B7 /* ImageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFormat.swift; sourceTree = "<group>"; };
-		D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtenionHelpers.swift; sourceTree = "<group>"; };
+		D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHelpers.swift; sourceTree = "<group>"; };
 		D1A37BEC215D375F009B39B7 /* Deprecated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecated.swift; sourceTree = "<group>"; };
 		D1A37BF1215D3850009B39B7 /* SizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeExtensions.swift; sourceTree = "<group>"; };
 		D1BA781C2174D07800C69D7B /* CallbackQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackQueue.swift; sourceTree = "<group>"; };
@@ -547,7 +547,7 @@
 				D13646732165A1A100A33652 /* Result.swift */,
 				D12AB6BB215D2BB50013BA68 /* Box.swift */,
 				D12AB6BC215D2BB50013BA68 /* String+MD5.swift */,
-				D1A37BE7215D365A009B39B7 /* ExtenionHelpers.swift */,
+				D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */,
 				D1A37BF1215D3850009B39B7 /* SizeExtensions.swift */,
 				D1839844216E333E003927D3 /* Delegate.swift */,
 				4B8351CB217084660081EED8 /* Runtime.swift */,
@@ -1081,7 +1081,7 @@
 				D1A37BD4215D2DBA009B39B7 /* GIFAnimatedImage.swift in Sources */,
 				4B46CC61217449C600D90C4A /* MemoryStorage.swift in Sources */,
 				D1A37BD5215D2DBA009B39B7 /* RequestModifier.swift in Sources */,
-				D1A37BEA215D365A009B39B7 /* ExtenionHelpers.swift in Sources */,
+				D1A37BEA215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
 				4BD821642189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D1A37BD6215D2DBA009B39B7 /* Resource.swift in Sources */,
 				D1A37BD7215D2DBA009B39B7 /* ImageDownloader.swift in Sources */,
@@ -1157,7 +1157,7 @@
 				4B46CC60217449C600D90C4A /* MemoryStorage.swift in Sources */,
 				D1839846216E333E003927D3 /* Delegate.swift in Sources */,
 				D12AB6D9215D2BB50013BA68 /* ImageTransition.swift in Sources */,
-				D1A37BE9215D365A009B39B7 /* ExtenionHelpers.swift in Sources */,
+				D1A37BE9215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
 				D12AB6DD215D2BB50013BA68 /* ImageProcessor.swift in Sources */,
 				D12AB6D5215D2BB50013BA68 /* Image.swift in Sources */,
 				D12AB729215D2BB50013BA68 /* String+MD5.swift in Sources */,
@@ -1234,7 +1234,7 @@
 				D1A37BE6215D359F009B39B7 /* ImageFormat.swift in Sources */,
 				D12AB713215D2BB50013BA68 /* KingfisherOptionsInfo.swift in Sources */,
 				D1E56448219B16330057AAE3 /* ImageDataProvider.swift in Sources */,
-				D1A37BEB215D365A009B39B7 /* ExtenionHelpers.swift in Sources */,
+				D1A37BEB215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1252,7 +1252,7 @@
 				4B46CC5F217449C600D90C4A /* MemoryStorage.swift in Sources */,
 				D1839845216E333E003927D3 /* Delegate.swift in Sources */,
 				D12AB6D8215D2BB50013BA68 /* ImageTransition.swift in Sources */,
-				D1A37BE8215D365A009B39B7 /* ExtenionHelpers.swift in Sources */,
+				D1A37BE8215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
 				D12AB6DC215D2BB50013BA68 /* ImageProcessor.swift in Sources */,
 				D12AB6D4215D2BB50013BA68 /* Image.swift in Sources */,
 				D12AB728215D2BB50013BA68 /* String+MD5.swift in Sources */,

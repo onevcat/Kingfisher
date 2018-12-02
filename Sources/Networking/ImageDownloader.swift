@@ -30,7 +30,7 @@ import AppKit
 import UIKit
 #endif
 
-/// Represents a success result of an image downloading progess.
+/// Represents a success result of an image downloading progress.
 public struct ImageLoadingResult {
 
     /// The downloaded image.
@@ -104,7 +104,7 @@ open class ImageDownloader {
         }
     }
     
-    /// Whether the download requests should use pipline or not. Default is false.
+    /// Whether the download requests should use pipeline or not. Default is false.
     open var requestsUsePipelining = false
 
     /// Delegate of this `ImageDownloader` object. See `ImageDownloaderDelegate` protocol for more.
@@ -240,8 +240,8 @@ open class ImageDownloader {
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
-                let prosessor = ImageDataProcessor(data: data, callbacks: callbacks)
-                prosessor.onImageProcessed.delegate(on: self) { (self, result) in
+                let processor = ImageDataProcessor(data: data, callbacks: callbacks)
+                processor.onImageProcessed.delegate(on: self) { (self, result) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
                     // `SessionDataTask.TaskCallback` as the input parameter.
                     // result: Result<Image>, callback: SessionDataTask.TaskCallback
@@ -255,7 +255,7 @@ open class ImageDownloader {
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }
-                prosessor.process()
+                processor.process()
 
             case .failure(let error):
                 callbacks.forEach { callback in

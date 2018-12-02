@@ -32,7 +32,7 @@ import Foundation
 /// storage. See these composed types for more information.
 public enum DiskStorage {
 
-    /// Represents a storage backend for the `DiskStorage`. The value is serialized to data
+    /// Represents a storage back-end for the `DiskStorage`. The value is serialized to data
     /// and stored as file in the file system under a specified location.
     ///
     /// You can config a `DiskStorage.Backend` in its initializer by passing a `DiskStorage.Config` value.
@@ -120,10 +120,10 @@ public enum DiskStorage {
         }
 
         func value(forKey key: String) throws -> T? {
-            return try value(forKey: key, refereceDate: Date(), actuallyLoad: true)
+            return try value(forKey: key, referenceDate: Date(), actuallyLoad: true)
         }
 
-        func value(forKey key: String, refereceDate: Date, actuallyLoad: Bool) throws -> T? {
+        func value(forKey key: String, referenceDate: Date, actuallyLoad: Bool) throws -> T? {
             let fileManager = config.fileManager
             let fileURL = cacheFileURL(forKey: key)
             let filePath = fileURL.path
@@ -140,7 +140,7 @@ public enum DiskStorage {
                     reason: .invalidURLResource(error: error, key: key, url: fileURL))
             }
 
-            if meta.expired(referenceDate: refereceDate) {
+            if meta.expired(referenceDate: referenceDate) {
                 return nil
             }
             if !actuallyLoad { return T.empty }
@@ -156,12 +156,12 @@ public enum DiskStorage {
         }
 
         func isCached(forKey key: String) -> Bool {
-            return isCached(forKey: key, refereceDate: Date())
+            return isCached(forKey: key, referenceDate: Date())
         }
 
-        func isCached(forKey key: String, refereceDate: Date) -> Bool {
+        func isCached(forKey key: String, referenceDate: Date) -> Bool {
             do {
-                guard let _ = try value(forKey: key, refereceDate: refereceDate, actuallyLoad: false) else {
+                guard let _ = try value(forKey: key, referenceDate: referenceDate, actuallyLoad: false) else {
                     return false
                 }
                 return true
@@ -218,7 +218,7 @@ public enum DiskStorage {
             return urls
         }
 
-        func removeExpiredValues(refereceDate: Date = Date()) throws -> [URL] {
+        func removeExpiredValues(referenceDate: Date = Date()) throws -> [URL] {
             let propertyKeys: [URLResourceKey] = [
                 .isDirectoryKey,
                 .contentModificationDateKey
@@ -232,7 +232,7 @@ public enum DiskStorage {
                     if meta.isDirectory {
                         return false
                     }
-                    return meta.expired(referenceDate: refereceDate)
+                    return meta.expired(referenceDate: referenceDate)
                 } catch {
                     return true
                 }
@@ -264,7 +264,7 @@ public enum DiskStorage {
                 }
                 return meta
             }
-            // Sort by last access date. Most recent file fisrt.
+            // Sort by last access date. Most recent file first.
             pendings.sort(by: FileMeta.lastAccessDate)
 
             var removed: [URL] = []

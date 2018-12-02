@@ -87,7 +87,7 @@ protocol StorageBackend {
 }
 
 /// Represents types which cost in memory can be calculated.
-public protocol CacheCostCalculatable {
+public protocol CacheCostCalculable {
     var cacheCost: Int { get }
 }
 

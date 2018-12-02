@@ -95,8 +95,8 @@ class DiskStorageTests: XCTestCase {
 
         try! storage.store(value: "1", forKey: "1", expiration: .seconds(1))
 
-        XCTAssertTrue(storage.isCached(forKey: "1", refereceDate: now))
-        XCTAssertFalse(storage.isCached(forKey: "1", refereceDate: now.addingTimeInterval(2)))
+        XCTAssertTrue(storage.isCached(forKey: "1", referenceDate: now))
+        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(2)))
     }
 
     func testConfigExpiration() {
@@ -105,8 +105,8 @@ class DiskStorageTests: XCTestCase {
 
         storage.config.expiration = .seconds(1)
         try! storage.store(value: "1", forKey: "1")
-        XCTAssertTrue(storage.isCached(forKey: "1", refereceDate: now))
-        XCTAssertFalse(storage.isCached(forKey: "1", refereceDate: now.addingTimeInterval(2)))
+        XCTAssertTrue(storage.isCached(forKey: "1", referenceDate: now))
+        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(2)))
     }
 
     func testExtendExpirationByAccessing() {
@@ -115,15 +115,15 @@ class DiskStorageTests: XCTestCase {
         let now = Date()
         try! storage.store(value: "1", forKey: "1", expiration: .seconds(2))
         XCTAssertTrue(storage.isCached(forKey: "1"))
-        XCTAssertFalse(storage.isCached(forKey: "1", refereceDate: now.addingTimeInterval(3)))
+        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(3)))
 
         delay(1) {
             let v = try! self.storage.value(forKey: "1")
             XCTAssertNotNil(v)
             // The meta extending happens on its own queue.
             self.storage.metaChangingQueue.async {
-                XCTAssertTrue(self.storage.isCached(forKey: "1", refereceDate: now.addingTimeInterval(3)))
-                XCTAssertFalse(self.storage.isCached(forKey: "1", refereceDate: now.addingTimeInterval(10)))
+                XCTAssertTrue(self.storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(3)))
+                XCTAssertFalse(self.storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(10)))
                 exp.fulfill()
             }
         }
@@ -138,7 +138,7 @@ class DiskStorageTests: XCTestCase {
         try! storage.store(value: "2", forKey: "2", expiration: expiration)
         try! storage.store(value: "3", forKey: "3")
 
-        let urls = try! self.storage.removeExpiredValues(refereceDate: Date().addingTimeInterval(2))
+        let urls = try! self.storage.removeExpiredValues(referenceDate: Date().addingTimeInterval(2))
         XCTAssertEqual(urls.count, 2)
 
         XCTAssertTrue(self.storage.isCached(forKey: "3"))

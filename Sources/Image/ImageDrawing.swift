@@ -473,7 +473,7 @@ extension KingfisherWrapper where Base: Image {
         rep.size = size
         NSGraphicsContext.saveGraphicsState()
         guard let context = NSGraphicsContext(bitmapImageRep: rep) else {
-            assertionFailure("[Kingfisher] Image contenxt cannot be created.")
+            assertionFailure("[Kingfisher] Image context cannot be created.")
             return nil
         }
         

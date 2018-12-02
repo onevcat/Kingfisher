@@ -75,9 +75,9 @@ extension KingfisherWrapper where Base == CGSize {
     /// Returns a `CGRect` for which the `base` size is constrained to an input `size` at a given `anchor` point.
     ///
     /// - Parameters:
-    ///   - size: The size in which the `base` should be constrainted to.
-    ///   - anchor: An anchor point in which the size constrainting should happen.
-    /// - Returns: The result `CGRect` for the constrainting operation.
+    ///   - size: The size in which the `base` should be constrained to.
+    ///   - anchor: An anchor point in which the size constraint should happen.
+    /// - Returns: The result `CGRect` for the constraint operation.
     public func constrainedRect(for size: CGSize, anchor: CGPoint) -> CGRect {
         
         let unifiedAnchor = CGPoint(x: anchor.x.clamped(to: 0.0...1.0),

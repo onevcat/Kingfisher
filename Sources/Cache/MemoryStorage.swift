@@ -32,24 +32,24 @@ import Foundation
 public enum MemoryStorage {
 
     /// Represents a storage which stores a certain type of value in memory. It provides fast access,
-    /// but limited storing size. The stored value type needs to conform to `CacheCostCalculatable`,
+    /// but limited storing size. The stored value type needs to conform to `CacheCostCalculable`,
     /// and its `cacheCost` will be used to determine the cost of size for the cache item.
     ///
     /// You can config a `MemoryStorage.Backend` in its initializer by passing a `MemoryStorage.Config` value.
     /// or modifying the `config` property after it being created. The backend of `MemoryStorage` has
-    /// upper limitaion on cost size in memory and item count. All items in the storage has an expiration
+    /// upper limitation on cost size in memory and item count. All items in the storage has an expiration
     /// date. When retrieved, if the target item is already expired, it will be recognized as it does not
     /// exist in the storage. The `MemoryStorage` also contains a scheduled self clean task, to evict expired
     /// items from memory.
-    public class Backend<T: CacheCostCalculatable>: StorageBackend {
+    public class Backend<T: CacheCostCalculable>: StorageBackend {
         let storage = NSCache<NSString, StorageObject<T>>()
         var keys = Set<String>()
 
         var cleanTimer: Timer? = nil
         let lock = NSLock()
 
-        /// The config used in this storage. It is a setable value and you can
-        /// use it to config the storage in air.
+        /// The config used in this storage. It is a value you can set and
+        /// use to config the storage in air.
         public var config: Config {
             didSet {
                 storage.totalCostLimit = config.totalCostLimit
