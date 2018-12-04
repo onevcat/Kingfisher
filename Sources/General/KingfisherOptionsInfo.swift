@@ -196,6 +196,12 @@ public enum KingfisherOptionsInfoItem {
     /// expiration in its config for all items. If set, the `DiskStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
     case diskCacheExpiration(StorageExpiration)
+    
+    /// Decides on which queue the image processing should happen. By default, Kingfisher uses a pre-defined serial
+    /// queue to process images. Use this option to change this behavior. For example, specify a `.mainCurrentOrAsync`
+    /// to let the image be processed in main queue to prevent a possible flickering (but with a possibility of
+    /// blocking the UI, especially if the processor needs a lot of time to run).
+    case processingQueue(CallbackQueue)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -232,6 +238,7 @@ public struct KingfisherParsedOptionsInfo {
     public var loadDiskFileSynchronously = false
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var diskCacheExpiration: StorageExpiration? = nil
+    public var processingQueue: CallbackQueue? = nil
 
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
@@ -265,6 +272,7 @@ public struct KingfisherParsedOptionsInfo {
             case .callbackDispatchQueue(let value): callbackQueue = value.map { .dispatch($0) } ?? .mainCurrentOrAsync
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
+            case .processingQueue(let queue): processingQueue = queue
             }
         }
 

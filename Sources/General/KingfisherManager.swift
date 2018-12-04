@@ -78,7 +78,7 @@ public class KingfisherManager {
         return [.downloader(downloader), .targetCache(cache)] + defaultOptions
     }
 
-    private let processQueue: DispatchQueue
+    private let processingQueue: CallbackQueue
     
     private convenience init() {
         self.init(downloader: .default, cache: .default)
@@ -89,7 +89,7 @@ public class KingfisherManager {
         self.cache = cache
 
         let processQueueName = "com.onevcat.Kingfisher.KingfisherManager.processQueue.\(UUID().uuidString)"
-        processQueue = DispatchQueue(label: processQueueName)
+        processingQueue = .dispatch(DispatchQueue(label: processQueueName))
     }
 
     /// Gets an image from a given resource.
@@ -193,9 +193,23 @@ public class KingfisherManager {
         provider.data { result in
             switch result {
             case .success(let data):
-                let image = options.processor.process(item: .data(data), options: options)!
-                let result = ImageLoadingResult(image: image, url: nil, originalData: data)
-                completionHandler?(.success(result))
+                (options.processingQueue ?? self.processingQueue).execute {
+                    let processor = options.processor
+                    let processingItem = ImageProcessItem.data(data)
+                    guard let image = processor.process(item: processingItem, options: options) else {
+                        options.callbackQueue.execute {
+                            completionHandler?(
+                                .failure(
+                                    .processorError(reason: .processingFailed(processor: processor, item: processingItem))
+                                )
+                            )
+                        }
+                        return
+                    }
+                    
+                    let result = ImageLoadingResult(image: image, url: nil, originalData: data)
+                    options.callbackQueue.execute { completionHandler?(.success(result)) }
+                }
             case .failure(let error):
                 options.callbackQueue.execute {
                     completionHandler?(
@@ -238,14 +252,12 @@ public class KingfisherManager {
                 let needToCacheOriginalImage = options.cacheOriginalImage &&
                     options.processor != DefaultImageProcessor.default
                 if needToCacheOriginalImage {
-                    self.processQueue.async {
-                        let originalCache = options.originalCache ?? targetCache
-                        originalCache.storeToDisk(
-                            value.originalData,
-                            forKey: source.cacheKey,
-                            processorIdentifier: DefaultImageProcessor.default.identifier,
-                            expiration: options.diskCacheExpiration)
-                    }
+                    let originalCache = options.originalCache ?? targetCache
+                    originalCache.storeToDisk(
+                        value.originalData,
+                        forKey: source.cacheKey,
+                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        expiration: options.diskCacheExpiration)
                 }
 
                 if !options.waitForCache {
@@ -335,8 +347,7 @@ public class KingfisherManager {
             originalCache.retrieveImage(forKey: key, options: optionsWithoutProcessor) { result in
                 if let image = result.value?.image {
                     let processor = options.processor
-                    let processQueue = self.processQueue
-                    processQueue.async {
+                    (options.processingQueue ?? self.processingQueue).execute {
                         let item = ImageProcessItem.image(image)
                         guard let processedImage = processor.process(item: item, options: options) else {
                             let error = KingfisherError.processorError(
