@@ -361,6 +361,23 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
+    func testFailingProcessOnDataProviderImage() {
+        let provider = SimpleImageDataProvider { .success(testImageData) }
+        var called = false
+        let p = FailingProcessor()
+        let options = [KingfisherOptionsInfoItem.processor(p), .processingQueue(.mainCurrentOrAsync)]
+        _ = manager.retrieveImage(with: .provider(provider), options: options) { result in
+            called = true
+            XCTAssertNotNil(result.error)
+            if case .processorError(reason: .processingFailed(let processor, _)) = result.error! {
+                XCTAssertEqual(processor.identifier, p.identifier)
+            } else {
+                XCTFail()
+            }
+        }
+        XCTAssertTrue(called)
+    }
+    
     func testCacheOriginalImageWithOriginalCache() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -633,7 +650,8 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveWithImageProvider() {
         let provider = SimpleImageDataProvider { .success(testImageData) }
         var called = false
-        _ = manager.retrieveImage(with: .provider(provider)) { result in
+        _ = manager.retrieveImage(with: .provider(provider), options: [.processingQueue(.mainCurrentOrAsync)]) {
+            result in
             called = true
             XCTAssertNotNil(result.value)
             XCTAssertTrue(result.value!.image.renderEqual(to: testImage))

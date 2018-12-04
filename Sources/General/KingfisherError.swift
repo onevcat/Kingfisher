@@ -166,7 +166,13 @@ public enum KingfisherError: Error {
         /// The resource task is finished, but it is not the one expected now. This usually happens when you set another
         /// resource on the view without cancelling the current on-going one. The previous setting task will fail with
         /// this `.notCurrentSourceTask` error when a result got, regardless of it being successful or not for that task.
+        /// The result of this original task is contained in the associated value.
         /// Code 5002.
+        /// - result: The `RetrieveImageResult` if the source task is finished without problem. `nil` if an error
+        ///           happens.
+        /// - error: The `Error` if an issue happens during image setting task. `nil` if the task finishes without
+        ///          problem.
+        /// - source: The original source value of the taks.
         case notCurrentSourceTask(result: RetrieveImageResult?, error: Error?, source: Source)
 
         /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
@@ -218,6 +224,8 @@ public enum KingfisherError: Error {
 }
 
 extension KingfisherError: LocalizedError {
+    
+    /// A localized message describing what error occurred.
     public var errorDescription: String? {
         switch self {
         case .requestError(let reason): return reason.errorDescription
@@ -230,6 +238,8 @@ extension KingfisherError: LocalizedError {
 }
 
 extension KingfisherError: CustomNSError {
+
+    /// The error code within the given domain.
     public var errorCode: Int {
         switch self {
         case .requestError(let reason): return reason.errorCode

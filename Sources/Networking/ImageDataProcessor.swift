@@ -26,24 +26,27 @@
 
 import Foundation
 
-let processQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process")
+private let sharedProcessingQueue: CallbackQueue =
+    .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))
 
 // Handles image processing work on an own process queue.
 class ImageDataProcessor {
     let data: Data
     let callbacks: [SessionDataTask.TaskCallback]
+    let queue: CallbackQueue
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
     // queue settings in each option...
     let onImageProcessed = Delegate<(Result<Image, KingfisherError>, SessionDataTask.TaskCallback), Void>()
 
-    init(data: Data, callbacks: [SessionDataTask.TaskCallback]) {
+    init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?) {
         self.data = data
         self.callbacks = callbacks
+        self.queue = processingQueue ?? sharedProcessingQueue
     }
 
     func process() {
-        processQueue.async(execute: doProcess)
+        queue.execute(doProcess)
     }
 
     private func doProcess() {

@@ -240,7 +240,7 @@ open class ImageDownloader {
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
-                let processor = ImageDataProcessor(data: data, callbacks: callbacks)
+                let processor = ImageDataProcessor(data: data, callbacks: callbacks, processingQueue: options.processingQueue)
                 processor.onImageProcessed.delegate(on: self) { (self, result) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
                     // `SessionDataTask.TaskCallback` as the input parameter.

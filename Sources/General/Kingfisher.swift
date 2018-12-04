@@ -47,6 +47,8 @@ import WatchKit
 #endif
 #endif
 
+/// Wrapper for Kingfisher compatible types. This type provides an extension point for
+/// connivence methods in Kingfisher.
 public struct KingfisherWrapper<Base> {
     public let base: Base
     public init(_ base: Base) {
@@ -54,9 +56,13 @@ public struct KingfisherWrapper<Base> {
     }
 }
 
+/// Represents a type which is compatible with Kingfisher. You can use `kf` property to get a
+/// value in the namespace of Kingfisher.
 public protocol KingfisherCompatible { }
 
 public extension KingfisherCompatible {
+    
+    /// Gets a namespace holder for Kingfisher compatible types.
     public var kf: KingfisherWrapper<Self> {
         get { return KingfisherWrapper(self) }
         set { }
