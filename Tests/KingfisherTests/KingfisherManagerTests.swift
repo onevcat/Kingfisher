@@ -665,8 +665,7 @@ class KingfisherManagerTests: XCTestCase {
         _ = manager.retrieveImage(with: .provider(provider)) { result in
             called = true
             XCTAssertNotNil(result.error)
-            if case .imageSettingError(reason: .dataProviderError(let p, let error)) = result.error! {
-                XCTAssertEqual(provider.identifier, p.identifier)
+            if case .imageSettingError(reason: .dataProviderError(_, let error)) = result.error! {
                 XCTAssertTrue(error is SimpleImageDataProvider.E)
             } else {
                 XCTFail()
