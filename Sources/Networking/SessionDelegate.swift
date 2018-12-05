@@ -60,28 +60,33 @@ class SessionDelegate: NSObject {
         lock.lock()
         defer { lock.unlock() }
 
-        // Try to reuse existing task.
-        if let task = tasks[url] {
-            let token = task.addCallback(callback)
-            return DownloadTask(sessionTask: task, cancelToken: token)
-        } else {
-            // Create a new task if necessary.
-            let task = SessionDataTask(task: dataTask)
-            task.onCallbackCancelled.delegate(on: self) { [unowned task] (self, value) in
-                let (token, callback) = value
+        // Create a new task if necessary.
+        let task = SessionDataTask(task: dataTask)
+        task.onCallbackCancelled.delegate(on: self) { [unowned task] (self, value) in
+            let (token, callback) = value
 
-                let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
-                task.onTaskDone.call((.failure(error), [callback]))
-                // No other callbacks waiting, we can clear the task now.
-                if !task.containsCallbacks {
-                    let dataTask = task.task
-                    self.remove(dataTask, acquireLock: true)
-                }
+            let error = KingfisherError.requestError(reason: .taskCancelled(task: task, token: token))
+            task.onTaskDone.call((.failure(error), [callback]))
+            // No other callbacks waiting, we can clear the task now.
+            if !task.containsCallbacks {
+                let dataTask = task.task
+                self.remove(dataTask, acquireLock: true)
             }
-            let token = task.addCallback(callback)
-            tasks[url] = task
-            return DownloadTask(sessionTask: task, cancelToken: token)
         }
+        let token = task.addCallback(callback)
+        tasks[url] = task
+        return DownloadTask(sessionTask: task, cancelToken: token)
+    }
+
+    func append(
+        _ task: SessionDataTask,
+        url: URL,
+        callback: SessionDataTask.TaskCallback) -> DownloadTask
+    {
+        lock.lock()
+        defer { lock.unlock() }
+        let token = task.addCallback(callback)
+        return DownloadTask(sessionTask: task, cancelToken: token)
     }
 
     func remove(_ task: URLSessionTask, acquireLock: Bool) {
@@ -104,6 +109,10 @@ class SessionDelegate: NSObject {
             return nil
         }
         return sessionTask
+    }
+
+    func task(for url: URL) -> SessionDataTask? {
+        return tasks[url]
     }
 
     func cancelAll() {

@@ -164,7 +164,7 @@ open class ImageCache {
     /// Creates an `ImageCache` from a customized `MemoryStorage` and `DiskStorage`.
     ///
     /// - Parameters:
-    ///   - memoryStorage: The `MemoryStorage` object to use in the image cache.
+    ///   - memoryStorage: The `MemoryStorage.Backend` object to use in the image cache.
     ///   - diskStorage: The `DiskStorage.Backend` object to use in the image cache.
     ///   - name: A name used as a part of the bound IO queue.
     public init(

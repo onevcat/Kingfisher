@@ -219,10 +219,15 @@ open class ImageDownloader {
             onProgress: onProgress, onCompleted: onCompleted, options: options)
 
         // Ready to start download. Add it to session task manager (`sessionHandler`)
-        let dataTask = session.dataTask(with: request)
-        dataTask.priority = options.downloadPriority
 
-        let downloadTask = sessionDelegate.add(dataTask, url: url, callback: callback)
+        let downloadTask: DownloadTask
+        if let existingTask = sessionDelegate.task(for: url) {
+            downloadTask = sessionDelegate.append(existingTask, url: url, callback: callback)
+        } else {
+            let sessionDataTask = session.dataTask(with: request)
+            sessionDataTask.priority = options.downloadPriority
+            downloadTask = sessionDelegate.add(sessionDataTask, url: url, callback: callback)
+        }
 
         let sessionTask = downloadTask.sessionTask
         sessionTask.onTaskDone.delegate(on: self) { (self, done) in
@@ -240,7 +245,8 @@ open class ImageDownloader {
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
-                let processor = ImageDataProcessor(data: data, callbacks: callbacks, processingQueue: options.processingQueue)
+                let processor = ImageDataProcessor(
+                    data: data, callbacks: callbacks, processingQueue: options.processingQueue)
                 processor.onImageProcessed.delegate(on: self) { (self, result) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
                     // `SessionDataTask.TaskCallback` as the input parameter.
