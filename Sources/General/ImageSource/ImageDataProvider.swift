@@ -35,15 +35,6 @@ public protocol ImageDataProvider {
     /// The key used in cache.
     var cacheKey: String { get }
     
-    /// The image identifier of this provider instance. For different image loading, you
-    /// should provide a different `identifier` value. For example, when you want to load
-    /// an image from a certain URL, use the `absoluteString` property of that URL is
-    /// generally a good idea.
-    ///
-    /// Kingfisher uses this value to identify whether a finished task is the running and
-    /// being expected one for a view when you use Kingfisher's view extensions methods.
-    var identifier: String {get }
-    
     /// Provides the data which represents image. Kingfisher uses the data you pass in the
     /// handler to process images and caches it for later use.
     ///
@@ -79,11 +70,11 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
         self.cacheKey = cacheKey ?? fileURL.absoluteString
     }
     
+    /// The key used in cache.
     public var cacheKey: String
     public func data(handler: (Result<Data, Error>) -> Void) {
         handler( Result { try Data(contentsOf: fileURL) } )
     }
-    public var identifier: String { return fileURL.absoluteString }
 }
 
 /// Represents an image data provider for loading image from a given Base64 encoded string.
@@ -101,10 +92,34 @@ public struct Base64ImageDataProvider: ImageDataProvider {
         self.cacheKey = cacheKey
     }
 
+    /// The key used in cache.
     public var cacheKey: String
-    public var identifier: String { return cacheKey }
     public func data(handler: (Result<Data, Error>) -> Void) {
         let data = Data(base64Encoded: base64String)!
+        handler(.success(data))
+    }
+}
+
+/// Represents an image data provider for a raw data object.
+public struct RawImageDataProvider: ImageDataProvider {
+    
+    /// The raw data object to provide to Kingfisher image loader.
+    public let data: Data
+    
+    /// The key used in cache.
+    public let cacheKey: String
+    
+    /// Creates an image data provider by the given raw `data` value and a `cacheKey` be used in Kingfisher cache.
+    ///
+    /// - Parameters:
+    ///   - data: The raw data reprensents an image.
+    ///   - cacheKey: The key is used for caching the image data. You need a different key for any different image.
+    public init(data: Data, cacheKey: String) {
+        self.data = data
+        self.cacheKey = cacheKey
+    }
+    
+    public func data(handler: @escaping (Result<Data, Error>) -> Void) {
         handler(.success(data))
     }
 }
