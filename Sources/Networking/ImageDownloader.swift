@@ -303,7 +303,6 @@ open class ImageDownloader {
     }
 }
 
-// MARK: - Download method
 extension ImageDownloader {
 
     /// Cancel all downloading tasks for this `ImageDownloader`. It will trigger the completion handlers

@@ -55,14 +55,14 @@ public enum Source {
     /// from local storage or in any other encoding format (like Base64).
     case provider(ImageDataProvider)
     
-    var cacheKey: String {
+    public var cacheKey: String {
         switch self {
         case .network(let resource): return resource.cacheKey
         case .provider(let provider): return provider.cacheKey
         }
     }
     
-    var url: URL? {
+    public var url: URL? {
         switch self {
         case .network(let resource): return resource.downloadURL
         // `ImageDataProvider` does not provide a URL. All it cares is how to get the data back.

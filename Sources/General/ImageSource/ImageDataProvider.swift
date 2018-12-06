@@ -58,7 +58,10 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
 
     /// The file URL from which the image be loaded.
     public let fileURL: URL
-    
+
+    /// The key used in cache.
+    public var cacheKey: String
+
     /// Creates an image data provider by supplying the target local file URL.
     ///
     /// - Parameters:
@@ -69,9 +72,7 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
         self.fileURL = fileURL
         self.cacheKey = cacheKey ?? fileURL.absoluteString
     }
-    
-    /// The key used in cache.
-    public var cacheKey: String
+
     public func data(handler: (Result<Data, Error>) -> Void) {
         handler( Result { try Data(contentsOf: fileURL) } )
     }
@@ -80,7 +81,10 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
 /// Represents an image data provider for loading image from a given Base64 encoded string.
 public struct Base64ImageDataProvider: ImageDataProvider {
     
-    let base64String: String
+    public let base64String: String
+
+    /// The key used in cache.
+    public var cacheKey: String
     
     /// Creates an image data provider by supplying the Base64 encoded string.
     ///
@@ -92,8 +96,6 @@ public struct Base64ImageDataProvider: ImageDataProvider {
         self.cacheKey = cacheKey
     }
 
-    /// The key used in cache.
-    public var cacheKey: String
     public func data(handler: (Result<Data, Error>) -> Void) {
         let data = Data(base64Encoded: base64String)!
         handler(.success(data))
@@ -107,7 +109,7 @@ public struct RawImageDataProvider: ImageDataProvider {
     public let data: Data
     
     /// The key used in cache.
-    public let cacheKey: String
+    public var cacheKey: String
     
     /// Creates an image data provider by the given raw `data` value and a `cacheKey` be used in Kingfisher cache.
     ///

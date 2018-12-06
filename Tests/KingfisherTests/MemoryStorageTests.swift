@@ -191,10 +191,12 @@ class MemoryStorageTests: XCTestCase {
 
         try! storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
-
+        XCTAssertEqual(self.storage.keys.count, 1)
+        
         delay(0.2) {
             XCTAssertFalse(self.storage.isCached(forKey: "1"))
             XCTAssertNil(self.storage.storage.object(forKey: "1"))
+            XCTAssertEqual(self.storage.keys.count, 0)
             exp.fulfill()
         }
 
@@ -203,7 +205,7 @@ class MemoryStorageTests: XCTestCase {
 
     func testStorageObject() {
         let now = Date()
-        let obj = MemoryStorage.StorageObject(1, expiration: .seconds(1))
+        let obj = MemoryStorage.StorageObject(1, key: "1", expiration: .seconds(1))
         XCTAssertEqual(obj.value, 1)
 
         XCTAssertEqual(
