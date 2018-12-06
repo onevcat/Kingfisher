@@ -161,9 +161,7 @@ public enum MemoryStorage {
         }
 
         class CacheDelegate<T>: NSObject, NSCacheDelegate {
-            
             let onObjectRemoved = Delegate<T, Void>()
-            
             func cache(_ cache: NSCache<AnyObject, AnyObject>, willEvictObject obj: Any) {
                 if let obj = obj as? T {
                     onObjectRemoved.call(obj)
