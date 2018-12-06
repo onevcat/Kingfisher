@@ -210,7 +210,14 @@ public enum KingfisherError: Error {
         }
         return false
     }
-    
+
+    public var isInvalidResponseStatusCode: Bool {
+        if case .responseError(reason: .invalidHTTPStatusCode) = self {
+            return true
+        }
+        return false
+    }
+
     /// Helper property to check whether this error is a `ImageSettingErrorReason.notCurrentSourceTask` or not.
     /// When a new image setting task starts while the old one is still running, the new task identifier will be
     /// set and the old one is overwritten. A `.notCurrentSourceTask` error will be raised when the old task finishes

@@ -48,6 +48,8 @@ public enum MemoryStorage {
         var cleanTimer: Timer? = nil
         let lock = NSLock()
 
+        let cacheDelegate = CacheDelegate<StorageObject<T>>()
+
         /// The config used in this storage. It is a value you can set and
         /// use to config the storage in air.
         public var config: Config {
@@ -65,6 +67,10 @@ public enum MemoryStorage {
             self.config = config
             storage.totalCostLimit = config.totalCostLimit
             storage.countLimit = config.countLimit
+            storage.delegate = cacheDelegate
+            cacheDelegate.onObjectRemoved.delegate(on: self) { (self, obj) in
+                self.keys.remove(obj.key)
+            }
 
             cleanTimer = .scheduledTimer(withTimeInterval: config.cleanInterval, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
@@ -111,7 +117,7 @@ public enum MemoryStorage {
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
             
-            let object = StorageObject(value, expiration: expiration)
+            let object = StorageObject(value, key: key, expiration: expiration)
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
         }
@@ -153,6 +159,17 @@ public enum MemoryStorage {
             storage.removeAllObjects()
             keys.removeAll()
         }
+
+        class CacheDelegate<T>: NSObject, NSCacheDelegate {
+            
+            let onObjectRemoved = Delegate<T, Void>()
+            
+            func cache(_ cache: NSCache<AnyObject, AnyObject>, willEvictObject obj: Any) {
+                if let obj = obj as? T {
+                    onObjectRemoved.call(obj)
+                }
+            }
+        }
     }
 }
 
@@ -193,11 +210,13 @@ extension MemoryStorage {
     class StorageObject<T> {
         let value: T
         let expiration: StorageExpiration
+        let key: String
         
         private(set) var estimatedExpiration: Date
         
-        init(_ value: T, expiration: StorageExpiration) {
+        init(_ value: T, key: String, expiration: StorageExpiration) {
             self.value = value
+            self.key = key
             self.expiration = expiration
             
             self.estimatedExpiration = expiration.estimatedExpirationSinceNow
