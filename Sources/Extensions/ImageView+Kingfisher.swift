@@ -152,6 +152,37 @@ extension KingfisherWrapper where Base: ImageView {
             completionHandler: completionHandler)
     }
 
+    /// Sets an image to the image view with a data provider.
+    ///
+    /// - Parameters:
+    ///   - provider: The `ImageDataProvider` object contains information about the data.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the image data, from either cache
+    /// or the data provider. Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
+    @discardableResult
+    public func setImage(
+        with provider: ImageDataProvider?,
+        placeholder: Placeholder? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        return setImage(
+            with: provider.map { .provider($0) },
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
+    }
+
     /// Cancels the image download task of the image view if it is running.
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {

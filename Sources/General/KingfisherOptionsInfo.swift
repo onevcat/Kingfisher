@@ -106,6 +106,10 @@ public enum KingfisherOptionsInfoItem {
 
     /// The associated value will be used as the target queue of dispatch callbacks when retrieving images from
     /// cache. If not set, Kingfisher will use `.mainCurrentOrAsync` for callbacks.
+    ///
+    /// - Note:
+    /// This option does not affect the callbacks for UI related extension methods. You will always get the
+    /// callbacks called from main queue.
     case callbackQueue(CallbackQueue)
     
     /// The associated value will be used as the scale factor when converting retrieved data to an image.
