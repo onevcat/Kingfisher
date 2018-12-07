@@ -47,6 +47,7 @@
 		D1CE1BD021A1AFA300419000 /* TransitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */; };
 		D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BD221A1B45A00419000 /* ImageLoader.swift */; };
 		D1CE1BD421A1B45A00419000 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BD221A1B45A00419000 /* ImageLoader.swift */; };
+		D1E4CF5421BACBA6004D029D /* ImageDataProviderCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */; };
 		D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */; };
 		D1F06F3521AA5938000B1C38 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */; };
 		D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */; };
@@ -169,6 +170,7 @@
 		D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KingfisherOperation.swift"; sourceTree = "<group>"; };
 		D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewController.swift; sourceTree = "<group>"; };
 		D1CE1BD221A1B45A00419000 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderCollectionViewController.swift; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailImageViewController.swift; sourceTree = "<group>"; };
 		D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFViewController.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */,
 				D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */,
 				D1F06F3821AAF1EE000B1C38 /* IndicatorCollectionViewController.swift */,
+				D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -612,6 +615,7 @@
 				D1F06F3921AAF1EE000B1C38 /* IndicatorCollectionViewController.swift in Sources */,
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
+				D1E4CF5421BACBA6004D029D /* ImageDataProviderCollectionViewController.swift in Sources */,
 				D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
