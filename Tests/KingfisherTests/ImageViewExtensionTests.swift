@@ -378,7 +378,7 @@ class ImageViewExtensionTests: XCTestCase {
         group.enter()
         self.imageView.kf.setImage(with: testURLs[1]) { result in
             XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value?.source?.url, testURLs[1])
+            XCTAssertEqual(result.value?.source.url, testURLs[1])
             XCTAssertEqual(result.value!.image, self.imageView.image)
             group.leave()
         }

@@ -13,21 +13,22 @@
 <a href="#sponsors" alt="Sponsors on Open Collective"><img src="https://opencollective.com/Kingfisher/sponsors/badge.svg" /></a>
 </p>
 
-Kingfisher is a lightweight, pure-Swift library for downloading and caching images from the web. This project is heavily inspired by the popular [SDWebImage](https://github.com/rs/SDWebImage). It provides you a chance to use a pure-Swift alternative in your next app.
+Kingfisher is a powerful, pure-Swift library for downloading and caching images from the web. It provides you a chance to use a pure-Swift alternative in your next app.
 
 ## Features
 
 - [x] Asynchronous image downloading and caching.
-- [x] `URLSession`-based networking. Basic image processors and filters supplied.
+- [x] Loading image from either `URLSession`-based networking or local provided data.
+- [x] Useful image processors and filters provided.
 - [x] Multiple-layer hybrid cache for both memory and disk.
 - [x] Fine control on cache behavior. Customizable expiration date and size limit.
-- [x] Cancelable downloading and processing tasks to improve performance.
+- [x] Cancelable downloading and auto-reusing previous downloaded content to improve performance.
 - [x] Independent components. Use the downloader, caching system and image processors separately as you need.
-- [x] Prefetching images and showing them from cache later when necessary.
-- [x] Extensions for `UIImageView`, `NSImage` and `UIButton` to directly set an image from a URL.
+- [x] Prefetching images and showing them from cache to boost your app.
+- [x] View extensions for `UIImageView`, `NSImage`, `NSButton` and `UIButton` to directly set an image from a URL.
 - [x] Built-in transition animation when setting images.
 - [x] Customizable placeholder and indicator while loading images.
-- [x] Extensible image processing and image format supported.
+- [x] Extensible image processing and image format easily.
 
 ### Kingfisher 101
 
@@ -38,30 +39,28 @@ let url = URL(string: "https://example.com/image.png")
 imageView.kf.setImage(with: url)
 ```
 
-Kingfisher will download the image from `url`, send it to both the memory cache and the disk cache, and display it in `imageView`. When you use the same code later, the image will be retrieved from cache and shown immediately.
+Kingfisher will download the image from `url`, send it to both memory cache and disk cache, and display it in `imageView`. When you set with the same URL later, the image will be retrieved from cache and shown immediately.
 
-### More Interesting Example
+### A More Advanced Example
 
-With the options and callbacks, you can express hard tasks and use Kingfisher in a powerful way. For example, the code below: 
+With the powerful options, you can do hard tasks with Kingfisher in a simple way. For example, the code below: 
 
-1. Downsamples a high resolution image to match the image view size.
-2. Makes it round cornered with a given radius.
-3. Shows a system indicator and a placeholder image while downloading.
-4. When prepared, it animates the small thumbnail image with a fade in effect. 
-5. The the original large image is also cached to disk for later use, to get rid of downloading again in a detail view.
-6. A console log is printed when the task finishes, either for success or failure.
+1. Downloads a high resolution image.
+2. Downsamples it to match the image view size.
+3. Makes it round cornered with a given radius.
+4. Shows a system indicator and a placeholder image while downloading.
+5. When prepared, it animates the small thumbnail image with a "fade in" effect. 
+6. The the original large image is also cached to disk for later use, to get rid of downloading it again in a detail view.
+7. A console log is printed when the task finishes, either for success or failure.
 
 ```swift
 let url = URL(string: "https://example.com/high_resolution_image.png")
-let scale = UIScreen.main.scale
-let placeholderImage = UIImage(named: "placeholderImage")
 let processor = DownsamplingImageProcessor(size: imageView.size)
              >> RoundCornerImageProcessor(cornerRadius: 20)
-
 imageView.kf.indicatorType = .activity
 imageView.kf.setImage(
     with: resource,
-    placeholder: placeholderImage,
+    placeholder: UIImage(named: "placeholderImage"),
     options: [
         .processor(processor),
         .scaleFactor(UIScreen.main.scale),
@@ -79,9 +78,11 @@ imageView.kf.setImage(
 }
 ```
 
+It is really a very common situation I will meet in my daily work. Think about how many lines you need to write if without Kingfisher. You will fall in love with it!
+
 ### Learn More
 
-To learn the using Kingfisher by more examples, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do.
+To learn the using Kingfisher by more examples, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance in the same page, remember to check them too.
 
 ## Requirements
 
@@ -129,7 +130,7 @@ This project exists thanks to all the people who contribute. [[Contribute]](http
 
 ## Backers
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
+Thank you to all our backers! Your support is really important for the project and encouraging us to continue. 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
 
 <a href="https://opencollective.com/kingfisher#backers" target="_blank"><img src="https://opencollective.com/kingfisher/backers.svg?width=890"></a>
 

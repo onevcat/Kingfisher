@@ -166,18 +166,13 @@ open class ImageCache {
     /// - Parameters:
     ///   - memoryStorage: The `MemoryStorage.Backend` object to use in the image cache.
     ///   - diskStorage: The `DiskStorage.Backend` object to use in the image cache.
-    ///   - name: A name used as a part of the bound IO queue.
     public init(
         memoryStorage: MemoryStorage.Backend<Image>,
-        diskStorage: DiskStorage.Backend<Data>,
-        name: String = "")
+        diskStorage: DiskStorage.Backend<Data>)
     {
         self.memoryStorage = memoryStorage
         self.diskStorage = diskStorage
-        var ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue"
-        if !name.isEmpty {
-            ioQueueName.append(".\(name)")
-        }
+        let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue.\(UUID().uuidString)"
         ioQueue = DispatchQueue(label: ioQueueName)
         
         #if !os(macOS) && !os(watchOS)
@@ -248,7 +243,7 @@ open class ImageCache {
         let diskStorage = try DiskStorage.Backend<Data>(config: diskConfig)
         diskConfig.cachePathBlock = nil
         
-        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage, name: name)
+        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
     }
     
     deinit {
@@ -598,6 +593,11 @@ open class ImageCache {
             }
         }
     }
+
+    /// Clears the expired images from disk storage. This is an async operation.
+    open func cleanExpiredMemoryCache() {
+        memoryStorage.removeExpired()
+    }
     
     /// Clears the expired images from disk storage. This is an async operation.
     @objc func cleanExpiredDiskCache() {
@@ -757,7 +757,7 @@ open class ImageCache {
     /// This method does not guarantee there is an image already cached in the returned path. It just gives your
     /// the path that the image should be, if it exists in disk storage.
     ///
-    /// You could use `isImageCached(forKey:)` method to check whether the image is cached under that key in disk.
+    /// You could use `isCached(forKey:)` method to check whether the image is cached under that key in disk.
     open func cachePath(
         forKey key: String,
         processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> String

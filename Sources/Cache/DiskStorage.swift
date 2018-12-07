@@ -277,7 +277,7 @@ public enum DiskStorage {
             return removed
         }
 
-        // Get the total file size of the folder in bytes.
+        /// Get the total file size of the folder in bytes.
         func totalSize() throws -> UInt {
             let propertyKeys: [URLResourceKey] = [.fileSizeKey]
             let urls = try allFileURLs(for: propertyKeys)
