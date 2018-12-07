@@ -81,7 +81,7 @@ class NSButtonExtensionTests: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testDownloadAndSetAlternateImage() {
@@ -121,7 +121,7 @@ class NSButtonExtensionTests: XCTestCase {
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testCacnelAlternateImageTask() {
@@ -138,7 +138,7 @@ class NSButtonExtensionTests: XCTestCase {
         self.button.kf.cancelAlternateImageDownloadTask()
         _ = stub.go()
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingNilURL() {
@@ -156,7 +156,7 @@ class NSButtonExtensionTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingNonWorkingImageWithFailureImage() {

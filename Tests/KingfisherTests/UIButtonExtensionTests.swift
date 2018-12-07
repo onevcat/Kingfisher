@@ -83,7 +83,7 @@ class UIButtonExtensionTests: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testDownloadAndSetBackgroundImage() {
@@ -108,7 +108,7 @@ class UIButtonExtensionTests: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCacnelImageTask() {
@@ -125,7 +125,7 @@ class UIButtonExtensionTests: XCTestCase {
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCacnelBackgroundImageTask() {
@@ -142,7 +142,7 @@ class UIButtonExtensionTests: XCTestCase {
         self.button.kf.cancelBackgroundImageDownloadTask()
         _ = stub.go()
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingNilURL() {
@@ -159,7 +159,7 @@ class UIButtonExtensionTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingNonWorkingImageWithFailureImage() {

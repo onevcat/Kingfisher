@@ -264,7 +264,7 @@ extension KingfisherWrapper where Base: NSButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+                completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -288,7 +288,7 @@ extension KingfisherWrapper where Base: NSButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+                completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }

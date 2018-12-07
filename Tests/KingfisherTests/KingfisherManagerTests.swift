@@ -85,7 +85,7 @@ class KingfisherManagerTests: XCTestCase {
                 XCTAssertEqual(result.value!.cacheType, .none)
                 exp.fulfill()
         }}}}}
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testRetrieveImageWithProcessor() {
@@ -121,7 +121,7 @@ class KingfisherManagerTests: XCTestCase {
 
                 exp.fulfill()
         }}}}}}
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testRetrieveImageForceRefresh() {
@@ -145,7 +145,7 @@ class KingfisherManagerTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {
@@ -164,7 +164,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertTrue(Thread.isMainThread)
             completionExpectation.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testShouldNotDownloadImageIfCacheOnlyAndNotInCache() {
@@ -182,7 +182,7 @@ class KingfisherManagerTests: XCTestCase {
             }
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
@@ -196,7 +196,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertTrue(result.error!.isInvalidResponseStatusCode(404))
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testSucessCompletionHandlerRunningOnCustomQueue() {
@@ -220,7 +220,7 @@ class KingfisherManagerTests: XCTestCase {
             }
             completionExpectation.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testDefaultOptionCouldApply() {
@@ -235,7 +235,7 @@ class KingfisherManagerTests: XCTestCase {
             #endif
             exp.fulfill()
         })
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testOriginalImageCouldBeStored() {
@@ -265,7 +265,7 @@ class KingfisherManagerTests: XCTestCase {
             }
         }
 
-        self.waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testOriginalImageNotBeStoredWithoutOptionSet() {
@@ -292,7 +292,7 @@ class KingfisherManagerTests: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCouldProcessOnOriginalImage() {
@@ -325,7 +325,7 @@ class KingfisherManagerTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testFailingProcessOnOriginalImage() {
@@ -358,7 +358,7 @@ class KingfisherManagerTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testFailingProcessOnDataProviderImage() {
@@ -405,7 +405,7 @@ class KingfisherManagerTests: XCTestCase {
                 }
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCouldProcessOnOriginalImageWithOriginalCache() {
@@ -445,7 +445,7 @@ class KingfisherManagerTests: XCTestCase {
                 }
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testWaitForCacheOnRetrieveImage() {
@@ -463,7 +463,7 @@ class KingfisherManagerTests: XCTestCase {
             
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testNotWaitForCacheOnRetrieveImage() {
@@ -488,7 +488,7 @@ class KingfisherManagerTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testWaitForCacheOnRetrieveImageWithProcessor() {
@@ -501,7 +501,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(result.value!.cacheType, .none)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testImageShouldOnlyFromMemoryCacheOrRefreshCanBeGotFromMemory() {
@@ -525,7 +525,7 @@ class KingfisherManagerTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testImageShouldOnlyFromMemoryCacheOrRefreshCanRefreshIfNotInMemory() {
@@ -580,7 +580,7 @@ class KingfisherManagerTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -599,7 +599,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(result.value?.image.renderingMode, .alwaysTemplate)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testShouldApplyImageModifierWhenLoadFromMemoryCache() {
@@ -620,7 +620,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(result.value?.image.renderingMode, .alwaysTemplate)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testShouldApplyImageModifierWhenLoadFromDiskCache() {
@@ -643,7 +643,7 @@ class KingfisherManagerTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 #endif
     

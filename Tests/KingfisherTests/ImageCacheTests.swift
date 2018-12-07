@@ -115,7 +115,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler:nil)
+        waitForExpectations(timeout: 3, handler:nil)
     }
     
     func testClearMemoryCache() {
@@ -129,7 +129,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testNoImageFound() {
@@ -139,7 +139,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertNil(result.value!.image)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testCachedFileDoesNotExist() {
@@ -160,7 +160,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testStoreMultipleImages() {
@@ -176,7 +176,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertEqual(files.count, testKeys.count)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCachedFileExists() {
@@ -214,7 +214,7 @@ class ImageCacheTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testCachedFileWithCustomPathExtensionExists() {
@@ -230,7 +230,7 @@ class ImageCacheTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
   
@@ -251,7 +251,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertTrue(self.cache.imageCachedType(forKey: key).cached)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCleanDiskCacheNotification() {
@@ -301,7 +301,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRetrieveCacheWithProcessorIdentifier() {
@@ -321,7 +321,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testDefaultCache() {
@@ -334,7 +334,7 @@ class ImageCacheTests: XCTestCase {
             cleanDefaultCache()
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testRetrieveDiskCacheSynchronously() {
@@ -357,7 +357,7 @@ class ImageCacheTests: XCTestCase {
             // This should be called after the completion handler above.
             dispatched = true
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testRetrieveDiskCacheAsynchronously() {
@@ -380,7 +380,7 @@ class ImageCacheTests: XCTestCase {
             // This should be called before the completion handler above.
             dispatched = true
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -401,7 +401,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testGettingDiskCachedImageCouldBeModified() {
@@ -422,7 +422,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 #endif
     
@@ -443,7 +443,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1.5, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testStoreToDiskWithExpiration() {
@@ -462,7 +462,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertEqual(self.cache.imageCachedType(forKey: key), .none)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1.5, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     // MARK: - Helper

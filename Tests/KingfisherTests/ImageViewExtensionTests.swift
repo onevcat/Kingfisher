@@ -87,7 +87,7 @@ class ImageViewExtensionTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testImageDownloadCompletionHandlerRunningOnMainQueue() {
@@ -105,7 +105,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertTrue(Thread.isMainThread)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testImageDownloadWithResourceForImageView() {
@@ -135,7 +135,7 @@ class ImageViewExtensionTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testImageDownloadCancelForImageView() {
@@ -155,7 +155,7 @@ class ImageViewExtensionTests: XCTestCase {
         XCTAssertNotNil(task)
         task?.cancel()
         _ = stub.go()
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testImageDownloadCancelPartialTaskBeforeRequest() {
@@ -191,7 +191,7 @@ class ImageViewExtensionTests: XCTestCase {
         group.notify(queue: .main) {
             delay(0.1) { exp.fulfill() }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testImageDownloadCancelAllTasksAfterRequestStarted() {
@@ -227,7 +227,7 @@ class ImageViewExtensionTests: XCTestCase {
         group.notify(queue: .main) {
             delay(0.1) { exp.fulfill() }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testImageDownloadMultipleCaches() {
@@ -306,7 +306,7 @@ class ImageViewExtensionTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCanUseImageIndicatorViewAnimating() {
@@ -332,7 +332,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertTrue(indicator!.view.isHidden)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCacnelImageTask() {
@@ -349,7 +349,7 @@ class ImageViewExtensionTests: XCTestCase {
         self.imageView.kf.cancelDownloadTask()
         _ = stub.go()
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testDownloadForMutipleURLs() {
@@ -384,7 +384,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingNilURL() {
@@ -400,7 +400,7 @@ class ImageViewExtensionTests: XCTestCase {
             exp.fulfill()
         }
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingImageWhileKeepingCurrentOne() {
@@ -420,7 +420,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         XCTAssertEqual(testImage, imageView.image)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingImageKeepingRespectingPlaceholder() {
@@ -443,7 +443,7 @@ class ImageViewExtensionTests: XCTestCase {
         XCTAssertNotNil(imageView.image)
         XCTAssertEqual(anotherImage, imageView.image)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSetGIFImageOnlyFirstFrameThenFullFrames() {
@@ -494,7 +494,7 @@ class ImageViewExtensionTests: XCTestCase {
             loadFullGIFImage()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     // https://github.com/onevcat/Kingfisher/issues/665
@@ -518,7 +518,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testImageSettingWithPlaceholder() {
@@ -544,7 +544,7 @@ class ImageViewExtensionTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testImageSettingWithCustomizePlaceholder() {
@@ -572,7 +572,7 @@ class ImageViewExtensionTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testSettingNonWorkingImageWithFailureImage() {
@@ -650,7 +650,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 }
 
