@@ -117,7 +117,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertNotNil(obj)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testStoreWithConfigExpiration() {
@@ -136,7 +136,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertNotNil(obj)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRemoveExpired() {
@@ -157,7 +157,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertNil(self.storage.storage.object(forKey: "1"))
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testExtendExpirationByAccessing() {
@@ -181,7 +181,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertFalse(self.storage.isCached(forKey: "1"))
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testAutoCleanExpiredMemory() {
@@ -200,7 +200,7 @@ class MemoryStorageTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testStorageObject() {
@@ -222,6 +222,6 @@ class MemoryStorageTests: XCTestCase {
                 accuracy: 0.1)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 }

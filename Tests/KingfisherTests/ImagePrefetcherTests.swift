@@ -76,7 +76,7 @@ class ImagePrefetcherTests: XCTestCase {
                 exp.fulfill()
             }
         prefetcher.start()
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCancelPrefetching() {
@@ -104,7 +104,7 @@ class ImagePrefetcherTests: XCTestCase {
             prefetcher.stop()
             stubs.forEach { _ = $0.go() }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
 
@@ -127,7 +127,7 @@ class ImagePrefetcherTests: XCTestCase {
         
         prefetcher.start()
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testPrefetcherForceRefreshDownloadImages() {
@@ -144,7 +144,7 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         prefetcher.start()
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testPrefetchWithWrongInitParameters() {
@@ -158,7 +158,7 @@ class ImagePrefetcherTests: XCTestCase {
         }
         
         prefetcher.start()
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testFetchWithProcessor() {
@@ -212,7 +212,7 @@ class ImagePrefetcherTests: XCTestCase {
             prefetchAgain()
         }
         prefetcher.start()
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testAlsoPrefetchToMemory() {
@@ -244,7 +244,7 @@ class ImagePrefetcherTests: XCTestCase {
             prefetcher.start()
             
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testNotPrefetchToMemory() {
@@ -276,7 +276,7 @@ class ImagePrefetcherTests: XCTestCase {
             prefetcher.start()
             
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testPrefetchMoreTaskThanMaxConcurrency() {
@@ -296,6 +296,6 @@ class ImagePrefetcherTests: XCTestCase {
         prefetcher.maxConcurrentDownloads = 1
         prefetcher.start()
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 }
