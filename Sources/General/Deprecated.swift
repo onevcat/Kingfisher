@@ -98,7 +98,7 @@ extension KingfisherManager {
         return retrieveImage(with: resource, options: options, progressBlock: progressBlock) {
             result in
             switch result {
-            case .success(let value): completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+            case .success(let value): completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error): completionHandler?(nil, error as NSError, .none, resource.downloadURL)
             }
         }
@@ -149,7 +149,7 @@ extension KingfisherWrapper where Base: ImageView {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+                completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -180,7 +180,7 @@ extension KingfisherWrapper where Base: UIButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+                completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -207,7 +207,7 @@ extension KingfisherWrapper where Base: UIButton {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+                completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }
@@ -236,7 +236,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             result in
             switch result {
             case .success(let value):
-                completionHandler?(value.image, nil, value.cacheType, value.source?.url)
+                completionHandler?(value.image, nil, value.cacheType, value.source.url)
             case .failure(let error):
                 completionHandler?(nil, error as NSError, .none, nil)
             }

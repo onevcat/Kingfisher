@@ -44,7 +44,7 @@ public struct RetrieveImageResult {
     public let cacheType: CacheType
 
     /// The `Source` from which the retrieve task begins.
-    public let source: Source?
+    public let source: Source
 }
 
 /// Main manager class of Kingfisher. It connects Kingfisher downloader and cache,

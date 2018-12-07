@@ -55,13 +55,18 @@ public enum Source {
     /// from local storage or in any other encoding format (like Base64).
     case provider(ImageDataProvider)
     
+    /// The cache key defined for this source value.
     public var cacheKey: String {
         switch self {
         case .network(let resource): return resource.cacheKey
         case .provider(let provider): return provider.cacheKey
         }
     }
-    
+
+    /// The URL defined for this source value.
+    ///
+    /// For a `.network` source, it is the `downloadURL` of associated `Resource` instance.
+    /// For a `.provider` value, it is always `nil`.
     public var url: URL? {
         switch self {
         case .network(let resource): return resource.downloadURL
