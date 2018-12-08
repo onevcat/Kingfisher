@@ -1,1 +1,0 @@
-git clone https://github.com/onevcat/Kingfisher-TestImages.git Kingfisher-TestImages

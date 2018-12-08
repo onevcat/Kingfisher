@@ -1,13 +1,10 @@
-# Uncomment this line to define a global platform for your project
-# platform :ios, '6.0'
-
 target 'KingfisherTests' do
-    platform :ios, '8.0'
+    platform :ios, '9.0'
     pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git', :branch => 'swift4'
 end
 
 target 'KingfisherTests-macOS' do
-    platform :osx, '10.10'
+    platform :osx, '10.11'
     pod 'Nocilla',  :git => 'https://github.com/onevcat/Nocilla.git', :branch => 'swift4'
 end
 

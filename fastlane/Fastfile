@@ -4,15 +4,27 @@ fastlane_version "1.37.0"
 default_platform :ios
 
 platform :ios do
-  before_all do
+  desc "Runs all the tests"
+  lane :tests do
+    test(scheme: "Kingfisher", swift_version: "4.2")
+    test(scheme: "Kingfisher-macOS", swift_version: "4.2")
+    test(scheme: "Kingfisher-tvOS", swift_version: "4.2")
 
+    test(scheme: "Kingfisher", swift_version: "4.0")
+    test(scheme: "Kingfisher-macOS", swift_version: "4.0")
+    test(scheme: "Kingfisher-tvOS", swift_version: "4.0")
   end
 
-  desc "Runs all the tests"
-  lane :test do
-    scan(scheme: "Kingfisher", clean: true)
-    # scan(scheme: "Kingfisher-macOS", clean: true, destination: 'platform=macOS')
-    scan(scheme: "Kingfisher-tvOS", clean: true)
+  lane :test do |options|
+    if options[:scheme].include? "macOS"
+        scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}", destination: "platform=macOS")
+    else
+        scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}")
+    end
+  end
+
+  lane :test_ci do
+    test(scheme: ENV["SCHEME"], swift_version: ENV["SWIFT_VERSION"])
   end
   
   desc "Lint"
