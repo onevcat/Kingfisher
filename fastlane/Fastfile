@@ -41,7 +41,7 @@ platform :ios do
       ensure_git_branch
       ensure_git_status_clean
       
-      test
+      tests
       lint
       
       sync_build_number_to_git
