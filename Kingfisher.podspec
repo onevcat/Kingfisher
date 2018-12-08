@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
 
   s.name         = "Kingfisher"
-  s.version      = "4.10.1"
+  s.version      = "5.0.0"
   s.summary      = "A lightweight and pure Swift implemented library for downloading and cacheing image from the web."
 
   s.description  = <<-DESC
-                   Kingfisher is a lightweight and pure Swift implemented library for downloading and cacheing image from the web. It provides you a chance to use pure Swift alternation in your next app.
+                   Kingfisher is a powerful and pure Swift implemented library for downloading and cacheing image from the web. It provides you a chance to use pure Swift alternation in your next app.
 
                    * Everything in Kingfisher goes asynchronously, not only downloading, but also caching. That means you can never worry about blocking your UI thread.
                    * Multiple-layer cache. Downloaded image will be cached in both memory and disk. So there is no need to download it again and this could boost your app dramatically.
@@ -27,29 +27,39 @@ Pod::Spec.new do |s|
 
   s.swift_version = "4.2"
 
-  s.ios.deployment_target = "8.0"
-  s.tvos.deployment_target = "9.0"
-  s.osx.deployment_target = "10.10"
+  s.ios.deployment_target = "10.0"
+  s.tvos.deployment_target = "10.0"
+  s.osx.deployment_target = "10.12"
   s.watchos.deployment_target = "3.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   
-  s.source_files  = ["Sources/*.swift", "Sources/Kingfisher.h", "Sources/Kingfisher.swift"]
+  s.source_files  = ["Sources/**/*.swift", "Sources/Kingfisher.h"]
   s.public_header_files = ["Sources/Kingfisher.h"]
   
-  s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift", "Sources/WKInterfaceImage+Kingfisher.swift"]
-  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", 
-                             "Sources/UIButton+Kingfisher.swift", 
-                             "Sources/ImageView+Kingfisher.swift", 
-                             "Sources/NSButton+Kingfisher.swift", 
-                             "Sources/Indicator.swift", 
-                             "Sources/Filter.swift",
-                             "Sources/Placeholder.swift"
-                            ]
-  s.ios.exclude_files = ["Sources/NSButton+Kingfisher.swift", "Sources/WKInterfaceImage+Kingfisher.swift"]
-  s.tvos.exclude_files = ["Sources/NSButton+Kingfisher.swift", "Sources/WKInterfaceImage+Kingfisher.swift"]
-
+  s.osx.exclude_files = [
+      "Sources/Views/AnimatedImageView.swift", 
+      "Sources/Extensions/UIButton+Kingfisher.swift", 
+      "Sources/Extensions/WKInterfaceImage+Kingfisher.swift"
+    ]
+  s.watchos.exclude_files = [
+      "Sources/Views/AnimatedImageView.swift", 
+      "Sources/Extensions/UIButton+Kingfisher.swift", 
+      "Sources/Extensions/ImageView+Kingfisher.swift", 
+      "Sources/Extensions/NSButton+Kingfisher.swift", 
+      "Sources/Views/Indicator.swift", 
+      "Sources/Image/Filter.swift",
+      "Sources/Image/Placeholder.swift"
+    ]
+  s.ios.exclude_files = [
+      "Sources/Extensions/NSButton+Kingfisher.swift", 
+      "Sources/Extensions/WKInterfaceImage+Kingfisher.swift"
+    ]
+  s.tvos.exclude_files = [
+      "Sources/Extensions/NSButton+Kingfisher.swift", 
+      "Sources/Extensions/WKInterfaceImage+Kingfisher.swift"
+    ]
   s.requires_arc = true
-  s.framework = "CFNetwork"
+  s.frameworks = "CFNetwork", "Accelerate"
 
 end
