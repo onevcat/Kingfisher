@@ -47,7 +47,7 @@ class InterfaceController: WKInterfaceController {
     
     func refreshImage() {
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(currentIndex! + 1).jpg")!
-        self.interfaceImage.kf.setImage(url)
+        interfaceImage.kf.setImage(with: url)
     }
 
     override func willActivate() {

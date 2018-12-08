@@ -29,23 +29,13 @@ import XCTest
 @testable import Kingfisher
 
 class KingfisherOptionsInfoTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
+
     func testEmptyOptionsShouldParseCorrectly() {
-        let options = KingfisherEmptyOptionsInfo
+        let options = KingfisherParsedOptionsInfo(KingfisherOptionsInfo.empty)
         XCTAssertTrue(options.targetCache === nil)
         XCTAssertTrue(options.downloader === nil)
 
-#if !os(macOS)
+#if os(iOS) || os(tvOS)
         switch options.transition {
         case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
@@ -57,82 +47,88 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.fromMemoryCacheOrRefresh)
         XCTAssertFalse(options.cacheMemoryOnly)
         XCTAssertFalse(options.backgroundDecode)
-        XCTAssertEqual(options.callbackDispatchQueue.label, DispatchQueue.main.label)
+        XCTAssertEqual(options.callbackQueue.queue.label, DispatchQueue.main.label)
         XCTAssertEqual(options.scaleFactor, 1.0)
         XCTAssertFalse(options.keepCurrentImageWhileLoading)
         XCTAssertFalse(options.onlyLoadFirstFrame)
         XCTAssertFalse(options.cacheOriginalImage)
     }
     
-
     func testSetOptionsShouldParseCorrectly() {
         let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
-#if os(macOS)
-        let transition = ImageTransition.none
-#else
-        let transition = ImageTransition.fade(0.5)
-#endif
-            
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
-        
-        let options: KingfisherOptionsInfo = [
+        let serializer = FormatIndicatedCacheSerializer.png
+        let modifier = DefaultImageModifier.default
+
+        var options = KingfisherParsedOptionsInfo([
             .targetCache(cache),
             .downloader(downloader),
-            .transition(transition),
+            .originalCache(cache),
             .downloadPriority(0.8),
             .forceRefresh,
+            .forceTransition,
             .fromMemoryCacheOrRefresh,
             .cacheMemoryOnly,
+            .waitForCache,
             .onlyFromCache,
             .backgroundDecode,
-            .callbackDispatchQueue(queue),
+            .callbackQueue(.dispatch(queue)),
+            // Not sure why but we need `KingfisherOptionsInfoItem` to compile...
             KingfisherOptionsInfoItem.scaleFactor(2.0),
+            .preloadAllAnimationData,
             .requestModifier(testModifier),
             .processor(processor),
+            .cacheSerializer(serializer),
+            .imageModifier(modifier),
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
             .cacheOriginalImage
-        ]
+        ])
         
         XCTAssertTrue(options.targetCache === cache)
+        XCTAssertTrue(options.originalCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
-#if !os(macOS)
+        #if os(iOS) || os(tvOS)
+        let transition = ImageTransition.fade(0.5)
+        options.transition = transition
         switch options.transition {
         case .fade(let duration): XCTAssertEqual(duration, 0.5)
         default: XCTFail()
         }
-#endif
+        #endif
         
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
         XCTAssertTrue(options.fromMemoryCacheOrRefresh)
+        XCTAssertTrue(options.forceTransition)
         XCTAssertTrue(options.cacheMemoryOnly)
+        XCTAssertTrue(options.waitForCache)
         XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
         
-        XCTAssertEqual(options.callbackDispatchQueue.label, queue.label)
+        XCTAssertEqual(options.callbackQueue.queue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
-        XCTAssertTrue(options.modifier is TestModifier)
+        XCTAssertTrue(options.preloadAllAnimationData)
+        XCTAssertTrue(options.requestModifier is TestModifier)
         XCTAssertEqual(options.processor.identifier, processor.identifier)
+        XCTAssertTrue(options.cacheSerializer is FormatIndicatedCacheSerializer)
+        XCTAssertTrue(options.imageModifier is DefaultImageModifier)
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)
     }
     
     func testOptionCouldBeOverwritten() {
-        var options: KingfisherOptionsInfo = [.downloadPriority(0.5), .onlyFromCache]
+        var options = KingfisherParsedOptionsInfo([.downloadPriority(0.5), .onlyFromCache])
         XCTAssertEqual(options.downloadPriority, 0.5)
-        
-        options.append(.downloadPriority(0.8))
+
+        options = KingfisherParsedOptionsInfo([.downloadPriority(0.5), .onlyFromCache, .downloadPriority(0.8)])
         XCTAssertEqual(options.downloadPriority, 0.8)
-        
-        options.append(.downloadPriority(1.0))
-        XCTAssertEqual(options.downloadPriority, 1.0)
     }
 }
 

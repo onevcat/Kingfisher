@@ -1,7 +1,5 @@
 <p align="center">
-
 <img src="https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png" alt="Kingfisher" title="Kingfisher" width="557"/>
-
 </p>
 
 <p align="center">
@@ -15,48 +13,95 @@
 <a href="#sponsors" alt="Sponsors on Open Collective"><img src="https://opencollective.com/Kingfisher/sponsors/badge.svg" /></a>
 </p>
 
-Kingfisher is a lightweight, pure-Swift library for downloading and caching images from the web. This project is heavily inspired by the popular [SDWebImage](https://github.com/rs/SDWebImage). It provides you a chance to use a pure-Swift alternative in your next app.
+Kingfisher is a powerful, pure-Swift library for downloading and caching images from the web. It provides you a chance to use a pure-Swift alternative in your next app.
 
 ## Features
 
 - [x] Asynchronous image downloading and caching.
-- [x] `URLSession`-based networking. Basic image processors and filters supplied.
-- [x] Multiple-layer cache for both memory and disk.
-- [x] Cancelable downloading and processing tasks to improve performance.
-- [x] Independent components. Use the downloader or caching system separately as you need.
-- [x] Prefetching images and showing them from cache later when necessary.
-- [x] Extensions for `UIImageView`, `NSImage` and `UIButton` to directly set an image from a URL.
+- [x] Loading image from either `URLSession`-based networking or local provided data.
+- [x] Useful image processors and filters provided.
+- [x] Multiple-layer hybrid cache for both memory and disk.
+- [x] Fine control on cache behavior. Customizable expiration date and size limit.
+- [x] Cancelable downloading and auto-reusing previous downloaded content to improve performance.
+- [x] Independent components. Use the downloader, caching system and image processors separately as you need.
+- [x] Prefetching images and showing them from cache to boost your app.
+- [x] View extensions for `UIImageView`, `NSImage`, `NSButton` and `UIButton` to directly set an image from a URL.
 - [x] Built-in transition animation when setting images.
-- [x] Customizable placeholder while loading images.
-- [x] Extensible image processing and image format support.
+- [x] Customizable placeholder and indicator while loading images.
+- [x] Extensible image processing and image format easily.
+
+### Kingfisher 101
 
 The simplest use-case is setting an image to an image view with the `UIImageView` extension:
 
 ```swift
-let url = URL(string: "url_of_your_image")
+let url = URL(string: "https://example.com/image.png")
 imageView.kf.setImage(with: url)
 ```
 
-Kingfisher will download the image from `url`, send it to both the memory cache and the disk cache, and display it in `imageView`. When you use the same code later, the image will be retrieved from cache and shown immediately.
+Kingfisher will download the image from `url`, send it to both memory cache and disk cache, and display it in `imageView`. When you set with the same URL later, the image will be retrieved from cache and shown immediately.
 
-For more examples of using Kingfisher, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet).
+### A More Advanced Example
+
+With the powerful options, you can do hard tasks with Kingfisher in a simple way. For example, the code below: 
+
+1. Downloads a high-resolution image.
+2. Downsamples it to match the image view size.
+3. Makes it round cornered with a given radius.
+4. Shows a system indicator and a placeholder image while downloading.
+5. When prepared, it animates the small thumbnail image with a "fade in" effect. 
+6. The original large image is also cached to disk for later use, to get rid of downloading it again in a detail view.
+7. A console log is printed when the task finishes, either for success or failure.
+
+```swift
+let url = URL(string: "https://example.com/high_resolution_image.png")
+let processor = DownsamplingImageProcessor(size: imageView.size)
+             >> RoundCornerImageProcessor(cornerRadius: 20)
+imageView.kf.indicatorType = .activity
+imageView.kf.setImage(
+    with: resource,
+    placeholder: UIImage(named: "placeholderImage"),
+    options: [
+        .processor(processor),
+        .scaleFactor(UIScreen.main.scale),
+        .transition(.fade(1)),
+        .cacheOriginalImage
+    ])
+{
+    result in
+    switch result {
+    case .success(let value):
+        print("Task done for: \(value.source.url?.absoluteString ?? "")")
+    case .failure(let error):
+        print("Job failed: \(error.localizedDescription)")
+    }
+}
+```
+
+It is really a very common situation I will meet in my daily work. Think about how many lines you need to write if without Kingfisher. You will fall in love with it!
+
+### Learn More
+
+To learn the using of Kingfisher by more examples, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance in the same page, remember to check them too.
 
 ## Requirements
 
-- iOS 8.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
-- Swift 4 (Kingfisher 4.x), Swift 3 (Kingfisher 3.x)
+- iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+
+- Swift 4.0+
 
-Main development of Kingfisher is based on Swift 4. Only critical bug fixes will be applied to Kingfisher 3.x.
+[Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - Kingfisher 5.x is NOT fully compatible with version 4.x. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
 
-- Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 has been removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble in migrating, please open an issue to discuss.
-- [Kingfisher 3.0 Migration Guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
+If you are using an even earlier version, see the guides below to know the steps for migrating.
+
+> - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 has been removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble in migrating, please open an issue to discuss.
+> - [Kingfisher 3.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
 
 ## Next Steps
 
 We prepared a [wiki page](https://github.com/onevcat/Kingfisher/wiki). You can find tons of useful things there.
 
 * [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) - Follow it to integrate Kingfisher into your project.
-* [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet)- Curious about what Kingfisher could do and how would it look like when used in your project? See this page for useful code snippets. If you are already familiar with Kingfisher, you could also learn new tricks to improve the way you use Kingfisher! 
+* [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet)- Curious about what Kingfisher could do and how would it look like when used in your project? See this page for useful code snippets. If you are already familiar with Kingfisher, you could also learn new tricks to improve the way you use Kingfisher!
 * [API Reference](http://onevcat.github.io/Kingfisher/) - Lastly, please remember to read the full whenever you may need a more detailed reference.
 
 ## Other
@@ -67,9 +112,7 @@ I want to keep Kingfisher lightweight. This framework will focus on providing a 
 
 ### Developments and Tests
 
-Any contributing and pull requests are warmly welcome. However, before you plan to implement some features or try to fix an uncertain issue, it is recommended to open a discussion first. 
-
-The test images are contained in another project to keep this project repo fast and slim. You could run `./setup.sh` in the root folder of Kingfisher to clone the test images when you need to run the tests target. It would be appreciated if your pull requests could build and with all tests green. :)
+Any contributing and pull requests are warmly welcome. However, before you plan to implement some features or try to fix an uncertain issue, it is recommended to open a discussion first. It would be appreciated if your pull requests could build and with all tests green. :)
 
 ### About the logo
 
@@ -87,7 +130,7 @@ This project exists thanks to all the people who contribute. [[Contribute]](http
 
 ## Backers
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
+Thank you to all our backers! Your support is really important for the project and encourages us to continue. 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
 
 <a href="https://opencollective.com/kingfisher#backers" target="_blank"><img src="https://opencollective.com/kingfisher/backers.svg?width=890"></a>
 
@@ -107,10 +150,6 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 <a href="https://opencollective.com/kingfisher/sponsor/8/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/8/avatar.svg"></a>
 <a href="https://opencollective.com/kingfisher/sponsor/9/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/9/avatar.svg"></a>
 
-
-
 ### License
 
 Kingfisher is released under the MIT license. See LICENSE for details.
-
-
