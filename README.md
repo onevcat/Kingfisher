@@ -45,12 +45,12 @@ Kingfisher will download the image from `url`, send it to both memory cache and 
 
 With the powerful options, you can do hard tasks with Kingfisher in a simple way. For example, the code below: 
 
-1. Downloads a high resolution image.
+1. Downloads a high-resolution image.
 2. Downsamples it to match the image view size.
 3. Makes it round cornered with a given radius.
 4. Shows a system indicator and a placeholder image while downloading.
 5. When prepared, it animates the small thumbnail image with a "fade in" effect. 
-6. The the original large image is also cached to disk for later use, to get rid of downloading it again in a detail view.
+6. The original large image is also cached to disk for later use, to get rid of downloading it again in a detail view.
 7. A console log is printed when the task finishes, either for success or failure.
 
 ```swift
@@ -71,7 +71,7 @@ imageView.kf.setImage(
     result in
     switch result {
     case .success(let value):
-        print("Task done for: \(value.source?.url?.absoluteString ?? "")")
+        print("Task done for: \(value.source.url?.absoluteString ?? "")")
     case .failure(let error):
         print("Job failed: \(error.localizedDescription)")
     }
@@ -82,7 +82,7 @@ It is really a very common situation I will meet in my daily work. Think about h
 
 ### Learn More
 
-To learn the using Kingfisher by more examples, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance in the same page, remember to check them too.
+To learn the using of Kingfisher by more examples, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance in the same page, remember to check them too.
 
 ## Requirements
 
@@ -130,7 +130,7 @@ This project exists thanks to all the people who contribute. [[Contribute]](http
 
 ## Backers
 
-Thank you to all our backers! Your support is really important for the project and encouraging us to continue. 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
+Thank you to all our backers! Your support is really important for the project and encourages us to continue. 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
 
 <a href="https://opencollective.com/kingfisher#backers" target="_blank"><img src="https://opencollective.com/kingfisher/backers.svg?width=890"></a>
 
@@ -153,5 +153,3 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 ### License
 
 Kingfisher is released under the MIT license. See LICENSE for details.
-
-
