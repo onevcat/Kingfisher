@@ -27,7 +27,25 @@
 import UIKit
 
 extension KingfisherWrapper where Base: UIButton {
-    
+
+    // MARK: Setting Image
+    /// Sets an image to the button for a specified state with a source.
+    ///
+    /// - Parameters:
+    ///   - source: The `Source` object contains information about the image.
+    ///   - state: The button state to which the image should be set.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// Internally, this method will use `KingfisherManager` to get the requested source, from either cache
+    /// or network. Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
     @discardableResult
     public func setImage(
         with source: Source?,
@@ -50,7 +68,7 @@ extension KingfisherWrapper where Base: UIButton {
         }
         
         var mutatingSelf = self
-        let issuedTaskIdentifier = SourceIdentifier.next()
+        let issuedTaskIdentifier = Source.Identifier.next()
         setTaskIdentifier(issuedTaskIdentifier, for: state)
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -121,6 +139,8 @@ extension KingfisherWrapper where Base: UIButton {
             progressBlock: progressBlock,
             completionHandler: completionHandler)
     }
+
+    // MARK: Cancelling Downloading Task
     
     /// Cancels the image download task of the button if it is running.
     /// Nothing will happen if the downloading has already finished.
@@ -128,6 +148,25 @@ extension KingfisherWrapper where Base: UIButton {
         imageTask?.cancel()
     }
 
+    // MARK: Setting Background Image
+
+    /// Sets a background image to the button for a specified state with a source.
+    ///
+    /// - Parameters:
+    ///   - source: The `Source` object contains information about the image.
+    ///   - state: The button state to which the image should be set.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// Internally, this method will use `KingfisherManager` to get the requested source
+    /// Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
     @discardableResult
     public func setBackgroundImage(
         with source: Source?,
@@ -150,7 +189,7 @@ extension KingfisherWrapper where Base: UIButton {
         }
         
         var mutatingSelf = self
-        let issuedTaskIdentifier = SourceIdentifier.next()
+        let issuedTaskIdentifier = Source.Identifier.next()
         setBackgroundTaskIdentifier(issuedTaskIdentifier, for: state)
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -224,6 +263,8 @@ extension KingfisherWrapper where Base: UIButton {
             progressBlock: progressBlock,
             completionHandler: completionHandler)
     }
+
+    // MARK: Cancelling Background Downloading Task
     
     /// Cancels the background image download task of the button if it is running.
     /// Nothing will happen if the downloading has already finished.
@@ -236,13 +277,14 @@ extension KingfisherWrapper where Base: UIButton {
 private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
+// MARK: Properties
 extension KingfisherWrapper where Base: UIButton {
 
-    public func taskIdentifier(for state: UIControl.State) -> SourceIdentifier.Value? {
-        return (taskIdentifierInfo[NSNumber(value:state.rawValue)] as? Box<SourceIdentifier.Value>)?.value
+    public func taskIdentifier(for state: UIControl.State) -> Source.Identifier.Value? {
+        return (taskIdentifierInfo[NSNumber(value:state.rawValue)] as? Box<Source.Identifier.Value>)?.value
     }
 
-    private func setTaskIdentifier(_ identifier: SourceIdentifier.Value?, for state: UIControl.State) {
+    private func setTaskIdentifier(_ identifier: Source.Identifier.Value?, for state: UIControl.State) {
         taskIdentifierInfo[NSNumber(value:state.rawValue)] = identifier.map { Box($0) }
     }
     
@@ -271,13 +313,14 @@ extension KingfisherWrapper where Base: UIButton {
 private var backgroundTaskIdentifierKey: Void?
 private var backgroundImageTaskKey: Void?
 
+// MARK: Background Properties
 extension KingfisherWrapper where Base: UIButton {
 
-    public func backgroundTaskIdentifier(for state: UIControl.State) -> SourceIdentifier.Value? {
-        return (backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] as? Box<SourceIdentifier.Value>)?.value
+    public func backgroundTaskIdentifier(for state: UIControl.State) -> Source.Identifier.Value? {
+        return (backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] as? Box<Source.Identifier.Value>)?.value
     }
     
-    private func setBackgroundTaskIdentifier(_ identifier: SourceIdentifier.Value?, for state: UIControl.State) {
+    private func setBackgroundTaskIdentifier(_ identifier: Source.Identifier.Value?, for state: UIControl.State) {
         backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] = identifier.map { Box($0) }
     }
     

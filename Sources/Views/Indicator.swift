@@ -50,8 +50,6 @@ public enum IndicatorType {
     case custom(indicator: Indicator)
 }
 
-// MARK: - Indicator Protocol
-
 /// An indicator type which can be used to show the download task is in progress.
 public protocol Indicator {
     
@@ -76,7 +74,6 @@ extension Indicator {
     public var centerOffset: CGPoint { return .zero }
 }
 
-// MARK: - ActivityIndicator
 // Displays a NSProgressIndicator / UIActivityIndicatorView
 final class ActivityIndicator: Indicator {
 

@@ -85,7 +85,8 @@ platform :ios do
                         --module-version #{target_version} \
                         --module Kingfisher \
                         --root-url http://onevcat.github.io/Kingfisher/ \
-                        --output docs/")
+                        --output docs/ \
+                        --theme fullwidth")
   end
 
   after_all do |lane|

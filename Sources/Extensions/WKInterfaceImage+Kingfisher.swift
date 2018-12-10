@@ -27,7 +27,26 @@
 import WatchKit
 
 extension KingfisherWrapper where Base: WKInterfaceImage {
-    
+
+    // MARK: Setting Image
+
+    /// Sets an image to the image view with a source.
+    ///
+    /// - Parameters:
+    ///   - source: The `Source` object contains information about the image.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the requested source
+    /// Since this method will perform UI changes, you must call it from the main thread.
+    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    ///
     @discardableResult
     public func setImage(
         with source: Source?,
@@ -49,7 +68,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             base.setImage(placeholder)
         }
         
-        let issuedTaskIdentifier = SourceIdentifier.next()
+        let issuedTaskIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedTaskIdentifier
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
@@ -89,7 +108,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
     /// Sets an image to the image view with a requested resource.
     ///
     /// - Parameters:
-    ///   - resource: The `Resource` object contains information about the resource.
+    ///   - resource: The `Resource` object contains information about the image.
     ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
     ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
     ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
@@ -119,24 +138,24 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             completionHandler: completionHandler)
     }
 
-    /**
-     Cancel the image download task bounded to the image view if it is running.
-     Nothing will happen if the downloading has already finished.
-     */
+    // MARK: Cancelling Image
+
+    /// Cancel the image download task bounded to the image view if it is running.
+    /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
     }
 }
 
-// MARK: - Associated Object
 private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
+// MARK: Properties
 extension KingfisherWrapper where Base: WKInterfaceImage {
     
-    public private(set) var taskIdentifier: SourceIdentifier.Value? {
+    public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
-            let box: Box<SourceIdentifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
+            let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
         set {

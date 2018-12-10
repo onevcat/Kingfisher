@@ -77,10 +77,11 @@ public struct DownloadTask {
 /// Represents a downloading manager for requesting the image with a URL from server.
 open class ImageDownloader {
 
+    // MARK: Singleton
     /// The default downloader.
     public static let `default` = ImageDownloader(name: "default")
 
-    // MARK: - Public property
+    // MARK: Public Properties
     /// The duration before the downloading is timeout. Default is 15 seconds.
     open var downloadTimeout: TimeInterval = 15.0
     
@@ -117,6 +118,8 @@ open class ImageDownloader {
     private let name: String
     private let sessionDelegate: SessionDelegate
     private var session: URLSession
+
+    // MARK: Initializers
 
     /// Creates a downloader with name.
     ///
@@ -279,6 +282,7 @@ open class ImageDownloader {
         return downloadTask
     }
 
+    // MARK: Dowloading Task
     /// Downloads an image with a URL and option.
     ///
     /// - Parameters:
@@ -303,6 +307,7 @@ open class ImageDownloader {
     }
 }
 
+// MARK: Cancelling Task
 extension ImageDownloader {
 
     /// Cancel all downloading tasks for this `ImageDownloader`. It will trigger the completion handlers

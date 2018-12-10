@@ -51,10 +51,10 @@ public enum ImageFormat {
 }
 
 
-// MARK: - Misc Helpers
 extension Data: KingfisherCompatible {}
+
+// MARK: - Misc Helpers
 extension KingfisherWrapper where Base == Data {
-    
     /// Gets the image format corresponding to the data.
     public var imageFormat: ImageFormat {
         var buffer = [UInt8](repeating: 0, count: 8)

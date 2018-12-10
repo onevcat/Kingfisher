@@ -65,11 +65,7 @@ class ImageModifierTests: XCTestCase {
         let m = FlipsForRightToLeftLayoutDirectionImageModifier()
         let image = Image(data: testImagePNGData)!
         let modifiedImage = m.modify(image)
-        if #available(iOS 9.0, *) {
-            XCTAssert(modifiedImage.flipsForRightToLeftLayoutDirection == true)
-        } else {
-            XCTAssert(true)
-        }
+        XCTAssert(modifiedImage.flipsForRightToLeftLayoutDirection == true)
     }
 
     func testAlignmentRectInsetsImageModifier() {

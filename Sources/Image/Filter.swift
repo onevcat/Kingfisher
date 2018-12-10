@@ -24,10 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
-
 import CoreImage
-import Accelerate
 
 // Reuse the same CI Context for all CI drawing.
 private let ciContext = CIContext(options: nil)

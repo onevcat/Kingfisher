@@ -26,19 +26,7 @@
 
 import Foundation
 
-/// Represents the source task identifier when setting an image to a view with extension methods.
-public enum SourceIdentifier {
-    
-    /// The underlying value type of source identifier.
-    public typealias Value = UInt
-    static var current: Value = 0
-    static func next() -> Value {
-        current += 1
-        return current
-    }
-}
-
-/// Represents an image setting source for Kingfisher method.
+/// Represents an image setting source for Kingfisher methods.
 ///
 /// A `Source` value indicates the way how the target image can be retrieved and cached.
 ///
@@ -47,6 +35,21 @@ public enum SourceIdentifier {
 /// - provider: The target image should be provided in a data format. Normally, it can be an image
 ///             from local storage or in any other encoding format (like Base64).
 public enum Source {
+
+    /// Represents the source task identifier when setting an image to a view with extension methods.
+    public enum Identifier {
+
+        /// The underlying value type of source identifier.
+        public typealias Value = UInt
+        static var current: Value = 0
+        static func next() -> Value {
+            current += 1
+            return current
+        }
+    }
+
+    // MARK: Member Cases
+
     /// The target image should be got from network remotely. The associated `Resource`
     /// value defines detail information like image URL and cache key.
     case network(Resource)
@@ -54,7 +57,9 @@ public enum Source {
     /// The target image should be provided in a data format. Normally, it can be an image
     /// from local storage or in any other encoding format (like Base64).
     case provider(ImageDataProvider)
-    
+
+    // MARK: Getting Properties
+
     /// The cache key defined for this source value.
     public var cacheKey: String {
         switch self {

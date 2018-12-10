@@ -56,11 +56,12 @@ public protocol ImageDataProvider {
 /// as applying `ImageProcessor`s and storing the image to `ImageCache` of Kingfisher.
 public struct LocalFileImageDataProvider: ImageDataProvider {
 
+    // MARK: Public Properties
+
     /// The file URL from which the image be loaded.
     public let fileURL: URL
 
-    /// The key used in cache.
-    public var cacheKey: String
+    // MARK: Initializers
 
     /// Creates an image data provider by supplying the target local file URL.
     ///
@@ -73,6 +74,11 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
         self.cacheKey = cacheKey ?? fileURL.absoluteString
     }
 
+    // MARK: Protocol Conforming
+
+    /// The key used in cache.
+    public var cacheKey: String
+
     public func data(handler: (Result<Data, Error>) -> Void) {
         handler( Result { try Data(contentsOf: fileURL) } )
     }
@@ -80,12 +86,13 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
 
 /// Represents an image data provider for loading image from a given Base64 encoded string.
 public struct Base64ImageDataProvider: ImageDataProvider {
-    
+
+    // MARK: Public Properties
+    /// The encoded Base64 string for the image.
     public let base64String: String
 
-    /// The key used in cache.
-    public var cacheKey: String
-    
+    // MARK: Initializers
+
     /// Creates an image data provider by supplying the Base64 encoded string.
     ///
     /// - Parameters:
@@ -96,6 +103,11 @@ public struct Base64ImageDataProvider: ImageDataProvider {
         self.cacheKey = cacheKey
     }
 
+    // MARK: Protocol Conforming
+
+    /// The key used in cache.
+    public var cacheKey: String
+
     public func data(handler: (Result<Data, Error>) -> Void) {
         let data = Data(base64Encoded: base64String)!
         handler(.success(data))
@@ -104,13 +116,14 @@ public struct Base64ImageDataProvider: ImageDataProvider {
 
 /// Represents an image data provider for a raw data object.
 public struct RawImageDataProvider: ImageDataProvider {
-    
+
+    // MARK: Public Properties
+
     /// The raw data object to provide to Kingfisher image loader.
     public let data: Data
-    
-    /// The key used in cache.
-    public var cacheKey: String
-    
+
+    // MARK: Initializers
+
     /// Creates an image data provider by the given raw `data` value and a `cacheKey` be used in Kingfisher cache.
     ///
     /// - Parameters:
@@ -120,7 +133,12 @@ public struct RawImageDataProvider: ImageDataProvider {
         self.data = data
         self.cacheKey = cacheKey
     }
+
+    // MARK: Protocol Conforming
     
+    /// The key used in cache.
+    public var cacheKey: String
+
     public func data(handler: @escaping (Result<Data, Error>) -> Void) {
         handler(.success(data))
     }

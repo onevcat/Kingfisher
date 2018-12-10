@@ -30,7 +30,6 @@ import AppKit
 import UIKit
 #endif
 
-
 /// Represents a placeholder type which could be set while loading as well as
 /// loading finished without getting an image.
 public protocol Placeholder {
