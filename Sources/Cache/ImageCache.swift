@@ -140,7 +140,14 @@ public enum ImageCacheResult {
 /// your own cache object and configure its storages as your need. This class also provide an interface for you to set
 /// the memory and disk storage config.
 open class ImageCache {
-    
+
+    // MARK: Singleton
+    /// The default `ImageCache` object. Kingfisher will use this cache for its related methods if there is no
+    /// other cache specified. The `name` of this default cache is "default", and you should not use this name
+    /// for any of your customize cache.
+    public static let `default` = ImageCache(name: "default")
+
+    // MARK: Public Properties
     /// The `MemoryStorage.Backend` object used in this cache. This storage holds loaded images in memory with a
     /// reasonable expire duration and a maximum memory usage. To modify the configuration of a storage, just set
     /// the storage `config` and its properties.
@@ -152,14 +159,11 @@ open class ImageCache {
     public let diskStorage: DiskStorage.Backend<Data>
     
     private let ioQueue: DispatchQueue
-
-    /// The default `ImageCache` object. Kingfisher will use this cache for its related methods if there is no
-    /// other cache specified. The `name` of this default cache is "default", and you should not use this name
-    /// for any of your customize cache.
-    public static let `default` = ImageCache(name: "default")
     
     /// Closure that defines the disk cache path from a given path and cacheName.
     public typealias DiskCachePathClosure = (URL, String) -> URL
+
+    // MARK: Initializers
 
     /// Creates an `ImageCache` from a customized `MemoryStorage` and `DiskStorage`.
     ///
@@ -249,7 +253,9 @@ open class ImageCache {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+
+    // MARK: Storing Images
+
     open func store(_ image: Image,
                     original: Data? = nil,
                     forKey key: String,
@@ -295,7 +301,6 @@ open class ImageCache {
         }
     }
 
-    // MARK: - Store & Remove
     /// Stores an image to the cache.
     ///
     /// - Parameters:
@@ -391,7 +396,9 @@ open class ImageCache {
             callbackQueue.execute { completionHandler(result) }
         }
     }
-    
+
+    // MARK: Removing Images
+
     /// Removes the image for the given key from the cache.
     ///
     /// - Parameters:
@@ -479,6 +486,8 @@ open class ImageCache {
             }
         }
     }
+
+    // MARK: Getting Images
 
     /// Gets an image for a given key from the cache, either from memory storage or disk storage.
     ///
@@ -573,7 +582,7 @@ open class ImageCache {
             completionHandler: completionHandler)
     }
 
-    // MARK: - Clear & Clean
+    // MARK: Cleaning
     /// Clears the memory storage of this cache.
     @objc public func clearMemoryCache() {
         try? memoryStorage.removeAll()
@@ -662,6 +671,8 @@ open class ImageCache {
         }
     }
 #endif
+
+    // MARK: Image Cache State
 
     /// Returns the cache type for a given `key` and `identifier` combination.
     /// This method is used for checking whether an image is cached in current cache.

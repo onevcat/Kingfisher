@@ -30,6 +30,7 @@ import AppKit
 import UIKit
 #endif
 
+// MARK: - Deprecated
 extension KingfisherWrapper where Base: Image {
     @available(*, deprecated, message:
     "Will be removed soon. Pass parameters with `ImageCreatingOptions`, use `image(with:options:)` instead.")
@@ -70,12 +71,14 @@ public typealias CompletionHandler =
 public typealias ImageDownloaderCompletionHandler =
     ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
 
+// MARK: - Deprecated
 @available(*, deprecated, message: "Will be removed soon. Use `DownloadTask` to cancel a task.")
 extension RetrieveImageTask {
     @available(*, deprecated, message: "RetrieveImageTask.empty will be removed soon. Use `nil` to represent a no task.")
     public static let empty = RetrieveImageTask()
 }
 
+// MARK: - Deprecated
 extension KingfisherManager {
     /// Get an image with resource.
     /// If `.empty` is used as `options`, Kingfisher will seek the image in memory and disk first.
@@ -105,6 +108,7 @@ extension KingfisherManager {
     }
 }
 
+// MARK: - Deprecated
 extension ImageDownloader {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
@@ -136,6 +140,7 @@ public final class RetrieveImageTask {
 public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 
 #if !os(watchOS)
+// MARK: - Deprecated
 extension KingfisherWrapper where Base: ImageView {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
@@ -159,6 +164,7 @@ extension KingfisherWrapper where Base: ImageView {
 #endif
 
 #if canImport(UIKit) && !os(watchOS)
+// MARK: - Deprecated
 extension KingfisherWrapper where Base: UIButton {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
@@ -218,6 +224,7 @@ extension KingfisherWrapper where Base: UIButton {
 
 #if os(watchOS)
 import WatchKit
+// MARK: - Deprecated
 extension KingfisherWrapper where Base: WKInterfaceImage {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
@@ -246,6 +253,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
 #endif
 
 #if os(macOS)
+// MARK: - Deprecated
 extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     @available(*, deprecated, message: "Use `Result` based callback instead.")
@@ -297,6 +305,7 @@ extension KingfisherWrapper where Base: NSButton {
 }
 #endif
 
+// MARK: - Deprecated
 extension ImageCache {
     /// The largest cache cost of memory cache. The total cost is pixel count of
     /// all cached images in memory.
@@ -395,9 +404,7 @@ extension ImageCache {
         get { return diskStorage.config.expiration.timeInterval }
         set { diskStorage.config.expiration = .seconds(newValue) }
     }
-}
 
-extension ImageCache {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     open func store(_ image: Image,
                     original: Data? = nil,
@@ -428,6 +435,7 @@ extension ImageCache {
     }
 }
 
+// MARK: - Deprecated
 public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The queue of callbacks should happen from Kingfisher.
     @available(*, deprecated, message: "Use `callbackQueue` instead.", renamed: "callbackQueue")
@@ -445,6 +453,7 @@ public let KingfisherErrorDomain = "com.onevcat.Kingfisher.Error"
 message: "Use `.invalidHTTPStatusCode` or `isInvalidResponseStatusCode` of `KingfisherError` instead for the status code.")
 public let KingfisherErrorStatusCodeKey = "statusCode"
 
+// MARK: - Deprecated
 public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The target `ImageCache` which is used.
     @available(*, deprecated,

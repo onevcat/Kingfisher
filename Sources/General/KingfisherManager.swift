@@ -51,11 +51,12 @@ public struct RetrieveImageResult {
 /// to provide a set of convenience methods to use Kingfisher for tasks.
 /// You can use this class to retrieve an image via a specified URL from web or cache.
 public class KingfisherManager {
-    
+
     /// Represents a shared manager used across Kingfisher.
     /// Use this instance for getting or storing images with Kingfisher.
     public static let shared = KingfisherManager()
-    
+
+    // Mark: Public Properties
     /// The `ImageCache` used by this manager. It is `ImageCache.default` by default.
     /// If a cache is specified in `KingfisherManager.defaultOptions`, the value in `defaultOptions` will be
     /// used instead.
@@ -91,6 +92,8 @@ public class KingfisherManager {
         let processQueueName = "com.onevcat.Kingfisher.KingfisherManager.processQueue.\(UUID().uuidString)"
         processingQueue = .dispatch(DispatchQueue(label: processQueueName))
     }
+
+    // Mark: Getting Images
 
     /// Gets an image from a given resource.
     ///
@@ -190,6 +193,7 @@ public class KingfisherManager {
         options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)?)
     {
+        guard let  completionHandler = completionHandler else { return }
         provider.data { result in
             switch result {
             case .success(let data):
@@ -198,23 +202,23 @@ public class KingfisherManager {
                     let processingItem = ImageProcessItem.data(data)
                     guard let image = processor.process(item: processingItem, options: options) else {
                         options.callbackQueue.execute {
-                            completionHandler?(
-                                .failure(
-                                    .processorError(reason: .processingFailed(processor: processor, item: processingItem))
-                                )
-                            )
+                            let error = KingfisherError.processorError(
+                                reason: .processingFailed(processor: processor, item: processingItem))
+                            completionHandler(.failure(error))
                         }
                         return
                     }
-                    
-                    let result = ImageLoadingResult(image: image, url: nil, originalData: data)
-                    options.callbackQueue.execute { completionHandler?(.success(result)) }
+
+                    options.callbackQueue.execute {
+                        let result = ImageLoadingResult(image: image, url: nil, originalData: data)
+                        completionHandler(.success(result))
+                    }
                 }
             case .failure(let error):
                 options.callbackQueue.execute {
-                    completionHandler?(
-                        .failure(.imageSettingError(reason: .dataProviderError(provider: provider, error: error)))
-                    )
+                    let error = KingfisherError.imageSettingError(
+                        reason: .dataProviderError(provider: provider, error: error))
+                    completionHandler(.failure(error))
                 }
 
             }

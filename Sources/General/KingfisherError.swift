@@ -33,10 +33,9 @@ extension Never: Error {}
 /// as its error type. To handle errors from Kingfisher, you switch over the error to get a reason catalog,
 /// then switch over the reason to know error detail.
 public enum KingfisherError: Error {
-    
-    /// The error domain of `KingfisherError`. All errors from Kingfisher is under this domain.
-    public static let domain = "com.onevcat.Kingfisher.Error"
-    
+
+    // MARK: Error Reason Types
+
     /// Represents the error reason during networking request phase.
     ///
     /// - emptyRequest: The request is empty. Code 1001.
@@ -178,6 +177,8 @@ public enum KingfisherError: Error {
         /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
         case dataProviderError(provider: ImageDataProvider, error: Error)
     }
+
+    // MARK: Member Cases
     
     /// Represents the error reason during networking request phase.
     case requestError(reason: RequestErrorReason)
@@ -189,7 +190,9 @@ public enum KingfisherError: Error {
     case processorError(reason: ProcessorErrorReason)
     /// Represents the error reason during image setting in a view related class.
     case imageSettingError(reason: ImageSettingErrorReason)
-    
+
+    // MARK: Helper Properties & Methods
+
     /// Helper property to check whether this error is a `RequestErrorReason.taskCancelled` or not.
     public var isTaskCancelled: Bool {
         if case .requestError(reason: .taskCancelled) = self {
@@ -230,6 +233,7 @@ public enum KingfisherError: Error {
     }
 }
 
+// MARK: - LocalizedError Conforming
 extension KingfisherError: LocalizedError {
     
     /// A localized message describing what error occurred.
@@ -244,7 +248,12 @@ extension KingfisherError: LocalizedError {
     }
 }
 
+
+// MARK: - CustomNSError Conforming
 extension KingfisherError: CustomNSError {
+
+    /// The error domain of `KingfisherError`. All errors from Kingfisher is under this domain.
+    public static let domain = "com.onevcat.Kingfisher.Error"
 
     /// The error code within the given domain.
     public var errorCode: Int {

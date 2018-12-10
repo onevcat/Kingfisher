@@ -215,9 +215,7 @@ class KingfisherManagerTests: XCTestCase {
         {
             result in
             XCTAssertNil(result.error)
-            if #available(iOS 10.0, tvOS 10.0, macOS 10.12, *) {
-                dispatchPrecondition(condition: .onQueue(customQueue))
-            }
+            dispatchPrecondition(condition: .onQueue(customQueue))
             completionExpectation.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
