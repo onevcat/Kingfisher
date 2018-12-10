@@ -285,9 +285,9 @@ open class AnimatedImageView: UIImageView {
             duration = 1.0 / Double(displayLink.preferredFramesPerSecond)
         }
 
-        animator.shouldChangeFrame(with: duration) { hasNewFrame in
+        animator.shouldChangeFrame(with: duration) { [weak self] hasNewFrame in
             if hasNewFrame {
-                layer.setNeedsDisplay()
+                self?.layer.setNeedsDisplay()
             }
         }
     }
