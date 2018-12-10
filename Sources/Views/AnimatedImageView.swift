@@ -152,6 +152,11 @@ open class AnimatedImageView: UIImageView {
     // MARK: - Private property
     /// `Animator` instance that holds the frames of a specific image in memory.
     private var animator: Animator?
+
+    // Dispatch queue used for preloading images.
+    private lazy var preloadQueue: DispatchQueue = {
+        return DispatchQueue(label: "com.onevcat.Kingfisher.Animator.preloadQueue")
+    }()
     
     // A flag to avoid invalidating the displayLink on deinit if it was never created, because displayLink is so lazy.
     private var isDisplayLinkInitialized: Bool = false
@@ -240,7 +245,8 @@ open class AnimatedImageView: UIImageView {
                 contentMode: contentMode,
                 size: bounds.size,
                 framePreloadCount: framePreloadCount,
-                repeatCount: repeatCount)
+                repeatCount: repeatCount,
+                preloadQueue: preloadQueue)
             animator.delegate = self
             animator.needsPrescaling = needsPrescaling
             animator.prepareFramesAsynchronously()
@@ -420,12 +426,14 @@ extension AnimatedImageView {
              contentMode mode: UIView.ContentMode,
              size: CGSize,
              framePreloadCount count: Int,
-             repeatCount: AnimatedImageView.RepeatCount) {
+             repeatCount: RepeatCount,
+             preloadQueue: DispatchQueue) {
             self.imageSource = source
             self.contentMode = mode
             self.size = size
             self.maxFrameCount = count
             self.maxRepeatCount = repeatCount
+            self.preloadQueue = preloadQueue
         }
 
         func frame(at index: Int) -> Image? {
