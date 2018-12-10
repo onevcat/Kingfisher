@@ -104,7 +104,7 @@ class GIFAnimatedImage {
         self.duration = gifDuration
     }
     
-    //Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary.
+    // Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary.
     static func getFrameDuration(from gifInfo: [String: Any]?) -> TimeInterval {
         let defaultFrameDuration = 0.1
         guard let gifInfo = gifInfo else { return defaultFrameDuration }
@@ -115,5 +115,14 @@ class GIFAnimatedImage {
         
         guard let frameDuration = duration else { return defaultFrameDuration }
         return frameDuration.doubleValue > 0.011 ? frameDuration.doubleValue : defaultFrameDuration
+    }
+
+    // Calculates frame duration at a specific index for a gif from an `imageSource`.
+    static func getFrameDuration(from imageSource: CGImageSource, at index: Int) -> TimeInterval {
+        guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, index, nil)
+            as? [String: Any] else { return 0.0 }
+
+        let gifInfo = properties[kCGImagePropertyGIFDictionary as String] as? [String: Any]
+        return getFrameDuration(from: gifInfo)
     }
 }
