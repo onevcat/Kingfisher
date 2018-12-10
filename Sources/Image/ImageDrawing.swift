@@ -539,6 +539,7 @@ extension KingfisherWrapper where Base: CGImage {
     ///   - targetSize: The target size in point.
     ///   - contentMode: Content mode of output image should be.
     /// - Returns: A CGImage with new size.
+    #if os(iOS) || os(tvOS)
     public func resize(to size: CGSize, for contentMode: UIView.ContentMode) -> CGImage {
         switch contentMode {
         case .scaleAspectFit:
@@ -549,6 +550,7 @@ extension KingfisherWrapper where Base: CGImage {
             return resize(to: size)
         }
     }
+    #endif
 
     // MARK: - Resize
     /// Resizes `base` CGImage to a CGImage with new size.
