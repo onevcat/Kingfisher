@@ -478,20 +478,18 @@ extension AnimatedImageView {
         }
 
         private func loadFrame(at index: Int) -> UIImage? {
-            guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, index, nil) else {
+            guard let image = CGImageSourceCreateImageAtIndex(imageSource, index, nil) else {
                 return nil
             }
 
-            let image = Image(cgImage: imageRef)
-            let scaledImage: Image?
-
+            let scaledImage: CGImage
             if needsPrescaling, size != .zero {
                 scaledImage = image.kf.resize(to: size, for: contentMode)
             } else {
                 scaledImage = image
             }
 
-            return scaledImage
+            return Image(cgImage: scaledImage)
         }
         
         private func updatePreloadedFrames() {
