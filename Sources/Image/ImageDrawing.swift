@@ -524,3 +524,63 @@ extension KingfisherWrapper where Base: Image {
     }
     #endif
 }
+
+extension CGImage: KingfisherCompatible {}
+/// High Performance Image Resizing
+/// @see https://nshipster.com/image-resizing/
+extension KingfisherWrapper where Base: CGImage {
+    var size: CGSize {
+        return CGSize(width: CGFloat(base.width), height: CGFloat(base.height))
+    }
+
+    /// Resizes `base` CGImage to a CGImage of new size, respecting the given content mode.
+    ///
+    /// - Parameters:
+    ///   - targetSize: The target size in point.
+    ///   - contentMode: Content mode of output image should be.
+    /// - Returns: A CGImage with new size.
+    public func resize(to size: CGSize, for contentMode: UIView.ContentMode) -> CGImage {
+        switch contentMode {
+        case .scaleAspectFit:
+            return resize(to: size, for: .aspectFit)
+        case .scaleAspectFill:
+            return resize(to: size, for: .aspectFill)
+        default:
+            return resize(to: size)
+        }
+    }
+
+    // MARK: - Resize
+    /// Resizes `base` CGImage to a CGImage with new size.
+    ///
+    /// - Parameter size: The target size in point.
+    /// - Returns: A CGImage with new size.
+    public func resize(to size: CGSize) -> CGImage {
+        guard let context = CGContext(data: nil,
+                                      width: Int(size.width),
+                                      height: Int(size.height),
+                                      bitsPerComponent: base.bitsPerComponent,
+                                      bytesPerRow: base.bytesPerRow,
+                                      space: base.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: base.bitmapInfo.rawValue) else
+        {
+            return base
+        }
+
+        let rect = CGRect(origin: .zero, size: size)
+        context.interpolationQuality = .high
+        context.draw(base, in: rect)
+        return context.makeImage() ?? base
+    }
+
+    /// Resizes `base` CGImage to a CGImage of new size, respecting the given content mode.
+    ///
+    /// - Parameters:
+    ///   - targetSize: The target size in point.
+    ///   - contentMode: Content mode of output image should be.
+    /// - Returns: A CGImage with new size.
+    public func resize(to targetSize: CGSize, for contentMode: ContentMode) -> CGImage {
+        let newSize = size.kf.resize(to: targetSize, for: contentMode)
+        return resize(to: newSize)
+    }
+}
