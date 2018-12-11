@@ -321,13 +321,16 @@ public class KingfisherManager {
             (options.fromMemoryCacheOrRefresh == false || targetImageCached == .memory)
         if validCache {
             targetCache.retrieveImage(forKey: key, options: options) { result in
-                if let image = result.value?.image {
-                    let value = result.map {
-                        RetrieveImageResult(image: image, cacheType: $0.cacheType, source: source)
+                guard let completionHandler = completionHandler else { return }
+                options.callbackQueue.execute {
+                    if let image = result.value?.image {
+                        let value = result.map {
+                            RetrieveImageResult(image: image, cacheType: $0.cacheType, source: source)
+                        }
+                        completionHandler(value)
+                    } else {
+                        completionHandler(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
                     }
-                    completionHandler?(value)
-                } else {
-                    completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
                 }
             }
             return true
@@ -356,7 +359,7 @@ public class KingfisherManager {
                         guard let processedImage = processor.process(item: item, options: options) else {
                             let error = KingfisherError.processorError(
                                             reason: .processingFailed(processor: processor, item: item))
-                            completionHandler?(.failure(error))
+                            options.callbackQueue.execute { completionHandler?(.failure(error)) }
                             return
                         }
 
@@ -371,19 +374,21 @@ public class KingfisherManager {
                             _ in
                             if options.waitForCache {
                                 let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
-                                completionHandler?(.success(value))
+                                options.callbackQueue.execute { completionHandler?(.success(value)) }
                             }
                         }
 
                         if !options.waitForCache {
                             let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
-                            completionHandler?(.success(value))
+                            options.callbackQueue.execute { completionHandler?(.success(value)) }
                         }
                     }
                 } else {
                     // This should not happen actually, since we already confirmed `originalImageCached` is `true`.
                     // Just in case...
-                    completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
+                    options.callbackQueue.execute {
+                        completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
+                    }
                 }
             }
             return true
