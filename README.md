@@ -125,7 +125,7 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute]](https://github.com/onevcat/Kingfisher/blob/master/CONTRIBUTING.md).
-<a href="https://github.com/onevcat/Kingfisher/graphs/contributors"><img src="https://opencollective.com/kingfisher/contributors.svg?width=890" /></a>
+<a href="https://opencollective.com/kingfisher#backer"><img src="https://opencollective.com/kingfisher/contributors.svg?width=890" /></a>
 
 
 ## Backers
