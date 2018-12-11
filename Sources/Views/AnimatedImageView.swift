@@ -335,8 +335,8 @@ extension AnimatedImageView {
         //
         // - parameter image: An optional `UIImage` instance to be assigned to the new frame.
         // - returns: An `AnimatedFrame` instance.
-        func makeAnimatedFrame(with newImage: UIImage?) -> AnimatedFrame {
-            return AnimatedFrame(image: newImage, duration: duration)
+        func makeAnimatedFrame(image: UIImage?) -> AnimatedFrame {
+            return AnimatedFrame(image: image, duration: duration)
         }
     }
 }
@@ -475,7 +475,7 @@ extension AnimatedImageView {
                 animatedFrames += [AnimatedFrame(image: nil, duration: frameDuration)]
 
                 if index > maxFrameCount { return }
-                animatedFrames[index] = animatedFrames[index].makeAnimatedFrame(with: loadFrame(at: index))
+                animatedFrames[index] = animatedFrames[index].makeAnimatedFrame(image: loadFrame(at: index))
             }
 
             self.loopDuration = duration
@@ -510,7 +510,7 @@ extension AnimatedImageView {
             preloadIndexes(start: currentFrameIndex).forEach { index in
                 let currentAnimatedFrame = animatedFrames[index]
                 if !currentAnimatedFrame.isPlaceholder { return }
-                animatedFrames[index] = currentAnimatedFrame.makeAnimatedFrame(with: loadFrame(at: index))
+                animatedFrames[index] = currentAnimatedFrame.makeAnimatedFrame(image: loadFrame(at: index))
             }
         }
 
