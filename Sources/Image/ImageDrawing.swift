@@ -560,7 +560,10 @@ extension KingfisherWrapper where Base: CGImage {
     public func resize(to size: CGSize) -> CGImage {
         let alphaInfo = base.alphaInfo.rawValue & CGBitmapInfo.alphaInfoMask.rawValue
         var hasAlpha = false
-        if alphaInfo == CGImageAlphaInfo.premultipliedLast.rawValue || alphaInfo == CGImageAlphaInfo.premultipliedFirst.rawValue || alphaInfo == CGImageAlphaInfo.first.rawValue || alphaInfo == CGImageAlphaInfo.last.rawValue {
+        if alphaInfo == CGImageAlphaInfo.premultipliedLast.rawValue
+            || alphaInfo == CGImageAlphaInfo.premultipliedFirst.rawValue
+            || alphaInfo == CGImageAlphaInfo.first.rawValue
+            || alphaInfo == CGImageAlphaInfo.last.rawValue {
             hasAlpha = true
         }
 
