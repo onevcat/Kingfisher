@@ -556,13 +556,22 @@ extension KingfisherWrapper where Base: CGImage {
     /// - Parameter size: The target size in point.
     /// - Returns: A CGImage with new size.
     public func resize(to size: CGSize) -> CGImage {
+        let alphaInfo = base.alphaInfo.rawValue & CGBitmapInfo.alphaInfoMask.rawValue
+        var hasAlpha = false
+        if alphaInfo == CGImageAlphaInfo.premultipliedLast.rawValue || alphaInfo == CGImageAlphaInfo.premultipliedFirst.rawValue || alphaInfo == CGImageAlphaInfo.first.rawValue || alphaInfo == CGImageAlphaInfo.last.rawValue {
+            hasAlpha = true
+        }
+
+        var bitmapInfo = CGImageByteOrderInfo.order32Little.rawValue
+        bitmapInfo |= hasAlpha ? CGImageAlphaInfo.premultipliedFirst.rawValue : CGImageAlphaInfo.noneSkipFirst.rawValue
+
         guard let context = CGContext(data: nil,
                                       width: Int(size.width),
                                       height: Int(size.height),
                                       bitsPerComponent: base.bitsPerComponent,
                                       bytesPerRow: base.bytesPerRow,
                                       space: base.colorSpace ?? CGColorSpaceCreateDeviceRGB(),
-                                      bitmapInfo: base.bitmapInfo.rawValue) else
+                                      bitmapInfo: bitmapInfo) else
         {
             return base
         }
