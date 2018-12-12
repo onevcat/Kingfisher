@@ -220,6 +220,22 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testLoadCacheCompletionHandlerRunningOnCustomQueue() {
+        let completionExpectation = expectation(description: "completionHandler running on custom queue")
+
+        let url = testURLs[0]
+        manager.cache.store(testImage, forKey: url.cacheKey)
+
+        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
+        manager.retrieveImage(with: url, options: [.callbackQueue(.dispatch(customQueue))]) {
+            result in
+            XCTAssertNil(result.error)
+            dispatchPrecondition(condition: .onQueue(customQueue))
+            completionExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testDefaultOptionCouldApply() {
         let exp = expectation(description: #function)
