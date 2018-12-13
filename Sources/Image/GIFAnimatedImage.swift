@@ -88,14 +88,7 @@ class GIFAnimatedImage {
                 gifDuration = .infinity
             } else {
                 // Get current animated GIF frame duration
-                guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil)
-                    as? [String: Any] else
-                {
-                    return nil
-                }
-                
-                let gifInfo = properties[kCGImagePropertyGIFDictionary as String] as? [String: Any]
-                gifDuration += GIFAnimatedImage.getFrameDuration(from: gifInfo)
+                gifDuration += GIFAnimatedImage.getFrameDuration(from: imageSource, at: i)
             }
             images.append(KingfisherWrapper.image(cgImage: imageRef, scale: options.scale, refImage: nil))
             if options.onlyFirstFrame { break }
