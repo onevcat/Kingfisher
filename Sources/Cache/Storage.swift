@@ -73,19 +73,6 @@ public enum StorageExpiration {
     }
 }
 
-protocol StorageBackend {
-    associatedtype ValueType
-    associatedtype KeyType
-    func store(
-        value: ValueType,
-        forKey key: KeyType,
-        expiration: StorageExpiration?) throws
-    func value(forKey key: KeyType) throws -> ValueType?
-    func remove(forKey key: String) throws
-    func removeAll() throws
-    func isCached(forKey key: String) -> Bool
-}
-
 /// Represents types which cost in memory can be calculated.
 public protocol CacheCostCalculable {
     var cacheCost: Int { get }

@@ -38,7 +38,7 @@ public enum DiskStorage {
     /// You can config a `DiskStorage.Backend` in its initializer by passing a `DiskStorage.Config` value.
     /// or modifying the `config` property after it being created. `DiskStorage` will use file's attributes to keep
     /// track of a file for its expiration or size limitation.
-    public class Backend<T: DataTransformable>: StorageBackend {
+    public class Backend<T: DataTransformable> {
         /// The config used for this disk storage.
         public var config: Config
 

@@ -41,7 +41,7 @@ public enum MemoryStorage {
     /// date. When retrieved, if the target item is already expired, it will be recognized as it does not
     /// exist in the storage. The `MemoryStorage` also contains a scheduled self clean task, to evict expired
     /// items from memory.
-    public class Backend<T: CacheCostCalculable>: StorageBackend {
+    public class Backend<T: CacheCostCalculable> {
         let storage = NSCache<NSString, StorageObject<T>>()
         var keys = Set<String>()
 
