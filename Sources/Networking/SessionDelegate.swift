@@ -220,6 +220,18 @@ extension SessionDelegate: URLSessionDataDelegate {
     {
         onReceiveSessionTaskChallenge.call((session, task, challenge, completionHandler))
     }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void)
+    {
+        if let url = response.url, let option = self.task(for: url)?.callbacks.first?.options
+        {
+            let handledRequest = option.redirectHandler.handled(for: request)
+            completionHandler(handledRequest)
+            return
+        }
+        
+        completionHandler(request)
+    }
 
     private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?), KingfisherError>) {
         guard let sessionTask = self.task(for: task) else {
