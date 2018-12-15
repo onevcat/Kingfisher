@@ -60,6 +60,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()
+        let testRedirectHandler = TestRedirectHandler()
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         let serializer = FormatIndicatedCacheSerializer.png
         let modifier = DefaultImageModifier.default
@@ -81,6 +82,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             KingfisherOptionsInfoItem.scaleFactor(2.0),
             .preloadAllAnimationData,
             .requestModifier(testModifier),
+            .redirectHandler(testRedirectHandler),
             .processor(processor),
             .cacheSerializer(serializer),
             .imageModifier(modifier),
@@ -115,6 +117,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(options.scaleFactor, 2.0)
         XCTAssertTrue(options.preloadAllAnimationData)
         XCTAssertTrue(options.requestModifier is TestModifier)
+        XCTAssertTrue(options.redirectHandler is TestRedirectHandler)
         XCTAssertEqual(options.processor.identifier, processor.identifier)
         XCTAssertTrue(options.cacheSerializer is FormatIndicatedCacheSerializer)
         XCTAssertTrue(options.imageModifier is DefaultImageModifier)
@@ -135,5 +138,11 @@ class KingfisherOptionsInfoTests: XCTestCase {
 class TestModifier: ImageDownloadRequestModifier {
     func modified(for request: URLRequest) -> URLRequest? {
         return nil
+    }
+}
+
+class TestRedirectHandler: ImageDownloadRedirectHandler {
+    func handleHTTPRedirection(for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(newRequest)
     }
 }
