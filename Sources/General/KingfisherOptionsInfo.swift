@@ -237,10 +237,10 @@ public struct KingfisherParsedOptionsInfo {
     public var preloadAllAnimationData = false
     public var callbackQueue: CallbackQueue = .mainCurrentOrAsync
     public var scaleFactor: CGFloat = 1.0
-    public var requestModifier: ImageDownloadRequestModifier = NoModifier.default
-    public var redirectHandler: ImageDownloadRedirectHandler = NoHandler.default
+    public var requestModifier: ImageDownloadRequestModifier? = nil
+    public var redirectHandler: ImageDownloadRedirectHandler? = nil
     public var processor: ImageProcessor = DefaultImageProcessor.default
-    public var imageModifier: ImageModifier = DefaultImageModifier.default
+    public var imageModifier: ImageModifier? = nil
     public var cacheSerializer: CacheSerializer = DefaultCacheSerializer.default
     public var keepCurrentImageWhileLoading = false
     public var onlyLoadFirstFrame = false

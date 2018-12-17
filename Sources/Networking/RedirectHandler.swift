@@ -28,41 +28,41 @@ import Foundation
 
 /// Represents and wraps a method for modifying request during an image download request redirection.
 public protocol ImageDownloadRedirectHandler {
-    
+
     /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
-    /// This is the posibility you can modify the image download request during redirection. You can modify the request for
-    /// some customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url
-    /// mapping.
+    /// This is the posibility you can modify the image download request during redirection. You can modify the
+    /// request for some customizing purpose, such as adding auth token to the header, do basic HTTP auth or
+    /// something like url mapping.
     ///
     /// Usually, you pass an `ImageDownloadRedirectHandler` as the associated value of
     /// `KingfisherOptionsInfoItem.redirectHandler` and use it as the `options` parameter in related methods.
     ///
     /// If you do nothing with the input `request` and return it as is, a downloading process will redirect with it.
     ///
-    /// - Parameter task: current SessionDataTask.
-    ///             response: response received during redirection.
-    ///             newRequest: request for redirection which can be modified.
-    ///             completionHandler: closure for modifying request
-    ///
-    func handleHTTPRedirection(for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void)
-}
-
-struct NoHandler: ImageDownloadRedirectHandler {
-    static let `default` = NoHandler()
-    private init() {}
-    
-    func handleHTTPRedirection(for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        completionHandler(newRequest)
-    }
+    /// - Parameters:
+    ///   - task: The current `SessionDataTask` which triggers this redirect.
+    ///   - response: The response received during redirection.
+    ///   - newRequest: The request for redirection which can be modified.
+    ///   - completionHandler: A closure for being called with modified request.
+    func handleHTTPRedirection(
+        for task: SessionDataTask,
+        response: HTTPURLResponse,
+        newRequest: URLRequest,
+        completionHandler: @escaping (URLRequest?) -> Void)
 }
 
 /// A wrapper for creating an `ImageDownloadRedirectHandler` easier.
-/// This type conforms to `ImageDownloadRedirectHandler` and wraps an image modify block.
-public struct AnyHandler: ImageDownloadRedirectHandler {
+/// This type conforms to `ImageDownloadRedirectHandler` and wraps an redirect request modify block.
+public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
     let block: (SessionDataTask, HTTPURLResponse, URLRequest, (URLRequest?) -> Void) -> Void
 
-    public func handleHTTPRedirection(for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+    public func handleHTTPRedirection(
+        for task: SessionDataTask,
+        response: HTTPURLResponse,
+        newRequest: URLRequest,
+        completionHandler: @escaping (URLRequest?) -> Void)
+    {
         block(task, response, newRequest, completionHandler)
     }
     

@@ -565,7 +565,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     /// The `ImageDownloadRequestModifier` will be used before sending a download request.
     @available(*, deprecated,
     message: "Create a `KingfisherParsedOptionsInfo` from `KingfisherOptionsInfo` and use `requestModifier` instead.")
-    public var modifier: ImageDownloadRequestModifier {
+    public var modifier: ImageDownloadRequestModifier? {
         return KingfisherParsedOptionsInfo(Array(self)).requestModifier
     }
 
@@ -579,7 +579,7 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     /// `ImageModifier` for modifying right before the image is displayed.
     @available(*, deprecated,
     message: "Create a `KingfisherParsedOptionsInfo` from `KingfisherOptionsInfo` and use `imageModifier` instead.")
-    public var imageModifier: ImageModifier {
+    public var imageModifier: ImageModifier? {
         return KingfisherParsedOptionsInfo(Array(self)).imageModifier
     }
 
@@ -632,4 +632,17 @@ public extension Collection where Iterator.Element == KingfisherOptionsInfoItem 
     public var loadDiskFileSynchronously: Bool {
         return KingfisherParsedOptionsInfo(Array(self)).loadDiskFileSynchronously
     }
+}
+
+/// The default modifier.
+/// It does nothing and returns the image as is.
+@available(*, deprecated, message: "Use `nil` in KingfisherOptionsInfo to indicate no modifier.")
+public struct DefaultImageModifier: ImageModifier {
+
+    /// A default `DefaultImageModifier` which can be used everywhere.
+    public static let `default` = DefaultImageModifier()
+    private init() {}
+
+    /// Modifies an input `Image`. See `ImageModifier` protocol for more.
+    public func modify(_ image: Image) -> Image { return image }
 }
