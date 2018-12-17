@@ -16,6 +16,10 @@ platform :ios do
   end
 
   lane :test do |options|
+    _test(options) rescue _test(options)
+  end
+
+  private_lane :_test do |options|
     if options[:scheme].include? "macOS"
         scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}", destination: "platform=macOS")
     else
