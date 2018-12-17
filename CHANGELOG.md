@@ -2,6 +2,14 @@
 
 -----
 
+## [5.0.1 - Interweave](https://github.com/onevcat/Kingfisher/releases/tag/5.0.1) (2018-12-17)
+
+#### Fix
+* Retrieving images from cache now respect options `callbackQueue` setting. [#1066](https://github.com/onevcat/Kingfisher/issues/1066)
+* A crash when passing zero or negative size to `DownsamplingImageProcessor`. [#1073](https://github.com/onevcat/Kingfisher/issues/1073)
+
+---
+
 ## [5.0.0 - Reborn](https://github.com/onevcat/Kingfisher/releases/tag/5.0.0) (2018-12-08)
 
 #### Add

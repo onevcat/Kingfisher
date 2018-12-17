@@ -30,91 +30,70 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
-      "line": 253,
+      "line": 259,
       "symbol": "ImageCache.store(_:original:forKey:options:toDisk:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
-      "line": 345,
+      "line": 350,
       "symbol": "ImageCache.storeToDisk(_:forKey:processorIdentifier:expiration:callbackQueue:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
-      "line": 780,
+      "line": 791,
       "symbol": "KingfisherWrapper.shared",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/Storage.swift",
-      "line": 91,
+      "line": 78,
       "symbol": "CacheCostCalculable.cacheCost",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/Storage.swift",
-      "line": 96,
+      "line": 83,
       "symbol": "DataTransformable.toData()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/Storage.swift",
-      "line": 97,
+      "line": 84,
       "symbol": "DataTransformable.fromData(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/Storage.swift",
-      "line": 98,
+      "line": 85,
       "symbol": "DataTransformable.empty",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/ImageView+Kingfisher.swift",
-      "line": 37,
-      "symbol": "KingfisherWrapper.setImage(with:placeholder:options:progressBlock:completionHandler:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/ImageView+Kingfisher.swift",
-      "line": 244,
+      "line": 285,
       "symbol": "KingfisherWrapper.taskIdentifier",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/UIButton+Kingfisher.swift",
-      "line": 32,
-      "symbol": "KingfisherWrapper.setImage(with:for:placeholder:options:progressBlock:completionHandler:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/UIButton+Kingfisher.swift",
-      "line": 132,
-      "symbol": "KingfisherWrapper.setBackgroundImage(with:for:placeholder:options:progressBlock:completionHandler:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/UIButton+Kingfisher.swift",
-      "line": 241,
+      "line": 283,
       "symbol": "KingfisherWrapper.taskIdentifier(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/UIButton+Kingfisher.swift",
-      "line": 276,
+      "line": 319,
       "symbol": "KingfisherWrapper.backgroundTaskIdentifier(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -128,121 +107,114 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 36,
+      "line": 37,
       "symbol": "KingfisherWrapper.image(data:scale:preloadAllAnimationData:onlyFirstFrame:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 52,
+      "line": 53,
       "symbol": "KingfisherWrapper.animated(with:scale:duration:preloadAll:onlyFirstFrame:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 66,
+      "line": 67,
       "symbol": "CompletionHandler",
       "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 70,
+      "line": 71,
       "symbol": "ImageDownloaderCompletionHandler",
       "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 76,
+      "line": 78,
       "symbol": "RetrieveImageTask.empty",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 111,
+      "line": 115,
       "symbol": "ImageDownloader.downloadImage(with:retrieveImageTask:options:progressBlock:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 128,
+      "line": 132,
       "symbol": "RetrieveImageDownloadTask",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 132,
+      "line": 136,
       "symbol": "RetrieveImageTask",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 136,
+      "line": 140,
       "symbol": "ImageDownloaderProgressBlock",
       "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 142,
+      "line": 147,
       "symbol": "KingfisherWrapper.setImage(with:placeholder:options:progressBlock:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 165,
+      "line": 171,
       "symbol": "KingfisherWrapper.setImage(with:for:placeholder:options:progressBlock:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 192,
+      "line": 198,
       "symbol": "KingfisherWrapper.setBackgroundImage(with:for:placeholder:options:progressBlock:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 346,
+      "line": 355,
       "symbol": "ImageCache.cachePath(forComputedKey:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 376,
+      "line": 385,
       "symbol": "ImageCache.retrieveImage(forKey:options:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 402,
+      "line": 409,
       "symbol": "ImageCache.store(_:original:forKey:processorIdentifier:cacheSerializer:toDisk:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Deprecated.swift",
-      "line": 424,
+      "line": 431,
       "symbol": "ImageCache.calculateDiskCacheSize(completion:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/ImageSource/ImageDataProvider.swift",
-      "line": 84,
-      "symbol": "Base64ImageDataProvider.base64String",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
@@ -317,7 +289,7 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/KingfisherError.swift",
-      "line": 214,
+      "line": 217,
       "symbol": "KingfisherError.isInvalidResponseStatusCode",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -527,14 +499,14 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image/Filter.swift",
-      "line": 41,
+      "line": 38,
       "symbol": "CIImageProcessor.filter",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image/Filter.swift",
-      "line": 70,
+      "line": 67,
       "symbol": "Filter.init(transform:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

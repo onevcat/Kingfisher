@@ -4,412 +4,440 @@
     <title>KingfisherManager Class Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <script src="../js/jquery.min.js" defer></script>
     <script src="../js/jazzy.js" defer></script>
     
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
   </head>
   <body>
+
     <a name="//apple_ref/swift/Class/KingfisherManager" class="dashAnchor"></a>
+
     <a title="KingfisherManager Class Reference"></a>
-    <header>
-      <div class="content-wrapper">
-        <p><a href="../index.html">Kingfisher Docs</a> (86% documented)</p>
-        <p class="header-right"><a href="https://github.com/onevcat/Kingfisher"><img src="../img/gh.png"/>View on GitHub</a></p>
-        <p class="header-right"><a href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml"><img src="../img/dash.png"/>Install in Dash</a></p>
-      </div>
-    </header>
-    <div class="content-wrapper">
-      <p id="breadcrumbs">
-        <a href="../index.html">Kingfisher Reference</a>
-        <img id="carat" src="../img/carat.png" />
-        KingfisherManager Class Reference
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          Kingfisher Docs
+        </a>
+         (86% documented)
       </p>
-    </div>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/onevcat/Kingfisher">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="dash-feed://http%3A%2F%2Fonevcat%2Egithub%2Eio%2FKingfisher%2Fdocsets%2FKingfisher%2Exml">
+            <img class="header-icon" src="../img/dash.png"/>
+            Install in Dash
+          </a>
+        </p>
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">Kingfisher Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      KingfisherManager Class Reference
+    </p>
+
     <div class="content-wrapper">
-      <nav class="sidebar">
+      <nav class="navigation">
         <ul class="nav-groups">
           <li class="nav-group-name">
-            <a href="../Classes.html">Classes</a>
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Classes/AnimatedImageView.html">AnimatedImageView</a>
+                <a class="nav-group-task-link" href="../Classes/AnimatedImageView.html">AnimatedImageView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/AnimatedImageView/RepeatCount.html">– RepeatCount</a>
+                <a class="nav-group-task-link" href="../Classes/AnimatedImageView/RepeatCount.html">– RepeatCount</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/ImageCache.html">ImageCache</a>
+                <a class="nav-group-task-link" href="../Classes/ImageCache.html">ImageCache</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/ImageDownloader.html">ImageDownloader</a>
+                <a class="nav-group-task-link" href="../Classes/ImageDownloader.html">ImageDownloader</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/ImagePrefetcher.html">ImagePrefetcher</a>
+                <a class="nav-group-task-link" href="../Classes/ImagePrefetcher.html">ImagePrefetcher</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/KingfisherManager.html">KingfisherManager</a>
+                <a class="nav-group-task-link" href="../Classes/KingfisherManager.html">KingfisherManager</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/RetrieveImageTask.html">RetrieveImageTask</a>
+                <a class="nav-group-task-link" href="../Classes/RetrieveImageTask.html">RetrieveImageTask</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/SessionDataTask.html">SessionDataTask</a>
+                <a class="nav-group-task-link" href="../Classes/SessionDataTask.html">SessionDataTask</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Global Variables.html">Global Variables</a>
+            <a class="nav-group-name-link" href="../Global Variables.html">Global Variables</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Global Variables.html#/s:10Kingfisher0A23DiskCacheCleanedHashKeySSvp">KingfisherDiskCacheCleanedHashKey</a>
+                <a class="nav-group-task-link" href="../Global Variables.html#/s:10Kingfisher0A23DiskCacheCleanedHashKeySSvp">KingfisherDiskCacheCleanedHashKey</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Global Variables.html#/s:10Kingfisher0A11ErrorDomainSSvp">KingfisherErrorDomain</a>
+                <a class="nav-group-task-link" href="../Global Variables.html#/s:10Kingfisher0A11ErrorDomainSSvp">KingfisherErrorDomain</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Enums.html">Enumerations</a>
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/CacheType.html">CacheType</a>
+                <a class="nav-group-task-link" href="../Enums/CacheType.html">CacheType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/CallbackQueue.html">CallbackQueue</a>
+                <a class="nav-group-task-link" href="../Enums/CallbackQueue.html">CallbackQueue</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ContentMode.html">ContentMode</a>
+                <a class="nav-group-task-link" href="../Enums/ContentMode.html">ContentMode</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/DiskStorage.html">DiskStorage</a>
+                <a class="nav-group-task-link" href="../Enums/DiskStorage.html">DiskStorage</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/DiskStorage/Backend.html">– Backend</a>
+                <a class="nav-group-task-link" href="../Enums/DiskStorage/Backend.html">– Backend</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/DiskStorage/Config.html">– Config</a>
+                <a class="nav-group-task-link" href="../Enums/DiskStorage/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ImageCacheResult.html">ImageCacheResult</a>
+                <a class="nav-group-task-link" href="../Enums/ImageCacheResult.html">ImageCacheResult</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ImageFormat.html">ImageFormat</a>
+                <a class="nav-group-task-link" href="../Enums/ImageFormat.html">ImageFormat</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ImageProcessItem.html">ImageProcessItem</a>
+                <a class="nav-group-task-link" href="../Enums/ImageProcessItem.html">ImageProcessItem</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ImageTransition.html">ImageTransition</a>
+                <a class="nav-group-task-link" href="../Enums/ImageTransition.html">ImageTransition</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ImageTransition.html">ImageTransition</a>
+                <a class="nav-group-task-link" href="../Enums/ImageTransition.html">ImageTransition</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/IndicatorType.html">IndicatorType</a>
+                <a class="nav-group-task-link" href="../Enums/IndicatorType.html">IndicatorType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherError.html">KingfisherError</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherError.html">KingfisherError</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherError/RequestErrorReason.html">– RequestErrorReason</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherError/RequestErrorReason.html">– RequestErrorReason</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherError/ResponseErrorReason.html">– ResponseErrorReason</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherError/ResponseErrorReason.html">– ResponseErrorReason</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherError/CacheErrorReason.html">– CacheErrorReason</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherError/CacheErrorReason.html">– CacheErrorReason</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherError/ProcessorErrorReason.html">– ProcessorErrorReason</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherError/ProcessorErrorReason.html">– ProcessorErrorReason</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherError/ImageSettingErrorReason.html">– ImageSettingErrorReason</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherError/ImageSettingErrorReason.html">– ImageSettingErrorReason</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/KingfisherOptionsInfoItem.html">KingfisherOptionsInfoItem</a>
+                <a class="nav-group-task-link" href="../Enums/KingfisherOptionsInfoItem.html">KingfisherOptionsInfoItem</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MemoryStorage.html">MemoryStorage</a>
+                <a class="nav-group-task-link" href="../Enums/MemoryStorage.html">MemoryStorage</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MemoryStorage/Backend.html">– Backend</a>
+                <a class="nav-group-task-link" href="../Enums/MemoryStorage/Backend.html">– Backend</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MemoryStorage/Config.html">– Config</a>
+                <a class="nav-group-task-link" href="../Enums/MemoryStorage/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/Result.html">Result</a>
+                <a class="nav-group-task-link" href="../Enums/Result.html">Result</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/Source.html">Source</a>
+                <a class="nav-group-task-link" href="../Enums/Source.html">Source</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/SourceIdentifier.html">SourceIdentifier</a>
+                <a class="nav-group-task-link" href="../Enums/Source/Identifier.html">– Identifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/StorageExpiration.html">StorageExpiration</a>
+                <a class="nav-group-task-link" href="../Enums/StorageExpiration.html">StorageExpiration</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Extensions.html">Extensions</a>
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Extensions/Collection.html">Collection</a>
+                <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Data.html">Data</a>
+                <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Image.html">Image</a>
+                <a class="nav-group-task-link" href="../Extensions/Image.html">Image</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Notification.html">Notification</a>
+                <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Notification/Name.html">– Name</a>
+                <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/URL.html">URL</a>
+                <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Functions.html">Functions</a>
+            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Functions.html#/s:10Kingfisher2ggoiyAA14ImageProcessor_pAaC_p_AaC_ptF">&gt;&gt;(_:_:)</a>
+                <a class="nav-group-task-link" href="../Functions.html#/s:10Kingfisher2ggoiyAA14ImageProcessor_pAaC_p_AaC_ptF">&gt;&gt;(_:_:)</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Protocols.html">Protocols</a>
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Protocols/AnimatedImageViewDelegate.html">AnimatedImageViewDelegate</a>
+                <a class="nav-group-task-link" href="../Protocols/AnimatedImageViewDelegate.html">AnimatedImageViewDelegate</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a>
+                <a class="nav-group-task-link" href="../Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CIImageProcessor.html">CIImageProcessor</a>
+                <a class="nav-group-task-link" href="../Protocols/CIImageProcessor.html">CIImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CacheCostCalculable.html">CacheCostCalculable</a>
+                <a class="nav-group-task-link" href="../Protocols/CacheCostCalculable.html">CacheCostCalculable</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/CacheSerializer.html">CacheSerializer</a>
+                <a class="nav-group-task-link" href="../Protocols/CacheSerializer.html">CacheSerializer</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/DataTransformable.html">DataTransformable</a>
+                <a class="nav-group-task-link" href="../Protocols/DataTransformable.html">DataTransformable</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ImageDataProvider.html">ImageDataProvider</a>
+                <a class="nav-group-task-link" href="../Protocols/ImageDataProvider.html">ImageDataProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ImageDownloadRequestModifier.html">ImageDownloadRequestModifier</a>
+                <a class="nav-group-task-link" href="../Protocols/ImageDownloadRequestModifier.html">ImageDownloadRequestModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a>
+                <a class="nav-group-task-link" href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ImageModifier.html">ImageModifier</a>
+                <a class="nav-group-task-link" href="../Protocols/ImageModifier.html">ImageModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/ImageProcessor.html">ImageProcessor</a>
+                <a class="nav-group-task-link" href="../Protocols/ImageProcessor.html">ImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/Indicator.html">Indicator</a>
+                <a class="nav-group-task-link" href="../Protocols/Indicator.html">Indicator</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/KingfisherCompatible.html">KingfisherCompatible</a>
+                <a class="nav-group-task-link" href="../Protocols/KingfisherCompatible.html">KingfisherCompatible</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/Placeholder.html">Placeholder</a>
+                <a class="nav-group-task-link" href="../Protocols/Placeholder.html">Placeholder</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Protocols/Resource.html">Resource</a>
+                <a class="nav-group-task-link" href="../Protocols/Resource.html">Resource</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Structs.html">Structures</a>
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Structs/AlignmentRectInsetsImageModifier.html">AlignmentRectInsetsImageModifier</a>
+                <a class="nav-group-task-link" href="../Structs/AlignmentRectInsetsImageModifier.html">AlignmentRectInsetsImageModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/AnyImageModifier.html">AnyImageModifier</a>
+                <a class="nav-group-task-link" href="../Structs/AnyImageModifier.html">AnyImageModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/AnyModifier.html">AnyModifier</a>
+                <a class="nav-group-task-link" href="../Structs/AnyModifier.html">AnyModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/Base64ImageDataProvider.html">Base64ImageDataProvider</a>
+                <a class="nav-group-task-link" href="../Structs/Base64ImageDataProvider.html">Base64ImageDataProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/BlackWhiteProcessor.html">BlackWhiteProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/BlackWhiteProcessor.html">BlackWhiteProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/BlendImageProcessor.html">BlendImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/BlendImageProcessor.html">BlendImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/BlurImageProcessor.html">BlurImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/BlurImageProcessor.html">BlurImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/CacheStoreResult.html">CacheStoreResult</a>
+                <a class="nav-group-task-link" href="../Structs/CacheStoreResult.html">CacheStoreResult</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/ColorControlsProcessor.html">ColorControlsProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/CompositingImageProcessor.html">CompositingImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/CompositingImageProcessor.html">CompositingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/CroppingImageProcessor.html">CroppingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
+                <a class="nav-group-task-link" href="../Structs/DefaultCacheSerializer.html">DefaultCacheSerializer</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/DefaultImageModifier.html">DefaultImageModifier</a>
+                <a class="nav-group-task-link" href="../Structs/DefaultImageModifier.html">DefaultImageModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/DefaultImageProcessor.html">DefaultImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/DefaultImageProcessor.html">DefaultImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/DownloadTask.html">DownloadTask</a>
+                <a class="nav-group-task-link" href="../Structs/DownloadTask.html">DownloadTask</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/DownsamplingImageProcessor.html">DownsamplingImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/DownsamplingImageProcessor.html">DownsamplingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/Filter.html">Filter</a>
+                <a class="nav-group-task-link" href="../Structs/Filter.html">Filter</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/FlipsForRightToLeftLayoutDirectionImageModifier.html">FlipsForRightToLeftLayoutDirectionImageModifier</a>
+                <a class="nav-group-task-link" href="../Structs/FlipsForRightToLeftLayoutDirectionImageModifier.html">FlipsForRightToLeftLayoutDirectionImageModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/FormatIndicatedCacheSerializer.html">FormatIndicatedCacheSerializer</a>
+                <a class="nav-group-task-link" href="../Structs/FormatIndicatedCacheSerializer.html">FormatIndicatedCacheSerializer</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ImageCreatingOptions.html">ImageCreatingOptions</a>
+                <a class="nav-group-task-link" href="../Structs/ImageCreatingOptions.html">ImageCreatingOptions</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ImageLoadingResult.html">ImageLoadingResult</a>
+                <a class="nav-group-task-link" href="../Structs/ImageLoadingResult.html">ImageLoadingResult</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ImageResource.html">ImageResource</a>
+                <a class="nav-group-task-link" href="../Structs/ImageResource.html">ImageResource</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/KingfisherParsedOptionsInfo.html">KingfisherParsedOptionsInfo</a>
+                <a class="nav-group-task-link" href="../Structs/KingfisherParsedOptionsInfo.html">KingfisherParsedOptionsInfo</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/KingfisherWrapper.html">KingfisherWrapper</a>
+                <a class="nav-group-task-link" href="../Structs/KingfisherWrapper.html">KingfisherWrapper</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/LocalFileImageDataProvider.html">LocalFileImageDataProvider</a>
+                <a class="nav-group-task-link" href="../Structs/LocalFileImageDataProvider.html">LocalFileImageDataProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/OverlayImageProcessor.html">OverlayImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/OverlayImageProcessor.html">OverlayImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/RawImageDataProvider.html">RawImageDataProvider</a>
+                <a class="nav-group-task-link" href="../Structs/RawImageDataProvider.html">RawImageDataProvider</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/RectCorner.html">RectCorner</a>
+                <a class="nav-group-task-link" href="../Structs/RectCorner.html">RectCorner</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/RenderingModeImageModifier.html">RenderingModeImageModifier</a>
+                <a class="nav-group-task-link" href="../Structs/RenderingModeImageModifier.html">RenderingModeImageModifier</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ResizingImageProcessor.html">ResizingImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/ResizingImageProcessor.html">ResizingImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:10Kingfisher25RetrieveImageDownloadTaskV">RetrieveImageDownloadTask</a>
+                <a class="nav-group-task-link" href="../Structs.html#/s:10Kingfisher25RetrieveImageDownloadTaskV">RetrieveImageDownloadTask</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/RetrieveImageResult.html">RetrieveImageResult</a>
+                <a class="nav-group-task-link" href="../Structs/RetrieveImageResult.html">RetrieveImageResult</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/RoundCornerImageProcessor.html">RoundCornerImageProcessor</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/TintImageProcessor.html">TintImageProcessor</a>
+                <a class="nav-group-task-link" href="../Structs/TintImageProcessor.html">TintImageProcessor</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Typealiases.html">Type Aliases</a>
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/Button">Button</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/Button">Button</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher6Buttona">Button</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher6Buttona">Button</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/Color">Color</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/Color">Color</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher5Colora">Color</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher5Colora">Color</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher17CompletionHandlera">CompletionHandler</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher17CompletionHandlera">CompletionHandler</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher21DownloadProgressBlocka">DownloadProgressBlock</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher21DownloadProgressBlocka">DownloadProgressBlock</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/Image">Image</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/Image">Image</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher5Imagea">Image</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher5Imagea">Image</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/ImageView">ImageView</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/ImageView">ImageView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher9ImageViewa">ImageView</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher9ImageViewa">ImageView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/IndicatorView">IndicatorView</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/IndicatorView">IndicatorView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher13IndicatorViewa">IndicatorView</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher13IndicatorViewa">IndicatorView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher27PrefetcherCompletionHandlera">PrefetcherCompletionHandler</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher27PrefetcherCompletionHandlera">PrefetcherCompletionHandler</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher23PrefetcherProgressBlocka">PrefetcherProgressBlock</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher23PrefetcherProgressBlocka">PrefetcherProgressBlock</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher11Transformera">Transformer</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher11Transformera">Transformer</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/View">View</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/View">View</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10Kingfisher4Viewa">View</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher4Viewa">View</a>
               </li>
             </ul>
           </li>
         </ul>
       </nav>
       <article class="main-content">
-        <section>
-          <section class="section">
+
+        <section class="section">
+          <div class="section-content">
             <h1>KingfisherManager</h1>
               <div class="declaration">
                 <div class="language">
@@ -421,10 +449,13 @@
 to provide a set of convenience methods to use Kingfisher for tasks.
 You can use this class to retrieve an image via a specified URL from web or cache.</p>
 
-          </section>
-          <section class="section task-group-section">
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
             <div class="task-group">
-              <ul>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -451,7 +482,7 @@ Use this instance for getting or storing images with Kingfisher.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/KingfisherManager.swift#L57">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/KingfisherManager.swift#L57">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -483,7 +514,7 @@ used instead.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/KingfisherManager.swift#L62">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/KingfisherManager.swift#L63">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -515,7 +546,7 @@ used instead.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/KingfisherManager.swift#L67">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/KingfisherManager.swift#L68">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -549,7 +580,7 @@ if the option exists in both.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/KingfisherManager.swift#L74">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/KingfisherManager.swift#L75">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -654,7 +685,7 @@ will download the <code>resource</code>, store it in cache, then call <code>comp
        the started <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code> is returned. Otherwise, <code>nil</code> is returned.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/KingfisherManager.swift#L114-L124">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/KingfisherManager.swift#L117-L127">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -758,7 +789,7 @@ will try to load the <code>source</code>, store it in cache, then call <code>com
        the started <code><a href="../Structs/DownloadTask.html">DownloadTask</a></code> is returned. Otherwise, <code>nil</code> is returned.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/KingfisherManager.swift#L144-L156">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/KingfisherManager.swift#L147-L159">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -766,7 +797,14 @@ will try to load the <code>source</code>, store it in cache, then call <code>com
               </ul>
             </div>
             <div class="task-group">
-              <ul>
+              <div class="task-name-container">
+                <a name="/Deprecated"></a>
+                <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
+                <a href="#/Deprecated">
+                  <h3 class="section-name">Deprecated</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -859,21 +897,22 @@ These default behaviors could be adjusted by passing different options. See <cod
                         <p>A <code><a href="../Classes/RetrieveImageTask.html">RetrieveImageTask</a></code> task object. You can use this object to cancel the task.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.0/Sources/General/Deprecated.swift#L93-L105">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.0.1/Sources/General/Deprecated.swift#L96-L108">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
               </ul>
             </div>
-          </section>
+          </div>
         </section>
-        <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-12-08)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
-        </section>
+
       </article>
     </div>
+    <section class="footer">
+      <p>&copy; 2018 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2018-12-17)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
   </body>
 </div>
 </html>
