@@ -43,27 +43,6 @@ public protocol ImageModifier {
     func modify(_ image: Image) -> Image
 }
 
-extension ImageModifier {
-    func modify(_ image: Image?) -> Image? {
-        guard let image = image else {
-            return nil
-        }
-        return modify(image)
-    }
-}
-
-/// The default modifier.
-/// It does nothing and returns the image as is.
-public struct DefaultImageModifier: ImageModifier {
-
-    /// A default `DefaultImageModifier` which can be used everywhere.
-    public static let `default` = DefaultImageModifier()
-    private init() {}
-
-    /// Modifies an input `Image`. See `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image { return image }
-}
-
 /// A wrapper for creating an `ImageModifier` easier.
 /// This type conforms to `ImageModifier` and wraps an image modify block.
 /// If the `block` throws an error, the original image will be used.

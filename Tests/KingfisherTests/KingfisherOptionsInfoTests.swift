@@ -63,7 +63,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let testRedirectHandler = TestRedirectHandler()
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         let serializer = FormatIndicatedCacheSerializer.png
-        let modifier = DefaultImageModifier.default
+        let modifier = AnyImageModifier { i in return i }
 
         var options = KingfisherParsedOptionsInfo([
             .targetCache(cache),
@@ -120,7 +120,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.redirectHandler is TestRedirectHandler)
         XCTAssertEqual(options.processor.identifier, processor.identifier)
         XCTAssertTrue(options.cacheSerializer is FormatIndicatedCacheSerializer)
-        XCTAssertTrue(options.imageModifier is DefaultImageModifier)
+        XCTAssertTrue(options.imageModifier is AnyImageModifier)
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)

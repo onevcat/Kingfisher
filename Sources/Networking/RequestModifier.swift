@@ -46,14 +46,6 @@ public protocol ImageDownloadRequestModifier {
     func modified(for request: URLRequest) -> URLRequest?
 }
 
-struct NoModifier: ImageDownloadRequestModifier {
-    static let `default` = NoModifier()
-    private init() {}
-    func modified(for request: URLRequest) -> URLRequest? {
-        return request
-    }
-}
-
 /// A wrapper for creating an `ImageDownloadRequestModifier` easier.
 /// This type conforms to `ImageDownloadRequestModifier` and wraps an image modify block.
 public struct AnyModifier: ImageDownloadRequestModifier {

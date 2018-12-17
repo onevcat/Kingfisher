@@ -61,8 +61,10 @@ class ImageDataProcessor {
 
             let result: Result<Image, KingfisherError>
             if let image = image {
-                let imageModifier = callback.options.imageModifier
-                var finalImage = imageModifier.modify(image)
+                var finalImage = image
+                if let imageModifier = callback.options.imageModifier {
+                    finalImage = imageModifier.modify(image)
+                }
                 if callback.options.backgroundDecode {
                     finalImage = finalImage.kf.decoded
                 }
