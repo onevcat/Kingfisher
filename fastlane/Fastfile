@@ -16,6 +16,8 @@ platform :ios do
   end
 
   lane :test do |options|
+    # Sometimes Travis CI would fail due to timeout. 
+    # Not sure why but just rerunning the test perfectly fixes it. :[
     _test(options) rescue _test(options)
   end
 
