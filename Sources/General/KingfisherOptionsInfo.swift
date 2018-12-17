@@ -133,6 +133,13 @@ public enum KingfisherOptionsInfoItem {
     /// The original request will be sent without any modification by default.
     case requestModifier(ImageDownloadRequestModifier)
     
+    /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
+    /// This is the posibility you can modify the image download request during redirect. You can modify the request for
+    /// some customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url
+    /// mapping.
+    /// The original redirection request will be sent without any modification by default.
+    case redirectHandler(ImageDownloadRedirectHandler)
+    
     /// Processor for processing when the downloading finishes, a processor will convert the downloaded data to an image
     /// and/or apply some filter on it. If a cache is connected to the downloader (it happens when you are using
     /// KingfisherManager or any of the view extension methods), the converted image will also be sent to cache as well.
@@ -231,6 +238,7 @@ public struct KingfisherParsedOptionsInfo {
     public var callbackQueue: CallbackQueue = .mainCurrentOrAsync
     public var scaleFactor: CGFloat = 1.0
     public var requestModifier: ImageDownloadRequestModifier = NoModifier.default
+    public var redirectHandler: ImageDownloadRedirectHandler = NoHandler.default
     public var processor: ImageProcessor = DefaultImageProcessor.default
     public var imageModifier: ImageModifier = DefaultImageModifier.default
     public var cacheSerializer: CacheSerializer = DefaultCacheSerializer.default
@@ -264,6 +272,7 @@ public struct KingfisherParsedOptionsInfo {
             case .callbackQueue(let value): callbackQueue = value
             case .scaleFactor(let value): scaleFactor = value
             case .requestModifier(let value): requestModifier = value
+            case .redirectHandler(let value): redirectHandler = value
             case .processor(let value): processor = value
             case .imageModifier(let value): imageModifier = value
             case .cacheSerializer(let value): cacheSerializer = value
