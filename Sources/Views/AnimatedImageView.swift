@@ -164,7 +164,8 @@ open class AnimatedImageView: UIImageView {
     // A display link that keeps calling the `updateFrame` method on every screen refresh.
     private lazy var displayLink: CADisplayLink = {
         isDisplayLinkInitialized = true
-        let displayLink = CADisplayLink(target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
+        let displayLink = CADisplayLink(
+            target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
         displayLink.add(to: .main, forMode: runLoopMode)
         displayLink.isPaused = true
         return displayLink
@@ -441,7 +442,7 @@ extension AnimatedImageView {
         }
 
         func duration(at index: Int) -> TimeInterval {
-            return animatedFrames[safe: index]?.duration  ?? TimeInterval.infinity
+            return animatedFrames[safe: index]?.duration  ?? .infinity
         }
 
         func prepareFramesAsynchronously() {
