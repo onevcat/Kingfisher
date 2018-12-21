@@ -71,10 +71,19 @@ public enum MemoryStorage {
             cacheDelegate.onObjectRemoved.delegate(on: self) { (self, obj) in
                 self.keys.remove(obj.key)
             }
-
-            cleanTimer = .scheduledTimer(withTimeInterval: config.cleanInterval, repeats: true) { [weak self] _ in
-                guard let self = self else { return }
-                self.removeExpired()
+            
+            if #available(iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *) {
+                cleanTimer = .scheduledTimer(withTimeInterval: config.cleanInterval, repeats: true) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.removeExpired()
+                }
+            } else {
+                let sink = TargetSelSink { [weak self] _ in
+                    guard let self = self else { return }
+                    self.removeExpired()
+                }
+                
+                cleanTimer = .scheduledTimer(timeInterval: config.cleanInterval, target: sink, selector: #selector(TargetSelSink.timerFireMethod(_:)), userInfo: nil, repeats: true)
             }
         }
 
@@ -227,5 +236,18 @@ extension MemoryStorage {
         var expired: Bool {
             return estimatedExpiration.isPast
         }
+    }
+}
+
+private class TargetSelSink : NSObject {
+    var closure: (Timer) -> Void
+    
+    init(_ closure: @escaping (Timer) -> Void) {
+        self.closure = closure
+        super.init()
+    }
+    
+    @objc func timerFireMethod(_ timer: Timer) {
+        closure(timer)
     }
 }
