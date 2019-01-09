@@ -89,7 +89,7 @@ class SessionDelegate: NSObject {
         return DownloadTask(sessionTask: task, cancelToken: token)
     }
 
-    func remove(_ task: URLSessionTask, acquireLock: Bool) {
+    private func remove(_ task: URLSessionTask, acquireLock: Bool) {
         guard let url = task.originalRequest?.url else {
             return
         }
@@ -98,7 +98,7 @@ class SessionDelegate: NSObject {
         if acquireLock { lock.unlock() }
     }
 
-    func task(for task: URLSessionTask) -> SessionDataTask? {
+    private func task(for task: URLSessionTask) -> SessionDataTask? {
         guard let url = task.originalRequest?.url else {
             return nil
         }
@@ -112,6 +112,8 @@ class SessionDelegate: NSObject {
     }
 
     func task(for url: URL) -> SessionDataTask? {
+        lock.lock()
+        defer { lock.unlock() }
         return tasks[url]
     }
 
@@ -165,9 +167,10 @@ extension SessionDelegate: URLSessionDataDelegate {
         task.didReceiveData(data)
 
         if let expectedContentLength = dataTask.response?.expectedContentLength, expectedContentLength != -1 {
+            let dataLength = Int64(task.mutableData.count)
             DispatchQueue.main.async {
                 task.callbacks.forEach { callback in
-                    callback.onProgress?.call((Int64(task.mutableData.count), expectedContentLength))
+                    callback.onProgress?.call((dataLength, expectedContentLength))
                 }
             }
         }
