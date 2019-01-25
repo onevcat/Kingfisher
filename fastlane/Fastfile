@@ -6,6 +6,10 @@ default_platform :ios
 platform :ios do
   desc "Runs all the tests"
   lane :tests do
+    test(scheme: "Kingfisher", swift_version: "5.0")
+    test(scheme: "Kingfisher-macOS", swift_version: "5.0")
+    test(scheme: "Kingfisher-tvOS", swift_version: "5.0")
+
     test(scheme: "Kingfisher", swift_version: "4.2")
     test(scheme: "Kingfisher-macOS", swift_version: "4.2")
     test(scheme: "Kingfisher-tvOS", swift_version: "4.2")
@@ -16,9 +20,7 @@ platform :ios do
   end
 
   lane :test do |options|
-    # Sometimes Travis CI would fail due to timeout. 
-    # Not sure why but just rerunning the test perfectly fixes it. :[
-    _test(options) rescue _test(options)
+    _test(options)
   end
 
   private_lane :_test do |options|
