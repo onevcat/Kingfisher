@@ -297,7 +297,7 @@ extension KingfisherWrapper where Base: NSButton {
 extension KingfisherWrapper where Base: NSButton {
 
     /// Gets the image URL bound to this button.
-    @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
+    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {
         get { return nil }
         set { }
@@ -305,7 +305,7 @@ extension KingfisherWrapper where Base: NSButton {
 
 
     /// Gets the image URL bound to this button.
-    @available(*, obsoleted: 5.0, message: "Use `alternateTaskIdentifier` instead to identify a setting task.")
+    @available(*, deprecated, message: "Use `alternateTaskIdentifier` instead to identify a setting task.")
     public private(set) var alternateWebURL: URL? {
         get { return nil }
         set { }

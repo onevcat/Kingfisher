@@ -205,7 +205,7 @@ extension KingfisherWrapper where Base: Image {
         guard let animatedImage = GIFAnimatedImage(from: imageSource, for: info, options: options) else {
             return nil
         }
-        let image: Image?
+        var image: Image?
         if options.onlyFirstFrame {
             image = animatedImage.images.first
         } else {
