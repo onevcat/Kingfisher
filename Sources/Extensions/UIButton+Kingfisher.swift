@@ -351,7 +351,7 @@ extension KingfisherWrapper where Base: UIButton {
     ///
     /// - Parameter state: The state that uses the specified image.
     /// - Returns: Current URL for image.
-    @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
+    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
     public func webURL(for state: UIControl.State) -> URL? {
         return nil
     }
@@ -360,7 +360,7 @@ extension KingfisherWrapper where Base: UIButton {
     ///
     /// - Parameter state: The state that uses the specified background image.
     /// - Returns: Current URL for image.
-    @available(*, obsoleted: 5.0, message: "Use `backgroundTaskIdentifier` instead to identify a setting task.")
+    @available(*, deprecated, message: "Use `backgroundTaskIdentifier` instead to identify a setting task.")
     public func backgroundWebURL(for state: UIControl.State) -> URL? {
         return nil
     }
