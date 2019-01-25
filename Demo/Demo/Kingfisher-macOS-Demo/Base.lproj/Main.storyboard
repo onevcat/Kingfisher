@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -669,10 +670,10 @@
             </objects>
             <point key="canvasLocation" x="75" y="250"/>
         </scene>
-        <!--Normal Loading View Controller-->
+        <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="NormalLoadingViewController" customModule="Kingfisher_macOS_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Kingfisher_macOS_Demo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="620" height="480"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -681,7 +682,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="620" height="450"/>
                                 <clipView key="contentView" id="rM7-g8-q6C">
                                     <rect key="frame" x="1" y="1" width="618" height="448"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <collectionView id="XnK-6H-mn7">
                                             <rect key="frame" x="0.0" y="0.0" width="618" height="448"/>
@@ -731,6 +732,7 @@
                             <constraint firstAttribute="trailing" secondItem="MlO-xV-qug" secondAttribute="trailing" id="18w-Qc-Jr6"/>
                             <constraint firstItem="yIr-uo-Quc" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="35L-th-6RE"/>
                             <constraint firstItem="yIr-uo-Quc" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="AhA-g2-Cms"/>
+                            <constraint firstItem="Ejh-qu-qmy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="yIr-uo-Quc" secondAttribute="trailing" constant="12" symbolic="YES" id="BRb-HY-Dny"/>
                             <constraint firstItem="MlO-xV-qug" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="30" id="Bzu-9v-r7G"/>
                             <constraint firstAttribute="bottom" secondItem="MlO-xV-qug" secondAttribute="bottom" id="HY0-vM-k0l"/>
                             <constraint firstItem="MlO-xV-qug" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="Pp3-O7-2Bs"/>
