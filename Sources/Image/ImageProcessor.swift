@@ -104,7 +104,7 @@ extension ImageProcessor {
     }
 }
 
-public extension ImageProcessor {
+extension ImageProcessor {
     
     /// Appends an `ImageProcessor` to another. The identifier of the new `ImageProcessor`
     /// will be "\(self.identifier)|>\(another.identifier)".

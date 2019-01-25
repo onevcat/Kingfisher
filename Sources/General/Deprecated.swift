@@ -436,7 +436,7 @@ extension ImageCache {
 }
 
 // MARK: - Deprecated
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The queue of callbacks should happen from Kingfisher.
     @available(*, deprecated, message: "Use `callbackQueue` instead.", renamed: "callbackQueue")
     public var callbackDispatchQueue: DispatchQueue {
@@ -454,7 +454,7 @@ message: "Use `.invalidHTTPStatusCode` or `isInvalidResponseStatusCode` of `King
 public let KingfisherErrorStatusCodeKey = "statusCode"
 
 // MARK: - Deprecated
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The target `ImageCache` which is used.
     @available(*, deprecated,
     message: "Create a `KingfisherParsedOptionsInfo` from `KingfisherOptionsInfo` and use `targetCache` instead.")
