@@ -279,8 +279,8 @@ class ImageCacheTests: XCTestCase {
                 
                     XCTAssertEqual(hashes.count, 1)
                     XCTAssertEqual(hashes.first!, self.cache.hash(forKey: key))
-                
-                    NotificationCenter.default.removeObserver(self.observer)
+                    guard let o = self.observer else { return }
+                    NotificationCenter.default.removeObserver(o)
                     exp.fulfill()
                 }
 
