@@ -239,7 +239,7 @@ open class ImageCache {
         var diskConfig = DiskStorage.Config(
             name: name,
             sizeLimit: 0,
-            directory: path.flatMap { URL(string: $0) }
+            directory: path.flatMap { URL(fileURLWithPath: $0) }
         )
         if let closure = diskCachePathClosure {
             diskConfig.cachePathBlock = closure
