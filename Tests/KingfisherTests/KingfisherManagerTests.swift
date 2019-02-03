@@ -4,7 +4,7 @@
 //
 //  Created by Wei Wang on 15/10/22.
 //
-//  Copyright (c) 2018 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -215,7 +215,9 @@ class KingfisherManagerTests: XCTestCase {
         {
             result in
             XCTAssertNil(result.error)
-            dispatchPrecondition(condition: .onQueue(customQueue))
+            if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+                dispatchPrecondition(condition: .onQueue(customQueue))
+            }
             completionExpectation.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -231,7 +233,9 @@ class KingfisherManagerTests: XCTestCase {
         manager.retrieveImage(with: url, options: [.callbackQueue(.dispatch(customQueue))]) {
             result in
             XCTAssertNil(result.error)
-            dispatchPrecondition(condition: .onQueue(customQueue))
+            if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+                dispatchPrecondition(condition: .onQueue(customQueue))
+            }
             completionExpectation.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)

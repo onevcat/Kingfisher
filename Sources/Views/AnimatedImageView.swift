@@ -9,7 +9,7 @@
 //
 //  The MIT License (MIT)
 //
-//  Copyright (c) 2018 Reda Lemeden.
+//  Copyright (c) 2019 Reda Lemeden.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy of
 //  this software and associated documentation files (the "Software"), to deal in
@@ -241,10 +241,11 @@ open class AnimatedImageView: UIImageView {
     private func reset() {
         animator = nil
         if let imageSource = image?.kf.imageSource {
+            let targetSize = bounds.scaled(UIScreen.main.scale).size
             let animator = Animator(
                 imageSource: imageSource,
                 contentMode: contentMode,
-                size: bounds.size,
+                size: targetSize,
                 framePreloadCount: framePreloadCount,
                 repeatCount: repeatCount,
                 preloadQueue: preloadQueue)
@@ -285,11 +286,17 @@ open class AnimatedImageView: UIImageView {
         // See [#718](https://github.com/onevcat/Kingfisher/issues/718)
         // By setting CADisableMinimumFrameDuration to YES in Info.plist may
         // cause the preferredFramesPerSecond being 0
-        if displayLink.preferredFramesPerSecond == 0 {
-            duration = displayLink.duration
+        if #available(iOS 10.0, tvOS 10.0, *) {
+            // By setting CADisableMinimumFrameDuration to YES in Info.plist may
+            // cause the preferredFramesPerSecond being 0
+            if displayLink.preferredFramesPerSecond == 0 {
+                duration = displayLink.duration
+            } else {
+                // Some devices (like iPad Pro 10.5) will have a different FPS.
+                duration = 1.0 / Double(displayLink.preferredFramesPerSecond)
+            }
         } else {
-            // Some devices (like iPad Pro 10.5) will have a different FPS.
-            duration = 1.0 / Double(displayLink.preferredFramesPerSecond)
+            duration = displayLink.duration
         }
 
         animator.shouldChangeFrame(with: duration) { [weak self] hasNewFrame in

@@ -2,6 +2,16 @@
 
 -----
 
+## [5.1.0 - Redirecting & Racing](https://github.com/onevcat/Kingfisher/releases/tag/5.1.0) (2019-01-12)
+
+#### Add
+* Add a `ImageDownloadRedirectHandler` for intercepting HTTP request which redirects. [#1072](https://github.com/onevcat/Kingfisher/pull/1072)
+
+#### Fix
+* Some thread racing when downloading and resetting images in the same image view. [#1089](https://github.com/onevcat/Kingfisher/pull/1089)
+
+---
+
 ## [5.0.1 - Interweave](https://github.com/onevcat/Kingfisher/releases/tag/5.0.1) (2018-12-17)
 
 #### Fix
