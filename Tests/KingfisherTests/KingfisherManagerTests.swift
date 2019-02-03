@@ -215,7 +215,9 @@ class KingfisherManagerTests: XCTestCase {
         {
             result in
             XCTAssertNil(result.error)
-            dispatchPrecondition(condition: .onQueue(customQueue))
+            if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+                dispatchPrecondition(condition: .onQueue(customQueue))
+            }
             completionExpectation.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -231,7 +233,9 @@ class KingfisherManagerTests: XCTestCase {
         manager.retrieveImage(with: url, options: [.callbackQueue(.dispatch(customQueue))]) {
             result in
             XCTAssertNil(result.error)
-            dispatchPrecondition(condition: .onQueue(customQueue))
+            if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+                dispatchPrecondition(condition: .onQueue(customQueue))
+            }
             completionExpectation.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
