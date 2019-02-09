@@ -31,6 +31,10 @@ import AppKit
 import UIKit
 #endif
 
+// The dispatch queue to use for handling resource process, so downloading does not occur on the main thread
+// This prevents stuttering when preloading images in a collection view or table view.
+private let prefetchQueue = DispatchQueue(label: "com.onevcat.Kingfisher.PrefetchQueue")
+
 /// Progress update block of prefetcher. 
 ///
 /// - `skippedResources`: An array of resources that are already cached before the prefetching starting.
@@ -57,10 +61,7 @@ public class ImagePrefetcher {
     
     /// The maximum concurrent downloads to use when prefetching images. Default is 5.
     public var maxConcurrentDownloads = 5
-    
-    // The dispatch queue to use for handling resource process, so downloading does not occur on the main thread
-    // This prevents stuttering when preloading images in a collection view or table view.
-    private var prefetchQueue: DispatchQueue
+
     
     private let prefetchResources: [Resource]
     private let optionsInfo: KingfisherParsedOptionsInfo
@@ -137,10 +138,6 @@ public class ImagePrefetcher {
         var options = KingfisherParsedOptionsInfo(options)
         prefetchResources = resources
         pendingResources = ArraySlice(resources)
-        
-        // Set up the dispatch queue that all our work should occur on.
-        let prefetchQueueName = "com.onevcat.Kingfisher.PrefetchQueue"
-        prefetchQueue = DispatchQueue(label: prefetchQueueName)
         
         // We want all callbacks from our prefetch queue, so we should ignore the callback queue in options.
         // Add our own callback dispatch queue to make sure all internal callbacks are
