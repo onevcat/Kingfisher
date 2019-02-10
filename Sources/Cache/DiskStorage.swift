@@ -43,7 +43,7 @@ public enum DiskStorage {
         public var config: Config
 
         // The final storage URL on disk, with `name` and `cachePathBlock` considered.
-        let directoryURL: URL
+        public let directoryURL: URL
 
         let metaChangingQueue: DispatchQueue
 
