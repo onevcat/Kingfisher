@@ -302,16 +302,16 @@ class ImagePrefetcherTests: XCTestCase {
     func testPrefetchMultiTimes() {
         let exp = expectation(description: #function)
         let group = DispatchGroup()
-
         testURLs.forEach { stub($0, data: testImageData) }
         for _ in 0..<10000 {
             group.enter()
-            let prefetcher = ImagePrefetcher(resources: testURLs) { _, _, _ in
-                group.leave()
-            }
+            let prefetcher = ImagePrefetcher(
+                resources: testURLs,
+                options: [.waitForCache])
+            { _, _, _ in group.leave() }
             prefetcher.start()
         }
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 }
