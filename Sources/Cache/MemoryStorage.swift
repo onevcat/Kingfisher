@@ -129,6 +129,9 @@ public enum MemoryStorage {
         }
 
         func value(forKey key: String, extendingExpiration: Bool) -> T? {
+            lock.lock()
+            defer { lock.unlock() }
+
             guard let object = storage.object(forKey: key as NSString) else {
                 return nil
             }
