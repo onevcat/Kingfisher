@@ -312,6 +312,6 @@ class ImagePrefetcherTests: XCTestCase {
             prefetcher.start()
         }
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 }
