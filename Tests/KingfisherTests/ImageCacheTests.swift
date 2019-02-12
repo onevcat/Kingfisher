@@ -50,7 +50,8 @@ class ImageCacheTests: XCTestCase {
     
     func testInvalidCustomCachePath() {
         let customPath = "/path/to/image/cache"
-        XCTAssertThrowsError(try ImageCache(name: "test", path: customPath)) { error in
+        let url = URL(fileURLWithPath: customPath)
+        XCTAssertThrowsError(try ImageCache(name: "test", cacheDirectoryURL: url)) { error in
             guard case KingfisherError.cacheError(reason: .cannotCreateDirectory(let path, _)) = error else {
                 XCTFail("Should be KingfisherError with cacheError reason.")
                 return
@@ -65,7 +66,7 @@ class ImageCacheTests: XCTestCase {
         let subFolder = cacheURL.appendingPathComponent("temp")
 
         let customPath = subFolder.path
-        let cache = try! ImageCache(name: "test", path: customPath)
+        let cache = try! ImageCache(name: "test", cacheDirectoryURL: subFolder)
         XCTAssertEqual(
             cache.diskStorage.directoryURL.path,
             (customPath as NSString).appendingPathComponent("com.onevcat.Kingfisher.ImageCache.test"))
@@ -73,7 +74,7 @@ class ImageCacheTests: XCTestCase {
     }
     
     func testCustomCachePathByBlock() {
-        let cache = try! ImageCache(name: "test", path: nil, diskCachePathClosure: { (url, path) -> URL in
+        let cache = try! ImageCache(name: "test", cacheDirectoryURL: nil, diskCachePathClosure: { (url, path) -> URL in
             let modifiedPath = path + "-modified"
             return url.appendingPathComponent(modifiedPath, isDirectory: true)
         })
