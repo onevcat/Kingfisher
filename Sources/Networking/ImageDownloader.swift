@@ -235,49 +235,49 @@ open class ImageDownloader {
         }
 
         let sessionTask = downloadTask.sessionTask
-        sessionTask.onTaskDone.delegate(on: self) { (self, done) in
-            // Underlying downloading finishes.
-            // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
-            let (result, callbacks) = done
-
-            // Before processing the downloaded data.
-            self.delegate?.imageDownloader(
-                self,
-                didFinishDownloadingImageForURL: url,
-                with: result.value?.1,
-                error: result.error)
-
-            switch result {
-            // Download finished. Now process the data to an image.
-            case .success(let (data, response)):
-                let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: options.processingQueue)
-                processor.onImageProcessed.delegate(on: self) { (self, result) in
-                    // `onImageProcessed` will be called for `callbacks.count` times, with each
-                    // `SessionDataTask.TaskCallback` as the input parameter.
-                    // result: Result<Image>, callback: SessionDataTask.TaskCallback
-                    let (result, callback) = result
-
-                    if let image = result.value {
-                        self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
-                    }
-
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data) }
-                    let queue = callback.options.callbackQueue
-                    queue.execute { callback.onCompleted?.call(imageResult) }
-                }
-                processor.process()
-
-            case .failure(let error):
-                callbacks.forEach { callback in
-                    let queue = callback.options.callbackQueue
-                    queue.execute { callback.onCompleted?.call(.failure(error)) }
-                }
-            }
-        }
 
         // Start the session task if not started yet.
         if !sessionTask.started {
+            sessionTask.onTaskDone.delegate(on: self) { (self, done) in
+                // Underlying downloading finishes.
+                // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
+                let (result, callbacks) = done
+
+                // Before processing the downloaded data.
+                self.delegate?.imageDownloader(
+                    self,
+                    didFinishDownloadingImageForURL: url,
+                    with: result.value?.1,
+                    error: result.error)
+
+                switch result {
+                // Download finished. Now process the data to an image.
+                case .success(let (data, response)):
+                    let processor = ImageDataProcessor(
+                        data: data, callbacks: callbacks, processingQueue: options.processingQueue)
+                    processor.onImageProcessed.delegate(on: self) { (self, result) in
+                        // `onImageProcessed` will be called for `callbacks.count` times, with each
+                        // `SessionDataTask.TaskCallback` as the input parameter.
+                        // result: Result<Image>, callback: SessionDataTask.TaskCallback
+                        let (result, callback) = result
+
+                        if let image = result.value {
+                            self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
+                        }
+
+                        let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data) }
+                        let queue = callback.options.callbackQueue
+                        queue.execute { callback.onCompleted?.call(imageResult) }
+                    }
+                    processor.process()
+
+                case .failure(let error):
+                    callbacks.forEach { callback in
+                        let queue = callback.options.callbackQueue
+                        queue.execute { callback.onCompleted?.call(.failure(error)) }
+                    }
+                }
+            }
             delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
             sessionTask.resume()
         }

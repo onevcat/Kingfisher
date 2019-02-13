@@ -8,6 +8,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/DiskStorage.swift",
+      "line": 46,
+      "symbol": "DiskStorage.Backend.directoryURL",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
       "line": 87,
       "symbol": "Data.toData()",
@@ -30,21 +37,21 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
-      "line": 259,
+      "line": 267,
       "symbol": "ImageCache.store(_:original:forKey:options:toDisk:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
-      "line": 350,
+      "line": 358,
       "symbol": "ImageCache.storeToDisk(_:forKey:processorIdentifier:expiration:callbackQueue:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/ImageCache.swift",
-      "line": 792,
+      "line": 800,
       "symbol": "KingfisherWrapper.shared",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"

@@ -298,4 +298,20 @@ class ImagePrefetcherTests: XCTestCase {
         
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testPrefetchMultiTimes() {
+        let exp = expectation(description: #function)
+        let group = DispatchGroup()
+        testURLs.forEach { stub($0, data: testImageData) }
+        for _ in 0..<10000 {
+            group.enter()
+            let prefetcher = ImagePrefetcher(
+                resources: testURLs,
+                options: [.waitForCache])
+            { _, _, _ in group.leave() }
+            prefetcher.start()
+        }
+        group.notify(queue: .main) { exp.fulfill() }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
