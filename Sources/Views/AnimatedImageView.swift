@@ -241,10 +241,11 @@ open class AnimatedImageView: UIImageView {
     private func reset() {
         animator = nil
         if let imageSource = image?.kf.imageSource {
+            let targetSize = bounds.scaled(UIScreen.main.scale).size
             let animator = Animator(
                 imageSource: imageSource,
                 contentMode: contentMode,
-                size: bounds.size,
+                size: targetSize,
                 framePreloadCount: framePreloadCount,
                 repeatCount: repeatCount,
                 preloadQueue: preloadQueue)

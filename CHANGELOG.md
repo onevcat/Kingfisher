@@ -2,6 +2,15 @@
 
 -----
 
+## [5.1.1 - Racing](https://github.com/onevcat/Kingfisher/releases/tag/5.1.1) (2019-02-11)
+
+#### Fix
+* Deprecate incorrect `ImageCache` initializer with `path` parameter. Now use the `cacheDirectoryURL` version for clearer implemetation. [#1114](https://github.com/onevcat/Kingfisher/pull/1114/)
+* Fix a race condition when setting download delegate from multiple `ImagePrefetcher`s. [#1109](https://github.com/onevcat/Kingfisher/issues/1109)
+* Now `directoryURL` of disk storage backend is marked as public correctly. [#1108](https://github.com/onevcat/Kingfisher/issues/1108)
+
+---
+
 ## [5.1.0 - Redirecting & Racing](https://github.com/onevcat/Kingfisher/releases/tag/5.1.0) (2019-01-12)
 
 #### Add
