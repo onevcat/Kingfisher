@@ -1,5 +1,5 @@
 language: swift
-osx_image: xcode10.1
+osx_image: xcode10.2
 
 cache: bundler
 
@@ -9,6 +9,12 @@ before_install:
 
 matrix:
   include:
+  - name: iOS | Swift 5.0
+    env: LANE=test_ci SCHEME=Kingfisher SWIFT_VERSION=5.0
+  - name: macOS | Swift 5.0
+    env: LANE=test_ci SCHEME=Kingfisher-macOS SWIFT_VERSION=5.0
+  - name: tvOS | Swift 5.0
+    env: LANE=test_ci SCHEME=Kingfisher-tvOS SWIFT_VERSION=5.0
   - name: iOS | Swift 4.2
     env: LANE=test_ci SCHEME=Kingfisher SWIFT_VERSION=4.2
   - name: macOS | Swift 4.2
