@@ -78,7 +78,7 @@ imageView.kf.setImage(
 }
 ```
 
-It is really a very common situation I will meet in my daily work. Think about how many lines you need to write if without Kingfisher. You will fall in love with it!
+It is really a very common situation I can meet in my daily work. Think about how many lines you need to write without Kingfisher. You will fall in love with it if you give it a try!
 
 ### Learn More
 
