@@ -143,17 +143,18 @@ extension KingfisherWrapper where Base: Image {
                 return
             }
             
-            if let backgroundColor = backgroundColor {
-                let rectPath = UIBezierPath(rect: rect)
-                backgroundColor.setFill()
-                rectPath.fill()
-            }
-            
             let path = UIBezierPath(roundedRect: rect,
                                     byRoundingCorners: corners.uiRectCorner,
                                     cornerRadii: CGSize(width: radius, height: radius)).cgPath
+            
             context.addPath(path)
             context.clip()
+            
+            if let backgroundColor = backgroundColor {
+                context.setFillColor(backgroundColor.cgColor)
+                context.fill(rect)
+            }
+            
             base.draw(in: rect)
             #endif
         }
