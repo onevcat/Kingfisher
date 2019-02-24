@@ -42,8 +42,11 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(format, .GIF)
         
         let raw: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8]
-        
+        #if swift(>=5.0)
+        format = Data(raw).kf.imageFormat
+        #else
         format = Data(bytes: raw).kf.imageFormat
+        #endif
         XCTAssertEqual(format, .unknown)
     }
     
@@ -58,23 +61,23 @@ class ImageExtensionTests: XCTestCase {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image)
-#if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf.imageSource!)
         XCTAssertEqual(count, 8)
-#else
+        #else
         XCTAssertEqual(image!.kf.images!.count, 8)
         XCTAssertEqual(image!.kf.duration, 0.8, accuracy: 0.001)
-#endif
+        #endif
     }
 
-#if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS)
     func testScaleForGIFImage() {
         let options = ImageCreatingOptions(scale: 2.0, duration: 0.0, preloadAll: false, onlyFirstFrame: false)
         let image = KingfisherWrapper<Image>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image)
         XCTAssertEqual(image!.scale, 2.0)
     }
-#endif
+    #endif
 
     func testGIFRepresentation() {
         let options = ImageCreatingOptions()
@@ -95,14 +98,13 @@ class ImageExtensionTests: XCTestCase {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<Image>.animatedImage(data: testImageSingleFrameGIFData, options: options)
         XCTAssertNotNil(image)
-#if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS)
         let count = CGImageSourceGetCount(image!.kf.imageSource!)
         XCTAssertEqual(count, 1)
-#else
+        #else
         XCTAssertEqual(image!.kf.images!.count, 1)
-        
         XCTAssertEqual(image!.kf.duration, Double.infinity)
-#endif
+        #endif
     }
     
     func testGenerateFromNonImage() {
