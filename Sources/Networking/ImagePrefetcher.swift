@@ -190,10 +190,11 @@ public class ImagePrefetcher {
 
         let downloadTaskCompletionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { result in
             self.tasks.removeValue(forKey: resource.downloadURL)
-            if let _ = result.error {
-                self.failedResources.append(resource)
-            } else {
+            do {
+                let _ = try result.get()
                 self.completedResources.append(resource)
+            } catch {
+                self.failedResources.append(resource)
             }
             
             self.reportProgress()
