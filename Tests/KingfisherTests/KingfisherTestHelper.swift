@@ -216,7 +216,7 @@ extension Bundle {
 }
 
 // Make tests happier with old Result type
-extension Kingfisher.Result {
+extension Result {
     var value: Success? {
         switch self {
         case .success(let success): return success
