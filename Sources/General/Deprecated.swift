@@ -392,7 +392,12 @@ extension ImageCache {
             callbackQueue: .dispatch((options ?? .empty).callbackDispatchQueue))
         {
             result in
-            completionHandler?(result.value?.image, result.value?.cacheType ?? .none)
+            do {
+                let value = try result.get()
+                completionHandler?(value.image, value.cacheType)
+            } catch {
+                completionHandler?(nil, .none)
+            }
         }
     }
 
@@ -430,7 +435,8 @@ extension ImageCache {
     @available(*, deprecated, message: "Use the `Result`-based `calculateDiskStorageSize` instead.")
     open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> Void)) {
         calculateDiskStorageSize { result in
-            handler(result.value ?? 0)
+            let size: UInt? = try? result.get()
+            handler(size ?? 0)
         }
     }
 }
