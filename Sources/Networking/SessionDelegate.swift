@@ -70,7 +70,7 @@ class SessionDelegate: NSObject {
             // No other callbacks waiting, we can clear the task now.
             if !task.containsCallbacks {
                 let dataTask = task.task
-                self.remove(dataTask, acquireLock: true)
+                self.remove(dataTask)
             }
         }
         let token = task.addCallback(callback)
@@ -87,7 +87,7 @@ class SessionDelegate: NSObject {
         return DownloadTask(sessionTask: task, cancelToken: token)
     }
 
-    private func remove(_ task: URLSessionTask, acquireLock: Bool) {
+    private func remove(_ task: URLSessionTask) {
         guard let url = task.originalRequest?.url else {
             return
         }
@@ -98,12 +98,12 @@ class SessionDelegate: NSObject {
 
     private func task(for task: URLSessionTask) -> SessionDataTask? {
 
-        lock.lock()
-        defer { lock.unlock() }
-
         guard let url = task.originalRequest?.url else {
             return nil
         }
+
+        lock.lock()
+        defer { lock.unlock() }
         guard let sessionTask = tasks[url] else {
             return nil
         }
@@ -247,9 +247,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
-        // The lock should be already acquired in the session delegate queue
-        // by the caller `urlSession(_:task:didCompleteWithError:)`.
-        remove(task, acquireLock: false)
+        remove(task)
         sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
     }
 }
