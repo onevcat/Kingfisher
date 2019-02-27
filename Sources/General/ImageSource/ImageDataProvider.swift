@@ -80,7 +80,7 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
     public var cacheKey: String
 
     public func data(handler: (Result<Data, Error>) -> Void) {
-        handler( Result { try Data(contentsOf: fileURL) } )
+        handler(Result(catching: { try Data(contentsOf: fileURL) }))
     }
 }
 
