@@ -78,7 +78,7 @@ public class ImagePrefetcher {
     private let manager: KingfisherManager
     
     private var finished: Bool {
-        let totalFinished = failedResources.count + skippedResources.count + completedResources.count
+        let totalFinished: Int = failedResources.count + skippedResources.count + completedResources.count
         return totalFinished == prefetchResources.count && tasks.isEmpty
     }
 
