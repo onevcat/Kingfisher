@@ -172,7 +172,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
 
 extension KingfisherWrapper where Base: WKInterfaceImage {
     /// Gets the image URL bound to this image view.
-    @available(*, obsoleted: 5.0, message: "Use `taskIdentifier` instead to identify a setting task.")
+    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {
         get { return nil }
         set { }

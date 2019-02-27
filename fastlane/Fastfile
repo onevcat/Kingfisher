@@ -6,6 +6,10 @@ default_platform :ios
 platform :ios do
   desc "Runs all the tests"
   lane :tests do
+    test(scheme: "Kingfisher", swift_version: "5.0")
+    test(scheme: "Kingfisher-macOS", swift_version: "5.0")
+    test(scheme: "Kingfisher-tvOS", swift_version: "5.0")
+
     test(scheme: "Kingfisher", swift_version: "4.2")
     test(scheme: "Kingfisher-macOS", swift_version: "4.2")
     test(scheme: "Kingfisher-tvOS", swift_version: "4.2")

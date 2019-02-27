@@ -392,7 +392,12 @@ extension ImageCache {
             callbackQueue: .dispatch((options ?? .empty).callbackDispatchQueue))
         {
             result in
-            completionHandler?(result.value?.image, result.value?.cacheType ?? .none)
+            do {
+                let value = try result.get()
+                completionHandler?(value.image, value.cacheType)
+            } catch {
+                completionHandler?(nil, .none)
+            }
         }
     }
 
@@ -430,13 +435,14 @@ extension ImageCache {
     @available(*, deprecated, message: "Use the `Result`-based `calculateDiskStorageSize` instead.")
     open func calculateDiskCacheSize(completion handler: @escaping ((_ size: UInt) -> Void)) {
         calculateDiskStorageSize { result in
-            handler(result.value ?? 0)
+            let size: UInt? = try? result.get()
+            handler(size ?? 0)
         }
     }
 }
 
 // MARK: - Deprecated
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The queue of callbacks should happen from Kingfisher.
     @available(*, deprecated, message: "Use `callbackQueue` instead.", renamed: "callbackQueue")
     public var callbackDispatchQueue: DispatchQueue {
@@ -454,7 +460,7 @@ message: "Use `.invalidHTTPStatusCode` or `isInvalidResponseStatusCode` of `King
 public let KingfisherErrorStatusCodeKey = "statusCode"
 
 // MARK: - Deprecated
-public extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
+extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The target `ImageCache` which is used.
     @available(*, deprecated,
     message: "Create a `KingfisherParsedOptionsInfo` from `KingfisherOptionsInfo` and use `targetCache` instead.")
