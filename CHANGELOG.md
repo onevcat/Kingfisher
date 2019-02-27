@@ -2,6 +2,17 @@
 
 -----
 
+## [5.2.0 - Swift 5.0](https://github.com/onevcat/Kingfisher/releases/tag/5.2.0) (2019-02-27)
+
+#### Add
+* Compatible with Swift 5.0 and Xcode 10.2. Now Kingfisher builds against Swift 4.0, 4.2 and 5.0. [#1098](https://github.com/onevcat/Kingfisher/pull/1098)
+
+#### Fix
+* A possible dead lock when using `ImagePretcher` heavily in another thread. [#1122](https://github.com/onevcat/Kingfisher/pull/1122)
+* Redesign `Result` type based on Swift `Result` in standard library. Deprecate `value` and `error` getter for `Kingfisher.Result`.
+
+---
+
 ## [5.1.1 - Racing](https://github.com/onevcat/Kingfisher/releases/tag/5.1.1) (2019-02-11)
 
 #### Fix
