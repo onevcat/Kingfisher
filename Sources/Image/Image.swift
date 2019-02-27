@@ -230,7 +230,8 @@ extension KingfisherWrapper where Base: Image {
                 let duration = options.duration <= 0.0 ? animatedImage.duration : options.duration
                 image = .animatedImage(with: animatedImage.images, duration: duration)
             }
-            image?.kf.animatedImageData = data
+            var kf = image?.kf
+            kf?.animatedImageData = data
         } else {
             image = Image(data: data, scale: options.scale)
             var kf = image?.kf
