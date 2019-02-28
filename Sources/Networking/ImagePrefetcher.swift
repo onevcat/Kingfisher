@@ -78,7 +78,7 @@ public class ImagePrefetcher {
     private let manager: KingfisherManager
     
     private var finished: Bool {
-        let totalFinished = failedResources.count + skippedResources.count + completedResources.count
+        let totalFinished: Int = failedResources.count + skippedResources.count + completedResources.count
         return totalFinished == prefetchResources.count && tasks.isEmpty
     }
 
@@ -190,10 +190,11 @@ public class ImagePrefetcher {
 
         let downloadTaskCompletionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { result in
             self.tasks.removeValue(forKey: resource.downloadURL)
-            if let _ = result.error {
-                self.failedResources.append(resource)
-            } else {
+            do {
+                let _ = try result.get()
                 self.completedResources.append(resource)
+            } catch {
+                self.failedResources.append(resource)
             }
             
             self.reportProgress()

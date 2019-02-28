@@ -38,7 +38,7 @@ class DetailImageViewController: UIViewController {
         scrollView.delegate = self
         
         imageView.kf.setImage(with: imageURL, options: [.memoryCacheExpiration(.expired)]) { result in
-            guard let image = result.value?.image else {
+            guard let image = try? result.get().image else {
                 return
             }
             let scrollViewFrame = self.scrollView.frame
