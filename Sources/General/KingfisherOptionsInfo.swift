@@ -94,6 +94,9 @@ public enum KingfisherOptionsInfoItem {
     /// not in cache, the image retrieving will fail with an error.
     case onlyFromCache
     
+    /// If set, Kingfisher will try to retrieve the image from cache first and set. Then it will try to fire a download task for the resource and refresh image.
+    case fromCacheThanRefresh
+    
     /// Decode the image in background thread before using. It will decode the downloaded image data and do a off-screen
     /// rendering to extract pixel information in background. This can speed up display, but will cost more time to
     /// prepare the image for using.
@@ -233,6 +236,7 @@ public struct KingfisherParsedOptionsInfo {
     public var cacheMemoryOnly = false
     public var waitForCache = false
     public var onlyFromCache = false
+    public var fromCacheThanRefresh = false
     public var backgroundDecode = false
     public var preloadAllAnimationData = false
     public var callbackQueue: CallbackQueue = .mainCurrentOrAsync
@@ -267,6 +271,7 @@ public struct KingfisherParsedOptionsInfo {
             case .cacheMemoryOnly: cacheMemoryOnly = true
             case .waitForCache: waitForCache = true
             case .onlyFromCache: onlyFromCache = true
+            case .fromCacheThanRefresh: fromCacheThanRefresh = true
             case .backgroundDecode: backgroundDecode = true
             case .preloadAllAnimationData: preloadAllAnimationData = true
             case .callbackQueue(let value): callbackQueue = value

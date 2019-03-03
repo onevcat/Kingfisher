@@ -173,7 +173,7 @@ public class KingfisherManager {
                 options: options,
                 completionHandler: completionHandler)
             
-            if loadedFromCache {
+            if loadedFromCache && !options.fromCacheThanRefresh {
                 return nil
             }
             
