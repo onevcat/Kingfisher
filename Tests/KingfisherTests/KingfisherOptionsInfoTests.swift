@@ -52,6 +52,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.keepCurrentImageWhileLoading)
         XCTAssertFalse(options.onlyLoadFirstFrame)
         XCTAssertFalse(options.cacheOriginalImage)
+        XCTAssertFalse(options.fromCacheThanRefresh)
     }
     
     func testSetOptionsShouldParseCorrectly() {
@@ -88,7 +89,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .imageModifier(modifier),
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
-            .cacheOriginalImage
+            .cacheOriginalImage,
+            .fromCacheThanRefresh
         ])
         
         XCTAssertTrue(options.targetCache === cache)
@@ -124,6 +126,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)
+        XCTAssertTrue(options.fromCacheThanRefresh)
     }
     
     func testOptionCouldBeOverwritten() {
