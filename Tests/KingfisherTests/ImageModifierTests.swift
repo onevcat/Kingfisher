@@ -1,5 +1,5 @@
 //
-//  ImageProcessorTests.swift
+//  ImageModifierTests.swift
 //  Kingfisher
 //
 //  Created by Ethan Gill on 2017/11/29.
