@@ -65,7 +65,7 @@ extension KingfisherCompatible {
     /// Gets a namespace holder for Kingfisher compatible types.
     public var kf: KingfisherWrapper<Self> {
         get { return KingfisherWrapper(self) }
-        set { }
+        nonmutating set { }
     }
 }
 
