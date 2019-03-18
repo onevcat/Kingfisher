@@ -51,7 +51,7 @@ public enum ImageFormat {
 }
 
 
-extension Data: KingfisherCompatible {}
+extension Data: KingfisherCompatibleValue {}
 
 // MARK: - Misc Helpers
 extension KingfisherWrapper where Base == Data {
