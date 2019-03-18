@@ -27,7 +27,7 @@
 import Foundation
 import CommonCrypto
 
-extension String: KingfisherCompatible { }
+extension String: KingfisherCompatibleValue { }
 extension KingfisherWrapper where Base == String {
     var md5: String {
         guard let data = base.data(using: .utf8) else {

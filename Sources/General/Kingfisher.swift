@@ -56,16 +56,27 @@ public struct KingfisherWrapper<Base> {
     }
 }
 
-/// Represents a type which is compatible with Kingfisher. You can use `kf` property to get a
+/// Represents an object type that is compatible with Kingfisher. You can use `kf` property to get a
 /// value in the namespace of Kingfisher.
-public protocol KingfisherCompatible { }
+public protocol KingfisherCompatible: AnyObject { }
+
+/// Represents a value type that is compatible with Kingfisher. You can use `kf` property to get a
+/// value in the namespace of Kingfisher.
+public protocol KingfisherCompatibleValue {}
 
 extension KingfisherCompatible {
-    
     /// Gets a namespace holder for Kingfisher compatible types.
     public var kf: KingfisherWrapper<Self> {
         get { return KingfisherWrapper(self) }
-        nonmutating set { }
+        set { }
+    }
+}
+
+extension KingfisherCompatibleValue {
+    /// Gets a namespace holder for Kingfisher compatible types.
+    public var kf: KingfisherWrapper<Self> {
+        get { return KingfisherWrapper(self) }
+        set { }
     }
 }
 
