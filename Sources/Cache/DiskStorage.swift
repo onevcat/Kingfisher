@@ -44,6 +44,7 @@ public enum DiskStorage {
 
         // The final storage URL on disk, with `name` and `cachePathBlock` considered.
         public let directoryURL: URL
+        public var useEncryptionForCacheFileName: Bool = true
 
         let metaChangingQueue: DispatchQueue
 
@@ -196,11 +197,18 @@ public enum DiskStorage {
         }
 
         func cacheFileName(forKey key: String) -> String {
-            let hashedKey = key.kf.md5
-            if let ext = config.pathExtension {
-                return "\(hashedKey).\(ext)"
+            if useEncryptionForCacheFileName {
+                let hashedKey = key.kf.md5
+                if let ext = config.pathExtension {
+                    return "\(hashedKey).\(ext)"
+                }
+                return hashedKey
+            } else {
+                if let ext = config.pathExtension {
+                    return "\(key).\(ext)"
+                }
+                return key
             }
-            return hashedKey
         }
 
         func allFileURLs(for propertyKeys: [URLResourceKey]) throws -> [URL] {
