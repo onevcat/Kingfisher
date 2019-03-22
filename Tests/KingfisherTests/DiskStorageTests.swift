@@ -156,6 +156,20 @@ class DiskStorageTests: XCTestCase {
         XCTAssertTrue(urls.count > 0)
     }
 
+    func testConfigUsesHashedFileName() {
+        let key = "test"
+
+        // hashed fileName
+        storage.config.usesHashedFileName = true
+        let hashedFileName = storage.cacheFileName(forKey: key)
+        XCTAssertNotEqual(hashedFileName, key)
+
+        // fileName without hash
+        storage.config.usesHashedFileName = false
+        let originalFileName = storage.cacheFileName(forKey: key)
+        XCTAssertEqual(originalFileName, key)
+    }
+
     func testFileMetaOrder() {
         let urls = [URL(string: "test1")!, URL(string: "test2")!, URL(string: "test3")!]
 
