@@ -163,6 +163,8 @@ class DiskStorageTests: XCTestCase {
         storage.config.usesHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
+        // validation md5 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.md5)
 
         // fileName without hash
         storage.config.usesHashedFileName = false
