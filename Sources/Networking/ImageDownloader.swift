@@ -74,6 +74,27 @@ public struct DownloadTask {
     }
 }
 
+extension DownloadTask {
+    enum WrappedTask {
+        case download(DownloadTask)
+        case dataProviding
+
+        func cancel() {
+            switch self {
+            case .download(let task): task.cancel()
+            case .dataProviding: break
+            }
+        }
+
+        var value: DownloadTask? {
+            switch self {
+            case .download(let task): return task
+            case .dataProviding: return nil
+            }
+        }
+    }
+}
+
 /// Represents a downloading manager for requesting the image with a URL from server.
 open class ImageDownloader {
 

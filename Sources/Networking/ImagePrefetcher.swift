@@ -40,6 +40,9 @@ import UIKit
 public typealias PrefetcherProgressBlock =
     ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
 
+public typealias PrefetcherSourceProgressBlock =
+    ((_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void)
+
 /// Completion block of prefetcher.
 ///
 /// - `skippedResources`: An array of resources that are already cached before the prefetching starting.
@@ -48,6 +51,9 @@ public typealias PrefetcherProgressBlock =
 /// - `completedResources`: An array of resources that are downloaded and cached successfully.
 public typealias PrefetcherCompletionHandler =
     ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
+
+public typealias PrefetcherSourceCompletionHandler =
+    ((_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void)
 
 /// `ImagePrefetcher` represents a downloading manager for requesting many images via URLs, then caching them.
 /// This is useful when you know a list of image resources and want to download them before showing. It also works with
@@ -58,14 +64,13 @@ public class ImagePrefetcher {
     /// The maximum concurrent downloads to use when prefetching images. Default is 5.
     public var maxConcurrentDownloads = 5
 
-    
     private let prefetchResources: [Resource]
     private let optionsInfo: KingfisherParsedOptionsInfo
 
     private var progressBlock: PrefetcherProgressBlock?
     private var completionHandler: PrefetcherCompletionHandler?
     
-    private var tasks = [URL: DownloadTask]()
+    private var tasks = [URL: DownloadTask.WrappedTask]()
     
     private var pendingResources: ArraySlice<Resource>
     private var skippedResources = [Resource]()
