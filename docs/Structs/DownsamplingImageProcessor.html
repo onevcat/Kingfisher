@@ -256,6 +256,9 @@
                 <a class="nav-group-task-link" href="../Protocols/KingfisherCompatible.html">KingfisherCompatible</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/KingfisherCompatibleValue.html">KingfisherCompatibleValue</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/Placeholder.html">Placeholder</a>
               </li>
               <li class="nav-group-task">
@@ -428,6 +431,12 @@
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher23PrefetcherProgressBlocka">PrefetcherProgressBlock</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher33PrefetcherSourceCompletionHandlera">PrefetcherSourceCompletionHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher29PrefetcherSourceProgressBlocka">PrefetcherSourceProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher11Transformera">Transformer</a>
               </li>
               <li class="nav-group-task">
@@ -454,13 +463,6 @@
             <p>Processor for downsampling an image. Compared to <code><a href="../Structs/ResizingImageProcessor.html">ResizingImageProcessor</a></code>, this processor
 does not render the images to resize. Instead, it downsample the input data directly to an
 image. It is a more efficient than <code><a href="../Structs/ResizingImageProcessor.html">ResizingImageProcessor</a></code>.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    Downsampling only happens when this processor used as the first processor in a processing
-pipeline, when the input <code><a href="../Enums/ImageProcessItem.html">ImageProcessItem</a></code> is an <code>.data</code> value. If appending to any other
-processors, it falls back to use the normal rendering resizing behavior.
-
-</div>
 
 <p>Only CG-based images are supported. Animated images (like GIF) is not supported.</p>
 
@@ -498,7 +500,7 @@ data without downsampling.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.2.0/Sources/Image/ImageProcessor.swift#L775">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Image/ImageProcessor.swift#L770">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -533,7 +535,7 @@ data without downsampling.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.2.0/Sources/Image/ImageProcessor.swift#L779">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Image/ImageProcessor.swift#L774">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -582,7 +584,7 @@ data without downsampling.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.2.0/Sources/Image/ImageProcessor.swift#L784-L787">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Image/ImageProcessor.swift#L779-L782">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -652,7 +654,7 @@ data without downsampling.</p>
                         <p>The processed image.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.2.0/Sources/Image/ImageProcessor.swift#L797-L805">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Image/ImageProcessor.swift#L792-L802">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -665,7 +667,7 @@ data without downsampling.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-02-27)</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-03-24)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
