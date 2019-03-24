@@ -80,3 +80,19 @@ public enum Source {
         }
     }
 }
+
+extension Source {
+    var asResource: Resource? {
+        guard case .network(let resource) = self else {
+            return nil
+        }
+        return resource
+    }
+
+    var asProvider: ImageDataProvider? {
+        guard case .provider(let provider) = self else {
+            return nil
+        }
+        return provider
+    }
+}
