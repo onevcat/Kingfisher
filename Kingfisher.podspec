@@ -26,6 +26,7 @@ Pod::Spec.new do |s|
   s.social_media_url   = "http://twitter.com/onevcat"
 
   s.swift_version = "4.2"
+  s.swift_versions = ['4.0', '4.2', '5.0']
 
   s.ios.deployment_target = "10.0"
   s.tvos.deployment_target = "10.0"
