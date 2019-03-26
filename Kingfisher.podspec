@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Kingfisher"
-  s.version      = "5.2.0"
+  s.version      = "5.3.0"
   s.summary      = "A lightweight and pure Swift implemented library for downloading and cacheing image from the web."
 
   s.description  = <<-DESC
@@ -26,6 +26,7 @@ Pod::Spec.new do |s|
   s.social_media_url   = "http://twitter.com/onevcat"
 
   s.swift_version = "4.2"
+  s.swift_versions = ['4.0', '4.2', '5.0']
 
   s.ios.deployment_target = "9.0"
   s.tvos.deployment_target = "10.0"

@@ -166,7 +166,10 @@ public class KingfisherManager {
     {
         if options.forceRefresh {
             return loadAndCacheImage(
-                source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+                source: source,
+                options: options,
+                progressBlock: progressBlock,
+                completionHandler: completionHandler)?.value
         } else {
             let loadedFromCache = retrieveImageFromCache(
                 source: source,
@@ -184,7 +187,10 @@ public class KingfisherManager {
             }
             
             return loadAndCacheImage(
-                source: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler)
+                source: source,
+                options: options,
+                progressBlock: progressBlock,
+                completionHandler: completionHandler)?.value
         }
     }
 
@@ -230,7 +236,7 @@ public class KingfisherManager {
         source: Source,
         options: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
     {
         func cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>)
         {
@@ -276,14 +282,18 @@ public class KingfisherManager {
         switch source {
         case .network(let resource):
             let downloader = options.downloader ?? self.downloader
-            return downloader.downloadImage(
+            guard let task = downloader.downloadImage(
                 with: resource.downloadURL,
                 options: options,
                 progressBlock: progressBlock,
-                completionHandler: cacheImage)
+                completionHandler: cacheImage) else
+            {
+                return nil
+            }
+            return .download(task)
         case .provider(let provider):
             provideImage(provider: provider, options: options, completionHandler: cacheImage)
-            return nil
+            return .dataProviding
         }
     }
     

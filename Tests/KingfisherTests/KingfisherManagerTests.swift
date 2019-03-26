@@ -380,7 +380,7 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testFailingProcessOnDataProviderImage() {
-        let provider = SimpleImageDataProvider { .success(testImageData) }
+        let provider = SimpleImageDataProvider(cacheKey: "key") { .success(testImageData) }
         var called = false
         let p = FailingProcessor()
         let options = [KingfisherOptionsInfoItem.processor(p), .processingQueue(.mainCurrentOrAsync)]
@@ -666,7 +666,7 @@ class KingfisherManagerTests: XCTestCase {
 #endif
     
     func testRetrieveWithImageProvider() {
-        let provider = SimpleImageDataProvider { .success(testImageData) }
+        let provider = SimpleImageDataProvider(cacheKey: "key") { .success(testImageData) }
         var called = false
         _ = manager.retrieveImage(with: .provider(provider), options: [.processingQueue(.mainCurrentOrAsync)]) {
             result in
@@ -678,7 +678,7 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testRetrieveWithImageProviderFail() {
-        let provider = SimpleImageDataProvider { .failure(SimpleImageDataProvider.E()) }
+        let provider = SimpleImageDataProvider(cacheKey: "key") { .failure(SimpleImageDataProvider.E()) }
         var called = false
         _ = manager.retrieveImage(with: .provider(provider)) { result in
             called = true
@@ -729,9 +729,7 @@ class FailingProcessor: ImageProcessor {
 }
 
 struct SimpleImageDataProvider: ImageDataProvider {
-    let cacheKey = "simple_image"
-    let identifier = "simple_image"
-    
+    let cacheKey: String
     let provider: () -> (Result<Data, Error>)
     
     func data(handler: @escaping (Result<Data, Error>) -> Void) {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>RetrieveImageResult Structure Reference</title>
+    <title>KingfisherCompatibleValue Protocol Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Struct/RetrieveImageResult" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Protocol/KingfisherCompatibleValue" class="dashAnchor"></a>
 
-    <a title="RetrieveImageResult Structure Reference"></a>
+    <a title="KingfisherCompatibleValue Protocol Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Kingfisher Reference</a>
       <img class="carat" src="../img/carat.png" />
-      RetrieveImageResult Structure Reference
+      KingfisherCompatibleValue Protocol Reference
     </p>
 
     <div class="content-wrapper">
@@ -453,14 +453,15 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>RetrieveImageResult</h1>
+            <h1>KingfisherCompatibleValue</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">RetrieveImageResult</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">KingfisherCompatibleValue</span></code></pre>
 
                 </div>
               </div>
-            <p>Represents the result of a Kingfisher retrieving image task.</p>
+            <p>Represents a value type that is compatible with Kingfisher. You can use <code>kf</code> property to get a
+value in the namespace of Kingfisher.</p>
 
           </div>
         </section>
@@ -472,90 +473,32 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher19RetrieveImageResultV5imageSo7UIImageCvp"></a>
-                    <a name="//apple_ref/swift/Property/image" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher19RetrieveImageResultV5imageSo7UIImageCvp">image</a>
+                    <a name="/s:10Kingfisher0A15CompatibleValuePAAE2kfAA0A7WrapperVyxGvp"></a>
+                    <a name="//apple_ref/swift/Property/kf" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher0A15CompatibleValuePAAE2kfAA0A7WrapperVyxGvp">kf</a>
                     </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Gets the image object of this result.</p>
+                        <p>Gets a namespace holder for Kingfisher compatible types.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">Image</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">kf</span><span class="p">:</span> <span class="kt"><a href="../Structs/KingfisherWrapper.html">KingfisherWrapper</a></span><span class="o">&lt;</span><span class="k">Self</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/General/KingfisherManager.swift#L40">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher19RetrieveImageResultV9cacheTypeAA05CacheF0Ovp"></a>
-                    <a name="//apple_ref/swift/Property/cacheType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher19RetrieveImageResultV9cacheTypeAA05CacheF0Ovp">cacheType</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Gets the cache source of the image. It indicates from which layer of cache this image is retrieved.
-If the image is just downloaded from network, <code>.none</code> will be returned.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">cacheType</span><span class="p">:</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/General/KingfisherManager.swift#L44">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10Kingfisher19RetrieveImageResultV6sourceAA6SourceOvp"></a>
-                    <a name="//apple_ref/swift/Property/source" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher19RetrieveImageResultV6sourceAA6SourceOvp">source</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The <code><a href="../Enums/Source.html">Source</a></code> from which the retrieve task begins.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">source</span><span class="p">:</span> <span class="kt"><a href="../Enums/Source.html">Source</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/General/KingfisherManager.swift#L47">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/General/Kingfisher.swift#L77-L80">Show on GitHub</a>
                       </div>
                     </section>
                   </div>

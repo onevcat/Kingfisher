@@ -1,8 +1,8 @@
 //
-//  String+MD5.swift
+//  ImageProcessorTests.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 18//25.
+//  Created by onevcat on 2019/03/02.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,26 +24,25 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
-import CommonCrypto
+import XCTest
+import Kingfisher
 
-extension String: KingfisherCompatibleValue { }
-extension KingfisherWrapper where Base == String {
-    var md5: String {
-        guard let data = base.data(using: .utf8) else {
-            return base
-        }
-        var digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
-        #if swift(>=5.0)
-        _ = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
-            return CC_MD5(bytes.baseAddress, CC_LONG(data.count), &digest)
-        }
-        #else
-        _ = data.withUnsafeBytes { bytes in
-            return CC_MD5(bytes, CC_LONG(data.count), &digest)
-        }
-        #endif
-        
-        return digest.map { String(format: "%02x", $0) }.joined()
+class ImageProcessorTests: XCTestCase {
+
+    // Issue 1125. https://github.com/onevcat/Kingfisher/issues/1125
+    func testDownsamplingSizes() {
+        XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
+
+        let emptyOption = KingfisherParsedOptionsInfo(nil)
+
+        let targetSize = CGSize(width: 20, height: 40)
+        let downsamplingProcessor = DownsamplingImageProcessor(size: targetSize)
+
+        let resultFromData = downsamplingProcessor.process(item: .data(testImageData), options: emptyOption)
+        XCTAssertEqual(resultFromData!.size, CGSize(width: 40, height: 40))
+
+        let resultFromImage = downsamplingProcessor.process(item: .image(testImage), options: emptyOption)
+        XCTAssertEqual(resultFromImage!.size, CGSize(width: 40, height: 40))
+
     }
 }
