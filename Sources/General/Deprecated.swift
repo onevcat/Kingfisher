@@ -407,7 +407,7 @@ extension ImageCache {
     @available(*, deprecated, message: "Deprecated. Use `diskStorage.config.expiration` instead")
     open var maxCachePeriodInSecond: TimeInterval {
         get { return diskStorage.config.expiration.timeInterval }
-        set { diskStorage.config.expiration = .seconds(newValue) }
+        set { diskStorage.config.expiration = newValue > 0 ? .seconds(newValue) : .never }
     }
 
     @available(*, deprecated, message: "Use `Result` based callback instead.")
