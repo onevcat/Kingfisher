@@ -251,8 +251,8 @@ class ImagePrefetcherTests: XCTestCase {
         let exp = expectation(description: #function)
         let cache = KingfisherManager.shared.cache
         let key = testKeys[0]
-        cache.store(Image(), forKey: key)
-        cache.store(testImage, forKey: key) { result in
+
+        cache.store(testImage, forKey: key, callbackQueue: .mainAsync) { result in
             try! cache.memoryStorage.remove(forKey: key)
             
             XCTAssertEqual(cache.imageCachedType(forKey: key), .disk)
