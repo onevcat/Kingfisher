@@ -2,6 +2,14 @@
 
 -----
 
+## [5.3.1 - Prefetching Threadh](https://github.com/onevcat/Kingfisher/releases/tag/5.3.1) (2019-03-28)
+
+#### Fix
+* Some thread issues which may cause crash when loading images by `ImagePrefetcher`. [#1150](https://github.com/onevcat/Kingfisher/pull/1150)
+* Setting a negative value by the deprecated `maxCachePeriodInSecond` API now expires the cache correctly. [#1145](https://github.com/onevcat/Kingfisher/pull/1145)
+
+---
+
 ## [5.3.0 - Prefetching Sources](https://github.com/onevcat/Kingfisher/releases/tag/5.3.0) (2019-03-24)
 
 #### Add
