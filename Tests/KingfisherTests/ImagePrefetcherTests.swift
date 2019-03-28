@@ -252,7 +252,7 @@ class ImagePrefetcherTests: XCTestCase {
         let cache = KingfisherManager.shared.cache
         let key = testKeys[0]
 
-        cache.store(testImage, forKey: key, callbackQueue: .mainAsync) { result in
+        cache.store(testImage, forKey: key) { result in
             try! cache.memoryStorage.remove(forKey: key)
             
             XCTAssertEqual(cache.imageCachedType(forKey: key), .disk)
@@ -307,12 +307,12 @@ class ImagePrefetcherTests: XCTestCase {
             group.enter()
             let prefetcher = ImagePrefetcher(
                 resources: testURLs,
-                options: [.waitForCache])
+                options: [.cacheMemoryOnly])
             { _, _, _ in group.leave() }
             prefetcher.start()
         }
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testPrefetchSources() {
