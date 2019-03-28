@@ -20,10 +20,7 @@ platform :ios do
   end
 
   lane :test do |options|
-    # Sometimes Travis CI would fail due to timeout. 
-    # Not sure why but just rerunning the test perfectly fixes it. :[
-    # Maybe it is related to some racing when running in CI, but it never reproducible in a local env.
-    _test(options) rescue _test(options)
+    _test(options)
   end
 
   private_lane :_test do |options|
