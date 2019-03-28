@@ -69,7 +69,11 @@ public typealias PrefetcherSourceCompletionHandler =
 /// This is useful when you know a list of image resources and want to download them before showing. It also works with
 /// some Cocoa prefetching mechanism like table view or collection view `prefetchDataSource`, to start image downloading
 /// and caching before they display on screen.
-public class ImagePrefetcher {
+public class ImagePrefetcher: CustomStringConvertible {
+
+    public var description: String {
+        return "\(Unmanaged.passUnretained(self).toOpaque())"
+    }
     
     /// The maximum concurrent downloads to use when prefetching images. Default is 5.
     public var maxConcurrentDownloads = 5
@@ -96,6 +100,7 @@ public class ImagePrefetcher {
     private let manager: KingfisherManager
 
     private let pretchQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImagePrefetcher.pretchQueue")
+    private static let requestingQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImagePrefetcher.requestingQueue")
 
     private var finished: Bool {
         let totalFinished: Int = failedSources.count + skippedSources.count + completedSources.count
@@ -259,11 +264,14 @@ public class ImagePrefetcher {
             }
         }
 
-        let downloadTask = manager.loadAndCacheImage(
-            source: source,
-            options: optionsInfo,
-            completionHandler: downloadTaskCompletionHandler)
-        
+        var downloadTask: DownloadTask.WrappedTask?
+        ImagePrefetcher.requestingQueue.sync {
+            downloadTask = manager.loadAndCacheImage(
+                source: source,
+                options: optionsInfo,
+                completionHandler: downloadTaskCompletionHandler)
+        }
+
         if let downloadTask = downloadTask {
             tasks[source.cacheKey] = downloadTask
         }
