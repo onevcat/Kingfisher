@@ -248,6 +248,6 @@ extension SessionDelegate: URLSessionDataDelegate {
             return
         }
         remove(task)
-        sessionTask.onTaskDone.call((result, Array(sessionTask.callbacks)))
+        sessionTask.onTaskDone.call((result, sessionTask.callbacks))
     }
 }
