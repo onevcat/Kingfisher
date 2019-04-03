@@ -456,7 +456,7 @@
             <h1>ImagePrefetcher</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ImagePrefetcher</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ImagePrefetcher</span> <span class="p">:</span> <span class="kt">CustomStringConvertible</span></code></pre>
 
                 </div>
               </div>
@@ -472,6 +472,35 @@ and caching before they display on screen.</p>
           <div class="section-content">
             <div class="task-group">
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:s23CustomStringConvertibleP11descriptionSSvp"></a>
+                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
+                    <a class="token" href="#/s:s23CustomStringConvertibleP11descriptionSSvp">description</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L74-L76">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -497,7 +526,7 @@ and caching before they display on screen.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Networking/ImagePrefetcher.swift#L75">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L79">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -598,7 +627,7 @@ main thread. The <code>.callbackQueue</code> value in <code>optionsInfo</code> w
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Networking/ImagePrefetcher.swift#L120-L132">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L127-L139">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -695,7 +724,7 @@ main thread. The <code>.callbackQueue</code> value in <code>optionsInfo</code> w
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Networking/ImagePrefetcher.swift#L147-L156">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L154-L163">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -791,7 +820,7 @@ main thread. The <code>.callbackQueue</code> value in <code>optionsInfo</code> w
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Networking/ImagePrefetcher.swift#L171-L179">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L178-L186">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -823,7 +852,7 @@ with the results of the process.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Networking/ImagePrefetcher.swift#L200-L225">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L207-L234">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -853,7 +882,7 @@ with the results of the process.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.0/Sources/Networking/ImagePrefetcher.swift#L228-L232">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.3.1/Sources/Networking/ImagePrefetcher.swift#L237-L243">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -866,7 +895,7 @@ with the results of the process.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-03-24)</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-03-28)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

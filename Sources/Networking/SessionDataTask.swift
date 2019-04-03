@@ -47,8 +47,10 @@ public class SessionDataTask {
     public let task: URLSessionDataTask
     private var callbacksStore = [CancelToken: TaskCallback]()
 
-    var callbacks: Dictionary<SessionDataTask.CancelToken, SessionDataTask.TaskCallback>.Values {
-        return callbacksStore.values
+    var callbacks: [SessionDataTask.TaskCallback] {
+        lock.lock()
+        defer { lock.unlock() }
+        return Array(callbacksStore.values)
     }
 
     private var currentToken = 0

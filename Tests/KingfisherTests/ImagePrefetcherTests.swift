@@ -251,7 +251,7 @@ class ImagePrefetcherTests: XCTestCase {
         let exp = expectation(description: #function)
         let cache = KingfisherManager.shared.cache
         let key = testKeys[0]
-        cache.store(Image(), forKey: key)
+
         cache.store(testImage, forKey: key) { result in
             try! cache.memoryStorage.remove(forKey: key)
             
@@ -307,12 +307,12 @@ class ImagePrefetcherTests: XCTestCase {
             group.enter()
             let prefetcher = ImagePrefetcher(
                 resources: testURLs,
-                options: [.waitForCache])
+                options: [.cacheMemoryOnly])
             { _, _, _ in group.leave() }
             prefetcher.start()
         }
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testPrefetchSources() {
