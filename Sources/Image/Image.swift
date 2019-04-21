@@ -121,9 +121,9 @@ extension KingfisherWrapper where Base: Image {
     /// This method will try to redraw an image with orientation and scale considered.
     public var normalized: Image {
         // prevent animated image (GIF) lose it's images
-        guard images == nil else { return base }
+        guard images == nil else { return base.copy() as! Image }
         // No need to do anything if already up
-        guard base.imageOrientation != .up else { return base }
+        guard base.imageOrientation != .up else { return base.copy() as! Image }
 
         return draw(to: size, inverting: true, refImage: Image()) {
             fixOrientation(in: $0)

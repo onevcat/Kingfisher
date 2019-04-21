@@ -196,6 +196,22 @@ extension Image {
     }
 }
 
+#if os(iOS) || os(tvOS)
+import UIKit
+extension Image {
+    static func from(color: Color, size: CGSize) -> Image {
+        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()
+        context!.setFillColor(color.cgColor)
+        context!.fill(rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img!
+    }
+}
+#endif
+
 extension Data {
     init(fileName: String) {
         let comp = fileName.components(separatedBy: ".")

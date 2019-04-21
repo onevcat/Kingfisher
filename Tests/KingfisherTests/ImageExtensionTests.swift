@@ -287,7 +287,16 @@ class ImageExtensionTests: XCTestCase {
         // No need to normalize up orientation image.
         let normalImage = testImage
         XCTAssertEqual(normalImage.imageOrientation, .up)
-        XCTAssertEqual(normalImage, testImage)
+        XCTAssertEqual(normalImage.kf.normalized, testImage)
+
+        let colorImage = UIImage.from(color: .red, size: CGSize(width: 100, height: 200))
+        let rotatedImage = UIImage(cgImage: colorImage.cgImage!, scale: colorImage.scale, orientation: .right)
+
+        XCTAssertEqual(rotatedImage.imageOrientation, .right)
+
+        let rotatedNormalizedImage = rotatedImage.kf.normalized
+        XCTAssertEqual(rotatedNormalizedImage.imageOrientation, .up)
+        XCTAssertEqual(rotatedNormalizedImage.size, CGSize(width: 200, height: 100))
         #endif
     }
     
