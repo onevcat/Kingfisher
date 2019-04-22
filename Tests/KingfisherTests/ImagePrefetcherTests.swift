@@ -312,7 +312,7 @@ class ImagePrefetcherTests: XCTestCase {
             prefetcher.start()
         }
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 15, handler: nil)
     }
 
     func testPrefetchSources() {
