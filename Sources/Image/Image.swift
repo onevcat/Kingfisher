@@ -148,6 +148,10 @@ extension KingfisherWrapper where Base: Image {
             transform = transform.rotated(by: .pi / -2.0)
         case .up, .upMirrored:
             break
+        #if compiler(>=5)
+        @unknown default:
+            break
+        #endif
         }
 
         //Flip image one more time if needed to, this is to prevent flipped image
@@ -160,6 +164,10 @@ extension KingfisherWrapper where Base: Image {
             transform = transform.scaledBy(x: -1, y: 1)
         case .up, .down, .left, .right:
             break
+        #if compiler(>=5)
+        @unknown default:
+            break
+        #endif
         }
 
         context.concatenate(transform)
