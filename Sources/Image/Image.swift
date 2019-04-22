@@ -121,12 +121,61 @@ extension KingfisherWrapper where Base: Image {
     /// This method will try to redraw an image with orientation and scale considered.
     public var normalized: Image {
         // prevent animated image (GIF) lose it's images
-        guard images == nil else { return base }
+        guard images == nil else { return base.copy() as! Image }
         // No need to do anything if already up
-        guard base.imageOrientation != .up else { return base }
-    
-        return draw(to: size) { _ in
-            base.draw(in: CGRect(origin: .zero, size: size))
+        guard base.imageOrientation != .up else { return base.copy() as! Image }
+
+        return draw(to: size, inverting: true, refImage: Image()) {
+            fixOrientation(in: $0)
+        }
+    }
+
+    func fixOrientation(in context: CGContext) {
+
+        var transform = CGAffineTransform.identity
+
+        let orientation = base.imageOrientation
+
+        switch orientation {
+        case .down, .downMirrored:
+            transform = transform.translatedBy(x: size.width, y: size.height)
+            transform = transform.rotated(by: .pi)
+        case .left, .leftMirrored:
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.rotated(by: .pi / 2.0)
+        case .right, .rightMirrored:
+            transform = transform.translatedBy(x: 0, y: size.height)
+            transform = transform.rotated(by: .pi / -2.0)
+        case .up, .upMirrored:
+            break
+        #if compiler(>=5)
+        @unknown default:
+            break
+        #endif
+        }
+
+        //Flip image one more time if needed to, this is to prevent flipped image
+        switch orientation {
+        case .upMirrored, .downMirrored:
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        case .leftMirrored, .rightMirrored:
+            transform = transform.translatedBy(x: size.height, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        case .up, .down, .left, .right:
+            break
+        #if compiler(>=5)
+        @unknown default:
+            break
+        #endif
+        }
+
+        context.concatenate(transform)
+        switch orientation {
+        case .left, .leftMirrored, .right, .rightMirrored:
+            context.draw(cgImage!, in: CGRect(x: 0, y: 0, width: size.height, height: size.width))
+        default:
+            context.draw(cgImage!, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
         }
     }
     #endif
