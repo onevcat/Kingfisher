@@ -2,7 +2,7 @@
 //  String+MD5.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 18//25.
+//  Created by Wei Wang on 18/09/25.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
