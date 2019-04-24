@@ -2,6 +2,17 @@
 
 -----
 
+## [5.4.0 - Accio Support](https://github.com/onevcat/Kingfisher/releases/tag/5.4.0) (2019-04-24)
+
+#### Add
+* Add support for building project with [Accio](https://github.com/JamitLabs/Accio) (and Swift Package Manager). [#1153](https://github.com/onevcat/Kingfisher/pull/1153)
+
+#### Fix
+* Now `maxCachePeriodInSecond` of cache would treat 0 as expiring correctly. [#1160](https://github.com/onevcat/Kingfisher/pull/1160)
+* Normalization of image now returns an image with `.up` as orientation. [#1163](https://github.com/onevcat/Kingfisher/pull/1163)
+
+---
+
 ## [5.3.1 - Prefetching Thread](https://github.com/onevcat/Kingfisher/releases/tag/5.3.1) (2019-03-28)
 
 #### Fix
