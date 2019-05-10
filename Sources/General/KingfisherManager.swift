@@ -27,6 +27,8 @@
 
 import Foundation
 
+public typealias DownloadReceivedBlock = ((_ latestData: Data, _ receivedData: Data) -> Void)
+
 /// The downloading progress block type.
 /// The parameter value is the `receivedSize` of current response.
 /// The second parameter is the total expected data length from response's "Content-Length" header.
@@ -161,6 +163,7 @@ public class KingfisherManager {
     func retrieveImage(
         with source: Source,
         options: KingfisherParsedOptionsInfo,
+        receivedBlock: DownloadReceivedBlock? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
@@ -168,8 +171,10 @@ public class KingfisherManager {
             return loadAndCacheImage(
                 source: source,
                 options: options,
+                receivedBlock: receivedBlock,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler)?.value
+            
         } else {
             let loadedFromCache = retrieveImageFromCache(
                 source: source,
@@ -189,6 +194,7 @@ public class KingfisherManager {
             return loadAndCacheImage(
                 source: source,
                 options: options,
+                receivedBlock: receivedBlock,
                 progressBlock: progressBlock,
                 completionHandler: completionHandler)?.value
         }
@@ -235,6 +241,7 @@ public class KingfisherManager {
     func loadAndCacheImage(
         source: Source,
         options: KingfisherParsedOptionsInfo,
+        receivedBlock: DownloadReceivedBlock? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
     {
@@ -285,6 +292,7 @@ public class KingfisherManager {
             guard let task = downloader.downloadImage(
                 with: resource.downloadURL,
                 options: options,
+                receivedBlock: receivedBlock,
                 progressBlock: progressBlock,
                 completionHandler: cacheImage) else
             {
