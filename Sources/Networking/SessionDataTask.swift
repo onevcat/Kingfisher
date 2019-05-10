@@ -34,6 +34,7 @@ public class SessionDataTask {
     public typealias CancelToken = Int
 
     struct TaskCallback {
+        let onReceived: Delegate<(Data, Data), Void>?
         let onProgress: Delegate<(Int64, Int64), Void>?
         let onCompleted: Delegate<Result<ImageLoadingResult, KingfisherError>, Void>?
         let options: KingfisherParsedOptionsInfo

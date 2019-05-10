@@ -149,10 +149,12 @@ extension KingfisherWrapper where Base: Image {
                 rectPath.fill()
             }
             
-            let path = UIBezierPath(roundedRect: rect,
-                                    byRoundingCorners: corners.uiRectCorner,
-                                    cornerRadii: CGSize(width: radius, height: radius)).cgPath
-            context.addPath(path)
+            let path = UIBezierPath(
+                roundedRect: rect,
+                byRoundingCorners: corners.uiRectCorner,
+                cornerRadii: CGSize(width: radius, height: radius)
+            )
+            context.addPath(path.cgPath)
             context.clip()
             base.draw(in: rect)
             #endif

@@ -175,6 +175,13 @@ extension SessionDelegate: URLSessionDataDelegate {
                 }
             }
         }
+        
+        let received = task.mutableData
+        DispatchQueue.main.async {
+            task.callbacks.forEach { callback in
+                callback.onReceived?.call((data, received))
+            }
+        }
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

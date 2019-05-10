@@ -197,6 +197,7 @@ open class ImageDownloader {
     func downloadImage(
         with url: URL,
         options: KingfisherParsedOptionsInfo,
+        receivedBlock: DownloadReceivedBlock? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
@@ -225,11 +226,21 @@ open class ImageDownloader {
         }
 
         // Wraps `progressBlock` and `completionHandler` to `onProgress` and `onCompleted` respectively.
+        let onReceived = receivedBlock.map {
+            block -> Delegate<(Data, Data), Void> in
+            let delegate = Delegate<(Data, Data), Void>()
+            delegate.delegate(on: self) { (_, callback) in
+                let (latest, received) = callback
+                block(latest, received)
+            }
+            return delegate
+        }
+
         let onProgress = progressBlock.map {
             block -> Delegate<(Int64, Int64), Void> in
             let delegate = Delegate<(Int64, Int64), Void>()
-            delegate.delegate(on: self) { (_, progress) in
-                let (downloaded, total) = progress
+            delegate.delegate(on: self) { (_, callback) in
+                let (downloaded, total) = callback
                 block(downloaded, total)
             }
             return delegate
@@ -238,15 +249,19 @@ open class ImageDownloader {
         let onCompleted = completionHandler.map {
             block -> Delegate<Result<ImageLoadingResult, KingfisherError>, Void> in
             let delegate =  Delegate<Result<ImageLoadingResult, KingfisherError>, Void>()
-            delegate.delegate(on: self) { (_, result) in
-                block(result)
+            delegate.delegate(on: self) { (_, callback) in
+                block(callback)
             }
             return delegate
         }
 
         // SessionDataTask.TaskCallback is a wrapper for `onProgress`, `onCompleted` and `options` (for processor info)
         let callback = SessionDataTask.TaskCallback(
-            onProgress: onProgress, onCompleted: onCompleted, options: options)
+            onReceived: onReceived,
+            onProgress: onProgress,
+            onCompleted: onCompleted,
+            options: options
+        )
 
         // Ready to start download. Add it to session task manager (`sessionHandler`)
 
