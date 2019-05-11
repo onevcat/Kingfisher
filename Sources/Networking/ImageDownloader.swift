@@ -290,13 +290,15 @@ open class ImageDownloader {
                         self,
                         didFinishDownloadingImageForURL: url,
                         with: value.1,
-                        error: nil)
+                        error: nil
+                    )
                 } catch {
                     self.delegate?.imageDownloader(
                         self,
                         didFinishDownloadingImageForURL: url,
                         with: nil,
-                        error: error)
+                        error: error
+                    )
                 }
 
                 switch result {

@@ -104,10 +104,30 @@ extension KingfisherWrapper where Base: ImageView {
         if base.shouldPreloadAllAnimation() {
             options.preloadAllAnimationData = true
         }
-
+        
+        let progressive = ImageProgressive(options)
+        
+        let dataUpdate = { (data: Data) in
+            guard
+                let data = progressive.scanning(data),
+                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks else {
+                return
+            }
+            progressive.decode(data, with: callbacks) { (image) in
+                guard mutatingSelf.imageTask != nil else { return }
+                
+                self.base.image = image
+            }
+        }
+        
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
+            receivedBlock: { latest, received in
+                guard issuedIdentifier == self.taskIdentifier else { return }
+                
+                dataUpdate(received)
+            },
             progressBlock: { receivedSize, totalSize in
                 guard issuedIdentifier == self.taskIdentifier else { return }
                 if let progressBlock = progressBlock {
@@ -151,8 +171,8 @@ extension KingfisherWrapper where Base: ImageView {
                         completionHandler?(result)
                     }
                 }
-        })
-
+            }
+        )
         mutatingSelf.imageTask = task
         return task
     }
