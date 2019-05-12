@@ -71,9 +71,29 @@ extension KingfisherWrapper where Base: NSButton {
         let issuedIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
 
+        let progressive = ImageProgressive(options)
+        
+        let dataUpdate = { (data: Data) in
+            guard
+                let data = progressive.scanning(data),
+                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks else {
+                return
+            }
+            progressive.decode(data, with: callbacks) { (image) in
+                guard mutatingSelf.imageTask != nil else { return }
+                
+                self.base.image = image
+            }
+        }
+        
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
+            receivedBlock: { latest, received in
+                guard issuedIdentifier == self.taskIdentifier else { return }
+                
+                dataUpdate(received)
+            },
             progressBlock: { receivedSize, totalSize in
                 guard issuedIdentifier == self.taskIdentifier else { return }
                 progressBlock?(receivedSize, totalSize)
