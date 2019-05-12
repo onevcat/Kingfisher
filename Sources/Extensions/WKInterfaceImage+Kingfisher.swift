@@ -70,9 +70,30 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
         
         let issuedTaskIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedTaskIdentifier
+        
+        let progressive = ImageProgressive(options)
+        
+        let dataUpdate = { (data: Data) in
+            guard
+                let data = progressive.scanning(data),
+                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks else {
+                    return
+            }
+            progressive.decode(data, with: callbacks) { (image) in
+                guard mutatingSelf.imageTask != nil else { return }
+                
+                self.base.setImage(image)
+            }
+        }
+        
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
+            receivedBlock: { latest, received in
+                guard issuedTaskIdentifier == self.taskIdentifier else { return }
+                
+                dataUpdate(received)
+            },
             progressBlock: { receivedSize, totalSize in
                 guard issuedTaskIdentifier == self.taskIdentifier else { return }
                 progressBlock?(receivedSize, totalSize)
