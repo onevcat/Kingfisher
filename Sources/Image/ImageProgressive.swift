@@ -26,6 +26,9 @@
 
 import UIKit
 
+private let sharedProcessingQueue: CallbackQueue =
+    .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))
+
 final class ImageProgressive {
     
     private let options: KingfisherParsedOptionsInfo
@@ -38,7 +41,7 @@ final class ImageProgressive {
     }
     
     func scanning(_ data: Data) -> Data? {
-        guard options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
+        guard let _ = options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
             return nil
         }
         guard (scannedIndex + 1) < data.count else {
@@ -71,23 +74,41 @@ final class ImageProgressive {
     }
     
     func decode(_ data: Data, with callbacks: [SessionDataTask.TaskCallback], completion: @escaping (Image) -> Void) {
-        let processor = ImageDataProcessor(
-            data: data[0 ..< lastSOSIndex],
-            callbacks: callbacks,
-            processingQueue: options.processingQueue
-        )
-        processor.onImageProcessed.delegate(on: self) { (self, result) in
-            guard let image = try? result.0.get() else { return }
-            
-            // Blur partial images.
-//            if self.scannedCount < 5 {
-//                // Progressively reduce blur as we load more scans.
-//                let radius = max(2, 14 - self.scannedCount * 4)
-//                image = image.kf.blurred(withRadius: CGFloat(radius))
-//            }
-
-            CallbackQueue.mainCurrentOrAsync.execute { completion(image) }
+        guard let isBlur = options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
+            return
         }
-        processor.process()
+        
+        func processing(_ data: Data) {
+            let processor = ImageDataProcessor(
+                data: data,
+                callbacks: callbacks,
+                processingQueue: options.processingQueue
+            )
+            processor.onImageProcessed.delegate(on: self) { (self, result) in
+                guard let image = try? result.0.get() else { return }
+                
+                CallbackQueue.mainCurrentOrAsync.execute { completion(image) }
+            }
+            processor.process()
+        }
+        
+        // Blur partial images.
+        let count = scannedCount
+        if isBlur, count < 5 {
+            let queue = options.processingQueue ?? sharedProcessingQueue
+            queue.execute {
+                // Progressively reduce blur as we load more scans.
+                let radius = max(2, 14 - count * 4)
+                let image = KingfisherWrapper<Image>.image(
+                    data: data,
+                    options: self.options.imageCreatingOptions
+                )
+                let temp = image?.kf.blurred(withRadius: CGFloat(radius))
+                processing(temp?.kf.data(format: .JPEG) ?? data)
+            }
+            
+        } else {
+            processing(data)
+        }
     }
 }
