@@ -25,23 +25,30 @@
 //  THE SOFTWARE.
 
 import UIKit
+import Kingfisher
 
 class ProgressiveJPEGViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var progressLabel: UILabel!
     
+    private var isBlur = true
+    private let url = URL(string: "https://demo-resources.oss-cn-beijing.aliyuncs.com/progressive.jpg")!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Loading"
+        title = "Progressive JPEG"
         setupOperationNavigationBar()
+        loadImage()
+    }
+    
+    private func loadImage() {
+        progressLabel.text = "- / -"
         
         imageView.kf.setImage(
-//            with: ImageLoader.sampleImageURLs[indexPath.row],
-//            with: URL(string: "http://calm.chongdingdahui.com/812075.jpg"),
-            with: URL(string: "https://demo-resources.oss-cn-beijing.aliyuncs.com/progressive.jpeg"),
+            with: url,
             placeholder: nil,
-            options: [.loadDiskFileSynchronously, .progressiveJPEG],
+            options: [.loadDiskFileSynchronously, .progressiveJPEG(isBlur)],
             progressBlock: { receivedSize, totalSize in
                 print("\(receivedSize)/\(totalSize)")
                 self.progressLabel.text = "\(receivedSize) / \(totalSize)"
@@ -51,5 +58,22 @@ class ProgressiveJPEGViewController: UIViewController {
                 print("Finished")
             }
         )
+    }
+    
+    override func alertPopup(_ sender: Any) -> UIAlertController {
+        let alert = super.alertPopup(sender)
+        let title = isBlur ? "Close Blur" : "Enabled Blur"
+        alert.addAction(UIAlertAction(title: title, style: .default) { _ in
+            self.isBlur.toggle()
+            // Clean cache
+            KingfisherManager.shared.cache.removeImage(
+                forKey: self.url.cacheKey,
+                callbackQueue: .mainAsync,
+                completionHandler: {
+                    self.loadImage()
+                }
+            )
+        })
+        return alert
     }
 }
