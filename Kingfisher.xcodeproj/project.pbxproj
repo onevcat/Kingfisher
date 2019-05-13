@@ -60,9 +60,6 @@
 		C9286408228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
 		C9286409228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
 		C928640A228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
-		C928640B228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
-		C928640C228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
-		C928640D228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
 		D10EC2361C3D632300A4211C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B2944481C3D01B20088C3E7 /* Kingfisher.framework */; };
 		D114F36E215D2D0B00A01349 /* String+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6BC215D2BB50013BA68 /* String+MD5.swift */; };
 		D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69D215D2BB50013BA68 /* RequestModifier.swift */; };
@@ -1140,7 +1137,6 @@
 				D1A1CCA021A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */,
 				4B8351C9217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B421D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
-				C928640C228584EB00257182 /* ImageProgressive.swift in Sources */,
 				D1BFED96222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */,
 				D12E0C741C47F6FE00AC98AD /* UIButtonExtensionTests.swift in Sources */,
 			);
@@ -1166,7 +1162,6 @@
 				D1A1CCA121A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */,
 				4B8351CA217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B431D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
-				C928640D228584EB00257182 /* ImageProgressive.swift in Sources */,
 				D1BFED97222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */,
 				D12E0C871C47F7AF00AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
 			);
@@ -1343,7 +1338,6 @@
 				D1A1CC9F21A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */,
 				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
-				C928640B228584EB00257182 /* ImageProgressive.swift in Sources */,
 				D1BFED95222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */,
 				D12E0C501C47F23500AC98AD /* ImageCacheTests.swift in Sources */,
 			);
