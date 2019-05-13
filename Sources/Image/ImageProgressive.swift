@@ -87,7 +87,7 @@ final class ImageProgressiveProvider {
         let interval = options.progressiveJPEG?.scanInterval ?? 0
         let isFastest = options.progressiveJPEG?.isFastestScan ?? true
         
-        func add(decoder data: Data) {
+        func add(decode data: Data) {
             queue.add(minimum: interval) { (completion) in
                 guard self.isContinueClosure() else {
                     completion()
@@ -108,11 +108,11 @@ final class ImageProgressiveProvider {
         if isFastest {
             guard let data = decoder.scanning(data) else { return }
             
-            add(decoder: data)
+            add(decode: data)
             
         } else {
             for data in decoder.scanning(data) {
-                add(decoder: data)
+                add(decode: data)
             }
         }
     }
@@ -126,13 +126,9 @@ final class ImageProgressiveProvider {
             closure()
         }
     }
-    
-    deinit {
-        print("deinit ImageProgressiveProvider")
-    }
 }
 
-final class ImageProgressiveDecoder {
+fileprivate final class ImageProgressiveDecoder {
     
     private let options: KingfisherParsedOptionsInfo
     private(set) var scannedCount: Int = 0
@@ -159,7 +155,9 @@ final class ImageProgressiveDecoder {
             // 0xFF, 0xDA - Start Of Scan
             let SOS = ImageFormat.JPEGMarker.SOS.bytes
             if data[index] == SOS[0], data[index + 1] == SOS[1] {
-                datas.append(data[0 ..< index])
+                if count > 0 {
+                    datas.append(data[0 ..< index])
+                }
                 count += 1
             }
             index += 1
@@ -168,6 +166,11 @@ final class ImageProgressiveDecoder {
         // Found more scans this the previous time
         guard count > scannedCount else { return [] }
         scannedCount = count
+        
+        // `> 1` checks that we've received a first scan (SOS) and then received
+        // and also received a second scan (SOS). This way we know that we have
+        // at least one full scan available.
+        guard count > 1 else { return [] }
         return datas
     }
     
@@ -253,14 +256,13 @@ final class ImageProgressiveDecoder {
     }
 }
 
-final class ImageProgressiveSerialQueue {
+fileprivate final class ImageProgressiveSerialQueue {
     typealias ClosureCallback = ((@escaping () -> Void)) -> Void
+    
     private let queue: DispatchQueue
     private var items: [DispatchWorkItem] = []
     private var notify: (() -> Void)?
-    var count: Int {
-        return items.count
-    }
+    var count: Int { return items.count }
     
     init(_ queue: DispatchQueue) {
         self.queue = queue
@@ -274,7 +276,10 @@ final class ImageProgressiveSerialQueue {
                 self.items.removeFirst()
                 
                 if let next = self.items.first {
-                    self.queue.asyncAfter(deadline: .now() + interval, execute: next)
+                    self.queue.asyncAfter(
+                        deadline: .now() + interval,
+                        execute: next
+                    )
                     
                 } else {
                     self.notify?()
