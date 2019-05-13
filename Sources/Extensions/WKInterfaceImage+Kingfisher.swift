@@ -71,28 +71,26 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
         let issuedTaskIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedTaskIdentifier
         
-        let progressive = ImageProgressive(options)
-        
-        let dataUpdate = { (data: Data) in
-            guard
-                let data = progressive.scanning(data),
-                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks else {
-                    return
-            }
-            progressive.decode(data, with: callbacks) { (image) in
-                guard mutatingSelf.imageTask != nil else { return }
-                
+        let progressive = ImageProgressiveProvider(
+            options,
+            isContinue: { () -> Bool in
+                issuedTaskIdentifier == self.taskIdentifier
+            },
+            isFinished: { () -> Bool in
+                mutatingSelf.imageTask != nil
+            },
+            refreshImage: { (image) in
                 self.base.setImage(image)
             }
-        }
+        )
         
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             receivedBlock: { latest, received in
                 guard issuedTaskIdentifier == self.taskIdentifier else { return }
-                
-                dataUpdate(received)
+                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks ?? []
+                progressive.update(data: received, with: callbacks)
             },
             progressBlock: { receivedSize, totalSize in
                 guard issuedTaskIdentifier == self.taskIdentifier else { return }
@@ -115,18 +113,22 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
                     
                     mutatingSelf.imageTask = nil
                     
-                    switch result {
-                    case .success(let value):
-                        self.base.setImage(value.image)
-                        completionHandler?(result)
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.setImage(image)
+                    progressive.finished {
+                        switch result {
+                        case .success(let value):
+                            self.base.setImage(value.image)
+                            completionHandler?(result)
+                            
+                        case .failure:
+                            if let image = options.onFailureImage {
+                                self.base.setImage(image)
+                            }
+                            completionHandler?(result)
                         }
-                        completionHandler?(result)
                     }
                 }
-        })
+            }
+        )
         
         mutatingSelf.imageTask = task
         return task

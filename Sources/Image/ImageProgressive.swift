@@ -30,15 +30,145 @@ import CoreGraphics
 private let sharedProcessingQueue: CallbackQueue =
     .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))
 
-final class ImageProgressive {
+public struct ImageProgressive {
+    
+    /// A default `ImageProgressive` could be used across.
+    public static let `default` = ImageProgressive(
+        isBlur: true,
+        isWait: false,
+        isFastestScan: true,
+        scanInterval: 0
+    )
+    
+    /// Whether to enable blur effect processing
+    let isBlur: Bool
+    /// Whether to wait for the scan to complete
+    let isWait: Bool
+    /// Whether to enable the fastest scan
+    let isFastestScan: Bool
+    /// Minimum time interval for each scan
+    let scanInterval: TimeInterval
+    
+    public init(isBlur: Bool,
+                isWait: Bool,
+                isFastestScan: Bool,
+                scanInterval: TimeInterval) {
+        self.isBlur = isBlur
+        self.isWait = isWait
+        self.isFastestScan = isFastestScan
+        self.scanInterval = scanInterval
+    }
+}
+
+final class ImageProgressiveProvider {
+    
+    private let options: KingfisherParsedOptionsInfo
+    private let refreshClosure: (Image) -> Void
+    private let isContinueClosure: () -> Bool
+    private let isFinishedClosure: () -> Bool
+    private let isWait: Bool
+    
+    private let decoder: ImageProgressiveDecoder
+    private let queue = ImageProgressiveSerialQueue(.main)
+    
+    init(_ options: KingfisherParsedOptionsInfo,
+         isContinue: @escaping () -> Bool,
+         isFinished: @escaping () -> Bool,
+         refreshImage: @escaping (Image) -> Void) {
+        self.options = options
+        self.refreshClosure = refreshImage
+        self.isContinueClosure = isContinue
+        self.isFinishedClosure = isFinished
+        self.decoder = ImageProgressiveDecoder(options)
+        self.isWait = options.progressiveJPEG?.isWait ?? false
+    }
+    
+    func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
+        let interval = options.progressiveJPEG?.scanInterval ?? 0
+        let isFastest = options.progressiveJPEG?.isFastestScan ?? true
+        
+        func add(decoder data: Data) {
+            queue.add(minimum: interval) { (completion) in
+                guard self.isContinueClosure() else {
+                    completion()
+                    return
+                }
+                
+                self.decoder.decode(data, with: callbacks) { (image) in
+                    defer { completion() }
+                    guard self.isContinueClosure() else { return }
+                    guard self.isWait || !self.isFinishedClosure() else { return }
+                    guard let image = image else { return }
+                    
+                    self.refreshClosure(image)
+                }
+            }
+        }
+        
+        if isFastest {
+            guard let data = decoder.scanning(data) else { return }
+            
+            add(decoder: data)
+            
+        } else {
+            for data in decoder.scanning(data) {
+                add(decoder: data)
+            }
+        }
+    }
+    
+    func finished(_ closure: @escaping () -> Void) {
+        if queue.count > 0, isWait {
+            queue.notify(closure)
+            
+        } else {
+            queue.clean()
+            closure()
+        }
+    }
+    
+    deinit {
+        print("deinit ImageProgressiveProvider")
+    }
+}
+
+final class ImageProgressiveDecoder {
     
     private let options: KingfisherParsedOptionsInfo
     private(set) var scannedCount: Int = 0
     private var scannedIndex = -1
-    private var lastSOSIndex = 0
     
     init(_ options: KingfisherParsedOptionsInfo) {
         self.options = options
+    }
+    
+    func scanning(_ data: Data) -> [Data] {
+        guard let _ = options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
+            return []
+        }
+        guard (scannedIndex + 1) < data.count else {
+            return []
+        }
+        
+        var datas: [Data] = []
+        var index = scannedIndex + 1
+        var count = scannedCount
+        
+        while index < (data.count - 1) {
+            scannedIndex = index
+            // 0xFF, 0xDA - Start Of Scan
+            let SOS = ImageFormat.JPEGMarker.SOS.bytes
+            if data[index] == SOS[0], data[index + 1] == SOS[1] {
+                datas.append(data[0 ..< index])
+                count += 1
+            }
+            index += 1
+        }
+        
+        // Found more scans this the previous time
+        guard count > scannedCount else { return [] }
+        scannedCount = count
+        return datas
     }
     
     func scanning(_ data: Data) -> Data? {
@@ -51,6 +181,7 @@ final class ImageProgressive {
         
         var index = scannedIndex + 1
         var count = scannedCount
+        var lastSOSIndex = 0
         
         while index < (data.count - 1) {
             scannedIndex = index
@@ -74,8 +205,11 @@ final class ImageProgressive {
         return data[0 ..< lastSOSIndex]
     }
     
-    func decode(_ data: Data, with callbacks: [SessionDataTask.TaskCallback], completion: @escaping (Image) -> Void) {
-        guard let isBlur = options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
+    func decode(_ data: Data,
+                with callbacks: [SessionDataTask.TaskCallback],
+                completion: @escaping (Image?) -> Void) {
+        guard data.kf.contains(jpeg: .SOF2) else {
+            CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
             return
         }
         
@@ -86,7 +220,10 @@ final class ImageProgressive {
                 processingQueue: options.processingQueue
             )
             processor.onImageProcessed.delegate(on: self) { (self, result) in
-                guard let image = try? result.0.get() else { return }
+                guard let image = try? result.0.get() else {
+                    CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
+                    return
+                }
                 
                 CallbackQueue.mainCurrentOrAsync.execute { completion(image) }
             }
@@ -95,6 +232,8 @@ final class ImageProgressive {
         
         // Blur partial images.
         let count = scannedCount
+        let isBlur = options.progressiveJPEG?.isBlur ?? false
+        
         if isBlur, count < 5 {
             let queue = options.processingQueue ?? sharedProcessingQueue
             queue.execute {
@@ -111,5 +250,53 @@ final class ImageProgressive {
         } else {
             processing(data)
         }
+    }
+}
+
+final class ImageProgressiveSerialQueue {
+    typealias ClosureCallback = ((@escaping () -> Void)) -> Void
+    private let queue: DispatchQueue
+    private var items: [DispatchWorkItem] = []
+    private var notify: (() -> Void)?
+    var count: Int {
+        return items.count
+    }
+    
+    init(_ queue: DispatchQueue) {
+        self.queue = queue
+    }
+    
+    func add(minimum interval: TimeInterval, closure: @escaping ClosureCallback) {
+        let completion = {
+            self.queue.async {
+                guard !self.items.isEmpty else { return }
+                
+                self.items.removeFirst()
+                
+                if let next = self.items.first {
+                    self.queue.asyncAfter(deadline: .now() + interval, execute: next)
+                    
+                } else {
+                    self.notify?()
+                    self.notify = nil
+                }
+            }
+        }
+        let item = DispatchWorkItem {
+            closure(completion)
+        }
+        if items.isEmpty {
+            queue.asyncAfter(deadline: .now(), execute: item)
+        }
+        items.append(item)
+    }
+    
+    func notify(_ closure: @escaping () -> Void) {
+        self.notify = closure
+    }
+    
+    func clean() {
+        items.forEach { $0.cancel() }
+        items.removeAll()
     }
 }

@@ -214,9 +214,8 @@ public enum KingfisherOptionsInfoItem {
     /// blocking the UI, especially if the processor needs a lot of time to run).
     case processingQueue(CallbackQueue)
     
-    /// Enable progressive image loading
-    /// true: Increase blur effect processing, false: No additional processing.
-    case progressiveJPEG(Bool)
+    /// Enable progressive image loading, Kingfisher will use the `ImageProgressive` of
+    case progressiveJPEG(ImageProgressive)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -255,7 +254,7 @@ public struct KingfisherParsedOptionsInfo {
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var diskCacheExpiration: StorageExpiration? = nil
     public var processingQueue: CallbackQueue? = nil
-    public var progressiveJPEG: Bool?
+    public var progressiveJPEG: ImageProgressive?
     
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
@@ -291,7 +290,7 @@ public struct KingfisherParsedOptionsInfo {
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
             case .processingQueue(let queue): processingQueue = queue
-            case .progressiveJPEG(let isBlur): progressiveJPEG = isBlur
+            case .progressiveJPEG(let value): progressiveJPEG = value
             }
         }
 
