@@ -105,34 +105,30 @@ extension KingfisherWrapper where Base: ImageView {
             options.preloadAllAnimationData = true
         }
         
-        let progressive = ImageProgressive(options)
-        
-        let dataUpdate = { (data: Data) in
-            guard
-                let data = progressive.scanning(data),
-                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks else {
-                return
-            }
-            progressive.decode(data, with: callbacks) { (image) in
-                guard mutatingSelf.imageTask != nil else { return }
-                
+        let progressive = ImageProgressiveProvider(
+            options,
+            isContinue: { () -> Bool in
+                issuedIdentifier == self.taskIdentifier
+            },
+            isFinished: { () -> Bool in
+                mutatingSelf.imageTask == nil
+            },
+            refreshImage: { (image) in
                 self.base.image = image
             }
-        }
+        )
         
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             receivedBlock: { latest, received in
                 guard issuedIdentifier == self.taskIdentifier else { return }
-                
-                dataUpdate(received)
+                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks ?? []
+                progressive.update(data: received, with: callbacks)
             },
             progressBlock: { receivedSize, totalSize in
                 guard issuedIdentifier == self.taskIdentifier else { return }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
+                progressBlock?(receivedSize, totalSize)
             },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
@@ -149,26 +145,29 @@ extension KingfisherWrapper where Base: ImageView {
                         completionHandler?(.failure(error))
                         return
                     }
-
+                    
                     mutatingSelf.imageTask = nil
-
-                    switch result {
-                    case .success(let value):
-                        guard self.needsTransition(options: options, cacheType: value.cacheType) else {
-                            mutatingSelf.placeholder = nil
-                            self.base.image = value.image
+                    
+                    progressive.finished {
+                        switch result {
+                        case .success(let value):
+                            guard self.needsTransition(options: options, cacheType: value.cacheType) else {
+                                mutatingSelf.placeholder = nil
+                                self.base.image = value.image
+                                completionHandler?(result)
+                                return
+                            }
+                            
+                            self.makeTransition(image: value.image, transition: options.transition) {
+                                completionHandler?(result)
+                            }
+                            
+                        case .failure:
+                            if let image = options.onFailureImage {
+                                self.base.image = image
+                            }
                             completionHandler?(result)
-                            return
                         }
-
-                        self.makeTransition(image: value.image, transition: options.transition) {
-                            completionHandler?(result)
-                        }
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.image = image
-                        }
-                        completionHandler?(result)
                     }
                 }
             }

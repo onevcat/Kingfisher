@@ -33,7 +33,11 @@ class ProgressiveJPEGViewController: UIViewController {
     @IBOutlet weak var progressLabel: UILabel!
     
     private var isBlur = true
+    private var isWait = true
+    private var isFastestScan = true
+    
     private let url = URL(string: "https://demo-resources.oss-cn-beijing.aliyuncs.com/progressive.jpg")!
+    private let processor = RoundCornerImageProcessor(cornerRadius: 30)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,10 +49,19 @@ class ProgressiveJPEGViewController: UIViewController {
     private func loadImage() {
         progressLabel.text = "- / -"
         
+        let progressive = ImageProgressive(
+            isBlur: isBlur,
+            isWait: isWait,
+            isFastestScan: isFastestScan,
+            scanInterval: 0.1
+        )
+        
         imageView.kf.setImage(
             with: url,
             placeholder: nil,
-            options: [.loadDiskFileSynchronously, .progressiveJPEG(isBlur)],
+            options: [.loadDiskFileSynchronously,
+                      .progressiveJPEG(progressive),
+                      .processor(processor)],
             progressBlock: { receivedSize, totalSize in
                 print("\(receivedSize)/\(totalSize)")
                 self.progressLabel.text = "\(receivedSize) / \(totalSize)"
@@ -62,18 +75,44 @@ class ProgressiveJPEGViewController: UIViewController {
     
     override func alertPopup(_ sender: Any) -> UIAlertController {
         let alert = super.alertPopup(sender)
-        let title = isBlur ? "Close Blur" : "Enabled Blur"
-        alert.addAction(UIAlertAction(title: title, style: .default) { _ in
-            self.isBlur.toggle()
+        
+        func reloadImage() {
+            // Cancel
+            imageView.kf.cancelDownloadTask()
             // Clean cache
             KingfisherManager.shared.cache.removeImage(
                 forKey: self.url.cacheKey,
+                processorIdentifier: self.processor.identifier,
                 callbackQueue: .mainAsync,
                 completionHandler: {
                     self.loadImage()
                 }
             )
-        })
+        }
+        
+        do {
+            let title = isBlur ? "Close Blur" : "Enabled Blur"
+            alert.addAction(UIAlertAction(title: title, style: .default) { _ in
+                self.isBlur.toggle()
+                reloadImage()
+            })
+        }
+        
+        do {
+            let title = isWait ? "Close Wait" : "Enabled Wait"
+            alert.addAction(UIAlertAction(title: title, style: .default) { _ in
+                self.isWait.toggle()
+                reloadImage()
+            })
+        }
+        
+        do {
+            let title = isFastestScan ? "Close Fastest Scan" : "Enabled Fastest Scan"
+            alert.addAction(UIAlertAction(title: title, style: .default) { _ in
+                self.isFastestScan.toggle()
+                reloadImage()
+            })
+        }
         return alert
     }
 }
