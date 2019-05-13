@@ -86,6 +86,8 @@ extension Data: KingfisherCompatibleValue {}
 extension KingfisherWrapper where Base == Data {
     /// Gets the image format corresponding to the data.
     public var imageFormat: ImageFormat {
+        guard base.count > 8 else { return .unknown }
+        
         var buffer = [UInt8](repeating: 0, count: 8)
         base.copyBytes(to: &buffer, count: 8)
         
