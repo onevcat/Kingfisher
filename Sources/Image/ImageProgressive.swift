@@ -119,7 +119,10 @@ final class ImageProgressiveProvider {
     
     func finished(_ closure: @escaping () -> Void) {
         if queue.count > 0, isWait {
-            queue.notify(closure)
+            queue.notify {
+                guard self.isContinueClosure() else { return }
+                closure()
+            }
             
         } else {
             queue.clean()
