@@ -90,7 +90,7 @@ class ProgressiveJPEGViewController: UIViewController {
         }
         
         do {
-            let title = isBlur ? "Close Blur" : "Enabled Blur"
+            let title = isBlur ? "Disable Blur" : "Enable Blur"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isBlur.toggle()
                 reloadImage()
@@ -98,7 +98,7 @@ class ProgressiveJPEGViewController: UIViewController {
         }
         
         do {
-            let title = isWait ? "Close Wait" : "Enabled Wait"
+            let title = isWait ? "Disable Wait" : "Enable Wait"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isWait.toggle()
                 reloadImage()
@@ -106,7 +106,7 @@ class ProgressiveJPEGViewController: UIViewController {
         }
         
         do {
-            let title = isFastestScan ? "Close Fastest Scan" : "Enabled Fastest Scan"
+            let title = isFastestScan ? "Disable Fastest Scan" : "Enable Fastest Scan"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isFastestScan.toggle()
                 reloadImage()
