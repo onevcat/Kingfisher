@@ -882,11 +882,9 @@
 			};
 			buildConfigurationList = D1ED2D061AD2CFA600CFC3EB /* Build configuration list for PBXProject "Kingfisher" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
-				en,
 				Base,
 			);
 			mainGroup = D1ED2D021AD2CFA600CFC3EB;
