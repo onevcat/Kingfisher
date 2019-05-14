@@ -106,9 +106,9 @@ final class ImageProgressiveProvider {
         }
         
         if isFastest {
-            guard let data = decoder.scanning(data) else { return }
+            guard let result = decoder.scanning(data) else { return }
             
-            add(decode: data)
+            add(decode: result)
             
         } else {
             for data in decoder.scanning(data) {
