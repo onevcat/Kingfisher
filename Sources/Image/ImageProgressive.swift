@@ -72,9 +72,9 @@ final class ImageProgressiveProvider {
     private let queue = ImageProgressiveSerialQueue(.main)
     
     init(_ options: KingfisherParsedOptionsInfo,
-         isContinue: @escaping () -> Bool,
-         isFinished: @escaping () -> Bool,
-         refreshImage: @escaping (Image) -> Void) {
+        isContinue: @escaping () -> Bool,
+        isFinished: @escaping () -> Bool,
+        refreshImage: @escaping (Image) -> Void) {
         self.options = options
         self.refreshClosure = refreshImage
         self.isContinueClosure = isContinue
@@ -84,8 +84,10 @@ final class ImageProgressiveProvider {
     }
     
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
-        let interval = options.progressiveJPEG?.scanInterval ?? 0
-        let isFastest = options.progressiveJPEG?.isFastestScan ?? true
+        guard let option = options.progressiveJPEG else { return }
+        
+        let interval = option.scanInterval
+        let isFastest = option.isFastestScan
         
         func add(decode data: Data) {
             queue.add(minimum: interval) { (completion) in
@@ -106,12 +108,13 @@ final class ImageProgressiveProvider {
         }
         
         if isFastest {
-            guard let result = decoder.scanning(data) else { return }
+            guard let data: Data = decoder.scanning(data) else { return }
             
-            add(decode: result)
+            add(decode: data)
             
         } else {
-            for data in decoder.scanning(data) {
+            let datas: [Data] = decoder.scanning(data)
+            for data in datas {
                 add(decode: data)
             }
         }
@@ -142,7 +145,7 @@ fileprivate final class ImageProgressiveDecoder {
     }
     
     func scanning(_ data: Data) -> [Data] {
-        guard let _ = options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
+        guard data.kf.contains(jpeg: .SOF2) else {
             return []
         }
         guard (scannedIndex + 1) < data.count else {
@@ -178,7 +181,7 @@ fileprivate final class ImageProgressiveDecoder {
     }
     
     func scanning(_ data: Data) -> Data? {
-        guard let _ = options.progressiveJPEG, data.kf.contains(jpeg: .SOF2) else {
+        guard data.kf.contains(jpeg: .SOF2) else {
             return nil
         }
         guard (scannedIndex + 1) < data.count else {
@@ -240,15 +243,16 @@ fileprivate final class ImageProgressiveDecoder {
         let count = scannedCount
         let isBlur = options.progressiveJPEG?.isBlur ?? false
         
-        if isBlur, count < 5 {
+        if isBlur, count < 6 {
             let queue = options.processingQueue ?? sharedProcessingQueue
+            let creating = options.imageCreatingOptions
             queue.execute {
                 // Progressively reduce blur as we load more scans.
-                let radius = max(2, 14 - count * 4)
                 let image = KingfisherWrapper<Image>.image(
                     data: data,
-                    options: self.options.imageCreatingOptions
+                    options: creating
                 )
+                let radius = max(2, 14 - count * 4)
                 let temp = image?.kf.blurred(withRadius: CGFloat(radius))
                 processing(temp?.kf.data(format: .JPEG) ?? data)
             }

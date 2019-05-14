@@ -37,6 +37,7 @@ class ProgressiveJPEGViewController: UIViewController {
     private var isFastestScan = true
     
     private let url = URL(string: "https://demo-resources.oss-cn-beijing.aliyuncs.com/progressive.jpg")!
+//    private let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-9.jpg")!
     private let processor = RoundCornerImageProcessor(cornerRadius: 30)
     
     override func viewDidLoad() {
