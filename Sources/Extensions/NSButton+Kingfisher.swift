@@ -76,9 +76,6 @@ extension KingfisherWrapper where Base: NSButton {
             isContinue: { () -> Bool in
                 issuedIdentifier == self.taskIdentifier
             },
-            isFinished: { () -> Bool in
-                mutatingSelf.imageTask != nil
-            },
             refreshImage: { (image) in
                 self.base.image = image
             }
@@ -90,7 +87,7 @@ extension KingfisherWrapper where Base: NSButton {
             receivedBlock: { latest, received in
                 guard issuedIdentifier == self.taskIdentifier else { return }
                 let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks ?? []
-                progressive.update(data: received, with: callbacks)
+                progressive?.update(data: received, with: callbacks)
             },
             progressBlock: { receivedSize, totalSize in
                 guard issuedIdentifier == self.taskIdentifier else { return }
@@ -98,22 +95,22 @@ extension KingfisherWrapper where Base: NSButton {
             },
             completionHandler: { result in
                 DispatchQueue.main.safeAsync {
-                    guard issuedIdentifier == self.taskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                    func handler() {
+                        guard issuedIdentifier == self.taskIdentifier else {
+                            let reason: KingfisherError.ImageSettingErrorReason
+                            do {
+                                let value = try result.get()
+                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                            } catch {
+                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                            }
+                            let error = KingfisherError.imageSettingError(reason: reason)
+                            completionHandler?(.failure(error))
+                            return
                         }
-                        let error = KingfisherError.imageSettingError(reason: reason)
-                        completionHandler?(.failure(error))
-                        return
-                    }
-
-                    mutatingSelf.imageTask = nil
-
-                    progressive.finished {
+                        
+                        mutatingSelf.imageTask = nil
+                        
                         switch result {
                         case .success(let value):
                             self.base.image = value.image
@@ -125,6 +122,13 @@ extension KingfisherWrapper where Base: NSButton {
                             }
                             completionHandler?(result)
                         }
+                    }
+                    
+                    if let progressive = progressive {
+                        progressive.finished { handler() }
+                        
+                    } else {
+                        handler()
                     }
                 }
             }
@@ -205,9 +209,6 @@ extension KingfisherWrapper where Base: NSButton {
             isContinue: { () -> Bool in
                 issuedIdentifier == self.alternateTaskIdentifier
             },
-            isFinished: { () -> Bool in
-                mutatingSelf.alternateImageTask != nil
-            },
             refreshImage: { (image) in
                 self.base.alternateImage = image
             }
@@ -219,7 +220,7 @@ extension KingfisherWrapper where Base: NSButton {
             receivedBlock: { latest, received in
                 guard issuedIdentifier == self.alternateTaskIdentifier else { return }
                 let callbacks = mutatingSelf.alternateImageTask?.sessionTask.callbacks ?? []
-                progressive.update(data: received, with: callbacks)
+                progressive?.update(data: received, with: callbacks)
             },
             progressBlock: { receivedSize, totalSize in
                 guard issuedIdentifier == self.alternateTaskIdentifier else { return }
@@ -227,22 +228,22 @@ extension KingfisherWrapper where Base: NSButton {
             },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    guard issuedIdentifier == self.alternateTaskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                    func handler() {
+                        guard issuedIdentifier == self.alternateTaskIdentifier else {
+                            let reason: KingfisherError.ImageSettingErrorReason
+                            do {
+                                let value = try result.get()
+                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                            } catch {
+                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                            }
+                            let error = KingfisherError.imageSettingError(reason: reason)
+                            completionHandler?(.failure(error))
+                            return
                         }
-                        let error = KingfisherError.imageSettingError(reason: reason)
-                        completionHandler?(.failure(error))
-                        return
-                    }
-
-                    mutatingSelf.alternateImageTask = nil
-
-                    progressive.finished {
+                        
+                        mutatingSelf.alternateImageTask = nil
+                        
                         switch result {
                         case .success(let value):
                             self.base.alternateImage = value.image
@@ -254,6 +255,13 @@ extension KingfisherWrapper where Base: NSButton {
                             }
                             completionHandler?(result)
                         }
+                    }
+                    
+                    if let progressive = progressive {
+                        progressive.finished { handler() }
+                        
+                    } else {
+                        handler()
                     }
                 }
             }
