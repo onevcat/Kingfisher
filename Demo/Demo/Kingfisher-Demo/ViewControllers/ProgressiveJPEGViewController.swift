@@ -36,8 +36,6 @@ class ProgressiveJPEGViewController: UIViewController {
     private var isWait = true
     private var isFastestScan = true
     
-    private let url = URL(string: "https://demo-resources.oss-cn-beijing.aliyuncs.com/progressive.jpg")!
-//    private let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-9.jpg")!
     private let processor = RoundCornerImageProcessor(cornerRadius: 30)
     
     override func viewDidLoad() {
@@ -58,7 +56,7 @@ class ProgressiveJPEGViewController: UIViewController {
         )
         
         imageView.kf.setImage(
-            with: url,
+            with: ImageLoader.progressiveImageURL,
             placeholder: nil,
             options: [.loadDiskFileSynchronously,
                       .progressiveJPEG(progressive),
@@ -82,7 +80,7 @@ class ProgressiveJPEGViewController: UIViewController {
             imageView.kf.cancelDownloadTask()
             // Clean cache
             KingfisherManager.shared.cache.removeImage(
-                forKey: self.url.cacheKey,
+                forKey: ImageLoader.progressiveImageURL.cacheKey,
                 processorIdentifier: self.processor.identifier,
                 callbackQueue: .mainAsync,
                 completionHandler: {
@@ -92,7 +90,7 @@ class ProgressiveJPEGViewController: UIViewController {
         }
         
         do {
-            let title = isBlur ? "Close Blur" : "Enabled Blur"
+            let title = isBlur ? "Disable Blur" : "Enable Blur"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isBlur.toggle()
                 reloadImage()
@@ -100,7 +98,7 @@ class ProgressiveJPEGViewController: UIViewController {
         }
         
         do {
-            let title = isWait ? "Close Wait" : "Enabled Wait"
+            let title = isWait ? "Disable Wait" : "Enable Wait"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isWait.toggle()
                 reloadImage()
@@ -108,7 +106,7 @@ class ProgressiveJPEGViewController: UIViewController {
         }
         
         do {
-            let title = isFastestScan ? "Close Fastest Scan" : "Enabled Fastest Scan"
+            let title = isFastestScan ? "Disable Fastest Scan" : "Enable Fastest Scan"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isFastestScan.toggle()
                 reloadImage()

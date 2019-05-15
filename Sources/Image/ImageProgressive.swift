@@ -60,8 +60,20 @@ public struct ImageProgressive {
     }
 }
 
-final class ImageProgressiveProvider {
-    
+protocol ImageSettable: AnyObject {
+    var image: Image? { get set }
+}
+
+final class ImageProgressiveProvider: DataReceivingSideEffect {
+
+    weak var imageSettable: ImageSettable?
+
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+        update(data: task.mutableData, with: task.callbacks)
+    }
+
+    var onShouldApply: () -> Bool = { return true }
+
     private let options: KingfisherParsedOptionsInfo
     private let refreshClosure: (Image) -> Void
     private let isContinueClosure: () -> Bool
@@ -91,31 +103,27 @@ final class ImageProgressiveProvider {
         let isFastest = option.isFastestScan
         
         func add(decode data: Data) {
-            queue.add(minimum: interval) { (completion) in
+            queue.add(minimum: interval) { completion in
                 guard self.isContinueClosure() else {
                     completion()
                     return
                 }
-                
-                self.decoder.decode(data, with: callbacks) { (image) in
+                self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
-                    guard self.isContinueClosure() else { return }
-                    guard self.isWait || !self.isFinished else { return }
+                    // guard self.isContinueClosure() else { return }
+                    // guard self.isWait || !self.isFinishedClosure() else { return }
                     guard let image = image else { return }
-                    
-                    self.refreshClosure(image)
+                    self.imageSettable?.image = image
                 }
             }
         }
         
         if isFastest {
-            guard let data: Data = decoder.scanning(data) else { return }
-            
+            guard let data = decoder.scanning(data) else { return }
             add(decode: data)
-            
         } else {
-            let datas: [Data] = decoder.scanning(data)
-            for data in datas {
+            let allData: [Data] = decoder.scanning(data)
+            for data in allData {
                 add(decode: data)
             }
         }
@@ -138,10 +146,10 @@ final class ImageProgressiveProvider {
     }
 }
 
-fileprivate final class ImageProgressiveDecoder {
+private final class ImageProgressiveDecoder {
     
     private let options: KingfisherParsedOptionsInfo
-    private(set) var scannedCount: Int = 0
+    private(set) var scannedCount = 0
     private var scannedIndex = -1
     
     init(_ options: KingfisherParsedOptionsInfo) {
@@ -152,7 +160,7 @@ fileprivate final class ImageProgressiveDecoder {
         guard data.kf.contains(jpeg: .SOF2) else {
             return []
         }
-        guard (scannedIndex + 1) < data.count else {
+        guard scannedIndex + 1 < data.count else {
             return []
         }
         
@@ -160,7 +168,7 @@ fileprivate final class ImageProgressiveDecoder {
         var index = scannedIndex + 1
         var count = scannedCount
         
-        while index < (data.count - 1) {
+        while index < data.count - 1 {
             scannedIndex = index
             // 0xFF, 0xDA - Start Of Scan
             let SOS = ImageFormat.JPEGMarker.SOS.bytes
@@ -188,7 +196,7 @@ fileprivate final class ImageProgressiveDecoder {
         guard data.kf.contains(jpeg: .SOF2) else {
             return nil
         }
-        guard (scannedIndex + 1) < data.count else {
+        guard scannedIndex + 1 < data.count else {
             return nil
         }
         
@@ -196,7 +204,7 @@ fileprivate final class ImageProgressiveDecoder {
         var count = scannedCount
         var lastSOSIndex = 0
         
-        while index < (data.count - 1) {
+        while index < data.count - 1 {
             scannedIndex = index
             // 0xFF, 0xDA - Start Of Scan
             let SOS = ImageFormat.JPEGMarker.SOS.bytes
@@ -267,7 +275,7 @@ fileprivate final class ImageProgressiveDecoder {
     }
 }
 
-fileprivate final class ImageProgressiveSerialQueue {
+private final class ImageProgressiveSerialQueue {
     typealias ClosureCallback = ((@escaping () -> Void)) -> Void
     
     private let queue: DispatchQueue
