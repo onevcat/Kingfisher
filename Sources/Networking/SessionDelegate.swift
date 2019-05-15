@@ -175,11 +175,10 @@ extension SessionDelegate: URLSessionDataDelegate {
                 }
             }
         }
-        
-        let received = task.mutableData
-        DispatchQueue.main.async {
-            task.callbacks.forEach { callback in
-                callback.onReceived?.call((data, received))
+
+        task.callbacks.forEach { callback in
+            callback.options.onDataReceived?.forEach { sideEffect in
+                sideEffect.onDataReceived(session, task: task, data: data)
             }
         }
     }
