@@ -25,6 +25,7 @@
 //  THE SOFTWARE.
 
 import XCTest
+@testable import Kingfisher
 
 class DataReceivingSideEffectTests: XCTestCase {
 
@@ -36,9 +37,20 @@ class DataReceivingSideEffectTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testDataReceivingSideEffectBlockCanBeCalled() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let receiver = DataReceivingStub()
+
+        let options: KingfisherOptionsInfo = [.onDataReceived([receiver])]
+        KingfisherManager.shared.retrieveImage(with: url, options: options) {
+            result in
+            XCTAssertTrue(receiver.called)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testPerformanceExample() {
@@ -48,4 +60,11 @@ class DataReceivingSideEffectTests: XCTestCase {
         }
     }
 
+}
+
+class DataReceivingStub: DataReceivingSideEffect {
+    var called: Bool = false
+    func onDataReceived(_ latest: Data, allData: Data) {
+        called = true
+    }
 }
