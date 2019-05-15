@@ -118,13 +118,10 @@ extension KingfisherWrapper where Base: ImageView {
                 isContinue: { () -> Bool in
                     issuedIdentifier == self.taskIdentifier
                 },
-                isFinished: { () -> Bool in
-                    mutatingSelf.imageTask != nil
-                },
                 refreshImage: { (image) in
                     //self.base.image = image
                 }
-            )
+            )!
 
             p.imageSettable = base
 
@@ -140,25 +137,20 @@ extension KingfisherWrapper where Base: ImageView {
             options: options,
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    func handler() {
-                        maybeIndicator?.stopAnimatingView()
-                        guard issuedIdentifier == self.taskIdentifier else {
-                            let reason: KingfisherError.ImageSettingErrorReason
-                            do {
-                                let value = try result.get()
-                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                            } catch {
-                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
-                            }
-                            let error = KingfisherError.imageSettingError(reason: reason)
-                            completionHandler?(.failure(error))
-                            return
+                    maybeIndicator?.stopAnimatingView()
+                    guard issuedIdentifier == self.taskIdentifier else {
+                        let reason: KingfisherError.ImageSettingErrorReason
+                        do {
+                            let value = try result.get()
+                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                        } catch {
+                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
                         }
                         let error = KingfisherError.imageSettingError(reason: reason)
                         completionHandler?(.failure(error))
                         return
                     }
-                    
+
                     mutatingSelf.imageTask = nil
 
                     switch result {
@@ -173,19 +165,11 @@ extension KingfisherWrapper where Base: ImageView {
                         self.makeTransition(image: value.image, transition: options.transition) {
                             completionHandler?(result)
                         }
-
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
                         }
                         completionHandler?(result)
-                    }
-                    
-                    if let progressive = progressive {
-                        progressive.finished { handler() }
-                        
-                    } else {
-                        handler()
                     }
                 }
             }
