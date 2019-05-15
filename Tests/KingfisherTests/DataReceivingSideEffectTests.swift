@@ -53,18 +53,43 @@ class DataReceivingSideEffectTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+    func testDataReceivingSideEffectBlockCanBeCalledButNotApply() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
 
+        let receiver = DataReceivingNotAppyStub()
+
+        let options: KingfisherOptionsInfo = [.onDataReceived([receiver])]
+        KingfisherManager.shared.retrieveImage(with: url, options: options) {
+            result in
+            XCTAssertTrue(receiver.called)
+            XCTAssertFalse(receiver.appied)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 class DataReceivingStub: DataReceivingSideEffect {
     var called: Bool = false
-    func onDataReceived(_ latest: Data, allData: Data) {
+    var onShouldApply: () -> Bool = { return true }
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         called = true
+    }
+}
+
+class DataReceivingNotAppyStub: DataReceivingSideEffect {
+
+    var called: Bool = false
+    var appied: Bool = false
+
+    var onShouldApply: () -> Bool = { return false }
+
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+        called = true
+        if onShouldApply() {
+            appied = true
+        }
     }
 }

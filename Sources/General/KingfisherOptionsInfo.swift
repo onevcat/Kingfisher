@@ -220,11 +220,6 @@ public enum KingfisherOptionsInfoItem {
     case onDataReceived([DataReceivingSideEffect])
 }
 
-
-public protocol DataReceivingSideEffect {
-    func onDataReceived(_ latest: Data, allData: Data)
-}
-
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
 // So we can prevent the iterating over the options array again and again.
 /// The parsed options info used across Kingfisher methods. Each property in this type corresponds a case member
@@ -317,5 +312,38 @@ extension KingfisherParsedOptionsInfo {
             duration: 0.0,
             preloadAll: preloadAllAnimationData,
             onlyFirstFrame: onlyLoadFirstFrame)
+    }
+}
+
+public protocol DataReceivingSideEffect: AnyObject {
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
+    var onShouldApply: () -> Bool { get set }
+}
+
+class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
+
+    var onShouldApply: () -> Bool = { return true }
+
+
+    let block: DownloadProgressBlock
+
+    init(_ block: @escaping DownloadProgressBlock) {
+        self.block = block
+    }
+
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+
+        guard onShouldApply() else { return }
+
+        guard let expectedContentLength = task.task.response?.expectedContentLength,
+                  expectedContentLength != -1 else
+        {
+            return
+        }
+
+        let dataLength = Int64(task.mutableData.count)
+        DispatchQueue.main.async {
+            self.block(dataLength, expectedContentLength)
+        }
     }
 }
