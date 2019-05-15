@@ -76,9 +76,6 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             isContinue: { () -> Bool in
                 issuedTaskIdentifier == self.taskIdentifier
             },
-            isFinished: { () -> Bool in
-                mutatingSelf.imageTask != nil
-            },
             refreshImage: { (image) in
                 self.base.setImage(image)
             }
@@ -90,7 +87,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             receivedBlock: { latest, received in
                 guard issuedTaskIdentifier == self.taskIdentifier else { return }
                 let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks ?? []
-                progressive.update(data: received, with: callbacks)
+                progressive?.update(data: received, with: callbacks)
             },
             progressBlock: { receivedSize, totalSize in
                 guard issuedTaskIdentifier == self.taskIdentifier else { return }
@@ -98,22 +95,22 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    guard issuedTaskIdentifier == self.taskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                    func handler() {
+                        guard issuedTaskIdentifier == self.taskIdentifier else {
+                            let reason: KingfisherError.ImageSettingErrorReason
+                            do {
+                                let value = try result.get()
+                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                            } catch {
+                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                            }
+                            let error = KingfisherError.imageSettingError(reason: reason)
+                            completionHandler?(.failure(error))
+                            return
                         }
-                        let error = KingfisherError.imageSettingError(reason: reason)
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    
-                    mutatingSelf.imageTask = nil
-                    
-                    progressive.finished {
+                        
+                        mutatingSelf.imageTask = nil
+                        
                         switch result {
                         case .success(let value):
                             self.base.setImage(value.image)
@@ -125,6 +122,13 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
                             }
                             completionHandler?(result)
                         }
+                    }
+                    
+                    if let progressive = progressive {
+                        progressive.finished { handler() }
+                        
+                    } else {
+                        handler()
                     }
                 }
             }
