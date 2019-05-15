@@ -65,20 +65,21 @@ final class ImageProgressiveProvider {
     private let options: KingfisherParsedOptionsInfo
     private let refreshClosure: (Image) -> Void
     private let isContinueClosure: () -> Bool
-    private let isFinishedClosure: () -> Bool
     private let isWait: Bool
     
     private let decoder: ImageProgressiveDecoder
     private let queue = ImageProgressiveSerialQueue(.main)
     
-    init(_ options: KingfisherParsedOptionsInfo,
+    private var isFinished = false
+    
+    init?(_ options: KingfisherParsedOptionsInfo,
         isContinue: @escaping () -> Bool,
-        isFinished: @escaping () -> Bool,
         refreshImage: @escaping (Image) -> Void) {
+        guard options.progressiveJPEG != nil else { return nil }
+        
         self.options = options
         self.refreshClosure = refreshImage
         self.isContinueClosure = isContinue
-        self.isFinishedClosure = isFinished
         self.decoder = ImageProgressiveDecoder(options)
         self.isWait = options.progressiveJPEG?.isWait ?? false
     }
@@ -99,7 +100,7 @@ final class ImageProgressiveProvider {
                 self.decoder.decode(data, with: callbacks) { (image) in
                     defer { completion() }
                     guard self.isContinueClosure() else { return }
-                    guard self.isWait || !self.isFinishedClosure() else { return }
+                    guard self.isWait || !self.isFinished else { return }
                     guard let image = image else { return }
                     
                     self.refreshClosure(image)
@@ -121,6 +122,9 @@ final class ImageProgressiveProvider {
     }
     
     func finished(_ closure: @escaping () -> Void) {
+        
+        isFinished = true
+        
         if queue.count > 0, isWait {
             queue.notify {
                 guard self.isContinueClosure() else { return }
@@ -269,6 +273,7 @@ fileprivate final class ImageProgressiveSerialQueue {
     private let queue: DispatchQueue
     private var items: [DispatchWorkItem] = []
     private var notify: (() -> Void)?
+    private var lastTime: TimeInterval?
     var count: Int { return items.count }
     
     init(_ queue: DispatchQueue) {
@@ -289,6 +294,7 @@ fileprivate final class ImageProgressiveSerialQueue {
                     )
                     
                 } else {
+                    self.lastTime = Date().timeIntervalSince1970
                     self.notify?()
                     self.notify = nil
                 }
@@ -298,7 +304,9 @@ fileprivate final class ImageProgressiveSerialQueue {
             closure(completion)
         }
         if items.isEmpty {
-            queue.asyncAfter(deadline: .now(), execute: item)
+            let difference = Date().timeIntervalSince1970 - (lastTime ?? 0)
+            let delay = difference > interval ? 0 : interval - difference
+            queue.asyncAfter(deadline: .now() + delay, execute: item)
         }
         items.append(item)
     }
