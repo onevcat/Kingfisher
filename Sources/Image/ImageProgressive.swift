@@ -305,7 +305,7 @@ fileprivate final class ImageProgressiveSerialQueue {
         }
         if items.isEmpty {
             let difference = Date().timeIntervalSince1970 - (lastTime ?? 0)
-            let delay = difference > interval ? 0 : interval - difference
+            let delay = difference < interval ? interval - difference : 0
             queue.asyncAfter(deadline: .now() + delay, execute: item)
         }
         items.append(item)
