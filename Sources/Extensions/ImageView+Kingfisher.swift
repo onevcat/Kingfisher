@@ -140,14 +140,19 @@ extension KingfisherWrapper where Base: ImageView {
             options: options,
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    maybeIndicator?.stopAnimatingView()
-                    guard issuedIdentifier == self.taskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                    func handler() {
+                        maybeIndicator?.stopAnimatingView()
+                        guard issuedIdentifier == self.taskIdentifier else {
+                            let reason: KingfisherError.ImageSettingErrorReason
+                            do {
+                                let value = try result.get()
+                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                            } catch {
+                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                            }
+                            let error = KingfisherError.imageSettingError(reason: reason)
+                            completionHandler?(.failure(error))
+                            return
                         }
                         let error = KingfisherError.imageSettingError(reason: reason)
                         completionHandler?(.failure(error))
@@ -174,6 +179,13 @@ extension KingfisherWrapper where Base: ImageView {
                             self.base.image = image
                         }
                         completionHandler?(result)
+                    }
+                    
+                    if let progressive = progressive {
+                        progressive.finished { handler() }
+                        
+                    } else {
+                        handler()
                     }
                 }
             }
