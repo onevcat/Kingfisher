@@ -60,8 +60,20 @@ public struct ImageProgressive {
     }
 }
 
-final class ImageProgressiveProvider {
-    
+protocol ImageSettable: AnyObject {
+    var image: Image? { get set }
+}
+
+final class ImageProgressiveProvider: DataReceivingSideEffect {
+
+    weak var imageSettable: ImageSettable?
+
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+        update(data: task.mutableData, with: task.callbacks)
+    }
+
+    var onShouldApply: () -> Bool = { return true }
+
     private let options: KingfisherParsedOptionsInfo
     private let refreshClosure: (Image) -> Void
     private let isContinueClosure: () -> Bool
@@ -95,14 +107,12 @@ final class ImageProgressiveProvider {
                     completion()
                     return
                 }
-                
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
-                    guard self.isContinueClosure() else { return }
-                    guard self.isWait || !self.isFinishedClosure() else { return }
+                    // guard self.isContinueClosure() else { return }
+                    // guard self.isWait || !self.isFinishedClosure() else { return }
                     guard let image = image else { return }
-                    
-                    self.refreshClosure(image)
+                    self.imageSettable?.image = image
                 }
             }
         }

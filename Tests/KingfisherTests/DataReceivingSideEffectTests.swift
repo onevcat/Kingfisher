@@ -29,18 +29,40 @@ import XCTest
 
 class DataReceivingSideEffectTests: XCTestCase {
 
+    var manager: KingfisherManager!
+
+    override class func setUp() {
+        super.setUp()
+        LSNocilla.sharedInstance().start()
+    }
+
+    override class func tearDown() {
+        LSNocilla.sharedInstance().stop()
+        super.tearDown()
+    }
+
     override func setUp() {
+        super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        let uuid = UUID()
+        let downloader = ImageDownloader(name: "test.manager.\(uuid.uuidString)")
+        let cache = ImageCache(name: "test.cache.\(uuid.uuidString)")
+
+        manager = KingfisherManager(downloader: downloader, cache: cache)
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        LSNocilla.sharedInstance().clearStubs()
+        clearCaches([manager.cache])
+        cleanDefaultCache()
+        manager = nil
+        super.tearDown()
     }
 
     func testDataReceivingSideEffectBlockCanBeCalled() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        stub(url, data: testImageData, length: 123)
 
         let receiver = DataReceivingStub()
 
@@ -56,7 +78,7 @@ class DataReceivingSideEffectTests: XCTestCase {
     func testDataReceivingSideEffectBlockCanBeCalledButNotApply() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        stub(url, data: testImageData, length: 123)
 
         let receiver = DataReceivingNotAppyStub()
 
@@ -75,7 +97,7 @@ class DataReceivingStub: DataReceivingSideEffect {
     var called: Bool = false
     var onShouldApply: () -> Bool = { return true }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
-        called = true
+        self.called = true
     }
 }
 

@@ -31,6 +31,8 @@ import AppKit
 import UIKit
 #endif
 
+extension ImageView: ImageSettable {}
+
 extension KingfisherWrapper where Base: ImageView {
 
     // MARK: Setting Image
@@ -105,6 +107,30 @@ extension KingfisherWrapper where Base: ImageView {
             options.preloadAllAnimationData = true
         }
 
+        if let progressBlock = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(progressBlock)]
+        }
+
+        if let progressive = options.progressiveJPEG {
+
+            let p = ImageProgressiveProvider(
+                options,
+                isContinue: { () -> Bool in
+                    issuedIdentifier == self.taskIdentifier
+                },
+                isFinished: { () -> Bool in
+                    mutatingSelf.imageTask != nil
+                },
+                refreshImage: { (image) in
+                    //self.base.image = image
+                }
+            )
+
+            p.imageSettable = base
+
+            options.onDataReceived = (options.onDataReceived ?? []) + [p]
+        }
+
         options.onDataReceived?.forEach {
             $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
         }
@@ -112,10 +138,6 @@ extension KingfisherWrapper where Base: ImageView {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard issuedIdentifier == self.taskIdentifier else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     maybeIndicator?.stopAnimatingView()
