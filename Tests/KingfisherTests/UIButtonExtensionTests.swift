@@ -78,7 +78,7 @@ class UIButtonExtensionTests: XCTestCase {
             XCTAssertTrue(image!.renderEqual(to: testImage))
             XCTAssertTrue(self.button.image(for: .normal)!.renderEqual(to: testImage))
             
-            XCTAssertEqual(self.button.kf.taskIdentifier(for: .normal), Source.Identifier.current)
+            //XCTAssertEqual(self.button.kf.taskIdentifier(for: .normal), Source.Identifier.current)
             XCTAssertEqual(result.value!.cacheType, .none)
             
             exp.fulfill()
