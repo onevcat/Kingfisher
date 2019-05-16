@@ -213,6 +213,11 @@ public enum KingfisherOptionsInfoItem {
     /// to let the image be processed in main queue to prevent a possible flickering (but with a possibility of
     /// blocking the UI, especially if the processor needs a lot of time to run).
     case processingQueue(CallbackQueue)
+    
+    /// Enable progressive image loading, Kingfisher will use the `ImageProgressive` of
+    case progressiveJPEG(ImageProgressive)
+
+    case onDataReceived([DataReceivingSideEffect])
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -251,7 +256,10 @@ public struct KingfisherParsedOptionsInfo {
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var diskCacheExpiration: StorageExpiration? = nil
     public var processingQueue: CallbackQueue? = nil
+    public var progressiveJPEG: ImageProgressive? = nil
 
+    public var onDataReceived: [DataReceivingSideEffect]? = nil
+    
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
         for option in info {
@@ -286,6 +294,8 @@ public struct KingfisherParsedOptionsInfo {
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
             case .processingQueue(let queue): processingQueue = queue
+            case .progressiveJPEG(let value): progressiveJPEG = value
+            case .onDataReceived(let value): onDataReceived = value
             }
         }
 
@@ -302,5 +312,35 @@ extension KingfisherParsedOptionsInfo {
             duration: 0.0,
             preloadAll: preloadAllAnimationData,
             onlyFirstFrame: onlyLoadFirstFrame)
+    }
+}
+
+public protocol DataReceivingSideEffect: AnyObject {
+    var onShouldApply: () -> Bool { get set }
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
+}
+
+class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
+
+    var onShouldApply: () -> Bool = { return true }
+    
+    let block: DownloadProgressBlock
+
+    init(_ block: @escaping DownloadProgressBlock) {
+        self.block = block
+    }
+
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+        guard onShouldApply() else { return }
+        guard
+            let expectedContentLength = task.task.response?.expectedContentLength,
+            expectedContentLength != -1 else {
+            return
+        }
+
+        let dataLength = Int64(task.mutableData.count)
+        DispatchQueue.main.async {
+            self.block(dataLength, expectedContentLength)
+        }
     }
 }
