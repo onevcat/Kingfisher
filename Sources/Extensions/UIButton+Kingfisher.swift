@@ -317,27 +317,22 @@ private var imageTaskKey: Void?
 // MARK: Properties
 extension KingfisherWrapper where Base: UIButton {
 
+    private typealias TaskIdentifier = Box<[UInt: Source.Identifier.Value]>
+    
     public func taskIdentifier(for state: UIControl.State) -> Source.Identifier.Value? {
-        return (taskIdentifierInfo[NSNumber(value:state.rawValue)] as? Box<Source.Identifier.Value>)?.value
+        return taskIdentifierInfo.value[state.rawValue]
     }
 
     private func setTaskIdentifier(_ identifier: Source.Identifier.Value?, for state: UIControl.State) {
-        taskIdentifierInfo[NSNumber(value:state.rawValue)] = identifier.map { Box($0) }
+        taskIdentifierInfo.value[state.rawValue] = identifier
     }
     
-    private var taskIdentifierInfo: NSMutableDictionary {
-        get {
-            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &taskIdentifierKey) else {
-                let dic = NSMutableDictionary()
-                var mutatingSelf = self
-                mutatingSelf.taskIdentifierInfo = dic
-                return dic
-            }
-            return dictionary
-        }
-        set {
-            setRetainedAssociatedObject(base, &taskIdentifierKey, newValue)
-        }
+    private var taskIdentifierInfo: TaskIdentifier {
+        return  getAssociatedObject(base, &taskIdentifierKey) ?? {
+            let value = TaskIdentifier([:])
+            setRetainedAssociatedObject(base, &taskIdentifierKey, value)
+            return value
+        }()
     }
     
     private var imageTask: DownloadTask? {
@@ -352,28 +347,21 @@ private var backgroundImageTaskKey: Void?
 
 // MARK: Background Properties
 extension KingfisherWrapper where Base: UIButton {
-
+    
     public func backgroundTaskIdentifier(for state: UIControl.State) -> Source.Identifier.Value? {
-        return (backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] as? Box<Source.Identifier.Value>)?.value
+        return backgroundTaskIdentifierInfo.value[state.rawValue]
     }
     
     private func setBackgroundTaskIdentifier(_ identifier: Source.Identifier.Value?, for state: UIControl.State) {
-        backgroundTaskIdentifierInfo[NSNumber(value:state.rawValue)] = identifier.map { Box($0) }
+        backgroundTaskIdentifierInfo.value[state.rawValue] = identifier
     }
     
-    private var backgroundTaskIdentifierInfo: NSMutableDictionary {
-        get {
-            guard let dictionary: NSMutableDictionary = getAssociatedObject(base, &backgroundTaskIdentifierKey) else {
-                let dic = NSMutableDictionary()
-                var mutatingSelf = self
-                mutatingSelf.backgroundTaskIdentifierInfo = dic
-                return dic
-            }
-            return dictionary
-        }
-        set {
-            setRetainedAssociatedObject(base, &backgroundTaskIdentifierKey, newValue)
-        }
+    private var backgroundTaskIdentifierInfo: TaskIdentifier {
+        return  getAssociatedObject(base, &backgroundTaskIdentifierKey) ?? {
+            let value = TaskIdentifier([:])
+            setRetainedAssociatedObject(base, &backgroundTaskIdentifierKey, value)
+            return value
+        }()
     }
     
     private var backgroundImageTask: DownloadTask? {
