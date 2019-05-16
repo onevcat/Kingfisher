@@ -216,8 +216,6 @@ public enum KingfisherOptionsInfoItem {
     
     /// Enable progressive image loading, Kingfisher will use the `ImageProgressive` of
     case progressiveJPEG(ImageProgressive)
-
-    case onDataReceived([DataReceivingSideEffect])
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -258,7 +256,7 @@ public struct KingfisherParsedOptionsInfo {
     public var processingQueue: CallbackQueue? = nil
     public var progressiveJPEG: ImageProgressive? = nil
 
-    public var onDataReceived: [DataReceivingSideEffect]? = nil
+    var onDataReceived: [DataReceivingSideEffect]? = nil
     
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
@@ -295,7 +293,6 @@ public struct KingfisherParsedOptionsInfo {
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
             case .processingQueue(let queue): processingQueue = queue
             case .progressiveJPEG(let value): progressiveJPEG = value
-            case .onDataReceived(let value): onDataReceived = value
             }
         }
 
@@ -315,7 +312,7 @@ extension KingfisherParsedOptionsInfo {
     }
 }
 
-public protocol DataReceivingSideEffect: AnyObject {
+protocol DataReceivingSideEffect: AnyObject {
     var onShouldApply: () -> Bool { get set }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
 }
