@@ -197,8 +197,6 @@ open class ImageDownloader {
     func downloadImage(
         with url: URL,
         options: KingfisherParsedOptionsInfo,
-        receivedBlock: DownloadReceivedBlock? = nil,
-        progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         // Creates default request.
@@ -225,26 +223,7 @@ open class ImageDownloader {
             return nil
         }
 
-        // Wraps `progressBlock` and `completionHandler` to `onProgress` and `onCompleted` respectively.
-        let onReceived = receivedBlock.map {
-            block -> Delegate<(Data, Data), Void> in
-            let delegate = Delegate<(Data, Data), Void>()
-            delegate.delegate(on: self) { (_, callback) in
-                let (latest, received) = callback
-                block(latest, received)
-            }
-            return delegate
-        }
-
-        let onProgress = progressBlock.map {
-            block -> Delegate<(Int64, Int64), Void> in
-            let delegate = Delegate<(Int64, Int64), Void>()
-            delegate.delegate(on: self) { (_, callback) in
-                let (downloaded, total) = callback
-                block(downloaded, total)
-            }
-            return delegate
-        }
+        // Wraps `completionHandler` to `onCompleted` respectively.
 
         let onCompleted = completionHandler.map {
             block -> Delegate<Result<ImageLoadingResult, KingfisherError>, Void> in
@@ -255,10 +234,8 @@ open class ImageDownloader {
             return delegate
         }
 
-        // SessionDataTask.TaskCallback is a wrapper for `onProgress`, `onCompleted` and `options` (for processor info)
+        // SessionDataTask.TaskCallback is a wrapper for `onCompleted` and `options` (for processor info)
         let callback = SessionDataTask.TaskCallback(
-            onReceived: onReceived,
-            onProgress: onProgress,
             onCompleted: onCompleted,
             options: options
         )
@@ -352,10 +329,13 @@ open class ImageDownloader {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        var info = KingfisherParsedOptionsInfo(options)
+        if let block = progressBlock {
+            info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
         return downloadImage(
             with: url,
-            options: KingfisherParsedOptionsInfo(options),
-            progressBlock: progressBlock,
+            options: info,
             completionHandler: completionHandler)
     }
 }

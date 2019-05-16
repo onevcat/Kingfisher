@@ -33,7 +33,6 @@ class ProgressiveJPEGViewController: UIViewController {
     @IBOutlet weak var progressLabel: UILabel!
     
     private var isBlur = true
-    private var isWait = true
     private var isFastestScan = true
     
     private let processor = RoundCornerImageProcessor(cornerRadius: 30)
@@ -50,7 +49,6 @@ class ProgressiveJPEGViewController: UIViewController {
         
         let progressive = ImageProgressive(
             isBlur: isBlur,
-            isWait: isWait,
             isFastestScan: isFastestScan,
             scanInterval: 0.1
         )
@@ -93,14 +91,6 @@ class ProgressiveJPEGViewController: UIViewController {
             let title = isBlur ? "Disable Blur" : "Enable Blur"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
                 self.isBlur.toggle()
-                reloadImage()
-            })
-        }
-        
-        do {
-            let title = isWait ? "Disable Wait" : "Enable Wait"
-            alert.addAction(UIAlertAction(title: title, style: .default) { _ in
-                self.isWait.toggle()
                 reloadImage()
             })
         }

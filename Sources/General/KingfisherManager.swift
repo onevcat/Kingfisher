@@ -27,8 +27,6 @@
 
 import Foundation
 
-public typealias DownloadReceivedBlock = ((_ latestData: Data, _ receivedData: Data) -> Void)
-
 /// The downloading progress block type.
 /// The parameter value is the `receivedSize` of current response.
 /// The second parameter is the total expected data length from response's "Content-Length" header.
@@ -153,26 +151,25 @@ public class KingfisherManager {
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = currentDefaultOptions + (options ?? .empty)
+        var info = KingfisherParsedOptionsInfo(options)
+        if let block = progressBlock {
+            info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
         return retrieveImage(
             with: source,
-            options: KingfisherParsedOptionsInfo(options),
-            progressBlock: progressBlock,
+            options: info,
             completionHandler: completionHandler)
     }
     
     func retrieveImage(
         with source: Source,
         options: KingfisherParsedOptionsInfo,
-        receivedBlock: DownloadReceivedBlock? = nil,
-        progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         if options.forceRefresh {
             return loadAndCacheImage(
                 source: source,
                 options: options,
-                receivedBlock: receivedBlock,
-                progressBlock: progressBlock,
                 completionHandler: completionHandler)?.value
             
         } else {
@@ -194,8 +191,6 @@ public class KingfisherManager {
             return loadAndCacheImage(
                 source: source,
                 options: options,
-                receivedBlock: receivedBlock,
-                progressBlock: progressBlock,
                 completionHandler: completionHandler)?.value
         }
     }
@@ -241,8 +236,6 @@ public class KingfisherManager {
     func loadAndCacheImage(
         source: Source,
         options: KingfisherParsedOptionsInfo,
-        receivedBlock: DownloadReceivedBlock? = nil,
-        progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
     {
         func cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>)
@@ -281,6 +274,7 @@ public class KingfisherManager {
                     let result = RetrieveImageResult(image: value.image, cacheType: .none, source: source)
                     completionHandler?(.success(result))
                 }
+                
             case .failure(let error):
                 completionHandler?(.failure(error))
             }
@@ -292,13 +286,11 @@ public class KingfisherManager {
             guard let task = downloader.downloadImage(
                 with: resource.downloadURL,
                 options: options,
-                receivedBlock: receivedBlock,
-                progressBlock: progressBlock,
-                completionHandler: cacheImage) else
-            {
+                completionHandler: cacheImage) else {
                 return nil
             }
             return .download(task)
+            
         case .provider(let provider):
             provideImage(provider: provider, options: options, completionHandler: cacheImage)
             return .dataProviding
@@ -429,6 +421,5 @@ public class KingfisherManager {
         }
 
         return false
-
     }
 }

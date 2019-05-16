@@ -31,8 +31,6 @@ import AppKit
 import UIKit
 #endif
 
-extension ImageView: ImageSettable {}
-
 extension KingfisherWrapper where Base: ImageView {
 
     // MARK: Setting Image
@@ -107,27 +105,16 @@ extension KingfisherWrapper where Base: ImageView {
             options.preloadAllAnimationData = true
         }
 
-        if let progressBlock = progressBlock {
-            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(progressBlock)]
+        if let block = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
 
-        if let progressive = options.progressiveJPEG {
-
-            let p = ImageProgressiveProvider(
-                options,
-                isContinue: { () -> Bool in
-                    issuedIdentifier == self.taskIdentifier
-                },
-                refreshImage: { (image) in
-                    //self.base.image = image
-                }
-            )!
-
-            p.imageSettable = base
-
-            options.onDataReceived = (options.onDataReceived ?? []) + [p]
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            self.base.image = image
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
         }
-
+        
         options.onDataReceived?.forEach {
             $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
         }
@@ -150,9 +137,10 @@ extension KingfisherWrapper where Base: ImageView {
                         completionHandler?(.failure(error))
                         return
                     }
-
+                    
                     mutatingSelf.imageTask = nil
-
+                    mutatingSelf.taskIdentifier = nil
+                    
                     switch result {
                     case .success(let value):
                         guard self.needsTransition(options: options, cacheType: value.cacheType) else {
@@ -161,10 +149,11 @@ extension KingfisherWrapper where Base: ImageView {
                             completionHandler?(result)
                             return
                         }
-
+                        
                         self.makeTransition(image: value.image, transition: options.transition) {
                             completionHandler?(result)
                         }
+                        
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
