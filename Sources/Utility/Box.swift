@@ -26,7 +26,7 @@
 import Foundation
 
 class Box<T> {
-    let value: T
+    var value: T
     
     init(_ value: T) {
         self.value = value

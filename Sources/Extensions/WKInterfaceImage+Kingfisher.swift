@@ -63,23 +63,34 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             return nil
         }
         
-        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         if !options.keepCurrentImageWhileLoading {
             base.setImage(placeholder)
         }
         
-        let issuedTaskIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedTaskIdentifier
+        let issuedIdentifier = Source.Identifier.next()
+        mutatingSelf.taskIdentifier = issuedIdentifier
+        
+        if let block = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+        
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            self.base.setImage(image)
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
+        }
+        
+        options.onDataReceived?.forEach {
+            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
+        }
+        
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            progressBlock: { receivedSize, totalSize in
-                guard issuedTaskIdentifier == self.taskIdentifier else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    guard issuedTaskIdentifier == self.taskIdentifier else {
+                    guard issuedIdentifier == self.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -93,11 +104,13 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
                     }
                     
                     mutatingSelf.imageTask = nil
+                    mutatingSelf.taskIdentifier = nil
                     
                     switch result {
                     case .success(let value):
                         self.base.setImage(value.image)
                         completionHandler?(result)
+                        
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.setImage(image)
@@ -105,7 +118,8 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
                         completionHandler?(result)
                     }
                 }
-        })
+            }
+        )
         
         mutatingSelf.imageTask = task
         return task
