@@ -62,73 +62,60 @@ extension KingfisherWrapper where Base: UIButton {
             return nil
         }
         
-        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         if !options.keepCurrentImageWhileLoading {
             base.setImage(placeholder, for: state)
         }
         
         var mutatingSelf = self
-        let issuedTaskIdentifier = Source.Identifier.next()
-        setTaskIdentifier(issuedTaskIdentifier, for: state)
+        let issuedIdentifier = Source.Identifier.next()
+        setTaskIdentifier(issuedIdentifier, for: state)
         
-        let progressive = ImageProgressiveProvider(
-            options,
-            isContinue: { () -> Bool in
-                issuedTaskIdentifier == self.taskIdentifier(for: state)
-            },
-            refreshImage: { (image) in
-                self.base.setImage(image, for: state)
-            }
-        )
+        if let block = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+        
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            self.base.setImage(image, for: state)
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
+        }
+        
+        options.onDataReceived?.forEach {
+            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier(for: state) }
+        }
         
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            receivedBlock: { latest, received in
-                guard issuedTaskIdentifier == self.taskIdentifier(for: state) else { return }
-                let callbacks = mutatingSelf.imageTask?.sessionTask.callbacks ?? []
-                progressive?.update(data: received, with: callbacks)
-            },
-            progressBlock: { receivedSize, totalSize in
-                guard issuedTaskIdentifier == self.taskIdentifier(for: state) else { return }
-                progressBlock?(receivedSize, totalSize)
-            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    func handler() {
-                        guard issuedTaskIdentifier == self.taskIdentifier(for: state) else {
-                            let reason: KingfisherError.ImageSettingErrorReason
-                            do {
-                                let value = try result.get()
-                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                            } catch {
-                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
-                            }
-                            let error = KingfisherError.imageSettingError(reason: reason)
-                            completionHandler?(.failure(error))
-                            return
+                    guard issuedIdentifier == self.taskIdentifier(for: state) else {
+                        let reason: KingfisherError.ImageSettingErrorReason
+                        do {
+                            let value = try result.get()
+                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                        } catch {
+                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
                         }
-                        
-                        mutatingSelf.imageTask = nil
-                        
-                        switch result {
-                        case .success(let value):
-                            self.base.setImage(value.image, for: state)
-                            completionHandler?(result)
-                            
-                        case .failure:
-                            if let image = options.onFailureImage {
-                                self.base.setImage(image, for: state)
-                            }
-                            completionHandler?(result)
-                        }
+                        let error = KingfisherError.imageSettingError(reason: reason)
+                        completionHandler?(.failure(error))
+                        return
                     }
                     
-                    if let progressive = progressive {
-                        progressive.finished { handler() }
+                    mutatingSelf.imageTask = nil
+                    mutatingSelf.setTaskIdentifier(nil, for: state)
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.setImage(value.image, for: state)
+                        completionHandler?(result)
                         
-                    } else {
-                        handler()
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setImage(image, for: state)
+                        }
+                        completionHandler?(result)
                     }
                 }
             }
@@ -216,76 +203,60 @@ extension KingfisherWrapper where Base: UIButton {
             return nil
         }
 
-        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         if !options.keepCurrentImageWhileLoading {
             base.setBackgroundImage(placeholder, for: state)
         }
         
         var mutatingSelf = self
-        let issuedTaskIdentifier = Source.Identifier.next()
-        setBackgroundTaskIdentifier(issuedTaskIdentifier, for: state)
+        let issuedIdentifier = Source.Identifier.next()
+        setBackgroundTaskIdentifier(issuedIdentifier, for: state)
         
-        let progressive = ImageProgressiveProvider(
-            options,
-            isContinue: { () -> Bool in
-                issuedTaskIdentifier == self.backgroundTaskIdentifier(for: state)
-            },
-            refreshImage: { (image) in
-                self.base.setBackgroundImage(image, for: state)
-            }
-        )
+        if let block = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+        
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            self.base.setBackgroundImage(image, for: state)
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
+        }
+        
+        options.onDataReceived?.forEach {
+            $0.onShouldApply = { issuedIdentifier == self.backgroundTaskIdentifier(for: state) }
+        }
         
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            receivedBlock: { latest, received in
-                guard issuedTaskIdentifier == self.backgroundTaskIdentifier(for: state) else { return }
-                let callbacks = mutatingSelf.backgroundImageTask?.sessionTask.callbacks ?? []
-                progressive?.update(data: received, with: callbacks)
-            },
-            progressBlock: { receivedSize, totalSize in
-                guard issuedTaskIdentifier == self.backgroundTaskIdentifier(for: state) else {
-                    return
-                }
-                if let progressBlock = progressBlock {
-                    progressBlock(receivedSize, totalSize)
-                }
-            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
-                    func handler() {
-                        guard issuedTaskIdentifier == self.backgroundTaskIdentifier(for: state) else {
-                            let reason: KingfisherError.ImageSettingErrorReason
-                            do {
-                                let value = try result.get()
-                                reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                            } catch {
-                                reason = .notCurrentSourceTask(result: nil, error: error, source: source)
-                            }
-                            let error = KingfisherError.imageSettingError(reason: reason)
-                            completionHandler?(.failure(error))
-                            return
+                    guard issuedIdentifier == self.backgroundTaskIdentifier(for: state) else {
+                        let reason: KingfisherError.ImageSettingErrorReason
+                        do {
+                            let value = try result.get()
+                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                        } catch {
+                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
                         }
-                        mutatingSelf.backgroundImageTask = nil
-                        
-                        switch result {
-                        case .success(let value):
-                            self.base.setBackgroundImage(value.image, for: state)
-                            completionHandler?(result)
-                            
-                        case .failure:
-                            if let image = options.onFailureImage {
-                                self.base.setBackgroundImage(image, for: state)
-                            }
-                            completionHandler?(result)
-                        }
+                        let error = KingfisherError.imageSettingError(reason: reason)
+                        completionHandler?(.failure(error))
+                        return
                     }
                     
-                    if let progressive = progressive {
-                        progressive.finished { handler() }
+                    mutatingSelf.backgroundImageTask = nil
+                    mutatingSelf.setBackgroundTaskIdentifier(nil, for: state)
+                    
+                    switch result {
+                    case .success(let value):
+                        self.base.setBackgroundImage(value.image, for: state)
+                        completionHandler?(result)
                         
-                    } else {
-                        handler()
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.setBackgroundImage(image, for: state)
+                        }
+                        completionHandler?(result)
                     }
                 }
             }

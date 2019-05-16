@@ -35,26 +35,21 @@ public struct ImageProgressive {
     /// A default `ImageProgressive` could be used across.
     public static let `default` = ImageProgressive(
         isBlur: true,
-        isWait: false,
         isFastestScan: true,
         scanInterval: 0
     )
     
     /// Whether to enable blur effect processing
     let isBlur: Bool
-    /// Whether to wait for the scan to complete
-    let isWait: Bool
     /// Whether to enable the fastest scan
     let isFastestScan: Bool
     /// Minimum time interval for each scan
     let scanInterval: TimeInterval
     
     public init(isBlur: Bool,
-                isWait: Bool,
                 isFastestScan: Bool,
                 scanInterval: TimeInterval) {
         self.isBlur = isBlur
-        self.isWait = isWait
         self.isFastestScan = isFastestScan
         self.scanInterval = scanInterval
     }
@@ -65,55 +60,48 @@ protocol ImageSettable: AnyObject {
 }
 
 final class ImageProgressiveProvider: DataReceivingSideEffect {
-
-    weak var imageSettable: ImageSettable?
-
+    
+    var onShouldApply: () -> Bool = { return true }
+    
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         update(data: task.mutableData, with: task.callbacks)
     }
 
-    var onShouldApply: () -> Bool = { return true }
-
-    private let options: KingfisherParsedOptionsInfo
-    private let refreshClosure: (Image) -> Void
-    private let isContinueClosure: () -> Bool
-    private let isWait: Bool
+    private let option: ImageProgressive
+    private let refresh: (Image) -> Void
     
     private let decoder: ImageProgressiveDecoder
     private let queue = ImageProgressiveSerialQueue(.main)
     
-    private var isFinished = false
-    
     init?(_ options: KingfisherParsedOptionsInfo,
-        isContinue: @escaping () -> Bool,
-        refreshImage: @escaping (Image) -> Void) {
-        guard options.progressiveJPEG != nil else { return nil }
+          refresh: @escaping (Image) -> Void) {
+        guard let option = options.progressiveJPEG else { return nil }
         
-        self.options = options
-        self.refreshClosure = refreshImage
-        self.isContinueClosure = isContinue
-        self.decoder = ImageProgressiveDecoder(options)
-        self.isWait = options.progressiveJPEG?.isWait ?? false
+        self.option = option
+        self.refresh = refresh
+        self.decoder = ImageProgressiveDecoder(
+            option,
+            processingQueue: options.processingQueue ?? sharedProcessingQueue,
+            creatingOptions: options.imageCreatingOptions
+        )
     }
     
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
-        guard let option = options.progressiveJPEG else { return }
-        
         let interval = option.scanInterval
         let isFastest = option.isFastestScan
         
         func add(decode data: Data) {
             queue.add(minimum: interval) { completion in
-                guard self.isContinueClosure() else {
+                guard self.onShouldApply() else {
+                    self.queue.clean()
                     completion()
                     return
                 }
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
-                    // guard self.isContinueClosure() else { return }
-                    // guard self.isWait || !self.isFinishedClosure() else { return }
+                    guard self.onShouldApply() else { return }
                     guard let image = image else { return }
-                    self.imageSettable?.image = image
+                    self.refresh(image)
                 }
             }
         }
@@ -128,32 +116,22 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
             }
         }
     }
-    
-    func finished(_ closure: @escaping () -> Void) {
-        
-        isFinished = true
-        
-        if queue.count > 0, isWait {
-            queue.notify {
-                guard self.isContinueClosure() else { return }
-                closure()
-            }
-            
-        } else {
-            queue.clean()
-            closure()
-        }
-    }
 }
 
 private final class ImageProgressiveDecoder {
     
-    private let options: KingfisherParsedOptionsInfo
+    private let option: ImageProgressive
+    private let processingQueue: CallbackQueue
+    private let creatingOptions: ImageCreatingOptions
     private(set) var scannedCount = 0
-    private var scannedIndex = -1
+    private(set) var scannedIndex = -1
     
-    init(_ options: KingfisherParsedOptionsInfo) {
-        self.options = options
+    init(_ option: ImageProgressive,
+         processingQueue: CallbackQueue,
+         creatingOptions: ImageCreatingOptions) {
+        self.option = option
+        self.processingQueue = processingQueue
+        self.creatingOptions = creatingOptions
     }
     
     func scanning(_ data: Data) -> [Data] {
@@ -238,7 +216,7 @@ private final class ImageProgressiveDecoder {
             let processor = ImageDataProcessor(
                 data: data,
                 callbacks: callbacks,
-                processingQueue: options.processingQueue
+                processingQueue: processingQueue
             )
             processor.onImageProcessed.delegate(on: self) { (self, result) in
                 guard let image = try? result.0.get() else {
@@ -253,16 +231,13 @@ private final class ImageProgressiveDecoder {
         
         // Blur partial images.
         let count = scannedCount
-        let isBlur = options.progressiveJPEG?.isBlur ?? false
         
-        if isBlur, count < 6 {
-            let queue = options.processingQueue ?? sharedProcessingQueue
-            let creating = options.imageCreatingOptions
-            queue.execute {
+        if option.isBlur, count < 6 {
+            processingQueue.execute {
                 // Progressively reduce blur as we load more scans.
                 let image = KingfisherWrapper<Image>.image(
                     data: data,
-                    options: creating
+                    options: self.creatingOptions
                 )
                 let radius = max(2, 14 - count * 4)
                 let temp = image?.kf.blurred(withRadius: CGFloat(radius))

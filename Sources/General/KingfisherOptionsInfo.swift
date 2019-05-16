@@ -316,15 +316,14 @@ extension KingfisherParsedOptionsInfo {
 }
 
 public protocol DataReceivingSideEffect: AnyObject {
-    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
     var onShouldApply: () -> Bool { get set }
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
 }
 
 class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
 
     var onShouldApply: () -> Bool = { return true }
-
-
+    
     let block: DownloadProgressBlock
 
     init(_ block: @escaping DownloadProgressBlock) {
@@ -332,12 +331,10 @@ class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
     }
 
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
-
         guard onShouldApply() else { return }
-
-        guard let expectedContentLength = task.task.response?.expectedContentLength,
-                  expectedContentLength != -1 else
-        {
+        guard
+            let expectedContentLength = task.task.response?.expectedContentLength,
+            expectedContentLength != -1 else {
             return
         }
 
