@@ -2,6 +2,17 @@
 
 -----
 
+## [5.5.0 - Progressive JPEG](https://github.com/onevcat/Kingfisher/releases/tag/5.5.0) (2019-05-17)
+
+#### Add
+* Add support for loading progressive JPEG images. This feature is still in beta and will be improved in the next few releases. To try it out, make sure you are loading a progressive JPEG image with a `.progressiveJPEG` options passed in. Thanks @lixiang1994 [#1181](https://github.com/onevcat/Kingfisher/pull/1181)
+* Choose to use `Swift.Result` as the default result type when Swift 5.0 or above is applied. [#1146](https://github.com/onevcat/Kingfisher/pull/1146)
+
+#### Fix
+* Apply to some modern Swift syntax, which may also improve internal performance a bit. [#1181](https://github.com/onevcat/Kingfisher/pull/1181)
+
+---
+
 ## [5.4.0 - Accio Support](https://github.com/onevcat/Kingfisher/releases/tag/5.4.0) (2019-04-24)
 
 #### Add
