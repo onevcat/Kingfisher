@@ -72,10 +72,16 @@ public enum MemoryStorage {
                 self.keys.remove(obj.key)
             }
 
-            cleanTimer = .scheduledTimer(withTimeInterval: config.cleanInterval, repeats: true) { [weak self] _ in
-                guard let self = self else { return }
-                self.removeExpired()
-            }
+            cleanTimer = .scheduledTimer(timeInterval: config.cleanInterval,
+                                         target: self,
+                                         selector: #selector(cleanTimerFire(_:)),
+                                         userInfo: nil,
+                                         repeats: true)
+        }
+
+        @objc
+        private func cleanTimerFire(_ timer: Timer) {
+            removeExpired()
         }
 
         func removeExpired() {
