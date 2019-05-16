@@ -87,6 +87,8 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     }
     
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
+        guard !data.isEmpty else { return }
+        
         let interval = option.scanInterval
         let isFastest = option.isFastestScan
         
@@ -107,13 +109,10 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
         }
         
         if isFastest {
-            guard let data = decoder.scanning(data) else { return }
-            add(decode: data)
+            add(decode: decoder.scanning(data) ?? Data())
+            
         } else {
-            let allData: [Data] = decoder.scanning(data)
-            for data in allData {
-                add(decode: data)
-            }
+            decoder.scanning(data).forEach { add(decode: $0) }
         }
     }
 }
