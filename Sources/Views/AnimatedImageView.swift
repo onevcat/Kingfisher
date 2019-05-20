@@ -503,9 +503,10 @@ extension AnimatedImageView {
                 kCGImageSourceThumbnailMaxPixelSize: max(size.width, size.height)
             ]
 
+            let resize = needsPrescaling && size != .zero
             guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource,
                                                                 index,
-                                                                needsPrescaling ? options as CFDictionary : nil) else {
+                                                                resize ? options as CFDictionary : nil) else {
                 return nil
             }
 
