@@ -335,7 +335,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacnelImageTask() {
+    func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -650,6 +650,84 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { exp.fulfill() }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testCacheImageExtendingExpirationTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(0.15))]
+        
+        let group = DispatchGroup()
+        
+        group.enter()
+        imageView.kf.setImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertTrue(result.value!.cacheType == .none)
+            group.leave()
+        }
+        
+        group.enter()
+        delay(0.1) {
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                group.leave()
+            }
+        }
+        
+        group.enter()
+        delay(0.2) {
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main, execute: exp.fulfill)
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testCacheImageExpirationTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpirationNotExtendable, .memoryCacheExpiration(.seconds(0.15))]
+  
+        let group = DispatchGroup()
+        
+        group.enter()
+        imageView.kf.setImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertTrue(result.value!.cacheType == .none)
+            group.leave()
+        }
+        
+        group.enter()
+        delay(0.1) {
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                group.leave()
+            }
+        }
+        
+        group.enter()
+        delay(0.2) {
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .none)
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main, execute: exp.fulfill)
+        
         waitForExpectations(timeout: 3, handler: nil)
     }
 }
