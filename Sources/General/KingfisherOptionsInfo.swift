@@ -203,6 +203,10 @@ public enum KingfisherOptionsInfoItem {
     /// value to overwrite the config setting for this caching item.
     case memoryCacheExpiration(StorageExpiration)
     
+    /// By default, every read operation for an item is extending it's expiration time. Use this setting to
+    /// disable this behavior and expire item regardless it's next requests.
+    case memoryCacheExpirationNotExtendable
+    
     /// The expiration setting for memory cache. By default, the underlying `DiskStorage.Backend` uses the
     /// expiration in its config for all items. If set, the `DiskStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
@@ -252,6 +256,7 @@ public struct KingfisherParsedOptionsInfo {
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
     public var memoryCacheExpiration: StorageExpiration? = nil
+    public var memoryCacheReadExtendingExpiration = true
     public var diskCacheExpiration: StorageExpiration? = nil
     public var processingQueue: CallbackQueue? = nil
     public var progressiveJPEG: ImageProgressive? = nil
@@ -290,6 +295,7 @@ public struct KingfisherParsedOptionsInfo {
             case .loadDiskFileSynchronously: loadDiskFileSynchronously = true
             case .callbackDispatchQueue(let value): callbackQueue = value.map { .dispatch($0) } ?? .mainCurrentOrAsync
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
+            case .memoryCacheExpirationNotExtendable: memoryCacheReadExtendingExpiration = false
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
             case .processingQueue(let queue): processingQueue = queue
             case .progressiveJPEG(let value): progressiveJPEG = value

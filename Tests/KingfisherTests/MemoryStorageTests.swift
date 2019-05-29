@@ -138,6 +138,56 @@ class MemoryStorageTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testStoreWithExpirationExtending() {
+        let exp = expectation(description: #function)
+        
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        try! storage.store(value: 1, forKey: "1", expiration: .seconds(0.15))
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+        
+        XCTAssertFalse(storage.isCached(forKey: "2"))
+        try! storage.store(value: 2, forKey: "2")
+        XCTAssertTrue(storage.isCached(forKey: "2"))
+        
+        delay(0.1) {
+            // Request for the object to extend it's expiration date
+            let obj = self.storage.value(forKey: "1", extendingExpiration: true)
+            XCTAssertNotNil(obj)
+        }
+        
+        delay(0.2) {
+            XCTAssertTrue(self.storage.isCached(forKey: "1"))
+            XCTAssertTrue(self.storage.isCached(forKey: "2"))
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testStoreWithExpirationNotExtending() {
+        let exp = expectation(description: #function)
+        
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        try! storage.store(value: 1, forKey: "1", expiration: .seconds(0.15))
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+        
+        XCTAssertFalse(storage.isCached(forKey: "2"))
+        try! storage.store(value: 2, forKey: "2")
+        XCTAssertTrue(storage.isCached(forKey: "2"))
+        
+        delay(0.1) {
+            // Request for the object to not extend it's expiration date
+            let obj = self.storage.value(forKey: "1", extendingExpiration: false)
+            XCTAssertNotNil(obj)
+        }
+        
+        delay(0.2) {
+            XCTAssertFalse(self.storage.isCached(forKey: "1"))
+            XCTAssertTrue(self.storage.isCached(forKey: "2"))
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 
     func testRemoveExpired() {
         let exp = expectation(description: #function)
