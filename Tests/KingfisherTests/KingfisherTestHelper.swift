@@ -100,7 +100,7 @@ func clearCaches(_ caches: [ImageCache]) {
 }
 
 func delay(_ time: Double, block: @escaping ()->()) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + time) { block() }
+    DispatchQueue.main.asyncAfter(deadline: .now() + time, qos: .userInteractive) { block() }
 }
 
 extension Image {
