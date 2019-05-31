@@ -48,7 +48,7 @@ class StorageExpirationTests: XCTestCase {
     
     func testExpirationDays() {
         let e = StorageExpiration.days(1)
-        let oneDayInSecond: TimeInterval = 60 * 60 * 24
+        let oneDayInSecond = TimeInterval(TimeConstants.secondsInOneDay)
         XCTAssertEqual(
             e.estimatedExpirationSinceNow.timeIntervalSince1970,
             Date().timeIntervalSince1970 + oneDayInSecond,
@@ -58,7 +58,7 @@ class StorageExpirationTests: XCTestCase {
     }
     
     func testExpirationDate() {
-        let oneDayInSecond: TimeInterval = 60 * 60 * 24
+        let oneDayInSecond = TimeInterval(TimeConstants.secondsInOneDay)
         let targetDate = Date().addingTimeInterval(oneDayInSecond)
         let e = StorageExpiration.date(targetDate)
         XCTAssertEqual(
