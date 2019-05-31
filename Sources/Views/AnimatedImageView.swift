@@ -120,6 +120,10 @@ open class AnimatedImageView: UIImageView {
     /// Default is `true`.
     public var needsPrescaling = true
 
+    /// Decode the GIF frames in background thread before using. It will decode frames data and do a off-screen
+    /// rendering to extract pixel information in background. This can reduce the main thread CPU usage.
+    public var backgroundDecode = true
+
     /// The animation timer's run loop mode. Default is `RunLoop.Mode.common`.
     /// Set this property to `RunLoop.Mode.default` will make the animation pause during UIScrollView scrolling.
     public var runLoopMode = KFRunLoopModeCommon {
@@ -251,6 +255,7 @@ open class AnimatedImageView: UIImageView {
                 preloadQueue: preloadQueue)
             animator.delegate = self
             animator.needsPrescaling = needsPrescaling
+            animator.backgroundDecode = backgroundDecode
             animator.prepareFramesAsynchronously()
             self.animator = animator
         }
@@ -361,6 +366,9 @@ extension AnimatedImageView {
         var isFinished: Bool = false
 
         var needsPrescaling = true
+
+        var backgroundDecode = true
+
         weak var delegate: AnimatorDelegate?
 
         // Total duration of one animation loop
@@ -488,18 +496,22 @@ extension AnimatedImageView {
         }
 
         private func loadFrame(at index: Int) -> UIImage? {
-            guard let image = CGImageSourceCreateImageAtIndex(imageSource, index, nil) else {
+            let options: [CFString: Any] = [
+                kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceShouldCacheImmediately: true,
+                kCGImageSourceThumbnailMaxPixelSize: max(size.width, size.height)
+            ]
+
+            let resize = needsPrescaling && size != .zero
+            guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource,
+                                                                index,
+                                                                resize ? options as CFDictionary : nil) else {
                 return nil
             }
 
-            let scaledImage: CGImage
-            if needsPrescaling, size != .zero {
-                scaledImage = image.kf.resize(to: size, for: contentMode)
-            } else {
-                scaledImage = image
-            }
-
-            return Image(cgImage: scaledImage)
+            let image = Image(cgImage: cgImage)
+            return backgroundDecode ? image.kf.decoded : image
         }
         
         private func updatePreloadedFrames() {
