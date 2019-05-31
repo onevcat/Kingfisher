@@ -26,6 +26,9 @@
 
 import Foundation
 
+#if swift(>=4.3)
+/// Result type already built-in
+#else
 /// A value that represents either a success or failure, capturing associated
 /// values in both cases.
 public enum Result<Success, Failure> {
@@ -189,6 +192,7 @@ extension Result : CustomDebugStringConvertible {
         return output
     }
 }
+#endif
 
 // Deprecated
 extension Result {

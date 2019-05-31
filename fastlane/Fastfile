@@ -51,6 +51,7 @@ platform :ios do
       
       tests
       lint
+      carthage(command: "archive", frameworks: ["Kingfisher"])
       
       sync_build_number_to_git
       increment_version_number(version_number: target_version)
@@ -72,7 +73,8 @@ platform :ios do
       api_token: ENV['GITHUB_TOKEN'],
       name: release_log[:title],
       tag_name: target_version,
-      description: release_log[:text]
+      description: release_log[:text],
+      upload_assets: ["Kingfisher.framework.zip"]
       )
 
       pod_push
