@@ -63,6 +63,7 @@ public enum KingfisherError: Error {
     /// - URLSessionError: An error happens in the system URL session. Code 2003.
     /// - dataModifyingFailed: Data modifying fails on returning a valid data. Code 2004.
     /// - noURLResponse: The task is done but no URL response found. Code 2005.
+    /// - failedURL: The url has been requested before and does not have a valid URL response
     public enum ResponseErrorReason {
         
         /// The response is not a valid URL response. Code 2001.
@@ -88,6 +89,10 @@ public enum KingfisherError: Error {
         /// The task is done but no URL response found. Code 2005.
         /// - task: The failed task.
         case noURLResponse(task: SessionDataTask)
+
+        /// The url has been previously retrieved but does not have a
+        /// valid response code. Code 2006
+        case failedURL
     }
     
     /// Represents the error reason during Kingfisher caching system.
@@ -301,6 +306,8 @@ extension KingfisherError.ResponseErrorReason {
             return "The data modifying delegate returned `nil` for the downloaded data. Task: \(task)."
         case .noURLResponse(let task):
             return "No URL response received. Task: \(task),"
+        case .failedURL:
+            return "The URL has been retrieved before and does not have a valid response code"
         }
     }
     
@@ -311,6 +318,7 @@ extension KingfisherError.ResponseErrorReason {
         case .URLSessionError: return 2003
         case .dataModifyingFailed: return 2004
         case .noURLResponse: return 2005
+        case .failedURL: return 2006
         }
     }
 }

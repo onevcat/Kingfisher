@@ -184,7 +184,7 @@ class ImageDownloaderTests: XCTestCase {
     }
  
     
-    func testDownloadResultErrorAndRetry() {
+    func testDownloadResultErrorAndRetryResultFailedURL() {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
@@ -198,11 +198,39 @@ class ImageDownloaderTests: XCTestCase {
             stub(url, data: testImageData)
             // Retry the download
             self.downloader.downloadImage(with: url) { result in
-                XCTAssertNil(result.error)
+                guard let error = result.error,
+                    case .responseError(let responseError) = error,
+                    case .failedURL = responseError else {
+                        XCTFail(#function)
+                        return
+                }
+
                 exp.fulfill()
             }
         }
         
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadResultErrorAndRetryWithForceRefresh() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+
+        stub(url, errorCode: -1)
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.error)
+
+            LSNocilla.sharedInstance().clearStubs()
+
+            stub(url, data: testImageData)
+            // Retry the download
+            self.downloader.downloadImage(with: url, options: [.forceRefresh]) { result in
+                XCTAssertNil(result.error)
+                exp.fulfill()
+            }
+        }
+
         waitForExpectations(timeout: 3, handler: nil)
     }
     

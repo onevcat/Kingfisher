@@ -140,6 +140,10 @@ open class ImageDownloader {
     private let sessionDelegate: SessionDelegate
     private var session: URLSession
 
+    /// Set<URL> contains a list of urls which have been retrieved but does not
+    /// return a valid response
+    private var failedURLs: Set<URL>
+
     // MARK: Initializers
 
     /// Creates a downloader with name.
@@ -150,6 +154,7 @@ open class ImageDownloader {
             fatalError("[Kingfisher] You should specify a name for the downloader. "
                 + "A downloader with empty name is not permitted.")
         }
+        self.failedURLs = []
 
         self.name = name
 
@@ -199,6 +204,14 @@ open class ImageDownloader {
         options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        // Check if the url is already retrieved before and does not force refresh
+        if !options.forceRefresh && failedURLs.contains(url) {
+            options.callbackQueue.execute {
+                completionHandler?(.failure(KingfisherError.responseError(reason: .failedURL)))
+            }
+            return nil
+        }
+
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
         request.httpShouldUsePipelining = requestsUsePipelining
@@ -300,6 +313,14 @@ open class ImageDownloader {
                     processor.process()
 
                 case .failure(let error):
+                    if case .responseError(let responseError) = error {
+                        switch responseError {
+                        case .invalidHTTPStatusCode, .invalidURLResponse, .noURLResponse, .URLSessionError:
+                            self.failedURLs.insert(url)
+                        default:
+                            break
+                        }
+                    }
                     callbacks.forEach { callback in
                         let queue = callback.options.callbackQueue
                         queue.execute { callback.onCompleted?.call(.failure(error)) }
