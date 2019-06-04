@@ -151,7 +151,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertNotNil(expirationDate1)
             
             // Request for the object to extend it's expiration date
-            let obj = self.storage.value(forKey: "1", extendingExpiration: true)
+            let obj = self.storage.value(forKey: "1", extendingExpiration: .seconds(5))
             XCTAssertNotNil(obj)
             
             let expirationDate2 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
@@ -177,7 +177,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertNotNil(expirationDate1)
             
             // Request for the object to extend it's expiration date
-            let obj = self.storage.value(forKey: "1", extendingExpiration: false)
+            let obj = self.storage.value(forKey: "1", extendingExpiration: .never)
             XCTAssertNotNil(obj)
             
             let expirationDate2 = self.storage.storage.object(forKey: "1")?.estimatedExpiration

@@ -658,7 +658,7 @@ class ImageViewExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
         
-        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(1))]
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(1)), .memoryCacheAccessExtendingExpiration(.seconds(100))]
        
         imageView.kf.setImage(with: url, options: options) { result in
             XCTAssertNotNil(result.value?.image)
@@ -678,6 +678,7 @@ class ImageViewExtensionTests: XCTestCase {
                     XCTAssertNotNil(expirationTime2)
                     XCTAssertNotEqual(expirationTime1, expirationTime2)
                     XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
+                    XCTAssertGreaterThan(expirationTime2!.timeIntervalSince(expirationTime1!), 10)
                     
                     exp.fulfill()
                 }
@@ -692,7 +693,7 @@ class ImageViewExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
         
-        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpirationNotExtendable, .memoryCacheExpiration(.seconds(1))]
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(1)), .memoryCacheAccessExtendingExpiration(.never)]
   
         imageView.kf.setImage(with: url, options: options) { result in
             XCTAssertNotNil(result.value?.image)

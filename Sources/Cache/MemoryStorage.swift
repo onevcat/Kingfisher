@@ -121,26 +121,29 @@ public enum MemoryStorage {
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
         }
-
-        // Use this when you actually access the memory cached item.
-        // This will extend the expired data for the accessed item.
-        func value(forKey key: String) throws -> T? {
-            return value(forKey: key, extendingExpiration: true)
-        }
-
-        func value(forKey key: String, extendingExpiration: Bool) -> T? {
+        
+        /// Use this when you actually access the memory cached item.
+        /// By default, this will extend the expired data for the accessed item.
+        ///
+        /// - Parameters:
+        ///   - key: Cache Key
+        ///   - extendingExpiration: expiration value to extend item expiration time:
+        ///     * .never will not extend expiration
+        ///     * nil (default value) will use object cache expiration settings
+        /// - Returns: cached object or nil
+        func value(forKey key: String, extendingExpiration: StorageExpiration? = nil) -> T? {
             guard let object = storage.object(forKey: key as NSString) else {
                 return nil
             }
             if object.expired {
                 return nil
             }
-            if extendingExpiration { object.extendExpiration() }
+            object.extendExpiration(by: extendingExpiration ?? object.expiration)
             return object.value
         }
 
         func isCached(forKey key: String) -> Bool {
-            guard let _ = value(forKey: key, extendingExpiration: false) else {
+            guard let _ = value(forKey: key, extendingExpiration: .never) else {
                 return false
             }
             return true
@@ -221,7 +224,16 @@ extension MemoryStorage {
         }
         
         func extendExpiration() {
-            self.estimatedExpiration = expiration.estimatedExpirationSinceNow
+            extendExpiration(by: expiration)
+        }
+        
+        func extendExpiration(by extendingExpiration: StorageExpiration) {
+            switch extendingExpiration {
+            case .never:
+                return
+            default:
+                self.estimatedExpiration = extendingExpiration.estimatedExpirationSinceNow
+            }
         }
         
         var expired: Bool {
