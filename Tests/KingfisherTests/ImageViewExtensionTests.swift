@@ -653,7 +653,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacheImageExtendingExpirationTask() {
+    func testImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -687,7 +687,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacheImageExpirationTask() {
+    func testImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
