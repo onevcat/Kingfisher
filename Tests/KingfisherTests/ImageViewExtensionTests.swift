@@ -658,37 +658,32 @@ class ImageViewExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
         
-        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(0.15))]
-        
-        let group = DispatchGroup()
-        
-        group.enter()
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(1))]
+       
         imageView.kf.setImage(with: url, options: options) { result in
             XCTAssertNotNil(result.value?.image)
             XCTAssertTrue(result.value!.cacheType == .none)
-            group.leave()
+            
+            let cacheKey = result.value!.source.cacheKey as NSString
+            let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+            XCTAssertNotNil(expirationTime1)
+            
+            delay(0.1, block: {
+                self.imageView.kf.setImage(with: url, options: options) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertTrue(result.value!.cacheType == .memory)
+                    
+                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                    
+                    XCTAssertNotNil(expirationTime2)
+                    XCTAssertNotEqual(expirationTime1, expirationTime2)
+                    XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
+                    
+                    exp.fulfill()
+                }
+            })
         }
-        
-        group.enter()
-        delay(0.1) {
-            self.imageView.kf.setImage(with: url, options: options) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertTrue(result.value!.cacheType == .memory)
-                group.leave()
-            }
-        }
-        
-        group.enter()
-        delay(0.2) {
-            self.imageView.kf.setImage(with: url, options: options) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertTrue(result.value!.cacheType == .memory)
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main, execute: exp.fulfill)
-        
+
         waitForExpectations(timeout: 3, handler: nil)
     }
     
@@ -697,36 +692,30 @@ class ImageViewExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
         
-        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpirationNotExtendable, .memoryCacheExpiration(.seconds(0.15))]
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpirationNotExtendable, .memoryCacheExpiration(.seconds(1))]
   
-        let group = DispatchGroup()
-        
-        group.enter()
         imageView.kf.setImage(with: url, options: options) { result in
             XCTAssertNotNil(result.value?.image)
             XCTAssertTrue(result.value!.cacheType == .none)
-            group.leave()
+            
+            let cacheKey = result.value!.source.cacheKey as NSString
+            let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+            XCTAssertNotNil(expirationTime1)
+            
+            delay(0.1, block: {
+                self.imageView.kf.setImage(with: url, options: options) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertTrue(result.value!.cacheType == .memory)
+                    
+                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                    
+                    XCTAssertNotNil(expirationTime2)
+                    XCTAssertEqual(expirationTime1, expirationTime2)
+                    
+                    exp.fulfill()
+                }
+            })
         }
-        
-        group.enter()
-        delay(0.1) {
-            self.imageView.kf.setImage(with: url, options: options) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertTrue(result.value!.cacheType == .memory)
-                group.leave()
-            }
-        }
-        
-        group.enter()
-        delay(0.2) {
-            self.imageView.kf.setImage(with: url, options: options) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertTrue(result.value!.cacheType == .none)
-                group.leave()
-            }
-        }
-        
-        group.notify(queue: .main, execute: exp.fulfill)
         
         waitForExpectations(timeout: 3, handler: nil)
     }
