@@ -203,9 +203,9 @@ public enum KingfisherOptionsInfoItem {
     /// value to overwrite the config setting for this caching item.
     case memoryCacheExpiration(StorageExpiration)
     
-    /// The expiration extending setting for memory cache. Item expiration time will be incremented by this value after access
-    /// By default, the underlying `MemoryStorage.Backend` uses the expiration extending in its config for all items. If set, the `MemoryStorage.Backend` will use this associated
-    /// value to overwrite the config setting for this caching item.
+    /// The expiration extending setting for memory cache. The item expiration time will be incremented by this value after access.
+    /// By default, the underlying `MemoryStorage.Backend` uses the initial cache expiration as extending value.
+    /// To disable extending option at all add memoryCacheAccessExtendingExpiration(.never) to options.
     case memoryCacheAccessExtendingExpiration(StorageExpiration)
     
     /// The expiration setting for memory cache. By default, the underlying `DiskStorage.Backend` uses the
