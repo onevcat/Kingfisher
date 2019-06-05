@@ -138,6 +138,57 @@ class MemoryStorageTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testStoreWithExpirationExtending() {
+        let exp = expectation(description: #function)
+        
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        try! storage.store(value: 1, forKey: "1", expiration: .seconds(1))
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+        
+        delay(0.1) {
+            let expirationDate1 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
+            XCTAssertNotNil(expirationDate1)
+            
+            // Request for the object to extend it's expiration date
+            let obj = self.storage.value(forKey: "1", extendingExpiration: .expirationTime(.seconds(5)))
+            XCTAssertNotNil(obj)
+            
+            let expirationDate2 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
+            XCTAssertNotNil(expirationDate2)
+            
+            XCTAssertNotEqual(expirationDate1!, expirationDate2!)
+            XCTAssert(expirationDate1!.isPast(referenceDate: expirationDate2!))
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testStoreWithExpirationNotExtending() {
+        let exp = expectation(description: #function)
+        
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        try! storage.store(value: 1, forKey: "1", expiration: .seconds(1))
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+        
+        delay(0.1) {
+            let expirationDate1 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
+            XCTAssertNotNil(expirationDate1)
+            
+            // Request for the object to extend it's expiration date
+            let obj = self.storage.value(forKey: "1", extendingExpiration: .none)
+            XCTAssertNotNil(obj)
+            
+            let expirationDate2 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
+            XCTAssertNotNil(expirationDate2)
+            
+            XCTAssertEqual(expirationDate1, expirationDate2)
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 
     func testRemoveExpired() {
         let exp = expectation(description: #function)
