@@ -131,19 +131,19 @@ public enum MemoryStorage {
         ///     * .never will not extend expiration
         ///     * nil (default value) will use object cache expiration settings
         /// - Returns: cached object or nil
-        func value(forKey key: String, extendingExpiration: StorageExpiration? = nil) -> T? {
+        func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) -> T? {
             guard let object = storage.object(forKey: key as NSString) else {
                 return nil
             }
             if object.expired {
                 return nil
             }
-            object.extendExpiration(by: extendingExpiration ?? object.expiration)
+            object.extendExpiration(extendingExpiration)
             return object.value
         }
 
         func isCached(forKey key: String) -> Bool {
-            guard let _ = value(forKey: key, extendingExpiration: .never) else {
+            guard let _ = value(forKey: key, extendingExpiration: .none) else {
                 return false
             }
             return true
@@ -222,17 +222,15 @@ extension MemoryStorage {
             
             self.estimatedExpiration = expiration.estimatedExpirationSinceNow
         }
-        
-        func extendExpiration() {
-            extendExpiration(by: expiration)
-        }
-        
-        func extendExpiration(by extendingExpiration: StorageExpiration) {
+
+        func extendExpiration(_ extendingExpiration: ExpirationExtending = .cacheTime) {
             switch extendingExpiration {
-            case .never:
+            case .none:
                 return
-            default:
-                self.estimatedExpiration = extendingExpiration.estimatedExpirationSinceNow
+            case .cacheTime:
+                self.estimatedExpiration = expiration.estimatedExpirationSinceNow
+            case .expirationTime(let expirationTime):
+                self.estimatedExpiration = expirationTime.estimatedExpirationSinceNow
             }
         }
         
