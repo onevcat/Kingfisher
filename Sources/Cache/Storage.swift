@@ -81,6 +81,20 @@ public enum StorageExpiration {
     }
 }
 
+/// Represents the expiration extending strategy used in storage to after access.
+///
+/// - none: The item expires after the original time, without extending after access.
+/// - cacheTime: The item expiration extends by the original cache time after each access.
+/// - expirationTime: The item expiration extends by the provided time after each access.
+public enum ExpirationExtending {
+    /// The item expires after the original time, without extending after access.
+    case none
+    /// The item expiration extends by the original cache time after each access.
+    case cacheTime
+    /// The item expiration extends by the provided time after each access.
+    case expirationTime(_ expiration: StorageExpiration)
+}
+
 /// Represents types which cost in memory can be calculated.
 public protocol CacheCostCalculable {
     var cacheCost: Int { get }
