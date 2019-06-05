@@ -85,7 +85,7 @@ public enum StorageExpiration {
 ///
 /// - none: The item expires after the original time, without extending after access.
 /// - cacheTime: The item expiration extends by the original cache time after each access.
-/// - expirationTime: The item expiration extends by the privided time after each access.
+/// - expirationTime: The item expiration extends by the provided time after each access.
 public enum ExpirationExtending {
     /// The item expires after the original time, without extending after access.
     case none
