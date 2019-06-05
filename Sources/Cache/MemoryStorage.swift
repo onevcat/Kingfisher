@@ -128,8 +128,9 @@ public enum MemoryStorage {
         /// - Parameters:
         ///   - key: Cache Key
         ///   - extendingExpiration: expiration value to extend item expiration time:
-        ///     * .never will not extend expiration
-        ///     * nil (default value) will use object cache expiration settings
+        ///     * .none: The item expires after the original time, without extending after access.
+        ///     * .cacheTime: The item expiration extends by the original cache time after each access.
+        ///     * .expirationTime: The item expiration extends by the provided time after each access.
         /// - Returns: cached object or nil
         func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) -> T? {
             guard let object = storage.object(forKey: key as NSString) else {
