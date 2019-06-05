@@ -88,8 +88,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .imageModifier(modifier),
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
-            .cacheOriginalImage,
-            .memoryCacheAccessExtendingExpiration(.seconds(1))
+            .cacheOriginalImage
         ])
         
         XCTAssertTrue(options.targetCache === cache)
@@ -110,7 +109,6 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.fromMemoryCacheOrRefresh)
         XCTAssertTrue(options.forceTransition)
         XCTAssertTrue(options.cacheMemoryOnly)
-        XCTAssertEqual(options.memoryCacheAccessExtendingExpiration?.timeInterval, 1)
         XCTAssertTrue(options.waitForCache)
         XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
