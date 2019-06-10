@@ -66,15 +66,15 @@ class MemoryStorageTests: XCTestCase {
         try! storage.store(value: 1, forKey: "1")
 
         XCTAssertTrue(storage.isCached(forKey: "1"))
-        XCTAssertEqual(try! storage.value(forKey: "1"), 1)
+        XCTAssertEqual(storage.value(forKey: "1"), 1)
     }
 
     func testStoreValueOverwritting() {
         try! storage.store(value: 1, forKey: "1")
-        XCTAssertEqual(try! storage.value(forKey: "1"), 1)
+        XCTAssertEqual(storage.value(forKey: "1"), 1)
 
         try! storage.store(value: 100, forKey: "1")
-        XCTAssertEqual(try! storage.value(forKey: "1"), 100)
+        XCTAssertEqual(storage.value(forKey: "1"), 100)
     }
 
     func testRemoveValue() {
@@ -219,7 +219,7 @@ class MemoryStorageTests: XCTestCase {
 
         delay(0.3) {
             // This should extend the expiration to (0.3 + 0.5) from initially created.
-            let v = try! self.storage.value(forKey: "1")
+            let v = self.storage.value(forKey: "1")
             XCTAssertEqual(v, 1)
         }
 

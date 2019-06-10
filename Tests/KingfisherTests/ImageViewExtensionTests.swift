@@ -484,7 +484,7 @@ class ImageViewExtensionTests: XCTestCase {
 
             XCTAssert(result.value!.cacheType == .none)
 
-            let memory = try! KingfisherManager.shared.cache.memoryStorage.value(forKey: url.cacheKey)
+            let memory = KingfisherManager.shared.cache.memoryStorage.value(forKey: url.cacheKey)
             XCTAssertNotNil(memory)
 
             let disk = try! KingfisherManager.shared.cache.diskStorage.value(forKey: url.cacheKey)
