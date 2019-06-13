@@ -79,7 +79,7 @@ extension KingfisherWrapper where Base: Image {
     }
     #else
     var cgImage: CGImage? { return base.cgImage }
-    var scale: CGFloat { return base.scale }
+    var scale: CGFloat { return UIScreen.main.scale }
     var images: [Image]? { return base.images }
     var duration: TimeInterval { return base.duration }
     var size: CGSize { return base.size }
