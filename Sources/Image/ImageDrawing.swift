@@ -26,7 +26,7 @@
 
 import Accelerate
 
-#if canImport(AppKit)
+#if os(macOS)
 import AppKit
 #endif
 #if canImport(UIKit)
