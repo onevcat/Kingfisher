@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(AppKit)
+#if os(macOS)
 import AppKit
 public typealias IndicatorView = NSView
 #else

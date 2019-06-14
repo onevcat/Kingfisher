@@ -27,7 +27,7 @@
 import Foundation
 import CoreGraphics
 
-#if canImport(AppKit)
+#if os(macOS)
 import AppKit
 #endif
 
