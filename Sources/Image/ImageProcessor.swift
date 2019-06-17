@@ -27,7 +27,7 @@
 import Foundation
 import CoreGraphics
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(UIKitForMac)
 import AppKit
 #endif
 
