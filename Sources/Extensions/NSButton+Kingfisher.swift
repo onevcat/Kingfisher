@@ -24,6 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if os(macOS)
 
 import AppKit
 
@@ -348,3 +349,5 @@ extension KingfisherWrapper where Base: NSButton {
         set { }
     }
 }
+
+#endif
