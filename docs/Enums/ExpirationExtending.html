@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>DiskStorage Enumeration Reference</title>
+    <title>ExpirationExtending Enumeration Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Enum/DiskStorage" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Enum/ExpirationExtending" class="dashAnchor"></a>
 
-    <a title="DiskStorage Enumeration Reference"></a>
+    <a title="ExpirationExtending Enumeration Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Kingfisher Reference</a>
       <img class="carat" src="../img/carat.png" />
-      DiskStorage Enumeration Reference
+      ExpirationExtending Enumeration Reference
     </p>
 
     <div class="content-wrapper">
@@ -462,16 +462,20 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>DiskStorage</h1>
+            <h1>ExpirationExtending</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">DiskStorage</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ExpirationExtending</span></code></pre>
 
                 </div>
               </div>
-            <p>Represents a set of conception related to storage which stores a certain type of value in disk.
-This is a namespace for the disk storage types. A <code>Backend</code> with a certain <code>Config</code> will be used to describe the
-storage. See these composed types for more information.</p>
+            <p>Represents the expiration extending strategy used in storage to after access.</p>
+
+<ul>
+<li>none: The item expires after the original time, without extending after access.</li>
+<li>cacheTime: The item expiration extends by the original cache time after each access.</li>
+<li>expirationTime: The item expiration extends by the provided time after each access.</li>
+</ul>
 
           </div>
         </section>
@@ -483,9 +487,9 @@ storage. See these composed types for more information.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher11DiskStorageO7BackendC"></a>
-                    <a name="//apple_ref/swift/Class/Backend" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher11DiskStorageO7BackendC">Backend</a>
+                    <a name="/s:10Kingfisher19ExpirationExtendingO4noneyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/none" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher19ExpirationExtendingO4noneyA2CmF">none</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -493,39 +497,29 @@ storage. See these composed types for more information.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Represents a storage back-end for the <code><a href="../Enums/DiskStorage.html">DiskStorage</a></code>. The value is serialized to data
-and stored as file in the file system under a specified location.</p>
+                        <p>The item expires after the original time, without extending after access.</p>
 
-<p>You can config a <code>DiskStorage.Backend</code> in its initializer by passing a <code><a href="../Enums/DiskStorage/Config.html">DiskStorage.Config</a></code> value.
-or modifying the <code>config</code> property after it being created. <code><a href="../Enums/DiskStorage.html">DiskStorage</a></code> will use file&rsquo;s attributes to keep
-track of a file for its expiration or size limitation.</p>
-
-                        <a href="../Enums/DiskStorage/Backend.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Backend</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/DataTransformable.html">DataTransformable</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="k">none</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.6.0/Sources/Cache/DiskStorage.swift#L41-L302">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.6.0/Sources/Cache/Storage.swift#L91">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher11DiskStorageO6ConfigV"></a>
-                    <a name="//apple_ref/swift/Struct/Config" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher11DiskStorageO6ConfigV">Config</a>
+                    <a name="/s:10Kingfisher19ExpirationExtendingO9cacheTimeyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/cacheTime" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher19ExpirationExtendingO9cacheTimeyA2CmF">cacheTime</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -533,20 +527,49 @@ track of a file for its expiration or size limitation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Represents the config used in a <code><a href="../Enums/DiskStorage.html">DiskStorage</a></code>.</p>
+                        <p>The item expiration extends by the original cache time after each access.</p>
 
-                        <a href="../Enums/DiskStorage/Config.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Config</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">cacheTime</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.6.0/Sources/Cache/DiskStorage.swift#L307-L354">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.6.0/Sources/Cache/Storage.swift#L93">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher19ExpirationExtendingO14expirationTimeyAcA07StorageB0OcACmF"></a>
+                    <a name="//apple_ref/swift/Element/expirationTime(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher19ExpirationExtendingO14expirationTimeyAcA07StorageB0OcACmF">expirationTime(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The item expiration extends by the provided time after each access.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">expirationTime</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span> <span class="kt"><a href="../Enums/StorageExpiration.html">StorageExpiration</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.6.0/Sources/Cache/Storage.swift#L95">Show on GitHub</a>
                       </div>
                     </section>
                   </div>

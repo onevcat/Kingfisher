@@ -335,7 +335,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacnelImageTask() {
+    func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -484,7 +484,7 @@ class ImageViewExtensionTests: XCTestCase {
 
             XCTAssert(result.value!.cacheType == .none)
 
-            let memory = try! KingfisherManager.shared.cache.memoryStorage.value(forKey: url.cacheKey)
+            let memory = KingfisherManager.shared.cache.memoryStorage.value(forKey: url.cacheKey)
             XCTAssertNotNil(memory)
 
             let disk = try! KingfisherManager.shared.cache.diskStorage.value(forKey: url.cacheKey)
@@ -650,6 +650,74 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { exp.fulfill() }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testImageCacheExtendingExpirationTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(1)), .memoryCacheAccessExtendingExpiration(.expirationTime(.seconds(100)))]
+       
+        imageView.kf.setImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertTrue(result.value!.cacheType == .none)
+            
+            let cacheKey = result.value!.source.cacheKey as NSString
+            let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+            XCTAssertNotNil(expirationTime1)
+            
+            delay(0.1, block: {
+                self.imageView.kf.setImage(with: url, options: options) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertTrue(result.value!.cacheType == .memory)
+                    
+                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                    
+                    XCTAssertNotNil(expirationTime2)
+                    XCTAssertNotEqual(expirationTime1, expirationTime2)
+                    XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
+                    XCTAssertGreaterThan(expirationTime2!.timeIntervalSince(expirationTime1!), 10)
+                    
+                    exp.fulfill()
+                }
+            })
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testImageCacheNotExtendingExpirationTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let options: KingfisherOptionsInfo = [.cacheMemoryOnly, .memoryCacheExpiration(.seconds(1)), .memoryCacheAccessExtendingExpiration(.none)]
+  
+        imageView.kf.setImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertTrue(result.value!.cacheType == .none)
+            
+            let cacheKey = result.value!.source.cacheKey as NSString
+            let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+            XCTAssertNotNil(expirationTime1)
+            
+            delay(0.1, block: {
+                self.imageView.kf.setImage(with: url, options: options) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertTrue(result.value!.cacheType == .memory)
+                    
+                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                    
+                    XCTAssertNotNil(expirationTime2)
+                    XCTAssertEqual(expirationTime1, expirationTime2)
+                    
+                    exp.fulfill()
+                }
+            })
+        }
+        
         waitForExpectations(timeout: 3, handler: nil)
     }
 }
