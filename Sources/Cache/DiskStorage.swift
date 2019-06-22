@@ -190,7 +190,15 @@ public enum DiskStorage {
             }
         }
 
-        func cacheFileURL(forKey key: String) -> URL {
+        /// The URL of the cached file with a given computed `key`.
+        ///
+        /// - Note:
+        /// This method does not guarantee there is an image already cached in the returned URL. It just gives your
+        /// the URL that the image should be if it exists in disk storage, with the give key.
+        ///
+        /// - Parameter key: The final computed key used when caching the image. Please note that usually this is not
+        /// the `cacheKey` of an image `Source`. It is the computed key with processor identifier considered.
+        public func cacheFileURL(forKey key: String) -> URL {
             let fileName = cacheFileName(forKey: key)
             return directoryURL.appendingPathComponent(fileName)
         }
