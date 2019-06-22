@@ -329,10 +329,9 @@ extension KingfisherWrapper where Base: UIButton {
     
     private var taskIdentifierInfo: TaskIdentifier {
         return  getAssociatedObject(base, &taskIdentifierKey) ?? {
-            let value = TaskIdentifier([:])
-            setRetainedAssociatedObject(base, &taskIdentifierKey, value)
-            return value
-        }()
+            setRetainedAssociatedObject(base, &taskIdentifierKey, $0)
+            return $0
+        } (TaskIdentifier([:]))
     }
     
     private var imageTask: DownloadTask? {
@@ -358,10 +357,9 @@ extension KingfisherWrapper where Base: UIButton {
     
     private var backgroundTaskIdentifierInfo: TaskIdentifier {
         return  getAssociatedObject(base, &backgroundTaskIdentifierKey) ?? {
-            let value = TaskIdentifier([:])
-            setRetainedAssociatedObject(base, &backgroundTaskIdentifierKey, value)
-            return value
-        }()
+            setRetainedAssociatedObject(base, &backgroundTaskIdentifierKey, $0)
+            return $0
+        } (TaskIdentifier([:]))
     }
     
     private var backgroundImageTask: DownloadTask? {

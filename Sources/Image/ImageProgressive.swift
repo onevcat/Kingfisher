@@ -71,7 +71,7 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     private let refresh: (Image) -> Void
     
     private let decoder: ImageProgressiveDecoder
-    private let queue = ImageProgressiveSerialQueue(.main)
+    private let queue = ImageProgressiveSerialQueue(.global(qos: .utility))
     
     init?(_ options: KingfisherParsedOptionsInfo,
           refresh: @escaping (Image) -> Void) {
@@ -89,16 +89,14 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
         guard !data.isEmpty else { return }
         
-        let interval = option.scanInterval
-        let isFastest = option.isFastestScan
-        
-        func add(decode data: Data) {
-            queue.add(minimum: interval) { completion in
-                guard self.onShouldApply() else {
-                    self.queue.clean()
-                    completion()
-                    return
-                }
+        queue.add(minimum: option.scanInterval) { completion in
+            guard self.onShouldApply() else {
+                self.queue.clean()
+                completion()
+                return
+            }
+            
+            func decode(_ data: Data) {
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
                     guard self.onShouldApply() else { return }
@@ -106,13 +104,13 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
                     self.refresh(image)
                 }
             }
-        }
-        
-        if isFastest {
-            add(decode: decoder.scanning(data) ?? Data())
             
-        } else {
-            decoder.scanning(data).forEach { add(decode: $0) }
+            if self.option.isFastestScan {
+                decode(self.decoder.scanning(data) ?? Data())
+                
+            } else {
+                self.decoder.scanning(data).forEach { decode($0) }
+            }
         }
     }
 }
@@ -300,5 +298,9 @@ private final class ImageProgressiveSerialQueue {
     func clean() {
         items.forEach { $0.cancel() }
         items.removeAll()
+    }
+    
+    deinit {
+        clean()
     }
 }
