@@ -330,7 +330,7 @@ extension KingfisherWrapper where Base: UIButton {
     private var taskIdentifierInfo: TaskIdentifier {
         return  getAssociatedObject(base, &taskIdentifierKey) ?? {
             setRetainedAssociatedObject(base, &taskIdentifierKey, $0)
-            $0
+            return $0
         } (TaskIdentifier([:]))
     }
     
@@ -358,7 +358,7 @@ extension KingfisherWrapper where Base: UIButton {
     private var backgroundTaskIdentifierInfo: TaskIdentifier {
         return  getAssociatedObject(base, &backgroundTaskIdentifierKey) ?? {
             setRetainedAssociatedObject(base, &backgroundTaskIdentifierKey, $0)
-            $0
+            return $0
         } (TaskIdentifier([:]))
     }
     
