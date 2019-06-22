@@ -1,8 +1,8 @@
 //
-//  MainViewController.swift
+//  SwiftUIViewController.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2018/11/18.
+//  Created by Wei Wang on 2019/06/18.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,28 +24,4 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
-
-#if canImport(SwiftUI)
-import SwiftUI
-#endif
-
-class MainViewController: UITableViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = "Kingfisher"
-        setupOperationNavigationBar()
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 9 {
-
-            if #available(iOS 13.0, *) {
-                navigationController?.pushViewController(UIHostingController(rootView: SwiftUIView()), animated: true)
-            } else {
-                print("Not supported on this deploy platform.")
-            }
-        }
-    }
-
-}
+import Foundation

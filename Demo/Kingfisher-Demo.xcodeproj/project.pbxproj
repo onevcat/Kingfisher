@@ -16,6 +16,8 @@
 		4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742471D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
+		4B91BFB222B8D45000FDC81F /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B91BFB122B8D45000FDC81F /* SwiftUIViewController.swift */; };
+		4BB3DE8622B8D9C400F65D51 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
 		4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3371D5B02F8003387C2 /* Assets.xcassets */; };
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
@@ -142,6 +144,8 @@
 		4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinityCollectionViewController.swift; sourceTree = "<group>"; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
+		4B91BFB122B8D45000FDC81F /* SwiftUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIViewController.swift; sourceTree = "<group>"; };
+		4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4BCCF3391D5B02F8003387C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -322,12 +326,14 @@
 		D1A1CCA921A1936300263AD8 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */,
+				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
+				4B91BFB122B8D45000FDC81F /* SwiftUIViewController.swift */,
 				D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */,
 				4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */,
 				D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */,
 				D12E0C941C47F91800AC98AD /* NormalLoadingViewController.swift */,
 				D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */,
-				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
 				D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */,
 				D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */,
 				D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */,
@@ -611,7 +617,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B91BFB222B8D45000FDC81F /* SwiftUIViewController.swift in Sources */,
 				C959EEE622874DC600467A10 /* ProgressiveJPEGViewController.swift in Sources */,
+				4BB3DE8622B8D9C400F65D51 /* SwiftUIView.swift in Sources */,
 				D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12E0C9B1C47F91800AC98AD /* NormalLoadingViewController.swift in Sources */,
 				D1CE1BD021A1AFA300419000 /* TransitionViewController.swift in Sources */,
