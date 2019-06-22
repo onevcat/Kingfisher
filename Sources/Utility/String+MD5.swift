@@ -44,6 +44,6 @@ extension KingfisherWrapper where Base == String {
         }
         #endif
         
-        return digest.map { String(format: "%02x", $0) }.joined()
+        return digest.reduce(into: "") { $0 += String(format: "%02x", $1) }
     }
 }

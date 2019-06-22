@@ -26,6 +26,14 @@
 
 import Foundation
 
+/// Constants for some time intervals
+struct TimeConstants {
+    static let secondsInOneMinute = 60
+    static let minutesInOneHour = 60
+    static let hoursInOneDay = 24
+    static let secondsInOneDay = secondsInOneMinute * minutesInOneHour * hoursInOneDay
+}
+
 /// Represents the expiration strategy used in storage.
 ///
 /// - never: The item never expires.
@@ -48,7 +56,7 @@ public enum StorageExpiration {
         switch self {
         case .never: return .distantFuture
         case .seconds(let seconds): return date.addingTimeInterval(seconds)
-        case .days(let days): return date.addingTimeInterval(TimeInterval(60 * 60 * 24 * days))
+        case .days(let days): return date.addingTimeInterval(TimeInterval(TimeConstants.secondsInOneDay * days))
         case .date(let ref): return ref
         case .expired: return .distantPast
         }
@@ -66,11 +74,25 @@ public enum StorageExpiration {
         switch self {
         case .never: return .infinity
         case .seconds(let seconds): return seconds
-        case .days(let days): return TimeInterval(60 * 60 * 24 * days)
+        case .days(let days): return TimeInterval(TimeConstants.secondsInOneDay * days)
         case .date(let ref): return ref.timeIntervalSinceNow
         case .expired: return -(.infinity)
         }
     }
+}
+
+/// Represents the expiration extending strategy used in storage to after access.
+///
+/// - none: The item expires after the original time, without extending after access.
+/// - cacheTime: The item expiration extends by the original cache time after each access.
+/// - expirationTime: The item expiration extends by the provided time after each access.
+public enum ExpirationExtending {
+    /// The item expires after the original time, without extending after access.
+    case none
+    /// The item expiration extends by the original cache time after each access.
+    case cacheTime
+    /// The item expiration extends by the provided time after each access.
+    case expirationTime(_ expiration: StorageExpiration)
 }
 
 /// Represents types which cost in memory can be calculated.
