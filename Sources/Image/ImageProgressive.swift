@@ -71,7 +71,7 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     private let refresh: (Image) -> Void
     
     private let decoder: ImageProgressiveDecoder
-    private let queue = ImageProgressiveSerialQueue(.global(qos: .utility))
+    private let queue = ImageProgressiveSerialQueue()
     
     init?(_ options: KingfisherParsedOptionsInfo,
           refresh: @escaping (Image) -> Void) {
@@ -250,19 +250,18 @@ private final class ImageProgressiveDecoder {
 private final class ImageProgressiveSerialQueue {
     typealias ClosureCallback = ((@escaping () -> Void)) -> Void
     
-    private let queue: DispatchQueue
+    private let queue: DispatchQueue = .init(label: "com.onevcat.Kingfisher.ImageProgressive.SerialQueue")
     private var items: [DispatchWorkItem] = []
     private var notify: (() -> Void)?
     private var lastTime: TimeInterval?
     var count: Int { return items.count }
     
-    init(_ queue: DispatchQueue) {
-        self.queue = queue
-    }
-    
     func add(minimum interval: TimeInterval, closure: @escaping ClosureCallback) {
-        let completion = {
-            self.queue.async {
+        let completion = { [weak self] in
+            guard let self = self else { return }
+            
+            self.queue.async { [weak self] in
+                guard let self = self else { return }
                 guard !self.items.isEmpty else { return }
                 
                 self.items.removeFirst()
@@ -280,15 +279,20 @@ private final class ImageProgressiveSerialQueue {
                 }
             }
         }
-        let item = DispatchWorkItem {
-            closure(completion)
+        
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            
+            let item = DispatchWorkItem {
+                closure(completion)
+            }
+            if self.items.isEmpty {
+                let difference = Date().timeIntervalSince1970 - (self.lastTime ?? 0)
+                let delay = difference < interval ? interval - difference : 0
+                self.queue.asyncAfter(deadline: .now() + delay, execute: item)
+            }
+            self.items.append(item)
         }
-        if items.isEmpty {
-            let difference = Date().timeIntervalSince1970 - (lastTime ?? 0)
-            let delay = difference < interval ? interval - difference : 0
-            queue.asyncAfter(deadline: .now() + delay, execute: item)
-        }
-        items.append(item)
     }
     
     func notify(_ closure: @escaping () -> Void) {
@@ -296,11 +300,10 @@ private final class ImageProgressiveSerialQueue {
     }
     
     func clean() {
-        items.forEach { $0.cancel() }
-        items.removeAll()
-    }
-    
-    deinit {
-        clean()
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            self.items.forEach { $0.cancel() }
+            self.items.removeAll()
+        }
     }
 }
