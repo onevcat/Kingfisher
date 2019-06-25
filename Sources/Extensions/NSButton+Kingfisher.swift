@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
+#if canImport(AppKit)
 import AppKit
 
 extension KingfisherWrapper where Base: NSButton {
@@ -348,3 +348,4 @@ extension KingfisherWrapper where Base: NSButton {
         set { }
     }
 }
+#endif
