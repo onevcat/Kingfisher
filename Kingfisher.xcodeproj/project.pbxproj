@@ -296,7 +296,7 @@
 		4B46CC5E217449C600D90C4A /* MemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStorage.swift; sourceTree = "<group>"; };
 		4B46CC63217449E000D90C4A /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B46CC6821744AC500D90C4A /* DiskStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStorage.swift; sourceTree = "<group>"; };
-		4B531FE322C35B7B0041899C /* KFImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KFImage.swift; path = Sources/SwiftUI/KFImage.swift; sourceTree = "<group>"; };
+		4B531FE322C35B7B0041899C /* KFImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFImage.swift; sourceTree = "<group>"; };
 		4B8351C7217066580081EED8 /* StubHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubHelpers.swift; sourceTree = "<group>"; };
 		4B8351CB217084660081EED8 /* Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runtime.swift; sourceTree = "<group>"; };
 		4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloaderDelegate.swift; sourceTree = "<group>"; };
@@ -442,6 +442,7 @@
 		4B531FE222C35B5F0041899C /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				4B531FE322C35B7B0041899C /* KFImage.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -651,7 +652,6 @@
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
-				4B531FE322C35B7B0041899C /* KFImage.swift */,
 				D12AB688215D2A280013BA68 /* Sources */,
 				D10EC22C1C3D62E800A4211C /* Tests */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
@@ -1678,13 +1678,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
@@ -1736,7 +1737,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VALIDATE_PRODUCT = YES;

@@ -25,7 +25,6 @@
 //  THE SOFTWARE.
 
 import SwiftUI
-import Kingfisher
 import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -86,8 +85,9 @@ public struct KFImage: SwiftUI.View {
 
 #if DEBUG
 struct KFImage_Previews : PreviewProvider {
-    static var previews: some View {
-        KFImage()
+    static var previews: some SwiftUI.View {
+        KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
+        .resizable().aspectRatio(contentMode: .fit).padding()
     }
 }
 #endif
