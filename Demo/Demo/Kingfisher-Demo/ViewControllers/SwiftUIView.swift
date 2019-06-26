@@ -24,22 +24,21 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+import Kingfisher
 import SwiftUI
 
-@available(iOS 13.0, *)
-struct KFImage: View {
-
-    @ObjectBinding var image: UIImage
-
-    var body: some View {
-        Image(uiImage: image)
-    }
-}
-
-@available(iOS 13.0, *)
-struct SwiftUIView : View {
-    var body: some View {
-        Text("Hello World!")
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+struct SwiftUIView : SwiftUI.View {
+    var body: some SwiftUI.View {
+        VStack {
+            Text("Hello World")
+            KFImage(url: URL(string: "https://onevcat.com/assets/images/avatar.jpg")!)
+                .resizable()
+                .padding()
+                .background(Color.red)
+                .frame(width: 400, height: 400)
+            Text("Test Me")
+        }
     }
 }
 

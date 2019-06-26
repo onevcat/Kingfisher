@@ -26,6 +26,10 @@
 		4B46CC6A21744AC500D90C4A /* DiskStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC6821744AC500D90C4A /* DiskStorage.swift */; };
 		4B46CC6B21744AC500D90C4A /* DiskStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC6821744AC500D90C4A /* DiskStorage.swift */; };
 		4B46CC6C21744AC500D90C4A /* DiskStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC6821744AC500D90C4A /* DiskStorage.swift */; };
+		4B531FE422C35B7B0041899C /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B531FE322C35B7B0041899C /* KFImage.swift */; };
+		4B531FE522C35B7B0041899C /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B531FE322C35B7B0041899C /* KFImage.swift */; };
+		4B531FE622C35B7B0041899C /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B531FE322C35B7B0041899C /* KFImage.swift */; };
+		4B531FE722C35B7B0041899C /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B531FE322C35B7B0041899C /* KFImage.swift */; };
 		4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351C7217066580081EED8 /* StubHelpers.swift */; };
 		4B8351C9217066580081EED8 /* StubHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351C7217066580081EED8 /* StubHelpers.swift */; };
 		4B8351CA217066580081EED8 /* StubHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8351C7217066580081EED8 /* StubHelpers.swift */; };
@@ -292,6 +296,7 @@
 		4B46CC5E217449C600D90C4A /* MemoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStorage.swift; sourceTree = "<group>"; };
 		4B46CC63217449E000D90C4A /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		4B46CC6821744AC500D90C4A /* DiskStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStorage.swift; sourceTree = "<group>"; };
+		4B531FE322C35B7B0041899C /* KFImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KFImage.swift; path = Sources/SwiftUI/KFImage.swift; sourceTree = "<group>"; };
 		4B8351C7217066580081EED8 /* StubHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubHelpers.swift; sourceTree = "<group>"; };
 		4B8351CB217084660081EED8 /* Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runtime.swift; sourceTree = "<group>"; };
 		4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloaderDelegate.swift; sourceTree = "<group>"; };
@@ -434,6 +439,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B531FE222C35B5F0041899C /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
 		4B8351C6217066400081EED8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -477,6 +489,7 @@
 		D12AB688215D2A280013BA68 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4B531FE222C35B5F0041899C /* SwiftUI */,
 				D12AB6A9215D2BB50013BA68 /* Info.plist */,
 				D12AB6AA215D2BB50013BA68 /* Kingfisher.h */,
 				D12AB6B0215D2BB50013BA68 /* General */,
@@ -638,6 +651,7 @@
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
+				4B531FE322C35B7B0041899C /* KFImage.swift */,
 				D12AB688215D2A280013BA68 /* Sources */,
 				D10EC22C1C3D62E800A4211C /* Tests */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
@@ -1109,6 +1123,7 @@
 				C9286409228584EB00257182 /* ImageProgressive.swift in Sources */,
 				4BD821642189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D1A37BD6215D2DBA009B39B7 /* Resource.swift in Sources */,
+				4B531FE622C35B7B0041899C /* KFImage.swift in Sources */,
 				D1A37BD7215D2DBA009B39B7 /* ImageDownloader.swift in Sources */,
 				D1A37BD8215D2DBA009B39B7 /* ImageModifier.swift in Sources */,
 				D1A37BD9215D2DBA009B39B7 /* ImagePrefetcher.swift in Sources */,
@@ -1178,6 +1193,7 @@
 				D12AB719215D2BB50013BA68 /* CacheSerializer.swift in Sources */,
 				D1E56446219B16330057AAE3 /* ImageDataProvider.swift in Sources */,
 				D12AB731215D2BB50013BA68 /* AnimatedImageView.swift in Sources */,
+				4B531FE522C35B7B0041899C /* KFImage.swift in Sources */,
 				4B46CC65217449E000D90C4A /* Storage.swift in Sources */,
 				D12AB6E5215D2BB50013BA68 /* Placeholder.swift in Sources */,
 				4B46CC6A21744AC500D90C4A /* DiskStorage.swift in Sources */,
@@ -1233,6 +1249,7 @@
 				D12AB71B215D2BB50013BA68 /* CacheSerializer.swift in Sources */,
 				4B46CC6C21744AC500D90C4A /* DiskStorage.swift in Sources */,
 				D8B3692821C5CED6000F36F6 /* RedirectHandler.swift in Sources */,
+				4B531FE722C35B7B0041899C /* KFImage.swift in Sources */,
 				D12AB6DB215D2BB50013BA68 /* ImageTransition.swift in Sources */,
 				4BD821652189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
 				D1BA78202174D07800C69D7B /* CallbackQueue.swift in Sources */,
@@ -1277,6 +1294,7 @@
 				D12AB718215D2BB50013BA68 /* CacheSerializer.swift in Sources */,
 				D1E56445219B16330057AAE3 /* ImageDataProvider.swift in Sources */,
 				D12AB730215D2BB50013BA68 /* AnimatedImageView.swift in Sources */,
+				4B531FE422C35B7B0041899C /* KFImage.swift in Sources */,
 				4B46CC64217449E000D90C4A /* Storage.swift in Sources */,
 				D12AB6E4215D2BB50013BA68 /* Placeholder.swift in Sources */,
 				4B46CC6921744AC500D90C4A /* DiskStorage.swift in Sources */,
