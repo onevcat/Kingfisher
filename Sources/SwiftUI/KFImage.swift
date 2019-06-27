@@ -2,7 +2,7 @@
 //  KFImage.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/06/26.
+//  Created by onevcat on 2019/06/26.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -28,67 +28,70 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-class ImageBinder: BindableObject {
-    let url: URL
-    var didChange = PassthroughSubject<Kingfisher.KFCrossPlatformImage?, Never>()
-
-    var image: Kingfisher.KFCrossPlatformImage? {
-        didSet {
-            didChange.send(image)
-        }
-    }
-
-    init(url: URL) {
-        self.url = url
-        _ = KingfisherManager.shared.retrieveImage(with: .network(url)) { r in
-            switch r {
-            case .success(let result): self.image = result.image
-            case .failure(let error): break
-            }
-        }
-    }
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct KFImage: SwiftUI.View {
+public struct KFImage: View {
 
     static let empty = Kingfisher.KFCrossPlatformImage()
 
-    private var capInsets: EdgeInsets?
-    private var resizingMode: SwiftUI.Image.ResizingMode?
-
-    var config: [(SwiftUI.Image) -> SwiftUI.Image]
+    var configs: [(Image) -> Image]
 
     @ObjectBinding var binder: ImageBinder
 
     public init(url: URL) {
         binder = ImageBinder(url: url)
-        config = []
+        configs = []
     }
 
-    public var body: some SwiftUI.View {
+    public var body: some View {
         #if canImport(UIKit)
-        let image = SwiftUI.Image(uiImage: binder.image ?? KFImage.empty)
+        let image = Image(uiImage: binder.image ?? KFImage.empty)
         #elseif canImport(AppKit)
-        let image = SwiftUI.Image(nsImage: binder.image ?? KFImage.empty)
+        let image = Image(nsImage: binder.image ?? KFImage.empty)
         #endif
 
-        return config.reduce(image) { current, config in config(current) }
+        return configs
+            .reduce(image) { current, config in config(current) }
+            .onAppear { self.binder.start() }
+    }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension KFImage {
+
+    public func config(_ block: @escaping (Image) -> Image) -> KFImage {
+        var result = self
+        result.configs.append(block)
+        return result
     }
 
-    public func resizable(capInsets: EdgeInsets = EdgeInsets(), resizingMode: SwiftUI.Image.ResizingMode = .stretch) -> KFImage {
-        var result = self
-        result.config.append { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
-        return result
+    public func resizable(
+        capInsets: EdgeInsets = EdgeInsets(),
+        resizingMode: Image.ResizingMode = .stretch) -> KFImage
+    {
+        config { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
+    }
+
+    public func renderingMode(_ renderingMode: Image.TemplateRenderingMode?) -> KFImage {
+        config { $0.renderingMode(renderingMode) }
+    }
+
+    public func interpolation(_ interpolation: Image.Interpolation) -> KFImage {
+        config { $0.interpolation(interpolation) }
+    }
+
+    public func antialiased(_ isAntialiased: Bool) -> KFImage {
+        config { $0.antialiased(isAntialiased) }
     }
 }
 
 #if DEBUG
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
-    static var previews: some SwiftUI.View {
+    static var previews: some View {
         KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
-        .resizable().aspectRatio(contentMode: .fit).padding()
+        .resizable()
+        .interpolation(.medium)
+        .aspectRatio(contentMode: .fit)
+        .padding()
     }
 }
 #endif
