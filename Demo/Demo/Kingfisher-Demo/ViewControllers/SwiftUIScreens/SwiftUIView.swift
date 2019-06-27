@@ -1,8 +1,8 @@
 //
-//  ImageBinder.swift
+//  SwiftUIView.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2019/06/27.
+//  Created by Wei Wang on 2019/06/18.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,47 +24,43 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Combine
+import Kingfisher
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFImage {
-    public class ImageBinder: BindableObject {
-        let url: URL
+struct SwiftUIView : View {
 
-        public var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
-        var subject = PassthroughSubject<RetrieveImageResult, KingfisherError>()
+    @State private var index = "1"
+    @State private var result = ""
 
-        var subscriber: Subscribers.Sink<PassthroughSubject<RetrieveImageResult, KingfisherError>>?
-
-        var downloadTask: DownloadTask?
-
-        var image: Kingfisher.KFCrossPlatformImage? {
-            didSet {
-                didChange.send(image)
-            }
-        }
-
-        init(url: URL) {
-            self.url = url
-        }
-
-        func start() {
-            downloadTask = KingfisherManager.shared.retrieveImage(with: .network(url)) { r in
-                switch r {
-                case .success(let result):
-                    self.image = result.image
-                    self.subject.send(result)
-                    self.subject.send(completion: .finished)
-                case .failure(let error):
-                    self.subject.send(completion: .failure(error))
+    var body: some View {
+        VStack {
+            KFImage(url: URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
+                .resizable()
+                .onSuccess { r in
+                    print("suc: \(r)")
+                    self.result = "\(r.cacheType)"
                 }
-            }
-        }
+                .onFailure { e in
+                    print("err: \(e)")
+                    self.result = "\(e)"
+                }
+                .placeholder(image: Image(systemName: "star.fill"))
+                .frame(width: 300, height: 300)
+                .cornerRadius(20)
 
-        public func cancel() {
-            downloadTask?.cancel()
-        }
+            Button(action: {
+                self.index = String(Int(self.index)! + 1)
+            }) { Text("+1") }
+
+        }.navigationBarTitle(Text("Basic Image"))
     }
-
 }
+
+#if DEBUG
+struct SwiftUIView_Previews : PreviewProvider {
+    static var previews: some View {
+        SwiftUIView()
+    }
+}
+#endif
