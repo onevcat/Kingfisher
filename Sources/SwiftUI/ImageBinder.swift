@@ -28,32 +28,37 @@ import Combine
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-class ImageBinder: BindableObject {
-    let url: URL
-    var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
+extension KFImage {
+    class ImageBinder: BindableObject {
+        let url: URL
 
-    var onDone = PassthroughSubject<RetrieveImageResult, KingfisherError>()
+        var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
+        var subject = PassthroughSubject<RetrieveImageResult, KingfisherError>()
 
-    var image: Kingfisher.KFCrossPlatformImage? {
-        didSet {
-            didChange.send(image)
+        var subscriber: Subscribers.Sink<PassthroughSubject<RetrieveImageResult, KingfisherError>>?
+
+        var image: Kingfisher.KFCrossPlatformImage? {
+            didSet {
+                didChange.send(image)
+            }
         }
-    }
 
-    init(url: URL) {
-        self.url = url
-    }
+        init(url: URL) {
+            self.url = url
+        }
 
-    func start() {
-        _ = KingfisherManager.shared.retrieveImage(with: .network(url)) { r in
-            switch r {
-            case .success(let result):
-                self.image = result.image
-                self.onDone.send(result)
-                self.onDone.send(completion: .finished)
-            case .failure(let error):
-                self.onDone.send(completion: .failure(error))
+        func start() {
+            _ = KingfisherManager.shared.retrieveImage(with: .network(url)) { r in
+                switch r {
+                case .success(let result):
+                    self.image = result.image
+                    self.subject.send(result)
+                    self.subject.send(completion: .finished)
+                case .failure(let error):
+                    self.subject.send(completion: .failure(error))
+                }
             }
         }
     }
+
 }

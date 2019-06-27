@@ -36,6 +36,9 @@ public struct KFImage: View {
 
     @ObjectBinding var binder: ImageBinder
 
+    private let onFailureDelegate = Delegate<KingfisherError, Void>()
+    private let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
+
     public init(url: URL) {
         binder = ImageBinder(url: url)
         configs = []
@@ -50,7 +53,23 @@ public struct KFImage: View {
 
         return configs
             .reduce(image) { current, config in config(current) }
-            .onAppear { self.binder.start() }
+            .onAppear { [unowned binder] in
+                binder.subscriber = binder.subject.sink(
+                    receiveCompletion: { complete in
+                        switch complete {
+                        case .failure(let error):
+                            self.onFailureDelegate.call(error)
+                        case .finished: break
+                        }
+                        binder.subscriber?.cancel()
+                        binder.subscriber = nil
+                    },
+                    receiveValue: { result in
+                        self.onSuccessDelegate.call(result)
+                    }
+                )
+                binder.start()
+            }
     }
 }
 
@@ -83,12 +102,32 @@ extension KFImage {
     }
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension KFImage {
+    public func onFailure(perform action: ((Error) -> Void)?) -> KFImage {
+        onFailureDelegate.delegate(on: binder) { _, error in
+            action?(error)
+        }
+        return self
+    }
+
+    public func onSuccess(perform action: ((RetrieveImageResult) -> Void)?) -> KFImage {
+        onSuccessDelegate.delegate(on: binder) { _, result in
+            action?(result)
+        }
+        return self
+    }
+}
+
 #if DEBUG
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
         .resizable()
+        .onSuccess { r in
+            print(r)
+        }
         .interpolation(.medium)
         .aspectRatio(contentMode: .fit)
         .padding()

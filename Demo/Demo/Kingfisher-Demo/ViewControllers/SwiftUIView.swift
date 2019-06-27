@@ -34,6 +34,12 @@ struct SwiftUIView : SwiftUI.View {
             Text("Hello World")
             KFImage(url: URL(string: "https://onevcat.com/assets/images/avatar.jpg")!)
                 .resizable()
+                .onSuccess { r in
+                    print(r)
+                }
+                .onFailure { e in
+                    print("Get an error \(e)")
+                }
                 .padding()
                 .background(Color.red)
                 .frame(width: 400, height: 400)
