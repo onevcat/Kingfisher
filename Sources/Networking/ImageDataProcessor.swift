@@ -37,7 +37,7 @@ class ImageDataProcessor {
 
     // Note: We have an optimization choice there, to reduce queue dispatch by checking callback
     // queue settings in each option...
-    let onImageProcessed = Delegate<(Result<Image, KingfisherError>, SessionDataTask.TaskCallback), Void>()
+    let onImageProcessed = Delegate<(Result<KFCrossPlatformImage, KingfisherError>, SessionDataTask.TaskCallback), Void>()
 
     init(data: Data, callbacks: [SessionDataTask.TaskCallback], processingQueue: CallbackQueue?) {
         self.data = data
@@ -50,7 +50,7 @@ class ImageDataProcessor {
     }
 
     private func doProcess() {
-        var processedImages = [String: Image]()
+        var processedImages = [String: KFCrossPlatformImage]()
         for callback in callbacks {
             let processor = callback.options.processor
             var image = processedImages[processor.identifier]
@@ -59,7 +59,7 @@ class ImageDataProcessor {
                 processedImages[processor.identifier] = image
             }
 
-            let result: Result<Image, KingfisherError>
+            let result: Result<KFCrossPlatformImage, KingfisherError>
             if let image = image {
                 var finalImage = image
                 if let imageModifier = callback.options.imageModifier {

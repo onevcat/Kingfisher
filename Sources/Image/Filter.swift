@@ -48,7 +48,7 @@ extension CIImageProcessor {
     /// - Returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         switch item {
         case .image(let image):
             return image.kf.apply(filter)
@@ -69,7 +69,7 @@ public struct Filter {
     }
     
     /// Tint filter which will apply a tint color to images.
-    public static var tint: (Color) -> Filter = {
+    public static var tint: (KFCrossPlatformColor) -> Filter = {
         color in
         Filter {
             input in
@@ -105,7 +105,7 @@ public struct Filter {
     }
 }
 
-extension KingfisherWrapper where Base: Image {
+extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
     /// Applies a `Filter` containing `CIImage` transformer to `self`.
     ///
@@ -115,7 +115,7 @@ extension KingfisherWrapper where Base: Image {
     /// - Note:
     ///    Only CG-based images are supported. If any error happens
     ///    during transforming, `self` will be returned.
-    public func apply(_ filter: Filter) -> Image {
+    public func apply(_ filter: Filter) -> KFCrossPlatformImage {
         
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
@@ -135,7 +135,7 @@ extension KingfisherWrapper where Base: Image {
         #if os(macOS)
             return fixedForRetinaPixel(cgImage: result, to: size)
         #else
-            return Image(cgImage: result, scale: base.scale, orientation: base.imageOrientation)
+            return KFCrossPlatformImage(cgImage: result, scale: base.scale, orientation: base.imageOrientation)
         #endif
     }
 

@@ -40,7 +40,7 @@ public protocol ImageModifier {
     /// - Note: The return value will be unmodified if modifying is not possible on
     ///         the current platform.
     /// - Note: Most modifiers support UIImage or NSImage, but not CGImage.
-    func modify(_ image: Image) -> Image
+    func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage
 }
 
 /// A wrapper for creating an `ImageModifier` easier.
@@ -50,15 +50,15 @@ public struct AnyImageModifier: ImageModifier {
 
     /// A block which modifies images, or returns the original image
     /// if modification cannot be performed with an error.
-    let block: (Image) throws -> Image
+    let block: (KFCrossPlatformImage) throws -> KFCrossPlatformImage
 
     /// Creates an `AnyImageModifier` with a given `modify` block.
-    public init(modify: @escaping (Image) throws -> Image) {
+    public init(modify: @escaping (KFCrossPlatformImage) throws -> KFCrossPlatformImage) {
         block = modify
     }
 
     /// Modify an input `Image`. See `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image {
+    public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return (try? block(image)) ?? image
     }
 }
@@ -80,7 +80,7 @@ public struct RenderingModeImageModifier: ImageModifier {
     }
 
     /// Modify an input `Image`. See `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image {
+    public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return image.withRenderingMode(renderingMode)
     }
 }
@@ -92,7 +92,7 @@ public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
     public init() {}
 
     /// Modify an input `Image`. See `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image {
+    public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return image.imageFlippedForRightToLeftLayoutDirection()
     }
 }
@@ -109,7 +109,7 @@ public struct AlignmentRectInsetsImageModifier: ImageModifier {
     }
 
     /// Modify an input `Image`. See `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image {
+    public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return image.withAlignmentRectInsets(alignmentInsets)
     }
 }

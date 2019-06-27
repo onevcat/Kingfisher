@@ -135,7 +135,7 @@ final class ActivityIndicator: Indicator {
 // MARK: - ImageIndicator
 // Displays an ImageView. Supports gif
 final class ImageIndicator: Indicator {
-    private let animatedImageIndicatorView: ImageView
+    private let animatedImageIndicatorView: KFCrossPlatformImageView
 
     var view: IndicatorView {
         return animatedImageIndicatorView
@@ -156,7 +156,7 @@ final class ImageIndicator: Indicator {
             return nil
         }
 
-        animatedImageIndicatorView = ImageView()
+        animatedImageIndicatorView = KFCrossPlatformImageView()
         animatedImageIndicatorView.image = image
         
         #if os(macOS)
