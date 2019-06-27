@@ -1,8 +1,8 @@
 //
-//  SwiftUIView.swift
+//  SwiftUIMainScreen.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 2019/06/18.
+//  Created by Wei Wang on 2019/06/27.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -28,30 +28,20 @@ import Kingfisher
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct SwiftUIView : SwiftUI.View {
+struct SwiftUIMainScreen : SwiftUI.View {
+
     var body: some SwiftUI.View {
-        VStack {
-            Text("Hello World")
-            KFImage(url: URL(string: "https://onevcat.com/assets/images/avatar.jpg")!)
-                .resizable()
-                .onSuccess { r in
-                    print(r)
-                }
-                .onFailure { e in
-                    print("Get an error \(e)")
-                }
-                .padding()
-                .background(Color.red)
-                .frame(width: 400, height: 400)
-            Text("Test Me")
+        List {
+            NavigationButton(destination: SwiftUIView()) { Text("Basic Image") }
+            NavigationButton(destination: SwiftUIList()) { Text("List") }
         }
     }
 }
 
 #if DEBUG
-struct SwiftUIView_Previews : PreviewProvider {
+struct SwiftUIMainScreen_Previews : PreviewProvider {
     static var previews: some View {
-        SwiftUIView()
+        SwiftUIMainScreen()
     }
 }
 #endif

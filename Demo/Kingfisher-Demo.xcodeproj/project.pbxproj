@@ -34,6 +34,7 @@
 		D12E0CA31C47F92200AC98AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C9E1C47F92200AC98AD /* Assets.xcassets */; };
 		D12E0CA41C47F92200AC98AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C9F1C47F92200AC98AD /* Main.storyboard */; };
 		D12E0CB61C47F9C100AC98AD /* NormalLoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C941C47F91800AC98AD /* NormalLoadingViewController.swift */; };
+		D139767D22C501D40073D00D /* SwiftUIMainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D139767C22C501D40073D00D /* SwiftUIMainScreen.swift */; };
 		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D1679A531C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */; };
 		D17176322047826A00EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D17176332047826A00EFC8C5 /* Kingfisher.framework */; };
@@ -43,6 +44,7 @@
 		D1717638204782D500EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1717639204782D500EFC8C5 /* Kingfisher.framework */; };
 		D171763E204782F300EFC8C5 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D1717639204782D500EFC8C5 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D171763F2047837900EFC8C5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D17176402047837900EFC8C5 /* Kingfisher.framework */; };
+		D17678CF22C517E500972227 /* SwiftUIList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17678CE22C517E400972227 /* SwiftUIList.swift */; };
 		D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA221A1879600263AD8 /* MainViewController.swift */; };
 		D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
 		D1A1CCA821A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
@@ -163,6 +165,7 @@
 		D12E0C9E1C47F92200AC98AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D12E0CA01C47F92200AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D12E0CA11C47F92200AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D139767C22C501D40073D00D /* SwiftUIMainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIMainScreen.swift; sourceTree = "<group>"; };
 		D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-tvOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +173,7 @@
 		D1717636204782AE00EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1717639204782D500EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D17176402047837900EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D17678CE22C517E400972227 /* SwiftUIList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIList.swift; sourceTree = "<group>"; };
 		D1A1CCA221A1879600263AD8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KingfisherOperation.swift"; sourceTree = "<group>"; };
 		D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewController.swift; sourceTree = "<group>"; };
@@ -313,6 +317,16 @@
 			path = "Demo/Kingfisher-tvOS-Demo";
 			sourceTree = "<group>";
 		};
+		D139767B22C501AD0073D00D /* SwiftUIScreens */ = {
+			isa = PBXGroup;
+			children = (
+				D139767C22C501D40073D00D /* SwiftUIMainScreen.swift */,
+				D17678CE22C517E400972227 /* SwiftUIList.swift */,
+				4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */,
+			);
+			path = SwiftUIScreens;
+			sourceTree = "<group>";
+		};
 		D1A1CCA521A1895000263AD8 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -324,7 +338,7 @@
 		D1A1CCA921A1936300263AD8 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */,
+				D139767B22C501AD0073D00D /* SwiftUIScreens */,
 				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
 				D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */,
 				4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */,
@@ -618,6 +632,7 @@
 				4BB3DE8622B8D9C400F65D51 /* SwiftUIView.swift in Sources */,
 				D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12E0C9B1C47F91800AC98AD /* NormalLoadingViewController.swift in Sources */,
+				D17678CF22C517E500972227 /* SwiftUIList.swift in Sources */,
 				D1CE1BD021A1AFA300419000 /* TransitionViewController.swift in Sources */,
 				D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */,
 				D1F06F3921AAF1EE000B1C38 /* IndicatorCollectionViewController.swift in Sources */,
@@ -629,6 +644,7 @@
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
+				D139767D22C501D40073D00D /* SwiftUIMainScreen.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -906,8 +922,9 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
@@ -958,8 +975,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VALIDATE_PRODUCT = YES;

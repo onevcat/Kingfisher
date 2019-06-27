@@ -28,13 +28,24 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension Image {
+    init(crossPlatformImage: KFCrossPlatformImage) {
+        #if canImport(UIKit)
+        self.init(uiImage: crossPlatformImage)
+        #elseif canImport(AppKit)
+        self.init(nsImage: crossPlatformImage)
+        #endif
+    }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: View {
 
-    static let empty = Kingfisher.KFCrossPlatformImage()
+    var placeholder = Image(crossPlatformImage: .init())
 
     var configs: [(Image) -> Image]
 
-    @ObjectBinding var binder: ImageBinder
+    @ObjectBinding public private(set) var binder: ImageBinder
 
     private let onFailureDelegate = Delegate<KingfisherError, Void>()
     private let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
@@ -45,15 +56,12 @@ public struct KFImage: View {
     }
 
     public var body: some View {
-        #if canImport(UIKit)
-        let image = Image(uiImage: binder.image ?? KFImage.empty)
-        #elseif canImport(AppKit)
-        let image = Image(nsImage: binder.image ?? KFImage.empty)
-        #endif
-
+        print("Loading body \(binder.url)")
+        let image = binder.image.map { Image(crossPlatformImage: $0) } ?? placeholder
         return configs
             .reduce(image) { current, config in config(current) }
             .onAppear { [unowned binder] in
+                binder.subscriber?.cancel()
                 binder.subscriber = binder.subject.sink(
                     receiveCompletion: { complete in
                         switch complete {
@@ -68,6 +76,7 @@ public struct KFImage: View {
                         self.onSuccessDelegate.call(result)
                     }
                 )
+                print("Start!! \(binder.url)")
                 binder.start()
             }
     }
@@ -100,6 +109,20 @@ extension KFImage {
     public func antialiased(_ isAntialiased: Bool) -> KFImage {
         config { $0.antialiased(isAntialiased) }
     }
+
+    public func placeholder(image: Image?) -> KFImage {
+        var result = self
+        result.placeholder = image ?? Image(crossPlatformImage: .init())
+        return result
+    }
+
+    public func placeholder(name: String, bundle: Bundle? = nil) -> KFImage {
+        return placeholder(image: .init(name, bundle: bundle))
+    }
+
+    public func placeholder(systemName: String) -> KFImage {
+        return placeholder(image: .init(systemName: systemName))
+    }
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -124,11 +147,10 @@ extension KFImage {
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
-        .resizable()
         .onSuccess { r in
             print(r)
         }
-        .interpolation(.medium)
+        .resizable()
         .aspectRatio(contentMode: .fit)
         .padding()
     }

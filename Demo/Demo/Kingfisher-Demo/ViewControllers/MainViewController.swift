@@ -41,7 +41,7 @@ class MainViewController: UITableViewController {
         if indexPath.row == 9 {
 
             if #available(iOS 13.0, *) {
-                navigationController?.pushViewController(UIHostingController(rootView: SwiftUIView()), animated: true)
+                navigationController?.pushViewController(UIHostingController(rootView: SwiftUIMainScreen()), animated: true)
             } else {
                 print("Not supported on this deploy platform.")
             }
