@@ -31,7 +31,7 @@ import AppKit
 import UIKit
 #endif
 
-extension KingfisherWrapper where Base: ImageView {
+extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
     // MARK: Setting Image
 
@@ -259,7 +259,7 @@ extension KingfisherWrapper where Base: ImageView {
         }
     }
 
-    private func makeTransition(image: Image, transition: ImageTransition, done: @escaping () -> Void) {
+    private func makeTransition(image: KFCrossPlatformImage, transition: ImageTransition, done: @escaping () -> Void) {
         #if !os(macOS)
         // Force hiding the indicator without transition first.
         UIView.transition(
@@ -295,7 +295,7 @@ private var indicatorTypeKey: Void?
 private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
-extension KingfisherWrapper where Base: ImageView {
+extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
     // MARK: Properties
     public private(set) var taskIdentifier: Source.Identifier.Value? {
@@ -390,11 +390,11 @@ extension KingfisherWrapper where Base: ImageView {
 }
 
 
-@objc extension ImageView {
+@objc extension KFCrossPlatformImageView {
     func shouldPreloadAllAnimation() -> Bool { return true }
 }
 
-extension KingfisherWrapper where Base: ImageView {
+extension KingfisherWrapper where Base: KFCrossPlatformImageView {
     /// Gets the image URL bound to this image view.
     @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
     public private(set) var webURL: URL? {

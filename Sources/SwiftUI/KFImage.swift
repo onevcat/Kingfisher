@@ -30,9 +30,9 @@ import Combine
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 class ImageBinder: BindableObject {
     let url: URL
-    var didChange = PassthroughSubject<Kingfisher.Image?, Never>()
+    var didChange = PassthroughSubject<Kingfisher.KFCrossPlatformImage?, Never>()
 
-    var image: Kingfisher.Image? {
+    var image: Kingfisher.KFCrossPlatformImage? {
         didSet {
             didChange.send(image)
         }
@@ -52,7 +52,7 @@ class ImageBinder: BindableObject {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: SwiftUI.View {
 
-    static let empty = Kingfisher.Image()
+    static let empty = Kingfisher.KFCrossPlatformImage()
 
     private var capInsets: EdgeInsets?
     private var resizingMode: SwiftUI.Image.ResizingMode?
@@ -84,6 +84,7 @@ public struct KFImage: SwiftUI.View {
 }
 
 #if DEBUG
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
     static var previews: some SwiftUI.View {
         KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
