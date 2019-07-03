@@ -84,8 +84,13 @@ public class KingfisherManager {
     private convenience init() {
         self.init(downloader: .default, cache: .default)
     }
-    
-    init(downloader: ImageDownloader, cache: ImageCache) {
+
+    /// Creates an image setting manager with specified downloader and cache.
+    ///
+    /// - Parameters:
+    ///   - downloader: The image downloader used to download images.
+    ///   - cache: The image cache which stores memory and disk images.
+    public init(downloader: ImageDownloader, cache: ImageCache) {
         self.downloader = downloader
         self.cache = cache
 
