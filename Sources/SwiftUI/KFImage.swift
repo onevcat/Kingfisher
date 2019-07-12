@@ -29,6 +29,7 @@ import Combine
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Image {
+    // Creates an SwiftUI.Image with either UIImage or NSImage.
     init(crossPlatformImage: KFCrossPlatformImage) {
         #if canImport(UIKit)
         self.init(uiImage: crossPlatformImage)
@@ -56,21 +57,18 @@ public struct KFImage: View {
     }
 
     public var body: some View {
-        print("Loading body \(binder.url)")
         let image = binder.image.map { Image(crossPlatformImage: $0) } ?? placeholder
         return configs
             .reduce(image) { current, config in config(current) }
             .onAppear { [unowned binder] in
-                binder.subscriber?.cancel()
-                binder.subscriber = binder.subject.sink(
+                _ = binder.subject.sink(
                     receiveCompletion: { complete in
                         switch complete {
                         case .failure(let error):
                             self.onFailureDelegate.call(error)
-                        case .finished: break
+                        case .finished:
+                            break
                         }
-                        binder.subscriber?.cancel()
-                        binder.subscriber = nil
                     },
                     receiveValue: { result in
                         self.onSuccessDelegate.call(result)

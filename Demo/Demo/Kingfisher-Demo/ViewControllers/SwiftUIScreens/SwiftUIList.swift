@@ -34,18 +34,22 @@ struct SwiftUIList : View {
 
     var body: some View {
         List(index) { i in
-            KFImage(url: URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(i).jpg")!)
-                .resizable()
-                .onSuccess { r in
-                    print("suc: \(i)")
+            HStack(alignment: .center) {
+                Spacer()
+                KFImage(url: URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(i).jpg")!)
+                    .resizable()
+                    .onSuccess { r in
+                        print("suc: \(i) - \(r.cacheType)")
                 }
                 .onFailure { e in
                     print("err: \(i)")
                 }
-                .placeholder(image: Image(systemName: "star.fill"))
-                .frame(width: 300, height: 300)
-                .cornerRadius(20)
-        }.navigationBarTitle(Text("Basic Image"))
+                .placeholder(image: Image(systemName: "arrow.2.circlepath.circle"))
+                    .frame(width: 300, height: 300)
+                    .cornerRadius(20)
+                Spacer()
+            }.padding(.vertical, 12)
+        }.navigationBarTitle(Text("SwiftUI List"))
     }
 }
 
