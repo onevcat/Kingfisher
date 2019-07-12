@@ -28,12 +28,12 @@ import Kingfisher
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct SwiftUIMainScreen : SwiftUI.View {
+struct SwiftUIMainScreen : View {
 
-    var body: some SwiftUI.View {
+    var body: some View {
         List {
-            NavigationButton(destination: SwiftUIView()) { Text("Basic Image") }
-            NavigationButton(destination: SwiftUIList()) { Text("List") }
+            NavigationLink(destination: SwiftUIView()) { Text("Basic Image") }
+            NavigationLink(destination: SwiftUIList()) { Text("List") }
         }
     }
 }

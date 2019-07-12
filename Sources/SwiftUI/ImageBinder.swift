@@ -29,20 +29,16 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
+
     public class ImageBinder: BindableObject {
         let url: URL
 
         public var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
         var subject = PassthroughSubject<RetrieveImageResult, KingfisherError>()
-
-        var subscriber: Subscribers.Sink<PassthroughSubject<RetrieveImageResult, KingfisherError>>?
-
         var downloadTask: DownloadTask?
 
         var image: Kingfisher.KFCrossPlatformImage? {
-            didSet {
-                didChange.send(image)
-            }
+            didSet { didChange.send(image) }
         }
 
         init(url: URL) {
@@ -50,21 +46,25 @@ extension KFImage {
         }
 
         func start() {
-            downloadTask = KingfisherManager.shared.retrieveImage(with: .network(url)) { r in
-                switch r {
-                case .success(let result):
-                    self.image = result.image
-                    self.subject.send(result)
-                    self.subject.send(completion: .finished)
-                case .failure(let error):
-                    self.subject.send(completion: .failure(error))
+            let source = Source.network(url)
+            downloadTask = KingfisherManager.shared
+                .retrieveImage(with: source) { [weak self] result in
+                    guard let self = self else { return }
+
+                    self.downloadTask = nil
+                    switch result {
+                    case .success(let value):
+                        self.image = value.image
+                        self.subject.send(value)
+                        self.subject.send(completion: .finished)
+                    case .failure(let error):
+                        self.subject.send(completion: .failure(error))
+                    }
                 }
-            }
         }
 
         public func cancel() {
             downloadTask?.cancel()
         }
     }
-
 }
