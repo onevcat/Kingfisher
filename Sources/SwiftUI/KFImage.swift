@@ -47,9 +47,13 @@ public struct KFImage: View {
 
     @ObjectBinding public private(set) var binder: ImageBinder
 
-    public init(url: URL, options: KingfisherOptionsInfo? = nil) {
-        binder = ImageBinder(url: url, options: options)
+    public init(_ source: Source, options: KingfisherOptionsInfo? = nil) {
+        binder = ImageBinder(source: source, options: options)
         configs = []
+    }
+
+    public init(_ url: URL, options: KingfisherOptionsInfo? = nil) {
+        self.init(.network(url), options: options)
     }
 
     public var body: some View {
@@ -57,7 +61,6 @@ public struct KFImage: View {
         return configs
             .reduce(image) { current, config in config(current) }
             .onAppear { [unowned binder] in
-                print("Start!! \(binder.url)")
                 binder.start()
             }
     }
@@ -129,7 +132,7 @@ extension KFImage {
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {
-            KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
+            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
                 .onSuccess { r in
                     print(r)
                 }

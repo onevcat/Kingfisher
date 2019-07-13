@@ -36,7 +36,7 @@ struct SwiftUIList : View {
         List(index) { i in
             HStack(alignment: .center) {
                 Spacer()
-                KFImage(url: URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!)
+                KFImage(URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!)
                     .resizable()
                     .onSuccess { r in
                         print("suc: \(i) - \(r.cacheType)")

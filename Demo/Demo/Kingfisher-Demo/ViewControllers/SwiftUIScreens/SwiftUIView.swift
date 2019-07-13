@@ -35,7 +35,7 @@ struct SwiftUIView : View {
 
     var body: some View {
         VStack {
-            KFImage(url: URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
+            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
                 .resizable()
                 .onSuccess { r in
                     print("suc: \(r)")
