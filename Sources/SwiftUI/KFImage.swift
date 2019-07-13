@@ -43,16 +43,12 @@ extension Image {
 public struct KFImage: View {
 
     var placeholder = Image(crossPlatformImage: .init())
-
     var configs: [(Image) -> Image]
 
     @ObjectBinding public private(set) var binder: ImageBinder
 
-    private let onFailureDelegate = Delegate<KingfisherError, Void>()
-    private let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
-
-    public init(url: URL) {
-        binder = ImageBinder(url: url)
+    public init(url: URL, options: KingfisherOptionsInfo? = nil) {
+        binder = ImageBinder(url: url, options: options)
         configs = []
     }
 
@@ -61,20 +57,6 @@ public struct KFImage: View {
         return configs
             .reduce(image) { current, config in config(current) }
             .onAppear { [unowned binder] in
-                _ = binder.subject.sink(
-                    receiveCompletion: { complete in
-                        switch complete {
-                        case .failure(let error):
-                            self.onFailureDelegate.call(error)
-                        case .finished:
-                            break
-                        }
-                    },
-                    receiveValue: { result in
-                        self.onSuccessDelegate.call(result)
-                    }
-                )
-                print("Start!! \(binder.url)")
                 binder.start()
             }
     }
@@ -126,16 +108,17 @@ extension KFImage {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
     public func onFailure(perform action: ((Error) -> Void)?) -> KFImage {
-        onFailureDelegate.delegate(on: binder) { _, error in
-            action?(error)
-        }
+        binder.setOnFailure(perform: action)
         return self
     }
 
     public func onSuccess(perform action: ((RetrieveImageResult) -> Void)?) -> KFImage {
-        onSuccessDelegate.delegate(on: binder) { _, result in
-            action?(result)
-        }
+        binder.setOnSuccess(perform: action)
+        return self
+    }
+
+    public func onProgress(perform action: ((Int64, Int64) -> Void)?) -> KFImage {
+        binder.setOnProgress(perform: action)
         return self
     }
 }
@@ -144,13 +127,15 @@ extension KFImage {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
-        KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
-        .onSuccess { r in
-            print(r)
+        Group {
+            KFImage(url:URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
+                .onSuccess { r in
+                    print(r)
+                }
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding()
         }
-        .resizable()
-        .aspectRatio(contentMode: .fit)
-        .padding()
     }
 }
 #endif
