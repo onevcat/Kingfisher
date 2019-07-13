@@ -40,12 +40,19 @@ extension Image {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension View {
+    func eraseToAnyView() -> AnyView { .init(self) }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: View {
 
-    var placeholder = Image(crossPlatformImage: .init())
-    var configs: [(Image) -> Image]
-
     @ObjectBinding public private(set) var binder: ImageBinder
+
+    var placeholder: AnyView?
+    var cancelOnDisappear: Bool = false
+    
+    var configs: [(Image) -> Image]
 
     public init(_ source: Source, options: KingfisherOptionsInfo? = nil) {
         binder = ImageBinder(source: source, options: options)
@@ -57,12 +64,26 @@ public struct KFImage: View {
     }
 
     public var body: some View {
-        let image = binder.image.map { Image(crossPlatformImage: $0) } ?? placeholder
-        return configs
-            .reduce(image) { current, config in config(current) }
-            .onAppear { [unowned binder] in
+        if let image = binder.image {
+            let result = configs.reduce(Image(crossPlatformImage: image)) {
+                current, config in
+                config(current)
+            }
+            return AnyView(result)
+        } else {
+            let result = placeholder ?? AnyView(Image(crossPlatformImage: .init()))
+            let onAppear = result.onAppear { [unowned binder] in
                 binder.start()
             }
+
+            if cancelOnDisappear {
+                return onAppear.onDisappear { [unowned binder] in
+                    binder.cancel()
+                }.eraseToAnyView()
+            } else {
+                return onAppear.eraseToAnyView()
+            }
+        }
     }
 }
 
@@ -94,18 +115,17 @@ extension KFImage {
         config { $0.antialiased(isAntialiased) }
     }
 
-    public func placeholder(image: Image?) -> KFImage {
+    public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> KFImage {
+        let v = content()
         var result = self
-        result.placeholder = image ?? Image(crossPlatformImage: .init())
+        result.placeholder = AnyView(v)
         return result
     }
 
-    public func placeholder(name: String, bundle: Bundle? = nil) -> KFImage {
-        return placeholder(image: .init(name, bundle: bundle))
-    }
-
-    public func placeholder(systemName: String) -> KFImage {
-        return placeholder(image: .init(systemName: systemName))
+    public func cancelOnDisappear(_ flag: Bool) -> KFImage {
+        var result = self
+        result.cancelOnDisappear = flag
+        return result
     }
 }
 

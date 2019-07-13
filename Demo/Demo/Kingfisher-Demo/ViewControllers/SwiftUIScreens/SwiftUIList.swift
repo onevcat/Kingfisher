@@ -39,12 +39,20 @@ struct SwiftUIList : View {
                 KFImage(URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!)
                     .resizable()
                     .onSuccess { r in
-                        print("suc: \(i) - \(r.cacheType)")
+                        print("Success: \(i) - \(r.cacheType)")
                     }
                     .onFailure { e in
-                        print("err: \(i)")
+                        print("Error: \(e)")
                     }
-                    .placeholder(image: Image(systemName: "arrow.2.circlepath.circle"))
+                    .onProgress { downloaded, total in
+                        print("\(downloaded) / \(total))")
+                    }
+                    .placeholder {
+                        Image(systemName: "arrow.2.circlepath.circle")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                    }
+                    .cancelOnDisappear(true)
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(20)
                     .frame(width: 300, height: 300)
