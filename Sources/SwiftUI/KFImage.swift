@@ -57,6 +57,7 @@ public struct KFImage: View {
         return configs
             .reduce(image) { current, config in config(current) }
             .onAppear { [unowned binder] in
+                print("Start!! \(binder.url)")
                 binder.start()
             }
     }

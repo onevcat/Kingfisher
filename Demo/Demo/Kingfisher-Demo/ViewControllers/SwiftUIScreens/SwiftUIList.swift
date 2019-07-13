@@ -30,23 +30,24 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct SwiftUIList : View {
 
-    let index = Array(repeating: 1...10, count: 10).flatMap { $0 }
+    let index = 1 ..< 700
 
     var body: some View {
         List(index) { i in
             HStack(alignment: .center) {
                 Spacer()
-                KFImage(url: URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(i).jpg")!)
+                KFImage(url: URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!)
                     .resizable()
                     .onSuccess { r in
                         print("suc: \(i) - \(r.cacheType)")
-                }
-                .onFailure { e in
-                    print("err: \(i)")
-                }
-                .placeholder(image: Image(systemName: "arrow.2.circlepath.circle"))
-                    .frame(width: 300, height: 300)
+                    }
+                    .onFailure { e in
+                        print("err: \(i)")
+                    }
+                    .placeholder(image: Image(systemName: "arrow.2.circlepath.circle"))
+                    .aspectRatio(contentMode: .fit)
                     .cornerRadius(20)
+                    .frame(width: 300, height: 300)
                 Spacer()
             }.padding(.vertical, 12)
         }.navigationBarTitle(Text("SwiftUI List"))
