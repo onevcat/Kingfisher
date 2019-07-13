@@ -35,7 +35,7 @@ extension KFImage {
         let source: Source
         let options: KingfisherOptionsInfo?
 
-        public var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
+        public var didChange = PassthroughSubject<Void, Never>()
         var downloadTask: DownloadTask?
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
@@ -43,7 +43,7 @@ extension KFImage {
         let onProgressDelegate = Delegate<(Int64, Int64), Void>()
 
         var image: Kingfisher.KFCrossPlatformImage? {
-            didSet { didChange.send(image) }
+            didSet { didChange.send() }
         }
 
         init(source: Source, options: KingfisherOptionsInfo?) {

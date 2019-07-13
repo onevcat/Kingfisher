@@ -38,8 +38,7 @@ struct SwiftUIList : View {
                 Spacer()
 
                 KFImage(
-                    URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!,
-                    options: [.transition(.fade(3))]
+                    URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!
                 )
                 .resizable()
                 .onSuccess { r in
@@ -58,7 +57,7 @@ struct SwiftUIList : View {
                             .frame(width: 80, height: 80)
                             .padding(20)
                         Text("Loading...").font(.largeTitle)
-                    }
+                    }.foregroundColor(.gray)
 
                 }
                 .cancelOnDisappear(true)
