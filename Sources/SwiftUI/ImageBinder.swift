@@ -32,7 +32,7 @@ extension KFImage {
 
     public class ImageBinder: BindableObject {
 
-        let url: URL
+        let source: Source
         let options: KingfisherOptionsInfo?
 
         public var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
@@ -46,13 +46,12 @@ extension KFImage {
             didSet { didChange.send(image) }
         }
 
-        init(url: URL, options: KingfisherOptionsInfo?) {
-            self.url = url
+        init(source: Source, options: KingfisherOptionsInfo?) {
+            self.source = source
             self.options = options
         }
 
         func start() {
-            let source = Source.network(url)
             downloadTask = KingfisherManager.shared
                 .retrieveImage(
                     with: source,
