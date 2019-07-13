@@ -31,40 +31,70 @@ import SwiftUI
 extension KFImage {
 
     public class ImageBinder: BindableObject {
+
         let url: URL
+        let options: KingfisherOptionsInfo?
 
         public var didChange = PassthroughSubject<KFCrossPlatformImage?, Never>()
-        var subject = PassthroughSubject<RetrieveImageResult, KingfisherError>()
         var downloadTask: DownloadTask?
+
+        let onFailureDelegate = Delegate<KingfisherError, Void>()
+        let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
+        let onProgressDelegate = Delegate<(Int64, Int64), Void>()
 
         var image: Kingfisher.KFCrossPlatformImage? {
             didSet { didChange.send(image) }
         }
 
-        init(url: URL) {
+        init(url: URL, options: KingfisherOptionsInfo?) {
             self.url = url
+            self.options = options
         }
 
         func start() {
             let source = Source.network(url)
             downloadTask = KingfisherManager.shared
-                .retrieveImage(with: source) { [weak self] result in
-                    guard let self = self else { return }
+                .retrieveImage(
+                    with: source,
+                    options: options,
+                    progressBlock: { size, total in
+                        self.onProgressDelegate.call((size, total))
+                    },
+                    completionHandler: { [weak self] result in
 
-                    self.downloadTask = nil
-                    switch result {
-                    case .success(let value):
-                        self.image = value.image
-                        self.subject.send(value)
-                        self.subject.send(completion: .finished)
-                    case .failure(let error):
-                        self.subject.send(completion: .failure(error))
-                    }
-                }
+                        guard let self = self else { return }
+
+                        self.downloadTask = nil
+                        switch result {
+                        case .success(let value):
+                            self.image = value.image
+                            self.onSuccessDelegate.call(value)
+                        case .failure(let error):
+                            self.onFailureDelegate.call(error)
+                        }
+                })
         }
 
         public func cancel() {
             downloadTask?.cancel()
+        }
+
+        func setOnFailure(perform action: ((Error) -> Void)?) {
+            onFailureDelegate.delegate(on: self) { _, error in
+                action?(error)
+            }
+        }
+
+        func setOnSuccess(perform action: ((RetrieveImageResult) -> Void)?) {
+            onSuccessDelegate.delegate(on: self) { _, result in
+                action?(result)
+            }
+        }
+
+        func setOnProgress(perform action: ((Int64, Int64) -> Void)?) {
+            onProgressDelegate.delegate(on: self) { _, result in
+                action?(result.0, result.1)
+            }
         }
     }
 }
