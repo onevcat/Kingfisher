@@ -36,26 +36,36 @@ struct SwiftUIList : View {
         List(index) { i in
             HStack(alignment: .center) {
                 Spacer()
-                KFImage(URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!)
-                    .resizable()
-                    .onSuccess { r in
-                        print("Success: \(i) - \(r.cacheType)")
-                    }
-                    .onFailure { e in
-                        print("Error: \(e)")
-                    }
-                    .onProgress { downloaded, total in
-                        print("\(downloaded) / \(total))")
-                    }
-                    .placeholder {
+
+                KFImage(
+                    URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!,
+                    options: [.transition(.fade(3))]
+                )
+                .resizable()
+                .onSuccess { r in
+                    print("Success: \(i) - \(r.cacheType)")
+                }
+                .onFailure { e in
+                    print("Error: \(e)")
+                }
+                .onProgress { downloaded, total in
+                    print("\(downloaded) / \(total))")
+                }
+                .placeholder {
+                    HStack {
                         Image(systemName: "arrow.2.circlepath.circle")
                             .resizable()
                             .frame(width: 80, height: 80)
+                            .padding(20)
+                        Text("Loading...").font(.largeTitle)
                     }
-                    .cancelOnDisappear(true)
-                    .aspectRatio(contentMode: .fit)
-                    .cornerRadius(20)
-                    .frame(width: 300, height: 300)
+
+                }
+                .cancelOnDisappear(true)
+                .aspectRatio(contentMode: .fit)
+                .cornerRadius(20)
+                .frame(width: 300, height: 300)
+
                 Spacer()
             }.padding(.vertical, 12)
         }.navigationBarTitle(Text("SwiftUI List"))

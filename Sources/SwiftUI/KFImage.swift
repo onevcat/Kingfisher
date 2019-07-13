@@ -71,7 +71,8 @@ public struct KFImage: View {
             }
             return AnyView(result)
         } else {
-            let result = placeholder ?? AnyView(Image(crossPlatformImage: .init()))
+            let result = (placeholder ?? AnyView(Image(crossPlatformImage: .init())))
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             let onAppear = result.onAppear { [unowned binder] in
                 binder.start()
             }
