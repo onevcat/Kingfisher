@@ -65,14 +65,13 @@ public struct KFImage: View {
 
     public var body: some View {
         if let image = binder.image {
-            let result = configs.reduce(Image(crossPlatformImage: image)) {
-                current, config in
-                config(current)
-            }
-            return AnyView(result)
+            return configs.reduce(Image(crossPlatformImage: image)) {
+                current, config in config(current)
+            }.eraseToAnyView()
         } else {
-            let result = (placeholder ?? AnyView(Image(crossPlatformImage: .init())))
+            let result = (placeholder ?? Image(crossPlatformImage: .init()).eraseToAnyView())
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            
             let onAppear = result.onAppear { [unowned binder] in
                 binder.start()
             }
