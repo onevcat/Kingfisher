@@ -45,7 +45,9 @@ struct SwiftUIView : View {
                     print("err: \(e)")
                     self.result = "\(e)"
                 }
-                .placeholder(image: Image(systemName: "star.fill"))
+                .placeholder {
+                    Image(systemName: "star.fill")
+                }
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
 
