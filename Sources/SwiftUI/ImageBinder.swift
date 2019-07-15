@@ -30,12 +30,15 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
+    /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
+    /// image downloading and progress reporting based on `KingfisherManager`.
     public class ImageBinder: BindableObject {
+
+        public var didChange = PassthroughSubject<Void, Never>()
 
         let source: Source
         let options: KingfisherOptionsInfo?
 
-        public var didChange = PassthroughSubject<Void, Never>()
         var downloadTask: DownloadTask?
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
@@ -46,6 +49,7 @@ extension KFImage {
             didSet { didChange.send() }
         }
 
+        // Only `.fade` is now supported.
         var fadeTransitionAnimation: Animation? {
             #if os(iOS) || os(tvOS)
             guard let options = (options.map { KingfisherParsedOptionsInfo($0) }) else {
@@ -92,11 +96,12 @@ extension KFImage {
                 })
         }
 
+        /// Cancels the download task if it is in progress.
         public func cancel() {
             downloadTask?.cancel()
         }
 
-        func setOnFailure(perform action: ((Error) -> Void)?) {
+        func setOnFailure(perform action: ((KingfisherError) -> Void)?) {
             onFailureDelegate.delegate(on: self) { _, error in
                 action?(error)
             }

@@ -39,12 +39,6 @@ extension Image {
     }
 }
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension View {
-    func eraseToAnyView() -> AnyView { .init(self) }
-}
-
-
 /// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
 /// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -60,7 +54,7 @@ public struct KFImage: View {
     var cancelOnDisappear: Bool = false
 
     // Configurations should be performed on the image.
-    var configs: [(Image) -> Image]
+    var configurations: [(Image) -> Image]
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
@@ -68,7 +62,7 @@ public struct KFImage: View {
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
     public init(_ source: Source, options: KingfisherOptionsInfo? = nil) {
         binder = ImageBinder(source: source, options: options)
-        configs = []
+        configurations = []
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
@@ -83,13 +77,13 @@ public struct KFImage: View {
     public var body: some View {
         ZStack {
             if binder.image != nil {
-                configs
+                configurations
                     .reduce(Image(crossPlatformImage: binder.image!)) {
                         current, config in config(current)
                     }
                     .animation(binder.fadeTransitionAnimation)
             } else {
-                (placeholder ?? Image(crossPlatformImage: .init()).eraseToAnyView())
+                (placeholder ?? AnyView(Image(crossPlatformImage: .init())))
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .onDisappear { [unowned binder = self.binder] in
                         if self.cancelOnDisappear { binder.cancel() }
@@ -104,9 +98,12 @@ public struct KFImage: View {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
-    public func config(_ block: @escaping (Image) -> Image) -> KFImage {
+    /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
+    /// - Parameter block: The block applies to loaded image.
+    /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
+    public func configure(_ block: @escaping (Image) -> Image) -> KFImage {
         var result = self
-        result.configs.append(block)
+        result.configurations.append(block)
         return result
     }
 
@@ -114,21 +111,24 @@ extension KFImage {
         capInsets: EdgeInsets = EdgeInsets(),
         resizingMode: Image.ResizingMode = .stretch) -> KFImage
     {
-        config { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
+        configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
     }
 
     public func renderingMode(_ renderingMode: Image.TemplateRenderingMode?) -> KFImage {
-        config { $0.renderingMode(renderingMode) }
+        configure { $0.renderingMode(renderingMode) }
     }
 
     public func interpolation(_ interpolation: Image.Interpolation) -> KFImage {
-        config { $0.interpolation(interpolation) }
+        configure { $0.interpolation(interpolation) }
     }
 
     public func antialiased(_ isAntialiased: Bool) -> KFImage {
-        config { $0.antialiased(isAntialiased) }
+        configure { $0.antialiased(isAntialiased) }
     }
 
+    /// Sets a placeholder `View` which shows when loading the image.
+    /// - Parameter content: A view that describes the placeholder.
+    /// - Returns: A `KFImage` view that contains `content` as its placeholder.
     public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> KFImage {
         let v = content()
         var result = self
@@ -136,6 +136,9 @@ extension KFImage {
         return result
     }
 
+    /// Sets cancelling the download task bound to `self` when the view disappearing.
+    /// - Parameter flag: Whether cancel the task or not.
+    /// - Returns: A `KFImage` view that cancels downloading task when disappears.
     public func cancelOnDisappear(_ flag: Bool) -> KFImage {
         var result = self
         result.cancelOnDisappear = flag
@@ -145,16 +148,29 @@ extension KFImage {
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
-    public func onFailure(perform action: ((Error) -> Void)?) -> KFImage {
+
+    /// Sets the action to perform when the image setting fails.
+    /// - Parameter action: The action to perform. If `action` is `nil`, the
+    ///   call has no effect.
+    /// - Returns: A `KFImage` view that triggers `action` when setting image fails.
+    public func onFailure(perform action: ((KingfisherError) -> Void)?) -> KFImage {
         binder.setOnFailure(perform: action)
         return self
     }
 
+    /// Sets the action to perform when the image setting successes.
+    /// - Parameter action: The action to perform. If `action` is `nil`, the
+    ///   call has no effect.
+    /// - Returns: A `KFImage` view that triggers `action` when setting image successes.
     public func onSuccess(perform action: ((RetrieveImageResult) -> Void)?) -> KFImage {
         binder.setOnSuccess(perform: action)
         return self
     }
 
+    /// Sets the action to perform when the image downloading progress receiving new data.
+    /// - Parameter action: The action to perform. If `action` is `nil`, the
+    ///   call has no effect.
+    /// - Returns: A `KFImage` view that triggers `action` when new data arrives when downloading.
     public func onProgress(perform action: ((Int64, Int64) -> Void)?) -> KFImage {
         binder.setOnProgress(perform: action)
         return self
