@@ -1,8 +1,8 @@
 //
-//  MainViewController.swift
+//  KingfisherSwiftUI.h
 //  Kingfisher
 //
-//  Created by onevcat on 2018/11/18.
+//  Created by onevcat on 2019/07/15.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,12 +24,14 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
+#import <UIKit/UIKit.h>
 
-class MainViewController: UITableViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = "Kingfisher"
-        setupOperationNavigationBar()
-    }
-}
+//! Project version number for KingfisherSwiftUI.
+FOUNDATION_EXPORT double KingfisherSwiftUIVersionNumber;
+
+//! Project version string for KingfisherSwiftUI.
+FOUNDATION_EXPORT const unsigned char KingfisherSwiftUIVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <KingfisherSwiftUI/PublicHeader.h>
+
+
