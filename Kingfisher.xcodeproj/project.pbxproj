@@ -167,6 +167,9 @@
 		D13646772165A1A100A33652 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13646732165A1A100A33652 /* Result.swift */; };
 		D178DBBF22DCC40E00BF4B82 /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B531FE322C35B7B0041899C /* KFImage.swift */; };
 		D178DBC022DCC40E00BF4B82 /* ImageBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10CEBD522C4E6AC0065C727 /* ImageBinder.swift */; };
+		D178DBC122DCC96300BF4B82 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
+		D178DBC222DCC99900BF4B82 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
+		D178DBC322DCC99900BF4B82 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D1839845216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D1839846216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D1839847216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
@@ -272,6 +275,13 @@
 			remoteGlobalIDString = 4B2944471C3D01B20088C3E7;
 			remoteInfo = "Kingfisher-OSX";
 		};
+		D178DBC422DCC99900BF4B82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1ED2D341AD2D09F00CFC3EB;
+			remoteInfo = "Kingfisher-iOS";
+		};
 		D1ED2D411AD2D09F00CFC3EB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D1ED2D031AD2CFA600CFC3EB /* Project object */;
@@ -280,6 +290,20 @@
 			remoteInfo = Kingfisher;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D178DBC622DCC99900BF4B82 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D178DBC322DCC99900BF4B82 /* Kingfisher.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		033CD4A1D8C6D03D7AC150BE /* Pods-KingfisherTests-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -413,6 +437,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D178DBC222DCC99900BF4B82 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,10 +838,12 @@
 				D134D49422DCC375002F5C35 /* Sources */,
 				D134D49522DCC375002F5C35 /* Frameworks */,
 				D134D49622DCC375002F5C35 /* Resources */,
+				D178DBC622DCC99900BF4B82 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D178DBC522DCC99900BF4B82 /* PBXTargetDependency */,
 			);
 			name = KingfisherSwiftUI;
 			productName = KingfisherSwiftUI;
@@ -1241,6 +1268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D178DBC122DCC96300BF4B82 /* Delegate.swift in Sources */,
 				D178DBBF22DCC40E00BF4B82 /* KFImage.swift in Sources */,
 				D178DBC022DCC40E00BF4B82 /* ImageBinder.swift in Sources */,
 			);
@@ -1435,6 +1463,11 @@
 			isa = PBXTargetDependency;
 			target = 4B2944471C3D01B20088C3E7 /* Kingfisher-macOS */;
 			targetProxy = D10EC2371C3D632300A4211C /* PBXContainerItemProxy */;
+		};
+		D178DBC522DCC99900BF4B82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1ED2D341AD2D09F00CFC3EB /* Kingfisher-iOS */;
+			targetProxy = D178DBC422DCC99900BF4B82 /* PBXContainerItemProxy */;
 		};
 		D1ED2D421AD2D09F00CFC3EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
