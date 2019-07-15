@@ -46,6 +46,22 @@ extension KFImage {
             didSet { didChange.send() }
         }
 
+        var fadeTransitionAnimation: Animation? {
+            #if os(iOS) || os(tvOS)
+            guard let options = (options.map { KingfisherParsedOptionsInfo($0) }) else {
+                return nil
+            }
+            switch options.transition {
+            case .fade(let duration):
+                return .basic(duration: duration, curve: .linear)
+            default:
+                return nil
+            }
+            #else
+            return nil
+            #endif
+        }
+
         init(source: Source, options: KingfisherOptionsInfo?) {
             self.source = source
             self.options = options
@@ -67,7 +83,9 @@ extension KFImage {
                         switch result {
                         case .success(let value):
                             self.image = value.image
-                            self.onSuccessDelegate.call(value)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                self.onSuccessDelegate.call(value)
+                            }
                         case .failure(let error):
                             self.onFailureDelegate.call(error)
                         }

@@ -44,45 +44,59 @@ extension View {
     func eraseToAnyView() -> AnyView { .init(self) }
 }
 
+
+/// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
+/// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: View {
 
+    /// An image binder that manages loading and cancelling image related task.
     @ObjectBinding public private(set) var binder: ImageBinder
 
+    // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
+
+    // Whether the download task should be cancelled when the view disappears.
     var cancelOnDisappear: Bool = false
-    
+
+    // Configurations should be performed on the image.
     var configs: [(Image) -> Image]
 
+    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
+    /// - Parameter source: The image `Source` defining where to load the target image.
+    /// - Parameter options: The options should be applied when loading the image.
+    ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
     public init(_ source: Source, options: KingfisherOptionsInfo? = nil) {
         binder = ImageBinder(source: source, options: options)
         configs = []
     }
 
+    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
+    /// - Parameter url: The image URL from where to load the target image.
+    /// - Parameter options: The options should be applied when loading the image.
+    ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
     public init(_ url: URL, options: KingfisherOptionsInfo? = nil) {
         self.init(.network(url), options: options)
     }
 
+    /// Declares the content and behavior of this view.
     public var body: some View {
-        if let image = binder.image {
-            return configs.reduce(Image(crossPlatformImage: image)) {
-                current, config in config(current)
-            }.eraseToAnyView()
-        } else {
-            let result = (placeholder ?? Image(crossPlatformImage: .init()).eraseToAnyView())
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            
-            let onAppear = result.onAppear { [unowned binder] in
-                binder.start()
-            }
-
-            if cancelOnDisappear {
-                return onAppear.onDisappear { [unowned binder] in
-                    binder.cancel()
-                }.eraseToAnyView()
+        ZStack {
+            if binder.image != nil {
+                configs
+                    .reduce(Image(crossPlatformImage: binder.image!)) {
+                        current, config in config(current)
+                    }
+                    .animation(binder.fadeTransitionAnimation)
             } else {
-                return onAppear.eraseToAnyView()
+                (placeholder ?? Image(crossPlatformImage: .init()).eraseToAnyView())
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    .onDisappear { [unowned binder = self.binder] in
+                        if self.cancelOnDisappear { binder.cancel() }
+                    }
             }
+        }.onAppear { [unowned binder] in
+            binder.start()
         }
     }
 }
