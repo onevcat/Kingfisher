@@ -84,6 +84,7 @@ extension Image: KingfisherCompatible { }
 #if !os(watchOS)
 extension ImageView: KingfisherCompatible { }
 extension Button: KingfisherCompatible { }
+extension NSTextAttachment: KingfisherCompatible { }
 #else
 extension WKInterfaceImage: KingfisherCompatible { }
 #endif
