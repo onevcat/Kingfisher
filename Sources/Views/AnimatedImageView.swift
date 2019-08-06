@@ -128,7 +128,7 @@ open class AnimatedImageView: UIImageView {
     /// Set this property to `RunLoop.Mode.default` will make the animation pause during UIScrollView scrolling.
     public var runLoopMode = KFRunLoopModeCommon {
         willSet {
-            guard runLoopMode == newValue else { return }
+            guard runLoopMode != newValue else { return }
             stopAnimating()
             displayLink.remove(from: .main, forMode: runLoopMode)
             displayLink.add(to: .main, forMode: newValue)
