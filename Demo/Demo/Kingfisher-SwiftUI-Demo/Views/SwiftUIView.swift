@@ -1,8 +1,8 @@
 //
-//  SwiftUIMainScreen.swift
+//  SwiftUIView.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 2019/06/27.
+//  Created by Wei Wang on 2019/06/18.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,24 +24,44 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Kingfisher
+import KingfisherSwiftUI
 import SwiftUI
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct SwiftUIMainScreen : View {
+struct SwiftUIView : View {
+
+    @State private var index = 1
 
     var body: some View {
-        List {
-            NavigationLink(destination: SwiftUIView()) { Text("Basic Image") }
-            NavigationLink(destination: SwiftUIList()) { Text("List") }
-        }
+        VStack {
+            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages" +
+                                "/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
+                .onSuccess { r in
+                    print("suc: \(r)")
+                }
+                .onFailure { e in
+                    print("err: \(e)")
+                }
+                .placeholder {
+                    Image(systemName: "arrow.2.circlepath.circle")
+                        .font(.largeTitle)
+                }
+                .resizable()
+                .frame(width: 300, height: 300)
+                .cornerRadius(20)
+                .shadow(radius: 5)
+
+            Button(action: {
+                self.index = (self.index % 10) + 1
+            }) { Text("Next Image") }
+
+        }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
     }
 }
 
 #if DEBUG
-struct SwiftUIMainScreen_Previews : PreviewProvider {
+struct SwiftUIView_Previews : PreviewProvider {
     static var previews: some View {
-        SwiftUIMainScreen()
+        SwiftUIView()
     }
 }
 #endif

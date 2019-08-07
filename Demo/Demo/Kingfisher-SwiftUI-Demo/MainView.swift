@@ -1,8 +1,8 @@
 //
-//  SwiftUIView.swift
+//  MainView.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 2019/06/18.
+//  Created by jp20028 on 2019/08/07.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,45 +24,34 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Kingfisher
 import SwiftUI
+import Kingfisher
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct SwiftUIView : View {
-
-    @State private var index = "1"
-    @State private var result = ""
-
+struct MainView: View {
     var body: some View {
-        VStack {
-            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
-                .resizable()
-                .onSuccess { r in
-                    print("suc: \(r)")
-                    self.result = "\(r.cacheType)"
-                }
-                .onFailure { e in
-                    print("err: \(e)")
-                    self.result = "\(e)"
-                }
-                .placeholder {
-                    Image(systemName: "star.fill")
-                }
-                .frame(width: 300, height: 300)
-                .cornerRadius(20)
 
-            Button(action: {
-                self.index = String(Int(self.index)! + 1)
-            }) { Text("+1") }
-
-        }.navigationBarTitle(Text("Basic Image"))
+        NavigationView {
+            List {
+                Button(
+                    action: {
+                        KingfisherManager.shared.cache.clearMemoryCache()
+                        KingfisherManager.shared.cache.clearDiskCache()
+                    },
+                    label: {
+                        Text("Clear Cache").foregroundColor(.blue)
+                    }
+                )
+                NavigationLink(destination: SwiftUIView()) { Text("Basic Image") }
+                NavigationLink(destination: SwiftUIList()) { Text("List") }
+            }.navigationBarTitle(Text("Kingfisher"))
+        }
     }
 }
 
 #if DEBUG
-struct SwiftUIView_Previews : PreviewProvider {
+struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        SwiftUIView()
+        MainView()
     }
 }
 #endif
