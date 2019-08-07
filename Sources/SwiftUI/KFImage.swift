@@ -46,7 +46,7 @@ extension Image {
 public struct KFImage: View {
 
     /// An image binder that manages loading and cancelling image related task.
-    @ObjectBinding public private(set) var binder: ImageBinder
+    @ObservedObject public private(set) var binder: ImageBinder
 
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
