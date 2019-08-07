@@ -33,9 +33,7 @@ extension KFImage {
 
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
     /// image downloading and progress reporting based on `KingfisherManager`.
-    public class ImageBinder: BindableObject {
-
-        public var didChange = PassthroughSubject<Void, Never>()
+    public class ImageBinder: ObservableObject {
 
         let source: Source
         let options: KingfisherOptionsInfo?
@@ -46,9 +44,7 @@ extension KFImage {
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
         let onProgressDelegate = Delegate<(Int64, Int64), Void>()
 
-        var image: Kingfisher.KFCrossPlatformImage? {
-            didSet { didChange.send() }
-        }
+        @Published var image: Kingfisher.KFCrossPlatformImage?
 
         // Only `.fade` is now supported.
         var fadeTransitionAnimation: Animation? {
@@ -58,7 +54,7 @@ extension KFImage {
             }
             switch options.transition {
             case .fade(let duration):
-                return .basic(duration: duration, curve: .linear)
+                return .linear(duration: duration)
             default:
                 return nil
             }
@@ -70,6 +66,7 @@ extension KFImage {
         init(source: Source, options: KingfisherOptionsInfo?) {
             self.source = source
             self.options = options
+            self.image = nil
         }
 
         func start() {
