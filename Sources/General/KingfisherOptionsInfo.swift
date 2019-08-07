@@ -208,7 +208,7 @@ public enum KingfisherOptionsInfoItem {
     /// To disable extending option at all add memoryCacheAccessExtendingExpiration(.none) to options.
     case memoryCacheAccessExtendingExpiration(ExpirationExtending)
     
-    /// The expiration setting for memory cache. By default, the underlying `DiskStorage.Backend` uses the
+    /// The expiration setting for disk cache. By default, the underlying `DiskStorage.Backend` uses the
     /// expiration in its config for all items. If set, the `DiskStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
     case diskCacheExpiration(StorageExpiration)
