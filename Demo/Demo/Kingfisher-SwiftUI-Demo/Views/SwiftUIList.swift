@@ -24,10 +24,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Kingfisher
+import KingfisherSwiftUI
 import SwiftUI
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct SwiftUIList : View {
 
     let index = 1 ..< 700
@@ -46,7 +45,7 @@ struct SwiftUIList : View {
                     print("Success: \(i) - \(r.cacheType)")
                 }
                 .onFailure { e in
-                    print("Error: \(e)")
+                    print("Error \(i): \(e)")
                 }
                 .onProgress { downloaded, total in
                     print("\(downloaded) / \(total))")
@@ -61,7 +60,6 @@ struct SwiftUIList : View {
                     }
                     .foregroundColor(.gray)
                     .opacity(0.3)
-
                 }
                 .cancelOnDisappear(true)
                 .aspectRatio(contentMode: .fit)
@@ -70,7 +68,7 @@ struct SwiftUIList : View {
 
                 Spacer()
             }.padding(.vertical, 12)
-        }.navigationBarTitle(Text("SwiftUI List"))
+        }.navigationBarTitle(Text("SwiftUI List"), displayMode: .inline)
     }
 }
 

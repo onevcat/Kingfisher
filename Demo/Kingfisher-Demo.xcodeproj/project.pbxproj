@@ -21,6 +21,25 @@
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
 		4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF33A1D5B02F8003387C2 /* Cell.xib */; };
 		4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF33C1D5B02F8003387C2 /* ViewController.swift */; };
+		4BEF109322FA9B1C00820491 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BEF108A22FA9B1C00820491 /* Assets.xcassets */; };
+		4BEF109522FA9B1C00820491 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BEF108D22FA9B1C00820491 /* LaunchScreen.storyboard */; };
+		4BEF109622FA9B1C00820491 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEF108F22FA9B1C00820491 /* AppDelegate.swift */; };
+		4BEF109722FA9B1C00820491 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEF109022FA9B1C00820491 /* MainView.swift */; };
+		4BEF109922FA9B1C00820491 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEF109222FA9B1C00820491 /* SceneDelegate.swift */; };
+		4BEF109B22FA9C6700820491 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */; };
+		4BEF109C22FA9C6700820491 /* SwiftUIList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17678CE22C517E400972227 /* SwiftUIList.swift */; };
+		4BEF109F22FA9D2F00820491 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF109D22FA9CF100820491 /* Kingfisher.framework */; };
+		4BEF10A022FA9D2F00820491 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF109D22FA9CF100820491 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BEF10A222FA9DAB00820491 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10A122FA9DAB00820491 /* Kingfisher.framework */; };
+		4BEF10A322FA9DAB00820491 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10A122FA9DAB00820491 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BEF10A522FA9DC300820491 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10A422FA9DC300820491 /* Kingfisher.framework */; };
+		4BEF10A622FA9DC300820491 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10A422FA9DC300820491 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BEF10A922FA9DE400820491 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10A822FA9DE400820491 /* Kingfisher.framework */; };
+		4BEF10AA22FA9DE400820491 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10A822FA9DE400820491 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BEF10AC22FA9F6A00820491 /* KingfisherSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10AB22FA9F6A00820491 /* KingfisherSwiftUI.framework */; };
+		4BEF10AD22FA9F6A00820491 /* KingfisherSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10AB22FA9F6A00820491 /* KingfisherSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4BEF10B022FA9F7600820491 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10AF22FA9F7600820491 /* Kingfisher.framework */; };
+		4BEF10B122FA9F7600820491 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BEF10AF22FA9F7600820491 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C959EEE622874DC600467A10 /* ProgressiveJPEGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */; };
 		D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */; };
 		D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */; };
@@ -78,12 +97,36 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4BEF10A722FA9DC300820491 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4BEF10A622FA9DC300820491 /* Kingfisher.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BEF10AE22FA9F6A00820491 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4BEF10B122FA9F7600820491 /* Kingfisher.framework in Embed Frameworks */,
+				4BEF10AD22FA9F6A00820491 /* KingfisherSwiftUI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D12F2EEC1C4E7CF500B8054D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				4BEF10AA22FA9DE400820491 /* Kingfisher.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,6 +137,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				4BEF10A322FA9DAB00820491 /* Kingfisher.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -115,6 +159,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				4BEF10A022FA9D2F00820491 /* Kingfisher.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -139,6 +184,20 @@
 		4BCCF33A1D5B02F8003387C2 /* Cell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
 		4BCCF33B1D5B02F8003387C2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BCCF33C1D5B02F8003387C2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4BEF108A22FA9B1C00820491 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4BEF108C22FA9B1C00820491 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4BEF108E22FA9B1C00820491 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4BEF108F22FA9B1C00820491 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4BEF109022FA9B1C00820491 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		4BEF109122FA9B1C00820491 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BEF109222FA9B1C00820491 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4BEF109D22FA9CF100820491 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BEF10A122FA9DAB00820491 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BEF10A422FA9DC300820491 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BEF10A822FA9DE400820491 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BEF10AB22FA9F6A00820491 /* KingfisherSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KingfisherSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BEF10AF22FA9F7600820491 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BFD30BF22FA9AC1002849BF /* Kingfisher-SwiftUI-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-SwiftUI-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressiveJPEGViewController.swift; sourceTree = "<group>"; };
 		D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessorCollectionViewController.swift; sourceTree = "<group>"; };
 		D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -152,7 +211,6 @@
 		D12E0C9E1C47F92200AC98AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D12E0CA01C47F92200AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D12E0CA11C47F92200AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D139767C22C501D40073D00D /* SwiftUIMainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIMainScreen.swift; sourceTree = "<group>"; };
 		D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-tvOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,6 +232,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BEF10A522FA9DC300820491 /* Kingfisher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BFD30BC22FA9AC1002849BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BEF10B022FA9F7600820491 /* Kingfisher.framework in Frameworks */,
+				4BEF10AC22FA9F6A00820491 /* KingfisherSwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +256,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BEF10A222FA9DAB00820491 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +264,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BEF10A922FA9DE400820491 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +272,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BEF109F22FA9D2F00820491 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +282,12 @@
 		277EAE762045ADE700547CD3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4BEF10AF22FA9F7600820491 /* Kingfisher.framework */,
+				4BEF10AB22FA9F6A00820491 /* KingfisherSwiftUI.framework */,
+				4BEF10A822FA9DE400820491 /* Kingfisher.framework */,
+				4BEF10A422FA9DC300820491 /* Kingfisher.framework */,
+				4BEF10A122FA9DAB00820491 /* Kingfisher.framework */,
+				4BEF109D22FA9CF100820491 /* Kingfisher.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -252,9 +329,43 @@
 			path = "Demo/Kingfisher-macOS-Demo";
 			sourceTree = "<group>";
 		};
+		4BEF108922FA9B1C00820491 /* Kingfisher-SwiftUI-Demo */ = {
+			isa = PBXGroup;
+			children = (
+				4BEF109A22FA9C5600820491 /* Views */,
+				4BEF108A22FA9B1C00820491 /* Assets.xcassets */,
+				4BEF108B22FA9B1C00820491 /* Preview Content */,
+				4BEF108D22FA9B1C00820491 /* LaunchScreen.storyboard */,
+				4BEF108F22FA9B1C00820491 /* AppDelegate.swift */,
+				4BEF109022FA9B1C00820491 /* MainView.swift */,
+				4BEF109122FA9B1C00820491 /* Info.plist */,
+				4BEF109222FA9B1C00820491 /* SceneDelegate.swift */,
+			);
+			name = "Kingfisher-SwiftUI-Demo";
+			path = "Demo/Kingfisher-SwiftUI-Demo";
+			sourceTree = "<group>";
+		};
+		4BEF108B22FA9B1C00820491 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4BEF108C22FA9B1C00820491 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4BEF109A22FA9C5600820491 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */,
+				D17678CE22C517E400972227 /* SwiftUIList.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		D10EC22B1C3D62DE00A4211C /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				4BEF108922FA9B1C00820491 /* Kingfisher-SwiftUI-Demo */,
 				D12E0C8B1C47F91800AC98AD /* Kingfisher-Demo */,
 				4BCCF3351D5B02F8003387C2 /* Kingfisher-macOS-Demo */,
 				D12E0C9C1C47F92200AC98AD /* Kingfisher-tvOS-Demo */,
@@ -292,16 +403,6 @@
 			path = "Demo/Kingfisher-tvOS-Demo";
 			sourceTree = "<group>";
 		};
-		D139767B22C501AD0073D00D /* SwiftUIScreens */ = {
-			isa = PBXGroup;
-			children = (
-				D139767C22C501D40073D00D /* SwiftUIMainScreen.swift */,
-				D17678CE22C517E400972227 /* SwiftUIList.swift */,
-				4BB3DE8522B8D9C400F65D51 /* SwiftUIView.swift */,
-			);
-			path = SwiftUIScreens;
-			sourceTree = "<group>";
-		};
 		D1A1CCA521A1895000263AD8 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -313,7 +414,6 @@
 		D1A1CCA921A1936300263AD8 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				D139767B22C501AD0073D00D /* SwiftUIScreens */,
 				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
 				D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */,
 				4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */,
@@ -356,6 +456,7 @@
 				4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */,
 				D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */,
 				D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */,
+				4BFD30BF22FA9AC1002849BF /* Kingfisher-SwiftUI-Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -370,6 +471,7 @@
 				4B2944511C3D03880088C3E7 /* Sources */,
 				4B2944521C3D03880088C3E7 /* Frameworks */,
 				4B2944531C3D03880088C3E7 /* Resources */,
+				4BEF10A722FA9DC300820491 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -378,6 +480,24 @@
 			name = "Kingfisher-macOS-Demo";
 			productName = "Kingfisher-OSX-Demo";
 			productReference = 4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4BFD30BE22FA9AC1002849BF /* Kingfisher-SwiftUI-Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4BFD30D222FA9AC3002849BF /* Build configuration list for PBXNativeTarget "Kingfisher-SwiftUI-Demo" */;
+			buildPhases = (
+				4BFD30BB22FA9AC1002849BF /* Sources */,
+				4BFD30BC22FA9AC1002849BF /* Frameworks */,
+				4BFD30BD22FA9AC1002849BF /* Resources */,
+				4BEF10AE22FA9F6A00820491 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Kingfisher-SwiftUI-Demo";
+			productName = "Kingfisher-SwiftUI-Demo";
+			productReference = 4BFD30BF22FA9AC1002849BF /* Kingfisher-SwiftUI-Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */ = {
@@ -460,7 +580,7 @@
 		D1ED2D031AD2CFA600CFC3EB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 1100;
 				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Wei Wang";
 				TargetAttributes = {
@@ -468,6 +588,11 @@
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = A4YJ9MRZ66;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Automatic;
+					};
+					4BFD30BE22FA9AC1002849BF = {
+						CreatedOnToolsVersion = 11.0;
+						DevelopmentTeam = A4YJ9MRZ66;
 						ProvisioningStyle = Automatic;
 					};
 					D13F49C11BEDA53F00CE335D = {
@@ -510,6 +635,7 @@
 				D1ED2D0A1AD2CFA600CFC3EB /* Kingfisher-Demo */,
 				D13F49C11BEDA53F00CE335D /* Kingfisher-tvOS-Demo */,
 				4B2944541C3D03880088C3E7 /* Kingfisher-macOS-Demo */,
+				4BFD30BE22FA9AC1002849BF /* Kingfisher-SwiftUI-Demo */,
 				D1679A381C4E78B20020FD12 /* Kingfisher-watchOS-Demo */,
 				D1679A441C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension */,
 			);
@@ -525,6 +651,15 @@
 				4BCCF3401D5B02F8003387C2 /* Cell.xib in Resources */,
 				4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */,
 				4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BFD30BD22FA9AC1002849BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BEF109522FA9B1C00820491 /* LaunchScreen.storyboard in Resources */,
+				4BEF109322FA9B1C00820491 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +710,18 @@
 			files = (
 				4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */,
 				4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4BFD30BB22FA9AC1002849BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BEF109C22FA9C6700820491 /* SwiftUIList.swift in Sources */,
+				4BEF109722FA9B1C00820491 /* MainView.swift in Sources */,
+				4BEF109622FA9B1C00820491 /* AppDelegate.swift in Sources */,
+				4BEF109B22FA9C6700820491 /* SwiftUIView.swift in Sources */,
+				4BEF109922FA9B1C00820491 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,6 +800,14 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
+		4BEF108D22FA9B1C00820491 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BEF108E22FA9B1C00820491 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
 		D12E0C8D1C47F91800AC98AD /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -718,6 +873,59 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		4BFD30D022FA9AC3002849BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "$(SRCROOT)/Demo/Kingfisher-SwiftUI-Demo/Preview\\ Content";
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "$(SRCROOT)/Demo/Kingfisher-SwiftUI-Demo/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-SwiftUI-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4BFD30D122FA9AC3002849BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "$(SRCROOT)/Demo/Kingfisher-SwiftUI-Demo/Preview\\ Content";
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "$(SRCROOT)/Demo/Kingfisher-SwiftUI-Demo/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.Kingfisher-SwiftUI-Demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -992,6 +1200,15 @@
 			buildConfigurations = (
 				4B2944621C3D03880088C3E7 /* Debug */,
 				4B2944631C3D03880088C3E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4BFD30D222FA9AC3002849BF /* Build configuration list for PBXNativeTarget "Kingfisher-SwiftUI-Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BFD30D022FA9AC3002849BF /* Debug */,
+				4BFD30D122FA9AC3002849BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

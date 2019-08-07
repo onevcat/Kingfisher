@@ -64,6 +64,7 @@ public struct KFImage: View {
     public init(_ source: Source, options: KingfisherOptionsInfo? = nil) {
         binder = ImageBinder(source: source, options: options)
         configurations = []
+        binder.start()
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
@@ -91,7 +92,9 @@ public struct KFImage: View {
                     }
             }
         }.onAppear { [unowned binder] in
-            binder.start()
+            if !binder.loadingOrSuccessed {
+                binder.start()
+            }
         }
     }
 }
