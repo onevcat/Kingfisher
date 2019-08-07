@@ -32,7 +32,7 @@ extension Float {
     }
 }
 
-#if canImport(AppKit) && !targetEnvironment(UIKitForMac)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 extension NSBezierPath {
     convenience init(roundedRect rect: NSRect, topLeftRadius: CGFloat, topRightRadius: CGFloat,

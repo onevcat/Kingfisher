@@ -24,6 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(UIKit)
 import UIKit
 
 extension KingfisherWrapper where Base: UIButton {
@@ -390,3 +391,4 @@ extension KingfisherWrapper where Base: UIButton {
         return nil
     }
 }
+#endif
