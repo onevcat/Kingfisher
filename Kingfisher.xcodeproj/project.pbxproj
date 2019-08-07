@@ -169,7 +169,6 @@
 		D178DBC022DCC40E00BF4B82 /* ImageBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10CEBD522C4E6AC0065C727 /* ImageBinder.swift */; };
 		D178DBC122DCC96300BF4B82 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D178DBC222DCC99900BF4B82 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
-		D178DBC322DCC99900BF4B82 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D1839845216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D1839846216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D1839847216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
@@ -290,20 +289,6 @@
 			remoteInfo = Kingfisher;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		D178DBC622DCC99900BF4B82 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D178DBC322DCC99900BF4B82 /* Kingfisher.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		033CD4A1D8C6D03D7AC150BE /* Pods-KingfisherTests-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -830,22 +815,21 @@
 			productReference = D10EC2311C3D632300A4211C /* KingfisherTests-macOS.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D134D49722DCC375002F5C35 /* KingfisherSwiftUI */ = {
+		D134D49722DCC375002F5C35 /* Kingfisher-SwiftUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D134D49F22DCC375002F5C35 /* Build configuration list for PBXNativeTarget "KingfisherSwiftUI" */;
+			buildConfigurationList = D134D49F22DCC375002F5C35 /* Build configuration list for PBXNativeTarget "Kingfisher-SwiftUI" */;
 			buildPhases = (
 				D134D49322DCC375002F5C35 /* Headers */,
 				D134D49422DCC375002F5C35 /* Sources */,
 				D134D49522DCC375002F5C35 /* Frameworks */,
 				D134D49622DCC375002F5C35 /* Resources */,
-				D178DBC622DCC99900BF4B82 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				D178DBC522DCC99900BF4B82 /* PBXTargetDependency */,
 			);
-			name = KingfisherSwiftUI;
+			name = "Kingfisher-SwiftUI";
 			productName = KingfisherSwiftUI;
 			productReference = D134D49822DCC375002F5C35 /* KingfisherSwiftUI.framework */;
 			productType = "com.apple.product-type.framework";
@@ -987,7 +971,7 @@
 				D13F49D51BEDA67C00CE335D /* Kingfisher-tvOS */,
 				4B2944471C3D01B20088C3E7 /* Kingfisher-macOS */,
 				D16799EA1C4E74460020FD12 /* Kingfisher-watchOS */,
-				D134D49722DCC375002F5C35 /* KingfisherSwiftUI */,
+				D134D49722DCC375002F5C35 /* Kingfisher-SwiftUI */,
 				D1ED2D3E1AD2D09F00CFC3EB /* KingfisherTests */,
 				4B37667E1C478F940001443F /* KingfisherTests-tvOS */,
 				D10EC2301C3D632300A4211C /* KingfisherTests-macOS */,
@@ -1632,7 +1616,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.KingfisherSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = KingfisherSwiftUI;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1669,7 +1653,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.KingfisherSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = KingfisherSwiftUI;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2031,7 +2015,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D134D49F22DCC375002F5C35 /* Build configuration list for PBXNativeTarget "KingfisherSwiftUI" */ = {
+		D134D49F22DCC375002F5C35 /* Build configuration list for PBXNativeTarget "Kingfisher-SwiftUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D134D49D22DCC375002F5C35 /* Debug */,
