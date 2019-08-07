@@ -35,7 +35,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
 
     // MARK: Setting Image
 
-    /// Sets an image to the image view with a source.
+    /// Sets an image to the text attachment with a source.
     ///
     /// - Parameters:
     ///   - source: The `Source` object contains information about the image.
@@ -130,7 +130,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         return task
     }
 
-    /// Sets an image to the image view with a requested resource.
+    /// Sets an image to the text attachment with a requested resource.
     ///
     /// - Parameters:
     ///   - resource: The `Resource` object contains information about the image.
@@ -165,7 +165,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
 
     // MARK: Cancelling Image
 
-    /// Cancel the image download task bounded to the image view if it is running.
+    /// Cancel the image download task bounded to the text attachment if it is running.
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
@@ -192,14 +192,5 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
-    }
-}
-
-extension KingfisherWrapper where Base: NSTextAttachment {
-    /// Gets the image URL bound to this image view.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
-    public private(set) var webURL: URL? {
-        get { return nil }
-        set { }
     }
 }
