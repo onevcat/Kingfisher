@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if !os(watchOS)
+
 #if os(macOS)
 import AppKit
 #else
@@ -74,3 +76,5 @@ extension Placeholder where Self: View {
         removeFromSuperview()
     }
 }
+
+#endif
