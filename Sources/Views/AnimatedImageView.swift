@@ -358,7 +358,7 @@ extension AnimatedImageView {
         private let maxRepeatCount: RepeatCount
 
         private let maxTimeStep: TimeInterval = 1.0
-        private var animatedFrames = SafeArray<AnimatedFrame>()
+        private let animatedFrames = SafeArray<AnimatedFrame>()
         private var frameCount = 0
         private var timeSinceLastFrameChange: TimeInterval = 0.0
         private var currentRepeatCount: UInt = 0
@@ -599,10 +599,10 @@ class SafeArray<Element> {
         array.reserveCapacity(count)
     }
     
-    func append(_ elment: Element) {
+    func append(_ element: Element) {
         lock.lock()
         defer { lock.unlock() }
-        array += [elment]
+        array += [element]
     }
     
     func removeAll() {
