@@ -358,7 +358,7 @@ extension AnimatedImageView {
         private let maxRepeatCount: RepeatCount
 
         private let maxTimeStep: TimeInterval = 1.0
-        private var animatedFrames = [AnimatedFrame]()
+        private var animatedFrames = SafeArray<AnimatedFrame>()
         private var frameCount = 0
         private var timeSinceLastFrameChange: TimeInterval = 0.0
         private var currentRepeatCount: UInt = 0
@@ -447,11 +447,11 @@ extension AnimatedImageView {
         }
 
         func frame(at index: Int) -> Image? {
-            return animatedFrames[safe: index]?.image
+            return animatedFrames[index]?.image
         }
 
         func duration(at index: Int) -> TimeInterval {
-            return animatedFrames[safe: index]?.duration  ?? .infinity
+            return animatedFrames[index]?.duration  ?? .infinity
         }
 
         func prepareFramesAsynchronously() {
@@ -482,17 +482,17 @@ extension AnimatedImageView {
             (0..<frameCount).forEach { index in
                 let frameDuration = GIFAnimatedImage.getFrameDuration(from: imageSource, at: index)
                 duration += min(frameDuration, maxTimeStep)
-                animatedFrames += [AnimatedFrame(image: nil, duration: frameDuration)]
+                animatedFrames.append(AnimatedFrame(image: nil, duration: frameDuration))
 
                 if index > maxFrameCount { return }
-                animatedFrames[index] = animatedFrames[index].makeAnimatedFrame(image: loadFrame(at: index))
+                animatedFrames[index] = animatedFrames[index]?.makeAnimatedFrame(image: loadFrame(at: index))
             }
 
             self.loopDuration = duration
         }
 
         private func resetAnimatedFrames() {
-            animatedFrames = []
+            animatedFrames.removeAll()
         }
 
         private func loadFrame(at index: Int) -> UIImage? {
@@ -519,10 +519,10 @@ extension AnimatedImageView {
                 return
             }
 
-            animatedFrames[previousFrameIndex] = animatedFrames[previousFrameIndex].placeholderFrame
+            animatedFrames[previousFrameIndex] = animatedFrames[previousFrameIndex]?.placeholderFrame
 
             preloadIndexes(start: currentFrameIndex).forEach { index in
-                let currentAnimatedFrame = animatedFrames[index]
+                guard let currentAnimatedFrame = animatedFrames[index] else { return }
                 if !currentAnimatedFrame.isPlaceholder { return }
                 animatedFrames[index] = currentAnimatedFrame.makeAnimatedFrame(image: loadFrame(at: index))
             }
@@ -563,8 +563,51 @@ extension AnimatedImageView {
     }
 }
 
-extension Array {
-    subscript(safe index: Int) -> Element? {
-        return indices ~= index ? self[index] : nil
+class SafeArray<Element> {
+    private var array: Array<Element> = []
+    private let lock = NSLock()
+    
+    subscript(index: Int) -> Element? {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            if index >= 0 && index < array.count {
+                return array[index]
+            } else {
+                return nil
+            }
+        }
+        
+        set(newValue) {
+            lock.lock()
+            defer { lock.unlock() }
+            if let newValue = newValue, index >= 0 && index < array.count {
+                array[index] = newValue
+            }
+        }
+    }
+    
+    var count : Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return array.count
+    }
+    
+    func reserveCapacity(_ count: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        array.reserveCapacity(count)
+    }
+    
+    func append(_ elment: Element) {
+        lock.lock()
+        defer { lock.unlock() }
+        array += [elment]
+    }
+    
+    func removeAll() {
+        lock.lock()
+        defer { lock.unlock() }
+        array = []
     }
 }
