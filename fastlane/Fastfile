@@ -88,6 +88,7 @@ platform :ios do
       target_version = options[:version]
       Actions.sh("cd .. && jazzy \
                         --clean \
+                        -x USE_SWIFT_RESPONSE_FILE=NO \
                         --author \"Wei Wang\" \
                         --author_url https://onevcat.com \
                         --github_url https://github.com/onevcat/Kingfisher \
