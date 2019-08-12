@@ -574,7 +574,7 @@ class SafeArray<Element> {
             return array.indices ~= index ? array[index] : nil
         }
         
-        set(newValue) {
+        set {
             lock.lock()
             defer { lock.unlock() }
             if let newValue = newValue, array.indices ~= index {
