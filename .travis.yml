@@ -28,7 +28,7 @@ matrix:
   - osx_image: xcode10.1
     env: DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=5.0
   - osx_image: xcode10.1
-    env: DESTINATION='platform=tvOS Simulator,name=Apple TV 1080p' SWIFT_VERSION=5.0
+    env: DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=5.0
 
 script:
   - bundle exec fastlane test_ci
