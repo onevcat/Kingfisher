@@ -2,7 +2,7 @@ language: swift
 
 osx_image: 
 - xcode10.1
-- xcode10.2
+- xcode10.3
 
 env:
 - DESTINATION='platform=macOS' SWIFT_VERSION=5.0
