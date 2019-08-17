@@ -24,6 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(AppKit)
 import AppKit
 import XCTest
 @testable import Kingfisher
@@ -190,3 +191,4 @@ class NSButtonExtensionTests: XCTestCase {
     }
 
 }
+#endif
