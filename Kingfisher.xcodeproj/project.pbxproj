@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		185218B61CC07F8300BD58DE /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
-		27E5080C747EEE32B3B3D56E /* libPods-KingfisherTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CCDD057F8DA8D24EE701CF98 /* libPods-KingfisherTests.a */; };
 		4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B46CC5F217449C600D90C4A /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC5E217449C600D90C4A /* MemoryStorage.swift */; };
 		4B46CC64217449E000D90C4A /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC63217449E000D90C4A /* Storage.swift */; };
@@ -30,7 +29,6 @@
 		4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
 		4BE688F722FD513100B11168 /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */; };
 		4BE688F822FD513700B11168 /* WKInterfaceImage+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AF215D2BB50013BA68 /* WKInterfaceImage+Kingfisher.swift */; };
-		AE1D6776DC6183B84B561961 /* libPods-KingfisherTests-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 124FABC032484C46AC221D0C /* libPods-KingfisherTests-tvOS.a */; };
 		C9286407228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
 		D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69D215D2BB50013BA68 /* RequestModifier.swift */; };
 		D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69E215D2BB50013BA68 /* Resource.swift */; };
@@ -84,6 +82,33 @@
 		D12E0C891C47F7B700AC98AD /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4C1C47F23500AC98AD /* KingfisherTestHelper.swift */; };
 		D12E0C8A1C47F7C000AC98AD /* dancing-banana.gif in Resources */ = {isa = PBXBuildFile; fileRef = D12E0C441C47F23500AC98AD /* dancing-banana.gif */; };
 		D13646742165A1A100A33652 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13646732165A1A100A33652 /* Result.swift */; };
+		D16FEA3A23078C63006E67D5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F623078C63006E67D5 /* LICENSE */; };
+		D16FEA3B23078C63006E67D5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F723078C63006E67D5 /* README.md */; };
+		D16FEA3C23078C63006E67D5 /* LSStubRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FE9FA23078C63006E67D5 /* LSStubRequest.m */; };
+		D16FEA3D23078C63006E67D5 /* LSStubResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FE9FB23078C63006E67D5 /* LSStubResponse.m */; };
+		D16FEA3E23078C63006E67D5 /* LSNocilla.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FE9FE23078C63006E67D5 /* LSNocilla.m */; };
+		D16FEA3F23078C63006E67D5 /* LSHTTPRequestDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA0023078C63006E67D5 /* LSHTTPRequestDiff.m */; };
+		D16FEA4023078C63006E67D5 /* LSHTTPClientHook.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA0423078C63006E67D5 /* LSHTTPClientHook.m */; };
+		D16FEA4123078C63006E67D5 /* NSURLRequest+LSHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA0723078C63006E67D5 /* NSURLRequest+LSHTTPRequest.m */; };
+		D16FEA4223078C63006E67D5 /* LSNSURLHook.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA0C23078C63006E67D5 /* LSNSURLHook.m */; };
+		D16FEA4323078C63006E67D5 /* NSURLRequest+DSL.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA0D23078C63006E67D5 /* NSURLRequest+DSL.m */; };
+		D16FEA4423078C63006E67D5 /* LSHTTPStubURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA0E23078C63006E67D5 /* LSHTTPStubURLProtocol.m */; };
+		D16FEA4523078C63006E67D5 /* ASIHTTPRequestStub.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA1123078C63006E67D5 /* ASIHTTPRequestStub.m */; };
+		D16FEA4623078C63006E67D5 /* LSASIHTTPRequestHook.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA1323078C63006E67D5 /* LSASIHTTPRequestHook.m */; };
+		D16FEA4723078C63006E67D5 /* LSASIHTTPRequestAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA1423078C63006E67D5 /* LSASIHTTPRequestAdapter.m */; };
+		D16FEA4823078C63006E67D5 /* LSNSURLSessionHook.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA1823078C63006E67D5 /* LSNSURLSessionHook.m */; };
+		D16FEA4923078C63006E67D5 /* NSRegularExpression+Matcheable.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2223078C63006E67D5 /* NSRegularExpression+Matcheable.m */; };
+		D16FEA4A23078C63006E67D5 /* NSString+Matcheable.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2423078C63006E67D5 /* NSString+Matcheable.m */; };
+		D16FEA4B23078C63006E67D5 /* NSData+Matcheable.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2523078C63006E67D5 /* NSData+Matcheable.m */; };
+		D16FEA4C23078C63006E67D5 /* LSDataMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2623078C63006E67D5 /* LSDataMatcher.m */; };
+		D16FEA4D23078C63006E67D5 /* LSMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2723078C63006E67D5 /* LSMatcher.m */; };
+		D16FEA4E23078C63006E67D5 /* LSRegexMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2823078C63006E67D5 /* LSRegexMatcher.m */; };
+		D16FEA4F23078C63006E67D5 /* LSStringMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA2A23078C63006E67D5 /* LSStringMatcher.m */; };
+		D16FEA5023078C63006E67D5 /* NSString+Nocilla.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3023078C63006E67D5 /* NSString+Nocilla.m */; };
+		D16FEA5123078C63006E67D5 /* NSData+Nocilla.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3123078C63006E67D5 /* NSData+Nocilla.m */; };
+		D16FEA5223078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3423078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m */; };
+		D16FEA5323078C63006E67D5 /* LSStubResponseDSL.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3623078C63006E67D5 /* LSStubResponseDSL.m */; };
+		D16FEA5423078C63006E67D5 /* LSStubRequestDSL.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3723078C63006E67D5 /* LSStubRequestDSL.m */; };
 		D1839845216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
 		D186696E21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
@@ -116,7 +141,6 @@
 		D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		D9638BA71C7DCF560046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		D9638BA81C7DCF570046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
-		E31853303C9C8A94F3A8D16A /* libPods-KingfisherTests-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 304293EFEECEDC34FAB93806 /* libPods-KingfisherTests-macOS.a */; };
 		F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72CE9CD1FCF17ED00CC522A /* ImageModifierTests.swift */; };
 		F72CE9CF1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72CE9CD1FCF17ED00CC522A /* ImageModifierTests.swift */; };
 		F72CE9D01FCF17ED00CC522A /* ImageModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72CE9CD1FCF17ED00CC522A /* ImageModifierTests.swift */; };
@@ -133,11 +157,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		033CD4A1D8C6D03D7AC150BE /* Pods-KingfisherTests-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		124FABC032484C46AC221D0C /* libPods-KingfisherTests-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
-		304293EFEECEDC34FAB93806 /* libPods-KingfisherTests-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4AB2628A580157ADADCE0011 /* Pods-KingfisherTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4B10480C216F157000300C61 /* ImageDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProcessor.swift; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B37667F1C478F940001443F /* KingfisherTests-tvOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-tvOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,11 +175,8 @@
 		4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStorageTests.swift; sourceTree = "<group>"; };
 		4BD821612189FC0C0084CC21 /* SessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
 		4BD821662189FD330084CC21 /* SessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDataTask.swift; sourceTree = "<group>"; };
-		6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests/Pods-KingfisherTests.release.xcconfig"; sourceTree = "<group>"; };
-		7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		C9286406228584EB00257182 /* ImageProgressive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProgressive.swift; sourceTree = "<group>"; };
 		C959EEE7228940FE00467A10 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		CCDD057F8DA8D24EE701CF98 /* libPods-KingfisherTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KingfisherTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D10EC2311C3D632300A4211C /* KingfisherTests-macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KingfisherTests-macOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D12AB69D215D2BB50013BA68 /* RequestModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModifier.swift; sourceTree = "<group>"; };
 		D12AB69E215D2BB50013BA68 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
@@ -202,6 +219,63 @@
 		D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
 		D12E0C5F1C47F24800AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D13646732165A1A100A33652 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		D16FE9F623078C63006E67D5 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		D16FE9F723078C63006E67D5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D16FE9FA23078C63006E67D5 /* LSStubRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSStubRequest.m; sourceTree = "<group>"; };
+		D16FE9FB23078C63006E67D5 /* LSStubResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSStubResponse.m; sourceTree = "<group>"; };
+		D16FE9FC23078C63006E67D5 /* LSStubResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSStubResponse.h; sourceTree = "<group>"; };
+		D16FE9FD23078C63006E67D5 /* LSStubRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSStubRequest.h; sourceTree = "<group>"; };
+		D16FE9FE23078C63006E67D5 /* LSNocilla.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSNocilla.m; sourceTree = "<group>"; };
+		D16FEA0023078C63006E67D5 /* LSHTTPRequestDiff.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSHTTPRequestDiff.m; sourceTree = "<group>"; };
+		D16FEA0123078C63006E67D5 /* LSHTTPRequestDiff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPRequestDiff.h; sourceTree = "<group>"; };
+		D16FEA0223078C63006E67D5 /* Nocilla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nocilla.h; sourceTree = "<group>"; };
+		D16FEA0423078C63006E67D5 /* LSHTTPClientHook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSHTTPClientHook.m; sourceTree = "<group>"; };
+		D16FEA0523078C63006E67D5 /* LSHTTPClientHook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPClientHook.h; sourceTree = "<group>"; };
+		D16FEA0723078C63006E67D5 /* NSURLRequest+LSHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+LSHTTPRequest.m"; sourceTree = "<group>"; };
+		D16FEA0823078C63006E67D5 /* NSURLRequest+DSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+DSL.h"; sourceTree = "<group>"; };
+		D16FEA0923078C63006E67D5 /* LSNSURLHook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSNSURLHook.h; sourceTree = "<group>"; };
+		D16FEA0A23078C63006E67D5 /* LSHTTPStubURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPStubURLProtocol.h; sourceTree = "<group>"; };
+		D16FEA0B23078C63006E67D5 /* NSURLRequest+LSHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+LSHTTPRequest.h"; sourceTree = "<group>"; };
+		D16FEA0C23078C63006E67D5 /* LSNSURLHook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSNSURLHook.m; sourceTree = "<group>"; };
+		D16FEA0D23078C63006E67D5 /* NSURLRequest+DSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+DSL.m"; sourceTree = "<group>"; };
+		D16FEA0E23078C63006E67D5 /* LSHTTPStubURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSHTTPStubURLProtocol.m; sourceTree = "<group>"; };
+		D16FEA1023078C63006E67D5 /* LSASIHTTPRequestHook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSASIHTTPRequestHook.h; sourceTree = "<group>"; };
+		D16FEA1123078C63006E67D5 /* ASIHTTPRequestStub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIHTTPRequestStub.m; sourceTree = "<group>"; };
+		D16FEA1223078C63006E67D5 /* LSASIHTTPRequestAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSASIHTTPRequestAdapter.h; sourceTree = "<group>"; };
+		D16FEA1323078C63006E67D5 /* LSASIHTTPRequestHook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSASIHTTPRequestHook.m; sourceTree = "<group>"; };
+		D16FEA1423078C63006E67D5 /* LSASIHTTPRequestAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSASIHTTPRequestAdapter.m; sourceTree = "<group>"; };
+		D16FEA1523078C63006E67D5 /* ASIHTTPRequestStub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIHTTPRequestStub.h; sourceTree = "<group>"; };
+		D16FEA1723078C63006E67D5 /* LSNSURLSessionHook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSNSURLSessionHook.h; sourceTree = "<group>"; };
+		D16FEA1823078C63006E67D5 /* LSNSURLSessionHook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSNSURLSessionHook.m; sourceTree = "<group>"; };
+		D16FEA1A23078C63006E67D5 /* LSHTTPBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPBody.h; sourceTree = "<group>"; };
+		D16FEA1B23078C63006E67D5 /* LSHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPRequest.h; sourceTree = "<group>"; };
+		D16FEA1C23078C63006E67D5 /* LSHTTPResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPResponse.h; sourceTree = "<group>"; };
+		D16FEA1D23078C63006E67D5 /* LSNocilla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSNocilla.h; sourceTree = "<group>"; };
+		D16FEA1F23078C63006E67D5 /* LSMatcheable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSMatcheable.h; sourceTree = "<group>"; };
+		D16FEA2023078C63006E67D5 /* LSMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSMatcher.h; sourceTree = "<group>"; };
+		D16FEA2123078C63006E67D5 /* LSStringMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSStringMatcher.h; sourceTree = "<group>"; };
+		D16FEA2223078C63006E67D5 /* NSRegularExpression+Matcheable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRegularExpression+Matcheable.m"; sourceTree = "<group>"; };
+		D16FEA2323078C63006E67D5 /* LSRegexMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSRegexMatcher.h; sourceTree = "<group>"; };
+		D16FEA2423078C63006E67D5 /* NSString+Matcheable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Matcheable.m"; sourceTree = "<group>"; };
+		D16FEA2523078C63006E67D5 /* NSData+Matcheable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Matcheable.m"; sourceTree = "<group>"; };
+		D16FEA2623078C63006E67D5 /* LSDataMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSDataMatcher.m; sourceTree = "<group>"; };
+		D16FEA2723078C63006E67D5 /* LSMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSMatcher.m; sourceTree = "<group>"; };
+		D16FEA2823078C63006E67D5 /* LSRegexMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSRegexMatcher.m; sourceTree = "<group>"; };
+		D16FEA2923078C63006E67D5 /* NSRegularExpression+Matcheable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRegularExpression+Matcheable.h"; sourceTree = "<group>"; };
+		D16FEA2A23078C63006E67D5 /* LSStringMatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSStringMatcher.m; sourceTree = "<group>"; };
+		D16FEA2B23078C63006E67D5 /* NSString+Matcheable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Matcheable.h"; sourceTree = "<group>"; };
+		D16FEA2C23078C63006E67D5 /* LSDataMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSDataMatcher.h; sourceTree = "<group>"; };
+		D16FEA2D23078C63006E67D5 /* NSData+Matcheable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Matcheable.h"; sourceTree = "<group>"; };
+		D16FEA2F23078C63006E67D5 /* NSData+Nocilla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Nocilla.h"; sourceTree = "<group>"; };
+		D16FEA3023078C63006E67D5 /* NSString+Nocilla.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Nocilla.m"; sourceTree = "<group>"; };
+		D16FEA3123078C63006E67D5 /* NSData+Nocilla.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Nocilla.m"; sourceTree = "<group>"; };
+		D16FEA3223078C63006E67D5 /* NSString+Nocilla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Nocilla.h"; sourceTree = "<group>"; };
+		D16FEA3423078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSHTTPRequestDSLRepresentation.m; sourceTree = "<group>"; };
+		D16FEA3523078C63006E67D5 /* LSStubRequestDSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSStubRequestDSL.h; sourceTree = "<group>"; };
+		D16FEA3623078C63006E67D5 /* LSStubResponseDSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSStubResponseDSL.m; sourceTree = "<group>"; };
+		D16FEA3723078C63006E67D5 /* LSStubRequestDSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSStubRequestDSL.m; sourceTree = "<group>"; };
+		D16FEA3823078C63006E67D5 /* LSHTTPRequestDSLRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSHTTPRequestDSLRepresentation.h; sourceTree = "<group>"; };
+		D16FEA3923078C63006E67D5 /* LSStubResponseDSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSStubResponseDSL.h; sourceTree = "<group>"; };
 		D1839844216E333E003927D3 /* Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delegate.swift; sourceTree = "<group>"; };
 		D186696C21834261002B502E /* ImageDrawingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDrawingTests.swift; sourceTree = "<group>"; };
 		D1A1CC99219FAB4B00263AD8 /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
@@ -219,10 +293,8 @@
 		D1E56444219B16330057AAE3 /* ImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageDataProvider.swift; path = Sources/General/ImageSource/ImageDataProvider.swift; sourceTree = SOURCE_ROOT; };
 		D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D3F1AD2D09F00CFC3EB /* KingfisherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KingfisherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D7B91E45CD834BE64717E77F /* Pods-KingfisherTests-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-tvOS/Pods-KingfisherTests-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D8FCF6A721C5A0E500F9ABC0 /* RedirectHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedirectHandler.swift; sourceTree = "<group>"; };
 		D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePrefetcherTests.swift; sourceTree = "<group>"; };
-		DE80CB18FBC9F9F23DC1FDCF /* Pods-KingfisherTests-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KingfisherTests-macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-KingfisherTests-macOS/Pods-KingfisherTests-macOS.release.xcconfig"; sourceTree = "<group>"; };
 		F72CE9CD1FCF17ED00CC522A /* ImageModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModifierTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -231,7 +303,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE1D6776DC6183B84B561961 /* libPods-KingfisherTests-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,7 +310,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E31853303C9C8A94F3A8D16A /* libPods-KingfisherTests-macOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,7 +325,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */,
-				27E5080C747EEE32B3B3D56E /* libPods-KingfisherTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,22 +348,10 @@
 			path = "Tests/KingfisherTests-macOS";
 			sourceTree = "<group>";
 		};
-		7C9E3F3AA655241E5FF95378 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				4AB2628A580157ADADCE0011 /* Pods-KingfisherTests.debug.xcconfig */,
-				6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */,
-				7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */,
-				DE80CB18FBC9F9F23DC1FDCF /* Pods-KingfisherTests-macOS.release.xcconfig */,
-				D7B91E45CD834BE64717E77F /* Pods-KingfisherTests-tvOS.debug.xcconfig */,
-				033CD4A1D8C6D03D7AC150BE /* Pods-KingfisherTests-tvOS.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		D10EC22C1C3D62E800A4211C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D16FE9F423078C63006E67D5 /* Dependency */,
 				4BCCF3431D5B0457003387C2 /* KingfisherTests-macOS */,
 				D12E0C431C47F23500AC98AD /* KingfisherTests */,
 				D12E0C5E1C47F24800AC98AD /* KingfisherTests-tvOS */,
@@ -453,6 +510,167 @@
 			path = "Tests/KingfisherTests-tvOS";
 			sourceTree = "<group>";
 		};
+		D16FE9F423078C63006E67D5 /* Dependency */ = {
+			isa = PBXGroup;
+			children = (
+				D16FE9F523078C63006E67D5 /* Nocilla */,
+			);
+			name = Dependency;
+			path = Tests/Dependency;
+			sourceTree = "<group>";
+		};
+		D16FE9F523078C63006E67D5 /* Nocilla */ = {
+			isa = PBXGroup;
+			children = (
+				D16FE9F623078C63006E67D5 /* LICENSE */,
+				D16FE9F723078C63006E67D5 /* README.md */,
+				D16FE9F823078C63006E67D5 /* Nocilla */,
+			);
+			path = Nocilla;
+			sourceTree = "<group>";
+		};
+		D16FE9F823078C63006E67D5 /* Nocilla */ = {
+			isa = PBXGroup;
+			children = (
+				D16FE9F923078C63006E67D5 /* Stubs */,
+				D16FE9FE23078C63006E67D5 /* LSNocilla.m */,
+				D16FE9FF23078C63006E67D5 /* Diff */,
+				D16FEA0223078C63006E67D5 /* Nocilla.h */,
+				D16FEA0323078C63006E67D5 /* Hooks */,
+				D16FEA1923078C63006E67D5 /* Model */,
+				D16FEA1D23078C63006E67D5 /* LSNocilla.h */,
+				D16FEA1E23078C63006E67D5 /* Matchers */,
+				D16FEA2E23078C63006E67D5 /* Categories */,
+				D16FEA3323078C63006E67D5 /* DSL */,
+			);
+			path = Nocilla;
+			sourceTree = "<group>";
+		};
+		D16FE9F923078C63006E67D5 /* Stubs */ = {
+			isa = PBXGroup;
+			children = (
+				D16FE9FA23078C63006E67D5 /* LSStubRequest.m */,
+				D16FE9FB23078C63006E67D5 /* LSStubResponse.m */,
+				D16FE9FC23078C63006E67D5 /* LSStubResponse.h */,
+				D16FE9FD23078C63006E67D5 /* LSStubRequest.h */,
+			);
+			path = Stubs;
+			sourceTree = "<group>";
+		};
+		D16FE9FF23078C63006E67D5 /* Diff */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA0023078C63006E67D5 /* LSHTTPRequestDiff.m */,
+				D16FEA0123078C63006E67D5 /* LSHTTPRequestDiff.h */,
+			);
+			path = Diff;
+			sourceTree = "<group>";
+		};
+		D16FEA0323078C63006E67D5 /* Hooks */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA0423078C63006E67D5 /* LSHTTPClientHook.m */,
+				D16FEA0523078C63006E67D5 /* LSHTTPClientHook.h */,
+				D16FEA0623078C63006E67D5 /* NSURLRequest */,
+				D16FEA0F23078C63006E67D5 /* ASIHTTPRequest */,
+				D16FEA1623078C63006E67D5 /* NSURLSession */,
+			);
+			path = Hooks;
+			sourceTree = "<group>";
+		};
+		D16FEA0623078C63006E67D5 /* NSURLRequest */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA0723078C63006E67D5 /* NSURLRequest+LSHTTPRequest.m */,
+				D16FEA0823078C63006E67D5 /* NSURLRequest+DSL.h */,
+				D16FEA0923078C63006E67D5 /* LSNSURLHook.h */,
+				D16FEA0A23078C63006E67D5 /* LSHTTPStubURLProtocol.h */,
+				D16FEA0B23078C63006E67D5 /* NSURLRequest+LSHTTPRequest.h */,
+				D16FEA0C23078C63006E67D5 /* LSNSURLHook.m */,
+				D16FEA0D23078C63006E67D5 /* NSURLRequest+DSL.m */,
+				D16FEA0E23078C63006E67D5 /* LSHTTPStubURLProtocol.m */,
+			);
+			path = NSURLRequest;
+			sourceTree = "<group>";
+		};
+		D16FEA0F23078C63006E67D5 /* ASIHTTPRequest */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA1023078C63006E67D5 /* LSASIHTTPRequestHook.h */,
+				D16FEA1123078C63006E67D5 /* ASIHTTPRequestStub.m */,
+				D16FEA1223078C63006E67D5 /* LSASIHTTPRequestAdapter.h */,
+				D16FEA1323078C63006E67D5 /* LSASIHTTPRequestHook.m */,
+				D16FEA1423078C63006E67D5 /* LSASIHTTPRequestAdapter.m */,
+				D16FEA1523078C63006E67D5 /* ASIHTTPRequestStub.h */,
+			);
+			path = ASIHTTPRequest;
+			sourceTree = "<group>";
+		};
+		D16FEA1623078C63006E67D5 /* NSURLSession */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA1723078C63006E67D5 /* LSNSURLSessionHook.h */,
+				D16FEA1823078C63006E67D5 /* LSNSURLSessionHook.m */,
+			);
+			path = NSURLSession;
+			sourceTree = "<group>";
+		};
+		D16FEA1923078C63006E67D5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA1A23078C63006E67D5 /* LSHTTPBody.h */,
+				D16FEA1B23078C63006E67D5 /* LSHTTPRequest.h */,
+				D16FEA1C23078C63006E67D5 /* LSHTTPResponse.h */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		D16FEA1E23078C63006E67D5 /* Matchers */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA1F23078C63006E67D5 /* LSMatcheable.h */,
+				D16FEA2023078C63006E67D5 /* LSMatcher.h */,
+				D16FEA2123078C63006E67D5 /* LSStringMatcher.h */,
+				D16FEA2223078C63006E67D5 /* NSRegularExpression+Matcheable.m */,
+				D16FEA2323078C63006E67D5 /* LSRegexMatcher.h */,
+				D16FEA2423078C63006E67D5 /* NSString+Matcheable.m */,
+				D16FEA2523078C63006E67D5 /* NSData+Matcheable.m */,
+				D16FEA2623078C63006E67D5 /* LSDataMatcher.m */,
+				D16FEA2723078C63006E67D5 /* LSMatcher.m */,
+				D16FEA2823078C63006E67D5 /* LSRegexMatcher.m */,
+				D16FEA2923078C63006E67D5 /* NSRegularExpression+Matcheable.h */,
+				D16FEA2A23078C63006E67D5 /* LSStringMatcher.m */,
+				D16FEA2B23078C63006E67D5 /* NSString+Matcheable.h */,
+				D16FEA2C23078C63006E67D5 /* LSDataMatcher.h */,
+				D16FEA2D23078C63006E67D5 /* NSData+Matcheable.h */,
+			);
+			path = Matchers;
+			sourceTree = "<group>";
+		};
+		D16FEA2E23078C63006E67D5 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA2F23078C63006E67D5 /* NSData+Nocilla.h */,
+				D16FEA3023078C63006E67D5 /* NSString+Nocilla.m */,
+				D16FEA3123078C63006E67D5 /* NSData+Nocilla.m */,
+				D16FEA3223078C63006E67D5 /* NSString+Nocilla.h */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		D16FEA3323078C63006E67D5 /* DSL */ = {
+			isa = PBXGroup;
+			children = (
+				D16FEA3423078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m */,
+				D16FEA3523078C63006E67D5 /* LSStubRequestDSL.h */,
+				D16FEA3623078C63006E67D5 /* LSStubResponseDSL.m */,
+				D16FEA3723078C63006E67D5 /* LSStubRequestDSL.m */,
+				D16FEA3823078C63006E67D5 /* LSHTTPRequestDSLRepresentation.h */,
+				D16FEA3923078C63006E67D5 /* LSStubResponseDSL.h */,
+			);
+			path = DSL;
+			sourceTree = "<group>";
+		};
 		D1A1CC98219FAB3500263AD8 /* ImageSource */ = {
 			isa = PBXGroup;
 			children = (
@@ -470,7 +688,6 @@
 				D10EC22C1C3D62E800A4211C /* Tests */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
 				EA99D30544BD22799F7A5367 /* Frameworks */,
-				7C9E3F3AA655241E5FF95378 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -491,9 +708,6 @@
 				C959EEE7228940FE00467A10 /* QuartzCore.framework */,
 				4B164ACE1B8D554200768EC6 /* CFNetwork.framework */,
 				4B3E714D1B01FEB200F5AAED /* WatchKit.framework */,
-				CCDD057F8DA8D24EE701CF98 /* libPods-KingfisherTests.a */,
-				304293EFEECEDC34FAB93806 /* libPods-KingfisherTests-macOS.a */,
-				124FABC032484C46AC221D0C /* libPods-KingfisherTests-tvOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -516,8 +730,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B3766891C478F940001443F /* Build configuration list for PBXNativeTarget "KingfisherTests-tvOS" */;
 			buildPhases = (
-				A5A13E4B02EADA5851C42A76 /* [CP] Check Pods Manifest.lock */,
-				47A2E7E48EEB2B4ECBA002DE /* [CP] Check Pods Manifest.lock */,
 				4B37667B1C478F940001443F /* Sources */,
 				4B37667C1C478F940001443F /* Frameworks */,
 				4B37667D1C478F940001443F /* Resources */,
@@ -535,8 +747,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D10EC2391C3D632300A4211C /* Build configuration list for PBXNativeTarget "KingfisherTests-macOS" */;
 			buildPhases = (
-				875B3E20755E971898C499A3 /* [CP] Check Pods Manifest.lock */,
-				1A7245D94CDE1E4D171C8E3B /* [CP] Check Pods Manifest.lock */,
 				D10EC22D1C3D632300A4211C /* Sources */,
 				D10EC22E1C3D632300A4211C /* Frameworks */,
 				D10EC22F1C3D632300A4211C /* Resources */,
@@ -572,8 +782,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D1ED2D521AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "KingfisherTests" */;
 			buildPhases = (
-				3ACF82069FA33E2B17A8BF34 /* [CP] Check Pods Manifest.lock */,
-				9336000264DA10AF6BEC0C4C /* [CP] Check Pods Manifest.lock */,
 				D1ED2D3B1AD2D09F00CFC3EB /* Sources */,
 				D1ED2D3C1AD2D09F00CFC3EB /* Frameworks */,
 				D1ED2D3D1AD2D09F00CFC3EB /* Resources */,
@@ -668,114 +876,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D16FEA3A23078C63006E67D5 /* LICENSE in Resources */,
 				D1D2C32A1C70A3230018F2F9 /* single-frame.gif in Resources */,
+				D16FEA3B23078C63006E67D5 /* README.md in Resources */,
 				D12E0C4F1C47F23500AC98AD /* dancing-banana.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1A7245D94CDE1E4D171C8E3B /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		3ACF82069FA33E2B17A8BF34 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-KingfisherTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		47A2E7E48EEB2B4ECBA002DE /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		875B3E20755E971898C499A3 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-KingfisherTests-macOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9336000264DA10AF6BEC0C4C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		A5A13E4B02EADA5851C42A76 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-KingfisherTests-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4B37667B1C478F940001443F /* Sources */ = {
@@ -887,22 +995,47 @@
 			buildActionMask = 2147483647;
 			files = (
 				D12E0C571C47F23500AC98AD /* KingfisherTestHelper.swift in Sources */,
+				D16FEA4923078C63006E67D5 /* NSRegularExpression+Matcheable.m in Sources */,
 				D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */,
 				D1E564412199C21E0057AAE3 /* StorageExpirationTests.swift in Sources */,
+				D16FEA4123078C63006E67D5 /* NSURLRequest+LSHTTPRequest.m in Sources */,
 				4BCFF7A621990DB70055AAC4 /* MemoryStorageTests.swift in Sources */,
+				D16FEA4623078C63006E67D5 /* LSASIHTTPRequestHook.m in Sources */,
 				D12E0C561C47F23500AC98AD /* KingfisherOptionsInfoTests.swift in Sources */,
 				D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */,
 				D12E0C551C47F23500AC98AD /* KingfisherManagerTests.swift in Sources */,
+				D16FEA4523078C63006E67D5 /* ASIHTTPRequestStub.m in Sources */,
+				D16FEA4423078C63006E67D5 /* LSHTTPStubURLProtocol.m in Sources */,
 				D12E0C511C47F23500AC98AD /* ImageDownloaderTests.swift in Sources */,
+				D16FEA4A23078C63006E67D5 /* NSString+Matcheable.m in Sources */,
+				D16FEA4723078C63006E67D5 /* LSASIHTTPRequestAdapter.m in Sources */,
+				D16FEA4F23078C63006E67D5 /* LSStringMatcher.m in Sources */,
+				D16FEA3C23078C63006E67D5 /* LSStubRequest.m in Sources */,
 				D12E0C521C47F23500AC98AD /* ImageExtensionTests.swift in Sources */,
+				D16FEA5123078C63006E67D5 /* NSData+Nocilla.m in Sources */,
+				D16FEA5023078C63006E67D5 /* NSString+Nocilla.m in Sources */,
+				D16FEA4E23078C63006E67D5 /* LSRegexMatcher.m in Sources */,
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
+				D16FEA4023078C63006E67D5 /* LSHTTPClientHook.m in Sources */,
+				D16FEA3F23078C63006E67D5 /* LSHTTPRequestDiff.m in Sources */,
 				D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */,
+				D16FEA4323078C63006E67D5 /* NSURLRequest+DSL.m in Sources */,
+				D16FEA5323078C63006E67D5 /* LSStubResponseDSL.m in Sources */,
+				D16FEA4C23078C63006E67D5 /* LSDataMatcher.m in Sources */,
 				4BCFF7AA219932390055AAC4 /* DiskStorageTests.swift in Sources */,
+				D16FEA5423078C63006E67D5 /* LSStubRequestDSL.m in Sources */,
 				D1A1CC9F21A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */,
+				D16FEA4823078C63006E67D5 /* LSNSURLSessionHook.m in Sources */,
+				D16FEA3E23078C63006E67D5 /* LSNocilla.m in Sources */,
+				D16FEA4D23078C63006E67D5 /* LSMatcher.m in Sources */,
 				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D1BFED95222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */,
+				D16FEA5223078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m in Sources */,
+				D16FEA4223078C63006E67D5 /* LSNSURLHook.m in Sources */,
+				D16FEA4B23078C63006E67D5 /* NSData+Matcheable.m in Sources */,
+				D16FEA3D23078C63006E67D5 /* LSStubResponse.m in Sources */,
 				D12E0C501C47F23500AC98AD /* ImageCacheTests.swift in Sources */,
 				4BA3BF1E228BCDD100909201 /* DataReceivingSideEffectTests.swift in Sources */,
 			);
@@ -921,7 +1054,6 @@
 /* Begin XCBuildConfiguration section */
 		4B3766871C478F940001443F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D7B91E45CD834BE64717E77F /* Pods-KingfisherTests-tvOS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -939,7 +1071,6 @@
 		};
 		4B3766881C478F940001443F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 033CD4A1D8C6D03D7AC150BE /* Pods-KingfisherTests-tvOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -958,7 +1089,6 @@
 		};
 		D10EC23A1C3D632300A4211C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7204D40BEFEA059FA25864C4 /* Pods-KingfisherTests-macOS.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -975,7 +1105,6 @@
 		};
 		D10EC23B1C3D632300A4211C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DE80CB18FBC9F9F23DC1FDCF /* Pods-KingfisherTests-macOS.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1166,7 +1295,6 @@
 		};
 		D1ED2D531AD2D09F00CFC3EB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4AB2628A580157ADADCE0011 /* Pods-KingfisherTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1187,7 +1315,6 @@
 		};
 		D1ED2D541AD2D09F00CFC3EB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6CD5C0134AA4B1C0892E7319 /* Pods-KingfisherTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
