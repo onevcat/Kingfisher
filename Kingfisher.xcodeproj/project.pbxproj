@@ -85,6 +85,7 @@
 		D16FEA5223078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3423078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m */; };
 		D16FEA5323078C63006E67D5 /* LSStubResponseDSL.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3623078C63006E67D5 /* LSStubResponseDSL.m */; };
 		D16FEA5423078C63006E67D5 /* LSStubRequestDSL.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FEA3723078C63006E67D5 /* LSStubRequestDSL.m */; };
+		D16FEA5523079707006E67D5 /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		D1839845216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
 		D1A1CC9A219FAB4B00263AD8 /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CC99219FAB4B00263AD8 /* Source.swift */; };
@@ -821,6 +822,7 @@
 				D16FEA3C23078C63006E67D5 /* LSStubRequest.m in Sources */,
 				D12E0C521C47F23500AC98AD /* ImageExtensionTests.swift in Sources */,
 				D16FEA5123078C63006E67D5 /* NSData+Nocilla.m in Sources */,
+				D16FEA5523079707006E67D5 /* NSButtonExtensionTests.swift in Sources */,
 				D16FEA5023078C63006E67D5 /* NSString+Nocilla.m in Sources */,
 				D16FEA4E23078C63006E67D5 /* LSRegexMatcher.m in Sources */,
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
