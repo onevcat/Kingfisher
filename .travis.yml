@@ -6,14 +6,14 @@ osx_image:
 
 env:
 - DESTINATION='platform=macOS' SWIFT_VERSION=5.0
-- DESTINATION='platform=iOS Simulator,name=iPhone 6S' SWIFT_VERSION=5.0
-- DESTINATION='platform=tvOS Simulator,name=Apple TV 1080p' SWIFT_VERSION=5.0
+- DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=5.0
+- DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=5.0
 - DESTINATION='platform=macOS' SWIFT_VERSION=4.2
-- DESTINATION='platform=iOS Simulator,name=iPhone 6S' SWIFT_VERSION=4.2
-- DESTINATION='platform=tvOS Simulator,name=Apple TV 1080p' SWIFT_VERSION=4.2
+- DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=4.2
+- DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=4.2
 - DESTINATION='platform=macOS' SWIFT_VERSION=4.0
-- DESTINATION='platform=iOS Simulator,name=iPhone 6S' SWIFT_VERSION=4.0
-- DESTINATION='platform=tvOS Simulator,name=Apple TV 1080p' SWIFT_VERSION=4.0
+- DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=4.0
+- DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=4.0
 
 cache: bundler
 
@@ -26,7 +26,7 @@ matrix:
   - osx_image: xcode10.1
     env: DESTINATION='platform=macOS' SWIFT_VERSION=5.0
   - osx_image: xcode10.1
-    env: DESTINATION='platform=iOS Simulator,name=iPhone 6S' SWIFT_VERSION=5.0
+    env: DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=5.0
   - osx_image: xcode10.1
     env: DESTINATION='platform=tvOS Simulator,name=Apple TV 1080p' SWIFT_VERSION=5.0
 
