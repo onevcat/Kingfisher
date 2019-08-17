@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if !os(watchOS)
+
 import CoreImage
 
 // Reuse the same CI Context for all CI drawing.
@@ -140,3 +142,5 @@ extension KingfisherWrapper where Base: Image {
     }
 
 }
+
+#endif
