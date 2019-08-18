@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import KingfisherSwiftUI
+import Kingfisher
 import SwiftUI
 
 struct SwiftUIList : View {
@@ -35,7 +35,6 @@ struct SwiftUIList : View {
         List(index) { i in
             HStack(alignment: .center) {
                 Spacer()
-
                 KFImage(
                     URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!,
                     options: [.transition(.fade(0.4))]

@@ -120,12 +120,21 @@ final class ActivityIndicator: Indicator {
             activityIndicatorView.controlSize = .small
             activityIndicatorView.style = .spinning
         #else
+            let indicatorStyle: UIActivityIndicatorView.Style
             #if os(tvOS)
-                let indicatorStyle = UIActivityIndicatorView.Style.white
+            if #available(tvOS 13.0, *) {
+                indicatorStyle = UIActivityIndicatorView.Style.medium
+            } else {
+                indicatorStyle = UIActivityIndicatorView.Style.white
+            }
             #elseif targetEnvironment(macCatalyst)
-                let indicatorStyle = UIActivityIndicatorView.Style.medium
+            indicatorStyle = UIActivityIndicatorView.Style.medium
             #else
-                let indicatorStyle = UIActivityIndicatorView.Style.gray
+            if #available(iOS 13.0, *) {
+                indicatorStyle = UIActivityIndicatorView.Style.medium
+            } else {
+                indicatorStyle = UIActivityIndicatorView.Style.gray
+            }
             #endif
             #if swift(>=4.2)
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
