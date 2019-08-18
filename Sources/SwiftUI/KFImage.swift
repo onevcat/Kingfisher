@@ -26,6 +26,7 @@
 
 import SwiftUI
 import Combine
+import Kingfisher
 
 extension Image {
     // Creates an SwiftUI.Image with either UIImage or NSImage.

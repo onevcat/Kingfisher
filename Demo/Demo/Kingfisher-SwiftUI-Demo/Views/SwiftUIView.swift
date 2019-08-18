@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Kingfisher
+import KingfisherSwiftUI
 import SwiftUI
 
 struct SwiftUIView : View {

@@ -26,6 +26,7 @@
 
 import Combine
 import SwiftUI
+import Kingfisher
 
 extension KFImage {
 
