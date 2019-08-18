@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if !os(watchOS)
+
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 public typealias IndicatorView = NSView
@@ -188,3 +190,5 @@ final class ImageIndicator: Indicator {
         animatedImageIndicatorView.isHidden = true
     }
 }
+
+#endif
