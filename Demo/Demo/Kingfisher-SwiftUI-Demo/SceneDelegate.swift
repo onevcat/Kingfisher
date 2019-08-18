@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/08/07.
+//  Created by onevcat on 2019/08/18.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //

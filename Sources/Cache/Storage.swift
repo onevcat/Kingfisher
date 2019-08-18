@@ -55,10 +55,15 @@ public enum StorageExpiration {
     func estimatedExpirationSince(_ date: Date) -> Date {
         switch self {
         case .never: return .distantFuture
-        case .seconds(let seconds): return date.addingTimeInterval(seconds)
-        case .days(let days): return date.addingTimeInterval(TimeInterval(TimeConstants.secondsInOneDay * days))
-        case .date(let ref): return ref
-        case .expired: return .distantPast
+        case .seconds(let seconds):
+            return date.addingTimeInterval(seconds)
+        case .days(let days):
+            let duration = TimeInterval(TimeConstants.secondsInOneDay * days)
+            return date.addingTimeInterval(duration)
+        case .date(let ref):
+            return ref
+        case .expired:
+            return .distantPast
         }
     }
     
