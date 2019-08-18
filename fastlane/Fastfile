@@ -6,17 +6,17 @@ default_platform :ios
 platform :ios do
   desc "Runs all the tests"
   lane :tests do
-    test(scheme: "Kingfisher", swift_version: "5.0")
-    test(scheme: "Kingfisher-macOS", swift_version: "5.0")
-    test(scheme: "Kingfisher-tvOS", swift_version: "5.0")
+    test(destination: "platform=macOS", swift_version: "5.0")
+    test(destination: "platform=iOS Simulator,name=iPhone 8", swift_version: "5.0")
+    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "5.0")
 
-    test(scheme: "Kingfisher", swift_version: "4.2")
-    test(scheme: "Kingfisher-macOS", swift_version: "4.2")
-    test(scheme: "Kingfisher-tvOS", swift_version: "4.2")
+    test(destination: "platform=macOS", swift_version: "4.2")
+    test(destination: "platform=iOS Simulator,name=iPhone 8", swift_version: "4.2")
+    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "4.2")
 
-    test(scheme: "Kingfisher", swift_version: "4.0")
-    test(scheme: "Kingfisher-macOS", swift_version: "4.0")
-    test(scheme: "Kingfisher-tvOS", swift_version: "4.0")
+    test(destination: "platform=macOS", swift_version: "4.0")
+    test(destination: "platform=iOS Simulator,name=iPhone 8", swift_version: "4.0")
+    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "4.0")
   end
 
   lane :test do |options|
@@ -24,15 +24,16 @@ platform :ios do
   end
 
   private_lane :_test do |options|
-    if options[:scheme].include? "macOS"
-        scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}", destination: "platform=macOS")
-    else
-        scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}")
-    end
+    scan(
+        scheme: "Kingfisher", 
+        clean: true, 
+        xcargs: "SWIFT_VERSION=#{options[:swift_version]}",
+        destination: options[:destination]
+    )
   end
 
   lane :test_ci do
-    test(scheme: ENV["SCHEME"], swift_version: ENV["SWIFT_VERSION"])
+    test(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
   end
   
   desc "Lint"
