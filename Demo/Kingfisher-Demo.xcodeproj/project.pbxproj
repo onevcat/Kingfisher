@@ -45,6 +45,10 @@
 		D19ADD0223099B6400D20B28 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD0023099B5B00D20B28 /* Kingfisher.framework */; };
 		D19ADD0323099B6400D20B28 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD0023099B5B00D20B28 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D19ADD0523099B7900D20B28 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD0423099B7900D20B28 /* Kingfisher.framework */; };
+		D19ADD1223099E8000D20B28 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD0E23099E7B00D20B28 /* Kingfisher.framework */; };
+		D19ADD1323099E8000D20B28 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD0E23099E7B00D20B28 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D19ADD1423099E8100D20B28 /* KingfisherSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD1023099E7B00D20B28 /* KingfisherSwiftUI.framework */; };
+		D19ADD1523099E8100D20B28 /* KingfisherSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D19ADD1023099E7B00D20B28 /* KingfisherSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA221A1879600263AD8 /* MainViewController.swift */; };
 		D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
 		D1A1CCA821A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
@@ -102,6 +106,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D19ADD1523099E8100D20B28 /* KingfisherSwiftUI.framework in Embed Frameworks */,
+				D19ADD1323099E8000D20B28 /* Kingfisher.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -213,6 +219,8 @@
 		D17176402047837900EFC8C5 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D19ADD0023099B5B00D20B28 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D19ADD0423099B7900D20B28 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D19ADD0E23099E7B00D20B28 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D19ADD1023099E7B00D20B28 /* KingfisherSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KingfisherSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1A1CCA221A1879600263AD8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KingfisherOperation.swift"; sourceTree = "<group>"; };
 		D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewController.swift; sourceTree = "<group>"; };
@@ -280,6 +288,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D19ADD1423099E8100D20B28 /* KingfisherSwiftUI.framework in Frameworks */,
+				D19ADD1223099E8000D20B28 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +299,8 @@
 		277EAE762045ADE700547CD3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D19ADD0E23099E7B00D20B28 /* Kingfisher.framework */,
+				D19ADD1023099E7B00D20B28 /* KingfisherSwiftUI.framework */,
 				D19ADD0423099B7900D20B28 /* Kingfisher.framework */,
 				D19ADD0023099B5B00D20B28 /* Kingfisher.framework */,
 				D17176402047837900EFC8C5 /* Kingfisher.framework */,
