@@ -122,19 +122,11 @@ final class ActivityIndicator: Indicator {
         #else
             let indicatorStyle: UIActivityIndicatorView.Style
             #if os(tvOS)
-            if #available(tvOS 13.0, *) {
-                indicatorStyle = UIActivityIndicatorView.Style.medium
-            } else {
-                indicatorStyle = UIActivityIndicatorView.Style.white
-            }
+            indicatorStyle = UIActivityIndicatorView.Style.white
             #elseif targetEnvironment(macCatalyst)
             indicatorStyle = UIActivityIndicatorView.Style.medium
             #else
-            if #available(iOS 13.0, *) {
-                indicatorStyle = UIActivityIndicatorView.Style.medium
-            } else {
-                indicatorStyle = UIActivityIndicatorView.Style.gray
-            }
+            indicatorStyle = UIActivityIndicatorView.Style.gray
             #endif
             #if swift(>=4.2)
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
