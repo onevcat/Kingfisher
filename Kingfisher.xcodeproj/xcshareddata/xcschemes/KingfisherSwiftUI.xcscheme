@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D1F7603B230974DE000C5269"
-               BuildableName = "Kingfisher.framework"
+               BuildableName = "KingfisherSwiftUI.framework"
                BlueprintName = "KingfisherSwiftUI"
                ReferencedContainer = "container:Kingfisher.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D1F7603B230974DE000C5269"
-            BuildableName = "Kingfisher.framework"
+            BuildableName = "KingfisherSwiftUI.framework"
             BlueprintName = "KingfisherSwiftUI"
             ReferencedContainer = "container:Kingfisher.xcodeproj">
          </BuildableReference>
