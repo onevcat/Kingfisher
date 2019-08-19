@@ -93,8 +93,6 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// - Note:
     /// Only when `original` contains valid PNG, JPEG and GIF format data, the `image` will be
     /// converted to the corresponding data type. Otherwise, if the `original` is provided but it is not
-    /// a valid format, the `original` data will be used for cache.
-    ///
     /// If `original` is `nil`, the input `image` will be encoded as PNG data.
     public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
         return image.kf.data(format: original?.kf.imageFormat ?? .unknown)

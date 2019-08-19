@@ -71,7 +71,7 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     private let refresh: (KFCrossPlatformImage) -> Void
     
     private let decoder: ImageProgressiveDecoder
-    private let queue = ImageProgressiveSerialQueue(.main)
+    private let queue = ImageProgressiveSerialQueue()
     
     init?(_ options: KingfisherParsedOptionsInfo,
           refresh: @escaping (KFCrossPlatformImage) -> Void) {
@@ -89,16 +89,14 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
         guard !data.isEmpty else { return }
         
-        let interval = option.scanInterval
-        let isFastest = option.isFastestScan
-        
-        func add(decode data: Data) {
-            queue.add(minimum: interval) { completion in
-                guard self.onShouldApply() else {
-                    self.queue.clean()
-                    completion()
-                    return
-                }
+        queue.add(minimum: option.scanInterval) { completion in
+            guard self.onShouldApply() else {
+                self.queue.clean()
+                completion()
+                return
+            }
+            
+            func decode(_ data: Data) {
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
                     guard self.onShouldApply() else { return }
@@ -106,13 +104,13 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
                     self.refresh(image)
                 }
             }
-        }
-        
-        if isFastest {
-            add(decode: decoder.scanning(data) ?? Data())
             
-        } else {
-            decoder.scanning(data).forEach { add(decode: $0) }
+            if self.option.isFastestScan {
+                decode(self.decoder.scanning(data) ?? Data())
+                
+            } else {
+                self.decoder.scanning(data).forEach { decode($0) }
+            }
         }
     }
 }
@@ -252,19 +250,18 @@ private final class ImageProgressiveDecoder {
 private final class ImageProgressiveSerialQueue {
     typealias ClosureCallback = ((@escaping () -> Void)) -> Void
     
-    private let queue: DispatchQueue
+    private let queue: DispatchQueue = .init(label: "com.onevcat.Kingfisher.ImageProgressive.SerialQueue")
     private var items: [DispatchWorkItem] = []
     private var notify: (() -> Void)?
     private var lastTime: TimeInterval?
     var count: Int { return items.count }
     
-    init(_ queue: DispatchQueue) {
-        self.queue = queue
-    }
-    
     func add(minimum interval: TimeInterval, closure: @escaping ClosureCallback) {
-        let completion = {
-            self.queue.async {
+        let completion = { [weak self] in
+            guard let self = self else { return }
+            
+            self.queue.async { [weak self] in
+                guard let self = self else { return }
                 guard !self.items.isEmpty else { return }
                 
                 self.items.removeFirst()
@@ -282,15 +279,20 @@ private final class ImageProgressiveSerialQueue {
                 }
             }
         }
-        let item = DispatchWorkItem {
-            closure(completion)
+        
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            
+            let item = DispatchWorkItem {
+                closure(completion)
+            }
+            if self.items.isEmpty {
+                let difference = Date().timeIntervalSince1970 - (self.lastTime ?? 0)
+                let delay = difference < interval ? interval - difference : 0
+                self.queue.asyncAfter(deadline: .now() + delay, execute: item)
+            }
+            self.items.append(item)
         }
-        if items.isEmpty {
-            let difference = Date().timeIntervalSince1970 - (lastTime ?? 0)
-            let delay = difference < interval ? interval - difference : 0
-            queue.asyncAfter(deadline: .now() + delay, execute: item)
-        }
-        items.append(item)
     }
     
     func notify(_ closure: @escaping () -> Void) {
@@ -298,7 +300,10 @@ private final class ImageProgressiveSerialQueue {
     }
     
     func clean() {
-        items.forEach { $0.cancel() }
-        items.removeAll()
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            self.items.forEach { $0.cancel() }
+            self.items.removeAll()
+        }
     }
 }
