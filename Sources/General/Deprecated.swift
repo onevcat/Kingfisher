@@ -31,14 +31,14 @@ import UIKit
 #endif
 
 // MARK: - Deprecated
-extension KingfisherWrapper where Base: Image {
+extension KingfisherWrapper where Base: KFCrossPlatformImage {
     @available(*, deprecated, message:
     "Will be removed soon. Pass parameters with `ImageCreatingOptions`, use `image(with:options:)` instead.")
     public static func image(
         data: Data,
         scale: CGFloat,
         preloadAllAnimationData: Bool,
-        onlyFirstFrame: Bool) -> Image?
+        onlyFirstFrame: Bool) -> KFCrossPlatformImage?
     {
         let options = ImageCreatingOptions(
             scale: scale,
@@ -55,7 +55,7 @@ extension KingfisherWrapper where Base: Image {
         scale: CGFloat = 1.0,
         duration: TimeInterval = 0.0,
         preloadAll: Bool,
-        onlyFirstFrame: Bool = false) -> Image?
+        onlyFirstFrame: Bool = false) -> KFCrossPlatformImage?
     {
         let options = ImageCreatingOptions(
             scale: scale, duration: duration, preloadAll: preloadAll, onlyFirstFrame: onlyFirstFrame)
@@ -65,11 +65,11 @@ extension KingfisherWrapper where Base: Image {
 
 @available(*, deprecated, message: "Will be removed soon. Use `Result<RetrieveImageResult>` based callback instead")
 public typealias CompletionHandler =
-    ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
+    ((_ image: KFCrossPlatformImage?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> Void)
 
 @available(*, deprecated, message: "Will be removed soon. Use `Result<ImageLoadingResult>` based callback instead")
 public typealias ImageDownloaderCompletionHandler =
-    ((_ image: Image?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
+    ((_ image: KFCrossPlatformImage?, _ error: NSError?, _ url: URL?, _ originalData: Data?) -> Void)
 
 // MARK: - Deprecated
 @available(*, deprecated, message: "Will be removed soon. Use `DownloadTask` to cancel a task.")
@@ -141,7 +141,7 @@ public typealias ImageDownloaderProgressBlock = DownloadProgressBlock
 
 #if !os(watchOS)
 // MARK: - Deprecated
-extension KingfisherWrapper where Base: ImageView {
+extension KingfisherWrapper where Base: KFCrossPlatformImageView {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
     public func setImage(with resource: Resource?,
@@ -229,7 +229,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     @discardableResult
     public func setImage(_ resource: Resource?,
-                         placeholder: Image? = nil,
+                         placeholder: KFCrossPlatformImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
                          completionHandler: CompletionHandler?) -> DownloadTask?
@@ -258,7 +258,7 @@ extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     public func setImage(with resource: Resource?,
-                         placeholder: Image? = nil,
+                         placeholder: KFCrossPlatformImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
                          completionHandler: CompletionHandler?) -> DownloadTask?
@@ -282,7 +282,7 @@ extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     @available(*, deprecated, message: "Use `Result` based callback instead.")
     public func setAlternateImage(with resource: Resource?,
-                                  placeholder: Image? = nil,
+                                  placeholder: KFCrossPlatformImage? = nil,
                                   options: KingfisherOptionsInfo? = nil,
                                   progressBlock: DownloadProgressBlock? = nil,
                                   completionHandler: CompletionHandler?) -> DownloadTask?
@@ -368,7 +368,7 @@ extension ImageCache {
     @available(*, deprecated,
     message: "Use `Result` based `retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)` instead.",
     renamed: "retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)")
-    open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
+    open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> KFCrossPlatformImage? {
         let options = options ?? .empty
         let computedKey = key.computedKey(with: options.processor.identifier)
         do {
@@ -384,7 +384,7 @@ extension ImageCache {
     renamed: "retrieveImage(forKey:options:callbackQueue:completionHandler:)")
     open func retrieveImage(forKey key: String,
                             options: KingfisherOptionsInfo?,
-                            completionHandler: ((Image?, CacheType) -> Void)?)
+                            completionHandler: ((KFCrossPlatformImage?, CacheType) -> Void)?)
     {
         retrieveImage(
             forKey: key,
@@ -411,7 +411,7 @@ extension ImageCache {
     }
 
     @available(*, deprecated, message: "Use `Result` based callback instead.")
-    open func store(_ image: Image,
+    open func store(_ image: KFCrossPlatformImage,
                     original: Data? = nil,
                     forKey key: String,
                     processorIdentifier identifier: String = "",
@@ -621,7 +621,7 @@ extension Collection where Iterator.Element == KingfisherOptionsInfoItem {
     /// The image which should be used when download image request fails.
     @available(*, deprecated,
     message: "Create a `KingfisherParsedOptionsInfo` from `KingfisherOptionsInfo` and use `onFailureImage` instead.")
-    public var onFailureImage: Optional<Image?> {
+    public var onFailureImage: Optional<KFCrossPlatformImage?> {
         return KingfisherParsedOptionsInfo(Array(self)).onFailureImage
     }
 
@@ -650,5 +650,5 @@ public struct DefaultImageModifier: ImageModifier {
     private init() {}
 
     /// Modifies an input `Image`. See `ImageModifier` protocol for more.
-    public func modify(_ image: Image) -> Image { return image }
+    public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage { return image }
 }

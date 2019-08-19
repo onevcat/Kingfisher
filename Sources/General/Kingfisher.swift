@@ -29,19 +29,19 @@ import ImageIO
 
 #if os(macOS)
 import AppKit
-public typealias Image = NSImage
-public typealias View = NSView
-public typealias Color = NSColor
-public typealias ImageView = NSImageView
-public typealias Button = NSButton
+public typealias KFCrossPlatformImage = NSImage
+public typealias KFCrossPlatformView = NSView
+public typealias KFCrossPlatformColor = NSColor
+public typealias KFCrossPlatformImageView = NSImageView
+public typealias KFCrossPlatformButton = NSButton
 #else
 import UIKit
-public typealias Image = UIImage
-public typealias Color = UIColor
+public typealias KFCrossPlatformImage = UIImage
+public typealias KFCrossPlatformColor = UIColor
 #if !os(watchOS)
-public typealias ImageView = UIImageView
-public typealias View = UIView
-public typealias Button = UIButton
+public typealias KFCrossPlatformImageView = UIImageView
+public typealias KFCrossPlatformView = UIView
+public typealias KFCrossPlatformButton = UIButton
 #else
 import WatchKit
 #endif
@@ -80,10 +80,10 @@ extension KingfisherCompatibleValue {
     }
 }
 
-extension Image: KingfisherCompatible { }
+extension KFCrossPlatformImage: KingfisherCompatible { }
 #if !os(watchOS)
-extension ImageView: KingfisherCompatible { }
-extension Button: KingfisherCompatible { }
+extension KFCrossPlatformImageView: KingfisherCompatible { }
+extension KFCrossPlatformButton: KingfisherCompatible { }
 #else
 extension WKInterfaceImage: KingfisherCompatible { }
 #endif

@@ -182,7 +182,7 @@ public enum KingfisherOptionsInfoItem {
     /// If set and a downloading error occurred Kingfisher will set provided image (or empty)
     /// in place of requested one. It's useful when you don't want to show placeholder
     /// during loading time but wants to use some default image when requests will be failed.
-    case onFailureImage(Image?)
+    case onFailureImage(KFCrossPlatformImage?)
     
     /// If set and used in `ImagePrefetcher`, the prefetching operation will load the images into memory storage
     /// aggressively. By default this is not contained in the options, that means if the requested image is already
@@ -203,8 +203,11 @@ public enum KingfisherOptionsInfoItem {
     /// value to overwrite the config setting for this caching item.
     case memoryCacheExpiration(StorageExpiration)
     
-    /// The expiration extending setting for memory cache. The item expiration time will be incremented by this value after access.
-    /// By default, the underlying `MemoryStorage.Backend` uses the initial cache expiration as extending value: .cacheTime.
+    /// The expiration extending setting for memory cache. The item expiration time will be incremented by this
+    /// value after access.
+    /// By default, the underlying `MemoryStorage.Backend` uses the initial cache expiration as extending
+    /// value: .cacheTime.
+    ///
     /// To disable extending option at all add memoryCacheAccessExtendingExpiration(.none) to options.
     case memoryCacheAccessExtendingExpiration(ExpirationExtending)
     
@@ -253,7 +256,7 @@ public struct KingfisherParsedOptionsInfo {
     public var keepCurrentImageWhileLoading = false
     public var onlyLoadFirstFrame = false
     public var cacheOriginalImage = false
-    public var onFailureImage: Optional<Image?> = .none
+    public var onFailureImage: Optional<KFCrossPlatformImage?> = .none
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
     public var memoryCacheExpiration: StorageExpiration? = nil
