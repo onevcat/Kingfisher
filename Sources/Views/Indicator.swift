@@ -120,12 +120,13 @@ final class ActivityIndicator: Indicator {
             activityIndicatorView.controlSize = .small
             activityIndicatorView.style = .spinning
         #else
+            let indicatorStyle: UIActivityIndicatorView.Style
             #if os(tvOS)
-                let indicatorStyle = UIActivityIndicatorView.Style.white
+            indicatorStyle = UIActivityIndicatorView.Style.white
             #elseif targetEnvironment(macCatalyst)
-                let indicatorStyle = UIActivityIndicatorView.Style.medium
+            indicatorStyle = UIActivityIndicatorView.Style.medium
             #else
-                let indicatorStyle = UIActivityIndicatorView.Style.gray
+            indicatorStyle = UIActivityIndicatorView.Style.gray
             #endif
             #if swift(>=4.2)
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
@@ -139,7 +140,7 @@ final class ActivityIndicator: Indicator {
 // MARK: - ImageIndicator
 // Displays an ImageView. Supports gif
 final class ImageIndicator: Indicator {
-    private let animatedImageIndicatorView: ImageView
+    private let animatedImageIndicatorView: KFCrossPlatformImageView
 
     var view: IndicatorView {
         return animatedImageIndicatorView
@@ -160,7 +161,7 @@ final class ImageIndicator: Indicator {
             return nil
         }
 
-        animatedImageIndicatorView = ImageView()
+        animatedImageIndicatorView = KFCrossPlatformImageView()
         animatedImageIndicatorView.image = image
         
         #if os(macOS)
