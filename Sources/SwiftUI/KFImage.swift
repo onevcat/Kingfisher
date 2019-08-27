@@ -28,6 +28,7 @@ import SwiftUI
 import Combine
 import Kingfisher
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Image {
     // Creates an SwiftUI.Image with either UIImage or NSImage.
     init(crossPlatformImage: KFCrossPlatformImage) {
@@ -41,6 +42,7 @@ extension Image {
 
 /// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
 /// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: View {
 
     /// An image binder that manages loading and cancelling image related task.
@@ -97,6 +99,7 @@ public struct KFImage: View {
     }
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
     /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
@@ -147,6 +150,7 @@ extension KFImage {
     }
 }
 
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
     /// Sets the action to perform when the image setting fails.
@@ -178,6 +182,7 @@ extension KFImage {
 }
 
 #if DEBUG
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {
