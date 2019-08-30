@@ -72,11 +72,13 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     public func data(with image: Image, original: Data?) -> Data? {
         
         func imageData(withFormat imageFormat: ImageFormat) -> Data? {
-            switch imageFormat {
-            case .PNG: return image.kf.pngRepresentation()
-            case .JPEG: return image.kf.jpegRepresentation(compressionQuality: 1.0)
-            case .GIF: return image.kf.gifRepresentation()
-            case .unknown: return nil
+            return autoreleasepool { () -> Data? in
+                switch imageFormat {
+                case .PNG: return image.kf.pngRepresentation()
+                case .JPEG: return image.kf.jpegRepresentation(compressionQuality: 1.0)
+                case .GIF: return image.kf.gifRepresentation()
+                case .unknown: return nil
+                }
             }
         }
         

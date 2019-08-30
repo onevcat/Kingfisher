@@ -235,15 +235,17 @@ extension KingfisherWrapper where Base: Image {
     ///                     converted in the PNG representation.
     /// - Returns: The output data representing.
     public func data(format: ImageFormat) -> Data? {
-        let data: Data?
-        switch format {
-        case .PNG: data = pngRepresentation()
-        case .JPEG: data = jpegRepresentation(compressionQuality: 1.0)
-        case .GIF: data = gifRepresentation()
-        case .unknown: data = normalized.kf.pngRepresentation()
+        return autoreleasepool { () -> Data? in
+            let data: Data?
+            switch format {
+            case .PNG: data = pngRepresentation()
+            case .JPEG: data = jpegRepresentation(compressionQuality: 1.0)
+            case .GIF: data = gifRepresentation()
+            case .unknown: data = normalized.kf.pngRepresentation()
+            }
+            
+            return data
         }
-
-        return data
     }
 }
 
