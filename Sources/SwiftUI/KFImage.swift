@@ -61,7 +61,7 @@ public struct KFImage: View {
     /// - Parameter source: The image `Source` defining where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
-    public init(_ source: Source, options: KingfisherOptionsInfo? = nil) {
+    public init(source: Source?, options: KingfisherOptionsInfo? = nil) {
         binder = ImageBinder(source: source, options: options)
         configurations = []
         binder.start()
@@ -71,13 +71,14 @@ public struct KFImage: View {
     /// - Parameter url: The image URL from where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
-    public init(_ url: URL, options: KingfisherOptionsInfo? = nil) {
-        self.init(.network(url), options: options)
+    public init(_ url: URL?, options: KingfisherOptionsInfo? = nil) {
+        let source = url.map { Source.network($0) }
+        self.init(source: source, options: options)
     }
 
     /// Declares the content and behavior of this view.
     public var body: some View {
-        ZStack {
+        Group {
             if binder.image != nil {
                 configurations
                     .reduce(Image(crossPlatformImage: binder.image!)) {
@@ -85,11 +86,18 @@ public struct KFImage: View {
                     }
                     .animation(binder.fadeTransitionAnimation)
             } else {
-                (placeholder ?? AnyView(Image(crossPlatformImage: .init())))
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                    .onDisappear { [unowned binder = self.binder] in
-                        if self.cancelOnDisappear { binder.cancel() }
+                Group {
+                    if placeholder != nil {
+                        placeholder
+                    } else {
+                        Image(crossPlatformImage: .init())
                     }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                .border(Color.black)
+                .onDisappear { [unowned binder = self.binder] in
+                    if self.cancelOnDisappear { binder.cancel() }
+                }
             }
         }.onAppear { [unowned binder] in
             if !binder.loadingOrSuccessed {
