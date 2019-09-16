@@ -35,7 +35,7 @@ extension KFImage {
     /// image downloading and progress reporting based on `KingfisherManager`.
     public class ImageBinder: ObservableObject {
 
-        let source: Source
+        let source: Source?
         let options: KingfisherOptionsInfo?
 
         var downloadTask: DownloadTask?
@@ -65,7 +65,7 @@ extension KFImage {
             #endif
         }
 
-        init(source: Source, options: KingfisherOptionsInfo?) {
+        init(source: Source?, options: KingfisherOptionsInfo?) {
             self.source = source
             self.options = options
             self.image = nil
@@ -76,6 +76,14 @@ extension KFImage {
             guard !loadingOrSuccessed else { return }
 
             loadingOrSuccessed = true
+
+            guard let source = source else {
+                DispatchQueue.main.async {
+                    self.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
+                }
+                return
+            }
+
             downloadTask = KingfisherManager.shared
                 .retrieveImage(
                     with: source,
@@ -91,12 +99,14 @@ extension KFImage {
                         switch result {
                         case .success(let value):
                             self.image = value.image
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            DispatchQueue.main.async {
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
                             self.loadingOrSuccessed = false
-                            self.onFailureDelegate.call(error)
+                            DispatchQueue.main.async {
+                                self.onFailureDelegate.call(error)
+                            }
                         }
                 })
         }
