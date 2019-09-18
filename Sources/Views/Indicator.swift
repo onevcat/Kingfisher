@@ -121,13 +121,21 @@ final class ActivityIndicator: Indicator {
             activityIndicatorView.style = .spinning
         #else
             let indicatorStyle: UIActivityIndicatorView.Style
+
             #if os(tvOS)
-            indicatorStyle = UIActivityIndicatorView.Style.white
-            #elseif targetEnvironment(macCatalyst)
-            indicatorStyle = UIActivityIndicatorView.Style.medium
+            if #available(tvOS 13.0, *) {
+                indicatorStyle = UIActivityIndicatorView.Style.large
+            } else {
+                indicatorStyle = UIActivityIndicatorView.Style.white
+            }
             #else
-            indicatorStyle = UIActivityIndicatorView.Style.gray
+            if #available(iOS 13.0, * ) {
+                indicatorStyle = UIActivityIndicatorView.Style.medium
+            } else {
+                indicatorStyle = UIActivityIndicatorView.Style.gray
+            }
             #endif
+
             #if swift(>=4.2)
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
             #else
@@ -136,6 +144,18 @@ final class ActivityIndicator: Indicator {
         #endif
     }
 }
+
+#if canImport(UIKit)
+extension UIActivityIndicatorView.Style {
+    #if compiler(>=5.1)
+    #else
+    static let large = UIActivityIndicatorView.Style.white
+    #if !os(tvOS)
+    static let medium = UIActivityIndicatorView.Style.gray
+    #endif
+    #endif
+}
+#endif
 
 // MARK: - ImageIndicator
 // Displays an ImageView. Supports gif
