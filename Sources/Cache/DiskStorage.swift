@@ -119,7 +119,7 @@ public enum DiskStorage {
             config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
         }
 
-        func value(forKey key: String, extendingExpiration: ExpirationExtending) throws -> T? {
+        func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
             return try value(forKey: key, referenceDate: Date(), actuallyLoad: true, extendingExpiration: extendingExpiration)
         }
 
