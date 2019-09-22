@@ -553,7 +553,7 @@ open class ImageCache {
         loadingQueue.execute {
             do {
                 var image: Image? = nil
-                if let data = try self.diskStorage.value(forKey: computedKey) {
+                if let data = try self.diskStorage.value(forKey: computedKey, extendingExpiration: options.diskCacheAccessExtendingExpiration) {
                     image = options.cacheSerializer.image(with: data, options: options)
                 }
                 callbackQueue.execute { completionHandler(.success(image)) }

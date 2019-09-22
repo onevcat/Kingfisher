@@ -304,7 +304,7 @@ public struct KingfisherParsedOptionsInfo {
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .memoryCacheAccessExtendingExpiration(let expirationExtending): memoryCacheAccessExtendingExpiration = expirationExtending
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
-            case .diskCacheAccessExtendingExpiration(let expiration): diskCacheAccessExtendingExpiration = expiration
+            case .diskCacheAccessExtendingExpiration(let expirationExtending): diskCacheAccessExtendingExpiration = expirationExtending
             case .processingQueue(let queue): processingQueue = queue
             case .progressiveJPEG(let value): progressiveJPEG = value
             }

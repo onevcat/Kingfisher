@@ -369,10 +369,10 @@ extension ImageCache {
     message: "Use `Result` based `retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)` instead.",
     renamed: "retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)")
     open func retrieveImageInDiskCache(forKey key: String, options: KingfisherOptionsInfo? = nil) -> Image? {
-        let options = options ?? .empty
+        let options = KingfisherParsedOptionsInfo(options ?? .empty)
         let computedKey = key.computedKey(with: options.processor.identifier)
         do {
-            if let data = try diskStorage.value(forKey: computedKey) {
+            if let data = try diskStorage.value(forKey: computedKey, extendingExpiration: options.diskCacheAccessExtendingExpiration) {
                 return options.cacheSerializer.image(with: data, options: options)
             }
         } catch {}
