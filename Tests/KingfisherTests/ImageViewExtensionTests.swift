@@ -727,7 +727,7 @@ class ImageViewExtensionTests: XCTestCase {
         stub(url, data: testImageData)
 
         let options: KingfisherOptionsInfo = [.memoryCacheExpiration(.expired),
-                                              .diskCacheExpiration(.seconds(1)),
+                                              .diskCacheExpiration(.seconds(2)),
                                               .diskCacheAccessExtendingExpiration(.expirationTime(.seconds(100)))]
 
         imageView.kf.setImage(with: url, options: options) { result in
@@ -738,7 +738,7 @@ class ImageViewExtensionTests: XCTestCase {
                 self.imageView.kf.setImage(with: url, options: options) { result in
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertTrue(result.value!.cacheType == .disk)
-                    delay(1, block: {
+                    delay(2, block: {
                         self.imageView.kf.setImage(with: url, options: options) { result in
                             XCTAssertNotNil(result.value?.image)
                             XCTAssertTrue(result.value!.cacheType == .disk)
@@ -750,7 +750,7 @@ class ImageViewExtensionTests: XCTestCase {
             })
         }
 
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testDiskImageCacheNotExtendingExpirationTask() {
@@ -759,7 +759,7 @@ class ImageViewExtensionTests: XCTestCase {
         stub(url, data: testImageData)
 
         let options: KingfisherOptionsInfo = [.memoryCacheExpiration(.expired),
-                                              .diskCacheExpiration(.seconds(1)),
+                                              .diskCacheExpiration(.seconds(2)),
                                               .diskCacheAccessExtendingExpiration(.none)]
 
         imageView.kf.setImage(with: url, options: options) { result in
@@ -771,7 +771,7 @@ class ImageViewExtensionTests: XCTestCase {
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertTrue(result.value!.cacheType == .disk)
 
-                        delay(1, block: {
+                        delay(2, block: {
                             self.imageView.kf.setImage(with: url, options: options) { result in
                                 XCTAssertNotNil(result.value?.image)
                                 XCTAssertTrue(result.value!.cacheType == .none)
@@ -783,7 +783,7 @@ class ImageViewExtensionTests: XCTestCase {
             })
         }
 
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
 
