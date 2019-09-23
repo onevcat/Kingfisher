@@ -728,7 +728,7 @@ class ImageViewExtensionTests: XCTestCase {
 
         let options: KingfisherOptionsInfo = [.memoryCacheExpiration(.expired),
                                               .diskCacheExpiration(.seconds(1)),
-                                              .diskCacheAccessExtendingExpiration(.cacheTime)] // default option
+                                              .diskCacheAccessExtendingExpiration(.expirationTime(.seconds(100)))]
 
         imageView.kf.setImage(with: url, options: options) { result in
             XCTAssertNotNil(result.value?.image)
