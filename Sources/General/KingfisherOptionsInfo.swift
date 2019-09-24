@@ -215,6 +215,11 @@ public enum KingfisherOptionsInfoItem {
     /// expiration in its config for all items. If set, the `DiskStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
     case diskCacheExpiration(StorageExpiration)
+
+    /// The expiration extending setting for disk cache. The item expiration time will be incremented by this value after access.
+    /// By default, the underlying `DiskStorage.Backend` uses the initial cache expiration as extending value: .cacheTime.
+    /// To disable extending option at all add diskCacheAccessExtendingExpiration(.none) to options.
+    case diskCacheAccessExtendingExpiration(ExpirationExtending)
     
     /// Decides on which queue the image processing should happen. By default, Kingfisher uses a pre-defined serial
     /// queue to process images. Use this option to change this behavior. For example, specify a `.mainCurrentOrAsync`
@@ -262,6 +267,7 @@ public struct KingfisherParsedOptionsInfo {
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var memoryCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
     public var diskCacheExpiration: StorageExpiration? = nil
+    public var diskCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
     public var processingQueue: CallbackQueue? = nil
     public var progressiveJPEG: ImageProgressive? = nil
 
@@ -301,6 +307,7 @@ public struct KingfisherParsedOptionsInfo {
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .memoryCacheAccessExtendingExpiration(let expirationExtending): memoryCacheAccessExtendingExpiration = expirationExtending
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
+            case .diskCacheAccessExtendingExpiration(let expirationExtending): diskCacheAccessExtendingExpiration = expirationExtending
             case .processingQueue(let queue): processingQueue = queue
             case .progressiveJPEG(let value): progressiveJPEG = value
             }
