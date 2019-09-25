@@ -24,6 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 import AppKit
 
@@ -50,7 +51,7 @@ extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     public func setImage(
         with source: Source?,
-        placeholder: Image? = nil,
+        placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
@@ -144,7 +145,7 @@ extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     public func setImage(
         with resource: Resource?,
-        placeholder: Image? = nil,
+        placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
@@ -170,7 +171,7 @@ extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     public func setAlternateImage(
         with source: Source?,
-        placeholder: Image? = nil,
+        placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
@@ -264,7 +265,7 @@ extension KingfisherWrapper where Base: NSButton {
     @discardableResult
     public func setAlternateImage(
         with resource: Resource?,
-        placeholder: Image? = nil,
+        placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
@@ -352,3 +353,5 @@ extension KingfisherWrapper where Base: NSButton {
         set { }
     }
 }
+
+#endif

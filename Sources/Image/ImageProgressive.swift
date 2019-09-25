@@ -56,7 +56,7 @@ public struct ImageProgressive {
 }
 
 protocol ImageSettable: AnyObject {
-    var image: Image? { get set }
+    var image: KFCrossPlatformImage? { get set }
 }
 
 final class ImageProgressiveProvider: DataReceivingSideEffect {
@@ -68,13 +68,13 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     }
 
     private let option: ImageProgressive
-    private let refresh: (Image) -> Void
+    private let refresh: (KFCrossPlatformImage) -> Void
     
     private let decoder: ImageProgressiveDecoder
     private let queue = ImageProgressiveSerialQueue()
     
     init?(_ options: KingfisherParsedOptionsInfo,
-          refresh: @escaping (Image) -> Void) {
+          refresh: @escaping (KFCrossPlatformImage) -> Void) {
         guard let option = options.progressiveJPEG else { return nil }
         
         self.option = option
@@ -203,7 +203,7 @@ private final class ImageProgressiveDecoder {
     
     func decode(_ data: Data,
                 with callbacks: [SessionDataTask.TaskCallback],
-                completion: @escaping (Image?) -> Void) {
+                completion: @escaping (KFCrossPlatformImage?) -> Void) {
         guard data.kf.contains(jpeg: .SOF2) else {
             CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
             return
@@ -232,7 +232,7 @@ private final class ImageProgressiveDecoder {
         if option.isBlur, count < 6 {
             processingQueue.execute {
                 // Progressively reduce blur as we load more scans.
-                let image = KingfisherWrapper<Image>.image(
+                let image = KingfisherWrapper<KFCrossPlatformImage>.image(
                     data: data,
                     options: self.creatingOptions
                 )

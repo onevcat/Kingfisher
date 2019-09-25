@@ -2,7 +2,7 @@
 //  DataReceivingSideEffectTests.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/05/15.
+//  Created by Wei Wang on 2019/05/15.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
