@@ -68,7 +68,7 @@ platform :ios do
     
     push_to_git_remote
     
-    xcframework
+    xcframework(version: target_version)
     set_github_release(
       repository_name: "onevcat/Kingfisher",
       api_token: ENV['GITHUB_TOKEN'],
