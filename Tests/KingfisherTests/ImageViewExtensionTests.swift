@@ -237,6 +237,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         cache1.clearDiskCache()
         cache2.clearDiskCache()
+        cleanDefaultCache()
         
         let exp = expectation(description: #function)
         let url = testURLs[0]
