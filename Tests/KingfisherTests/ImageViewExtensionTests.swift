@@ -29,7 +29,7 @@ import XCTest
 
 class ImageViewExtensionTests: XCTestCase {
 
-    var imageView: ImageView!
+    var imageView: KFCrossPlatformImageView!
     
     override class func setUp() {
         super.setUp()
@@ -44,7 +44,7 @@ class ImageViewExtensionTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        imageView = ImageView()
+        imageView = KFCrossPlatformImageView()
         KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
         KingfisherManager.shared.defaultOptions = [.waitForCache]
         
@@ -179,7 +179,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.enter()
-        let anotherImageView = ImageView()
+        let anotherImageView = KFCrossPlatformImageView()
         anotherImageView.kf.setImage(with: url) { result in
             XCTAssertNotNil(result.value)
             group.leave()
@@ -274,7 +274,7 @@ class ImageViewExtensionTests: XCTestCase {
     
     func testCustomizeStructIndicatorExisting() {
         struct StructIndicator: Indicator {
-            let view = View()
+            let view = KFCrossPlatformView()
             func startAnimatingView() {}
             func stopAnimatingView() {}
         }
@@ -313,7 +313,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         imageView.kf.indicatorType = .image(imageData: testImageData)
         XCTAssertTrue(imageView.kf.indicator is ImageIndicator)
-        let image = (imageView.kf.indicator?.view as? ImageView)?.image
+        let image = (imageView.kf.indicator?.view as? KFCrossPlatformImageView)?.image
         XCTAssertNotNil(image)
         XCTAssertTrue(image!.renderEqual(to: testImage))
         
@@ -434,7 +434,7 @@ class ImageViewExtensionTests: XCTestCase {
         XCTAssertEqual(testImage, imageView.image)
         
         // While current image is not nil, keep it
-        let anotherImage = Image(data: testImageJEPGData)
+        let anotherImage = KFCrossPlatformImage(data: testImageJEPGData)
         imageView.image = anotherImage
         imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in
             XCTAssertNotEqual(self.imageView.image, anotherImage)
@@ -527,7 +527,7 @@ class ImageViewExtensionTests: XCTestCase {
 
         stub(url, data: testImageData, length: 123)
 
-        let emptyImage = Image()
+        let emptyImage = KFCrossPlatformImage()
         var processBlockCalled = false
 
         imageView.kf.setImage(
@@ -553,7 +553,7 @@ class ImageViewExtensionTests: XCTestCase {
 
         stub(url, data: testImageData, length: 123)
 
-        let view = View()
+        let view = KFCrossPlatformView()
         var processBlockCalled = false
 
         imageView.kf.setImage(
@@ -789,4 +789,4 @@ class ImageViewExtensionTests: XCTestCase {
 
 }
 
-extension View: Placeholder {}
+extension KFCrossPlatformView: Placeholder {}

@@ -69,7 +69,7 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     private let imageFormat: ImageFormat
     
     /// Creates data which represents the given `image` under a format.
-    public func data(with image: Image, original: Data?) -> Data? {
+    public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
         
         func imageData(withFormat imageFormat: ImageFormat) -> Data? {
             return autoreleasepool { () -> Data? in
@@ -98,7 +98,7 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     }
     
     /// Same implementation as `DefaultCacheSerializer`.
-    public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> Image? {
+    public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
     }
 }

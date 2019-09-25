@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if !os(watchOS)
+
 #if os(macOS)
 import AppKit
 #else
@@ -35,20 +37,20 @@ import UIKit
 public protocol Placeholder {
     
     /// How the placeholder should be added to a given image view.
-    func add(to imageView: ImageView)
+    func add(to imageView: KFCrossPlatformImageView)
     
     /// How the placeholder should be removed from a given image view.
-    func remove(from imageView: ImageView)
+    func remove(from imageView: KFCrossPlatformImageView)
 }
 
 /// Default implementation of an image placeholder. The image will be set or
 /// reset directly for `image` property of the image view.
-extension Image: Placeholder {
+extension KFCrossPlatformImage: Placeholder {
     /// How the placeholder should be added to a given image view.
-    public func add(to imageView: ImageView) { imageView.image = self }
+    public func add(to imageView: KFCrossPlatformImageView) { imageView.image = self }
 
     /// How the placeholder should be removed from a given image view.
-    public func remove(from imageView: ImageView) { imageView.image = nil }
+    public func remove(from imageView: KFCrossPlatformImageView) { imageView.image = nil }
 }
 
 /// Default implementation of an arbitrary view as placeholder. The view will be 
@@ -56,10 +58,10 @@ extension Image: Placeholder {
 ///
 /// To use your customize View type as placeholder, simply let it conforming to 
 /// `Placeholder` by `extension MyView: Placeholder {}`.
-extension Placeholder where Self: View {
+extension Placeholder where Self: KFCrossPlatformView {
     
     /// How the placeholder should be added to a given image view.
-    public func add(to imageView: ImageView) {
+    public func add(to imageView: KFCrossPlatformImageView) {
         imageView.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false
 
@@ -70,7 +72,9 @@ extension Placeholder where Self: View {
     }
 
     /// How the placeholder should be removed from a given image view.
-    public func remove(from imageView: ImageView) {
+    public func remove(from imageView: KFCrossPlatformImageView) {
         removeFromSuperview()
     }
 }
+
+#endif

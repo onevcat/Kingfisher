@@ -37,7 +37,7 @@ public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: I
 public struct RetrieveImageResult {
 
     /// Gets the image object of this result.
-    public let image: Image
+    public let image: KFCrossPlatformImage
 
     /// Gets the cache source of the image. It indicates from which layer of cache this image is retrieved.
     /// If the image is just downloaded from network, `.none` will be returned.
@@ -402,7 +402,8 @@ public class KingfisherManager {
                             {
                                 _ in
                                 if options.waitForCache {
-                                    let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
+                                    let value = RetrieveImageResult(
+                                        image: processedImage, cacheType: .none, source: source)
                                     options.callbackQueue.execute { completionHandler?(.success(value)) }
                                 }
                             }
@@ -417,7 +418,9 @@ public class KingfisherManager {
                         // This should not happen actually, since we already confirmed `originalImageCached` is `true`.
                         // Just in case...
                         options.callbackQueue.execute {
-                            completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
+                            completionHandler?(
+                                .failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key)))
+                            )
                         }
                     }
                 )

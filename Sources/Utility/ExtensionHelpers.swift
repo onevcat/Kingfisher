@@ -32,7 +32,7 @@ extension Float {
     }
 }
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 extension NSBezierPath {
     convenience init(roundedRect rect: NSRect, topLeftRadius: CGFloat, topRightRadius: CGFloat,
@@ -74,7 +74,7 @@ extension NSBezierPath {
     }
 }
 
-extension Image {
+extension KFCrossPlatformImage {
     // macOS does not support scale. This is just for code compatibility across platforms.
     convenience init?(data: Data, scale: CGFloat) {
         self.init(data: data)
