@@ -96,7 +96,6 @@ public struct KFImage: View {
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .border(Color.black)
                 .onDisappear { [unowned binder = self.binder] in
                     if self.cancelOnDisappear { binder.cancel() }
                 }
