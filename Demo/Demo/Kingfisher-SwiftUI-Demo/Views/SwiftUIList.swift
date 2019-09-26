@@ -53,9 +53,9 @@ struct SwiftUIList : View {
                     HStack {
                         Image(systemName: "arrow.2.circlepath.circle")
                             .resizable()
-                            .frame(width: 80, height: 80)
-                            .padding(20)
-                        Text("Loading...").font(.largeTitle)
+                            .frame(width: 50, height: 50)
+                            .padding(10)
+                        Text("Loading...").font(.title)
                     }
                     .foregroundColor(.gray)
                     .opacity(0.3)
