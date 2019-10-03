@@ -24,8 +24,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import SwiftUI
+#if canImport(SwiftUI) && canImport(Combine)
 import Combine
+import SwiftUI
 #if !KingfisherCocoaPods
 import Kingfisher
 #endif
@@ -205,4 +206,5 @@ struct KFImage_Previews : PreviewProvider {
         }
     }
 }
+#endif
 #endif
