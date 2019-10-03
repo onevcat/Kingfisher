@@ -86,7 +86,6 @@ public struct KFImage: View {
                     .reduce(Image(crossPlatformImage: binder.image!)) {
                         current, config in config(current)
                     }
-                    .animation(binder.fadeTransitionAnimation)
             } else {
                 Group {
                     if placeholder != nil {

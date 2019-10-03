@@ -51,23 +51,6 @@ extension KFImage {
 
         @Published var image: KFCrossPlatformImage?
 
-        // Only `.fade` is now supported.
-        var fadeTransitionAnimation: Animation? {
-            #if os(iOS) || os(tvOS)
-            guard let options = (options.map { KingfisherParsedOptionsInfo($0) }) else {
-                return nil
-            }
-            switch options.transition {
-            case .fade(let duration):
-                return .linear(duration: duration)
-            default:
-                return nil
-            }
-            #else
-            return nil
-            #endif
-        }
-
         init(source: Source?, options: KingfisherOptionsInfo?) {
             self.source = source
             self.options = options
