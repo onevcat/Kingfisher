@@ -24,6 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+import Kingfisher
 import KingfisherSwiftUI
 import SwiftUI
 
@@ -33,41 +34,59 @@ struct SwiftUIList : View {
 
     var body: some View {
         List(index) { i in
+            ListCell(index: i)
+        }.navigationBarTitle(Text("SwiftUI List"), displayMode: .inline)
+    }
+
+    struct ListCell: View {
+
+        @State var done = false
+
+        var alreadyCached: Bool {
+            ImageCache.default.isCached(forKey: url.absoluteString)
+        }
+
+        let index: Int
+        var url: URL {
+            URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(index).jpg")!
+        }
+
+        var body: some View {
             HStack(alignment: .center) {
                 Spacer()
-                KFImage(
-                    URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(i).jpg")!,
-                    options: [.transition(.fade(0.4))]
-                )
-                .resizable()
-                .onSuccess { r in
-                    print("Success: \(i) - \(r.cacheType)")
-                }
-                .onFailure { e in
-                    print("Error \(i): \(e)")
-                }
-                .onProgress { downloaded, total in
-                    print("\(downloaded) / \(total))")
-                }
-                .placeholder {
-                    HStack {
-                        Image(systemName: "arrow.2.circlepath.circle")
-                            .resizable()
-                            .frame(width: 50, height: 50)
-                            .padding(10)
-                        Text("Loading...").font(.title)
+                KFImage(url)
+                    .resizable()
+                    .onSuccess { r in
+                        self.done = true
+                        print("Success: \(self.index) - \(r.cacheType)")
                     }
-                    .foregroundColor(.gray)
-                    .opacity(0.3)
-                }
-                .cancelOnDisappear(true)
-                .aspectRatio(contentMode: .fit)
-                .cornerRadius(20)
-                .frame(width: 300, height: 300)
+                    .onFailure { e in
+                        print("Error \(self.index): \(e)")
+                    }
+                    .onProgress { downloaded, total in
+                        print("\(downloaded) / \(total))")
+                    }
+                    .placeholder {
+                        HStack {
+                            Image(systemName: "arrow.2.circlepath.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .padding(10)
+                            Text("Loading...").font(.title)
+                        }
+                        .foregroundColor(.gray)
+                    }
+                    .cancelOnDisappear(true)
+                    .aspectRatio(contentMode: .fit)
+                    .cornerRadius(20)
+                    .frame(width: 300, height: 300)
+                    .opacity(done || alreadyCached ? 1.0 : 0.3)
+                    .animation(.linear(duration: 0.4))
 
                 Spacer()
             }.padding(.vertical, 12)
-        }.navigationBarTitle(Text("SwiftUI List"), displayMode: .inline)
+        }
+
     }
 }
 
