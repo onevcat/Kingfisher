@@ -24,9 +24,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(SwiftUI) && canImport(Combine)
 import Combine
 import SwiftUI
-
 #if !KingfisherCocoaPods
 import Kingfisher
 #endif
@@ -138,3 +138,4 @@ extension KFImage {
         }
     }
 }
+#endif
