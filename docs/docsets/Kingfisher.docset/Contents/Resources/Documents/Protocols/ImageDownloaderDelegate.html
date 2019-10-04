@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.8.1 Docs
+          Kingfisher 5.8.2 Docs
         </a>
          (84% documented)
       </p>
@@ -392,16 +392,28 @@
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher6Buttona">Button</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher5Colora">Color</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher17CompletionHandlera">CompletionHandler</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher21DownloadProgressBlocka">DownloadProgressBlock</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher5Imagea">Image</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher32ImageDownloaderCompletionHandlera">ImageDownloaderCompletionHandler</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher28ImageDownloaderProgressBlocka">ImageDownloaderProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher9ImageViewa">ImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/IndicatorView">IndicatorView</a>
@@ -456,6 +468,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher11Transformera">Transformer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher4Viewa">View</a>
               </li>
             </ul>
           </li>
@@ -557,7 +572,7 @@ working stages and rules.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.1/Sources/Networking/ImageDownloaderDelegate.swift#L40">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.2/Sources/Networking/ImageDownloaderDelegate.swift#L40">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -649,7 +664,7 @@ working stages and rules.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.1/Sources/Networking/ImageDownloaderDelegate.swift#L50">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.2/Sources/Networking/ImageDownloaderDelegate.swift#L50">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -675,7 +690,7 @@ your last chance to verify or modify the downloaded data before Kingfisher tries
 processing on the image data.</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    This can be used to pre-process raw image data before creation of <code>Image</code> instance (i.e.
+    This can be used to pre-process raw image data before creation of <code><a href="../Typealiases.html#/s:10Kingfisher5Imagea">Image</a></code> instance (i.e.
 decrypting or verification). If <code>nil</code> returned, the processing is interrupted and a <code><a href="../Enums/KingfisherError.html">KingfisherError</a></code> with
 <code>ResponseErrorReason.dataModifyingFailed</code> will be raised. You could use this fact to stop the image
 processing flow if you find the data is corrupted or malformed.
@@ -745,7 +760,7 @@ processing flow if you find the data is corrupted or malformed.
        data and try to convert it to an image object.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.1/Sources/Networking/ImageDownloaderDelegate.swift#L72">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.2/Sources/Networking/ImageDownloaderDelegate.swift#L72">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -837,7 +852,7 @@ processing flow if you find the data is corrupted or malformed.
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.1/Sources/Networking/ImageDownloaderDelegate.swift#L82">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.2/Sources/Networking/ImageDownloaderDelegate.swift#L82">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -918,7 +933,7 @@ If an invalid code is received, the downloader will raise an <code><a href="../E
                         <p>Returns a value to indicate whether this HTTP status code is valid or not.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.1/Sources/Networking/ImageDownloaderDelegate.swift#L99">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.8.2/Sources/Networking/ImageDownloaderDelegate.swift#L99">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -931,7 +946,7 @@ If an invalid code is received, the downloader will raise an <code><a href="../E
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-09-27)</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-10-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
