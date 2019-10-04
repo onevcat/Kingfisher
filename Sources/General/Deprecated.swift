@@ -652,3 +652,30 @@ public struct DefaultImageModifier: ImageModifier {
     /// Modifies an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage { return image }
 }
+
+
+#if os(macOS)
+@available(*, deprecated, message: "Use `KFCrossPlatformImage` instead.")
+public typealias Image = KFCrossPlatformImage
+@available(*, deprecated, message: "Use `KFCrossPlatformView` instead.")
+public typealias View = KFCrossPlatformView
+@available(*, deprecated, message: "Use `KFCrossPlatformColor` instead.")
+public typealias Color = KFCrossPlatformColor
+@available(*, deprecated, message: "Use `KFCrossPlatformImageView` instead.")
+public typealias ImageView = KFCrossPlatformImageView
+@available(*, deprecated, message: "Use `KFCrossPlatformButton` instead.")
+public typealias Button = KFCrossPlatformButton
+#else
+@available(*, deprecated, message: "Use `KFCrossPlatformImage` instead.")
+public typealias Image = KFCrossPlatformImage
+@available(*, deprecated, message: "Use `KFCrossPlatformColor` instead.")
+public typealias Color = KFCrossPlatformColor
+    #if !os(watchOS)
+    @available(*, deprecated, message: "Use `KFCrossPlatformImageView` instead.")
+    public typealias ImageView = KFCrossPlatformImageView
+    @available(*, deprecated, message: "Use `KFCrossPlatformView` instead.")
+    public typealias View = KFCrossPlatformView
+    @available(*, deprecated, message: "Use `KFCrossPlatformButton` instead.")
+    public typealias Button = KFCrossPlatformButton
+    #endif
+#endif
