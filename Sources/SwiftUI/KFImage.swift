@@ -32,7 +32,7 @@ import Kingfisher
 #endif
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension Image {
+extension SwiftUI.Image {
     // Creates an SwiftUI.Image with either UIImage or NSImage.
     init(crossPlatformImage: KFCrossPlatformImage) {
         #if canImport(UIKit)
@@ -46,7 +46,7 @@ extension Image {
 /// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
 /// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct KFImage: View {
+public struct KFImage: SwiftUI.View {
 
     /// An image binder that manages loading and cancelling image related task.
     @ObservedObject public private(set) var binder: ImageBinder
@@ -58,7 +58,7 @@ public struct KFImage: View {
     var cancelOnDisappear: Bool = false
 
     // Configurations should be performed on the image.
-    var configurations: [(Image) -> Image]
+    var configurations: [(SwiftUI.Image) -> SwiftUI.Image]
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
@@ -80,7 +80,7 @@ public struct KFImage: View {
     }
 
     /// Declares the content and behavior of this view.
-    public var body: some View {
+    public var body: some SwiftUI.View {
         Group {
             if binder.image != nil {
                 configurations
@@ -114,7 +114,7 @@ extension KFImage {
     /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
     /// - Parameter block: The block applies to loaded image.
     /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
-    public func configure(_ block: @escaping (Image) -> Image) -> KFImage {
+    public func configure(_ block: @escaping (SwiftUI.Image) -> SwiftUI.Image) -> KFImage {
         var result = self
         result.configurations.append(block)
         return result
@@ -122,16 +122,16 @@ extension KFImage {
 
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: Image.ResizingMode = .stretch) -> KFImage
+        resizingMode: SwiftUI.Image.ResizingMode = .stretch) -> KFImage
     {
         configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
     }
 
-    public func renderingMode(_ renderingMode: Image.TemplateRenderingMode?) -> KFImage {
+    public func renderingMode(_ renderingMode: SwiftUI.Image.TemplateRenderingMode?) -> KFImage {
         configure { $0.renderingMode(renderingMode) }
     }
 
-    public func interpolation(_ interpolation: Image.Interpolation) -> KFImage {
+    public func interpolation(_ interpolation: SwiftUI.Image.Interpolation) -> KFImage {
         configure { $0.interpolation(interpolation) }
     }
 
@@ -142,7 +142,7 @@ extension KFImage {
     /// Sets a placeholder `View` which shows when loading the image.
     /// - Parameter content: A view that describes the placeholder.
     /// - Returns: A `KFImage` view that contains `content` as its placeholder.
-    public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> KFImage {
+    public func placeholder<Content: SwiftUI.View>(@ViewBuilder _ content: () -> Content) -> KFImage {
         let v = content()
         var result = self
         result.placeholder = AnyView(v)
@@ -193,7 +193,7 @@ extension KFImage {
 #if DEBUG
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
-    static var previews: some View {
+    static var previews: some SwiftUI.View {
         Group {
             KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
                 .onSuccess { r in

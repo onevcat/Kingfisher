@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import SwiftUI
-import Kingfisher
+import class Kingfisher.KingfisherManager
 
 struct MainView: View {
     var body: some View {
