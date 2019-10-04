@@ -84,7 +84,7 @@ public struct KFImage: SwiftUI.View {
         Group {
             if binder.image != nil {
                 configurations
-                    .reduce(Image(crossPlatformImage: binder.image!)) {
+                    .reduce(SwiftUI.Image(crossPlatformImage: binder.image!)) {
                         current, config in config(current)
                     }
             } else {
@@ -92,7 +92,7 @@ public struct KFImage: SwiftUI.View {
                     if placeholder != nil {
                         placeholder
                     } else {
-                        Image(crossPlatformImage: .init())
+                        SwiftUI.Image(crossPlatformImage: .init())
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
