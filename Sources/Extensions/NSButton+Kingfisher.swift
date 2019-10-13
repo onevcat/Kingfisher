@@ -302,8 +302,6 @@ extension KingfisherWrapper where Base: NSButton {
     public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
-            defer { objc_sync_exit(self) }
-            objc_sync_enter(self)
             return box?.value
         }
         set {
@@ -320,8 +318,6 @@ extension KingfisherWrapper where Base: NSButton {
     public private(set) var alternateTaskIdentifier: Source.Identifier.Value? {
         get {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &alternateTaskIdentifierKey)
-            defer { objc_sync_exit(self) }
-            objc_sync_enter(self)
             return box?.value
         }
         set {

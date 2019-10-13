@@ -345,15 +345,15 @@ class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
     }
 
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
-        guard onShouldApply() else { return }
-        guard
-            let expectedContentLength = task.task.response?.expectedContentLength,
-            expectedContentLength != -1 else {
-            return
-        }
-
-        let dataLength = Int64(task.mutableData.count)
         DispatchQueue.main.async {
+            guard self.onShouldApply() else { return }
+            guard
+                let expectedContentLength = task.task.response?.expectedContentLength,
+                expectedContentLength != -1 else {
+                return
+            }
+
+            let dataLength = Int64(task.mutableData.count)
             self.block(dataLength, expectedContentLength)
         }
     }
