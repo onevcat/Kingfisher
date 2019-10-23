@@ -262,7 +262,7 @@ public struct BlendImageProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.image(withBlendMode: blendMode, alpha: alpha, backgroundColor: backgroundColor)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -414,7 +414,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
                             roundingCorners: roundingCorners,
                             backgroundColor: backgroundColor)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -494,7 +494,7 @@ public struct ResizingImageProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.resize(to: referenceSize, for: targetContentMode)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -533,7 +533,7 @@ public struct BlurImageProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.blurred(withRadius: radius)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -576,7 +576,7 @@ public struct OverlayImageProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.overlaying(with: overlay, fraction: fraction)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -613,7 +613,7 @@ public struct TintImageProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.tinted(with: tint)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -667,7 +667,7 @@ public struct ColorControlsProcessor: ImageProcessor {
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -752,7 +752,7 @@ public struct CroppingImageProcessor: ImageProcessor {
         case .image(let image):
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.crop(to: size, anchorOn: anchor)
-        case .data: return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+        case .data: return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
@@ -808,7 +808,15 @@ public struct DownsamplingImageProcessor: ImageProcessor {
 ///   - left: The first processor.
 ///   - right: The second processor.
 /// - Returns: The concatenated processor.
+@available(*, deprecated,
+message: "Will be removed soon. Use `|>` instead.",
+renamed: "|>")
 public func >>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
+    return left.append(another: right)
+}
+
+infix operator |>: AdditionPrecedence
+public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
     return left.append(another: right)
 }
 
