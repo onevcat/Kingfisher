@@ -26,7 +26,7 @@
 
 import Foundation
 
-extension Float {
+extension CGFloat {
     var isEven: Bool {
         return truncatingRemainder(dividingBy: 2.0) == 0
     }

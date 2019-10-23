@@ -254,12 +254,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
         // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
         // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
-        let s = Float(max(radius, 2.0))
+        let s = max(radius, 2.0)
         // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
         
         // Fix the slow compiling time for Swift 3.
         // See https://github.com/onevcat/Kingfisher/issues/611
-        let pi2 = 2 * Float.pi
+        let pi2 = 2 * CGFloat.pi
         let sqrtPi2 = sqrt(pi2)
         var targetRadius = floor(s * 3.0 * sqrtPi2 / 4.0 + 0.5)
         
