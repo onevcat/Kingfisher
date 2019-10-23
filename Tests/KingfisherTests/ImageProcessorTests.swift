@@ -45,4 +45,16 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(resultFromImage!.size, CGSize(width: 40, height: 40))
 
     }
+
+    func testProcessorConcating() {
+        let p1 = BlurImageProcessor(blurRadius: 10)
+        let p2 = RoundCornerImageProcessor(cornerRadius: 10)
+        let p3 = TintImageProcessor(tint: .blue)
+
+        let two = p1 |> p2
+        let three = p1 |> p2 |> p3
+
+        XCTAssertNotNil(two)
+        XCTAssertNotNil(three)
+    }
 }
