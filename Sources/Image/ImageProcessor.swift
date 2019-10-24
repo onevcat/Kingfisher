@@ -324,7 +324,7 @@ public struct CompositingImageProcessor: ImageProcessor {
                             alpha: alpha,
                             backgroundColor: backgroundColor)
         case .data:
-            return (DefaultImageProcessor.default >> self).process(item: item, options: options)
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
         }
     }
 }
