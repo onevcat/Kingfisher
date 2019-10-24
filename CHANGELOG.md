@@ -2,6 +2,17 @@
 
 -----
 
+## [5.9.0 - Combination](https://github.com/onevcat/Kingfisher/releases/tag/5.9.0) (2019-10-24)
+
+#### Add
+* Introduce a `|>` operator for combining image processors. [#1320](https://github.com/onevcat/Kingfisher/pull/1320)
+
+#### Fix
+* Improve performance of reading task identifier when handling downloading side effect. [#1310](https://github.com/onevcat/Kingfisher/pull/1310)
+* Improve some type conversion to boost building. [#1321](https://github.com/onevcat/Kingfisher/pull/1321)
+
+---
+
 ## [5.8.3 - Carthage Cache](https://github.com/onevcat/Kingfisher/releases/tag/5.8.3) (2019-10-09)
 
 #### Fix
