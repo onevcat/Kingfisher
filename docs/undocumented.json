@@ -100,7 +100,7 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/NSButton+Kingfisher.swift",
-      "line": 320,
+      "line": 318,
       "symbol": "KingfisherWrapper.alternateTaskIdentifier",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -324,7 +324,7 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Kingfisher.swift",
-      "line": 815,
+      "line": 823,
       "symbol": "KFCrossPlatformColor",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -663,6 +663,13 @@
       "line": 102,
       "symbol": "ImageProcessor.process(item:options:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Image/ImageProcessor.swift",
+      "line": 819,
+      "symbol": "|>(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.free",
       "warning": "undocumented"
     },
     {
