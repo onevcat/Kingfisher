@@ -37,7 +37,7 @@ public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: I
 public struct RetrieveImageResult {
 
     /// Gets the image object of this result.
-    public let image: Image
+    public let image: KFCrossPlatformImage
 
     /// Gets the cache source of the image. It indicates from which layer of cache this image is retrieved.
     /// If the image is just downloaded from network, `.none` will be returned.
@@ -84,8 +84,13 @@ public class KingfisherManager {
     private convenience init() {
         self.init(downloader: .default, cache: .default)
     }
-    
-    init(downloader: ImageDownloader, cache: ImageCache) {
+
+    /// Creates an image setting manager with specified downloader and cache.
+    ///
+    /// - Parameters:
+    ///   - downloader: The image downloader used to download images.
+    ///   - cache: The image cache which stores memory and disk images.
+    public init(downloader: ImageDownloader, cache: ImageCache) {
         self.downloader = downloader
         self.cache = cache
 
@@ -397,7 +402,8 @@ public class KingfisherManager {
                             {
                                 _ in
                                 if options.waitForCache {
-                                    let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
+                                    let value = RetrieveImageResult(
+                                        image: processedImage, cacheType: .none, source: source)
                                     options.callbackQueue.execute { completionHandler?(.success(value)) }
                                 }
                             }
@@ -412,7 +418,9 @@ public class KingfisherManager {
                         // This should not happen actually, since we already confirmed `originalImageCached` is `true`.
                         // Just in case...
                         options.callbackQueue.execute {
-                            completionHandler?(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
+                            completionHandler?(
+                                .failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key)))
+                            )
                         }
                     }
                 )

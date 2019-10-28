@@ -703,13 +703,13 @@ class SimpleProcessor: ImageProcessor {
     /// - returns: The processed image.
     ///
     /// - Note: See documentation of `ImageProcessor` protocol for more.
-    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         processed = true
         switch item {
         case .image(let image):
             return image
         case .data(let data):
-            return KingfisherWrapper<Image>.image(data: data, options: options.imageCreatingOptions)
+            return KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options.imageCreatingOptions)
         }
     }
 }
@@ -718,7 +718,7 @@ class FailingProcessor: ImageProcessor {
     public let identifier = "FailingProcessor"
     var processed = false
     public init() {}
-    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         processed = true
         return nil
     }

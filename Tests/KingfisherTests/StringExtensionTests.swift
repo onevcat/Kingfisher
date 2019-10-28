@@ -3,7 +3,7 @@
 //  Kingfisher
 //
 //  Created by Wei Wang on 16/8/14.
-//  Copyright © 2018年 Wei Wang. All rights reserved.
+//  Copyright © 2019 Wei Wang. All rights reserved.
 //
 
 import XCTest

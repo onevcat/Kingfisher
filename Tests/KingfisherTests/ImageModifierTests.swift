@@ -43,7 +43,7 @@ class ImageModifierTests: XCTestCase {
         let m = AnyImageModifier { image in
             return image
         }
-        let image = Image(data: testImagePNGData)!
+        let image = KFCrossPlatformImage(data: testImagePNGData)!
         let modifiedImage = m.modify(image)
         XCTAssert(modifiedImage == image)
     }
@@ -52,7 +52,7 @@ class ImageModifierTests: XCTestCase {
 
     func testRenderingModeImageModifier() {
         let m1 = RenderingModeImageModifier(renderingMode: .alwaysOriginal)
-        let image = Image(data: testImagePNGData)!
+        let image = KFCrossPlatformImage(data: testImagePNGData)!
         let alwaysOriginalImage = m1.modify(image)
         XCTAssert(alwaysOriginalImage.renderingMode == .alwaysOriginal)
 
@@ -63,7 +63,7 @@ class ImageModifierTests: XCTestCase {
 
     func testFlipsForRightToLeftLayoutDirectionImageModifier() {
         let m = FlipsForRightToLeftLayoutDirectionImageModifier()
-        let image = Image(data: testImagePNGData)!
+        let image = KFCrossPlatformImage(data: testImagePNGData)!
         let modifiedImage = m.modify(image)
         XCTAssert(modifiedImage.flipsForRightToLeftLayoutDirection == true)
     }
@@ -71,7 +71,7 @@ class ImageModifierTests: XCTestCase {
     func testAlignmentRectInsetsImageModifier() {
         let insets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         let m = AlignmentRectInsetsImageModifier(alignmentInsets: insets)
-        let image = Image(data: testImagePNGData)!
+        let image = KFCrossPlatformImage(data: testImagePNGData)!
         let modifiedImage = m.modify(image)
         XCTAssert(modifiedImage.alignmentRectInsets == insets)
     }

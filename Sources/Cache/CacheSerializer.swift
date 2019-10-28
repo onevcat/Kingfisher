@@ -41,7 +41,7 @@ public protocol CacheSerializer {
     ///               downloaded, it will be `nil`.
     /// - Returns: The data object for storing to disk, or `nil` when no valid
     ///            data could be serialized.
-    func data(with image: Image, original: Data?) -> Data?
+    func data(with image: KFCrossPlatformImage, original: Data?) -> Data?
 
     /// Gets an image from provided serialized data.
     ///
@@ -50,7 +50,7 @@ public protocol CacheSerializer {
     ///   - options: The parsed options for deserialization.
     /// - Returns: An image deserialized or `nil` when no valid image
     ///            could be deserialized.
-    func image(with data: Data, options: KingfisherParsedOptionsInfo) -> Image?
+    func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
     
     /// Gets an image deserialized from provided data.
     ///
@@ -64,11 +64,11 @@ public protocol CacheSerializer {
     /// `KingfisherParsedOptionsInfo` as parameter instead.
     @available(*, deprecated,
     message: "Deprecated. Implement the method with same name but with `KingfisherParsedOptionsInfo` instead.")
-    func image(with data: Data, options: KingfisherOptionsInfo?) -> Image?
+    func image(with data: Data, options: KingfisherOptionsInfo?) -> KFCrossPlatformImage?
 }
 
 extension CacheSerializer {
-    public func image(with data: Data, options: KingfisherOptionsInfo?) -> Image? {
+    public func image(with data: Data, options: KingfisherOptionsInfo?) -> KFCrossPlatformImage? {
         return image(with: data, options: KingfisherParsedOptionsInfo(options))
     }
 }
@@ -93,10 +93,8 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// - Note:
     /// Only when `original` contains valid PNG, JPEG and GIF format data, the `image` will be
     /// converted to the corresponding data type. Otherwise, if the `original` is provided but it is not
-    /// a valid format, the `original` data will be used for cache.
-    ///
     /// If `original` is `nil`, the input `image` will be encoded as PNG data.
-    public func data(with image: Image, original: Data?) -> Data? {
+    public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
         return image.kf.data(format: original?.kf.imageFormat ?? .unknown)
     }
     
@@ -107,7 +105,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
     ///   - options: Options for deserialization.
     /// - Returns: An image deserialized or `nil` when no valid image
     ///            could be deserialized.
-    public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> Image? {
+    public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
     }
 }
