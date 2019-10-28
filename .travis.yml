@@ -1,34 +1,25 @@
 language: swift
 
 osx_image: 
-- xcode10.1
-- xcode10.2
+- xcode10.3
+- xcode11.1
 
 env:
-- SCHEME=Kingfisher SWIFT_VERSION=5.0
-- SCHEME=Kingfisher-macOS SWIFT_VERSION=5.0
-- SCHEME=Kingfisher-tvOS SWIFT_VERSION=5.0
-- SCHEME=Kingfisher SWIFT_VERSION=4.2
-- SCHEME=Kingfisher-macOS SWIFT_VERSION=4.2
-- SCHEME=Kingfisher-tvOS SWIFT_VERSION=4.2
-- SCHEME=Kingfisher SWIFT_VERSION=4.0
-- SCHEME=Kingfisher-macOS SWIFT_VERSION=4.0
-- SCHEME=Kingfisher-tvOS SWIFT_VERSION=4.0
+- DESTINATION='platform=macOS' SWIFT_VERSION=5.0
+- DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=5.0
+- DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=5.0
+- DESTINATION='platform=macOS' SWIFT_VERSION=4.2
+- DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=4.2
+- DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=4.2
+- DESTINATION='platform=macOS' SWIFT_VERSION=4.0
+- DESTINATION='platform=iOS Simulator,name=iPhone 8' SWIFT_VERSION=4.0
+- DESTINATION='platform=tvOS Simulator,name=Apple TV' SWIFT_VERSION=4.0
 
 cache: bundler
 
 before_install:
   - gem update --system
   - gem install bundler
-
-matrix:
-  exclude:
-  - osx_image: xcode10.1
-    env: SCHEME=Kingfisher SWIFT_VERSION=5.0
-  - osx_image: xcode10.1
-    env: SCHEME=Kingfisher-macOS SWIFT_VERSION=5.0
-  - osx_image: xcode10.1
-    env: SCHEME=Kingfisher-tvOS SWIFT_VERSION=5.0
 
 script:
   - bundle exec fastlane test_ci

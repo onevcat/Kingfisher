@@ -194,43 +194,6 @@ extension Result : CustomDebugStringConvertible {
 }
 #endif
 
-// Deprecated
-extension Result {
-
-    /// The stored value of a successful `Result`. `nil` if the `Result` was a failure.
-    @available(*, deprecated, message: "This method will be removed soon. Use `get() throws -> Success` instead.")
-    public var value: Success? {
-        switch self {
-        case let .success(value):
-            return value
-        case .failure:
-            return nil
-        }
-    }
-
-    /// The stored value of a failure `Result`. `nil` if the `Result` was a success.
-    @available(*, deprecated, message: "This method will be removed soon. Use `get() throws -> Success` instead.")
-    public var error: Failure? {
-        switch self {
-        case let .failure(error):
-            return error
-        case .success:
-            return nil
-        }
-    }
-
-    /// A Boolean value indicating whether the `Result` as a success.
-    @available(*, deprecated, message: "This method will be removed soon. Use methods defined in `Swift.Result`.")
-    public var isSuccess: Bool {
-        switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
-        }
-    }
-}
-
 // These helper methods are not public since we do not want them to be exposed or cause any conflicting.
 // However, they are just wrapper of `ResultUtil` static methods.
 extension Result where Failure: Error {

@@ -69,7 +69,7 @@ let testImageString =
     "QGIonoIMkqIiRG3iStrifaYB3hZhWQKX7symgAZUqRDFeIBzJQVAtlcCZbyk/aQ7TVltBMiIQo0vtJ/0Ji2jJ2PS3n9Au1oC/gAnVglCbQRUib4/oHNtBPwBTqwShGI2HTVZ/gvZ53KpZJXY" +
     "DwAAAABJRU5ErkJggg=="
 
-var testImage = Image(data: testImageData)!
+var testImage = KFCrossPlatformImage(data: testImageData)!
 let testImageData = Data(base64Encoded: testImageString)!
 
 let testImagePNGData = testImage.kf.pngRepresentation()!
@@ -103,8 +103,8 @@ func delay(_ time: Double, block: @escaping ()->()) {
     DispatchQueue.main.asyncAfter(deadline: .now() + time) { block() }
 }
 
-extension Image {
-    func renderEqual(to image: Image, withinTolerance tolerance: UInt8 = 3) -> Bool {
+extension KFCrossPlatformImage {
+    func renderEqual(to image: KFCrossPlatformImage, withinTolerance tolerance: UInt8 = 3) -> Bool {
         
         guard size == image.size else { return false }
         guard let imageData1 = kf.pngRepresentation(),
@@ -112,8 +112,8 @@ extension Image {
         {
             return false
         }
-        guard let unifiedImage1 = Image(data: imageData1),
-              let unifiedImage2 = Image(data: imageData2) else
+        guard let unifiedImage1 = KFCrossPlatformImage(data: imageData1),
+              let unifiedImage2 = KFCrossPlatformImage(data: imageData2) else
         {
             return false
         }
@@ -149,7 +149,7 @@ extension Image {
         return true
     }
     
-    func rendered() -> Image? {
+    func rendered() -> KFCrossPlatformImage? {
         // Ignore non CG images
         guard let cgImage = kf.cgImage else {
             return nil
@@ -189,17 +189,17 @@ extension Image {
         context.draw(cgImage, in: CGRect(origin: CGPoint.zero, size: size))
         
         #if os(macOS)
-        return context.makeImage().flatMap { Image(cgImage: $0, size: kf.size) }
+        return context.makeImage().flatMap { KFCrossPlatformImage(cgImage: $0, size: kf.size) }
         #else
-        return context.makeImage().flatMap { Image(cgImage: $0) }
+        return context.makeImage().flatMap { KFCrossPlatformImage(cgImage: $0) }
         #endif
     }
 }
 
 #if os(iOS) || os(tvOS)
 import UIKit
-extension Image {
-    static func from(color: Color, size: CGSize) -> Image {
+extension KFCrossPlatformImage {
+    static func from(color: KFCrossPlatformColor, size: CGSize) -> KFCrossPlatformImage {
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()

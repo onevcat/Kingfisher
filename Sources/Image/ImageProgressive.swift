@@ -56,7 +56,7 @@ public struct ImageProgressive {
 }
 
 protocol ImageSettable: AnyObject {
-    var image: Image? { get set }
+    var image: KFCrossPlatformImage? { get set }
 }
 
 final class ImageProgressiveProvider: DataReceivingSideEffect {
@@ -64,17 +64,21 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     var onShouldApply: () -> Bool = { return true }
     
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
-        update(data: task.mutableData, with: task.callbacks)
+
+        DispatchQueue.main.async {
+            guard self.onShouldApply() else { return }
+            self.update(data: task.mutableData, with: task.callbacks)
+        }
     }
 
     private let option: ImageProgressive
-    private let refresh: (Image) -> Void
+    private let refresh: (KFCrossPlatformImage) -> Void
     
     private let decoder: ImageProgressiveDecoder
     private let queue = ImageProgressiveSerialQueue()
     
     init?(_ options: KingfisherParsedOptionsInfo,
-          refresh: @escaping (Image) -> Void) {
+          refresh: @escaping (KFCrossPlatformImage) -> Void) {
         guard let option = options.progressiveJPEG else { return nil }
         
         self.option = option
@@ -88,14 +92,9 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
         guard !data.isEmpty else { return }
-        
+
         queue.add(minimum: option.scanInterval) { completion in
-            guard self.onShouldApply() else {
-                self.queue.clean()
-                completion()
-                return
-            }
-            
+
             func decode(_ data: Data) {
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
@@ -104,12 +103,19 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
                     self.refresh(image)
                 }
             }
-            
-            if self.option.isFastestScan {
-                decode(self.decoder.scanning(data) ?? Data())
-                
-            } else {
-                self.decoder.scanning(data).forEach { decode($0) }
+
+            CallbackQueue.mainCurrentOrAsync.execute {
+                guard self.onShouldApply() else {
+                    self.queue.clean()
+                    completion()
+                    return
+                }
+
+                if self.option.isFastestScan {
+                    decode(self.decoder.scanning(data) ?? Data())
+                } else {
+                    self.decoder.scanning(data).forEach { decode($0) }
+                }
             }
         }
     }
@@ -203,7 +209,7 @@ private final class ImageProgressiveDecoder {
     
     func decode(_ data: Data,
                 with callbacks: [SessionDataTask.TaskCallback],
-                completion: @escaping (Image?) -> Void) {
+                completion: @escaping (KFCrossPlatformImage?) -> Void) {
         guard data.kf.contains(jpeg: .SOF2) else {
             CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
             return
@@ -232,7 +238,7 @@ private final class ImageProgressiveDecoder {
         if option.isBlur, count < 6 {
             processingQueue.execute {
                 // Progressively reduce blur as we load more scans.
-                let image = KingfisherWrapper<Image>.image(
+                let image = KingfisherWrapper<KFCrossPlatformImage>.image(
                     data: data,
                     options: self.creatingOptions
                 )
@@ -250,7 +256,8 @@ private final class ImageProgressiveDecoder {
 private final class ImageProgressiveSerialQueue {
     typealias ClosureCallback = ((@escaping () -> Void)) -> Void
     
-    private let queue: DispatchQueue = .init(label: "com.onevcat.Kingfisher.ImageProgressive.SerialQueue")
+    private let queue: DispatchQueue = //DispatchQueue.main
+        .init(label: "com.onevcat.Kingfisher.ImageProgressive.SerialQueue")
     private var items: [DispatchWorkItem] = []
     private var notify: (() -> Void)?
     private var lastTime: TimeInterval?

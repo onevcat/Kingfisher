@@ -6,104 +6,161 @@ default_platform :ios
 platform :ios do
   desc "Runs all the tests"
   lane :tests do
-    test(scheme: "Kingfisher", swift_version: "5.0")
-    test(scheme: "Kingfisher-macOS", swift_version: "5.0")
-    test(scheme: "Kingfisher-tvOS", swift_version: "5.0")
-
-    test(scheme: "Kingfisher", swift_version: "4.2")
-    test(scheme: "Kingfisher-macOS", swift_version: "4.2")
-    test(scheme: "Kingfisher-tvOS", swift_version: "4.2")
-
-    test(scheme: "Kingfisher", swift_version: "4.0")
-    test(scheme: "Kingfisher-macOS", swift_version: "4.0")
-    test(scheme: "Kingfisher-tvOS", swift_version: "4.0")
+    test(destination: "platform=macOS", swift_version: "5.0")
+    test(destination: "platform=iOS Simulator,name=iPhone 8", swift_version: "5.0")
+    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "5.0")
+    
+    test(destination: "platform=macOS", swift_version: "4.2")
+    test(destination: "platform=iOS Simulator,name=iPhone 8", swift_version: "4.2")
+    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "4.2")
+    
+    test(destination: "platform=macOS", swift_version: "4.0")
+    test(destination: "platform=iOS Simulator,name=iPhone 8", swift_version: "4.0")
+    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "4.0")
   end
-
+  
   lane :test do |options|
     _test(options)
   end
-
+  
   private_lane :_test do |options|
-    if options[:scheme].include? "macOS"
-        scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}", destination: "platform=macOS")
-    else
-        scan(scheme: options[:scheme], clean: true, xcargs: "SWIFT_VERSION=#{options[:swift_version]}")
-    end
+    scan(
+      scheme: "Kingfisher", 
+      clean: true, 
+      xcargs: "SWIFT_VERSION=#{options[:swift_version]}",
+      destination: options[:destination]
+    )
   end
-
+  
   lane :test_ci do
-    test(scheme: ENV["SCHEME"], swift_version: ENV["SWIFT_VERSION"])
+    test(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
   end
   
   desc "Lint"
   lane :lint do
-      carthage(command: "build", no_skip_current: true)
-      pod_lib_lint
+    carthage(command: "build", no_skip_current: true)
+    pod_lib_lint
   end
-
+  
   desc "Release new version"
   lane :release do |options|
-      target_version = options[:version]
-      raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+    target_version = options[:version]
+    raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+    
+    ensure_git_branch
+    ensure_git_status_clean
+    
+    skip_tests =  options[:skip_tests]
+    tests unless skip_tests
+    
+    lint
 
-      ensure_git_branch
-      ensure_git_status_clean
-      
-      tests
-      lint
-      carthage(command: "archive", frameworks: ["Kingfisher"])
-      
-      sync_build_number_to_git
-      increment_version_number(version_number: target_version)
-      version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
-
-      log = extract_current_change_log(version: target_version)
-      release_log = update_change_log(log: log)
-
-      doc(version: target_version)
-
-      git_commit_all(message: "Bump version to #{target_version}")
-      
-      Actions.sh("git tag -s #{target_version} -m ''")
-
-      push_to_git_remote
-
-      set_github_release(
+    sync_build_number_to_git
+    increment_version_number(version_number: target_version)
+    version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
+    
+    log = extract_current_change_log(version: target_version)
+    release_log = update_change_log(log: log)
+    
+    doc(version: target_version)
+    
+    git_commit_all(message: "Bump version to #{target_version}")
+    
+    Actions.sh("git tag -s #{target_version} -m ''")
+    
+    push_to_git_remote
+    
+    xcframework(version: target_version)
+    set_github_release(
       repository_name: "onevcat/Kingfisher",
       api_token: ENV['GITHUB_TOKEN'],
       name: release_log[:title],
       tag_name: target_version,
       description: release_log[:text],
-      upload_assets: ["Kingfisher.framework.zip"]
-      )
-
-      pod_push
+      upload_assets: ["build/Kingfisher-#{target_version}.zip"]
+    )
+    
+    pod_push
   end
-
+  
   lane :podpush do
     pod_push
   end
-
+  
   lane :doc do |options|
-      target_version = options[:version]
-      Actions.sh("cd .. && jazzy \
-                        --clean \
-                        --author \"Wei Wang\" \
-                        --author_url https://onevcat.com \
-                        --github_url https://github.com/onevcat/Kingfisher \
-                        --github-file-prefix https://github.com/onevcat/Kingfisher/tree/#{target_version} \
-                        --module-version #{target_version} \
-                        --module Kingfisher \
-                        --root-url http://onevcat.github.io/Kingfisher/ \
-                        --output docs/ \
-                        --theme fullwidth")
+    target_version = options[:version]
+    Actions.sh("cd .. && jazzy \
+      --clean \
+      -x USE_SWIFT_RESPONSE_FILE=NO \
+      --author \"Wei Wang\" \
+      --author_url https://onevcat.com \
+      --github_url https://github.com/onevcat/Kingfisher \
+      --github-file-prefix https://github.com/onevcat/Kingfisher/tree/#{target_version} \
+      --module-version #{target_version} \
+      --module Kingfisher \
+      --root-url http://onevcat.github.io/Kingfisher/ \
+      --output docs/ \
+      --theme fullwidth")
+  end
+  
+  lane :xcframework do |options|
+    target_version = "Kingfisher-#{options[:version]}"
+    supporting_root = "../build/#{target_version}/Supporting Files"
+    xcversion(version: "~> 11.0")
+    FileUtils.rm_rf '../build'
+    
+    frameworks = []
+    
+    ["macosx",
+     "iphoneos", 
+     "iphonesimulator", 
+     "appletvos", 
+     "appletvsimulator", 
+     "watchos", 
+     "watchsimulator"
+    ].each do |sdk|
+      archive_path = "build/Kingfisher-#{sdk}.xcarchive"
+      xcodebuild(
+        archive: true,
+        archive_path: archive_path,
+        scheme: "Kingfisher",
+        sdk: sdk,
+        build_settings: {
+          "BUILD_LIBRARY_FOR_DISTRIBUTION" => "YES",
+          "SKIP_INSTALL" => "NO"
+        }
+      )
+      frameworks.push("#{archive_path}/Products/Library/Frameworks/Kingfisher.framework")
+
+      dSYM_path = "../#{archive_path}/dSYMs/Kingfisher.framework.dSYM"
+      FileUtils.mkdir_p("#{supporting_root}/#{sdk}/dSYMs/")
+      FileUtils.cp_r(dSYM_path, "#{supporting_root}/#{sdk}/dSYMs/Kingfisher.framework.dSYM")
+
+      bitcode_symbol_map_path = "../#{archive_path}/BCSymbolMaps/"
+      if Dir.exist?(bitcode_symbol_map_path)
+        FileUtils.mkdir_p("#{supporting_root}/#{sdk}/BCSymbolMaps/")
+        FileUtils.cp_r(bitcode_symbol_map_path, "#{supporting_root}/#{sdk}")
+      end
+    end
+    # `xcodebuild` action in fastlane does not support `-create-xcframework` arg yet.
+    # Change it back to use fastlane action later when it is prepared.
+    framework_args = frameworks.map { |framework_path| "-framework '#{framework_path}'"}
+    args = "-create-xcframework #{framework_args.join(" ")} -output 'build/#{target_version}/Kingfisher.xcframework'"
+    Dir.chdir("..") do
+      Action.sh "xcodebuild #{args}"
+    end
+
+    zip(
+      path: "build/#{target_version}",
+      output_path: "build/#{target_version}.zip"
+    )
   end
 
   after_all do |lane|
-
+  
   end
 
   error do |lane, exception|
-
+  
   end
 end
