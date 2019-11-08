@@ -48,11 +48,6 @@
                BlueprintName = "KingfisherTests"
                ReferencedContainer = "container:Kingfisher.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "ImagePrefetcherTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
