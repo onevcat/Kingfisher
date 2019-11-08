@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/cache@v1
-          with:
-            path: vendor/bundle
-            key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-gem-
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
       - name: Install Gems
         run: bundle install --path vendor/bundle
       - name: Run tests
