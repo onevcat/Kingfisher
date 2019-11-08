@@ -4,18 +4,23 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: macOS-latest
-
+    strategy:
+      matrix:
+        destination: ['platform=macOS', 'platform=iOS Simulator,name=iPhone 8', 'platform=tvOS Simulator,name=Apple TV']
+        swift-version: [5.0, 4.2, 4.0]
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gem-
-    - name: Install Gems
-      run: bundle install --path vendor/bundle
-    - name: Run tests
-      run: bundle exec fastlane tests
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+          with:
+            path: vendor/bundle
+            key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-gem-
+      - name: Install Gems
+        run: bundle install --path vendor/bundle
+      - name: Run tests
+        env:
+          DESTINATION: ${{ matrix.destination }}
+          SWIFT_VERSION: ${{ matrix.swift-version }}
+        run: bundle exec fastlane test_ci
