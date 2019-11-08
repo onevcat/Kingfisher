@@ -12,4 +12,4 @@ jobs:
     - name: Install Gems
       run: bundle install
     - name: Run tests
-      run: bundle exec fastlane test
+      run: bundle exec fastlane tests
