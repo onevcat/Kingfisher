@@ -1,13 +1,13 @@
-name: build
+name: Build & Test
 
 on: [push]
 
 jobs:
-  build:
+  run-test:
     runs-on: macOS-latest
     strategy:
       matrix:
-        destination: ['platform=macOS', 'platform=iOS Simulator,name=iPhone 8', 'platform=tvOS Simulator,name=Apple TV']
+        destination: ['macOS', 'iOS Simulator,name=iPhone 8', 'tvOS Simulator,name=Apple TV']
         swift-version: [5.0, 4.2, 4.0]
     steps:
       - uses: actions/checkout@v1
@@ -21,6 +21,6 @@ jobs:
         run: bundle install --path vendor/bundle
       - name: Run tests
         env:
-          DESTINATION: ${{ matrix.destination }}
+          DESTINATION: platform=${{ matrix.destination }}
           SWIFT_VERSION: ${{ matrix.swift-version }}
         run: bundle exec fastlane test_ci
