@@ -1,0 +1,15 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macOS-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Gems
+      run: bundle install
+    - name: Run tests
+      run: bundle exec fastlane test
