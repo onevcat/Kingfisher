@@ -165,12 +165,33 @@ public class KingfisherManager {
             options: info,
             completionHandler: completionHandler)
     }
-    
+
     func retrieveImage(
         with source: Source,
         options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
+        let context = RetrievingContext(options: options)
+        return retrieveImage(
+            with: source,
+            context: context)
+        {
+            result in
+            switch result {
+            case .success:
+                completionHandler?(result)
+            case .failure(let error):
+                completionHandler?(result)
+            }
+        }
+    }
+    
+    private func retrieveImage(
+        with source: Source,
+        context: RetrievingContext,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+    {
+        let options = context.options
         if options.forceRefresh {
             return loadAndCacheImage(
                 source: source,
@@ -429,5 +450,11 @@ public class KingfisherManager {
         }
 
         return false
+    }
+}
+
+extension KingfisherManager {
+    struct RetrievingContext {
+        var options: KingfisherParsedOptionsInfo
     }
 }
