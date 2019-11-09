@@ -456,5 +456,14 @@ public class KingfisherManager {
 extension KingfisherManager {
     struct RetrievingContext {
         var options: KingfisherParsedOptionsInfo
+        
+        mutating func popAlternativeSource() -> Source? {
+            guard var alternativeSources = options.alternativeSources, !alternativeSources.isEmpty else {
+                return nil
+            }
+            let nextSource = alternativeSources.removeFirst()
+            options.alternativeSources = alternativeSources
+            return nextSource
+        }
     }
 }
