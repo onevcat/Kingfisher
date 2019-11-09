@@ -229,6 +229,8 @@ public enum KingfisherOptionsInfoItem {
     
     /// Enable progressive image loading, Kingfisher will use the `ImageProgressive` of
     case progressiveJPEG(ImageProgressive)
+
+    case alternativeSources([Source])
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -270,6 +272,7 @@ public struct KingfisherParsedOptionsInfo {
     public var diskCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
     public var processingQueue: CallbackQueue? = nil
     public var progressiveJPEG: ImageProgressive? = nil
+    public var alternativeSources: [Source]? = nil
 
     var onDataReceived: [DataReceivingSideEffect]? = nil
     
@@ -310,6 +313,7 @@ public struct KingfisherParsedOptionsInfo {
             case .diskCacheAccessExtendingExpiration(let expirationExtending): diskCacheAccessExtendingExpiration = expirationExtending
             case .processingQueue(let queue): processingQueue = queue
             case .progressiveJPEG(let value): progressiveJPEG = value
+            case .alternativeSources(let sources): alternativeSources = sources
             }
         }
 

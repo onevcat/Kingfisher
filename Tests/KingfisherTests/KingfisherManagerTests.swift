@@ -687,6 +687,33 @@ class KingfisherManagerTests: XCTestCase {
         }
         XCTAssertTrue(called)
     }
+
+    func testContextRemovingAlternativeSource() {
+        let allSources: [Source] = [
+            .network(URL(string: "1")!),
+            .network(URL(string: "2")!)
+        ]
+        let info = KingfisherParsedOptionsInfo([.alternativeSources(allSources)])
+        var context = KingfisherManager.RetrievingContext(options: info)
+
+        let source1 = context.popAlternativeSource()
+        XCTAssertNotNil(source1)
+        guard case .network(let r1) = source1! else {
+            XCTFail("Should be a network source, but \(source1!)")
+            return
+        }
+        XCTAssertEqual(r1.downloadURL.absoluteString, "1")
+
+        let source2 = context.popAlternativeSource()
+        XCTAssertNotNil(source2)
+        guard case .network(let r2) = source2! else {
+            XCTFail("Should be a network source, but \(source2!)")
+            return
+        }
+        XCTAssertEqual(r2.downloadURL.absoluteString, "2")
+
+        XCTAssertNil(context.popAlternativeSource())
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
