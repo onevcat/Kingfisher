@@ -695,7 +695,7 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertTrue(called)
     }
 
-    func _testContextRemovingAlternativeSource() {
+    func testContextRemovingAlternativeSource() {
         let allSources: [Source] = [
             .network(URL(string: "1")!),
             .network(URL(string: "2")!)
