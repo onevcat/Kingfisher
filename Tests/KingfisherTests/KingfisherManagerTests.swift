@@ -728,7 +728,10 @@ class KingfisherManagerTests: XCTestCase {
         let brokenURL = URL(string: "brokenurl")!
         stub(brokenURL, data: Data())
 
-        _ = manager.retrieveImage(with: .network(brokenURL), options: [.alternativeSources([.network(url)])]) {
+        _ = manager.retrieveImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(url)]), .waitForCache])
+        {
             result in
 
             XCTAssertNotNil(result.value)
@@ -754,7 +757,7 @@ class KingfisherManagerTests: XCTestCase {
 
         _ = manager.retrieveImage(
             with: .network(brokenURL),
-            options: [.alternativeSources([.network(anotherBrokenURL), .network(url)])])
+            options: [.alternativeSources([.network(anotherBrokenURL), .network(url)]), .waitForCache])
         {
             result in
 
@@ -793,7 +796,7 @@ class KingfisherManagerTests: XCTestCase {
         var downloadTaskUpdatedCount = 0
         let task = manager.retrieveImage(
           with: .network(brokenURL),
-          options: [.alternativeSources([.network(url)])],
+          options: [.alternativeSources([.network(url)]), .waitForCache],
           downloadTaskUpdated: { newTask in
             downloadTaskUpdatedCount += 1
             XCTAssertEqual(newTask?.sessionTask.task.currentRequest?.url, url)
@@ -819,7 +822,7 @@ class KingfisherManagerTests: XCTestCase {
 
         let task = manager.retrieveImage(
             with: .network(brokenURL),
-            options: [.alternativeSources([.network(url)])]
+            options: [.alternativeSources([.network(url)]), .waitForCache]
         )
         {
             result in
@@ -843,7 +846,7 @@ class KingfisherManagerTests: XCTestCase {
         var task: DownloadTask!
         task = manager.retrieveImage(
             with: .network(brokenURL),
-            options: [.alternativeSources([.network(url)])],
+            options: [.alternativeSources([.network(url)]), .waitForCache],
             downloadTaskUpdated: { newTask in
                 task = newTask
                 task.cancel()
