@@ -861,7 +861,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertTrue(result.error?.isTaskCancelled ?? false)
 
             delay(0.1) {
-                dataStub.go()
+                _ = dataStub.go()
                 exp.fulfill()
             }
         }
