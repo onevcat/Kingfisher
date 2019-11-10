@@ -49,6 +49,7 @@ class KingfisherManagerTests: XCTestCase {
         let cache = ImageCache(name: "test.cache.\(uuid.uuidString)")
         
         manager = KingfisherManager(downloader: downloader, cache: cache)
+        manager.defaultOptions = [.waitForCache]
     }
     
     override func tearDown() {
@@ -488,7 +489,8 @@ class KingfisherManagerTests: XCTestCase {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
-        
+
+        self.manager.defaultOptions = .empty
         self.manager.retrieveImage(with: url, options: [.callbackQueue(.untouch)]) { result in
             XCTAssertNotNil(result.value?.image)
             XCTAssertEqual(result.value!.cacheType, .none)
@@ -668,6 +670,7 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveWithImageProvider() {
         let provider = SimpleImageDataProvider(cacheKey: "key") { .success(testImageData) }
         var called = false
+        manager.defaultOptions = .empty
         _ = manager.retrieveImage(with: .provider(provider), options: [.processingQueue(.mainCurrentOrAsync)]) {
             result in
             called = true
