@@ -176,6 +176,9 @@ public enum KingfisherError: Error {
 
         /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
         case dataProviderError(provider: ImageDataProvider, error: Error)
+
+        /// Code 5004.
+        case alternativeSourcesFailed([PropagationError])
     }
 
     // MARK: Member Cases
@@ -388,6 +391,8 @@ extension KingfisherError.ImageSettingErrorReason {
             }
         case .dataProviderError(let provider, let error):
             return "Image data provider fails to provide data. Provider: \(provider), error: \(error)"
+        case .alternativeSourcesFailed(let errors):
+            return "Image setting from alternaive sources failed: \(errors)"
         }
     }
     
@@ -396,6 +401,7 @@ extension KingfisherError.ImageSettingErrorReason {
         case .emptySource: return 5001
         case .notCurrentSourceTask: return 5002
         case .dataProviderError: return 5003
+        case .alternativeSourcesFailed: return 5004
         }
     }
 }

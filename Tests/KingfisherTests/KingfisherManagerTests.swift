@@ -260,7 +260,9 @@ class KingfisherManagerTests: XCTestCase {
         let manager = self.manager!
         let p = SimpleProcessor()
         let options = KingfisherParsedOptionsInfo([.processor(p), .cacheOriginalImage, .waitForCache])
-        manager.loadAndCacheImage(source: .network(url), options: options) { result in
+        let source = Source.network(url)
+        let context = RetrievingContext(options: options, originalSource: source)
+        manager.loadAndCacheImage(source: .network(url), context: context) { result in
             
             var imageCached = manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
             var originalCached = manager.cache.imageCachedType(forKey: url.cacheKey)
@@ -289,7 +291,9 @@ class KingfisherManagerTests: XCTestCase {
 
         let p = SimpleProcessor()
         let options = KingfisherParsedOptionsInfo([.processor(p), .waitForCache])
-        manager.loadAndCacheImage(source: .network(url), options: options) {
+        let source = Source.network(url)
+        let context = RetrievingContext(options: options, originalSource: source)
+        manager.loadAndCacheImage(source: .network(url), context: context) {
             result in
             var imageCached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
             var originalCached = self.manager.cache.imageCachedType(forKey: url.cacheKey)
@@ -694,7 +698,8 @@ class KingfisherManagerTests: XCTestCase {
             .network(URL(string: "2")!)
         ]
         let info = KingfisherParsedOptionsInfo([.alternativeSources(allSources)])
-        var context = KingfisherManager.RetrievingContext(options: info)
+        var context = RetrievingContext(
+            options: info, originalSource: .network(URL(string: "0")!), propagationErrors: [])
 
         let source1 = context.popAlternativeSource()
         XCTAssertNotNil(source1)

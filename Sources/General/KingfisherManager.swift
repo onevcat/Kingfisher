@@ -45,6 +45,8 @@ public struct RetrieveImageResult {
 
     /// The `Source` from which the retrieve task begins.
     public let source: Source
+
+    public let originalSource: Source
 }
 
 /// Main manager class of Kingfisher. It connects Kingfisher downloader and cache,
@@ -171,19 +173,37 @@ public class KingfisherManager {
         options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
-        let context = RetrievingContext(options: options)
-        return retrieveImage(
-            with: source,
-            context: context)
-        {
-            result in
+        var context = RetrievingContext(options: options, originalSource: source)
+
+        func handler(result: (Result<RetrieveImageResult, KingfisherError>)) -> Void {
             switch result {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
-                completionHandler?(result)
+                if let nextSource = context.popAlternativeSource() {
+                    context.appendError(error, to: source)
+                    _ = self.retrieveImage(with: nextSource, context: context, completionHandler: handler)
+
+                } else {
+                    // No other alternative source. Finish with error.
+                    if context.propagationErrors.isEmpty {
+                        completionHandler?(.failure(error))
+                    } else {
+                        context.appendError(error, to: source)
+                        let finalError = KingfisherError.imageSettingError(
+                            reason: .alternativeSourcesFailed(context.propagationErrors)
+                        )
+                        completionHandler?(.failure(finalError))
+                    }
+                }
             }
         }
+
+        return retrieveImage(
+            with: source,
+            context: context,
+            completionHandler: handler)
+
     }
     
     private func retrieveImage(
@@ -195,13 +215,13 @@ public class KingfisherManager {
         if options.forceRefresh {
             return loadAndCacheImage(
                 source: source,
-                options: options,
+                context: context,
                 completionHandler: completionHandler)?.value
             
         } else {
             let loadedFromCache = retrieveImageFromCache(
                 source: source,
-                options: options,
+                context: context,
                 completionHandler: completionHandler)
             
             if loadedFromCache {
@@ -216,7 +236,7 @@ public class KingfisherManager {
             
             return loadAndCacheImage(
                 source: source,
-                options: options,
+                context: context,
                 completionHandler: completionHandler)?.value
         }
     }
@@ -261,9 +281,10 @@ public class KingfisherManager {
     @discardableResult
     func loadAndCacheImage(
         source: Source,
-        options: KingfisherParsedOptionsInfo,
+        context: RetrievingContext,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
     {
+        let options = context.options
         func cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>)
         {
             switch result {
@@ -279,7 +300,12 @@ public class KingfisherManager {
                 {
                     _ in
                     if options.waitForCache {
-                        let result = RetrieveImageResult(image: value.image, cacheType: .none, source: source)
+                        let result = RetrieveImageResult(
+                            image: value.image,
+                            cacheType: .none,
+                            source: source,
+                            originalSource: context.originalSource
+                        )
                         completionHandler?(.success(result))
                     }
                 }
@@ -297,7 +323,12 @@ public class KingfisherManager {
                 }
 
                 if !options.waitForCache {
-                    let result = RetrieveImageResult(image: value.image, cacheType: .none, source: source)
+                    let result = RetrieveImageResult(
+                        image: value.image,
+                        cacheType: .none,
+                        source: source,
+                        originalSource: context.originalSource
+                    )
                     completionHandler?(.success(result))
                 }
                 
@@ -344,9 +375,10 @@ public class KingfisherManager {
     ///    back to cache for later use.
     func retrieveImageFromCache(
         source: Source,
-        options: KingfisherParsedOptionsInfo,
+        context: RetrievingContext,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
     {
+        let options = context.options
         // 1. Check whether the image was already in target cache. If so, just get it.
         let targetCache = options.targetCache ?? cache
         let key = source.cacheKey
@@ -364,7 +396,12 @@ public class KingfisherManager {
                             let value: Result<RetrieveImageResult, KingfisherError>
                             if let image = cacheResult.image {
                                 value = result.map {
-                                    RetrieveImageResult(image: image, cacheType: $0.cacheType, source: source)
+                                    RetrieveImageResult(
+                                        image: image,
+                                        cacheType: $0.cacheType,
+                                        source: source,
+                                        originalSource: context.originalSource
+                                    )
                                 }
                             } else {
                                 value = .failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key)))
@@ -424,13 +461,22 @@ public class KingfisherManager {
                                 _ in
                                 if options.waitForCache {
                                     let value = RetrieveImageResult(
-                                        image: processedImage, cacheType: .none, source: source)
+                                        image: processedImage,
+                                        cacheType: .none,
+                                        source: source,
+                                        originalSource: context.originalSource
+                                    )
                                     options.callbackQueue.execute { completionHandler?(.success(value)) }
                                 }
                             }
 
                             if !options.waitForCache {
-                                let value = RetrieveImageResult(image: processedImage, cacheType: .none, source: source)
+                                let value = RetrieveImageResult(
+                                    image: processedImage,
+                                    cacheType: .none,
+                                    source: source,
+                                    originalSource: context.originalSource
+                                )
                                 options.callbackQueue.execute { completionHandler?(.success(value)) }
                             }
                         }
@@ -453,17 +499,31 @@ public class KingfisherManager {
     }
 }
 
-extension KingfisherManager {
-    struct RetrievingContext {
-        var options: KingfisherParsedOptionsInfo
-        
-        mutating func popAlternativeSource() -> Source? {
-            guard var alternativeSources = options.alternativeSources, !alternativeSources.isEmpty else {
-                return nil
-            }
-            let nextSource = alternativeSources.removeFirst()
-            options.alternativeSources = alternativeSources
-            return nextSource
+public struct PropagationError {
+    let source: Source
+    let error: KingfisherError
+}
+
+struct RetrievingContext {
+
+    var options: KingfisherParsedOptionsInfo
+
+    let originalSource: Source
+    var propagationErrors: [PropagationError] = []
+
+    mutating func popAlternativeSource() -> Source? {
+        guard var alternativeSources = options.alternativeSources, !alternativeSources.isEmpty else {
+            return nil
         }
+        let nextSource = alternativeSources.removeFirst()
+        options.alternativeSources = alternativeSources
+        return nextSource
+    }
+
+    @discardableResult
+    mutating func appendError(_ error: KingfisherError, to source: Source) -> [PropagationError] {
+        let item = PropagationError(source: source, error: error)
+        propagationErrors.append(item)
+        return propagationErrors
     }
 }
