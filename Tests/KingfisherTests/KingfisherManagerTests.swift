@@ -841,7 +841,7 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        _ = delayedStub(url, data: testImageData)
 
         let brokenURL = URL(string: "brokenurl")!
         stub(brokenURL, data: Data())
