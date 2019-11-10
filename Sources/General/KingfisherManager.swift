@@ -49,6 +49,8 @@ public struct RetrieveImageResult {
     public let originalSource: Source
 }
 
+public typealias DownloadTaskUpdatedBlock = ((_ newTask: DownloadTask?) -> Void)
+
 /// Main manager class of Kingfisher. It connects Kingfisher downloader and cache,
 /// to provide a set of convenience methods to use Kingfisher for tasks.
 /// You can use this class to retrieve an image via a specified URL from web or cache.
@@ -125,11 +127,16 @@ public class KingfisherManager {
         with resource: Resource,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
+        downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let source = Source.network(resource)
         return retrieveImage(
-            with: source, options: options, progressBlock: progressBlock, completionHandler: completionHandler
+            with: source,
+            options: options,
+            progressBlock: progressBlock,
+            downloadTaskUpdated: downloadTaskUpdated,
+            completionHandler: completionHandler
         )
     }
 
@@ -155,6 +162,7 @@ public class KingfisherManager {
         with source: Source,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
+        downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = currentDefaultOptions + (options ?? .empty)
@@ -165,12 +173,14 @@ public class KingfisherManager {
         return retrieveImage(
             with: source,
             options: info,
+            downloadTaskUpdated: downloadTaskUpdated,
             completionHandler: completionHandler)
     }
 
     func retrieveImage(
         with source: Source,
         options: KingfisherParsedOptionsInfo,
+        downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         var context = RetrievingContext(options: options, originalSource: source)
@@ -180,12 +190,17 @@ public class KingfisherManager {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
+                // Skip alternative sources if the user cancelled it.
+                guard !error.isTaskCancelled else {
+                    completionHandler?(.failure(error))
+                    return
+                }
                 if let nextSource = context.popAlternativeSource() {
                     context.appendError(error, to: currentSource)
-                    _ = self.retrieveImage(with: nextSource, context: context) { result in
+                    let newTask = self.retrieveImage(with: nextSource, context: context) { result in
                         handler(currentSource: nextSource, result: result)
                     }
-
+                    downloadTaskUpdated?(newTask)
                 } else {
                     // No other alternative source. Finish with error.
                     if context.propagationErrors.isEmpty {
