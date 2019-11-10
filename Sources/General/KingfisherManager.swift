@@ -52,6 +52,18 @@ public struct RetrieveImageResult {
     public let originalSource: Source
 }
 
+/// A struct that stores some related information of an `KingfisherError`. It provides some context information for
+/// a pure error so you can identify the error easier.
+public struct PropagationError {
+
+    /// The `Source` to which current `error` is bound.
+    public let source: Source
+
+    /// The actual error happens in framework.
+    public let error: KingfisherError
+}
+
+
 /// The downloading task updated block type. The parameter `newTask` is the updated new task of image setting process.
 /// It is a `nil` if the image loading does not require an image downloading process. If an image downloading is issued,
 /// this value will contain the actual `DownloadTask` for you to keep and cancel it later if you need.
@@ -529,11 +541,6 @@ public class KingfisherManager {
 
         return false
     }
-}
-
-public struct PropagationError {
-    let source: Source
-    let error: KingfisherError
 }
 
 struct RetrievingContext {
