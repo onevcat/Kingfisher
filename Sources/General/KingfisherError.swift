@@ -171,11 +171,18 @@ public enum KingfisherError: Error {
         ///           happens.
         /// - error: The `Error` if an issue happens during image setting task. `nil` if the task finishes without
         ///          problem.
-        /// - source: The original source value of the taks.
+        /// - source: The original source value of the task.
         case notCurrentSourceTask(result: RetrieveImageResult?, error: Error?, source: Source)
 
         /// An error happens during getting data from an `ImageDataProvider`. Code 5003.
         case dataProviderError(provider: ImageDataProvider, error: Error)
+
+        /// No more alternative `Source` can be used in current loading process. It means that the
+        /// `.alternativeSources` are used and Kingfisher tried to recovery from the original error, but still
+        /// fails for all the given alternative sources. The associated value holds all the errors encountered during
+        /// the load process, including the original source loading error and all the alternative sources errors.
+        /// Code 5004.
+        case alternativeSourcesExhausted([PropagationError])
     }
 
     // MARK: Member Cases
@@ -388,6 +395,8 @@ extension KingfisherError.ImageSettingErrorReason {
             }
         case .dataProviderError(let provider, let error):
             return "Image data provider fails to provide data. Provider: \(provider), error: \(error)"
+        case .alternativeSourcesExhausted(let errors):
+            return "Image setting from alternaive sources failed: \(errors)"
         }
     }
     
@@ -396,6 +405,7 @@ extension KingfisherError.ImageSettingErrorReason {
         case .emptySource: return 5001
         case .notCurrentSourceTask: return 5002
         case .dataProviderError: return 5003
+        case .alternativeSourcesExhausted: return 5004
         }
     }
 }

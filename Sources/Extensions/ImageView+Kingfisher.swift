@@ -123,6 +123,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
+            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     maybeIndicator?.stopAnimatingView()
