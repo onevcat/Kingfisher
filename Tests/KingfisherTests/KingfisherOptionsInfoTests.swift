@@ -64,6 +64,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         let serializer = FormatIndicatedCacheSerializer.png
         let modifier = AnyImageModifier { i in return i }
+        let alternativeSource = Source.network(URL(string: "https://onevcat.com")!)
 
         var options = KingfisherParsedOptionsInfo([
             .targetCache(cache),
@@ -78,8 +79,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .onlyFromCache,
             .backgroundDecode,
             .callbackQueue(.dispatch(queue)),
-            // Not sure why but we need `KingfisherOptionsInfoItem` to compile...
-            KingfisherOptionsInfoItem.scaleFactor(2.0),
+            .scaleFactor(2.0),
             .preloadAllAnimationData,
             .requestModifier(testModifier),
             .redirectHandler(testRedirectHandler),
@@ -88,7 +88,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .imageModifier(modifier),
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
-            .cacheOriginalImage
+            .cacheOriginalImage,
+            .alternativeSources([alternativeSource])
         ])
         
         XCTAssertTrue(options.targetCache === cache)
@@ -124,6 +125,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)
+        XCTAssertEqual(options.alternativeSources?.count, 1)
+        XCTAssertEqual(options.alternativeSources?.first?.url, alternativeSource.url)
     }
     
     func testOptionCouldBeOverwritten() {

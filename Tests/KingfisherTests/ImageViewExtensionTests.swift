@@ -787,6 +787,63 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+    func testImageSettingWithAlternativeSource() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        imageView.kf.setImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(url)])]
+        ) { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(result.value!.source.url, url)
+            XCTAssertEqual(result.value!.originalSource.url, brokenURL)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testImageSettingCanCancelAlternativeSource() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let dataStub = delayedStub(url, data: testImageData)
+
+        let brokenURL = testURLs[1]
+        let brokenStub = delayedStub(brokenURL, data: Data())
+
+        var finishCalled = false
+
+        delay(0.1) {
+            _ = brokenStub.go()
+        }
+        delay(0.3) {
+            self.imageView.kf.cancelDownloadTask()
+        }
+        delay(0.5) {
+            _ = dataStub.go()
+            XCTAssertTrue(finishCalled)
+            exp.fulfill()
+        }
+
+        imageView.kf.setImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(url)])]
+        ) { result in
+            finishCalled = true
+            XCTAssertNotNil(result.error)
+            guard case .requestError(reason: .taskCancelled(let task, _)) = result.error! else {
+                XCTFail("The error should be a task cancelled.")
+                return
+            }
+            XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternatived url cancelled.")
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 
 }
 
