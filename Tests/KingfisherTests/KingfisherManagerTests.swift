@@ -841,7 +841,7 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        _ = delayedStub(url, data: testImageData)
+        let dataStub = delayedStub(url, data: testImageData)
 
         let brokenURL = URL(string: "brokenurl")!
         stub(brokenURL, data: Data())
@@ -859,7 +859,11 @@ class KingfisherManagerTests: XCTestCase {
             result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error?.isTaskCancelled ?? false)
-            exp.fulfill()
+
+            delay(0.1) {
+                dataStub.go()
+                exp.fulfill()
+            }
         }
 
         waitForExpectations(timeout: 1, handler: nil)
