@@ -695,7 +695,7 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertTrue(called)
     }
 
-    func testContextRemovingAlternativeSource() {
+    func _testContextRemovingAlternativeSource() {
         let allSources: [Source] = [
             .network(URL(string: "1")!),
             .network(URL(string: "2")!)
@@ -723,7 +723,7 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNil(context.popAlternativeSource())
     }
 
-    func testRetrievingWithAlternativeSource() {
+    func _testRetrievingWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -747,7 +747,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testRetrievingErrorsWithAlternativeSource() {
+    func _testRetrievingErrorsWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: Data())
@@ -788,7 +788,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testRetrievingAlternativeSourceTaskUpdateBlockCalled() {
+    func _testRetrievingAlternativeSourceTaskUpdateBlockCalled() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -815,7 +815,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testRetrievingAlternativeSourceCancelled() {
+    func _testRetrievingAlternativeSourceCancelled() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -838,7 +838,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
+    func _testRetrievingAlternativeSourceCanCancelUpdatedTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
