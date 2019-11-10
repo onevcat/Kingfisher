@@ -43,12 +43,18 @@ public struct RetrieveImageResult {
     /// If the image is just downloaded from network, `.none` will be returned.
     public let cacheType: CacheType
 
-    /// The `Source` from which the retrieve task begins.
+    /// The `Source` which this result is related to. This indicated where the `image` of `self` is referring.
     public let source: Source
 
+    /// The original `Source` from which the retrieve task begins. It can be different from the `source` property.
+    /// When an alternative source loading happened, the `source` will be the replacing loading target, while the
+    /// `originalSource` will be kept as the initial `source` which issued the image loading process.
     public let originalSource: Source
 }
 
+/// The downloading task updated block type. The parameter `newTask` is the updated new task of image setting process.
+/// It is a `nil` if the image loading does not require an image downloading process. If an image downloading is issued,
+/// this value will contain the actual `DownloadTask` for you to keep and cancel it later if you need.
 public typealias DownloadTaskUpdatedBlock = ((_ newTask: DownloadTask?) -> Void)
 
 /// Main manager class of Kingfisher. It connects Kingfisher downloader and cache,
@@ -102,16 +108,19 @@ public class KingfisherManager {
         processingQueue = .dispatch(DispatchQueue(label: processQueueName))
     }
 
-    // Mark: Getting Images
+    // MARK: - Getting Images
 
     /// Gets an image from a given resource.
-    ///
     /// - Parameters:
     ///   - resource: The `Resource` object defines data information like key or URL.
     ///   - options: Options to use when creating the animated image.
     ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called. `progressBlock` is always called in
     ///                    main queue.
+    ///   - downloadTaskUpdated: Called when a new image downloading task is created for current image retrieving. This
+    ///                          usually happens when an alternative source is used to replace the original (failed)
+    ///                          task. You can update your reference of `DownloadTask` if you want to manually `cancel`
+    ///                          the new task.
     ///   - completionHandler: Called when the image retrieved and set finished. This completion handler will be invoked
     ///                        from the `options.callbackQueue`. If not specified, the main queue will be used.
     /// - Returns: A task represents the image downloading. If there is a download task starts for `.network` resource,
@@ -121,7 +130,6 @@ public class KingfisherManager {
     ///    This method will first check whether the requested `resource` is already in cache or not. If cached,
     ///    it returns `nil` and invoke the `completionHandler` after the cached image retrieved. Otherwise, it
     ///    will download the `resource`, store it in cache, then call `completionHandler`.
-    ///
     @discardableResult
     public func retrieveImage(
         with resource: Resource,
@@ -148,6 +156,10 @@ public class KingfisherManager {
     ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called. `progressBlock` is always called in
     ///                    main queue.
+    ///   - downloadTaskUpdated: Called when a new image downloading task is created for current image retrieving. This
+    ///                          usually happens when an alternative source is used to replace the original (failed)
+    ///                          task. You can update your reference of `DownloadTask` if you want to manually `cancel`
+    ///                          the new task.
     ///   - completionHandler: Called when the image retrieved and set finished. This completion handler will be invoked
     ///                        from the `options.callbackQueue`. If not specified, the main queue will be used.
     /// - Returns: A task represents the image downloading. If there is a download task starts for `.network` resource,
@@ -208,7 +220,7 @@ public class KingfisherManager {
                     } else {
                         context.appendError(error, to: currentSource)
                         let finalError = KingfisherError.imageSettingError(
-                            reason: .alternativeSourcesFailed(context.propagationErrors)
+                            reason: .alternativeSourcesExhausted(context.propagationErrors)
                         )
                         completionHandler?(.failure(finalError))
                     }

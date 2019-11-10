@@ -774,7 +774,7 @@ class KingfisherManagerTests: XCTestCase {
                 return
             }
 
-            guard case .alternativeSourcesFailed(let errorInfo) = reason else {
+            guard case .alternativeSourcesExhausted(let errorInfo) = reason else {
                 XCTFail("The error reason should be alternativeSourcesFailed")
                 return
             }
