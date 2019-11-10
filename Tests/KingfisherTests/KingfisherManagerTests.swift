@@ -719,6 +719,68 @@ class KingfisherManagerTests: XCTestCase {
 
         XCTAssertNil(context.popAlternativeSource())
     }
+
+    func testRetrievingWithAlternativeSource() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        _ = manager.retrieveImage(with: .network(brokenURL), options: [.alternativeSources([.network(url)])]) {
+            result in
+
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(result.value!.source.url, url)
+            XCTAssertEqual(result.value!.originalSource.url, brokenURL)
+
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testRetrievingErrorsWithAlternativeSource() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: Data())
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        let anotherBrokenURL = URL(string: "anotherBrokenURL")!
+        stub(anotherBrokenURL, data: Data())
+
+        _ = manager.retrieveImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(anotherBrokenURL), .network(url)])])
+        {
+            result in
+
+            defer { exp.fulfill() }
+
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+
+            guard case .imageSettingError(reason: let reason) = result.error! else {
+                XCTFail("The error should be image setting error")
+                return
+            }
+
+            guard case .alternativeSourcesFailed(let errorInfo) = reason else {
+                XCTFail("The error reason should be alternativeSourcesFailed")
+                return
+            }
+
+            XCTAssertEqual(errorInfo.count, 3)
+            XCTAssertEqual(errorInfo[0].source.url, brokenURL)
+            XCTAssertEqual(errorInfo[1].source.url, anotherBrokenURL)
+            XCTAssertEqual(errorInfo[2].source.url, url)
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {

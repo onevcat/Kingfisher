@@ -175,21 +175,23 @@ public class KingfisherManager {
     {
         var context = RetrievingContext(options: options, originalSource: source)
 
-        func handler(result: (Result<RetrieveImageResult, KingfisherError>)) -> Void {
+        func handler(currentSource: Source, result: (Result<RetrieveImageResult, KingfisherError>)) -> Void {
             switch result {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
                 if let nextSource = context.popAlternativeSource() {
-                    context.appendError(error, to: source)
-                    _ = self.retrieveImage(with: nextSource, context: context, completionHandler: handler)
+                    context.appendError(error, to: currentSource)
+                    _ = self.retrieveImage(with: nextSource, context: context) { result in
+                        handler(currentSource: nextSource, result: result)
+                    }
 
                 } else {
                     // No other alternative source. Finish with error.
                     if context.propagationErrors.isEmpty {
                         completionHandler?(.failure(error))
                     } else {
-                        context.appendError(error, to: source)
+                        context.appendError(error, to: currentSource)
                         let finalError = KingfisherError.imageSettingError(
                             reason: .alternativeSourcesFailed(context.propagationErrors)
                         )
@@ -201,8 +203,11 @@ public class KingfisherManager {
 
         return retrieveImage(
             with: source,
-            context: context,
-            completionHandler: handler)
+            context: context)
+        {
+            result in
+            handler(currentSource: source, result: result)
+        }
 
     }
     
