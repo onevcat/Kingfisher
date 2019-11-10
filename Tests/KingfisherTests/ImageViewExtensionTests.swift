@@ -815,6 +815,8 @@ class ImageViewExtensionTests: XCTestCase {
         let brokenURL = testURLs[1]
         let brokenStub = delayedStub(brokenURL, data: Data())
 
+        var finishCalled = false
+
         delay(0.1) {
             _ = brokenStub.go()
         }
@@ -823,19 +825,21 @@ class ImageViewExtensionTests: XCTestCase {
         }
         delay(0.5) {
             _ = dataStub.go()
+            XCTAssertTrue(finishCalled)
+            exp.fulfill()
         }
 
         imageView.kf.setImage(
             with: .network(brokenURL),
             options: [.alternativeSources([.network(url)])]
         ) { result in
+            finishCalled = true
             XCTAssertNotNil(result.error)
             guard case .requestError(reason: .taskCancelled(let task, _)) = result.error! else {
                 XCTFail("The error should be a task cancelled.")
                 return
             }
             XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternatived url cancelled.")
-            exp.fulfill()
         }
 
         waitForExpectations(timeout: 1, handler: nil)
