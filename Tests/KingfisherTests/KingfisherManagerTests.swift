@@ -747,7 +747,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func _testRetrievingErrorsWithAlternativeSource() {
+    func testRetrievingErrorsWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: Data())
