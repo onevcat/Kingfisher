@@ -823,7 +823,6 @@ class KingfisherManagerTests: XCTestCase {
         )
         {
             result in
-            print(result)
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             exp.fulfill()
@@ -831,7 +830,33 @@ class KingfisherManagerTests: XCTestCase {
         task?.cancel()
 
         waitForExpectations(timeout: 1, handler: nil)
+    }
 
+    func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        var task: DownloadTask!
+        task = manager.retrieveImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(url)])],
+            downloadTaskUpdated: { newTask in
+                task = newTask
+                task.cancel()
+            }
+        )
+        {
+            result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
     }
 }
 
