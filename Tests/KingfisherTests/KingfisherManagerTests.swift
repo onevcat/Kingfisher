@@ -781,6 +781,58 @@ class KingfisherManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    func testRetrievingAlternativeSourceTaskUpdateBlockCalled() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        var downloadTaskUpdatedCount = 0
+        let task = manager.retrieveImage(
+          with: .network(brokenURL),
+          options: [.alternativeSources([.network(url)])],
+          downloadTaskUpdated: { newTask in
+            downloadTaskUpdatedCount += 1
+            XCTAssertEqual(newTask?.sessionTask.task.currentRequest?.url, url)
+          })
+          {
+            result in
+            XCTAssertEqual(downloadTaskUpdatedCount, 1)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(task?.sessionTask.task.currentRequest?.url, brokenURL)
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testRetrievingAlternativeSourceCancelled() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        let task = manager.retrieveImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(url)])]
+        )
+        {
+            result in
+            print(result)
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(result.error!.isTaskCancelled)
+            exp.fulfill()
+        }
+        task?.cancel()
+
+        waitForExpectations(timeout: 1, handler: nil)
+
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
