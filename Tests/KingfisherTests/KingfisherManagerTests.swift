@@ -417,11 +417,9 @@ class KingfisherManagerTests: XCTestCase {
                 options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache)])
             {
                 result in
-                delay(0.2) { // .waitForCache only works for regular cache, not for original cache.
-                    let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
-                    XCTAssertEqual(originalCached, .disk)
-                    exp.fulfill()
-                }
+                let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
+                XCTAssertEqual(originalCached, .disk)
+                exp.fulfill()
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -867,6 +865,57 @@ class KingfisherManagerTests: XCTestCase {
         }
 
         waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testCacheCallbackCoordinatorStateChanging() {
+        var coordinator = CacheCallbackCoordinator(
+            shouldWaitForCache: false, shouldCacheOriginal: false)
+        var called = false
+        coordinator.apply(.cacheInitiated) {
+            called = true
+        }
+        XCTAssertTrue(called)
+        XCTAssertEqual(coordinator.state, .done)
+        coordinator.apply(.cachingImage) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .done)
+
+        coordinator = CacheCallbackCoordinator(
+            shouldWaitForCache: true, shouldCacheOriginal: false)
+        called = false
+        coordinator.apply(.cacheInitiated) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .idle)
+        coordinator.apply(.cachingImage) {
+            called = true
+        }
+        XCTAssertTrue(called)
+        XCTAssertEqual(coordinator.state, .done)
+
+        coordinator = CacheCallbackCoordinator(
+            shouldWaitForCache: false, shouldCacheOriginal: true)
+        coordinator.apply(.cacheInitiated) {
+            called = true
+        }
+        XCTAssertEqual(coordinator.state, .done)
+        coordinator.apply(.cachingOriginalImage) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .done)
+
+        coordinator = CacheCallbackCoordinator(
+            shouldWaitForCache: true, shouldCacheOriginal: true)
+        coordinator.apply(.cacheInitiated) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .idle)
+        coordinator.apply(.cachingOriginalImage) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .originalImageCached)
+        coordinator.apply(.cachingImage) { called = true }
+        XCTAssertEqual(coordinator.state, .done)
+
+        coordinator = CacheCallbackCoordinator(
+            shouldWaitForCache: true, shouldCacheOriginal: true)
+        coordinator.apply(.cacheInitiated) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .idle)
+        coordinator.apply(.cachingImage) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .imageCached)
+        coordinator.apply(.cachingOriginalImage) { called = true }
+        XCTAssertEqual(coordinator.state, .done)
     }
 }
 

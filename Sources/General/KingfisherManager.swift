@@ -322,28 +322,53 @@ public class KingfisherManager {
         }
     }
 
-    @discardableResult
-    func loadAndCacheImage(
+    private func cacheImage(
         source: Source,
+        options: KingfisherParsedOptionsInfo,
         context: RetrievingContext,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
+        result: Result<ImageLoadingResult, KingfisherError>,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?
+    )
     {
-        let options = context.options
-        func cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>)
-        {
-            switch result {
-            case .success(let value):
-                // Add image to cache.
-                let targetCache = options.targetCache ?? self.cache
-                targetCache.store(
-                    value.image,
-                    original: value.originalData,
+        switch result {
+        case .success(let value):
+            let needToCacheOriginalImage = options.cacheOriginalImage &&
+                                           options.processor != DefaultImageProcessor.default
+            let coordinator = CacheCallbackCoordinator(
+                shouldWaitForCache: options.waitForCache, shouldCacheOriginal: needToCacheOriginalImage)
+            // Add image to cache.
+            let targetCache = options.targetCache ?? self.cache
+            targetCache.store(
+                value.image,
+                original: value.originalData,
+                forKey: source.cacheKey,
+                options: options,
+                toDisk: !options.cacheMemoryOnly)
+            {
+                _ in
+                coordinator.apply(.cachingImage) {
+                    let result = RetrieveImageResult(
+                        image: value.image,
+                        cacheType: .none,
+                        source: source,
+                        originalSource: context.originalSource
+                    )
+                    completionHandler?(.success(result))
+                }
+            }
+
+            // Add original image to cache if necessary.
+
+            if needToCacheOriginalImage {
+                let originalCache = options.originalCache ?? targetCache
+                originalCache.storeToDisk(
+                    value.originalData,
                     forKey: source.cacheKey,
-                    options: options,
-                    toDisk: !options.cacheMemoryOnly)
+                    processorIdentifier: DefaultImageProcessor.default.identifier,
+                    expiration: options.diskCacheExpiration)
                 {
                     _ in
-                    if options.waitForCache {
+                    coordinator.apply(.cachingOriginalImage) {
                         let result = RetrieveImageResult(
                             image: value.image,
                             cacheType: .none,
@@ -353,47 +378,50 @@ public class KingfisherManager {
                         completionHandler?(.success(result))
                     }
                 }
-
-                // Add original image to cache if necessary.
-                let needToCacheOriginalImage = options.cacheOriginalImage &&
-                    options.processor != DefaultImageProcessor.default
-                if needToCacheOriginalImage {
-                    let originalCache = options.originalCache ?? targetCache
-                    originalCache.storeToDisk(
-                        value.originalData,
-                        forKey: source.cacheKey,
-                        processorIdentifier: DefaultImageProcessor.default.identifier,
-                        expiration: options.diskCacheExpiration)
-                }
-
-                if !options.waitForCache {
-                    let result = RetrieveImageResult(
-                        image: value.image,
-                        cacheType: .none,
-                        source: source,
-                        originalSource: context.originalSource
-                    )
-                    completionHandler?(.success(result))
-                }
-                
-            case .failure(let error):
-                completionHandler?(.failure(error))
             }
+
+            coordinator.apply(.cacheInitiated) {
+                let result = RetrieveImageResult(
+                    image: value.image,
+                    cacheType: .none,
+                    source: source,
+                    originalSource: context.originalSource
+                )
+                completionHandler?(.success(result))
+            }
+
+        case .failure(let error):
+            completionHandler?(.failure(error))
+        }
+    }
+
+    @discardableResult
+    func loadAndCacheImage(
+        source: Source,
+        context: RetrievingContext,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
+    {
+        let options = context.options
+        func _cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>) {
+            cacheImage(
+                source: source,
+                options: options,
+                context: context,
+                result: result,
+                completionHandler: completionHandler
+            )
         }
 
         switch source {
         case .network(let resource):
             let downloader = options.downloader ?? self.downloader
-            guard let task = downloader.downloadImage(
-                with: resource.downloadURL,
-                options: options,
-                completionHandler: cacheImage) else {
-                return nil
-            }
-            return .download(task)
-            
+            let task = downloader.downloadImage(
+                with: resource.downloadURL, options: options, completionHandler: _cacheImage
+            )
+            return task.map(DownloadTask.WrappedTask.download)
+
         case .provider(let provider):
-            provideImage(provider: provider, options: options, completionHandler: cacheImage)
+            provideImage(provider: provider, options: options, completionHandler: _cacheImage)
             return .dataProviding
         }
     }
@@ -496,6 +524,10 @@ public class KingfisherManager {
 
                             var cacheOptions = options
                             cacheOptions.callbackQueue = .untouch
+
+                            let coordinator = CacheCallbackCoordinator(
+                                shouldWaitForCache: options.waitForCache, shouldCacheOriginal: false)
+
                             targetCache.store(
                                 processedImage,
                                 forKey: key,
@@ -503,7 +535,7 @@ public class KingfisherManager {
                                 toDisk: !options.cacheMemoryOnly)
                             {
                                 _ in
-                                if options.waitForCache {
+                                coordinator.apply(.cachingImage) {
                                     let value = RetrieveImageResult(
                                         image: processedImage,
                                         cacheType: .none,
@@ -514,7 +546,7 @@ public class KingfisherManager {
                                 }
                             }
 
-                            if !options.waitForCache {
+                            coordinator.apply(.cacheInitiated) {
                                 let value = RetrieveImageResult(
                                     image: processedImage,
                                     cacheType: .none,
@@ -564,5 +596,67 @@ struct RetrievingContext {
         let item = PropagationError(source: source, error: error)
         propagationErrors.append(item)
         return propagationErrors
+    }
+}
+
+class CacheCallbackCoordinator {
+
+    enum State {
+        case idle
+        case imageCached
+        case originalImageCached
+        case done
+    }
+
+    enum Action {
+        case cacheInitiated
+        case cachingImage
+        case cachingOriginalImage
+    }
+
+    private let shouldWaitForCache: Bool
+    private let shouldCacheOriginal: Bool
+
+    private (set) var state: State = .idle
+
+    init(shouldWaitForCache: Bool, shouldCacheOriginal: Bool) {
+        self.shouldWaitForCache = shouldWaitForCache
+        self.shouldCacheOriginal = shouldCacheOriginal
+    }
+
+    func apply(_ action: Action, trigger: () -> Void) {
+        switch (state, action) {
+        case (.done, _):
+            break
+
+        // From .idle
+        case (.idle, .cacheInitiated):
+            if !shouldWaitForCache {
+                state = .done
+                trigger()
+            }
+        case (.idle, .cachingImage):
+            if shouldCacheOriginal {
+                state = .imageCached
+            } else {
+                state = .done
+                trigger()
+            }
+        case (.idle, .cachingOriginalImage):
+            state = .originalImageCached
+
+        // From .imageCached
+        case (.imageCached, .cachingOriginalImage):
+            state = .done
+            trigger()
+
+        // From .originalImageCached
+        case (.originalImageCached, .cachingImage):
+            state = .done
+            trigger()
+
+        default:
+            assertionFailure("This case should not happen in CacheCallbackCoordinator: \(state) - \(action)")
+        }
     }
 }
