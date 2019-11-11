@@ -84,10 +84,10 @@ public enum KingfisherOptionsInfoItem {
     /// See `.transition` option for more.
     case forceTransition
     
-    ///  If set, Kingfisher will only cache the value in memory but not in disk.
+    /// If set, Kingfisher will only cache the value in memory but not in disk.
     case cacheMemoryOnly
     
-    ///  If set, Kingfisher will wait for caching operation to be completed before calling the completion block.
+    /// If set, Kingfisher will wait for caching operation to be completed before calling the completion block.
     case waitForCache
     
     /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is
