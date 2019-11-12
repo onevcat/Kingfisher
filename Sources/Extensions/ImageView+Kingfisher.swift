@@ -356,6 +356,17 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                     equalTo: base.centerXAnchor, constant: newIndicator.centerOffset.x).isActive = true
                 view.centerYAnchor.constraint(
                     equalTo: base.centerYAnchor, constant: newIndicator.centerOffset.y).isActive = true
+
+                switch newIndicator.sizeStrategy(in: base) {
+                case .intrinsicSize:
+                    break
+                case .full:
+                    view.heightAnchor.constraint(equalTo: base.heightAnchor, constant: 0).isActive = true
+                    view.widthAnchor.constraint(equalTo: base.widthAnchor, constant: 0).isActive = true
+                case .size(let size):
+                    view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+                    view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+                }
                 
                 newIndicator.view.isHidden = true
             }
