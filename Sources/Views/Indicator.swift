@@ -68,6 +68,8 @@ public protocol Indicator {
     /// The indicator view which would be added to the super view.
     var view: IndicatorView { get }
 
+    /// The size strategy used when adding the indicator to image view.
+    /// - Parameter imageView: The super view of indicator.
     func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy
 }
 
@@ -83,6 +85,9 @@ extension Indicator {
     /// no offset for the indicator view.
     public var centerOffset: CGPoint { return .zero }
 
+
+    /// Default implementation of `centerOffset` of `Indicator`. The default value is `.full`, means that the indicator
+    /// will pin to the same height and width as the image view.
     public func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy {
         return .full
     }
