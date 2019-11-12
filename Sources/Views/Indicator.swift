@@ -67,6 +67,14 @@ public protocol Indicator {
     
     /// The indicator view which would be added to the super view.
     var view: IndicatorView { get }
+
+    func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy
+}
+
+public enum IndicatorSizeStrategy {
+    case intrinsicSize
+    case full
+    case size(CGSize)
 }
 
 extension Indicator {
@@ -74,6 +82,10 @@ extension Indicator {
     /// Default implementation of `centerOffset` of `Indicator`. The default value is `.zero`, means that there is
     /// no offset for the indicator view.
     public var centerOffset: CGPoint { return .zero }
+
+    public func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy {
+        return .full
+    }
 }
 
 // Displays a NSProgressIndicator / UIActivityIndicatorView
@@ -112,6 +124,10 @@ final class ActivityIndicator: Indicator {
             #endif
             activityIndicatorView.isHidden = true
         }
+    }
+
+    func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy {
+        return .intrinsicSize
     }
 
     init() {
