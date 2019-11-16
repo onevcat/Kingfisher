@@ -21,9 +21,9 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.9.0 Docs
+          Kingfisher 5.10.0 Docs
         </a>
-         (84% documented)
+         (83% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -137,6 +137,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/ImageTransition.html">ImageTransition</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IndicatorSizeStrategy.html">IndicatorSizeStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/IndicatorType.html">IndicatorType</a>
@@ -366,6 +369,9 @@
                 <a class="nav-group-task-link" href="../Structs/OverlayImageProcessor.html">OverlayImageProcessor</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PropagationError.html">PropagationError</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/RawImageDataProvider.html">RawImageDataProvider</a>
               </li>
               <li class="nav-group-task">
@@ -405,6 +411,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher21DownloadProgressBlocka">DownloadProgressBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher24DownloadTaskUpdatedBlocka">DownloadTaskUpdatedBlock</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:10Kingfisher5Imagea">Image</a>
@@ -524,7 +533,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.9.0/Sources/General/KingfisherManager.swift#L40">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.10.0/Sources/General/KingfisherManager.swift#L40">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -555,7 +564,7 @@ If the image is just downloaded from network, <code>.none</code> will be returne
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.9.0/Sources/General/KingfisherManager.swift#L44">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.10.0/Sources/General/KingfisherManager.swift#L44">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -573,7 +582,7 @@ If the image is just downloaded from network, <code>.none</code> will be returne
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The <code><a href="../Enums/Source.html">Source</a></code> from which the retrieve task begins.</p>
+                        <p>The <code><a href="../Enums/Source.html">Source</a></code> which this result is related to. This indicated where the <code><a href="../Structs/RetrieveImageResult.html#/s:10Kingfisher19RetrieveImageResultV5imageSo7NSImageCvp">image</a></code> of <code>self</code> is referring.</p>
 
                       </div>
                       <div class="declaration">
@@ -585,7 +594,39 @@ If the image is just downloaded from network, <code>.none</code> will be returne
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.9.0/Sources/General/KingfisherManager.swift#L47">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.10.0/Sources/General/KingfisherManager.swift#L47">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher19RetrieveImageResultV14originalSourceAA0F0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/originalSource" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher19RetrieveImageResultV14originalSourceAA0F0Ovp">originalSource</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The original <code><a href="../Enums/Source.html">Source</a></code> from which the retrieve task begins. It can be different from the <code><a href="../Structs/RetrieveImageResult.html#/s:10Kingfisher19RetrieveImageResultV6sourceAA6SourceOvp">source</a></code> property.
+When an alternative source loading happened, the <code><a href="../Structs/RetrieveImageResult.html#/s:10Kingfisher19RetrieveImageResultV6sourceAA6SourceOvp">source</a></code> will be the replacing loading target, while the
+<code>originalSource</code> will be kept as the initial <code><a href="../Structs/RetrieveImageResult.html#/s:10Kingfisher19RetrieveImageResultV6sourceAA6SourceOvp">source</a></code> which issued the image loading process.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">originalSource</span><span class="p">:</span> <span class="kt"><a href="../Enums/Source.html">Source</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.10.0/Sources/General/KingfisherManager.swift#L52">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -598,8 +639,8 @@ If the image is just downloaded from network, <code>.none</code> will be returne
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-10-24)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-17)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
