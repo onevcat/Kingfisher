@@ -52,7 +52,7 @@ public protocol ImageDownloadRedirectHandler {
 }
 
 /// A wrapper for creating an `ImageDownloadRedirectHandler` easier.
-/// This type conforms to `ImageDownloadRedirectHandler` and wraps an redirect request modify block.
+/// This type conforms to `ImageDownloadRedirectHandler` and wraps a redirect request modify block.
 public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
     let block: (SessionDataTask, HTTPURLResponse, URLRequest, (URLRequest?) -> Void) -> Void
