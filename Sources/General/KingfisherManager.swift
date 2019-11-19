@@ -589,6 +589,11 @@ struct RetrievingContext {
     let originalSource: Source
     var propagationErrors: [PropagationError] = []
 
+    init(options: KingfisherParsedOptionsInfo, originalSource: Source) {
+        self.originalSource = originalSource
+        self.options = options
+    }
+
     mutating func popAlternativeSource() -> Source? {
         guard var alternativeSources = options.alternativeSources, !alternativeSources.isEmpty else {
             return nil
