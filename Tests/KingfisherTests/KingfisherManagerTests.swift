@@ -700,7 +700,7 @@ class KingfisherManagerTests: XCTestCase {
         ]
         let info = KingfisherParsedOptionsInfo([.alternativeSources(allSources)])
         var context = RetrievingContext(
-            options: info, originalSource: .network(URL(string: "0")!), propagationErrors: [])
+            options: info, originalSource: .network(URL(string: "0")!))
 
         let source1 = context.popAlternativeSource()
         XCTAssertNotNil(source1)
