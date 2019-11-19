@@ -31,6 +31,7 @@
 //  The name and characters used in the demo of this software are property of their
 //  respective owners.
 
+#if !os(watchOS)
 #if canImport(UIKit)
 import UIKit
 import ImageIO
@@ -610,4 +611,5 @@ class SafeArray<Element> {
         array = []
     }
 }
+#endif
 #endif
