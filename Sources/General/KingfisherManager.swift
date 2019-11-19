@@ -497,9 +497,15 @@ public class KingfisherManager {
         }
 
         // Check whether the unprocessed image existing or not.
-        let originalImageCached = originalCache.imageCachedType(
-            forKey: key, processorIdentifier: DefaultImageProcessor.default.identifier).cached
-        if originalImageCached {
+        let originalImageCacheType = originalCache.imageCachedType(
+            forKey: key, processorIdentifier: DefaultImageProcessor.default.identifier)
+        let canAcceptDiskCache = !options.fromMemoryCacheOrRefresh
+        
+        let canUseOriginalImageCache =
+            (canAcceptDiskCache && originalImageCacheType.cached) ||
+            (!canAcceptDiskCache && originalImageCacheType == .memory)
+        
+        if canUseOriginalImageCache {
             // Now we are ready to get found the original image from cache. We need the unprocessed image, so remove
             // any processor from options first.
             var optionsWithoutProcessor = options
@@ -509,6 +515,7 @@ public class KingfisherManager {
                 result.match(
                     onSuccess: { cacheResult in
                         guard let image = cacheResult.image else {
+                            assertionFailure("The image (under key: \(key) should be existing in the original cache.")
                             return
                         }
 
