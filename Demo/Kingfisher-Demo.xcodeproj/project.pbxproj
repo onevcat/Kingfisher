@@ -195,6 +195,7 @@
 		D12E0CA01C47F92200AC98AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D12E0CA11C47F92200AC98AD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D13F49C21BEDA53F00CE335D /* Kingfisher-tvOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-tvOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D16218A4238EAA67004A1C6C /* Kingfisher-Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Kingfisher-Demo.entitlements"; sourceTree = "<group>"; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1A1CCA221A1879600263AD8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -401,6 +402,7 @@
 		D1ED2D021AD2CFA600CFC3EB = {
 			isa = PBXGroup;
 			children = (
+				D16218A4238EAA67004A1C6C /* Kingfisher-Demo.entitlements */,
 				D10EC22B1C3D62DE00A4211C /* Demo */,
 				D1ED2D0C1AD2CFA600CFC3EB /* Products */,
 				277EAE762045ADE700547CD3 /* Frameworks */,
@@ -577,6 +579,7 @@
 				TargetAttributes = {
 					4B2944541C3D03880088C3E7 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = A4YJ9MRZ66;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -596,6 +599,7 @@
 					};
 					D1ED2D0A1AD2CFA600CFC3EB = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = A4YJ9MRZ66;
 						LastSwiftMigration = 0900;
 					};
 					D1F7609423098F62000C5269 = {
@@ -825,7 +829,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Demo/Kingfisher-macOS-Demo/Info.plist";
@@ -845,7 +849,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Demo/Kingfisher-macOS-Demo/Info.plist";
@@ -1098,12 +1102,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Kingfisher-Demo.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
 				INFOPLIST_FILE = "Demo/Kingfisher-Demo/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Debug;
 		};
@@ -1111,12 +1118,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Kingfisher-Demo.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
 				INFOPLIST_FILE = "Demo/Kingfisher-Demo/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
