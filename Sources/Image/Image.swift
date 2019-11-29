@@ -127,6 +127,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
         return draw(to: size, inverting: true, refImage: KFCrossPlatformImage()) {
             fixOrientation(in: $0)
+            return true
         }
     }
 
