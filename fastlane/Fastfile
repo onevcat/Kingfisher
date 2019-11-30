@@ -38,7 +38,7 @@ platform :ios do
   
   desc "Lint"
   lane :lint do
-    carthage(command: "build", no_skip_current: true)
+    carthage(command: "build", no_skip_current: true, platform: "iOS")
     pod_lib_lint
   end
   
