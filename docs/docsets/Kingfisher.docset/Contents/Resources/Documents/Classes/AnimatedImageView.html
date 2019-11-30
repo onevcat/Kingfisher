@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.10.1 Docs
+          Kingfisher 5.11.0 Docs
         </a>
          (83% documented)
       </p>
@@ -493,6 +493,12 @@
         <section class="section">
           <div class="section-content">
             <h1>AnimatedImageView</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">AnimatedImageView</span> <span class="p">:</span> <span class="kt">UIImageView</span></code></pre>
+
+                </div>
+              </div>
             <p>Represents a subclass of <code>UIImageView</code> for displaying animated image.
 Different from showing animated image in a normal <code>UIImageView</code> (which load all frames at one time),
 <code>AnimatedImageView</code> only tries to load several frames (defined by <code>framePreloadCount</code>) to reduce memory usage.
@@ -512,9 +518,9 @@ it would be fairly easy to switch between them.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC11RepeatCountO"></a>
                     <a name="//apple_ref/swift/Enum/RepeatCount" class="dashAnchor"></a>
-                    <a class="token" href="#/">RepeatCount</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC11RepeatCountO">RepeatCount</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -525,6 +531,17 @@ it would be fairly easy to switch between them.</p>
                         <p>Enumeration that specifies repeat count of GIF</p>
 
                         <a href="../Classes/AnimatedImageView/RepeatCount.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">RepeatCount</span> <span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L90-L111">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -543,9 +560,9 @@ it would be fairly easy to switch between them.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC08autoPlaybC0Sbvp"></a>
                     <a name="//apple_ref/swift/Property/autoPlayAnimatedImage" class="dashAnchor"></a>
-                    <a class="token" href="#/">autoPlayAnimatedImage</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC08autoPlaybC0Sbvp">autoPlayAnimatedImage</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -556,15 +573,26 @@ it would be fairly easy to switch between them.</p>
                         <p>Whether automatically play the animation when the view become visible. Default is <code>true</code>.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">autoPlayAnimatedImage</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L115">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC17framePreloadCountSivp"></a>
                     <a name="//apple_ref/swift/Property/framePreloadCount" class="dashAnchor"></a>
-                    <a class="token" href="#/">framePreloadCount</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC17framePreloadCountSivp">framePreloadCount</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -575,15 +603,26 @@ it would be fairly easy to switch between them.</p>
                         <p>The count of the frames should be preloaded before shown.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">framePreloadCount</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L118">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC15needsPrescalingSbvp"></a>
                     <a name="//apple_ref/swift/Property/needsPrescaling" class="dashAnchor"></a>
-                    <a class="token" href="#/">needsPrescaling</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC15needsPrescalingSbvp">needsPrescaling</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -596,15 +635,26 @@ If the downloaded image is larger than the image view&rsquo;s size, it will help
 Default is <code>true</code>.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">needsPrescaling</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L123">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC16backgroundDecodeSbvp"></a>
                     <a name="//apple_ref/swift/Property/backgroundDecode" class="dashAnchor"></a>
-                    <a class="token" href="#/">backgroundDecode</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC16backgroundDecodeSbvp">backgroundDecode</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -616,15 +666,26 @@ Default is <code>true</code>.</p>
 rendering to extract pixel information in background. This can reduce the main thread CPU usage.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">backgroundDecode</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L127">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC11runLoopModeSo05NSRunfG0avp"></a>
                     <a name="//apple_ref/swift/Property/runLoopMode" class="dashAnchor"></a>
-                    <a class="token" href="#/">runLoopMode</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC11runLoopModeSo05NSRunfG0avp">runLoopMode</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -636,15 +697,26 @@ rendering to extract pixel information in background. This can reduce the main t
 Set this property to <code>RunLoop.Mode.default</code> will make the animation pause during UIScrollView scrolling.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">runLoopMode</span><span class="p">:</span> <span class="kt">RunLoop</span><span class="o">.</span><span class="kt">Mode</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L131-L139">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC11repeatCountAC06RepeatF0Ovp"></a>
                     <a name="//apple_ref/swift/Property/repeatCount" class="dashAnchor"></a>
-                    <a class="token" href="#/">repeatCount</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC11repeatCountAC06RepeatF0Ovp">repeatCount</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -658,15 +730,26 @@ Setting this value to another one will reset current animation.</p>
 <p>Default is <code>.infinite</code>, which means the animation will last forever.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">repeatCount</span><span class="p">:</span> <span class="kt">AnimatedImageView</span><span class="o">.</span><span class="kt"><a href="../Classes/AnimatedImageView/RepeatCount.html">RepeatCount</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L145-L153">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/s:10Kingfisher17AnimatedImageViewC8delegateAA0bcD8Delegate_pSgvp"></a>
                     <a name="//apple_ref/swift/Property/delegate" class="dashAnchor"></a>
-                    <a class="token" href="#/">delegate</a>
+                    <a class="token" href="#/s:10Kingfisher17AnimatedImageViewC8delegateAA0bcD8Delegate_pSgvp">delegate</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -676,6 +759,17 @@ Setting this value to another one will reset current animation.</p>
                       <div class="abstract">
                         <p>Delegate of this <code>AnimatedImageView</code> object. See <code><a href="../Protocols/AnimatedImageViewDelegate.html">AnimatedImageViewDelegate</a></code> protocol for more.</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/AnimatedImageViewDelegate.html">AnimatedImageViewDelegate</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L156">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -694,9 +788,9 @@ Setting this value to another one will reset current animation.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(py)image"></a>
                     <a name="//apple_ref/swift/Property/image" class="dashAnchor"></a>
-                    <a class="token" href="#/">image</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(py)image">image</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -704,7 +798,19 @@ Setting this value to another one will reset current animation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="k">var</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">KFCrossPlatformImage</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L181-L189">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -712,9 +818,9 @@ Setting this value to another one will reset current animation.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(py)animating"></a>
                     <a name="//apple_ref/swift/Property/isAnimating" class="dashAnchor"></a>
-                    <a class="token" href="#/">isAnimating</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(py)animating">isAnimating</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -722,7 +828,19 @@ Setting this value to another one will reset current animation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="k">var</span> <span class="nv">isAnimating</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L197-L203">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -730,9 +848,9 @@ Setting this value to another one will reset current animation.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)startAnimating"></a>
                     <a name="//apple_ref/swift/Method/startAnimating()" class="dashAnchor"></a>
-                    <a class="token" href="#/">startAnimating()</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)startAnimating">startAnimating()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -743,15 +861,26 @@ Setting this value to another one will reset current animation.</p>
                         <p>Starts the animation.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">startAnimating</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L206-L213">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)stopAnimating"></a>
                     <a name="//apple_ref/swift/Method/stopAnimating()" class="dashAnchor"></a>
-                    <a class="token" href="#/">stopAnimating()</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)stopAnimating">stopAnimating()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -762,15 +891,26 @@ Setting this value to another one will reset current animation.</p>
                         <p>Stops the animation.</p>
 
                       </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">stopAnimating</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L216-L221">Show on GitHub</a>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)displayLayer:"></a>
                     <a name="//apple_ref/swift/Method/display(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">display(_:)</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)displayLayer:">display(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -778,7 +918,19 @@ Setting this value to another one will reset current animation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">display</span><span class="p">(</span><span class="n">_</span> <span class="nv">layer</span><span class="p">:</span> <span class="kt">CALayer</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L223-L229">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -786,9 +938,9 @@ Setting this value to another one will reset current animation.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)didMoveToWindow"></a>
                     <a name="//apple_ref/swift/Method/didMoveToWindow()" class="dashAnchor"></a>
-                    <a class="token" href="#/">didMoveToWindow()</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)didMoveToWindow">didMoveToWindow()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -796,7 +948,19 @@ Setting this value to another one will reset current animation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">didMoveToWindow</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L231-L234">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -804,9 +968,9 @@ Setting this value to another one will reset current animation.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
+                    <a name="/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)didMoveToSuperview"></a>
                     <a name="//apple_ref/swift/Method/didMoveToSuperview()" class="dashAnchor"></a>
-                    <a class="token" href="#/">didMoveToSuperview()</a>
+                    <a class="token" href="#/c:@M@Kingfisher@objc(cs)AnimatedImageView(im)didMoveToSuperview">didMoveToSuperview()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -814,7 +978,19 @@ Setting this value to another one will reset current animation.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">open</span> <span class="kd">func</span> <span class="nf">didMoveToSuperview</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/AnimatedImageView.swift#L236-L239">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -827,7 +1003,7 @@ Setting this value to another one will reset current animation.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-20)</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

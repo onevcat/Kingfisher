@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.10.1 Docs
+          Kingfisher 5.11.0 Docs
         </a>
          (83% documented)
       </p>
@@ -500,28 +500,6 @@
         <section class="section">
           <div class="section-content">
             <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/"></a>
-                    <a name="//apple_ref/swift/Variable/shared" class="dashAnchor"></a>
-                    <a class="token" href="#/">shared</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
               <div class="task-name-container">
                 <a name="/Setting%20Image"></a>
                 <a name="//apple_ref/swift/Section/Setting Image" class="dashAnchor"></a>
@@ -534,8 +512,8 @@
                   <div>
                     <code>
                     <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/setImage(with:for:placeholder:options:progressBlock:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">setImage(with:for:placeholder:options:progressBlock:completionHandler:)</a>
+                    <a name="//apple_ref/swift/Method/setImage(with:placeholder:options:progressBlock:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">setImage(with:placeholder:options:progressBlock:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -543,11 +521,11 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets an image to the button for a specified state with a source.</p>
+                        <p>Sets an image to the button with a source.</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>Internally, this method will use <code><a href="../Classes/KingfisherManager.html">KingfisherManager</a></code> to get the requested source, from either cache
-or network. Since this method will perform UI changes, you must call it from the main thread.
+    <p>Internally, this method will use <code><a href="../Classes/KingfisherManager.html">KingfisherManager</a></code> to get the requested source.
+Since this method will perform UI changes, you must call it from the main thread.
 Both <code>progressBlock</code> and <code>completionHandler</code> will be also executed in the main thread.</p>
 
 </div>
@@ -591,10 +569,10 @@ Nothing will happen if the downloading has already finished.</p>
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Setting%20Background%20Image"></a>
-                <a name="//apple_ref/swift/Section/Setting Background Image" class="dashAnchor"></a>
-                <a href="#/Setting%20Background%20Image">
-                  <h3 class="section-name">Setting Background Image</h3>
+                <a name="/Setting%20Alternate%20Image"></a>
+                <a name="//apple_ref/swift/Section/Setting Alternate Image" class="dashAnchor"></a>
+                <a href="#/Setting%20Alternate%20Image">
+                  <h3 class="section-name">Setting Alternate Image</h3>
                 </a>
               </div>
               <ul class="item-container">
@@ -602,8 +580,8 @@ Nothing will happen if the downloading has already finished.</p>
                   <div>
                     <code>
                     <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/setBackgroundImage(with:for:placeholder:options:progressBlock:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">setBackgroundImage(with:for:placeholder:options:progressBlock:completionHandler:)</a>
+                    <a name="//apple_ref/swift/Method/setAlternateImage(with:placeholder:options:progressBlock:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">setAlternateImage(with:placeholder:options:progressBlock:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -611,15 +589,7 @@ Nothing will happen if the downloading has already finished.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets a background image to the button for a specified state with a source.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    <p>Internally, this method will use <code><a href="../Classes/KingfisherManager.html">KingfisherManager</a></code> to get the requested source
-Since this method will perform UI changes, you must call it from the main thread.
-Both <code>progressBlock</code> and <code>completionHandler</code> will be also executed in the main thread.</p>
-
-</div>
-
+                        
                       </div>
                     </section>
                   </div>
@@ -628,10 +598,10 @@ Both <code>progressBlock</code> and <code>completionHandler</code> will be also 
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Cancelling%20Background%20Downloading%20Task"></a>
-                <a name="//apple_ref/swift/Section/Cancelling Background Downloading Task" class="dashAnchor"></a>
-                <a href="#/Cancelling%20Background%20Downloading%20Task">
-                  <h3 class="section-name">Cancelling Background Downloading Task</h3>
+                <a name="/Cancelling%20Alternate%20Image%20Downloading%20Task"></a>
+                <a name="//apple_ref/swift/Section/Cancelling Alternate Image Downloading Task" class="dashAnchor"></a>
+                <a href="#/Cancelling%20Alternate%20Image%20Downloading%20Task">
+                  <h3 class="section-name">Cancelling Alternate Image Downloading Task</h3>
                 </a>
               </div>
               <ul class="item-container">
@@ -639,8 +609,8 @@ Both <code>progressBlock</code> and <code>completionHandler</code> will be also 
                   <div>
                     <code>
                     <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/cancelBackgroundImageDownloadTask()" class="dashAnchor"></a>
-                    <a class="token" href="#/">cancelBackgroundImageDownloadTask()</a>
+                    <a name="//apple_ref/swift/Method/cancelAlternateImageDownloadTask()" class="dashAnchor"></a>
+                    <a class="token" href="#/">cancelAlternateImageDownloadTask()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -648,7 +618,7 @@ Both <code>progressBlock</code> and <code>completionHandler</code> will be also 
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Cancels the background image download task of the button if it is running.
+                        <p>Cancels the alternate image download task of the button if it is running.
 Nothing will happen if the downloading has already finished.</p>
 
                       </div>
@@ -658,55 +628,11 @@ Nothing will happen if the downloading has already finished.</p>
               </ul>
             </div>
             <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/taskIdentifier(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">taskIdentifier(for:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/backgroundTaskIdentifier(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">backgroundTaskIdentifier(for:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
               <div class="task-name-container">
-                <a name="/Setting%20Image2"></a>
-                <a name="//apple_ref/swift/Section/Setting Image" class="dashAnchor"></a>
-                <a href="#/Setting%20Image2">
-                  <h3 class="section-name">Setting Image</h3>
+                <a name="/Properties"></a>
+                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
+                <a href="#/Properties">
+                  <h3 class="section-name">Properties</h3>
                 </a>
               </div>
               <ul class="item-container">
@@ -714,8 +640,8 @@ Nothing will happen if the downloading has already finished.</p>
                   <div>
                     <code>
                     <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/setImage(with:placeholder:options:progressBlock:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">setImage(with:placeholder:options:progressBlock:completionHandler:)</a>
+                    <a name="//apple_ref/swift/Property/taskIdentifier" class="dashAnchor"></a>
+                    <a class="token" href="#/">taskIdentifier</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -723,17 +649,25 @@ Nothing will happen if the downloading has already finished.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Sets an image to the image view with a source.</p>
-<div class="aside aside-note">
-    <p class="aside-title">Note</p>
-    <p>Note:</p>
-
-</div>
-
-<p>Internally, this method will use <code><a href="../Classes/KingfisherManager.html">KingfisherManager</a></code> to get the requested source
-Since this method will perform UI changes, you must call it from the main thread.
-Both <code>progressBlock</code> and <code>completionHandler</code> will be also executed in the main thread.</p>
-
+                        
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Property/alternateTaskIdentifier" class="dashAnchor"></a>
+                    <a class="token" href="#/">alternateTaskIdentifier</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
                       </div>
                     </section>
                   </div>
@@ -771,35 +705,13 @@ Nothing will happen if the downloading has already finished.</p>
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/"></a>
-                    <a name="//apple_ref/swift/Property/taskIdentifier" class="dashAnchor"></a>
-                    <a class="token" href="#/">taskIdentifier</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </div>
         </section>
 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-20)</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
