@@ -100,6 +100,7 @@ public enum KingfisherError: Error {
     /// - imageNotExisting: The requested image does not exist in cache. Code 3006.
     /// - cannotConvertToData: Cannot convert an object to data for storing. Code 3007.
     /// - cannotSerializeImage: Cannot serialize an image to data for storing. Code 3008.
+    /// - cannotCreateCacheFile: Cannot create target cache file at the given path and key. Code 3009.
     public enum CacheErrorReason {
         
         /// Cannot create a file enumerator for a certain disk URL. Code 3001.
@@ -139,6 +140,13 @@ public enum KingfisherError: Error {
         /// - original: The original image data, if exists.
         /// - serializer: The `CacheSerializer` used for the image serializing.
         case cannotSerializeImage(image: KFCrossPlatformImage?, original: Data?, serializer: CacheSerializer)
+
+        /// - cannotCreateCacheFile: Cannot create target cache file at the given path and key. Code 3009.
+        /// - path: The path to which the file manager was going to write.
+        /// - key: The cache key used for the cache. When caching a file through `KingfisherManager` and Kingfisher's
+        ///        extension method, it is the resolved cache key based on your input `Source` and the image processors.
+        /// - data: The data was going to be cached.
+        case cannotCreateCacheFileOnDisk(path: String, key: String, data: Data)
     }
     
     
@@ -346,6 +354,8 @@ extension KingfisherError.CacheErrorReason {
             return "Cannot serialize an image due to the cache serializer returning `nil`. " +
                    "Image: \(String(describing:image)), original data: \(String(describing: originalData)), " +
                    "serializer: \(serializer)."
+        case .cannotCreateCacheFileOnDisk(let path, let key, let data):
+            return "Cannot create cache file at path: \(path) for the given key: \(key). Data count: \(data.count)"
         }
     }
     
@@ -359,6 +369,7 @@ extension KingfisherError.CacheErrorReason {
         case .imageNotExisting: return 3006
         case .cannotConvertToData: return 3007
         case .cannotSerializeImage: return 3008
+        case .cannotCreateCacheFileOnDisk: return 3009
         }
     }
 }

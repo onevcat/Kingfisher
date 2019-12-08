@@ -116,7 +116,14 @@ public enum DiskStorage {
                 // The estimated expiration date.
                 .modificationDate: expiration.estimatedExpirationSinceNow.fileAttributeDate
             ]
-            config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
+            let fileWrote = config.fileManager.createFile(
+                atPath: fileURL.path, contents: data, attributes: attributes
+            )
+            if !fileWrote {
+                throw KingfisherError.cacheError(
+                    reason: .cannotCreateCacheFileOnDisk(path: fileURL.path, key: key, data: data)
+                )
+            }
         }
 
         func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
