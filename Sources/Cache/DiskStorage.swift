@@ -108,6 +108,13 @@ public enum DiskStorage {
             }
 
             let fileURL = cacheFileURL(forKey: key)
+            do {
+                try data.write(to: fileURL)
+            } catch {
+                throw KingfisherError.cacheError(
+                    reason: .cannotCreateCacheFile(fileURL: fileURL, key: key, data: data, error: error)
+                )
+            }
 
             let now = Date()
             let attributes: [FileAttributeKey : Any] = [
@@ -116,7 +123,17 @@ public enum DiskStorage {
                 // The estimated expiration date.
                 .modificationDate: expiration.estimatedExpirationSinceNow.fileAttributeDate
             ]
-            config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
+            do {
+                try config.fileManager.setAttributes(attributes, ofItemAtPath: fileURL.path)
+            } catch {
+                throw KingfisherError.cacheError(
+                    reason: .cannotSetCacheFileAttribute(
+                        filePath: fileURL.path,
+                        attributes: attributes,
+                        error: error
+                    )
+                )
+            }
         }
 
         func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
