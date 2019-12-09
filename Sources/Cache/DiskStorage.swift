@@ -126,6 +126,7 @@ public enum DiskStorage {
             do {
                 try config.fileManager.setAttributes(attributes, ofItemAtPath: fileURL.path)
             } catch {
+                try? config.fileManager.removeItem(at: fileURL)
                 throw KingfisherError.cacheError(
                     reason: .cannotSetCacheFileAttribute(
                         filePath: fileURL.path,
@@ -170,7 +171,9 @@ public enum DiskStorage {
             do {
                 let data = try Data(contentsOf: fileURL)
                 let obj = try T.fromData(data)
-                metaChangingQueue.async { meta.extendExpiration(with: fileManager, extendingExpiration: extendingExpiration) }
+                metaChangingQueue.async {
+                    meta.extendExpiration(with: fileManager, extendingExpiration: extendingExpiration)
+                }
                 return obj
             } catch {
                 throw KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: fileURL, error: error))
@@ -183,10 +186,13 @@ public enum DiskStorage {
 
         func isCached(forKey key: String, referenceDate: Date) -> Bool {
             do {
-                guard let _ = try value(forKey: key, referenceDate: referenceDate, actuallyLoad: false, extendingExpiration: .none) else {
-                    return false
-                }
-                return true
+                let result = try value(
+                    forKey: key,
+                    referenceDate: referenceDate,
+                    actuallyLoad: false,
+                    extendingExpiration: .none
+                )
+                return result != nil
             } catch {
                 return false
             }
