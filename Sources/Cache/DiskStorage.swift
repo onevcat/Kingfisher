@@ -108,6 +108,13 @@ public enum DiskStorage {
             }
 
             let fileURL = cacheFileURL(forKey: key)
+            do {
+                try data.write(to: fileURL)
+            } catch {
+                throw KingfisherError.cacheError(
+                    reason: .cannotCreateCacheFile(fileURL: fileURL, key: key, data: data, error: error)
+                )
+            }
 
             let now = Date()
             let attributes: [FileAttributeKey : Any] = [
@@ -116,7 +123,18 @@ public enum DiskStorage {
                 // The estimated expiration date.
                 .modificationDate: expiration.estimatedExpirationSinceNow.fileAttributeDate
             ]
-            config.fileManager.createFile(atPath: fileURL.path, contents: data, attributes: attributes)
+            do {
+                try config.fileManager.setAttributes(attributes, ofItemAtPath: fileURL.path)
+            } catch {
+                try? config.fileManager.removeItem(at: fileURL)
+                throw KingfisherError.cacheError(
+                    reason: .cannotSetCacheFileAttribute(
+                        filePath: fileURL.path,
+                        attributes: attributes,
+                        error: error
+                    )
+                )
+            }
         }
 
         func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
@@ -153,7 +171,9 @@ public enum DiskStorage {
             do {
                 let data = try Data(contentsOf: fileURL)
                 let obj = try T.fromData(data)
-                metaChangingQueue.async { meta.extendExpiration(with: fileManager, extendingExpiration: extendingExpiration) }
+                metaChangingQueue.async {
+                    meta.extendExpiration(with: fileManager, extendingExpiration: extendingExpiration)
+                }
                 return obj
             } catch {
                 throw KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: fileURL, error: error))
@@ -166,10 +186,13 @@ public enum DiskStorage {
 
         func isCached(forKey key: String, referenceDate: Date) -> Bool {
             do {
-                guard let _ = try value(forKey: key, referenceDate: referenceDate, actuallyLoad: false, extendingExpiration: .none) else {
-                    return false
-                }
-                return true
+                let result = try value(
+                    forKey: key,
+                    referenceDate: referenceDate,
+                    actuallyLoad: false,
+                    extendingExpiration: .none
+                )
+                return result != nil
             } catch {
                 return false
             }
