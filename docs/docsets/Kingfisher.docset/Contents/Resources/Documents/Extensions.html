@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Kingfisher 5.11.0 Docs
+          Kingfisher 5.12.0 Docs
         </a>
          (83% documented)
       </p>
@@ -192,13 +192,22 @@
             <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@S@CGSize">CGSize</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/KingfisherWrapper.html">KingfisherWrapper</a>
@@ -210,7 +219,16 @@
                 <a class="nav-group-task-link" href="Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:SS">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/WKInterfaceImage">WKInterfaceImage</a>
               </li>
             </ul>
           </li>
@@ -491,7 +509,7 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>Extensions</h1>
             <p>The following extensions are available globally.</p>
 
@@ -542,12 +560,14 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">KFCrossPlatformImage</span><span class="p">:</span> <span class="kt"><a href="Protocols/CacheCostCalculable.html">CacheCostCalculable</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">:</span> <span class="kt"><a href="Protocols/CacheCostCalculable.html">CacheCostCalculable</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatible.html">KingfisherCompatible</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">:</span> <span class="kt"><a href="Protocols/Placeholder.html">Placeholder</a></span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Kingfisher.swift#L81-L84">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L81-L84">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -573,6 +593,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Data</span><span class="p">:</span> <span class="kt"><a href="Protocols/DataTransformable.html">DataTransformable</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Data</span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatibleValue.html">KingfisherCompatibleValue</a></span></code></pre>
 
                         </div>
                       </div>
@@ -582,7 +603,42 @@
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/For%20App%20Extensions"></a>
+                <a name="//apple_ref/swift/Section/For App Extensions" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/For%20App%20Extensions"></a>
+                  <h3 class="section-name"><p>For App Extensions</p>
+</h3>
+                </div>
+              </div>
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)UIApplication"></a>
+                    <a name="//apple_ref/swift/Extension/UIApplication" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)UIApplication">UIApplication</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIApplication</span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatible.html">KingfisherCompatible</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -608,9 +664,11 @@
               <div class="task-name-container">
                 <a name="/Deprecated"></a>
                 <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
-                <a href="#/Deprecated">
-                  <h3 class="section-name">Deprecated</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Deprecated"></a>
+                  <h3 class="section-name"><p>Deprecated</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -640,10 +698,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -674,6 +728,136 @@ If you need customize the url and/or cache key, use <code><a href="Structs/Image
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher24KFCrossPlatformImageViewa"></a>
+                    <a name="//apple_ref/swift/Extension/KFCrossPlatformImageView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="Typealiases.html#/KFCrossPlatformImageView">KFCrossPlatformImageView</a></span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatible.html">KingfisherCompatible</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher21KFCrossPlatformButtona"></a>
+                    <a name="//apple_ref/swift/Extension/KFCrossPlatformButton" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="Typealiases.html#/KFCrossPlatformButton">KFCrossPlatformButton</a></span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatible.html">KingfisherCompatible</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Extension/WKInterfaceImage" class="dashAnchor"></a>
+                    <a class="token" href="#/">WKInterfaceImage</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@S@CGSize"></a>
+                    <a name="//apple_ref/swift/Extension/CGSize" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@S@CGSize">CGSize</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">CGSize</span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatibleValue.html">KingfisherCompatibleValue</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SS"></a>
+                    <a name="//apple_ref/swift/Extension/String" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SS">String</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">String</span><span class="p">:</span> <span class="kt"><a href="Protocols/KingfisherCompatibleValue.html">KingfisherCompatibleValue</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -682,8 +866,8 @@ If you need customize the url and/or cache key, use <code><a href="Structs/Image
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

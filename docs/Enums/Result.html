@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.11.0 Docs
+          Kingfisher 5.12.0 Docs
         </a>
          (83% documented)
       </p>
@@ -192,13 +192,22 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@S@CGSize">CGSize</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KingfisherWrapper.html">KingfisherWrapper</a>
@@ -210,7 +219,16 @@
                 <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:SS">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/WKInterfaceImage">WKInterfaceImage</a>
               </li>
             </ul>
           </li>
@@ -491,11 +509,14 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>Result</h1>
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Result</span> <span class="p">:</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Result</span> <span class="p">:</span> <span class="kt">Equatable</span> <span class="k">where</span> <span class="kt">Success</span> <span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Failure</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Result</span> <span class="p">:</span> <span class="kt">Hashable</span> <span class="k">where</span> <span class="kt">Success</span> <span class="p">:</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -534,7 +555,7 @@ values in both cases.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L36">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L36">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -564,7 +585,7 @@ values in both cases.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L39">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L39">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -624,7 +645,7 @@ instance.</p>
 it was applied.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L50-L59">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L50-L59">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -685,7 +706,7 @@ instance.</p>
 it was applied.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L71-L80">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L71-L80">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -743,7 +764,7 @@ instance.</p>
 the previous error value.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L89-L98">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L89-L98">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -801,7 +822,36 @@ instance.</p>
 the previous success value.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L107-L116">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L107-L116">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:s28CustomDebugStringConvertibleP16debugDescriptionSSvp"></a>
+                    <a name="//apple_ref/swift/Property/debugDescription" class="dashAnchor"></a>
+                    <a class="token" href="#/s:s28CustomDebugStringConvertibleP16debugDescriptionSSvp">debugDescription</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">debugDescription</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L180-L193">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -809,6 +859,15 @@ the previous success value.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Failure%60:%20%60Error%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Failure`: `Error`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Failure%60:%20%60Error%60"></a>
+                  <h3 class="section-name"><p>Available where <code>Failure</code>: <code>Error</code></p>
+</h3>
+                </div>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -856,7 +915,7 @@ success, or to catch the value if it represents a failure.</p>
                         <p>The success value, if the instance represents a success.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L136-L143">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L136-L143">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -896,7 +955,7 @@ success, or to catch the value if it represents a failure.</p>
                         <p>The success value, if the instance is a success.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L150-L157">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L150-L157">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -904,6 +963,15 @@ success, or to catch the value if it represents a failure.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Failure%60%20==%20%60Swift.Error%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Failure` == `Swift.Error`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Failure%60%20==%20%60Swift.Error%60"></a>
+                  <h3 class="section-name"><p>Available where <code>Failure</code> == <code>Swift.Error</code></p>
+</h3>
+                </div>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -950,40 +1018,7 @@ returned value as a success, or any thrown error as a failure.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L166-L172">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:s28CustomDebugStringConvertibleP16debugDescriptionSSvp"></a>
-                    <a name="//apple_ref/swift/Property/debugDescription" class="dashAnchor"></a>
-                    <a class="token" href="#/s:s28CustomDebugStringConvertibleP16debugDescriptionSSvp">debugDescription</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">debugDescription</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Utility/Result.swift#L180-L193">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Utility/Result.swift#L166-L172">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -996,8 +1031,8 @@ returned value as a success, or any thrown error as a failure.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

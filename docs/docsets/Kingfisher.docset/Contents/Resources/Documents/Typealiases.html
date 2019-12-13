@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Kingfisher 5.11.0 Docs
+          Kingfisher 5.12.0 Docs
         </a>
          (83% documented)
       </p>
@@ -192,13 +192,22 @@
             <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@S@CGSize">CGSize</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/KingfisherWrapper.html">KingfisherWrapper</a>
@@ -210,7 +219,16 @@
                 <a class="nav-group-task-link" href="Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:SS">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/WKInterfaceImage">WKInterfaceImage</a>
               </li>
             </ul>
           </li>
@@ -491,7 +509,7 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>Type Aliases</h1>
             <p>The following type aliases are available globally.</p>
 
@@ -501,12 +519,48 @@
         <section class="section">
           <div class="section-content">
             <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher20KFCrossPlatformImagea"></a>
+                    <a name="//apple_ref/swift/Alias/KFCrossPlatformImage" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">KFCrossPlatformImage</span> <span class="o">=</span> <span class="kt">UIImage</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
               <div class="task-name-container">
                 <a name="/Deprecated"></a>
                 <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
-                <a href="#/Deprecated">
-                  <h3 class="section-name">Deprecated</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Deprecated"></a>
+                  <h3 class="section-name"><p>Deprecated</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -529,12 +583,12 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">CompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">KFCrossPlatformImage</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">cacheType</span><span class="p">:</span> <span class="kt"><a href="Enums/CacheType.html">CacheType</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">imageURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">CompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">cacheType</span><span class="p">:</span> <span class="kt"><a href="Enums/CacheType.html">CacheType</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">imageURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -559,27 +613,16 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ImageDownloaderCompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">KFCrossPlatformImage</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">originalData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ImageDownloaderCompletionHandler</span> <span class="o">=</span> <span class="p">((</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">?,</span> <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">originalData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Deprecated2"></a>
-                <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
-                <a href="#/Deprecated2">
-                  <h3 class="section-name">Deprecated</h3>
-                </a>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -605,22 +648,11 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Deprecated3"></a>
-                <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
-                <a href="#/Deprecated3">
-                  <h3 class="section-name">Deprecated</h3>
-                </a>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -641,12 +673,12 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Image</span> <span class="o">=</span> <span class="kt">KFCrossPlatformImage</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Image</span> <span class="o">=</span> <span class="kt"><a href="Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -676,7 +708,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -706,7 +738,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -736,7 +768,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -766,15 +798,11 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -868,36 +896,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10Kingfisher20KFCrossPlatformImagea"></a>
-                    <a name="//apple_ref/swift/Alias/KFCrossPlatformImage" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">KFCrossPlatformImage</span> <span class="o">=</span> <span class="kt">UIImage</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:10Kingfisher20KFCrossPlatformColora"></a>
                     <a name="//apple_ref/swift/Alias/KFCrossPlatformColor" class="dashAnchor"></a>
                     <a class="token" href="#/s:10Kingfisher20KFCrossPlatformColora">KFCrossPlatformColor</a>
@@ -920,7 +918,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -950,7 +948,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -980,7 +978,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1010,15 +1008,11 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Kingfisher.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1034,7 +1028,7 @@
                       <div class="abstract">
                         <p>The downloading progress block type.
 The parameter value is the <code>receivedSize</code> of current response.
-The second parameter is the total expected data length from response&rsquo;s <q>Content-Length</q> header.
+The second parameter is the total expected data length from response&rsquo;s &ldquo;Content-Length&rdquo; header.
 If the expected length is not available, this block will not be called.</p>
 
                       </div>
@@ -1047,7 +1041,7 @@ If the expected length is not available, this block will not be called.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherManager.swift#L34">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherManager.swift#L34">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1079,15 +1073,11 @@ this value will contain the actual <code><a href="Structs/DownloadTask.html">Dow
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherManager.swift#L70">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherManager.swift#L70">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1114,15 +1104,11 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherOptionsInfo.swift#L36">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherOptionsInfo.swift#L36">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1148,15 +1134,11 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Image/Filter.swift#L35">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Image/Filter.swift#L35">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1189,7 +1171,7 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImagePrefetcher.swift#L40">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImagePrefetcher.swift#L40">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1225,7 +1207,7 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImagePrefetcher.swift#L48">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImagePrefetcher.swift#L48">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1262,7 +1244,7 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImagePrefetcher.swift#L57">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImagePrefetcher.swift#L57">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1298,15 +1280,11 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImagePrefetcher.swift#L65">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImagePrefetcher.swift#L65">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1350,7 +1328,7 @@ You can use the enum of option item with value to control some behaviors of King
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Views/Indicator.swift#L">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Views/Indicator.swift#L">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1363,8 +1341,8 @@ You can use the enum of option item with value to control some behaviors of King
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

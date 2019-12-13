@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.11.0 Docs
+          Kingfisher 5.12.0 Docs
         </a>
          (83% documented)
       </p>
@@ -192,13 +192,22 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@S@CGSize">CGSize</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KingfisherWrapper.html">KingfisherWrapper</a>
@@ -210,7 +219,16 @@
                 <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:SS">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/WKInterfaceImage">WKInterfaceImage</a>
               </li>
             </ul>
           </li>
@@ -491,11 +509,13 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>KingfisherError</h1>
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">KingfisherError</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">KingfisherError</span><span class="p">:</span> <span class="kt">LocalizedError</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">KingfisherError</span><span class="p">:</span> <span class="kt">CustomNSError</span></code></pre>
 
                 </div>
               </div>
@@ -513,9 +533,11 @@ then switch over the reason to know error detail.</p>
               <div class="task-name-container">
                 <a name="/Error%20Reason%20Types"></a>
                 <a name="//apple_ref/swift/Section/Error Reason Types" class="dashAnchor"></a>
-                <a href="#/Error%20Reason%20Types">
-                  <h3 class="section-name">Error Reason Types</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Error%20Reason%20Types"></a>
+                  <h3 class="section-name"><p>Error Reason Types</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -550,7 +572,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L44-L57">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L44-L57">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -589,7 +611,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L66-L91">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L66-L91">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -618,6 +640,8 @@ then switch over the reason to know error detail.</p>
 <li>imageNotExisting: The requested image does not exist in cache. Code 3006.</li>
 <li>cannotConvertToData: Cannot convert an object to data for storing. Code 3007.</li>
 <li>cannotSerializeImage: Cannot serialize an image to data for storing. Code 3008.</li>
+<li>cannotCreateCacheFile: Cannot create the cache file at a certain fileURL under a key. Code 3009.</li>
+<li>cannotSetCacheFileAttribute: Cannot set file attributes to a cached file. Code 3010.</li>
 </ul>
 
                         <a href="../Enums/KingfisherError/CacheErrorReason.html" class="slightly-smaller">See more</a>
@@ -631,7 +655,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L103-L142">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L105-L160">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -666,7 +690,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L148-L153">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L166-L171">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -703,7 +727,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L160-L186">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L178-L204">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -714,9 +738,11 @@ then switch over the reason to know error detail.</p>
               <div class="task-name-container">
                 <a name="/Member%20Cases"></a>
                 <a name="//apple_ref/swift/Section/Member Cases" class="dashAnchor"></a>
-                <a href="#/Member%20Cases">
-                  <h3 class="section-name">Member Cases</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Member%20Cases"></a>
+                  <h3 class="section-name"><p>Member Cases</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -744,7 +770,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L191">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L209">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -774,7 +800,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L193">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L211">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -804,7 +830,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L195">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L213">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -834,7 +860,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L197">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L215">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -864,7 +890,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L199">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L217">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -875,9 +901,11 @@ then switch over the reason to know error detail.</p>
               <div class="task-name-container">
                 <a name="/Helper%20Properties%20&amp;%20Methods"></a>
                 <a name="//apple_ref/swift/Section/Helper Properties &amp; Methods" class="dashAnchor"></a>
-                <a href="#/Helper%20Properties%20&amp;%20Methods">
-                  <h3 class="section-name">Helper Properties &amp; Methods</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Helper%20Properties%20&amp;%20Methods"></a>
+                  <h3 class="section-name"><p>Helper Properties &amp; Methods</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -905,7 +933,7 @@ then switch over the reason to know error detail.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L204-L209">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L222-L227">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -960,7 +988,7 @@ associated value is a given status code.</p>
        and its status code equals to <code>code</code>, <code>true</code> is returned. Otherwise, <code>false</code>.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L217-L222">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L235-L240">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -990,7 +1018,7 @@ associated value is a given status code.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L224-L229">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L242-L247">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1023,7 +1051,7 @@ to let you know the setting process finishes with a certain result, but the imag
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L235-L240">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L253-L258">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1034,9 +1062,11 @@ to let you know the setting process finishes with a certain result, but the imag
               <div class="task-name-container">
                 <a name="/LocalizedError%20Conforming"></a>
                 <a name="//apple_ref/swift/Section/LocalizedError Conforming" class="dashAnchor"></a>
-                <a href="#/LocalizedError%20Conforming">
-                  <h3 class="section-name">LocalizedError Conforming</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/LocalizedError%20Conforming"></a>
+                  <h3 class="section-name"><p>LocalizedError Conforming</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1064,7 +1094,7 @@ to let you know the setting process finishes with a certain result, but the imag
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L247-L255">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L265-L273">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1075,9 +1105,11 @@ to let you know the setting process finishes with a certain result, but the imag
               <div class="task-name-container">
                 <a name="/CustomNSError%20Conforming"></a>
                 <a name="//apple_ref/swift/Section/CustomNSError Conforming" class="dashAnchor"></a>
-                <a href="#/CustomNSError%20Conforming">
-                  <h3 class="section-name">CustomNSError Conforming</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/CustomNSError%20Conforming"></a>
+                  <h3 class="section-name"><p>CustomNSError Conforming</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1105,7 +1137,7 @@ to let you know the setting process finishes with a certain result, but the imag
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L263">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L281">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1135,7 +1167,7 @@ to let you know the setting process finishes with a certain result, but the imag
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/KingfisherError.swift#L266-L274">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/KingfisherError.swift#L284-L292">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1148,8 +1180,8 @@ to let you know the setting process finishes with a certain result, but the imag
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

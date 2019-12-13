@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.11.0 Docs
+          Kingfisher 5.12.0 Docs
         </a>
          (83% documented)
       </p>
@@ -192,13 +192,22 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@S@CGSize">CGSize</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KingfisherWrapper.html">KingfisherWrapper</a>
@@ -210,7 +219,16 @@
                 <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:SS">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/WKInterfaceImage">WKInterfaceImage</a>
               </li>
             </ul>
           </li>
@@ -491,7 +509,7 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>ImageCache</h1>
               <div class="declaration">
                 <div class="language">
@@ -516,9 +534,11 @@ the memory and disk storage config.</p>
               <div class="task-name-container">
                 <a name="/Singleton"></a>
                 <a name="//apple_ref/swift/Section/Singleton" class="dashAnchor"></a>
-                <a href="#/Singleton">
-                  <h3 class="section-name">Singleton</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Singleton"></a>
+                  <h3 class="section-name"><p>Singleton</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -535,7 +555,7 @@ the memory and disk storage config.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>The default <code>ImageCache</code> object. Kingfisher will use this cache for its related methods if there is no
-other cache specified. The <code>name</code> of this default cache is <q>default</q>, and you should not use this name
+other cache specified. The <code>name</code> of this default cache is &ldquo;default&rdquo;, and you should not use this name
 for any of your customize cache.</p>
 
                       </div>
@@ -548,7 +568,7 @@ for any of your customize cache.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L148">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L148">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -559,9 +579,11 @@ for any of your customize cache.</p>
               <div class="task-name-container">
                 <a name="/Public%20Properties"></a>
                 <a name="//apple_ref/swift/Section/Public Properties" class="dashAnchor"></a>
-                <a href="#/Public%20Properties">
-                  <h3 class="section-name">Public Properties</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Public%20Properties"></a>
+                  <h3 class="section-name"><p>Public Properties</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -586,12 +608,12 @@ the storage <code>config</code> and its properties.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">memoryStorage</span><span class="p">:</span> <span class="kt"><a href="../Enums/MemoryStorage.html">MemoryStorage</a></span><span class="o">.</span><span class="kt">Backend</span><span class="o">&lt;</span><span class="kt">KFCrossPlatformImage</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">memoryStorage</span><span class="p">:</span> <span class="kt"><a href="../Enums/MemoryStorage.html">MemoryStorage</a></span><span class="o">.</span><span class="kt">Backend</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L154">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L154">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -623,7 +645,7 @@ the storage <code>config</code> and its properties.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L159">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L159">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -653,7 +675,7 @@ the storage <code>config</code> and its properties.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L164">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L164">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -664,9 +686,11 @@ the storage <code>config</code> and its properties.</p>
               <div class="task-name-container">
                 <a name="/Initializers"></a>
                 <a name="//apple_ref/swift/Section/Initializers" class="dashAnchor"></a>
-                <a href="#/Initializers">
-                  <h3 class="section-name">Initializers</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Initializers"></a>
+                  <h3 class="section-name"><p>Initializers</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -690,7 +714,7 @@ the storage <code>config</code> and its properties.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
-    <span class="nv">memoryStorage</span><span class="p">:</span> <span class="kt"><a href="../Enums/MemoryStorage.html">MemoryStorage</a></span><span class="o">.</span><span class="kt">Backend</span><span class="o">&lt;</span><span class="kt">KFCrossPlatformImage</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="nv">memoryStorage</span><span class="p">:</span> <span class="kt"><a href="../Enums/MemoryStorage.html">MemoryStorage</a></span><span class="o">.</span><span class="kt">Backend</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nv">diskStorage</span><span class="p">:</span> <span class="kt"><a href="../Enums/DiskStorage.html">DiskStorage</a></span><span class="o">.</span><span class="kt">Backend</span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
 
                         </div>
@@ -727,7 +751,7 @@ the storage <code>config</code> and its properties.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L173-L207">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L173-L207">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -779,7 +803,7 @@ with a default config based on the <code>name</code>.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L215-L217">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L215-L217">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -867,7 +891,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L233-L259">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L233-L259">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -878,9 +902,11 @@ and a closure to modify the cache directory.</p>
               <div class="task-name-container">
                 <a name="/Storing%20Images"></a>
                 <a name="//apple_ref/swift/Section/Storing Images" class="dashAnchor"></a>
-                <a href="#/Storing%20Images">
-                  <h3 class="section-name">Storing Images</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Storing%20Images"></a>
+                  <h3 class="section-name"><p>Storing Images</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -903,7 +929,7 @@ and a closure to modify the cache directory.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">KFCrossPlatformImage</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">,</span>
                 <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                 <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                 <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/KingfisherParsedOptionsInfo.html">KingfisherParsedOptionsInfo</a></span><span class="p">,</span>
@@ -913,7 +939,7 @@ and a closure to modify the cache directory.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L267-L310">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L267-L310">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -938,7 +964,7 @@ and a closure to modify the cache directory.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">KFCrossPlatformImage</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">,</span>
                   <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                   <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                   <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
@@ -1063,7 +1089,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L333-L356">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L333-L356">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1099,7 +1125,7 @@ and a closure to modify the cache directory.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L358-L375">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L358-L375">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1110,9 +1136,11 @@ and a closure to modify the cache directory.</p>
               <div class="task-name-container">
                 <a name="/Removing%20Images"></a>
                 <a name="//apple_ref/swift/Section/Removing Images" class="dashAnchor"></a>
-                <a href="#/Removing%20Images">
-                  <h3 class="section-name">Removing Images</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Removing%20Images"></a>
+                  <h3 class="section-name"><p>Removing Images</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1227,7 +1255,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L422-L447">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L422-L447">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1238,9 +1266,11 @@ and a closure to modify the cache directory.</p>
               <div class="task-name-container">
                 <a name="/Getting%20Images"></a>
                 <a name="//apple_ref/swift/Section/Getting Images" class="dashAnchor"></a>
-                <a href="#/Getting%20Images">
-                  <h3 class="section-name">Getting Images</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Getting%20Images"></a>
+                  <h3 class="section-name"><p>Getting Images</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1329,7 +1359,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L511-L521">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L511-L521">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1356,7 +1386,7 @@ and a closure to modify the cache directory.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInMemoryCache</span><span class="p">(</span>
     <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">KFCrossPlatformImage</span><span class="p">?</span></code></pre>
+    <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -1397,7 +1427,7 @@ and a closure to modify the cache directory.</p>
        has already expired, <code>nil</code> is returned.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L538-L543">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L538-L543">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1426,7 +1456,7 @@ and a closure to modify the cache directory.</p>
     <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt"><a href="../Enums/CallbackQueue.html">CallbackQueue</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">untouch</span><span class="p">,</span>
-    <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">KFCrossPlatformImage</span><span class="p">?,</span> <span class="kt"><a href="../Enums/KingfisherError.html">KingfisherError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+    <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/KingfisherError.html">KingfisherError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1486,7 +1516,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L577-L588">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L577-L588">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1497,9 +1527,11 @@ and a closure to modify the cache directory.</p>
               <div class="task-name-container">
                 <a name="/Cleaning"></a>
                 <a name="//apple_ref/swift/Section/Cleaning" class="dashAnchor"></a>
-                <a href="#/Cleaning">
-                  <h3 class="section-name">Cleaning</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Cleaning"></a>
+                  <h3 class="section-name"><p>Cleaning</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1528,7 +1560,7 @@ and a closure to modify the cache directory.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L592-L594">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L592-L594">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1578,7 +1610,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L600-L609">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L600-L609">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1608,7 +1640,7 @@ and a closure to modify the cache directory.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L612-L614">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L612-L614">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1658,7 +1690,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L625-L650">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L625-L650">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1691,7 +1723,7 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L656-L677">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L656-L677">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1702,9 +1734,11 @@ It will be called automatically when <code>UIApplicationDidEnterBackgroundNotifi
               <div class="task-name-container">
                 <a name="/Image%20Cache%20State"></a>
                 <a name="//apple_ref/swift/Section/Image Cache State" class="dashAnchor"></a>
-                <a href="#/Image%20Cache%20State">
-                  <h3 class="section-name">Image Cache State</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Image%20Cache%20State"></a>
+                  <h3 class="section-name"><p>Image Cache State</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1773,7 +1807,7 @@ It also provides information on which kind of cache can it be found in the retur
        <code>.none</code> means the image is not in cache or it is already expired.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L692-L700">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L692-L700">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1848,7 +1882,7 @@ use <code><a href="../Classes/ImageCache.html#/s:10Kingfisher10ImageCacheC15imag
                         <p>A <code>Bool</code> which indicates whether a cache could match the given <code>key</code> and <code>identifier</code> combination.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L714-L719">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L714-L719">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1923,7 +1957,7 @@ if you need.</p>
                         <p>The hash which is used as the cache file name.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L733-L739">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L733-L739">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1973,7 +2007,7 @@ It is the total file size of all cached files in the <code><a href="../Classes/I
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L745-L759">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L745-L759">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2052,7 +2086,7 @@ the path that the image should be, if it exists in disk storage.</p>
                         <p>The disk path of cached image under the given <code>key</code> and <code>identifier</code>.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L777-L783">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L777-L783">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2063,9 +2097,11 @@ the path that the image should be, if it exists in disk storage.</p>
               <div class="task-name-container">
                 <a name="/For%20App%20Extensions"></a>
                 <a name="//apple_ref/swift/Section/For App Extensions" class="dashAnchor"></a>
-                <a href="#/For%20App%20Extensions">
-                  <h3 class="section-name">For App Extensions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/For%20App%20Extensions"></a>
+                  <h3 class="section-name"><p>For App Extensions</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -2151,7 +2187,7 @@ and a closure to modify the cache directory.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Cache/ImageCache.swift#L831-L838">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/ImageCache.swift#L831-L838">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2162,9 +2198,11 @@ and a closure to modify the cache directory.</p>
               <div class="task-name-container">
                 <a name="/Deprecated"></a>
                 <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
-                <a href="#/Deprecated">
-                  <h3 class="section-name">Deprecated</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Deprecated"></a>
+                  <h3 class="section-name"><p>Deprecated</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -2196,7 +2234,7 @@ memory warning notification is received.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L316-L319">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L316-L319">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2227,7 +2265,7 @@ memory warning notification is received.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L323-L326">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L323-L326">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2258,7 +2296,7 @@ memory warning notification is received.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L331-L334">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L331-L334">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2289,7 +2327,7 @@ memory warning notification is received.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L339-L341">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L339-L341">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2322,7 +2360,7 @@ Default is no limit.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L348-L351">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L348-L351">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2352,7 +2390,7 @@ Default is no limit.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L355-L357">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L355-L357">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2378,7 +2416,7 @@ Default is no limit.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, renamed: "retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:﹚", message: "Use `Result` based `retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:﹚` instead.")</span>
-<span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInDiskCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">KFCrossPlatformImage</span><span class="p">?</span></code></pre>
+<span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImageInDiskCache</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -2419,7 +2457,7 @@ stored with a specified <code><a href="../Protocols/ImageProcessor.html">ImagePr
                         <p>The image object if it is cached, or <code>nil</code> if there is no such key in the cache.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L371-L380">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L371-L380">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2446,12 +2484,12 @@ stored with a specified <code><a href="../Protocols/ImageProcessor.html">ImagePr
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">retrieveImage</span><span class="p">(</span><span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                         <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher0A11OptionsInfoa">KingfisherOptionsInfo</a></span><span class="p">?,</span>
-                        <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">((</span><span class="kt">KFCrossPlatformImage</span><span class="p">?,</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?)</span></code></pre>
+                        <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/CacheType.html">CacheType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?)</span></code></pre>
 
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L385-L402">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L385-L402">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2484,7 +2522,7 @@ Setting this to a negative value will make the disk cache never expiring.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L408-L411">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L408-L411">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2509,7 +2547,7 @@ Setting this to a negative value will make the disk cache never expiring.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">KFCrossPlatformImage</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">store</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">,</span>
                 <span class="nv">original</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                 <span class="n">forKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                 <span class="n">processorIdentifier</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
@@ -2520,7 +2558,7 @@ Setting this to a negative value will make the disk cache never expiring.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L414-L433">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L414-L433">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2550,7 +2588,7 @@ Setting this to a negative value will make the disk cache never expiring.</p>
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L436-L441">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L436-L441">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -2563,8 +2601,8 @@ Setting this to a negative value will make the disk cache never expiring.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -324,6 +324,27 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Kingfisher.swift",
+      "line": 83,
+      "symbol": "KFCrossPlatformImage",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Kingfisher.swift",
+      "line": 85,
+      "symbol": "KFCrossPlatformImageView",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Kingfisher.swift",
+      "line": 86,
+      "symbol": "KFCrossPlatformButton",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/Kingfisher.swift",
       "line": 823,
       "symbol": "KFCrossPlatformColor",
       "symbol_kind": "source.lang.swift.decl.extension",
@@ -331,7 +352,7 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/General/KingfisherError.swift",
-      "line": 224,
+      "line": 242,
       "symbol": "KingfisherError.isInvalidResponseStatusCode",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"

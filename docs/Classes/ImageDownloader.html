@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.11.0 Docs
+          Kingfisher 5.12.0 Docs
         </a>
          (83% documented)
       </p>
@@ -192,13 +192,22 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@S@CGSize">CGSize</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher21KFCrossPlatformButtona">KFCrossPlatformButton</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KingfisherWrapper.html">KingfisherWrapper</a>
@@ -210,7 +219,16 @@
                 <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:SS">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/WKInterfaceImage">WKInterfaceImage</a>
               </li>
             </ul>
           </li>
@@ -491,11 +509,13 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>ImageDownloader</h1>
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ImageDownloader</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ImageDownloader</span><span class="p">:</span> <span class="kt"><a href="../Protocols/AuthenticationChallengeResponsable.html">AuthenticationChallengeResponsable</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ImageDownloader</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ImageDownloaderDelegate.html">ImageDownloaderDelegate</a></span></code></pre>
 
                 </div>
               </div>
@@ -510,9 +530,11 @@
               <div class="task-name-container">
                 <a name="/Singleton"></a>
                 <a name="//apple_ref/swift/Section/Singleton" class="dashAnchor"></a>
-                <a href="#/Singleton">
-                  <h3 class="section-name">Singleton</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Singleton"></a>
+                  <h3 class="section-name"><p>Singleton</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -540,7 +562,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L103">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L103">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -551,9 +573,11 @@
               <div class="task-name-container">
                 <a name="/Public%20Properties"></a>
                 <a name="//apple_ref/swift/Section/Public Properties" class="dashAnchor"></a>
-                <a href="#/Public%20Properties">
-                  <h3 class="section-name">Public Properties</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Public%20Properties"></a>
+                  <h3 class="section-name"><p>Public Properties</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -581,7 +605,7 @@
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L107">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L107">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -616,7 +640,7 @@ specify the <code><a href="../Classes/ImageDownloader.html#/s:10Kingfisher15Imag
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L115">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L115">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -650,7 +674,7 @@ A configuration without persistent storage for caches is requested for downloade
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L122-L127">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L122-L127">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -680,7 +704,7 @@ A configuration without persistent storage for caches is requested for downloade
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L130">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L130">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -710,7 +734,7 @@ A configuration without persistent storage for caches is requested for downloade
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L133">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L133">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -741,7 +765,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L137">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L137">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -752,9 +776,11 @@ Downloader will forward the received authentication challenge for the downloadin
               <div class="task-name-container">
                 <a name="/Initializers"></a>
                 <a name="//apple_ref/swift/Section/Initializers" class="dashAnchor"></a>
-                <a href="#/Initializers">
-                  <h3 class="section-name">Initializers</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Initializers"></a>
+                  <h3 class="section-name"><p>Initializers</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -801,7 +827,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L148-L164">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L148-L164">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -812,9 +838,11 @@ Downloader will forward the received authentication challenge for the downloadin
               <div class="task-name-container">
                 <a name="/Dowloading%20Task"></a>
                 <a name="//apple_ref/swift/Section/Dowloading Task" class="dashAnchor"></a>
-                <a href="#/Dowloading%20Task">
-                  <h3 class="section-name">Dowloading Task</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Dowloading%20Task"></a>
+                  <h3 class="section-name"><p>Dowloading Task</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -894,7 +922,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         <p>A downloading task. You could call <code>cancel</code> on it to stop the download task.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L206-L322">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L206-L322">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -989,7 +1017,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         <p>A downloading task. You could call <code>cancel</code> on it to stop the download task.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L334-L348">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L334-L348">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1000,9 +1028,11 @@ Downloader will forward the received authentication challenge for the downloadin
               <div class="task-name-container">
                 <a name="/Deprecated"></a>
                 <a name="//apple_ref/swift/Section/Deprecated" class="dashAnchor"></a>
-                <a href="#/Deprecated">
-                  <h3 class="section-name">Deprecated</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Deprecated"></a>
+                  <h3 class="section-name"><p>Deprecated</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1035,7 +1065,7 @@ Downloader will forward the received authentication challenge for the downloadin
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/General/Deprecated.swift#L115-L128">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/General/Deprecated.swift#L115-L128">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1046,9 +1076,11 @@ Downloader will forward the received authentication challenge for the downloadin
               <div class="task-name-container">
                 <a name="/Cancelling%20Task"></a>
                 <a name="//apple_ref/swift/Section/Cancelling Task" class="dashAnchor"></a>
-                <a href="#/Cancelling%20Task">
-                  <h3 class="section-name">Cancelling Task</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Cancelling%20Task"></a>
+                  <h3 class="section-name"><p>Cancelling Task</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1081,7 +1113,7 @@ use <code><a href="../Classes/ImageDownloader.html#/s:10Kingfisher15ImageDownloa
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L360-L362">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L360-L362">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1131,7 +1163,7 @@ all not-yet-finished downloading tasks for the URL.</p>
                         </table>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.11.0/Sources/Networking/ImageDownloader.swift#L368-L370">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Networking/ImageDownloader.swift#L368-L370">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -1144,8 +1176,8 @@ all not-yet-finished downloading tasks for the URL.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-11-30)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.12.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
