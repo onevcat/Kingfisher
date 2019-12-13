@@ -36,7 +36,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
 
   s.default_subspecs = "Core"
-  s.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS' => '-DKingfisherCocoaPods' }
 
   s.requires_arc = true
   s.frameworks = "CFNetwork", "Accelerate"
@@ -54,6 +53,7 @@ Pod::Spec.new do |s|
     sp.tvos.deployment_target = "13.0"
     sp.osx.deployment_target = "10.15"
     sp.watchos.deployment_target = "6.0"
+    sp.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS' => '-DKingfisherCocoaPods' }
   end
 
 end
