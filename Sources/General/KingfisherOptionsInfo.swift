@@ -366,7 +366,7 @@ class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
                 return
             }
 
-            let dataLength: Int64 = Int64(task.mutableData.count)
+            let dataLength = Int64(task.mutableData.count)
             self.block(dataLength, expectedContentLength)
         }
     }

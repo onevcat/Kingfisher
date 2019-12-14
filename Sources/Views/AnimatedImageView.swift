@@ -298,7 +298,7 @@ open class AnimatedImageView: UIImageView {
             duration = displayLink.duration
         } else {
             // Some devices (like iPad Pro 10.5) will have a different FPS.
-            duration = 1.0 / Double(preferredFramesPerSecond)
+            duration = 1.0 / TimeInterval(preferredFramesPerSecond)
         }
 
         animator.shouldChangeFrame(with: duration) { [weak self] hasNewFrame in
