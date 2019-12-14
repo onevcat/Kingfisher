@@ -31,7 +31,7 @@ struct TimeConstants {
     static let secondsInOneMinute = 60
     static let minutesInOneHour = 60
     static let hoursInOneDay = 24
-    static let secondsInOneDay = TimeInterval(secondsInOneMinute * minutesInOneHour * hoursInOneDay)
+    static let secondsInOneDay = 86_400
 }
 
 /// Represents the expiration strategy used in storage.
@@ -58,7 +58,7 @@ public enum StorageExpiration {
         case .seconds(let seconds):
             return date.addingTimeInterval(seconds)
         case .days(let days):
-            let duration = TimeConstants.secondsInOneDay * TimeInterval(days)
+            let duration = TimeInterval(TimeConstants.secondsInOneDay) * TimeInterval(days)
             return date.addingTimeInterval(duration)
         case .date(let ref):
             return ref
@@ -79,7 +79,7 @@ public enum StorageExpiration {
         switch self {
         case .never: return .infinity
         case .seconds(let seconds): return seconds
-        case .days(let days): return TimeConstants.secondsInOneDay * TimeInterval(days)
+        case .days(let days): return TimeInterval(TimeConstants.secondsInOneDay) * TimeInterval(days)
         case .date(let ref): return ref.timeIntervalSinceNow
         case .expired: return -(.infinity)
         }
