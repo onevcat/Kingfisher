@@ -111,9 +111,16 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// If `original` is `nil`, the input `image` will be encoded as PNG data.
     public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
         if preferCacheOriginalData {
-            return original ?? image.kf.data(format: original?.kf.imageFormat ?? .unknown)
+            return original ??
+                image.kf.data(
+                    format: original?.kf.imageFormat ?? .unknown,
+                    compressionQuality: compressionQuality
+                )
         } else {
-            return image.kf.data(format: original?.kf.imageFormat ?? .unknown)
+            return image.kf.data(
+                format: original?.kf.imageFormat ?? .unknown,
+                compressionQuality: compressionQuality
+            )
         }
     }
     
