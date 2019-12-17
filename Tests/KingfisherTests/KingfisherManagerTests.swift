@@ -962,7 +962,7 @@ class KingfisherManagerTests: XCTestCase {
                 let fileURL = self.manager.cache.diskStorage.cacheFileURL(forKey: computedKey)
                 let data = try! Data(contentsOf: fileURL)
                 XCTAssertNotEqual(data, testImageJEPGData)
-                XCTAssertEqual(data, testImage.jpegData(compressionQuality: 0.8))
+                XCTAssertEqual(data, testImage.kf.jpegRepresentation(compressionQuality: 0.8))
 
                 exp.fulfill()
             }
