@@ -917,6 +917,57 @@ class KingfisherManagerTests: XCTestCase {
         coordinator.apply(.cachingOriginalImage) { called = true }
         XCTAssertEqual(coordinator.state, .done)
     }
+
+    func testCanUseCustomizeDefaultCacheSerializer() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        var cacheSerializer = DefaultCacheSerializer()
+        cacheSerializer.preferCacheOriginalData = true
+
+        manager.cache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            cacheSerializer: cacheSerializer, toDisk: true) {
+                result in
+
+                let computedKey = url.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
+                let fileURL = self.manager.cache.diskStorage.cacheFileURL(forKey: computedKey)
+                let data = try! Data(contentsOf: fileURL)
+                XCTAssertEqual(data, testImageData)
+
+                exp.fulfill()
+            }
+        waitForExpectations(timeout: 1.0)
+    }
+
+    func testCanUseCustomizeDefaultCacheSerializerStoreEncoded() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        var cacheSerializer = DefaultCacheSerializer()
+        cacheSerializer.compressionQuality = 0.8
+
+        manager.cache.store(
+            testImage,
+            original: testImageJEPGData,
+            forKey: url.cacheKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            cacheSerializer: cacheSerializer, toDisk: true) {
+                result in
+
+                let computedKey = url.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
+                let fileURL = self.manager.cache.diskStorage.cacheFileURL(forKey: computedKey)
+                let data = try! Data(contentsOf: fileURL)
+                XCTAssertNotEqual(data, testImageJEPGData)
+                XCTAssertEqual(data, testImage.kf.jpegRepresentation(compressionQuality: 0.8))
+
+                exp.fulfill()
+            }
+        waitForExpectations(timeout: 1.0)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
