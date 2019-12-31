@@ -341,10 +341,12 @@ extension KingfisherWrapper where Base: ImageView {
                 
                 base.addSubview(view)
                 view.translatesAutoresizingMaskIntoConstraints = false
-                view.centerXAnchor.constraint(
-                    equalTo: base.centerXAnchor, constant: newIndicator.centerOffset.x).isActive = true
-                view.centerYAnchor.constraint(
-                    equalTo: base.centerYAnchor, constant: newIndicator.centerOffset.y).isActive = true
+                if #available(iOS 9.0, *) {
+                    view.centerXAnchor.constraint(
+                        equalTo: base.centerXAnchor, constant: newIndicator.centerOffset.x).isActive = true
+                    view.centerYAnchor.constraint(
+                        equalTo: base.centerYAnchor, constant: newIndicator.centerOffset.y).isActive = true
+                }
                 
                 newIndicator.view.isHidden = true
             }

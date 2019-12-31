@@ -62,11 +62,13 @@ extension Placeholder where Self: View {
     public func add(to imageView: ImageView) {
         imageView.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false
-
-        centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
-        centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
-        heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
-        widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        
+        if #available(iOS 9.0, *) {
+            centerXAnchor.constraint(equalTo: imageView.centerXAnchor).isActive = true
+            centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+            heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+            widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        }
     }
 
     /// How the placeholder should be removed from a given image view.
