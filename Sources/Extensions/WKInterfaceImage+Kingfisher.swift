@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(WatchKit)
+
 import WatchKit
 
 extension KingfisherWrapper where Base: WKInterfaceImage {
@@ -184,3 +186,5 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
         set { }
     }
 }
+
+#endif
