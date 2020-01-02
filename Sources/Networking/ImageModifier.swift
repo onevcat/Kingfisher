@@ -86,6 +86,7 @@ public struct RenderingModeImageModifier: ImageModifier {
 }
 
 /// Modifier for setting the `flipsForRightToLeftLayoutDirection` property of images.
+@available(iOS 9.0, *)
 public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
 
     /// Creates a `FlipsForRightToLeftLayoutDirectionImageModifier`.

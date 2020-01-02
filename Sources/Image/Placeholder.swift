@@ -68,6 +68,11 @@ extension Placeholder where Self: View {
             centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
             heightAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
             widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        } else {
+            NSLayoutConstraint(item: self, attribute: .centerX, relatedBy: .equal, toItem: imageView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
+            NSLayoutConstraint(item: self, attribute: .centerY, relatedBy: .equal, toItem: imageView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
+            NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 1, constant: 0).isActive = true
+            NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: imageView, attribute: .width, multiplier: 1, constant: 0).isActive = true
         }
     }
 

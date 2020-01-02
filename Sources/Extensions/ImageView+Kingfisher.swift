@@ -346,6 +346,9 @@ extension KingfisherWrapper where Base: ImageView {
                         equalTo: base.centerXAnchor, constant: newIndicator.centerOffset.x).isActive = true
                     view.centerYAnchor.constraint(
                         equalTo: base.centerYAnchor, constant: newIndicator.centerOffset.y).isActive = true
+                } else {
+                    NSLayoutConstraint(item: view, attribute: .centerX, relatedBy: .equal, toItem: base, attribute: .centerX, multiplier: 1, constant: newIndicator.centerOffset.x).isActive = true
+                    NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: base, attribute: .centerY, multiplier: 1, constant: newIndicator.centerOffset.y).isActive = true
                 }
                 
                 newIndicator.view.isHidden = true
