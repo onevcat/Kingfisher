@@ -48,6 +48,13 @@ public protocol ImageDataProvider {
     /// `ImageSettingErrorReason` will be finally thrown out to you as the `KingfisherError`
     /// from the framework.
     func data(handler: @escaping (Result<Data, Error>) -> Void)
+
+    /// The content URL represents this provider, if exists.
+    var contentURL: URL? { get }
+}
+
+public extension ImageDataProvider {
+    var contentURL: URL? { return nil }
 }
 
 /// Represents an image data provider for loading from a local file URL on disk.
@@ -81,6 +88,11 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
 
     public func data(handler: (Result<Data, Error>) -> Void) {
         handler(Result(catching: { try Data(contentsOf: fileURL) }))
+    }
+
+    /// The URL of the local file on the disk.
+    public var contentURL: URL? {
+        return fileURL
     }
 }
 

@@ -150,9 +150,8 @@ public class KingfisherManager {
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
-        let source = Source.network(resource)
         return retrieveImage(
-            with: source,
+            with: resource.convertToSource(),
             options: options,
             progressBlock: progressBlock,
             downloadTaskUpdated: downloadTaskUpdated,
