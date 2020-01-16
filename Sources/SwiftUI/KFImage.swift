@@ -75,7 +75,7 @@ public struct KFImage: SwiftUI.View {
     /// - Parameter options: The options should be applied when loading the image.
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
     public init(_ url: URL?, options: KingfisherOptionsInfo? = nil) {
-        let source = url.map { Source.network($0) }
+		let source: Source? = url.map { $0.isFileURL ? Source.provider(LocalFileImageDataProvider(fileURL: $0)) : Source.network($0) }
         self.init(source: source, options: options)
     }
 
