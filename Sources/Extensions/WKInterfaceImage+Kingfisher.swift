@@ -154,7 +154,7 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         return setImage(
-            with: resource.map { .network($0) },
+            with: resource.convertToSource(),
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
