@@ -157,7 +157,7 @@ public class ImagePrefetcher: CustomStringConvertible {
         progressBlock: PrefetcherProgressBlock? = nil,
         completionHandler: PrefetcherCompletionHandler? = nil)
     {
-        self.init(sources: resources.map { .network($0) }, options: options)
+        self.init(sources: resources.map { $0.convertToSource() }, options: options)
         self.progressBlock = progressBlock
         self.completionHandler = completionHandler
     }
