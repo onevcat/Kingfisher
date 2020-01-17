@@ -18,7 +18,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gem-
       - name: Install Gems
-        run: bundle install --path vendor/bundle
+        run: bundle config set path 'vendor/bundle' && bundle install
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
