@@ -2,6 +2,18 @@
 
 -----
 
+## [5.13.0 - New Year 2020](https://github.com/onevcat/Kingfisher/releases/tag/5.13.0) (2020-01-17)
+
+#### Add
+* Mark `DefaultCacheSerializer` as `public` and enables the ability of original data caching. [#1373](https://github.com/onevcat/Kingfisher/pull/1373/)
+* Add image compression quality parameter to `DefaultCacheSerializer`. [#1372](https://github.com/onevcat/Kingfisher/pull/1372/)
+* A new `contentURL` property in `ImageDataProvider` to provide a URL when it makes sense. [#1386](https://github.com/onevcat/Kingfisher/pull/1386/)
+
+#### Fix
+* Now, local file URLs can be loaded as `Resource`s without converted to `LocalFileImageDataProvider` explicitly. [#1386](https://github.com/onevcat/Kingfisher/pull/1386/)
+
+---
+
 ## [5.12.0 - White Overflow](https://github.com/onevcat/Kingfisher/releases/tag/5.12.0) (2019-12-13)
 
 #### Add

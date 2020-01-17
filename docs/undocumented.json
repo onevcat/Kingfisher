@@ -2,7 +2,7 @@
   "warnings": [
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Cache/CacheSerializer.swift",
-      "line": 71,
+      "line": 72,
       "symbol": "CacheSerializer.image(with:options:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

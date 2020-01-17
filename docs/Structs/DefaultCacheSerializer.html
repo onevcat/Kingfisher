@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.12.0 Docs
+          Kingfisher 5.13.0 Docs
         </a>
          (83% documented)
       </p>
@@ -553,7 +553,104 @@ image other than these formats, a normalized <code>pngRepresentation</code> will
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/CacheSerializer.swift#L82">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/CacheSerializer.swift#L83">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher22DefaultCacheSerializerV18compressionQuality12CoreGraphics7CGFloatVvp"></a>
+                    <a name="//apple_ref/swift/Property/compressionQuality" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher22DefaultCacheSerializerV18compressionQuality12CoreGraphics7CGFloatVvp">compressionQuality</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The compression quality when converting image to a lossy format data. Default is 1.0.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">compressionQuality</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/CacheSerializer.swift#L86">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher22DefaultCacheSerializerV06preferC12OriginalDataSbvp"></a>
+                    <a name="//apple_ref/swift/Property/preferCacheOriginalData" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher22DefaultCacheSerializerV06preferC12OriginalDataSbvp">preferCacheOriginalData</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Whether the original data should be preferred when serializing the image.
+If <code>true</code>, the input original data will be checked first and used unless the data is <code>nil</code>.
+In that case, the serialization will fall back to creating data from image.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">preferCacheOriginalData</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/CacheSerializer.swift#L91">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher22DefaultCacheSerializerVACycfc"></a>
+                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher22DefaultCacheSerializerVACycfc">init()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a cache serializer that serialize and deserialize images in PNG, JPEG and GIF format.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Use <code><a href="../Structs/DefaultCacheSerializer.html#/s:10Kingfisher22DefaultCacheSerializerV7defaultACvpZ">DefaultCacheSerializer.default</a></code> unless you need to specify your own properties.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/CacheSerializer.swift#L98">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -627,7 +724,7 @@ If <code>original</code> is <code>nil</code>, the input <code>image</code> will 
        data could be serialized.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/CacheSerializer.swift#L97-L99">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/CacheSerializer.swift#L112-L125">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -693,7 +790,7 @@ If <code>original</code> is <code>nil</code>, the input <code>image</code> will 
        could be deserialized.</p>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/CacheSerializer.swift#L108-L110">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/CacheSerializer.swift#L134-L136">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -706,8 +803,8 @@ If <code>original</code> is <code>nil</code>, the input <code>image</code> will 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2020-01-17)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.12.0 Docs
+          Kingfisher 5.13.0 Docs
         </a>
          (83% documented)
       </p>
@@ -575,7 +575,7 @@ represented by PNG format, it will fallback to its real format which is determin
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L58">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L59">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -594,7 +594,9 @@ represented by PNG format, it will fallback to its real format which is determin
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>A <code>FormatIndicatedCacheSerializer</code> which converts image from and to JPEG format. If the image cannot be
-represented by JPEG format, it will fallback to its real format which is determined by <code>original</code> data.</p>
+represented by JPEG format, it will fallback to its real format which is determined by <code>original</code> data.
+The compression quality is 1.0 when using this serializer. If you need to set a customized compression quality,
+use <code><a href="../Structs/FormatIndicatedCacheSerializer.html#/s:10Kingfisher30FormatIndicatedCacheSerializerV4jpeg18compressionQualityAC12CoreGraphics7CGFloatV_tFZ">jpeg(compressionQuality:)</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -606,7 +608,58 @@ represented by JPEG format, it will fallback to its real format which is determi
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L62">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L65">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Kingfisher30FormatIndicatedCacheSerializerV4jpeg18compressionQualityAC12CoreGraphics7CGFloatV_tFZ"></a>
+                    <a name="//apple_ref/swift/Method/jpeg(compressionQuality:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Kingfisher30FormatIndicatedCacheSerializerV4jpeg18compressionQualityAC12CoreGraphics7CGFloatV_tFZ">jpeg(compressionQuality:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A <code>FormatIndicatedCacheSerializer</code> which converts image from and to JPEG format with a settable compression
+quality. If the image cannot be represented by JPEG format, it will fallback to its real format which is
+determined by <code>original</code> data.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">jpeg</span><span class="p">(</span><span class="nv">compressionQuality</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">FormatIndicatedCacheSerializer</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>compressionQuality</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The compression quality when converting image to JPEG data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L71-L73">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -637,7 +690,7 @@ represented by GIF format, it will fallback to its real format which is determin
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L66">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L77">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -667,7 +720,7 @@ represented by GIF format, it will fallback to its real format which is determin
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L72-L98">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L86-L112">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -697,7 +750,7 @@ represented by GIF format, it will fallback to its real format which is determin
                         </div>
                       </div>
                       <div class="slightly-smaller">
-                        <a href="https://github.com/onevcat/Kingfisher/tree/5.12.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L101-L103">Show on GitHub</a>
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.0/Sources/Cache/FormatIndicatedCacheSerializer.swift#L115-L117">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -710,8 +763,8 @@ represented by GIF format, it will fallback to its real format which is determin
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2019-12-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2020-01-17)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
