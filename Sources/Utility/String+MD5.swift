@@ -30,28 +30,13 @@ import CommonCrypto
 extension String: KingfisherCompatibleValue { }
 extension KingfisherWrapper where Base == String {
     var md5: String {
-        guard let data = base.data(using: .utf8) else {
-            return base
+        let data = Data(self.base.utf8)
+        let hash = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> [UInt8] in
+            var hash = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+            CC_MD5(bytes.baseAddress, CC_LONG(data.count), &hash)
+            return hash
         }
-
-        #if swift(>=5.0)
-        let message = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
-            return [UInt8](bytes)
-        }
-        #else
-        let message = data.withUnsafeBytes { bytes in
-            return [UInt8](UnsafeBufferPointer(start: bytes, count: data.count))
-        }
-        #endif
-
-        let MD5Calculator = MD5(message)
-        let MD5Data = MD5Calculator.calculate()
-
-        var MD5String = String()
-        for c in MD5Data {
-            MD5String += String(format: "%02x", c)
-        }
-        return MD5String
+        return hash.map { String(format: "%02x", $0) }.joined()
     }
 }
 
