@@ -1,0 +1,20 @@
+KingfisherSwiftUI:
+  project: Kingfisher.xcworkspace
+  sdks:
+  - watchsimulator
+  - iphonesimulator
+  - appletvsimulator
+  - watchos
+  - appletvos
+  - iphoneos
+  - macosx
+Kingfisher:
+  project: Kingfisher.xcworkspace
+  sdks:
+  - watchsimulator
+  - iphonesimulator
+  - appletvsimulator
+  - watchos
+  - appletvos
+  - iphoneos
+  - macosx
