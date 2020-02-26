@@ -627,12 +627,19 @@ class CacheCallbackCoordinator {
 
     private let shouldWaitForCache: Bool
     private let shouldCacheOriginal: Bool
+    private let stateQueue: DispatchQueue
+    private var threadSafeState: State = .idle
 
-    private (set) var state: State = .idle
+    private (set) var state: State {
+        set { stateQueue.sync { threadSafeState = newValue } }
+        get { stateQueue.sync { threadSafeState } }
+    }
 
     init(shouldWaitForCache: Bool, shouldCacheOriginal: Bool) {
         self.shouldWaitForCache = shouldWaitForCache
         self.shouldCacheOriginal = shouldCacheOriginal
+        let stateQueueName = "com.onevcat.Kingfisher.CacheCallbackCoordinator.stateQueue.\(UUID().uuidString)"
+        self.stateQueue = DispatchQueue(label: stateQueueName)
     }
 
     func apply(_ action: Action, trigger: () -> Void) {
