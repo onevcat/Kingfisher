@@ -84,7 +84,12 @@ extension KFImage {
                         self.downloadTask = nil
                         switch result {
                         case .success(let value):
-                            self.image = value.image
+                            // The normalized version of image is used to solve #1395
+                            // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
+                            // by `Image.init(uiImage:)`. (The orientation information should be already contained in
+                            // a `UIImage`)
+                            // https://github.com/onevcat/Kingfisher/issues/1395
+                            self.image = value.image.kf.normalized
                             DispatchQueue.main.async {
                                 self.onSuccessDelegate.call(value)
                             }
