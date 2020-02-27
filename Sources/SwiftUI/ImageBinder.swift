@@ -84,7 +84,7 @@ extension KFImage {
                         self.downloadTask = nil
                         switch result {
                         case .success(let value):
-                            self.image = value.image
+                            self.image = value.image.kf.normalized
                             DispatchQueue.main.async {
                                 self.onSuccessDelegate.call(value)
                             }
