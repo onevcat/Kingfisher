@@ -12,15 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/cache@v1
+        id: bundler-cache
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gems-
+      - name: Bundle setup
+        run: bundle config path vendor/bundle
       - name: Bundle install
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+        if: steps.bundler-cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
