@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Kingfisher 5.13.2 Docs
+          Kingfisher 5.13.3 Docs
         </a>
          (77% documented)
       </p>
@@ -66,10 +66,10 @@
                 <a class="nav-group-task-link" href="../Classes/AnimatedImageView/RepeatCount.html">– RepeatCount</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/AnimatedImageView.html#/s:10Kingfisher17AnimatedImageViewC0B5FrameV">– AnimatedFrame</a>
+                <a class="nav-group-task-link" href="../Classes/AnimatedImageView.html#/AnimatedFrame">– AnimatedFrame</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/AnimatedImageView.html#/s:10Kingfisher17AnimatedImageViewC8AnimatorC">– Animator</a>
+                <a class="nav-group-task-link" href="../Classes/AnimatedImageView.html#/Animator">– Animator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ImageCache.html">ImageCache</a>
@@ -246,9 +246,6 @@
                 <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImage.html">KFCrossPlatformImage</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/KFCrossPlatformImageView.html">KFCrossPlatformImageView</a>
               </li>
               <li class="nav-group-task">
@@ -267,6 +264,9 @@
                 <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/RectCorner.html">RectCorner</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
               </li>
               <li class="nav-group-task">
@@ -276,7 +276,7 @@
                 <a class="nav-group-task-link" href="../Extensions/UIActivityIndicatorView/Style.html">– Style</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)UIApplication">UIApplication</a>
+                <a class="nav-group-task-link" href="../Extensions.html#/UIApplication">UIApplication</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
@@ -568,7 +568,16 @@
         <section class="section">
           <div class="section-content top-matter">
             <h1>KFCrossPlatformImage</h1>
-            
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">:</span> <span class="kt"><a href="../Protocols/CacheCostCalculable.html">CacheCostCalculable</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">:</span> <span class="kt"><a href="../Protocols/KingfisherCompatible.html">KingfisherCompatible</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher20KFCrossPlatformImagea">KFCrossPlatformImage</a></span><span class="p">:</span> <span class="kt"><a href="../Protocols/Placeholder.html">Placeholder</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>Undocumented</p>
+
           </div>
         </section>
 
@@ -579,9 +588,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/"></a>
-                    <a name="//apple_ref/swift/Method/init(data:scale:)" class="dashAnchor"></a>
-                    <a class="token" href="#/">init(data:scale:)</a>
+                    <a name="/s:So7NSImageC10KingfisherE9cacheCostSivp"></a>
+                    <a name="//apple_ref/swift/Property/cacheCost" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7NSImageC10KingfisherE9cacheCostSivp">cacheCost</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -589,7 +598,109 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Cost of an image</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">cacheCost</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.3/Sources/Cache/ImageCache.swift#L83">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7NSImageC10KingfisherE3add2toySo0A4ViewC_tF"></a>
+                    <a name="//apple_ref/swift/Method/add(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7NSImageC10KingfisherE3add2toySo0A4ViewC_tF">add(to:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>How the placeholder should be added to a given image view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="n">to</span> <span class="nv">imageView</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.3/Sources/Image/Placeholder.swift#L50">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7NSImageC10KingfisherE6remove4fromySo0A4ViewC_tF"></a>
+                    <a name="//apple_ref/swift/Method/remove(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7NSImageC10KingfisherE6remove4fromySo0A4ViewC_tF">remove(from:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>How the placeholder should be removed from a given image view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">remove</span><span class="p">(</span><span class="n">from</span> <span class="nv">imageView</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10Kingfisher24KFCrossPlatformImageViewa">KFCrossPlatformImageView</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.3/Sources/Image/Placeholder.swift#L53">Show on GitHub</a>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7NSImageC10KingfisherE4data5scaleABSg10Foundation4DataV_12CoreGraphics7CGFloatVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(data:scale:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7NSImageC10KingfisherE4data5scaleABSg10Foundation4DataV_12CoreGraphics7CGFloatVtcfc">init(data:scale:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="n">convenience</span> <span class="nf">init</span><span class="p">?(</span><span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="nv">scale</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div class="slightly-smaller">
+                        <a href="https://github.com/onevcat/Kingfisher/tree/5.13.3/Sources/Utility/ExtensionHelpers.swift#L79-L81">Show on GitHub</a>
                       </div>
                     </section>
                   </div>
@@ -602,7 +713,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2020-02-28)</p>
+      <p>&copy; 2020 <a class="link" href="https://onevcat.com" target="_blank" rel="external">Wei Wang</a>. All rights reserved. (Last updated: 2020-04-01)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

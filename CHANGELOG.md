@@ -2,6 +2,14 @@
 
 -----
 
+## [5.13.3 - Dynamic SPM](https://github.com/onevcat/Kingfisher/releases/tag/5.13.3) (2020-04-01)
+
+#### Fix
+* Allows Carthage to build this library for macOS. [#1413](https://github.com/onevcat/Kingfisher/pull/1413)
+* Explicitly specify to build as a dynamic framework for Swift Package Manager. [#1420](https://github.com/onevcat/Kingfisher/pull/1420)
+
+---
+
 ## [5.13.2 - KFImage Orientation](https://github.com/onevcat/Kingfisher/releases/tag/5.13.2) (2020-02-28)
 
 #### Fix
