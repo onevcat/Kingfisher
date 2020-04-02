@@ -95,11 +95,16 @@ public struct KFImage: SwiftUI.View {
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .onDisappear { [unowned binder = self.binder] in
-                    if self.cancelOnDisappear { binder.cancel() }
+                .onDisappear { [weak binder = self.binder] in
+                    if self.cancelOnDisappear {
+                        binder?.cancel()
+                    }
                 }
             }
-        }.onAppear { [unowned binder] in
+        }.onAppear { [weak binder] in
+            guard let binder = binder else {
+                return
+            }
             if !binder.loadingOrSuccessed {
                 binder.start()
             }
