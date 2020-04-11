@@ -64,8 +64,11 @@ public struct KFImage: SwiftUI.View {
     /// - Parameter source: The image `Source` defining where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
-    public init(source: Source?, options: KingfisherOptionsInfo? = nil) {
-        binder = ImageBinder(source: source, options: options)
+    /// - Parameter isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
+    ///                       state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
+    ///                       wrapped value from outside.
+    public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
+        binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
         configurations = []
         binder.start()
     }
@@ -74,8 +77,11 @@ public struct KFImage: SwiftUI.View {
     /// - Parameter url: The image URL from where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
-    public init(_ url: URL?, options: KingfisherOptionsInfo? = nil) {
-        self.init(source: url?.convertToSource(), options: options)
+    /// - Parameter isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
+    ///                       state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
+    ///                       wrapped value from outside.
+    public init(_ url: URL?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
+        self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
     }
 
     /// Declares the content and behavior of this view.

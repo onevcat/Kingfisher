@@ -49,11 +49,14 @@ extension KFImage {
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
         let onProgressDelegate = Delegate<(Int64, Int64), Void>()
 
+        var isLoaded: Binding<Bool>
+
         @Published var image: KFCrossPlatformImage?
 
-        init(source: Source?, options: KingfisherOptionsInfo?) {
+        init(source: Source?, options: KingfisherOptionsInfo?, isLoaded: Binding<Bool>) {
             self.source = source
             self.options = options
+            self.isLoaded = isLoaded
             self.image = nil
         }
 
@@ -91,6 +94,7 @@ extension KFImage {
                             // https://github.com/onevcat/Kingfisher/issues/1395
                             self.image = value.image.kf.normalized
                             DispatchQueue.main.async {
+                                self.isLoaded.wrappedValue = true
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
@@ -108,19 +112,19 @@ extension KFImage {
         }
 
         func setOnFailure(perform action: ((KingfisherError) -> Void)?) {
-            onFailureDelegate.delegate(on: self) { _, error in
+            onFailureDelegate.delegate(on: self) { (self, error) in
                 action?(error)
             }
         }
 
         func setOnSuccess(perform action: ((RetrieveImageResult) -> Void)?) {
-            onSuccessDelegate.delegate(on: self) { _, result in
+            onSuccessDelegate.delegate(on: self) { (self, result) in
                 action?(result)
             }
         }
 
         func setOnProgress(perform action: ((Int64, Int64) -> Void)?) {
-            onProgressDelegate.delegate(on: self) { _, result in
+            onProgressDelegate.delegate(on: self) { (self, result) in
                 action?(result.0, result.1)
             }
         }
