@@ -2,6 +2,13 @@
 
 -----
 
+## [5.13.4 - Build Configurations](https://github.com/onevcat/Kingfisher/releases/tag/5.13.4) (2020-04-11)
+
+#### Fix
+* Expose all build configurations in Package.swift file for Swift Package Manager. Now you can choose the linking style by yourself. [#1426](https://github.com/onevcat/Kingfisher/pull/1426)
+
+---
+
 ## [5.13.3 - Dynamic SPM](https://github.com/onevcat/Kingfisher/releases/tag/5.13.3) (2020-04-01)
 
 #### Fix
