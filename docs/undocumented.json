@@ -989,42 +989,42 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Networking/SessionDelegate.swift",
-      "line": 141,
+      "line": 143,
       "symbol": "SessionDelegate.urlSession(_:dataTask:didReceive:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Networking/SessionDelegate.swift",
-      "line": 164,
+      "line": 166,
       "symbol": "SessionDelegate.urlSession(_:dataTask:didReceive:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Networking/SessionDelegate.swift",
-      "line": 178,
+      "line": 180,
       "symbol": "SessionDelegate.urlSession(_:task:didCompleteWithError:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Networking/SessionDelegate.swift",
-      "line": 206,
+      "line": 208,
       "symbol": "SessionDelegate.urlSession(_:didReceive:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Networking/SessionDelegate.swift",
-      "line": 214,
+      "line": 216,
       "symbol": "SessionDelegate.urlSession(_:task:didReceive:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Networking/SessionDelegate.swift",
-      "line": 223,
+      "line": 225,
       "symbol": "SessionDelegate.urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
