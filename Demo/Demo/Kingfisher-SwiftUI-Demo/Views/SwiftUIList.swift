@@ -54,10 +54,9 @@ struct SwiftUIList : View {
         var body: some View {
             HStack(alignment: .center) {
                 Spacer()
-                KFImage(url)
+                KFImage(url, isLoaded: $done)
                     .resizable()
                     .onSuccess { r in
-                        self.done = true
                         print("Success: \(self.index) - \(r.cacheType)")
                     }
                     .onFailure { e in
