@@ -305,8 +305,9 @@ public class KingfisherManager {
                         return
                     }
 
+                    let finalImage = options.imageModifier?.modify(image) ?? image
                     options.callbackQueue.execute {
-                        let result = ImageLoadingResult(image: image, url: nil, originalData: data)
+                        let result = ImageLoadingResult(image: finalImage, url: nil, originalData: data)
                         completionHandler(.success(result))
                     }
                 }
