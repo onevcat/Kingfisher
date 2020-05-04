@@ -109,7 +109,7 @@ platform :ios do
     
     # Xcode 11.4 causes a crash in the final xcframework
     # https://github.com/onevcat/Kingfisher/issues/1436
-    xcversion(version: "11.3.1")
+    xcversion(version: "~> 11.4")
     FileUtils.rm_rf '../build'
     
     frameworks = []
