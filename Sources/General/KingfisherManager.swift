@@ -418,7 +418,21 @@ public class KingfisherManager {
             let task = downloader.downloadImage(
                 with: resource.downloadURL, options: options, completionHandler: _cacheImage
             )
-            return task.map(DownloadTask.WrappedTask.download)
+
+
+            // The code below is neat, but it fails the Swift 5.2 compiler when `BUILD_LIBRARY_FOR_DISTRIBUTION` is
+            // turned on. I believe it is a bug in the compiler. But let's fallback to a traditional style before the
+            // bug can be fixed in Swift.
+            //
+            // https://github.com/onevcat/Kingfisher/issues/1436
+            //
+            // return task.map(DownloadTask.WrappedTask.download)
+
+            if let task = task {
+                return .download(task)
+            } else {
+                return nil
+            }
 
         case .provider(let provider):
             provideImage(provider: provider, options: options, completionHandler: _cacheImage)
