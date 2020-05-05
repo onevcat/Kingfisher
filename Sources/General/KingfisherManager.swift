@@ -420,9 +420,9 @@ public class KingfisherManager {
             )
 
 
-            // The code below is neat, but it fails the Swift 5.2 compiler when `BUILD_LIBRARY_FOR_DISTRIBUTION` is
-            // turned on. I believe it is a bug in the compiler. But let's fallback to a traditional style before the
-            // bug can be fixed in Swift.
+            // The code below is neat, but it fails the Swift 5.2 compiler with a runtime crash when 
+            // `BUILD_LIBRARY_FOR_DISTRIBUTION` is turned on. I believe it is a bug in the compiler. 
+            // Let's fallback to a traditional style before it can be fixed in Swift.
             //
             // https://github.com/onevcat/Kingfisher/issues/1436
             //
