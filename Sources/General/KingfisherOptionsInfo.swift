@@ -240,6 +240,8 @@ public enum KingfisherOptionsInfoItem {
     ///
     /// User cancellation will not trigger the alternative source loading.
     case alternativeSources([Source])
+
+    case retryStrategy(RetryStrategy)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -282,6 +284,7 @@ public struct KingfisherParsedOptionsInfo {
     public var processingQueue: CallbackQueue? = nil
     public var progressiveJPEG: ImageProgressive? = nil
     public var alternativeSources: [Source]? = nil
+    public var retryStrategy: RetryStrategy? = nil
 
     var onDataReceived: [DataReceivingSideEffect]? = nil
     
@@ -323,6 +326,7 @@ public struct KingfisherParsedOptionsInfo {
             case .processingQueue(let queue): processingQueue = queue
             case .progressiveJPEG(let value): progressiveJPEG = value
             case .alternativeSources(let sources): alternativeSources = sources
+            case .retryStrategy(let strategy): retryStrategy = strategy
             }
         }
 

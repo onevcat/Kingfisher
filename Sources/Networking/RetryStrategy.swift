@@ -26,47 +26,66 @@
 
 import Foundation
 
-struct RetryContext {
+public class RetryContext {
 
-    let source: Source
+    public let source: Source
 
-    let error: KingfisherError
-    let retriedCount: Int
+    public let error: KingfisherError
+    public var retriedCount: Int
 
-    let userInfo: Any?
+    public internal(set) var userInfo: Any? = nil
+
+    init(source: Source, error: KingfisherError) {
+        self.source = source
+        self.error = error
+        self.retriedCount = 0
+    }
+
+    func increasedRetryCount() -> RetryContext {
+        retriedCount += 1
+        return self
+    }
 }
 
-enum RetryPolicy {
-    case retry
+public enum RetryDecision {
+    case retry(userInfo: Any?)
     case stop
 }
 
-protocol RetryStrategy {
-    func retry(context: RetryContext, retryHandler: @escaping (RetryPolicy) -> Void)
+public protocol RetryStrategy {
+    func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void)
 }
 
-class SimpleRetryPolicy: RetryStrategy {
-    let maxRetryCount: Int
-    let retryInterval: TimeInterval
+public struct SimpleRetryStrategy: RetryStrategy {
+    public let maxRetryCount: Int
+    public let retryInterval: TimeInterval
 
-    init(maxRetryCount: Int, retryInterval: TimeInterval = 3.0) {
+    public init(maxRetryCount: Int, retryInterval: TimeInterval = 3.0) {
         self.maxRetryCount = maxRetryCount
         self.retryInterval = retryInterval
     }
 
-    func retry(context: RetryContext, retryHandler: @escaping (RetryPolicy) -> Void) {
+    public func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void) {
+        // Retry count exceeded.
         guard context.retriedCount < maxRetryCount else {
             retryHandler(.stop)
             return
         }
 
+        // User cancel the task. No retry.
         guard !context.error.isTaskCancelled else {
             retryHandler(.stop)
             return
         }
 
+        // Only retry for a response error.
+        guard case KingfisherError.responseError = context.error else {
+            retryHandler(.stop)
+            return
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + self.retryInterval) {
-            retryHandler(.retry)
+            retryHandler(.retry(userInfo: nil))
         }
     }
 }

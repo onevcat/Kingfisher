@@ -699,7 +699,7 @@ class KingfisherManagerTests: XCTestCase {
             .network(URL(string: "2")!)
         ]
         let info = KingfisherParsedOptionsInfo([.alternativeSources(allSources)])
-        var context = RetrievingContext(
+        let context = RetrievingContext(
             options: info, originalSource: .network(URL(string: "0")!))
 
         let source1 = context.popAlternativeSource()
