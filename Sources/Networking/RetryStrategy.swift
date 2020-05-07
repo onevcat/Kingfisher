@@ -41,7 +41,8 @@ public class RetryContext {
         self.retriedCount = 0
     }
 
-    func increasedRetryCount() -> RetryContext {
+    @discardableResult
+    func increaseRetryCount() -> RetryContext {
         retriedCount += 1
         return self
     }
@@ -56,11 +57,31 @@ public protocol RetryStrategy {
     func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void)
 }
 
-public struct SimpleRetryStrategy: RetryStrategy {
-    public let maxRetryCount: Int
-    public let retryInterval: TimeInterval
+public struct DelayRetryStrategy: RetryStrategy {
 
-    public init(maxRetryCount: Int, retryInterval: TimeInterval = 3.0) {
+    public enum Interval {
+        case seconds(TimeInterval)
+        case accumulated(TimeInterval)
+        case custom(block: (_ retriedCount: Int) -> TimeInterval)
+
+        func timeInterval(for retriedCount: Int) -> TimeInterval {
+            let retryAfter: TimeInterval
+            switch self {
+            case .seconds(let interval):
+                retryAfter = interval
+            case .accumulated(let interval):
+                retryAfter = Double(retriedCount + 1) * interval
+            case .custom(let block):
+                retryAfter = block(retriedCount)
+            }
+            return retryAfter
+        }
+    }
+
+    public let maxRetryCount: Int
+    public let retryInterval: Interval
+
+    public init(maxRetryCount: Int, retryInterval: Interval = .seconds(3)) {
         self.maxRetryCount = maxRetryCount
         self.retryInterval = retryInterval
     }
@@ -84,8 +105,13 @@ public struct SimpleRetryStrategy: RetryStrategy {
             return
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + self.retryInterval) {
+        let interval = retryInterval.timeInterval(for: context.retriedCount)
+        if interval == 0 {
             retryHandler(.retry(userInfo: nil))
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+                retryHandler(.retry(userInfo: nil))
+            }
         }
     }
 }
