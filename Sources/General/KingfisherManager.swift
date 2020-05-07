@@ -247,7 +247,7 @@ public class KingfisherManager {
                 completionHandler?(result)
             case .failure(let error):
                 if let retryStrategy = options.retryStrategy {
-                    let context = retryContext?.increasedRetryCount() ?? RetryContext(source: source, error: error)
+                    let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
                     retryContext = context
 
                     retryStrategy.retry(context: context) { decision in
