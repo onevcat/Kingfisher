@@ -153,7 +153,7 @@ class RetryStrategyTests: XCTestCase {
 
         retry.retry(context: context1) { decision in
             guard case RetryDecision.stop = decision else {
-            XCTFail("The deicision should be `stop`")
+                XCTFail("The decision should be `stop` if user cancelled the task.")
                 return
             }
             blockCalled.append(true)
@@ -165,7 +165,7 @@ class RetryStrategyTests: XCTestCase {
         )
         retry.retry(context: context2) { decision in
             guard case RetryDecision.stop = decision else {
-            XCTFail("The deicision should be `stop`")
+                XCTFail("The decision should be `stop` if the error type is not response error.")
                 return
             }
             blockCalled.append(true)
@@ -173,6 +173,25 @@ class RetryStrategyTests: XCTestCase {
 
         XCTAssertEqual(blockCalled.count, 2)
         XCTAssertTrue(blockCalled.allSatisfy { $0 })
+    }
+
+    func testDelayRetryStrategyDidRetried() {
+        var called = false
+        let source = Source.network(URL(string: "url")!)
+        let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(0))
+        let context = RetryContext(
+            source: source,
+            error: .responseError(reason: .URLSessionError(error: E()))
+        )
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.retry = decision else {
+                XCTFail("The decision should be `retry`.")
+                return
+            }
+            called = true
+        }
+
+        XCTAssertTrue(called)
     }
 }
 
