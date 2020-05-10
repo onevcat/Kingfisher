@@ -89,7 +89,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
             .cacheOriginalImage,
-            .alternativeSources([alternativeSource])
+            .alternativeSources([alternativeSource]),
+            .retryStrategy(DelayRetryStrategy(maxRetryCount: 10))
         ])
         
         XCTAssertTrue(options.targetCache === cache)
@@ -127,6 +128,10 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.cacheOriginalImage)
         XCTAssertEqual(options.alternativeSources?.count, 1)
         XCTAssertEqual(options.alternativeSources?.first?.url, alternativeSource.url)
+
+        let retry = options.retryStrategy as? DelayRetryStrategy
+        XCTAssertNotNil(retry)
+        XCTAssertEqual(retry?.maxRetryCount, 10)
     }
     
     func testOptionCouldBeOverwritten() {

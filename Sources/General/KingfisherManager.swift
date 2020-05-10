@@ -206,34 +206,80 @@ public class KingfisherManager {
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
-        var context = RetrievingContext(options: options, originalSource: source)
+        var retrievingContext = RetrievingContext(options: options, originalSource: source)
+        var retryContext: RetryContext?
+
+        func startNewRetrieveTask(
+            with source: Source,
+            downloadTaskUpdated: DownloadTaskUpdatedBlock?
+        ) {
+            let newTask = self.retrieveImage(with: source, context: retrievingContext) { result in
+                handler(currentSource: source, result: result)
+            }
+            downloadTaskUpdated?(newTask)
+        }
+
+        func failCurrentSource(_ source: Source, with error: KingfisherError) {
+            // Skip alternative sources if the user cancelled it.
+            guard !error.isTaskCancelled else {
+                completionHandler?(.failure(error))
+                return
+            }
+            if let nextSource = retrievingContext.popAlternativeSource() {
+                startNewRetrieveTask(with: nextSource, downloadTaskUpdated: downloadTaskUpdated)
+            } else {
+                // No other alternative source. Finish with error.
+                if retrievingContext.propagationErrors.isEmpty {
+                    completionHandler?(.failure(error))
+                } else {
+                    retrievingContext.appendError(error, to: source)
+                    let finalError = KingfisherError.imageSettingError(
+                        reason: .alternativeSourcesExhausted(retrievingContext.propagationErrors)
+                    )
+                    completionHandler?(.failure(finalError))
+                }
+            }
+        }
 
         func handler(currentSource: Source, result: (Result<RetrieveImageResult, KingfisherError>)) -> Void {
             switch result {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
-                // Skip alternative sources if the user cancelled it.
-                guard !error.isTaskCancelled else {
-                    completionHandler?(.failure(error))
-                    return
-                }
-                if let nextSource = context.popAlternativeSource() {
-                    context.appendError(error, to: currentSource)
-                    let newTask = self.retrieveImage(with: nextSource, context: context) { result in
-                        handler(currentSource: nextSource, result: result)
+                if let retryStrategy = options.retryStrategy {
+                    let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
+                    retryContext = context
+
+                    retryStrategy.retry(context: context) { decision in
+                        switch decision {
+                        case .retry(let userInfo):
+                            retryContext?.userInfo = userInfo
+                            startNewRetrieveTask(with: source, downloadTaskUpdated: downloadTaskUpdated)
+                        case .stop:
+                            failCurrentSource(currentSource, with: error)
+                        }
                     }
-                    downloadTaskUpdated?(newTask)
                 } else {
-                    // No other alternative source. Finish with error.
-                    if context.propagationErrors.isEmpty {
+
+                    // Skip alternative sources if the user cancelled it.
+                    guard !error.isTaskCancelled else {
                         completionHandler?(.failure(error))
+                        return
+                    }
+                    if let nextSource = retrievingContext.popAlternativeSource() {
+                        retrievingContext.appendError(error, to: currentSource)
+                        startNewRetrieveTask(with: nextSource, downloadTaskUpdated: downloadTaskUpdated)
                     } else {
-                        context.appendError(error, to: currentSource)
-                        let finalError = KingfisherError.imageSettingError(
-                            reason: .alternativeSourcesExhausted(context.propagationErrors)
-                        )
-                        completionHandler?(.failure(finalError))
+                        // No other alternative source. Finish with error.
+                        if retrievingContext.propagationErrors.isEmpty {
+                            completionHandler?(.failure(error))
+                        } else {
+                            retrievingContext.appendError(error, to: currentSource)
+                            let finalError = KingfisherError.imageSettingError(
+                                reason: .alternativeSourcesExhausted(retrievingContext.propagationErrors)
+                            )
+                            completionHandler?(.failure(finalError))
+                        }
                     }
                 }
             }
@@ -241,7 +287,7 @@ public class KingfisherManager {
 
         return retrieveImage(
             with: source,
-            context: context)
+            context: retrievingContext)
         {
             result in
             handler(currentSource: source, result: result)
@@ -596,7 +642,7 @@ public class KingfisherManager {
     }
 }
 
-struct RetrievingContext {
+class RetrievingContext {
 
     var options: KingfisherParsedOptionsInfo
 
@@ -608,7 +654,7 @@ struct RetrievingContext {
         self.options = options
     }
 
-    mutating func popAlternativeSource() -> Source? {
+    func popAlternativeSource() -> Source? {
         guard var alternativeSources = options.alternativeSources, !alternativeSources.isEmpty else {
             return nil
         }
@@ -618,7 +664,7 @@ struct RetrievingContext {
     }
 
     @discardableResult
-    mutating func appendError(_ error: KingfisherError, to source: Source) -> [PropagationError] {
+    func appendError(_ error: KingfisherError, to source: Source) -> [PropagationError] {
         let item = PropagationError(source: source, error: error)
         propagationErrors.append(item)
         return propagationErrors
