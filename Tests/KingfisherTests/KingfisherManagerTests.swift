@@ -496,12 +496,10 @@ class KingfisherManagerTests: XCTestCase {
             // We are not waiting for cache finishing here. So only sync memory cache is done.
             XCTAssertEqual(self.manager.cache.imageCachedType(forKey: url.cacheKey), .memory)
             
-            // Once we clear the memory cache, it will be .none (Disk caching operation is not started yet.)
+            // Clear the memory cache.
             self.manager.cache.clearMemoryCache()
-            XCTAssertEqual(self.manager.cache.imageCachedType(forKey: url.cacheKey), .none)
-            
             // After some time, the disk cache should be done.
-            delay(0.1) {
+            delay(0.2) {
                 XCTAssertEqual(self.manager.cache.imageCachedType(forKey: url.cacheKey), .disk)
                 exp.fulfill()
             }
