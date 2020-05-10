@@ -262,7 +262,7 @@ class MemoryStorageTests: XCTestCase {
         XCTAssertEqual(
             obj.estimatedExpiration.timeIntervalSince1970,
             now.addingTimeInterval(1).timeIntervalSince1970,
-            accuracy: 0.2)
+            accuracy: 0.3)
 
         let exp = expectation(description: #function)
         delay(0.5) {
@@ -270,7 +270,7 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertEqual(
                 obj.estimatedExpiration.timeIntervalSince1970,
                 now.addingTimeInterval(1.5).timeIntervalSince1970,
-                accuracy: 0.2)
+                accuracy: 0.3)
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
