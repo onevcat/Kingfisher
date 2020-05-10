@@ -96,7 +96,7 @@ class DiskStorageTests: XCTestCase {
         try! storage.store(value: "1", forKey: "1", expiration: .seconds(1))
 
         XCTAssertTrue(storage.isCached(forKey: "1", referenceDate: now))
-        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(2)))
+        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(5)))
     }
 
     func testConfigExpiration() {
@@ -106,7 +106,7 @@ class DiskStorageTests: XCTestCase {
         storage.config.expiration = .seconds(1)
         try! storage.store(value: "1", forKey: "1")
         XCTAssertTrue(storage.isCached(forKey: "1", referenceDate: now))
-        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(2)))
+        XCTAssertFalse(storage.isCached(forKey: "1", referenceDate: now.addingTimeInterval(5)))
     }
 
     func testExtendExpirationByAccessing() {
