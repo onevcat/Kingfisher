@@ -24,6 +24,7 @@
 		4BE688F722FD513100B11168 /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */; };
 		4BE688F822FD513700B11168 /* WKInterfaceImage+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AF215D2BB50013BA68 /* WKInterfaceImage+Kingfisher.swift */; };
 		C9286407228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
+		D11D9B72245FA6F700C5A0AE /* RetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D9B71245FA6F700C5A0AE /* RetryStrategy.swift */; };
 		D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69D215D2BB50013BA68 /* RequestModifier.swift */; };
 		D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69E215D2BB50013BA68 /* Resource.swift */; };
 		D12AB6C8215D2BB50013BA68 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */; };
@@ -104,6 +105,7 @@
 		D1E564412199C21E0057AAE3 /* StorageExpirationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E564402199C21E0057AAE3 /* StorageExpirationTests.swift */; };
 		D1E56445219B16330057AAE3 /* ImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E56444219B16330057AAE3 /* ImageDataProvider.swift */; };
 		D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
+		D1F1F6FF24625EC600910725 /* RetryStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F1F6FE24625EC600910725 /* RetryStrategyTests.swift */; };
 		D1F7606E230974DE000C5269 /* Kingfisher.h in Headers */ = {isa = PBXBuildFile; fileRef = D12AB6AA215D2BB50013BA68 /* Kingfisher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D1F7607723097533000C5269 /* ImageBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F7607523097532000C5269 /* ImageBinder.swift */; };
 		D1F7607823097533000C5269 /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F7607623097532000C5269 /* KFImage.swift */; };
@@ -142,6 +144,7 @@
 		4BD821662189FD330084CC21 /* SessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDataTask.swift; sourceTree = "<group>"; };
 		C9286406228584EB00257182 /* ImageProgressive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProgressive.swift; sourceTree = "<group>"; };
 		C959EEE7228940FE00467A10 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D11D9B71245FA6F700C5A0AE /* RetryStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy.swift; sourceTree = "<group>"; };
 		D12AB69D215D2BB50013BA68 /* RequestModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModifier.swift; sourceTree = "<group>"; };
 		D12AB69E215D2BB50013BA68 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
@@ -256,6 +259,7 @@
 		D1E56444219B16330057AAE3 /* ImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageDataProvider.swift; path = Sources/General/ImageSource/ImageDataProvider.swift; sourceTree = SOURCE_ROOT; };
 		D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D3F1AD2D09F00CFC3EB /* KingfisherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KingfisherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1F1F6FE24625EC600910725 /* RetryStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategyTests.swift; sourceTree = "<group>"; };
 		D1F76072230974DE000C5269 /* KingfisherSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KingfisherSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1F7607523097532000C5269 /* ImageBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBinder.swift; sourceTree = "<group>"; };
 		D1F7607623097532000C5269 /* KFImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KFImage.swift; sourceTree = "<group>"; };
@@ -338,6 +342,7 @@
 				4B10480C216F157000300C61 /* ImageDataProcessor.swift */,
 				D12AB6A0215D2BB50013BA68 /* ImageModifier.swift */,
 				D12AB6A1215D2BB50013BA68 /* ImagePrefetcher.swift */,
+				D11D9B71245FA6F700C5A0AE /* RetryStrategy.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -446,6 +451,7 @@
 				D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */,
 				D1BFED94222ACC6B009330C8 /* ImageProcessorTests.swift */,
 				4BA3BF1D228BCDD100909201 /* DataReceivingSideEffectTests.swift */,
+				D1F1F6FE24625EC600910725 /* RetryStrategyTests.swift */,
 			);
 			name = KingfisherTests;
 			path = Tests/KingfisherTests;
@@ -822,6 +828,7 @@
 				4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */,
 				D12AB72C215D2BB50013BA68 /* Indicator.swift in Sources */,
 				D12AB6C8215D2BB50013BA68 /* ImageDownloader.swift in Sources */,
+				D11D9B72245FA6F700C5A0AE /* RetryStrategy.swift in Sources */,
 				D1A37BE3215D359F009B39B7 /* ImageFormat.swift in Sources */,
 				D12AB714215D2BB50013BA68 /* ImageCache.swift in Sources */,
 				D12AB6D0215D2BB50013BA68 /* ImagePrefetcher.swift in Sources */,
@@ -887,6 +894,7 @@
 				D16FEA3E23078C63006E67D5 /* LSNocilla.m in Sources */,
 				D16FEA4D23078C63006E67D5 /* LSMatcher.m in Sources */,
 				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
+				D1F1F6FF24625EC600910725 /* RetryStrategyTests.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D1BFED95222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */,
 				D16FEA5223078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m in Sources */,
