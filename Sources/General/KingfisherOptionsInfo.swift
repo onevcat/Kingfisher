@@ -241,6 +241,15 @@ public enum KingfisherOptionsInfoItem {
     /// User cancellation will not trigger the alternative source loading.
     case alternativeSources([Source])
 
+    /// Provide a retry strategy which will be used when something gets wrong during the image retrieving process from
+    /// `KingfisherManager`. You can define a strategy by create a type conforming to the `RetryStrategy` protocol.
+    ///
+    /// - Note:
+    ///
+    /// All extension methods of Kingfisher (`kf` extensions on `UIImageView` or `UIButton`) retrieve images through
+    /// `KingfisherManager`, so the retry strategy also applies when using them. However, this option does not apply
+    /// when pass to an `ImageDownloader` or `ImageCache`.
+    ///
     case retryStrategy(RetryStrategy)
 }
 
