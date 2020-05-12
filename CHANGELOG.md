@@ -2,6 +2,20 @@
 
 -----
 
+## [5.14.0 - Retry Strategy](https://github.com/onevcat/Kingfisher/releases/tag/5.14.0) (2020-05-13)
+
+#### Add
+* A `.retryStrategy` option and associated `RetryStrategy` to define a highly customizable retry mechanism in Kingfisher. [#1424]
+* Built-in `DelayRetryStrategy` to provide a most common used retry strategy implementation. It simplifies the normal retry requirement when downloading an image from network. [#1447](https://github.com/onevcat/Kingfisher/pull/1447)
+* Now you can set the round corner radius for a `RoundCornerImageProcessor` in a fraction way. This is useful when you do not know the desire image view size, but still want to clip any received image to a certain round corner ratio (such as a circle for any image). [#1443](https://github.com/onevcat/Kingfisher/pull/1443)
+* Add an `isLoaded` binding to `KFImage` to follow SwiftUI pattern better. [#1429](https://github.com/onevcat/Kingfisher/pull/1429)
+
+#### Fix
+* An issue that `.imageModifier` option not working on an `ImageProvider` provided image. [#1435](https://github.com/onevcat/Kingfisher/pull/1435)
+* A workaround for making xcframework continue to work when exported with Swift 5.2 compiler and Xcode 11.4. [#1444](https://github.com/onevcat/Kingfisher/pull/1444)
+
+---
+
 ## [5.13.4 - Build Configurations](https://github.com/onevcat/Kingfisher/releases/tag/5.13.4) (2020-04-11)
 
 #### Fix
