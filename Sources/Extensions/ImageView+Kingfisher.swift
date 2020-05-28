@@ -90,8 +90,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         }
 
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
-        let noImageOrPlaceholderSet = base.image == nil && self.placeholder == nil
-        if !options.keepCurrentImageWhileLoading || noImageOrPlaceholderSet {
+
+        let isEmptyImage = base.image == nil && self.placeholder == nil
+        if !options.keepCurrentImageWhileLoading || isEmptyImage {
             // Always set placeholder while there is no image/placeholder yet.
             mutatingSelf.placeholder = placeholder
         }
