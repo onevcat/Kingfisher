@@ -46,6 +46,8 @@ public enum DiskStorage {
         public let directoryURL: URL
 
         let metaChangingQueue: DispatchQueue
+        
+        var maybeCached : Set<String>?
 
         /// Creates a disk storage with the given `DiskStorage.Config`.
         ///
@@ -72,6 +74,17 @@ public enum DiskStorage {
             metaChangingQueue = DispatchQueue(label: cacheName)
 
             try prepareDirectory()
+            
+            do {
+                maybeCached = Set()
+                try config.fileManager.contentsOfDirectory(atPath: directoryURL.path).forEach { (fileName) in
+                    maybeCached?.insert(fileName)
+                }
+            } catch {
+                // Just disable the functionality if we fail to initialize it properly. This will just revert to
+                // the previous behaviour which is to check file existence on disk directly
+                maybeCached = nil
+            }
         }
 
         // Creates the storage folder.
@@ -135,6 +148,7 @@ public enum DiskStorage {
                     )
                 )
             }
+            maybeCached?.insert(fileURL.lastPathComponent)
         }
 
         func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
@@ -150,6 +164,9 @@ public enum DiskStorage {
             let fileManager = config.fileManager
             let fileURL = cacheFileURL(forKey: key)
             let filePath = fileURL.path
+            guard maybeCached?.contains(fileURL.lastPathComponent) ?? true else {
+                return nil
+            }
             guard fileManager.fileExists(atPath: filePath) else {
                 return nil
             }
