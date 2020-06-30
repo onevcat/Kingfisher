@@ -228,7 +228,7 @@ public enum DiskStorage {
         /// the `cacheKey` of an image `Source`. It is the computed key with processor identifier considered.
         public func cacheFileURL(forKey key: String) -> URL {
             let fileName = cacheFileName(forKey: key)
-            return directoryURL.appendingPathComponent(fileName)
+            return directoryURL.appendingPathComponent(fileName, isDirectory: false)
         }
 
         func cacheFileName(forKey key: String) -> String {
