@@ -79,7 +79,7 @@
     },
     {
       "file": "/Users/onevcat/Dropbox/github/Kingfisher/Sources/Extensions/ImageView+Kingfisher.swift",
-      "line": 303,
+      "line": 304,
       "symbol": "KingfisherWrapper.taskIdentifier",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
