@@ -100,7 +100,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         group.notify(queue: .main, execute: exp.fulfill)
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testDownloadWithModifyingRequest() {
