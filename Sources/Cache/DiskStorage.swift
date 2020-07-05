@@ -46,8 +46,9 @@ public enum DiskStorage {
         public let directoryURL: URL
 
         let metaChangingQueue: DispatchQueue
-        
+
         var maybeCached : Set<String>?
+        let maybeCachedCheckingQueue = DispatchQueue(label: "com.onevcat.Kingfisher.maybeCachedCheckingQueue")
 
         /// Creates a disk storage with the given `DiskStorage.Config`.
         ///
@@ -74,16 +75,18 @@ public enum DiskStorage {
             metaChangingQueue = DispatchQueue(label: cacheName)
 
             try prepareDirectory()
-            
-            do {
-                maybeCached = Set()
-                try config.fileManager.contentsOfDirectory(atPath: directoryURL.path).forEach { (fileName) in
-                    maybeCached?.insert(fileName)
+
+            maybeCachedCheckingQueue.async {
+                do {
+                    self.maybeCached = Set()
+                    try config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path).forEach { fileName in
+                        self.maybeCached?.insert(fileName)
+                    }
+                } catch {
+                    // Just disable the functionality if we fail to initialize it properly. This will just revert to
+                    // the behavior which is to check file existence on disk directly.
+                    self.maybeCached = nil
                 }
-            } catch {
-                // Just disable the functionality if we fail to initialize it properly. This will just revert to
-                // the previous behaviour which is to check file existence on disk directly
-                maybeCached = nil
             }
         }
 
@@ -148,7 +151,10 @@ public enum DiskStorage {
                     )
                 )
             }
-            maybeCached?.insert(fileURL.lastPathComponent)
+
+            maybeCachedCheckingQueue.async {
+                self.maybeCached?.insert(fileURL.lastPathComponent)
+            }
         }
 
         func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
@@ -164,7 +170,11 @@ public enum DiskStorage {
             let fileManager = config.fileManager
             let fileURL = cacheFileURL(forKey: key)
             let filePath = fileURL.path
-            guard maybeCached?.contains(fileURL.lastPathComponent) ?? true else {
+
+            let fileMaybeCached = maybeCachedCheckingQueue.sync {
+                return maybeCached?.contains(fileURL.lastPathComponent) ?? true
+            }
+            guard fileMaybeCached else {
                 return nil
             }
             guard fileManager.fileExists(atPath: filePath) else {
