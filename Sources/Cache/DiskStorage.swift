@@ -259,8 +259,8 @@ public enum DiskStorage {
         }
 
         func cacheFileName(forKey key: String) -> String {
-            if config.usesHashedFileName {
-                let hashedKey = key.kf.md5
+            if config.usesHashedFileName, let fileNameHashProvider = config.fileNameHashProvider {
+                let hashedKey = fileNameHashProvider(key)
                 if let ext = config.pathExtension {
                     return "\(hashedKey).\(ext)"
                 }
@@ -382,6 +382,11 @@ extension DiskStorage {
 
         /// Default is `true`, means that the cache file name will be hashed before storing.
         public var usesHashedFileName = true
+
+        /// Default is an md5 hash
+        public var fileNameHashProvider: ((String) -> String)? = { string in
+            return string.kf.md5
+        }
 
         let name: String
         let fileManager: FileManager

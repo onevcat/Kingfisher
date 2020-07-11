@@ -178,7 +178,27 @@ class DiskStorageTests: XCTestCase {
         XCTAssertTrue(urls.count > 0)
     }
 
-    func testConfigUsesHashedFileName() {
+    func testCustomConfigUsesHashedFileNamed() {
+        let key = "test"
+
+        // hashed fileName
+        storage.config.usesHashedFileName = true
+        storage.config.fileNameHashProvider = { string in
+            return "hashed:\(key)"
+        }
+
+        let hashedFileName = storage.cacheFileName(forKey: key)
+        XCTAssertNotEqual(hashedFileName, key)
+        // validation custom hash of the key
+        XCTAssertEqual(hashedFileName, "hashed:\(key)")
+
+        // fileName without hash
+        storage.config.usesHashedFileName = false
+        let originalFileName = storage.cacheFileName(forKey: key)
+        XCTAssertEqual(originalFileName, key)
+    }
+
+    func testDefaultConfigUsesHashedFileName() {
         let key = "test"
 
         // hashed fileName
