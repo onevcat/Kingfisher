@@ -623,7 +623,7 @@ open class ImageCache {
         cleanExpiredDiskCache(completion: handler)
     }
 
-    /// Clears the expired images from disk storage. This is an async operation.
+    /// Clears the expired images from disk storage.
     open func cleanExpiredMemoryCache() {
         memoryStorage.removeExpired()
     }
