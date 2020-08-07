@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="peg-r0-mlo">
-    <device id="retina5_5" orientation="portrait" appearance="light"/>
+    <device id="retina5_5" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17120"/>
@@ -15,7 +15,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="cQA-0g-Ig3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="46n-QC-xKN">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -35,7 +35,6 @@
                                         </imageView>
                                     </subviews>
                                 </view>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="5wL-TX-hML" secondAttribute="bottom" id="6Fx-JY-GDB"/>
                                     <constraint firstAttribute="trailing" secondItem="5wL-TX-hML" secondAttribute="trailing" id="Fev-Dq-rlR"/>
@@ -78,17 +77,18 @@
                                 </constraints>
                             </imageView>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="45M-CC-Cpm">
-                                <rect key="frame" x="0.0" y="329" width="414" height="407"/>
+                                <rect key="frame" x="0.0" y="339" width="414" height="397"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="Faj-ZD-Pmu" id="iJ6-7y-h0M"/>
                                     <outlet property="delegate" destination="Faj-ZD-Pmu" id="yZp-17-Dfa"/>
                                 </connections>
                             </pickerView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="dJV-kj-nuj" firstAttribute="centerX" secondItem="yOP-AM-REf" secondAttribute="centerX" id="MyO-mQ-1dN"/>
-                            <constraint firstItem="45M-CC-Cpm" firstAttribute="top" secondItem="dJV-kj-nuj" secondAttribute="bottom" constant="10" id="REq-j4-Dpu"/>
+                            <constraint firstItem="45M-CC-Cpm" firstAttribute="top" secondItem="dJV-kj-nuj" secondAttribute="bottom" constant="20" id="REq-j4-Dpu"/>
                             <constraint firstItem="mU8-dd-l6y" firstAttribute="top" secondItem="45M-CC-Cpm" secondAttribute="bottom" id="VaQ-3D-7Fb"/>
                             <constraint firstAttribute="trailing" secondItem="45M-CC-Cpm" secondAttribute="trailing" id="Wum-4v-zxp"/>
                             <constraint firstItem="45M-CC-Cpm" firstAttribute="leading" secondItem="yOP-AM-REf" secondAttribute="leading" id="av8-Va-R0m"/>
@@ -394,7 +394,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="7Sv-Aq-e9P">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="kws-C5-XtN">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -414,7 +414,6 @@
                                         </imageView>
                                     </subviews>
                                 </view>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="ebU-Ze-jO5" secondAttribute="trailing" id="KnM-v3-kPW"/>
                                     <constraint firstAttribute="bottom" secondItem="ebU-Ze-jO5" secondAttribute="bottom" id="Kx9-Jc-nTH"/>
@@ -478,7 +477,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="04w-FS-fin">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ZDR-WG-GcY">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -498,7 +497,6 @@
                                         </imageView>
                                     </subviews>
                                 </view>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="h53-3h-nDR" firstAttribute="leading" secondItem="XQp-yE-aYb" secondAttribute="leading" id="4pa-OL-LEW"/>
                                     <constraint firstAttribute="trailing" secondItem="h53-3h-nDR" secondAttribute="trailing" id="7aL-Xj-TUb"/>
@@ -528,7 +526,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="NsZ-zd-xkw">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="rkX-qy-O8t">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -548,7 +546,6 @@
                                         </imageView>
                                     </subviews>
                                 </view>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="LR1-7T-gfM" secondAttribute="bottom" id="Z8r-gK-A8V"/>
                                     <constraint firstItem="LR1-7T-gfM" firstAttribute="top" secondItem="NaD-FY-St8" secondAttribute="top" id="gUe-9T-wHZ"/>
@@ -611,7 +608,7 @@
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="t8A-JA-4Y6" firstAttribute="centerX" secondItem="BJj-D6-yMO" secondAttribute="centerX" id="Bdk-FX-Ld7"/>
                             <constraint firstItem="t8A-JA-4Y6" firstAttribute="top" secondItem="UnC-f9-f1r" secondAttribute="bottom" constant="8" id="EHT-E1-E0N"/>
@@ -656,7 +653,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                             </imageView>
                                         </subviews>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="K6z-gh-7q1" secondAttribute="bottom" id="Kj4-tR-QNZ"/>
                                             <constraint firstItem="K6z-gh-7q1" firstAttribute="leading" secondItem="y9Y-32-dYG" secondAttribute="leading" id="Zqb-lf-AQK"/>
@@ -676,13 +673,13 @@
                             </scrollView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sOP-9B-hsj">
                                 <rect key="frame" x="207" y="716" width="0.0" height="0.0"/>
-                                <color key="backgroundColor" white="1" alpha="0.60148223458904104" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
+                                <color key="highlightedColor" systemColor="secondaryLabelColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="ysc-wr-YIy" secondAttribute="trailing" id="1C1-WZ-WlV"/>
                             <constraint firstAttribute="bottom" secondItem="ysc-wr-YIy" secondAttribute="bottom" id="36E-qx-dNi"/>
@@ -709,7 +706,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="KHw-Ia-NZ0">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="QR6-EV-Mcm">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -729,7 +726,6 @@
                                         </imageView>
                                     </subviews>
                                 </view>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="AHa-W9-ydh" secondAttribute="trailing" id="Aki-5h-QfA"/>
                                     <constraint firstItem="AHa-W9-ydh" firstAttribute="top" secondItem="oic-g0-0T7" secondAttribute="top" id="DrB-e3-ans"/>
@@ -777,7 +773,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="akD-zs-eTn" firstAttribute="centerX" secondItem="cGe-Lq-jhl" secondAttribute="centerX" id="5kh-xV-bka"/>
                             <constraint firstItem="izF-cD-0cm" firstAttribute="width" secondItem="cGe-Lq-jhl" secondAttribute="width" id="Aut-Lw-Huc"/>
@@ -804,7 +800,7 @@
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="hcT-OT-yiP">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="1Lb-Fd-Ckf">
                             <size key="itemSize" width="250" height="250"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -824,7 +820,6 @@
                                         </imageView>
                                     </subviews>
                                 </view>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="Gtp-fM-cpb" secondAttribute="trailing" id="6aF-90-gxG"/>
                                     <constraint firstItem="Gtp-fM-cpb" firstAttribute="leading" secondItem="qox-Vm-2MG" secondAttribute="leading" id="Kqs-p5-fJC"/>
@@ -849,6 +844,12 @@
         </scene>
     </scenes>
     <resources>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
