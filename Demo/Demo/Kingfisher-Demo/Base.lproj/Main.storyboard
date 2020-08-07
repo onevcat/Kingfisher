@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="peg-r0-mlo">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="peg-r0-mlo">
     <device id="retina5_5" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17120"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -61,10 +62,6 @@
         <scene sceneID="ovv-gp-rj6">
             <objects>
                 <viewController id="Faj-ZD-Pmu" customClass="TransitionViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="RZO-C9-EIv"/>
-                        <viewControllerLayoutGuide type="bottom" id="mU8-dd-l6y"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="yOP-AM-REf">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -85,14 +82,15 @@
                                 </connections>
                             </pickerView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="ZnV-pz-pbK"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="dJV-kj-nuj" firstAttribute="centerX" secondItem="yOP-AM-REf" secondAttribute="centerX" id="MyO-mQ-1dN"/>
+                            <constraint firstItem="dJV-kj-nuj" firstAttribute="centerX" secondItem="ZnV-pz-pbK" secondAttribute="centerX" id="MyO-mQ-1dN"/>
                             <constraint firstItem="45M-CC-Cpm" firstAttribute="top" secondItem="dJV-kj-nuj" secondAttribute="bottom" constant="20" id="REq-j4-Dpu"/>
-                            <constraint firstItem="mU8-dd-l6y" firstAttribute="top" secondItem="45M-CC-Cpm" secondAttribute="bottom" id="VaQ-3D-7Fb"/>
-                            <constraint firstAttribute="trailing" secondItem="45M-CC-Cpm" secondAttribute="trailing" id="Wum-4v-zxp"/>
-                            <constraint firstItem="45M-CC-Cpm" firstAttribute="leading" secondItem="yOP-AM-REf" secondAttribute="leading" id="av8-Va-R0m"/>
-                            <constraint firstItem="dJV-kj-nuj" firstAttribute="top" secondItem="RZO-C9-EIv" secondAttribute="bottom" constant="25" id="cXf-Wn-wQi"/>
+                            <constraint firstItem="ZnV-pz-pbK" firstAttribute="bottom" secondItem="45M-CC-Cpm" secondAttribute="bottom" id="VaQ-3D-7Fb"/>
+                            <constraint firstItem="ZnV-pz-pbK" firstAttribute="trailing" secondItem="45M-CC-Cpm" secondAttribute="trailing" id="Wum-4v-zxp"/>
+                            <constraint firstItem="45M-CC-Cpm" firstAttribute="leading" secondItem="ZnV-pz-pbK" secondAttribute="leading" id="av8-Va-R0m"/>
+                            <constraint firstItem="dJV-kj-nuj" firstAttribute="top" secondItem="ZnV-pz-pbK" secondAttribute="top" constant="25" id="cXf-Wn-wQi"/>
                         </constraints>
                     </view>
                     <connections>
@@ -440,25 +438,22 @@
         <scene sceneID="4xb-Y1-BL3">
             <objects>
                 <viewController id="WgT-E0-jsn" customClass="TextAttachmentViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Tde-bZ-aBn"/>
-                        <viewControllerLayoutGuide type="bottom" id="NQc-sY-9FP"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="g6d-ek-fNF">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YVS-ul-f2n">
-                                <rect key="frame" x="186" y="357.66666666666669" width="42" height="21"/>
+                                <rect key="frame" x="186" y="379.66666666666669" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="Y2m-JB-R1d"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="YVS-ul-f2n" firstAttribute="centerY" secondItem="g6d-ek-fNF" secondAttribute="centerY" id="5A0-w6-Sf2"/>
-                            <constraint firstItem="YVS-ul-f2n" firstAttribute="centerX" secondItem="g6d-ek-fNF" secondAttribute="centerX" id="cEB-ZN-gSo"/>
+                            <constraint firstItem="YVS-ul-f2n" firstAttribute="centerX" secondItem="Y2m-JB-R1d" secondAttribute="centerX" id="cEB-ZN-gSo"/>
+                            <constraint firstItem="YVS-ul-f2n" firstAttribute="centerY" secondItem="Y2m-JB-R1d" secondAttribute="centerY" id="rCh-46-XpX"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="7PX-Qv-jQm"/>
@@ -573,10 +568,6 @@
         <scene sceneID="3Ke-rL-QF2">
             <objects>
                 <viewController id="UXA-j3-Wgu" customClass="GIFViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="orw-69-3gi"/>
-                        <viewControllerLayoutGuide type="bottom" id="p7a-sN-YZ6"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="BJj-D6-yMO">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -608,18 +599,19 @@
                                 </constraints>
                             </imageView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="FHS-wj-J4H"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="t8A-JA-4Y6" firstAttribute="centerX" secondItem="BJj-D6-yMO" secondAttribute="centerX" id="Bdk-FX-Ld7"/>
+                            <constraint firstItem="t8A-JA-4Y6" firstAttribute="centerX" secondItem="FHS-wj-J4H" secondAttribute="centerX" id="Bdk-FX-Ld7"/>
                             <constraint firstItem="t8A-JA-4Y6" firstAttribute="top" secondItem="UnC-f9-f1r" secondAttribute="bottom" constant="8" id="EHT-E1-E0N"/>
-                            <constraint firstItem="QoV-VF-yGe" firstAttribute="leading" secondItem="BJj-D6-yMO" secondAttribute="leading" constant="20" id="TZZ-IF-G2M"/>
-                            <constraint firstItem="UnC-f9-f1r" firstAttribute="leading" secondItem="BJj-D6-yMO" secondAttribute="leading" constant="16" id="hCm-QI-DeK"/>
-                            <constraint firstItem="YLY-GE-UZC" firstAttribute="centerX" secondItem="BJj-D6-yMO" secondAttribute="centerX" id="jOD-Cv-2nl"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="QoV-VF-yGe" secondAttribute="trailing" constant="20" symbolic="YES" id="ow9-TC-KrI"/>
-                            <constraint firstItem="UnC-f9-f1r" firstAttribute="top" secondItem="orw-69-3gi" secondAttribute="bottom" constant="8" id="tXb-Ji-ePH"/>
+                            <constraint firstItem="QoV-VF-yGe" firstAttribute="leading" secondItem="FHS-wj-J4H" secondAttribute="leading" constant="20" id="TZZ-IF-G2M"/>
+                            <constraint firstItem="UnC-f9-f1r" firstAttribute="leading" secondItem="FHS-wj-J4H" secondAttribute="leading" constant="16" id="hCm-QI-DeK"/>
+                            <constraint firstItem="YLY-GE-UZC" firstAttribute="centerX" secondItem="FHS-wj-J4H" secondAttribute="centerX" id="jOD-Cv-2nl"/>
+                            <constraint firstItem="FHS-wj-J4H" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="QoV-VF-yGe" secondAttribute="trailing" constant="20" symbolic="YES" id="ow9-TC-KrI"/>
+                            <constraint firstItem="UnC-f9-f1r" firstAttribute="top" secondItem="FHS-wj-J4H" secondAttribute="top" constant="8" id="tXb-Ji-ePH"/>
                             <constraint firstItem="YLY-GE-UZC" firstAttribute="top" secondItem="QoV-VF-yGe" secondAttribute="bottom" constant="8" id="tjb-jD-W6j"/>
                             <constraint firstItem="QoV-VF-yGe" firstAttribute="top" secondItem="t8A-JA-4Y6" secondAttribute="bottom" constant="20" id="vDb-2h-8uB"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="UnC-f9-f1r" secondAttribute="trailing" constant="20" symbolic="YES" id="xUe-Ax-iVT"/>
+                            <constraint firstItem="FHS-wj-J4H" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="UnC-f9-f1r" secondAttribute="trailing" constant="20" symbolic="YES" id="xUe-Ax-iVT"/>
                         </constraints>
                     </view>
                     <connections>
@@ -635,10 +627,6 @@
         <scene sceneID="wpT-qC-cq3">
             <objects>
                 <viewController id="zDE-dW-hUu" customClass="DetailImageViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="KdH-XO-83s"/>
-                        <viewControllerLayoutGuide type="bottom" id="YL9-U6-xaw"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="0Gi-1l-eXz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -679,14 +667,15 @@
                                 <color key="highlightedColor" systemColor="secondaryLabelColor"/>
                             </label>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="7CV-BV-qfV"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="ysc-wr-YIy" secondAttribute="trailing" id="1C1-WZ-WlV"/>
+                            <constraint firstItem="7CV-BV-qfV" firstAttribute="trailing" secondItem="ysc-wr-YIy" secondAttribute="trailing" id="1C1-WZ-WlV"/>
                             <constraint firstAttribute="bottom" secondItem="ysc-wr-YIy" secondAttribute="bottom" id="36E-qx-dNi"/>
                             <constraint firstItem="ysc-wr-YIy" firstAttribute="top" secondItem="0Gi-1l-eXz" secondAttribute="top" id="ErP-w4-6bK"/>
-                            <constraint firstItem="sOP-9B-hsj" firstAttribute="centerX" secondItem="0Gi-1l-eXz" secondAttribute="centerX" id="JDr-B0-ZTD"/>
-                            <constraint firstItem="ysc-wr-YIy" firstAttribute="leading" secondItem="0Gi-1l-eXz" secondAttribute="leading" id="RFB-dT-sJs"/>
-                            <constraint firstItem="YL9-U6-xaw" firstAttribute="top" secondItem="sOP-9B-hsj" secondAttribute="bottom" constant="20" id="gZK-6r-GPm"/>
+                            <constraint firstItem="sOP-9B-hsj" firstAttribute="centerX" secondItem="7CV-BV-qfV" secondAttribute="centerX" id="JDr-B0-ZTD"/>
+                            <constraint firstItem="ysc-wr-YIy" firstAttribute="leading" secondItem="7CV-BV-qfV" secondAttribute="leading" id="RFB-dT-sJs"/>
+                            <constraint firstItem="7CV-BV-qfV" firstAttribute="bottom" secondItem="sOP-9B-hsj" secondAttribute="bottom" constant="20" id="gZK-6r-GPm"/>
                         </constraints>
                     </view>
                     <connections>
@@ -752,10 +741,6 @@
         <scene sceneID="aU5-xT-lmw">
             <objects>
                 <viewController id="P3U-9B-Crn" customClass="ProgressiveJPEGViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="yCs-FZ-4DV"/>
-                        <viewControllerLayoutGuide type="bottom" id="cxP-E0-3ef"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="cGe-Lq-jhl">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -773,14 +758,15 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="1aF-Wq-oWH"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="akD-zs-eTn" firstAttribute="centerX" secondItem="cGe-Lq-jhl" secondAttribute="centerX" id="5kh-xV-bka"/>
+                            <constraint firstItem="akD-zs-eTn" firstAttribute="centerX" secondItem="1aF-Wq-oWH" secondAttribute="centerX" id="5kh-xV-bka"/>
                             <constraint firstItem="izF-cD-0cm" firstAttribute="width" secondItem="cGe-Lq-jhl" secondAttribute="width" id="Aut-Lw-Huc"/>
-                            <constraint firstItem="akD-zs-eTn" firstAttribute="top" secondItem="yCs-FZ-4DV" secondAttribute="bottom" constant="10" id="HtJ-QY-RlR"/>
-                            <constraint firstAttribute="trailing" secondItem="akD-zs-eTn" secondAttribute="trailing" id="IbZ-qg-qTg"/>
-                            <constraint firstItem="akD-zs-eTn" firstAttribute="leading" secondItem="cGe-Lq-jhl" secondAttribute="leading" id="d4F-SH-Rkc"/>
-                            <constraint firstItem="izF-cD-0cm" firstAttribute="centerX" secondItem="cGe-Lq-jhl" secondAttribute="centerX" id="i2T-YC-hzq"/>
+                            <constraint firstItem="akD-zs-eTn" firstAttribute="top" secondItem="1aF-Wq-oWH" secondAttribute="top" constant="10" id="HtJ-QY-RlR"/>
+                            <constraint firstItem="1aF-Wq-oWH" firstAttribute="trailing" secondItem="akD-zs-eTn" secondAttribute="trailing" id="IbZ-qg-qTg"/>
+                            <constraint firstItem="akD-zs-eTn" firstAttribute="leading" secondItem="1aF-Wq-oWH" secondAttribute="leading" id="d4F-SH-Rkc"/>
+                            <constraint firstItem="izF-cD-0cm" firstAttribute="centerX" secondItem="1aF-Wq-oWH" secondAttribute="centerX" id="i2T-YC-hzq"/>
                             <constraint firstItem="izF-cD-0cm" firstAttribute="top" secondItem="akD-zs-eTn" secondAttribute="bottom" constant="30" id="oD0-d7-geg"/>
                         </constraints>
                     </view>
