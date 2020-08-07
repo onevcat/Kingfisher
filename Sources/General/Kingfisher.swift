@@ -84,6 +84,7 @@ extension KFCrossPlatformImage: KingfisherCompatible { }
 #if !os(watchOS)
 extension KFCrossPlatformImageView: KingfisherCompatible { }
 extension KFCrossPlatformButton: KingfisherCompatible { }
+extension NSTextAttachment: KingfisherCompatible { }
 #else
 extension WKInterfaceImage: KingfisherCompatible { }
 #endif
