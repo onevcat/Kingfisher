@@ -141,7 +141,11 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                     switch result {
                     case .success(let value):
                         self.base.image = value.image
+                        #if canImport(UIKit)
                         attributedView.setNeedsDisplay()
+                        #else
+                        attributedView.setNeedsDisplay(attributedView.bounds)
+                        #endif
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
