@@ -24,9 +24,16 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if !os(watchOS)
+
 import Foundation
 import AVKit
+
+#if canImport(MobileCoreServices)
 import MobileCoreServices
+#else
+import CoreServices
+#endif
 
 public struct AVAssetImageDataProvider: ImageDataProvider {
 
@@ -92,3 +99,5 @@ extension CGImage {
         return mutableData as Data
     }
 }
+
+#endif
