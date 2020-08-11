@@ -371,6 +371,30 @@
                                             <segue destination="WgT-E0-jsn" kind="show" id="Sgu-eB-5JV"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="2c2-O7-4OG">
+                                        <rect key="frame" x="0.0" y="468" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2c2-O7-4OG" id="Mjl-hg-ebT">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AVAsset Image Generator" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I8e-FH-QjH">
+                                                    <rect key="frame" x="20" y="11.666666666666664" width="194.66666666666666" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="I8e-FH-QjH" secondAttribute="trailing" constant="20" symbolic="YES" id="KjO-7Q-h0u"/>
+                                                <constraint firstItem="I8e-FH-QjH" firstAttribute="leading" secondItem="Mjl-hg-ebT" secondAttribute="leading" constant="20" symbolic="YES" id="Nib-u8-NUb"/>
+                                                <constraint firstItem="I8e-FH-QjH" firstAttribute="centerY" secondItem="Mjl-hg-ebT" secondAttribute="centerY" id="s3P-9n-qo8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="m5P-35-yHH" kind="show" id="iY4-PO-rZO"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -827,6 +851,38 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a3K-Ir-TOf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2654" y="1061"/>
+        </scene>
+        <!--Asset Image Generator View Controller-->
+        <scene sceneID="PCw-9j-oCu">
+            <objects>
+                <viewController id="m5P-35-yHH" customClass="AVAssetImageGeneratorViewController" customModule="Kingfisher_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Hqg-bo-3DO">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lTP-vt-DdF">
+                                <rect key="frame" x="87" y="94" width="240" height="240"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="240" id="PRd-E7-RiS"/>
+                                    <constraint firstAttribute="width" constant="240" id="sQj-Or-zGO"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="kpf-7x-2lo"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="lTP-vt-DdF" firstAttribute="centerX" secondItem="kpf-7x-2lo" secondAttribute="centerX" id="2MT-0R-oyk"/>
+                            <constraint firstItem="lTP-vt-DdF" firstAttribute="top" secondItem="kpf-7x-2lo" secondAttribute="top" constant="50" id="mff-5v-1Z1"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="7AD-kL-ZIP"/>
+                    <connections>
+                        <outlet property="imageView" destination="lTP-vt-DdF" id="fk4-PV-mkj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Idc-Kb-7jc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1850.7246376811595" y="1735.5978260869567"/>
         </scene>
     </scenes>
     <resources>
