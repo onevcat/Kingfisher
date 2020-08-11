@@ -47,6 +47,7 @@
 		D12EB83E24DD902300329EE1 /* TextAttachmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12EB83D24DD902300329EE1 /* TextAttachmentViewController.swift */; };
 		D12EB84024DDB9E100329EE1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12EB83F24DDB9E000329EE1 /* LaunchScreen.storyboard */; };
 		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D16CC3D824E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */; };
 		D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA221A1879600263AD8 /* MainViewController.swift */; };
 		D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
 		D1A1CCA821A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
@@ -200,6 +201,7 @@
 		D16218A4238EAA67004A1C6C /* Kingfisher-Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Kingfisher-Demo.entitlements"; sourceTree = "<group>"; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageGeneratorViewController.swift; sourceTree = "<group>"; };
 		D1A1CCA221A1879600263AD8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KingfisherOperation.swift"; sourceTree = "<group>"; };
 		D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewController.swift; sourceTree = "<group>"; };
@@ -389,6 +391,7 @@
 				D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */,
 				C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */,
 				D12EB83D24DD902300329EE1 /* TextAttachmentViewController.swift */,
+				D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -732,6 +735,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D16CC3D824E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift in Sources */,
 				C959EEE622874DC600467A10 /* ProgressiveJPEGViewController.swift in Sources */,
 				D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12EB83E24DD902300329EE1 /* TextAttachmentViewController.swift in Sources */,
