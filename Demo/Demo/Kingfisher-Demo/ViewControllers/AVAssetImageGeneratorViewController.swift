@@ -34,13 +34,11 @@ class AVAssetImageGeneratorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let url = URL(string: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4")!
-        let asset = AVAsset(url: url)
-        let generator = AVAssetImageGenerator(asset: asset)
         let provider = AVAssetImageDataProvider(
-            assetImageGenerator: generator,
-            time: CMTime(seconds: 14, preferredTimescale: 1)
+            assetURL: URL(string: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4")!,
+            seconds: 15.0
         )
+
         imageView.kf.setImage(with: provider) { r in
             print(r)
         }

@@ -50,7 +50,7 @@ public struct AVAssetImageDataProvider: ImageDataProvider {
     }
 
     public var cacheKey: String {
-        return "\(internalKey)_\(time.value)"
+        return "\(internalKey)_\(time.seconds)"
     }
 
     public init(assetImageGenerator: AVAssetImageGenerator, time: CMTime) {
@@ -62,6 +62,11 @@ public struct AVAssetImageDataProvider: ImageDataProvider {
         let asset = AVAsset(url: assetURL)
         let generator = AVAssetImageGenerator(asset: asset)
         self.init(assetImageGenerator: generator, time: time)
+    }
+
+    public init(assetURL: URL, seconds: TimeInterval) {
+        let time = CMTime(seconds: seconds, preferredTimescale: 600)
+        self.init(assetURL: assetURL, time: time)
     }
 
     public func data(handler: @escaping (Result<Data, Error>) -> Void) {
