@@ -25,7 +25,7 @@ platform :ios do
     
   lane :test_ci do
     if ENV["DESTINATION"].include? "watchOS" then
-        build_watch_os(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
+        build(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
     else
         test(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
     end
