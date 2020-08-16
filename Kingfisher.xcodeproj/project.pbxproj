@@ -61,6 +61,7 @@
 		D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */; };
 		D12EB83C24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */; };
 		D13646742165A1A100A33652 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13646732165A1A100A33652 /* Result.swift */; };
+		D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */; };
 		D16FEA3A23078C63006E67D5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F623078C63006E67D5 /* LICENSE */; };
 		D16FEA3B23078C63006E67D5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F723078C63006E67D5 /* README.md */; };
 		D16FEA3C23078C63006E67D5 /* LSStubRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D16FE9FA23078C63006E67D5 /* LSStubRequest.m */; };
@@ -187,6 +188,7 @@
 		D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
 		D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSTextAttachment+Kingfisher.swift"; sourceTree = "<group>"; };
 		D13646732165A1A100A33652 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageDataProvider.swift; sourceTree = "<group>"; };
 		D16FE9F623078C63006E67D5 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		D16FE9F723078C63006E67D5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D16FE9FA23078C63006E67D5 /* LSStubRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSStubRequest.m; sourceTree = "<group>"; };
@@ -627,6 +629,7 @@
 				D1A1CC99219FAB4B00263AD8 /* Source.swift */,
 				D12AB69E215D2BB50013BA68 /* Resource.swift */,
 				D1E56444219B16330057AAE3 /* ImageDataProvider.swift */,
+				D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */,
 			);
 			path = ImageSource;
 			sourceTree = "<group>";
@@ -813,6 +816,7 @@
 				D12AB6E4215D2BB50013BA68 /* Placeholder.swift in Sources */,
 				4B46CC6921744AC500D90C4A /* DiskStorage.swift in Sources */,
 				4B46CC5F217449C600D90C4A /* MemoryStorage.swift in Sources */,
+				D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */,
 				D1839845216E333E003927D3 /* Delegate.swift in Sources */,
 				D12AB6D8215D2BB50013BA68 /* ImageTransition.swift in Sources */,
 				D1A37BE8215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
