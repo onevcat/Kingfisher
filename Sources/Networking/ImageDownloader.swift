@@ -202,11 +202,11 @@ open class ImageDownloader {
     ///   - completionHandler: Called when the download progress finishes. This block will be called in the queue
     ///                        defined in `.callbackQueue` in `options` parameter.
     /// - Returns: A downloading task. You could call `cancel` on it to stop the download task.
-    @discardableResult
     open func downloadImage(
         with url: URL,
         options: KingfisherParsedOptionsInfo,
-        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil)
     {
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
@@ -218,18 +218,20 @@ open class ImageDownloader {
                 options.callbackQueue.execute {
                     completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
                 }
-                return nil
+                taskHandler(nil)
+                return
             }
             request = r
         }
-        
+
         // There is a possibility that request modifier changed the url to `nil` or empty.
         // In this case, throw an error.
         guard let url = request.url, !url.absoluteString.isEmpty else {
             options.callbackQueue.execute {
                 completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
             }
-            return nil
+            taskHandler(nil)
+            return
         }
 
         // Wraps `completionHandler` to `onCompleted` respectively.
@@ -318,7 +320,7 @@ open class ImageDownloader {
             delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
             sessionTask.resume()
         }
-        return downloadTask
+        taskHandler(downloadTask)
     }
 
     /// Downloads an image with a URL and option.
@@ -330,20 +332,21 @@ open class ImageDownloader {
     ///   - completionHandler: Called when the download progress finishes. This block will be called in the queue
     ///                        defined in `.callbackQueue` in `options` parameter.
     /// - Returns: A downloading task. You could call `cancel` on it to stop the download task.
-    @discardableResult
     open func downloadImage(
         with url: URL,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil)
     {
         var info = KingfisherParsedOptionsInfo(options)
         if let block = progressBlock {
             info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
-        return downloadImage(
+        downloadImage(
             with: url,
             options: info,
+            taskHandler: taskHandler,
             completionHandler: completionHandler)
     }
 }

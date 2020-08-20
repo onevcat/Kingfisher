@@ -264,19 +264,19 @@ public class ImagePrefetcher: CustomStringConvertible {
             }
         }
 
-        var downloadTask: DownloadTask.WrappedTask?
         ImagePrefetcher.requestingQueue.sync {
             let context = RetrievingContext(
                 options: optionsInfo, originalSource: source
             )
-            downloadTask = manager.loadAndCacheImage(
+            manager.loadAndCacheImage(
                 source: source,
                 context: context,
+                taskHandler: { [weak self] downloadTask in
+                    if let downloadTask = downloadTask {
+                        self?.tasks[source.cacheKey] = downloadTask
+                    }
+                },
                 completionHandler: downloadTaskCompletionHandler)
-        }
-
-        if let downloadTask = downloadTask {
-            tasks[source.cacheKey] = downloadTask
         }
     }
     

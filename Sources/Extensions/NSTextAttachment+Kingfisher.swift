@@ -79,21 +79,22 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     /// label.attributedText = attributedText
     /// ```
     ///
-    @discardableResult
     public func setImage(
         with source: Source?,
         attributedView: KFCrossPlatformView,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
     {
         var mutatingSelf = self
         guard let source = source else {
             base.image = placeholder
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
+            taskHandler(nil)
+            return
         }
 
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
@@ -118,9 +119,13 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
         }
 
-        let task = KingfisherManager.shared.retrieveImage(
+        KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
+            taskHandler: { task in
+                mutatingSelf.imageTask = task
+                taskHandler(task)
+            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     guard issuedIdentifier == self.taskIdentifier else {
@@ -154,11 +159,8 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                     }
                     completionHandler?(result)
                 }
-        }
+            }
         )
-
-        mutatingSelf.imageTask = task
-        return task
     }
 
     /// Sets an image to the text attachment with a source.
@@ -204,14 +206,14 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     /// label.attributedText = attributedText
     /// ```
     ///
-    @discardableResult
     public func setImage(
         with resource: Resource?,
         attributedView: KFCrossPlatformView,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
     {
         return setImage(
             with: resource.map { .network($0) },
@@ -219,6 +221,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
+            taskHandler: taskHandler,
             completionHandler: completionHandler)
     }
 

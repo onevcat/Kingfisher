@@ -73,12 +73,15 @@ extension KFImage {
                 return
             }
 
-            downloadTask = KingfisherManager.shared
+            KingfisherManager.shared
                 .retrieveImage(
                     with: source,
                     options: options,
                     progressBlock: { size, total in
                         self.onProgressDelegate.call((size, total))
+                    },
+                    taskHandler: { [weak self] downloadTask in
+                        self?.downloadTask = downloadTask
                     },
                     completionHandler: { [weak self] result in
 

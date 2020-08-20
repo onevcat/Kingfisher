@@ -142,19 +142,20 @@ public class KingfisherManager {
     ///    This method will first check whether the requested `resource` is already in cache or not. If cached,
     ///    it returns `nil` and invoke the `completionHandler` after the cached image retrieved. Otherwise, it
     ///    will download the `resource`, store it in cache, then call `completionHandler`.
-    @discardableResult
     public func retrieveImage(
         with resource: Resource,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?)
     {
-        return retrieveImage(
+        retrieveImage(
             with: resource.convertToSource(),
             options: options,
             progressBlock: progressBlock,
             downloadTaskUpdated: downloadTaskUpdated,
+            taskHandler: taskHandler,
             completionHandler: completionHandler
         )
     }
@@ -186,17 +187,19 @@ public class KingfisherManager {
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?)
     {
         let options = currentDefaultOptions + (options ?? .empty)
         var info = KingfisherParsedOptionsInfo(options)
         if let block = progressBlock {
             info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
-        return retrieveImage(
+        retrieveImage(
             with: source,
             options: info,
             downloadTaskUpdated: downloadTaskUpdated,
+            taskHandler: taskHandler,
             completionHandler: completionHandler)
     }
 
@@ -204,7 +207,8 @@ public class KingfisherManager {
         with source: Source,
         options: KingfisherParsedOptionsInfo,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?)
     {
         let retrievingContext = RetrievingContext(options: options, originalSource: source)
         var retryContext: RetryContext?
@@ -213,10 +217,15 @@ public class KingfisherManager {
             with source: Source,
             downloadTaskUpdated: DownloadTaskUpdatedBlock?
         ) {
-            let newTask = self.retrieveImage(with: source, context: retrievingContext) { result in
+            self.retrieveImage(
+                with: source,
+                context: retrievingContext,
+                taskHandler: { newTask in
+                    downloadTaskUpdated?(newTask)
+                }
+            ) { result in
                 handler(currentSource: source, result: result)
             }
-            downloadTaskUpdated?(newTask)
         }
 
         func failCurrentSource(_ source: Source, with error: KingfisherError) {
@@ -285,9 +294,10 @@ public class KingfisherManager {
             }
         }
 
-        return retrieveImage(
+        retrieveImage(
             with: source,
-            context: retrievingContext)
+            context: retrievingContext,
+            taskHandler: taskHandler)
         {
             result in
             handler(currentSource: source, result: result)
@@ -298,15 +308,19 @@ public class KingfisherManager {
     private func retrieveImage(
         with source: Source,
         context: RetrievingContext,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?)
     {
         let options = context.options
         if options.forceRefresh {
-            return loadAndCacheImage(
+            loadAndCacheImage(
                 source: source,
                 context: context,
-                completionHandler: completionHandler)?.value
-            
+                taskHandler: { wrappedTask in
+                    taskHandler(wrappedTask?.value)
+                },
+                completionHandler: completionHandler
+            )
         } else {
             let loadedFromCache = retrieveImageFromCache(
                 source: source,
@@ -314,19 +328,24 @@ public class KingfisherManager {
                 completionHandler: completionHandler)
             
             if loadedFromCache {
-                return nil
+                taskHandler(nil)
+                return
             }
             
             if options.onlyFromCache {
                 let error = KingfisherError.cacheError(reason: .imageNotExisting(key: source.cacheKey))
                 completionHandler?(.failure(error))
-                return nil
+                taskHandler(nil)
+                return
             }
             
             return loadAndCacheImage(
                 source: source,
                 context: context,
-                completionHandler: completionHandler)?.value
+                taskHandler: { wrappedTask in
+                    taskHandler(wrappedTask?.value)
+                },
+                completionHandler: completionHandler)
         }
     }
 
@@ -441,11 +460,11 @@ public class KingfisherManager {
         }
     }
 
-    @discardableResult
     func loadAndCacheImage(
         source: Source,
         context: RetrievingContext,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
+        taskHandler: @escaping (DownloadTask.WrappedTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?)
     {
         let options = context.options
         func _cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>) {
@@ -461,28 +480,30 @@ public class KingfisherManager {
         switch source {
         case .network(let resource):
             let downloader = options.downloader ?? self.downloader
-            let task = downloader.downloadImage(
-                with: resource.downloadURL, options: options, completionHandler: _cacheImage
+            downloader.downloadImage(
+                with: resource.downloadURL,
+                options: options,
+                taskHandler: { task in
+                    // The code below is neat, but it fails the Swift 5.2 compiler with a runtime crash when
+                    // `BUILD_LIBRARY_FOR_DISTRIBUTION` is turned on. I believe it is a bug in the compiler.
+                    // Let's fallback to a traditional style before it can be fixed in Swift.
+                    //
+                    // https://github.com/onevcat/Kingfisher/issues/1436
+                    //
+                    // taskHandler(task.map(DownloadTask.WrappedTask.download))
+
+                    if let task = task {
+                        taskHandler(.download(task))
+                    } else {
+                        taskHandler(nil)
+                    }
+                },
+                completionHandler: _cacheImage
             )
-
-
-            // The code below is neat, but it fails the Swift 5.2 compiler with a runtime crash when 
-            // `BUILD_LIBRARY_FOR_DISTRIBUTION` is turned on. I believe it is a bug in the compiler. 
-            // Let's fallback to a traditional style before it can be fixed in Swift.
-            //
-            // https://github.com/onevcat/Kingfisher/issues/1436
-            //
-            // return task.map(DownloadTask.WrappedTask.download)
-
-            if let task = task {
-                return .download(task)
-            } else {
-                return nil
-            }
 
         case .provider(let provider):
             provideImage(provider: provider, options: options, completionHandler: _cacheImage)
-            return .dataProviding
+            taskHandler(.dataProviding)
         }
     }
     

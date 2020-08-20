@@ -49,20 +49,21 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
     /// Since this method will perform UI changes, you must call it from the main thread.
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
-    @discardableResult
     public func setImage(
         with source: Source?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
     {
         var mutatingSelf = self
         guard let source = source else {
             base.setImage(placeholder)
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
+            taskHandler(nil)
+            return
         }
         
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
@@ -87,10 +88,14 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
             $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
         }
         
-        let task = KingfisherManager.shared.retrieveImage(
+        KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            taskHandler: { task in
+                mutatingSelf.imageTask = task
+                taskHandler(task)
+            },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     guard issuedIdentifier == self.taskIdentifier else {
@@ -123,9 +128,6 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
                 }
             }
         )
-        
-        mutatingSelf.imageTask = task
-        return task
     }
     
     /// Sets an image to the image view with a requested resource.
@@ -145,19 +147,20 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
     /// or network. Since this method will perform UI changes, you must call it from the main thread.
     /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
     ///
-    @discardableResult
     public func setImage(
         with resource: Resource?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        taskHandler: @escaping (DownloadTask?) -> Void,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil)
     {
-        return setImage(
+        setImage(
             with: resource?.convertToSource(),
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
+            taskHandler: taskHandler,
             completionHandler: completionHandler)
     }
 
