@@ -212,27 +212,54 @@ open class ImageDownloader {
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
         request.httpShouldUsePipelining = requestsUsePipelining
 
-        if let requestModifier = options.requestModifier {
-            // Modifies request before sending.
-            guard let r = requestModifier.modified(for: request) else {
-                options.callbackQueue.execute {
-                    completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
-                }
-                taskHandler(nil)
-                return
-            }
-            request = r
-        }
-
-        // There is a possibility that request modifier changed the url to `nil` or empty.
-        // In this case, throw an error.
-        guard let url = request.url, !url.absoluteString.isEmpty else {
-            options.callbackQueue.execute {
-                completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
-            }
-            taskHandler(nil)
+        guard let requestModifier = options.requestModifier else {
+            downloadImage(
+                with: url,
+                request: request,
+                options: options,
+                taskHandler: taskHandler,
+                completionHandler: completionHandler
+            )
             return
         }
+        // Modifies request before sending.
+        requestModifier.modified(for: request) { r in
+            DispatchQueue.main.async { [weak self] in
+                guard let r = r else {
+                    options.callbackQueue.execute {
+                        completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
+                    }
+                    taskHandler(nil)
+                    return
+                }
+
+                request = r
+
+                // There is a possibility that request modifier changed the url to `nil` or empty.
+                // In this case, throw an error.
+                guard let url = request.url, !url.absoluteString.isEmpty else {
+                    options.callbackQueue.execute {
+                        completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
+                    }
+                    taskHandler(nil)
+                    return
+                }
+                self?.downloadImage(
+                    with: url,
+                    request: request,
+                    options: options,
+                    taskHandler: taskHandler,
+                    completionHandler: completionHandler
+                )
+            }
+        }
+    }
+
+    private func downloadImage(with url: URL,
+                               request: URLRequest,
+                               options: KingfisherParsedOptionsInfo,
+                               taskHandler: (DownloadTask?) -> Void,
+                               completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) {
 
         // Wraps `completionHandler` to `onCompleted` respectively.
 

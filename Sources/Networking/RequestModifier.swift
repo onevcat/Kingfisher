@@ -43,7 +43,7 @@ public protocol ImageDownloadRequestModifier {
     /// - Returns: A modified version of request, which you wish to use for downloading an image. If `nil` returned,
     ///            a `KingfisherError.requestError` with `.emptyRequest` as its reason will occur.
     ///
-    func modified(for request: URLRequest) -> URLRequest?
+    func modified(for request: URLRequest, completion: @escaping (URLRequest?) -> Void)
 }
 
 /// A wrapper for creating an `ImageDownloadRequestModifier` easier.
@@ -53,8 +53,8 @@ public struct AnyModifier: ImageDownloadRequestModifier {
     let block: (URLRequest) -> URLRequest?
 
     /// For `ImageDownloadRequestModifier` conformation.
-    public func modified(for request: URLRequest) -> URLRequest? {
-        return block(request)
+    public func modified(for request: URLRequest, completion: @escaping (URLRequest?) -> Void) {
+        completion(block(request))
     }
     
     /// Creates a value of `ImageDownloadRequestModifier` which runs `modify` block.
