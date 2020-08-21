@@ -144,8 +144,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
 }
 
 class TestModifier: ImageDownloadRequestModifier {
-    func modified(for request: URLRequest) -> URLRequest? {
-        return nil
+    func modified(for request: URLRequest, completion: @escaping (URLRequest?) -> Void) {
+        completion(nil)
     }
 }
 

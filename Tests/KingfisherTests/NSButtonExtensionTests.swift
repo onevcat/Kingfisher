@@ -69,7 +69,7 @@ class NSButtonExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
 
-        button.kf.setImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) {
+        button.kf.setImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }, taskHandler: { _ in }) {
             result in
             XCTAssertTrue(progressBlockIsCalled)
             
@@ -91,7 +91,11 @@ class NSButtonExtensionTests: XCTestCase {
         stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
-        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) {
+        button.kf.setAlternateImage(
+            with: url,
+            progressBlock: { _, _ in progressBlockIsCalled = true },
+            taskHandler: { _ in })
+        {
             result in
             XCTAssertTrue(progressBlockIsCalled)
             
@@ -113,7 +117,7 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
         
-        button.kf.setImage(with: url) { result in
+        button.kf.setImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
@@ -130,7 +134,7 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
         
-        button.kf.setAlternateImage(with: url) { result in
+        button.kf.setAlternateImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
@@ -145,7 +149,7 @@ class NSButtonExtensionTests: XCTestCase {
     func testSettingNilURL() {
         let exp = expectation(description: #function)
         let url: URL? = nil
-        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in XCTFail() }) {
+        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in XCTFail() }, taskHandler: { _ in }) {
             result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
@@ -165,7 +169,7 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        button.kf.setImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        button.kf.setImage(with: url, options: [.onFailureImage(testImage)], taskHandler: { _ in }) { (result) -> Void in
             XCTAssertNil(result.value)
             expectation.fulfill()
         }
@@ -180,7 +184,11 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        button.kf.setAlternateImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        button.kf.setAlternateImage(
+            with: url,
+            options: [.onFailureImage(testImage)],
+            taskHandler: { _ in })
+        { (result) -> Void in
             XCTAssertNil(result.value)
             expectation.fulfill()
         }

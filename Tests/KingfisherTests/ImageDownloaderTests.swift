@@ -60,7 +60,7 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        downloader.downloadImage(with: url) { result in
+        downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.value)
             exp.fulfill()
         }
@@ -74,7 +74,7 @@ class ImageDownloaderTests: XCTestCase {
         for url in testURLs {
             group.enter()
             stub(url, data: testImageData)
-            downloader.downloadImage(with: url) { result in
+            downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
                 XCTAssertNotNil(result.value)
                 group.leave()
             }
@@ -93,7 +93,7 @@ class ImageDownloaderTests: XCTestCase {
 
         for _ in 0...5 {
             group.enter()
-            downloader.downloadImage(with: url) { result in
+            downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
                 XCTAssertNotNil(result.value)
                 group.leave()
             }
@@ -112,7 +112,7 @@ class ImageDownloaderTests: XCTestCase {
         modifier.url = url
         
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)]) { result in
+        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)], taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value?.url, url)
             exp.fulfill()
@@ -127,7 +127,11 @@ class ImageDownloaderTests: XCTestCase {
 
         let exp = expectation(description: #function)
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImage(with: someURL, options: [.requestModifier(nilModifier)]) { result in
+        downloader.downloadImage(
+            with: someURL,
+            options: [.requestModifier(nilModifier)],
+            taskHandler: { _ in })
+        { result in
             XCTAssertNotNil(result.error)
             guard case .requestError(reason: .emptyRequest) = result.error! else {
                 XCTFail()
@@ -144,7 +148,7 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData, statusCode: 404)
         
-        downloader.downloadImage(with: url) { result in
+        downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isInvalidResponseStatusCode(404))
             exp.fulfill()
@@ -163,7 +167,7 @@ class ImageDownloaderTests: XCTestCase {
         let downloader = ImageDownloader(name: "ssl.test")
         let url = URL(string: "https://testssl-expire.disig.sk/Expired.png")!
         
-        downloader.downloadImage(with: url) { result in
+        downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             if case .responseError(reason: .URLSessionError(let error)) = result.error! {
                 let nsError = error as NSError
@@ -190,14 +194,14 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
 
         stub(url, errorCode: -1)
-        downloader.downloadImage(with: url) { result in
+        downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             
             LSNocilla.sharedInstance().clearStubs()
 
             stub(url, data: testImageData)
             // Retry the download
-            self.downloader.downloadImage(with: url) { result in
+            self.downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
                 XCTAssertNil(result.error)
                 exp.fulfill()
             }
@@ -215,7 +219,8 @@ class ImageDownloaderTests: XCTestCase {
         downloader.downloadImage(
             with: url,
             options: [.requestModifier(modifier)],
-            progressBlock: { received, totalSize in XCTFail("The progress block should not be called.") })
+            progressBlock: { received, totalSize in XCTFail("The progress block should not be called.") },
+            taskHandler: { _ in })
         {
             result in
             XCTAssertNotNil(result.error)
@@ -231,8 +236,14 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskProperty() {
-        let task = downloader.downloadImage(with: URL(string: "1234")!)
-        XCTAssertNotNil(task, "The task should exist.")
+        let exp = expectation(description: #function)
+        downloader.downloadImage(
+            with: URL(string: "1234")!,
+            taskHandler: { task in
+                XCTAssertNotNil(task, "The task should exist.")
+                exp.fulfill()
+            })
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCancelDownloadTask() {
@@ -240,20 +251,20 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData, length: 123)
         
-        let task = downloader.downloadImage(
+        downloader.downloadImage(
             with: url,
-            progressBlock: { _, _ in XCTFail() })
+            progressBlock: { _, _ in XCTFail() },
+            taskHandler: { task in
+                XCTAssertNotNil(task)
+                task!.cancel()
+                _ = stub.go()
+            })
         {
             result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
         }
-        
-        XCTAssertNotNil(task)
-        task!.cancel()
-
-        _ = stub.go()
         
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -266,19 +277,23 @@ class ImageDownloaderTests: XCTestCase {
         let group = DispatchGroup()
 
         group.enter()
-        let task1 = downloader.downloadImage(with: url) { result in
+        downloader.downloadImage(
+            with: url,
+            taskHandler: { task in
+                task?.cancel()
+                delay(0.1) { _ = stub.go() }
+            }
+        ) { result in
             XCTAssertNotNil(result.error)
             group.leave()
         }
 
         group.enter()
-        _ = downloader.downloadImage(with: url) { result in
+        _ = downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.value?.image)
             group.leave()
         }
 
-        task1?.cancel()
-        delay(0.1) { _ = stub.go() }
         group.notify(queue: .main) {
             delay(0.1) { exp.fulfill() }
         }
@@ -299,7 +314,7 @@ class ImageDownloaderTests: XCTestCase {
         let urls = [url1, url1, url2]
         urls.forEach {
             group.enter()
-            downloader.downloadImage(with: $0) { result in
+            downloader.downloadImage(with: $0, taskHandler: { _ in }) { result in
                 XCTAssertNotNil(result.error)
                 XCTAssertTrue(result.error!.isTaskCancelled)
                 group.leave()
@@ -329,21 +344,21 @@ class ImageDownloaderTests: XCTestCase {
         let group = DispatchGroup()
         
         group.enter()
-        downloader.downloadImage(with: url1) { result in
+        downloader.downloadImage(with: url1, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             group.leave()
         }
         
         group.enter()
-        downloader.downloadImage(with: url1) { result in
+        downloader.downloadImage(with: url1, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             group.leave()
         }
         
         group.enter()
-        downloader.downloadImage(with: url2) { result in
+        downloader.downloadImage(with: url2, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.value)
             group.leave()
         }
@@ -370,9 +385,15 @@ class ImageDownloaderTests: XCTestCase {
         let group = DispatchGroup()
         
         group.enter()
-        let downloadTask = downloader.downloadImage(
+        downloader.downloadImage(
             with: url,
-            progressBlock: { _, _ in XCTFail()})
+            progressBlock: { _, _ in XCTFail()},
+            taskHandler: { downloadTask in
+                XCTAssertNotNil(downloadTask)
+
+                downloadTask!.cancel()
+                _ = stub.go()
+            })
         {
             result in
             XCTAssertNotNil(result.error)
@@ -380,13 +401,8 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
         
-        XCTAssertNotNil(downloadTask)
-        
-        downloadTask!.cancel()
-        _ = stub.go()
-        
         group.enter()
-        downloader.downloadImage(with: url) {
+        downloader.downloadImage(with: url, taskHandler: { _ in }) {
             result in
             XCTAssertNotNil(result.value)
             if let error = result.error {
@@ -402,9 +418,18 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskNil() {
+        let exp = expectation(description: #function)
+
         modifier.url = nil
-        let downloadTask = downloader.downloadImage(with: URL(string: "url")!, options: [.requestModifier(modifier)])
-        XCTAssertNil(downloadTask)
+        downloader.downloadImage(
+            with: URL(string: "url")!,
+            options: [.requestModifier(modifier)],
+            taskHandler: { downloadTask in
+                XCTAssertNil(downloadTask)
+                exp.fulfill()
+        })
+
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testDownloadWithProcessor() {
@@ -416,7 +441,7 @@ class ImageDownloaderTests: XCTestCase {
         let p = RoundCornerImageProcessor(cornerRadius: 40)
         let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
         
-        downloader.downloadImage(with: url, options: [.processor(p)]) { result in
+        downloader.downloadImage(with: url, options: [.processor(p)], taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.value)
             let image = result.value!.image
             XCTAssertFalse(image.renderEqual(to: testImage))
@@ -440,23 +465,44 @@ class ImageDownloaderTests: XCTestCase {
         let blurred = testImage.kf.blurred(withRadius: 3.0)
         
         let group = DispatchGroup()
+        let taskGroup = DispatchGroup()
 
         group.enter()
-        let task1 = downloader.downloadImage(with: url, options: [.processor(p1)]) { result in
+        taskGroup.enter()
+        var task1: DownloadTask?
+        downloader.downloadImage(
+            with: url,
+            options: [.processor(p1)],
+            taskHandler: { task in
+                task1 = task
+                taskGroup.leave()
+            })
+        { result in
             XCTAssertTrue(result.value!.image.renderEqual(to: roundcornered))
             group.leave()
         }
 
         group.enter()
-        let task2 = downloader.downloadImage(with: url, options: [.processor(p2)]) { result in
+        taskGroup.enter()
+        var task2: DownloadTask?
+        downloader.downloadImage(
+            with: url,
+            options: [.processor(p2)],
+            taskHandler: { task in
+                task2 = task
+                taskGroup.leave()
+            })
+        { result in
             XCTAssertTrue(result.value!.image.renderEqual(to: blurred))
             group.leave()
         }
 
-        XCTAssertNotNil(task1)
-        XCTAssertEqual(task1?.sessionTask.task, task2?.sessionTask.task)
+        taskGroup.notify(queue: .main) {
+            XCTAssertNotNil(task1)
+            XCTAssertEqual(task1?.sessionTask.task, task2?.sessionTask.task)
 
-        _ = stub.go()
+            _ = stub.go()
+        }
         
         group.notify(queue: .main, execute: exp.fulfill)
         waitForExpectations(timeout: 3, handler: nil)
@@ -469,7 +515,7 @@ class ImageDownloaderTests: XCTestCase {
         stub(url, data: testImageData)
 
         downloader.delegate = self
-        downloader.downloadImage(with: url) { result in
+        downloader.downloadImage(with: url, taskHandler: { _ in }) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             if case .responseError(reason: .dataModifyingFailed) = result.error! {
@@ -495,7 +541,7 @@ class ImageDownloaderTests: XCTestCase {
             return image.withRenderingMode(.alwaysTemplate)
         }
 
-        downloader.downloadImage(with: url, options: [.imageModifier(modifier)]) { result in
+        downloader.downloadImage(with: url, options: [.imageModifier(modifier)], taskHandler: { _ in }) { result in
             XCTAssertTrue(modifierCalled)
             XCTAssertEqual(result.value?.image.renderingMode, .alwaysTemplate)
             exp.fulfill()
@@ -510,12 +556,16 @@ class ImageDownloaderTests: XCTestCase {
         
         let url = testURLs[0]
         stub(url, data: testImageData)
-        let task = downloader.downloadImage(with: url, options: [.downloadPriority(URLSessionTask.highPriority)])
+        downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)],
+            taskHandler: { task in
+                XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
+            })
         {
             _ in
             exp.fulfill()
         }
-        XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
 }
@@ -528,10 +578,10 @@ extension ImageDownloaderTests: ImageDownloaderDelegate {
 
 class URLModifier: ImageDownloadRequestModifier {
     var url: URL? = nil
-    func modified(for request: URLRequest) -> URLRequest? {
+    func modified(for request: URLRequest, completion: @escaping (URLRequest?) -> Void) {
         var r = request
         r.url = url
-        return r
+        completion(r)
     }
 }
 

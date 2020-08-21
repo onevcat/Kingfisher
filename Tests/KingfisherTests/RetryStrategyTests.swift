@@ -94,6 +94,7 @@ class RetryStrategyTests: XCTestCase {
         _ = manager.retrieveImage(
             with: .network(brokenURL),
             options: [.retryStrategy(retry)],
+            taskHandler: { _ in },
             completionHandler: { result in
                 XCTAssertEqual(retry.count, 3)
                 exp.fulfill()

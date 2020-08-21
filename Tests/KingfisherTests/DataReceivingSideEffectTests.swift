@@ -67,7 +67,7 @@ class DataReceivingSideEffectTests: XCTestCase {
         let receiver = DataReceivingStub()
 
         let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
-        KingfisherManager.shared.retrieveImage(with: url, options: options) {
+        KingfisherManager.shared.retrieveImage(with: url, options: options, taskHandler: { _ in }) {
             result in
             XCTAssertTrue(receiver.called)
             exp.fulfill()
@@ -83,7 +83,7 @@ class DataReceivingSideEffectTests: XCTestCase {
         let receiver = DataReceivingNotAppyStub()
 
         let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
-        KingfisherManager.shared.retrieveImage(with: url, options: options) {
+        KingfisherManager.shared.retrieveImage(with: url, options: options, taskHandler: { _ in }) {
             result in
             XCTAssertTrue(receiver.called)
             XCTAssertFalse(receiver.appied)

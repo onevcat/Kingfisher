@@ -67,9 +67,13 @@ class UIButtonExtensionTests: XCTestCase {
 
         var progressBlockIsCalled = false
         
-        button.kf.setImage(with: url, for: .normal, progressBlock: { _, _ in
-            progressBlockIsCalled = true
-        })
+        button.kf.setImage(
+            with: url,
+            for: .normal,
+            progressBlock: { _, _ in
+                progressBlockIsCalled = true
+            },
+            taskHandler: { _ in })
         {
             result in
             XCTAssertTrue(progressBlockIsCalled)
@@ -93,9 +97,13 @@ class UIButtonExtensionTests: XCTestCase {
         stub(url, data: testImageData, length: 123)
         
         var progressBlockIsCalled = false
-        button.kf.setBackgroundImage(with: url, for: .normal, progressBlock: { _, _ in
-            progressBlockIsCalled = true
-        })
+        button.kf.setBackgroundImage(
+            with: url,
+            for: .normal,
+            progressBlock: { _, _ in
+                progressBlockIsCalled = true
+            },
+            taskHandler: { _ in })
         {
             result in
     
@@ -117,7 +125,7 @@ class UIButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
 
-        button.kf.setImage(with: url, for: .highlighted) { result in
+        button.kf.setImage(with: url, for: .highlighted, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
@@ -134,7 +142,7 @@ class UIButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
         
-        button.kf.setBackgroundImage(with: url, for: .highlighted) { result in
+        button.kf.setBackgroundImage(with: url, for: .highlighted, taskHandler: { _ in }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
@@ -150,7 +158,7 @@ class UIButtonExtensionTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url: URL? = nil
-        button.kf.setBackgroundImage(with: url, for: .normal) { result in
+        button.kf.setBackgroundImage(with: url, for: .normal, taskHandler: { _ in }) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             guard case .imageSettingError(reason: .emptySource) = result.error! else {
@@ -169,7 +177,12 @@ class UIButtonExtensionTests: XCTestCase {
         stub(url, errorCode: 404)
         let state = UIControl.State()
         
-        button.kf.setImage(with: url, for: state, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        button.kf.setImage(
+            with: url,
+            for: state,
+            options: [.onFailureImage(testImage)],
+            taskHandler: { _ in })
+        { (result) -> Void in
             XCTAssertNil(result.value)
             expectation.fulfill()
         }
@@ -184,7 +197,12 @@ class UIButtonExtensionTests: XCTestCase {
         stub(url, errorCode: 404)
         let state = UIControl.State()
         
-        button.kf.setBackgroundImage(with: url, for: state, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        button.kf.setBackgroundImage(
+            with: url,
+            for: state,
+            options: [.onFailureImage(testImage)],
+            taskHandler: { _ in })
+        { (result) -> Void in
             XCTAssertNil(result.value)
             expectation.fulfill()
         }
