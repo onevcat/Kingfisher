@@ -86,7 +86,7 @@ public enum MemoryStorage {
                 let nsKey = key as NSString
                 guard let object = storage.object(forKey: nsKey) else {
                     // This could happen if the object is moved by cache `totalCostLimit` or `countLimit` rule.
-                    // We didn't remove the key yet until now, since we do not want to introduce additonal lock.
+                    // We didn't remove the key yet until now, since we do not want to introduce additional lock.
                     // See https://github.com/onevcat/Kingfisher/issues/1233
                     keys.remove(key)
                     continue
