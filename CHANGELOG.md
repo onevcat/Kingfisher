@@ -2,6 +2,13 @@
 
 -----
 
+## [5.15.1 - SwiftUI Layout](https://github.com/onevcat/Kingfisher/releases/tag/5.15.1) (2020-09-16)
+
+#### Fix
+* A workaround for a SwiftUI issue that embedding an image view inside the `List` > `NavigationLink` > `HStack` hierarchy could crash the app on iOS 14. [#1508](https://github.com/onevcat/Kingfisher/issues/1508)
+
+---
+
 ## [5.15.0 - Video and Text Attachment](https://github.com/onevcat/Kingfisher/releases/tag/5.15.0) (2020-08-17)
 
 #### Add
