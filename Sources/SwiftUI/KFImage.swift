@@ -101,20 +101,14 @@ public struct KFImage: SwiftUI.View {
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .onAppear { [weak binder] in
-                    guard let binder = binder else {
-                        return
-                    }
-                    if !binder.loadingOrSuccessed {
-                        binder.start()
+                .onAppear {
+                    if !self.binder.loadingOrSuccessed {
+                        self.binder.start()
                     }
                 }
-                .onDisappear { [weak binder] in
-                    guard let binder = binder else {
-                        return
-                    }
+                .onDisappear {
                     if self.cancelOnDisappear {
-                        binder.cancel()
+                        self.binder.cancel()
                     }
                 }
             }
