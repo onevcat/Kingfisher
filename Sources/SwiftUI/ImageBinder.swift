@@ -92,8 +92,9 @@ extension KFImage {
                             // by `Image.init(uiImage:)`. (The orientation information should be already contained in
                             // a `UIImage`)
                             // https://github.com/onevcat/Kingfisher/issues/1395
-                            self.image = value.image.kf.normalized
+                            let image = value.image.kf.normalized
                             DispatchQueue.main.async {
+                                self.image = image
                                 self.isLoaded.wrappedValue = true
                                 self.onSuccessDelegate.call(value)
                             }
