@@ -52,7 +52,7 @@ platform :ios do
 
   desc "Lint"
   lane :lint do
-    carthage(command: "build", no_skip_current: true, platform: "iOS")
+    # carthage(command: "build", no_skip_current: true, platform: "iOS")
     pod_lib_lint
   end
   
@@ -121,9 +121,7 @@ platform :ios do
     target_version = "Kingfisher-#{options[:version]}"
     supporting_root = "../build/#{target_version}/Supporting Files"
     
-    # Xcode 11.4 causes a crash in the final xcframework
-    # https://github.com/onevcat/Kingfisher/issues/1436
-    xcversion(version: "~> 11.4")
+    xcversion(version: "~> 12.0")
     FileUtils.rm_rf '../build'
     
     frameworks = []
