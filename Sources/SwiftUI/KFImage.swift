@@ -101,7 +101,7 @@ public struct KFImage: SwiftUI.View {
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .onAppear { [weak binder] in
+                .onAppear { [weak binder = self.binder] in
                     guard let binder = binder else {
                         return
                     }
@@ -109,7 +109,7 @@ public struct KFImage: SwiftUI.View {
                         binder.start()
                     }
                 }
-                .onDisappear { [weak binder] in
+                .onDisappear { [weak binder = self.binder] in
                     guard let binder = binder else {
                         return
                     }
