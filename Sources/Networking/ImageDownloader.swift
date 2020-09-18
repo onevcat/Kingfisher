@@ -137,7 +137,7 @@ open class ImageDownloader {
     open weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
 
     private let name: String
-    private let sessionDelegate: SessionDelegate
+    private let sessionDelegate: KFSessionDelegate
     private var session: URLSession
 
     // MARK: Initializers
@@ -153,7 +153,7 @@ open class ImageDownloader {
 
         self.name = name
 
-        sessionDelegate = SessionDelegate()
+        sessionDelegate = KFSessionDelegate()
         session = URLSession(
             configuration: sessionConfiguration,
             delegate: sessionDelegate,

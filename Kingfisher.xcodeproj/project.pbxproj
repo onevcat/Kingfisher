@@ -19,7 +19,7 @@
 		4BA3BF1E228BCDD100909201 /* DataReceivingSideEffectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA3BF1D228BCDD100909201 /* DataReceivingSideEffectTests.swift */; };
 		4BCFF7A621990DB70055AAC4 /* MemoryStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */; };
 		4BCFF7AA219932390055AAC4 /* DiskStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */; };
-		4BD821622189FC0C0084CC21 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* SessionDelegate.swift */; };
+		4BD821622189FC0C0084CC21 /* KFSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821612189FC0C0084CC21 /* KFSessionDelegate.swift */; };
 		4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
 		4BE688F722FD513100B11168 /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */; };
 		4BE688F822FD513700B11168 /* WKInterfaceImage+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AF215D2BB50013BA68 /* WKInterfaceImage+Kingfisher.swift */; };
@@ -142,7 +142,7 @@
 		4BA3BF1D228BCDD100909201 /* DataReceivingSideEffectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReceivingSideEffectTests.swift; sourceTree = "<group>"; };
 		4BCFF7A521990DB60055AAC4 /* MemoryStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStorageTests.swift; sourceTree = "<group>"; };
 		4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStorageTests.swift; sourceTree = "<group>"; };
-		4BD821612189FC0C0084CC21 /* SessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
+		4BD821612189FC0C0084CC21 /* KFSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFSessionDelegate.swift; sourceTree = "<group>"; };
 		4BD821662189FD330084CC21 /* SessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDataTask.swift; sourceTree = "<group>"; };
 		C9286406228584EB00257182 /* ImageProgressive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProgressive.swift; sourceTree = "<group>"; };
 		C959EEE7228940FE00467A10 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -339,7 +339,7 @@
 				D12AB69D215D2BB50013BA68 /* RequestModifier.swift */,
 				D8FCF6A721C5A0E500F9ABC0 /* RedirectHandler.swift */,
 				D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */,
-				4BD821612189FC0C0084CC21 /* SessionDelegate.swift */,
+				4BD821612189FC0C0084CC21 /* KFSessionDelegate.swift */,
 				4BD821662189FD330084CC21 /* SessionDataTask.swift */,
 				4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */,
 				4B8E291B216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift */,
@@ -845,7 +845,7 @@
 				D12AB6E8215D2BB50013BA68 /* GIFAnimatedImage.swift in Sources */,
 				D13646742165A1A100A33652 /* Result.swift in Sources */,
 				D1A1CC9A219FAB4B00263AD8 /* Source.swift in Sources */,
-				4BD821622189FC0C0084CC21 /* SessionDelegate.swift in Sources */,
+				4BD821622189FC0C0084CC21 /* KFSessionDelegate.swift in Sources */,
 				D12AB6E0215D2BB50013BA68 /* Filter.swift in Sources */,
 				4BE688F722FD513100B11168 /* NSButton+Kingfisher.swift in Sources */,
 				D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */,
