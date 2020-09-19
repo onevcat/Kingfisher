@@ -2,6 +2,13 @@
 
 -----
 
+## [5.15.2 - Xcode 11 Revived](https://github.com/onevcat/Kingfisher/releases/tag/5.15.2) (2020-09-19)
+
+#### Fix
+* Fix a build error introduced by the previous SwiftUI fix for Xcode 12. Now Xcode 11 can also build the KingfisherSwiftUI target. [#1515](https://github.com/onevcat/Kingfisher/pull/1515)
+
+---
+
 ## [5.15.1 - SwiftUI Layout](https://github.com/onevcat/Kingfisher/releases/tag/5.15.1) (2020-09-16)
 
 #### Fix
