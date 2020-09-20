@@ -825,30 +825,3 @@ extension String {
         }
     }
 }
-
-extension ImageCache {
-
-    /// Creates an `ImageCache` with a given `name`, cache directory `path`
-    /// and a closure to modify the cache directory.
-    ///
-    /// - Parameters:
-    ///   - name: The name of cache object. It is used to setup disk cache directories and IO queue.
-    ///           You should not use the same `name` for different caches, otherwise, the disk storage would
-    ///           be conflicting to each other.
-    ///   - path: Location of cache URL on disk. It will be internally pass to the initializer of `DiskStorage` as the
-    ///           disk cache directory.
-    ///   - diskCachePathClosure: Closure that takes in an optional initial path string and generates
-    ///                           the final disk cache path. You could use it to fully customize your cache path.
-    /// - Throws: An error that happens during image cache creating, such as unable to create a directory at the given
-    ///           path.
-    @available(*, deprecated, message: "Use `init(name:cacheDirectoryURL:diskCachePathClosure:)` instead",
-    renamed: "init(name:cacheDirectoryURL:diskCachePathClosure:)")
-    public convenience init(
-        name: String,
-        path: String?,
-        diskCachePathClosure: DiskCachePathClosure? = nil) throws
-    {
-        let directoryURL = path.flatMap { URL(string: $0) }
-        try self.init(name: name, cacheDirectoryURL: directoryURL, diskCachePathClosure: diskCachePathClosure)
-    }
-}

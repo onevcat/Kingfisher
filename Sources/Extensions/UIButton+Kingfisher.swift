@@ -372,27 +372,6 @@ extension KingfisherWrapper where Base: UIButton {
         mutating set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
     }
 }
-
-extension KingfisherWrapper where Base: UIButton {
-
-    /// Gets the image URL of this button for a specified state.
-    ///
-    /// - Parameter state: The state that uses the specified image.
-    /// - Returns: Current URL for image.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
-    public func webURL(for state: UIControl.State) -> URL? {
-        return nil
-    }
-
-    /// Gets the background image URL of this button for a specified state.
-    ///
-    /// - Parameter state: The state that uses the specified background image.
-    /// - Returns: Current URL for image.
-    @available(*, deprecated, message: "Use `backgroundTaskIdentifier` instead to identify a setting task.")
-    public func backgroundWebURL(for state: UIControl.State) -> URL? {
-        return nil
-    }
-}
 #endif
 
 #endif

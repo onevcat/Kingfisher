@@ -98,11 +98,6 @@ public enum KingfisherOptionsInfoItem {
     /// rendering to extract pixel information in background. This can speed up display, but will cost more time to
     /// prepare the image for using.
     case backgroundDecode
-    
-    /// The associated value of this member will be used as the target queue of dispatch callbacks when
-    /// retrieving images from cache. If not set, Kingfisher will use main queue for callbacks.
-    @available(*, deprecated, message: "Use `.callbackQueue(CallbackQueue)` instead.")
-    case callbackDispatchQueue(DispatchQueue?)
 
     /// The associated value will be used as the target queue of dispatch callbacks when retrieving images from
     /// cache. If not set, Kingfisher will use `.mainCurrentOrAsync` for callbacks.
@@ -327,7 +322,6 @@ public struct KingfisherParsedOptionsInfo {
             case .onFailureImage(let value): onFailureImage = .some(value)
             case .alsoPrefetchToMemory: alsoPrefetchToMemory = true
             case .loadDiskFileSynchronously: loadDiskFileSynchronously = true
-            case .callbackDispatchQueue(let value): callbackQueue = value.map { .dispatch($0) } ?? .mainCurrentOrAsync
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .memoryCacheAccessExtendingExpiration(let expirationExtending): memoryCacheAccessExtendingExpiration = expirationExtending
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration
