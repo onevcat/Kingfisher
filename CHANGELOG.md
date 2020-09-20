@@ -2,6 +2,14 @@
 
 -----
 
+## [5.15.3 - Farewell Objective-C](https://github.com/onevcat/Kingfisher/releases/tag/5.15.3) (2020-09-21)
+
+#### Fix
+* Removed the unnecessary ObjC header generating and module defining due to Xcode 12 is now generating conflicted types even for different libraries. [#1517](https://github.com/onevcat/Kingfisher/issues/1517)
+* Set deploy target for SwiftUI target and its pod spec to iOS 10 and macOS 10.12, which aligns to the settings of core framework. That resolves some dependency issues when using CocoaPods for both app target and extension targets. But it does not mean you can use the SwiftUI support on those minimal target. All related APIs are still unavailable on old system versions. [#1524](https://github.com/onevcat/Kingfisher/pull/1524)
+
+---
+
 ## [5.15.2 - Xcode 11 Revived](https://github.com/onevcat/Kingfisher/releases/tag/5.15.2) (2020-09-19)
 
 #### Fix
