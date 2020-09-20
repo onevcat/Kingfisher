@@ -192,14 +192,4 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 }
-
-extension KingfisherWrapper where Base: WKInterfaceImage {
-    /// Gets the image URL bound to this image view.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
-    public private(set) var webURL: URL? {
-        get { return nil }
-        set { }
-    }
-}
-
 #endif
