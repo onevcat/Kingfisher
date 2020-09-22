@@ -45,8 +45,8 @@ public class KF {
         Builder(source: .network(resource))
     }
 
-    public static func url(_ url: URL) -> KF.Builder {
-        Builder(source: .network(url))
+    public static func url(_ url: URL, cacheKey: String? = nil) -> KF.Builder {
+        Builder(source: .network(ImageResource(downloadURL: url, cacheKey: cacheKey)))
     }
 
     public static func dataProvider(_ provider: ImageDataProvider) -> KF.Builder {
@@ -511,6 +511,12 @@ extension KF.Builder {
         } else {
             return appendProcessor(processor)
         }
+    }
+
+    public func resizing(referenceSize: CGSize, mode: ContentMode = .none) -> Self {
+        appendProcessor(
+            ResizingImageProcessor(referenceSize: referenceSize, mode: mode)
+        )
     }
 }
 
