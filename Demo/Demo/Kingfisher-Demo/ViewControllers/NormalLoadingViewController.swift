@@ -33,7 +33,6 @@ class NormalLoadingViewController: UICollectionViewController {
         super.viewDidLoad()
         title = "Loading"
         setupOperationNavigationBar()
-        collectionView?.prefetchDataSource = self
     }
 }
 
@@ -57,18 +56,14 @@ extension NormalLoadingViewController {
         forItemAt indexPath: IndexPath)
     {
         let imageView = (cell as! ImageCollectionViewCell).cellImageView!
-        imageView.kf.setImage(
-            with: ImageLoader.sampleImageURLs[indexPath.row],
-            placeholder: nil,
-            options: [.transition(.fade(1)), .loadDiskFileSynchronously],
-            progressBlock: { receivedSize, totalSize in
-                print("\(indexPath.row + 1): \(receivedSize)/\(totalSize)")
-            },
-            completionHandler: { result in
-                print(result)
-                print("\(indexPath.row + 1): Finished")
-            }
-        )
+        let url = ImageLoader.sampleImageURLs[indexPath.row]
+        KF.url(url)
+            .fade(duration: 1)
+            .loadDiskFileSynchronously()
+            .progress { (received, total) in print("\(indexPath.row + 1): \(received)/\(total)") }
+            .done { print($0) }
+            .catch { err in print("Error: \(err)") }
+            .set(to: imageView)
     }
     
     override func collectionView(
@@ -80,12 +75,5 @@ extension NormalLoadingViewController {
             for: indexPath) as! ImageCollectionViewCell
         cell.cellImageView.kf.indicatorType = .activity
         return cell
-    }
-}
-
-extension NormalLoadingViewController: UICollectionViewDataSourcePrefetching {
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let urls = indexPaths.compactMap { ImageLoader.sampleImageURLs[$0.row] }
-        ImagePrefetcher(urls: urls).start()
     }
 }
