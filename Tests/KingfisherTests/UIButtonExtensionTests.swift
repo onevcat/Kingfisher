@@ -66,24 +66,23 @@ class UIButtonExtensionTests: XCTestCase {
         stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
-        
-        button.kf.setImage(with: url, for: .normal, progressBlock: { _, _ in
-            progressBlockIsCalled = true
-        })
-        {
-            result in
-            XCTAssertTrue(progressBlockIsCalled)
-            let image = result.value?.image
-            XCTAssertNotNil(image)
-            
-            XCTAssertTrue(image!.renderEqual(to: testImage))
-            XCTAssertTrue(self.button.image(for: .normal)!.renderEqual(to: testImage))
-            
-            //XCTAssertEqual(self.button.kf.taskIdentifier(for: .normal), Source.Identifier.current)
-            XCTAssertEqual(result.value!.cacheType, .none)
-            
-            exp.fulfill()
-        }
+
+        KF.url(url)
+            .progress { _, _ in
+                progressBlockIsCalled = true
+            }
+            .done { result in
+                XCTAssertTrue(progressBlockIsCalled)
+
+                XCTAssertTrue(result.image.renderEqual(to: testImage))
+                XCTAssertTrue(self.button.image(for: .normal)!.renderEqual(to: testImage))
+
+                XCTAssertEqual(result.cacheType, .none)
+
+                exp.fulfill()
+            }
+            .set(to: button, for: .normal)
+
         waitForExpectations(timeout: 3, handler: nil)
     }
     
@@ -93,22 +92,21 @@ class UIButtonExtensionTests: XCTestCase {
         stub(url, data: testImageData, length: 123)
         
         var progressBlockIsCalled = false
-        button.kf.setBackgroundImage(with: url, for: .normal, progressBlock: { _, _ in
-            progressBlockIsCalled = true
-        })
-        {
-            result in
-    
-            XCTAssertTrue(progressBlockIsCalled)
-            
-            let image = result.value?.image
-            XCTAssertNotNil(image)
-            XCTAssertTrue(image!.renderEqual(to: testImage))
-            XCTAssertTrue(self.button.backgroundImage(for: .normal)!.renderEqual(to: testImage))
-            XCTAssertEqual(result.value!.cacheType, .none)
-            
-            exp.fulfill()
-        }
+        KF.url(url)
+            .progress { _, _ in
+                progressBlockIsCalled = true
+            }
+            .done { result in
+                XCTAssertTrue(progressBlockIsCalled)
+
+                XCTAssertTrue(result.image.renderEqual(to: testImage))
+                XCTAssertTrue(self.button.backgroundImage(for: .normal)!.renderEqual(to: testImage))
+
+                XCTAssertEqual(result.cacheType, .none)
+
+                exp.fulfill()
+            }
+            .setBackground(to: button, for: .normal)
         waitForExpectations(timeout: 3, handler: nil)
     }
     
@@ -117,11 +115,12 @@ class UIButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
 
-        button.kf.setImage(with: url, for: .highlighted) { result in
-            XCTAssertNotNil(result.error)
-            XCTAssertTrue(result.error!.isTaskCancelled)
-            delay(0.1) { exp.fulfill() }
-        }
+        KF.url(url)
+            .catch { error in
+                XCTAssertTrue(error.isTaskCancelled)
+                delay(0.1) { exp.fulfill() }
+            }
+            .set(to: button, for: .highlighted)
         
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
@@ -133,12 +132,13 @@ class UIButtonExtensionTests: XCTestCase {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
-        
-        button.kf.setBackgroundImage(with: url, for: .highlighted) { result in
-            XCTAssertNotNil(result.error)
-            XCTAssertTrue(result.error!.isTaskCancelled)
-            delay(0.1) { exp.fulfill() }
-        }
+
+        KF.url(url)
+            .catch { error in
+                XCTAssertTrue(error.isTaskCancelled)
+                delay(0.1) { exp.fulfill() }
+            }
+            .setBackground(to: button, for: .highlighted)
         
         self.button.kf.cancelBackgroundImageDownloadTask()
         _ = stub.go()
@@ -150,7 +150,7 @@ class UIButtonExtensionTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url: URL? = nil
-        button.kf.setBackgroundImage(with: url, for: .normal) { result in
+        button.kf.setBackgroundImage(with: url, for: .normal, completionHandler:  { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             guard case .imageSettingError(reason: .emptySource) = result.error! else {
@@ -158,7 +158,7 @@ class UIButtonExtensionTests: XCTestCase {
                 return
             }
             exp.fulfill()
-        }
+        })
         
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -168,14 +168,16 @@ class UIButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         let state = UIControl.State()
-        
-        button.kf.setImage(with: url, for: state, options: [.onFailureImage(testImage)]) { (result) -> Void in
-            XCTAssertNil(result.value)
-            expectation.fulfill()
-        }
+
+        KF.url(url)
+            .onFailureImage(testImage)
+            .catch { error in
+                XCTAssertEqual(testImage, self.button.image(for: state))
+                expectation.fulfill()
+            }
+            .set(to: button, for: state)
         XCTAssertNil(button.image(for: state))
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(testImage, button.image(for: state))
     }
     
     func testSettingNonWorkingBackgroundImageWithFailureImage() {
@@ -183,14 +185,18 @@ class UIButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         let state = UIControl.State()
-        
-        button.kf.setBackgroundImage(with: url, for: state, options: [.onFailureImage(testImage)]) { (result) -> Void in
-            XCTAssertNil(result.value)
-            expectation.fulfill()
-        }
+
+        KF.url(url)
+            .onFailureImage(testImage)
+            .catch { error in
+                XCTAssertEqual(testImage, self.button.backgroundImage(for: state))
+                expectation.fulfill()
+            }
+            .setBackground(to: button, for: state)
+
         XCTAssertNil(button.backgroundImage(for: state))
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(testImage, button.backgroundImage(for: state))
+
     }
 }
 #endif
