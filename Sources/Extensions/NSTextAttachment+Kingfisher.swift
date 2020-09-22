@@ -224,6 +224,9 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                         self.base.image = value.image
                         #if canImport(UIKit)
                         attributedView.setNeedsDisplay()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            
+                        }
                         #else
                         attributedView.setNeedsDisplay(attributedView.bounds)
                         #endif
