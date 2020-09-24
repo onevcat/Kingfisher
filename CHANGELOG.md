@@ -2,6 +2,13 @@
 
 -----
 
+## [5.15.4 - Farewell Objective-C (CocoaPods)](https://github.com/onevcat/Kingfisher/releases/tag/5.15.4) (2020-09-24)
+
+#### Fix
+* Give `SessionDelegate` an Objective-C name so it can work with other libraries even added by a dependency which generates Objective-C header. [#1532](https://github.com/onevcat/Kingfisher/pull/1532)
+
+---
+
 ## [5.15.3 - Farewell Objective-C](https://github.com/onevcat/Kingfisher/releases/tag/5.15.3) (2020-09-21)
 
 #### Fix
