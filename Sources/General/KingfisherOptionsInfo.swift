@@ -71,7 +71,7 @@ public enum KingfisherOptionsInfoItem {
     /// between 0.0~1.0. If this option not set, the default value (`URLSessionTask.defaultPriority`) will be used.
     case downloadPriority(Float)
     
-    /// If set, Kingfisher will ignore the cache and try to fire a download task for the resource.
+    /// If set, Kingfisher will ignore the cache and try to start a download task for the image source.
     case forceRefresh
 
     /// If set, Kingfisher will try to retrieve the image from memory cache first. If the image is not in memory
@@ -90,8 +90,9 @@ public enum KingfisherOptionsInfoItem {
     /// If set, Kingfisher will wait for caching operation to be completed before calling the completion block.
     case waitForCache
     
-    /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is
-    /// not in cache, the image retrieving will fail with an error.
+    /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is not in
+    /// cache, the image retrieving will fail with the `KingfisherError.cacheError` with `.imageNotExisting` as its
+    /// reason.
     case onlyFromCache
     
     /// Decode the image in background thread before using. It will decode the downloaded image data and do a off-screen
