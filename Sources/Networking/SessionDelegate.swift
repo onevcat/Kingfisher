@@ -27,6 +27,7 @@
 import Foundation
 
 // Represents the delegate object of downloader session. It also behave like a task manager for downloading.
+@objc(KFSessionDelegate) // Fix for ObjC header name conflicting. https://github.com/onevcat/Kingfisher/issues/1530
 class SessionDelegate: NSObject {
 
     typealias SessionChallengeFunc = (
