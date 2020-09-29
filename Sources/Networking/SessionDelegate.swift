@@ -73,6 +73,7 @@ class SessionDelegate: NSObject {
             // No other callbacks waiting, we can clear the task now.
             if !task.containsCallbacks {
                 let dataTask = task.task
+                dataTask.cancel()
                 self.remove(dataTask)
             }
         }
