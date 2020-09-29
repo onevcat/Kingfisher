@@ -101,9 +101,6 @@ public class SessionDataTask {
         guard let callback = removeCallback(token) else {
             return
         }
-        if callbacksStore.count == 0 {
-            task.cancel()
-        }
         onCallbackCancelled.call((token, callback))
     }
 
