@@ -2,6 +2,13 @@
 
 -----
 
+## [5.15.5 - Cancelling Fix](https://github.com/onevcat/Kingfisher/releases/tag/5.15.5) (2020-09-29)
+
+#### Fix
+* A possible fix for the crashes when cancelling a huge amount of image tasks too fast. [#1537]
+
+---
+
 ## [5.15.4 - Farewell Objective-C (CocoaPods)](https://github.com/onevcat/Kingfisher/releases/tag/5.15.4) (2020-09-24)
 
 #### Fix
