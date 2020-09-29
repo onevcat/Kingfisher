@@ -474,51 +474,135 @@ extension KF.Builder {
         return self
     }
 
+    /// Sets whether keeping the existing image of image view while setting another image to it.
+    /// - Parameter enabled: Whether the existing image should be kept.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// By setting this option, the placeholder image parameter of image view extension method
+    /// will be ignored and the current image will be kept while loading or downloading the new image.
+    ///
     public func keepCurrentImageWhileLoading(_ enabled: Bool = true) -> Self {
         options.keepCurrentImageWhileLoading = enabled
         return self
     }
 
+    /// Sets whether only the first frame from an animated image file should be loaded as a single image.
+    /// - Parameter enabled: Whether the only the first frame should be loaded.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// Loading an animated images may take too much memory. It will be useful when you want to display a
+    /// static preview of the first frame from an animated image.
+    ///
+    /// This option will be ignored if the target image is not animated image data.
+    ///
     public func onlyLoadFirstFrame(_ enabled: Bool = true) -> Self {
         options.onlyLoadFirstFrame = enabled
         return self
     }
 
+    /// Sets whether the original image should be cached even when the original image has been processed by any other
+    /// `ImageProcessor`s.
+    /// - Parameter enabled: Whether the original image should be cached.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both the final result and original
+    /// image. Kingfisher will have a chance to use the original image when another processor is applied to the same
+    /// resource, instead of downloading it again. You can use `.originalCache` to specify a cache or the original
+    /// images if necessary.
+    ///
+    /// The original image will be only cached to disk storage.
+    ///
     public func cacheOriginalImage(_ enabled: Bool = true) -> Self {
         options.cacheOriginalImage = enabled
         return self
     }
 
+    /// Sets the image that will be used if an image retrieving task fails.
+    /// - Parameter image: The image that will be used when something goes wrong.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// If set and an image retrieving error occurred Kingfisher will set provided image (or empty)
+    /// in place of requested one. It's useful when you don't want to show placeholder
+    /// during loading time but wants to use some default image when requests will be failed.
+    ///
     public func onFailureImage(_ image: KFCrossPlatformImage?) -> Self {
         options.onFailureImage = .some(image)
         return self
     }
 
+    /// Sets whether the disk storage loading should happen in the same calling queue.
+    /// - Parameter enabled: Whether the disk storage loading should happen in the same calling queue.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// By default, disk storage file loading
+    /// happens in its own queue with an asynchronous dispatch behavior. Although it provides better non-blocking disk
+    /// loading performance, it also causes a flickering when you reload an image from disk, if the image view already
+    /// has an image set.
+    ///
+    /// Set this options will stop that flickering by keeping all loading in the same queue (typically the UI queue
+    /// if you are using Kingfisher's extension methods to set an image), with a tradeoff of loading performance.
+    ///
     public func loadDiskFileSynchronously(_ enabled: Bool = true) -> Self {
         options.loadDiskFileSynchronously = enabled
         return self
     }
 
+    /// Sets a queue on which the image processing should happen.
+    /// - Parameter queue: The queue on which the image processing should happen.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// By default, Kingfisher uses a pre-defined serial
+    /// queue to process images. Use this option to change this behavior. For example, specify a `.mainCurrentOrAsync`
+    /// to let the image be processed in main queue to prevent a possible flickering (but with a possibility of
+    /// blocking the UI, especially if the processor needs a lot of time to run).
     public func processingQueue(_ queue: CallbackQueue?) -> Self {
         options.processingQueue = queue
         return self
     }
 
+    /// Enables progressive image loading with a specified `ImageProgressive` setting to process the
+    /// progressive JPEG data and display it in a progressive way.
+    /// - Parameter progressive: The progressive settings which is used while loading.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func progressiveJPEG(_ progressive: ImageProgressive? = .default) -> Self {
         options.progressiveJPEG = progressive
         return self
     }
 
+    /// Sets the alternative sources that will be used when loading of the original input `Source` fails.
+    /// - Parameter sources: The alternative sources will be used.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// Values of the `sources` array will be used to start a new image loading task if the previous task
+    /// fails due to an error. The image source loading process will stop as soon as a source is loaded successfully.
+    /// If all `sources` are used but the loading is still failing, an `imageSettingError` with
+    /// `alternativeSourcesExhausted` as its reason will be given out in the `catch` block.
+    ///
+    /// This is useful if you want to implement a fallback solution for setting image.
+    ///
+    /// User cancellation will not trigger the alternative source loading.
     public func alternativeSources(_ sources: [Source]?) -> Self {
         options.alternativeSources = sources
         return self
     }
 
+    /// Sets a retry strategy that will be used when something gets wrong during the image retrieving.
+    /// - Parameter strategy: The provided strategy to define how the retrying should happen.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func retry(_ strategy: RetryStrategy) -> Self {
         options.retryStrategy = strategy
         return self
     }
 
+    /// Sets a retry strategy with a max retry count and retrying interval.
+    /// - Parameters:
+    ///   - maxCount: The maximum count before the retry stops.
+    ///   - interval: The time interval between each retry attempt.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// This defines the simplest retry strategy, which retry a failing request for several times, with some certain
+    /// interval between each time. For example, `.retry(maxCount: 3, interval: .second(3))` means attempt for at most
+    /// three times, and wait for 3 seconds if a previous retry attempt fails, then start a new attempt.
     public func retry(maxCount: Int, interval: DelayRetryStrategy.Interval = .seconds(3)) -> Self {
         let strategy = DelayRetryStrategy(maxRetryCount: maxCount, retryInterval: interval)
         options.retryStrategy = strategy
@@ -528,11 +612,26 @@ extension KF.Builder {
 
 // MARK: - Request Modifier
 extension KF.Builder {
+
+    /// Sets an `ImageDownloadRequestModifier` to change the image download request before it being sent.
+    /// - Parameter modifier: The modifier will be used to change the request before it being sent.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// This is the last chance you can modify the image download request. You can modify the request for some
+    /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
+    ///
     public func requestModifier(_ modifier: ImageDownloadRequestModifier) -> Self {
         options.requestModifier = modifier
         return self
     }
 
+    /// Sets a block to change the image download request before it being sent.
+    /// - Parameter modifyBlock: The modifying block will be called to change the request before it being sent.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// This is the last chance you can modify the image download request. You can modify the request for some
+    /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
+    ///
     public func requestModifier(_ modifyBlock: @escaping (inout URLRequest) -> Void) -> Self {
         options.requestModifier = AnyModifier { r -> URLRequest? in
             var request = r
@@ -545,6 +644,8 @@ extension KF.Builder {
 
 // MARK: - Redirect Handler
 extension KF {
+
+    /// 
     public struct RedirectPayload {
         public let task: SessionDataTask
         public let response: HTTPURLResponse
