@@ -59,7 +59,7 @@ extension ViewController: NSCollectionViewDataSource {
         
         item.imageView?.kf.indicatorType = .activity
         KF.url(url)
-            .roundCorner(point: 20)
+            .roundCorner(radius: .point(20))
             .progress { receivedSize, totalSize in print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)") }
             .done { print($0) }
             .set(to: item.imageView!)

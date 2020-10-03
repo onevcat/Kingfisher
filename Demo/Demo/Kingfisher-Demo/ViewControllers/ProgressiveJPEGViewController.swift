@@ -56,7 +56,7 @@ class ProgressiveJPEGViewController: UIViewController {
         KF.url(ImageLoader.progressiveImageURL)
             .loadDiskFileSynchronously()
             .progressiveJPEG(progressive)
-            .roundCorner(point: 30)
+            .roundCorner(radius: .point(30))
             .progress { receivedSize, totalSize in
                 print("\(receivedSize)/\(totalSize)")
                 self.progressLabel.text = "\(receivedSize) / \(totalSize)"

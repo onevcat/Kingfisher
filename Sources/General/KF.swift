@@ -645,22 +645,46 @@ extension KF.Builder {
 // MARK: - Redirect Handler
 extension KF {
 
-    /// 
+    /// Represents the detail information when a task redirect happens. It is wrapping necessary information for a
+    /// `ImageDownloadRedirectHandler`. See that protocol for more information.
     public struct RedirectPayload {
+
+        /// The related session data task when the redirect happens. It is
+        /// the current `SessionDataTask` which triggers this redirect.
         public let task: SessionDataTask
+
+        /// The response received during redirection.
         public let response: HTTPURLResponse
+
+        /// The request for redirection which can be modified.
         public let newRequest: URLRequest
+
+        /// A closure for being called with modified request.
         public let completionHandler: (URLRequest?) -> Void
     }
 }
 
 extension KF.Builder {
 
+    /// The `ImageDownloadRedirectHandler` argument will be used to change the request before redirection.
+    /// This is the possibility you can modify the image download request during redirect. You can modify the request for
+    /// some customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url
+    /// mapping.
+    /// The original redirection request will be sent without any modification by default.
+    /// - Parameter handler: The handler will be used for redirection.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func redirectHandler(_ handler: ImageDownloadRedirectHandler) -> Self {
         options.redirectHandler = handler
         return self
     }
 
+    /// The `block` will be used to change the request before redirection.
+    /// This is the possibility you can modify the image download request during redirect. You can modify the request for
+    /// some customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url
+    /// mapping.
+    /// The original redirection request will be sent without any modification by default.
+    /// - Parameter block: The block will be used for redirection.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func redirectHandler(_ block: @escaping (KF.RedirectPayload) -> Void) -> Self {
         let redirectHandler = AnyRedirectHandler { (task, response, request, handler) in
             let payload = KF.RedirectPayload(
@@ -675,11 +699,27 @@ extension KF.Builder {
 
 // MARK: - Processor
 extension KF.Builder {
+
+    /// Sets an image processor for the image task. It replaces the current image processor settings.
+    ///
+    /// - Parameter processor: The processor you want to use to process the image after it is downloaded.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// - Note:
+    /// To append a processor to current ones instead of replacing them all, use `appendProcessor(_:)`.
     public func setProcessor(_ processor: ImageProcessor) -> Self {
         options.processor = processor
         return self
     }
 
+    /// Sets an array of image processors for the image task. It replaces the current image processor settings.
+    /// - Parameter processors: An array of processors. The processors inside this array will be concatenated one by one
+    ///                         to form a processor pipeline.
+    /// - Returns: A `KF.Builder` with changes applied.
+    ///
+    /// - Note:
+    /// To append processors to current ones instead of replacing them all, concatenate them by `|>`, then use
+    /// `appendProcessor(_:)`.
     public func setProcessors(_ processors: [ImageProcessor]) -> Self {
         switch processors.count {
         case 0:
@@ -692,20 +732,33 @@ extension KF.Builder {
         return self
     }
 
+    /// Appends a processor to the current set processors.
+    /// - Parameter processor: The processor which will be appended to current processor settings.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func appendProcessor(_ processor: ImageProcessor) -> Self {
         options.processor = options.processor |> processor
         return self
     }
 
+    /// Appends a `RoundCornerImageProcessor` to current processors.
+    /// - Parameters:
+    ///   - radius: The radius will be applied in processing. Specify a certain point value with `.point`, or a fraction
+    ///             of the target image with `.widthFraction`. or `.heightFraction`. For example, given a square image
+    ///             with width and height equals,  `.widthFraction(0.5)` means use half of the length of size and makes
+    ///             the final image a round one.
+    ///   - targetSize: Target size of output image should be. If `nil`, the image will keep its original size after processing.
+    ///   - corners: The target corners which will be applied rounding.
+    ///   - backgroundColor: Background color of the output image. If `nil`, it will use a transparent background.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func roundCorner(
-        point: CGFloat,
+        radius: RoundCornerImageProcessor.Radius,
         targetSize: CGSize? = nil,
         roundingCorners corners: RectCorner = .all,
         backgroundColor: KFCrossPlatformColor? = nil
     ) -> Self
     {
         let processor = RoundCornerImageProcessor(
-            radius: .point(point),
+            radius: radius,
             targetSize: targetSize,
             roundingCorners: corners,
             backgroundColor: backgroundColor
@@ -713,66 +766,68 @@ extension KF.Builder {
         return appendProcessor(processor)
     }
 
-    public func roundCorner(
-        widthFraction: CGFloat,
-        targetSize: CGSize? = nil,
-        roundingCorners corners: RectCorner = .all,
-        backgroundColor: KFCrossPlatformColor? = nil
-    ) -> Self {
-        let processor = RoundCornerImageProcessor(
-            radius: .widthFraction(widthFraction),
-            targetSize: targetSize,
-            roundingCorners: corners,
-            backgroundColor: backgroundColor
-        )
-        return appendProcessor(processor)
-    }
-
-    public func roundCorner(
-        heightFraction: CGFloat,
-        targetSize: CGSize? = nil,
-        roundingCorners corners: RectCorner = .all,
-        backgroundColor: KFCrossPlatformColor? = nil
-    ) -> Self {
-        let processor = RoundCornerImageProcessor(
-            radius: .heightFraction(heightFraction),
-            targetSize: targetSize,
-            roundingCorners: corners,
-            backgroundColor: backgroundColor
-        )
-        return appendProcessor(processor)
-    }
-
+    /// Appends a `BlurImageProcessor` to current processors.
+    /// - Parameter radius: Blur radius for the simulated Gaussian blur.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func blur(radius: CGFloat) -> Self {
         appendProcessor(
             BlurImageProcessor(blurRadius: radius)
         )
     }
 
+    /// Appends a `OverlayImageProcessor` to current processors.
+    /// - Parameters:
+    ///   - color: Overlay color will be used to overlay the input image.
+    ///   - fraction: Fraction will be used when overlay the color to image.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func overlay(color: KFCrossPlatformColor, fraction: CGFloat = 0.5) -> Self {
         appendProcessor(
             OverlayImageProcessor(overlay: color, fraction: fraction)
         )
     }
 
+    /// Appends a `TintImageProcessor` to current processors.
+    /// - Parameter color: Tint color will be used to tint the input image.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func tint(color: KFCrossPlatformColor) -> Self {
         appendProcessor(
             TintImageProcessor(tint: color)
         )
     }
 
+    /// Appends a `BlackWhiteProcessor` to current processors.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func blackWhite() -> Self {
         appendProcessor(
             BlackWhiteProcessor()
         )
     }
 
+    /// Appends a `CroppingImageProcessor` to current processors.
+    /// - Parameters:
+    ///   - size: Target size of output image should be.
+    ///   - anchor: Anchor point from which the output size should be calculate. The anchor point is consisted by two
+    ///             values between 0.0 and 1.0. It indicates a related point in current image.
+    ///             See `CroppingImageProcessor.init(size:anchor:)` for more.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func cropping(size: CGSize, anchor: CGPoint = .init(x: 0.5, y: 0.5)) -> Self {
         appendProcessor(
             CroppingImageProcessor(size: size, anchor: anchor)
         )
     }
 
+    /// Appends a `DownsamplingImageProcessor` to current processors.
+    ///
+    /// Compared to `ResizingImageProcessor`, the `DownsamplingImageProcessor` does not render the original images and
+    /// then resize it. Instead, it downsamples the input data directly to a thumbnail image. So it is a more efficient
+    /// than `ResizingImageProcessor`. Prefer to use `DownsamplingImageProcessor` as possible
+    /// as you can than the `ResizingImageProcessor`.
+    ///
+    /// Only CG-based images are supported. Animated images (like GIF) is not supported.
+    ///
+    /// - Parameter size: Target size of output image should be. It should be smaller than the size of input image.
+    ///                   If it is larger, the result image will be the same size of input data without downsampling.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func downsampling(size: CGSize) -> Self {
         let processor = DownsamplingImageProcessor(size: size)
         if options.processor == DefaultImageProcessor.default {
@@ -782,6 +837,16 @@ extension KF.Builder {
         }
     }
 
+
+    /// Appends a `ResizingImageProcessor` to current processors.
+    ///
+    /// If you need to resize a data represented image to a smaller size, use `DownsamplingImageProcessor`
+    /// instead, which is more efficient and uses less memory.
+    ///
+    /// - Parameters:
+    ///   - referenceSize: The reference size for resizing operation in point.
+    ///   - mode: Target content mode of output image should be. Default is `.none`.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func resizing(referenceSize: CGSize, mode: ContentMode = .none) -> Self {
         appendProcessor(
             ResizingImageProcessor(referenceSize: referenceSize, mode: mode)
@@ -791,11 +856,22 @@ extension KF.Builder {
 
 // MARK: - Cache Serializer
 extension KF.Builder {
+
+    /// Uses a given `CacheSerializer` to convert some data to an image object for retrieving from disk cache or vice
+    /// versa for storing to disk cache.
+    /// - Parameter cacheSerializer: The `CacheSerializer` which will be used.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func serialize(by cacheSerializer: CacheSerializer) -> Self {
         options.cacheSerializer = cacheSerializer
         return self
     }
 
+    /// Uses a given format to serializer the image data to disk. It converts the image object to the give data format.
+    /// - Parameters:
+    ///   - format: The desired data encoding format when store the image on disk.
+    ///   - jpegCompressionQuality: If the format is `.JPEG`, it specify the compression quality when converting the
+    ///                             image to a JPEG data. Otherwise, it is ignored.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func serialize(as format: ImageFormat, jpegCompressionQuality: CGFloat? = nil) -> Self {
         let cacheSerializer: FormatIndicatedCacheSerializer
         switch format {
@@ -815,11 +891,25 @@ extension KF.Builder {
 
 // MARK: - Image Modifier
 extension KF.Builder {
+
+    /// Sets an `ImageModifier` to the image task. Use this to modify the fetched image object properties if needed.
+    ///
+    /// If the image was fetched directly from the downloader, the modifier will run directly after the
+    /// `ImageProcessor`. If the image is being fetched from a cache, the modifier will run after the `CacheSerializer`.
+    /// - Parameter modifier: The `ImageModifier` which will be used to modify the image object.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func imageModifier(_ modifier: ImageModifier?) -> Self {
         options.imageModifier = modifier
         return self
     }
 
+    /// Sets a block to modify the image object. Use this to modify the fetched image object properties if needed.
+    ///
+    /// If the image was fetched directly from the downloader, the modifier block will run directly after the
+    /// `ImageProcessor`. If the image is being fetched from a cache, the modifier will run after the `CacheSerializer`.
+    ///
+    /// - Parameter block: The block which is used to modify the image object.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func imageModifier(_ block: @escaping (inout KFCrossPlatformImage) throws -> Void) -> Self {
         let modifier = AnyImageModifier { image -> KFCrossPlatformImage in
             var image = image
@@ -833,21 +923,57 @@ extension KF.Builder {
 
 // MARK: - Cache Expiration
 extension KF.Builder {
+
+    /// Sets the expiration setting for memory cache of this image task.
+    ///
+    /// By default, the underlying `MemoryStorage.Backend` uses the
+    /// expiration in its config for all items. If set, the `MemoryStorage.Backend` will use this value to overwrite
+    /// the config setting for this caching item.
+    ///
+    /// - Parameter expiration: The expiration setting used in cache storage.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func memoryCacheExpiration(_ expiration: StorageExpiration?) -> Self {
         options.memoryCacheExpiration = expiration
         return self
     }
 
+    /// Sets the expiration extending setting for memory cache. The item expiration time will be incremented by this
+    /// value after access.
+    ///
+    /// By default, the underlying `MemoryStorage.Backend` uses the initial cache expiration as extending
+    /// value: .cacheTime.
+    ///
+    /// To disable extending option at all, sets `.none` to it.
+    ///
+    /// - Parameter extending: The expiration extending setting used in cache storage.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func memoryCacheAccessExtending(_ extending: ExpirationExtending) -> Self {
         options.memoryCacheAccessExtendingExpiration = extending
         return self
     }
 
+    /// Sets the expiration setting for disk cache of this image task.
+    ///
+    /// By default, the underlying `DiskStorage.Backend` uses the expiration in its config for all items. If set,
+    /// the `DiskStorage.Backend` will use this value to overwrite the config setting for this caching item.
+    ///
+    /// - Parameter expiration: The expiration setting used in cache storage.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func diskCacheExpiration(_ expiration: StorageExpiration?) -> Self {
         options.diskCacheExpiration = expiration
         return self
     }
 
+    /// Sets the expiration extending setting for disk cache. The item expiration time will be incremented by this
+    /// value after access.
+    ///
+    /// By default, the underlying `DiskStorage.Backend` uses the initial cache expiration as extending
+    /// value: .cacheTime.
+    ///
+    /// To disable extending option at all, sets `.none` to it.
+    ///
+    /// - Parameter extending: The expiration extending setting used in cache storage.
+    /// - Returns: A `KF.Builder` with changes applied.
     public func diskCacheAccessExtending(_ extending: ExpirationExtending) -> Self {
         options.diskCacheAccessExtendingExpiration = extending
         return self
