@@ -48,7 +48,7 @@ class TextAttachmentViewController: UIViewController {
 
         KF.url(URL(string: "https://onevcat.com/assets/images/avatar.jpg")!)
             .resizing(referenceSize: CGSize(width: 30, height: 30))
-            .roundCorner(point: 15)
+            .roundCorner(radius: .point(15))
             .set(to: textAttachment, attributedView: label)
     }
 }
