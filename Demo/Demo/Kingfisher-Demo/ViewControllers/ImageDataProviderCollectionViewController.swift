@@ -50,7 +50,9 @@ class ImageDataProviderCollectionViewController: UICollectionViewController {
     
         let pair = model[indexPath.row]
         let provider = UserNameLetterIconImageProvider(userNameFirstLetter: pair.0, backgroundColor: pair.1)
-        cell.cellImageView.kf.setImage(with: provider, options:[.processor(RoundCornerImageProcessor(cornerRadius: 75))])
+        KF.dataProvider(provider)
+            .roundCorner(radius: .point(75))
+            .set(to: cell.cellImageView)
 
         return cell
     }

@@ -138,6 +138,35 @@ public class ImagePrefetcher: CustomStringConvertible {
             completionHandler: completionHandler)
     }
 
+    /// Creates an image prefetcher with an array of URLs.
+    ///
+    /// The prefetcher should be initiated with a list of prefetching targets. The URLs list is immutable.
+    /// After you get a valid `ImagePrefetcher` object, you call `start()` on it to begin the prefetching process.
+    /// The images which are already cached will be skipped without downloading again.
+    ///
+    /// - Parameters:
+    ///   - urls: The URLs which should be prefetched.
+    ///   - options: Options could control some behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the whole prefetching process finished.
+    ///
+    /// - Note:
+    /// By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as
+    /// the downloader and cache target respectively. You can specify another downloader or cache by using
+    /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
+    /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
+    public convenience init(
+        urls: [URL],
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: PrefetcherCompletionHandler? = nil)
+    {
+        let resources: [Resource] = urls.map { $0 }
+        self.init(
+            resources: resources,
+            options: options,
+            progressBlock: nil,
+            completionHandler: completionHandler)
+    }
+
     /// Creates an image prefetcher with an array of resources.
     ///
     /// - Parameters:
@@ -162,6 +191,27 @@ public class ImagePrefetcher: CustomStringConvertible {
         self.completionHandler = completionHandler
     }
 
+    /// Creates an image prefetcher with an array of resources.
+    ///
+    /// - Parameters:
+    ///   - resources: The resources which should be prefetched. See `Resource` type for more.
+    ///   - options: Options could control some behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the whole prefetching process finished.
+    ///
+    /// - Note:
+    /// By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as
+    /// the downloader and cache target respectively. You can specify another downloader or cache by using
+    /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
+    /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
+    public convenience init(
+        resources: [Resource],
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: PrefetcherCompletionHandler? = nil)
+    {
+        self.init(sources: resources.map { $0.convertToSource() }, options: options)
+        self.completionHandler = completionHandler
+    }
+
     /// Creates an image prefetcher with an array of sources.
     ///
     /// - Parameters:
@@ -182,6 +232,26 @@ public class ImagePrefetcher: CustomStringConvertible {
     {
         self.init(sources: sources, options: options)
         self.progressSourceBlock = progressBlock
+        self.completionSourceHandler = completionHandler
+    }
+
+    /// Creates an image prefetcher with an array of sources.
+    ///
+    /// - Parameters:
+    ///   - sources: The sources which should be prefetched. See `Source` type for more.
+    ///   - options: Options could control some behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the whole prefetching process finished.
+    ///
+    /// - Note:
+    /// By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as
+    /// the downloader and cache target respectively. You can specify another downloader or cache by using
+    /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
+    /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
+    public convenience init(sources: [Source],
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: PrefetcherSourceCompletionHandler? = nil)
+    {
+        self.init(sources: sources, options: options)
         self.completionSourceHandler = completionHandler
     }
 

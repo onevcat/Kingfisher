@@ -166,24 +166,20 @@ class ImageViewExtensionTests: XCTestCase {
         let group = DispatchGroup()
         
         group.enter()
-        let task1 = imageView.kf.setImage(with: url) {
-            result in
-            XCTAssertNil(result.value)
-            group.leave()
-        }
+        let task1 = KF.url(url)
+            .catch { _ in group.leave() }
+            .set(to: imageView)
         
         group.enter()
-        imageView.kf.setImage(with: url) { result in
-            XCTAssertNotNil(result.value)
-            group.leave()
-        }
+        KF.url(url)
+            .done { _ in group.leave() }
+            .set(to: imageView)
         
         group.enter()
         let anotherImageView = KFCrossPlatformImageView()
-        anotherImageView.kf.setImage(with: url) { result in
-            XCTAssertNotNil(result.value)
-            group.leave()
-        }
+        KF.url(url)
+            .done { _ in group.leave() }
+            .set(to: anotherImageView)
         
         task1?.cancel()
         _ = stub.go()
