@@ -141,20 +141,6 @@ extension Result where Failure: Error {
             throw failure
         }
     }
-
-    /// Unwraps the `Result` into a throwing expression.
-    ///
-    /// - Returns: The success value, if the instance is a success.
-    /// - Throws:  The error value, if the instance is a failure.
-    @available(*, deprecated, message: "This method will be removed soon. Use `get() throws -> Success` instead.")
-    public func unwrapped() throws -> Success {
-        switch self {
-        case let .success(value):
-            return value
-        case let .failure(error):
-            throw error
-        }
-    }
 }
 
 extension Result where Failure == Swift.Error {
