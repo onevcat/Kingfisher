@@ -538,13 +538,4 @@ extension KFCrossPlatformImageView {
     @objc func shouldPreloadAllAnimation() -> Bool { return true }
 }
 
-extension KingfisherWrapper where Base: KFCrossPlatformImageView {
-    /// Gets the image URL bound to this image view.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
-    public private(set) var webURL: URL? {
-        get { return nil }
-        set { }
-    }
-}
-
 #endif

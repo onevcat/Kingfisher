@@ -367,23 +367,4 @@ extension KingfisherWrapper where Base: NSButton {
         set { setRetainedAssociatedObject(base, &alternateImageTaskKey, newValue)}
     }
 }
-
-extension KingfisherWrapper where Base: NSButton {
-
-    /// Gets the image URL bound to this button.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
-    public private(set) var webURL: URL? {
-        get { return nil }
-        set { }
-    }
-
-
-    /// Gets the image URL bound to this button.
-    @available(*, deprecated, message: "Use `alternateTaskIdentifier` instead to identify a setting task.")
-    public private(set) var alternateWebURL: URL? {
-        get { return nil }
-        set { }
-    }
-}
-
 #endif

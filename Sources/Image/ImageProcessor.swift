@@ -59,27 +59,6 @@ public protocol ImageProcessor {
     /// the `DefaultImageProcessor`. It is recommended to use a reverse domain name notation string of
     /// your own for the identifier.
     var identifier: String { get }
-    
-    /// Processes the input `ImageProcessItem` with this processor.
-    ///
-    /// - Parameters:
-    ///   - item: Input item which will be processed by `self`.
-    ///   - options: Options when processing the item.
-    /// - Returns: The processed image.
-    ///
-    /// - Note: The return value should be `nil` if processing failed while converting an input item to image.
-    ///         If `nil` received by the processing caller, an error will be reported and the process flow stops.
-    ///         If the processing flow is not critical for your flow, then when the input item is already an image
-    ///         (`.image` case) and there is any errors in the processing, you could return the input image itself
-    ///         to keep the processing pipeline continuing.
-    /// - Note: Most processor only supports CG-based images. watchOS is not supported for processors containing
-    ///         a filter, the input image will be returned directly on watchOS.
-    /// - Note:
-    /// This method is deprecated. Please implement the version with
-    /// `KingfisherParsedOptionsInfo` as parameter instead.
-    @available(*, deprecated,
-    message: "Deprecated. Implement the method with same name but with `KingfisherParsedOptionsInfo` instead.")
-    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> KFCrossPlatformImage?
 
     /// Processes the input `ImageProcessItem` with this processor.
     ///
@@ -96,12 +75,6 @@ public protocol ImageProcessor {
     /// - Note: Most processor only supports CG-based images. watchOS is not supported for processors containing
     ///         a filter, the input image will be returned directly on watchOS.
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
-}
-
-extension ImageProcessor {
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> KFCrossPlatformImage? {
-        return process(item: item, options: KingfisherParsedOptionsInfo(options))
-    }
 }
 
 extension ImageProcessor {
@@ -370,18 +343,6 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     /// Identifier of the processor.
     /// - Note: See documentation of `ImageProcessor` protocol for more.
     public let identifier: String
-
-    /// Corner radius will be applied in processing. To provide backward compatibility, this property returns `0` unless
-    /// `Radius.point` is specified.
-    @available(*, deprecated, message: "Use `radius` property instead.")
-    public var cornerRadius: CGFloat {
-        switch radius {
-        case .widthFraction, .heightFraction:
-            return 0.0
-        case .point(let value):
-            return value
-        }
-    }
 
     /// The radius will be applied in processing. Specify a certain point value with `.point`, or a fraction of the
     /// target image with `.widthFraction`. or `.heightFraction`. For example, given a square image with width and
@@ -880,19 +841,6 @@ public struct DownsamplingImageProcessor: ImageProcessor {
             return KingfisherWrapper.downsampledImage(data: data, to: size, scale: options.scaleFactor)
         }
     }
-}
-
-/// Concatenates two `ImageProcessor`s. `ImageProcessor.append(another:)` is used internally.
-///
-/// - Parameters:
-///   - left: The first processor.
-///   - right: The second processor.
-/// - Returns: The concatenated processor.
-@available(*, deprecated,
-message: "Will be removed soon. Use `|>` instead.",
-renamed: "|>")
-public func >>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
-    return left.append(another: right)
 }
 
 infix operator |>: AdditionPrecedence
