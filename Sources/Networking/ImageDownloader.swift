@@ -346,6 +346,27 @@ open class ImageDownloader {
             options: info,
             completionHandler: completionHandler)
     }
+
+    /// Downloads an image with a URL and option.
+    ///
+    /// - Parameters:
+    ///   - url: Target URL.
+    ///   - options: The options could control download behavior. See `KingfisherOptionsInfo`.
+    ///   - completionHandler: Called when the download progress finishes. This block will be called in the queue
+    ///                        defined in `.callbackQueue` in `options` parameter.
+    /// - Returns: A downloading task. You could call `cancel` on it to stop the download task.
+    @discardableResult
+    open func downloadImage(
+        with url: URL,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        downloadImage(
+            with: url,
+            options: KingfisherParsedOptionsInfo(options),
+            completionHandler: completionHandler
+        )
+    }
 }
 
 // MARK: Cancelling Task

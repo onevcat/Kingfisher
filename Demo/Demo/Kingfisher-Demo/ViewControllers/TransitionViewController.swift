@@ -69,7 +69,10 @@ class TransitionViewController: UIViewController {
         
         let t = makeTransition(type: transitionType, duration: duration)
         let url = ImageLoader.sampleImageURLs[0]
-        imageView.kf.setImage(with: url, options: [.forceTransition, .transition(t)])
+        KF.url(url)
+            .forceTransition()
+            .transition(t)
+            .set(to: imageView)
     }
 }
 

@@ -384,7 +384,8 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     }
 
     /// The radius will be applied in processing. Specify a certain point value with `.point`, or a fraction of the
-    /// target image with `.fraction`. `.fraction(0.5)` means use half of the
+    /// target image with `.widthFraction`. or `.heightFraction`. For example, given a square image with width and
+    /// height equals,  `.widthFraction(0.5)` means use half of the length of size and makes the final image a round one.
     public let radius: Radius
     
     /// The target corners which will be applied rounding.
@@ -514,7 +515,7 @@ public enum ContentMode {
 
 /// Processor for resizing images.
 /// If you need to resize a data represented image to a smaller size, use `DownsamplingImageProcessor`
-/// instead, which is more efficient and takes less memory.
+/// instead, which is more efficient and uses less memory.
 public struct ResizingImageProcessor: ImageProcessor {
     
     /// Identifier of the processor.
@@ -836,8 +837,9 @@ public struct CroppingImageProcessor: ImageProcessor {
 }
 
 /// Processor for downsampling an image. Compared to `ResizingImageProcessor`, this processor
-/// does not render the images to resize. Instead, it downsample the input data directly to an
-/// image. It is a more efficient than `ResizingImageProcessor`.
+/// does not render the images to resize. Instead, it downsamples the input data directly to an
+/// image. It is a more efficient than `ResizingImageProcessor`. Prefer to use `DownsamplingImageProcessor` as possible
+/// as you can than the `ResizingImageProcessor`.
 ///
 /// Only CG-based images are supported. Animated images (like GIF) is not supported.
 public struct DownsamplingImageProcessor: ImageProcessor {
