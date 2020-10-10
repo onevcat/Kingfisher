@@ -67,7 +67,7 @@ extension KFImage {
             loadingOrSucceeded = true
 
             guard let source = source else {
-                DispatchQueue.main.async {
+                CallbackQueue.mainCurrentOrAsync.execute {
                     self.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
                 }
                 return
@@ -93,14 +93,16 @@ extension KFImage {
                             // a `UIImage`)
                             // https://github.com/onevcat/Kingfisher/issues/1395
                             let image = value.image.kf.normalized
-                            DispatchQueue.main.async {
-                                self.image = image
+                            CallbackQueue.mainAsync.execute {
                                 self.isLoaded.wrappedValue = true
+                            }
+                            CallbackQueue.mainCurrentOrAsync.execute {
+                                self.image = image
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
                             self.loadingOrSucceeded = false
-                            DispatchQueue.main.async {
+                            CallbackQueue.mainCurrentOrAsync.execute {
                                 self.onFailureDelegate.call(error)
                             }
                         }
