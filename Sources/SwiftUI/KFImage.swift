@@ -105,7 +105,7 @@ public struct KFImage: SwiftUI.View {
                     guard let binder = binder else {
                         return
                     }
-                    if !binder.loadingOrSuccessed {
+                    if !binder.loadingOrSucceeded {
                         binder.start()
                     }
                 }
