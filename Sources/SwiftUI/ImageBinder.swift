@@ -43,7 +43,7 @@ extension KFImage {
 
         var downloadTask: DownloadTask?
 
-        var loadingOrSuccessed: Bool = false
+        var loadingOrSucceeded: Bool = false
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
@@ -62,9 +62,9 @@ extension KFImage {
 
         func start() {
 
-            guard !loadingOrSuccessed else { return }
+            guard !loadingOrSucceeded else { return }
 
-            loadingOrSuccessed = true
+            loadingOrSucceeded = true
 
             guard let source = source else {
                 DispatchQueue.main.async {
@@ -99,7 +99,7 @@ extension KFImage {
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
-                            self.loadingOrSuccessed = false
+                            self.loadingOrSucceeded = false
                             DispatchQueue.main.async {
                                 self.onFailureDelegate.call(error)
                             }
