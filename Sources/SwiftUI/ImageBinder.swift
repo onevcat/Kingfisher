@@ -55,7 +55,9 @@ extension KFImage {
 
         init(source: Source?, options: KingfisherOptionsInfo?, isLoaded: Binding<Bool>) {
             self.source = source
-            self.options = options
+            // The refreshing of `KFImage` would happen much more frequently then an `UIImageView`, even as a
+            // "side-effect". To prevent unintended flickering, add `.loadDiskFileSynchronously` as a default.
+            self.options = (options ?? []) + [.loadDiskFileSynchronously]
             self.isLoaded = isLoaded
             self.image = nil
         }
