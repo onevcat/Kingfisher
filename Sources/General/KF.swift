@@ -28,7 +28,7 @@
 import UIKit
 #endif
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 #endif
 
@@ -194,7 +194,7 @@ extension KF.Builder {
     }
     #endif // end of canImport(UIKit)
 
-    #if canImport(AppKit)
+    #if canImport(AppKit) && !targetEnvironment(macCatalyst)
     /// Builds the image task request and sets it to a button.
     /// - Parameter button: The button which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
