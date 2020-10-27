@@ -146,11 +146,13 @@ class RetryStrategyTests: XCTestCase {
         var blockCalled: [Bool] = []
         let source = Source.network(URL(string: "url")!)
         let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(0))
+
+        let task = URLSession.shared.dataTask(with: URL(string: "url")!)
+
         let context1 = RetryContext(
             source: source,
-            error: .requestError(reason: .taskCancelled(task: .init(task: .init()), token: .init()))
+            error: .requestError(reason: .taskCancelled(task: .init(task: task), token: .init()))
         )
-
         retry.retry(context: context1) { decision in
             guard case RetryDecision.stop = decision else {
                 XCTFail("The decision should be `stop` if user cancelled the task.")
