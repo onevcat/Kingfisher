@@ -69,7 +69,7 @@ With the powerful options, you can do hard tasks with Kingfisher in a simple way
 ```swift
 let url = URL(string: "https://example.com/high_resolution_image.png")
 let processor = DownsamplingImageProcessor(size: imageView.bounds.size)
-             >> RoundCornerImageProcessor(cornerRadius: 20)
+             |> RoundCornerImageProcessor(cornerRadius: 20)
 imageView.kf.indicatorType = .activity
 imageView.kf.setImage(
     with: url,
