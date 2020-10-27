@@ -73,13 +73,20 @@ class SessionDelegate: NSObject {
             // No other callbacks waiting, we can clear the task now.
             if !task.containsCallbacks {
                 let dataTask = task.task
-                dataTask.cancel()
+
+                self.cancelTask(dataTask)
                 self.remove(dataTask)
             }
         }
         let token = task.addCallback(callback)
         tasks[url] = task
         return DownloadTask(sessionTask: task, cancelToken: token)
+    }
+
+    private func cancelTask(_ dataTask: URLSessionDataTask) {
+        lock.lock()
+        defer { lock.unlock() }
+        dataTask.cancel()
     }
 
     func append(
@@ -92,22 +99,22 @@ class SessionDelegate: NSObject {
     }
 
     private func remove(_ task: URLSessionTask) {
+        lock.lock()
+        defer { lock.unlock() }
+
         guard let url = task.originalRequest?.url else {
             return
         }
-        lock.lock()
-        defer {lock.unlock()}
         tasks[url] = nil
     }
 
     private func task(for task: URLSessionTask) -> SessionDataTask? {
+        lock.lock()
+        defer { lock.unlock() }
 
         guard let url = task.originalRequest?.url else {
             return nil
         }
-
-        lock.lock()
-        defer { lock.unlock() }
         guard let sessionTask = tasks[url] else {
             return nil
         }
