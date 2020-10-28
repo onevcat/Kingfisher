@@ -75,7 +75,7 @@ class SessionDelegate: NSObject {
                 let dataTask = task.task
 
                 self.cancelTask(dataTask)
-                self.remove(dataTask)
+                self.remove(task)
             }
         }
         let token = task.addCallback(callback)
@@ -98,11 +98,11 @@ class SessionDelegate: NSObject {
         return DownloadTask(sessionTask: task, cancelToken: token)
     }
 
-    private func remove(_ task: URLSessionTask) {
+    private func remove(_ task: SessionDataTask) {
         lock.lock()
         defer { lock.unlock() }
 
-        guard let url = task.originalRequest?.url else {
+        guard let url = task.originalURL else {
             return
         }
         tasks[url] = nil
@@ -189,7 +189,7 @@ extension SessionDelegate: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let sessionTask = self.task(for: task) else { return }
 
-        if let url = task.originalRequest?.url {
+        if let url = sessionTask.originalURL {
             let result: Result<URLResponse, KingfisherError>
             if let error = error {
                 result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
@@ -256,7 +256,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
-        remove(task)
+        remove(sessionTask)
         sessionTask.onTaskDone.call((result, sessionTask.callbacks))
     }
 }
