@@ -6,7 +6,7 @@ on:
     branches:
       - master
     paths:
-      - .github/workflows/documentation.yml
+      - .github/workflows/documentation.yaml
       - Sources/**.swift
 
 jobs:
