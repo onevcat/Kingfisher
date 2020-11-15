@@ -22,6 +22,7 @@ jobs:
           inputs: "Sources"
           output: "Documentation"
           format: "html"
+          module-name: "Kingfisher"
           base-url: "/"
       - name: Upload Documentation Netlify
         uses: netlify/actions/cli@master
