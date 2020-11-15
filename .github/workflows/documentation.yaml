@@ -21,6 +21,7 @@ jobs:
         with:
           inputs: "Sources"
           output: "Documentation"
+          format: "html"
       - name: Upload Documentation Netlify
         uses: netlify/actions/cli@master
         with:
