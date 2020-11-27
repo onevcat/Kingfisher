@@ -4,7 +4,7 @@ on:
   workflow_dispatch: {}
   push:
     branches:
-      - doc-deploy
+      - master
     paths:
       - .github/workflows/documentation.yaml
       - Sources/**.swift
