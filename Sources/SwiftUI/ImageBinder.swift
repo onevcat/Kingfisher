@@ -95,16 +95,16 @@ extension KFImage {
                             // a `UIImage`)
                             // https://github.com/onevcat/Kingfisher/issues/1395
                             let image = value.image.kf.normalized
-                            CallbackQueue.mainAsync.execute {
-                                self.isLoaded.wrappedValue = true
-                            }
                             CallbackQueue.mainCurrentOrAsync.execute {
                                 self.image = image
+                            }
+                            CallbackQueue.mainAsync.execute {
+                                self.isLoaded.wrappedValue = true
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
                             self.loadingOrSucceeded = false
-                            CallbackQueue.mainCurrentOrAsync.execute {
+                            CallbackQueue.mainAsync.execute {
                                 self.onFailureDelegate.call(error)
                             }
                         }
