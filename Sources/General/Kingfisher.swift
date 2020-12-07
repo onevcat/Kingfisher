@@ -42,6 +42,9 @@ public typealias KFCrossPlatformColor = UIColor
 public typealias KFCrossPlatformImageView = UIImageView
 public typealias KFCrossPlatformView = UIView
 public typealias KFCrossPlatformButton = UIButton
+#if canImport(TVUIKit)
+import TVUIKit
+#endif
 #else
 import WatchKit
 #endif
@@ -87,4 +90,9 @@ extension KFCrossPlatformButton: KingfisherCompatible { }
 extension NSTextAttachment: KingfisherCompatible { }
 #else
 extension WKInterfaceImage: KingfisherCompatible { }
+#endif
+
+#if os(tvOS) && canImport(TVUIKit)
+@available(tvOS 12.0, *)
+extension TVMonogramView: KingfisherCompatible { }
 #endif
