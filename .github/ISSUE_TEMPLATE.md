@@ -1,6 +1,6 @@
-<!-->
+<!--
 Issue is for reporting a problem of Kingfisher. To ask a question or discuss about usage, please go to the Discussion (https://github.com/onevcat/Kingfisher/discussions).
-<--!>
+-->
 
 ### Check List
 
