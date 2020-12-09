@@ -1,3 +1,7 @@
+<!-->
+Issue is for reporting a problem of Kingfisher. To ask a question or discuss about usage, please go to the Discussion (https://github.com/onevcat/Kingfisher/discussions).
+<--!>
+
 ### Check List
 
 Thanks for considering to open an issue. Before you submit your issue, please confirm these boxes are checked.
