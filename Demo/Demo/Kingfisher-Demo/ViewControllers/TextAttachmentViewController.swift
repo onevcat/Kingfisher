@@ -43,17 +43,13 @@ class TextAttachmentViewController: UIViewController {
         let attributedText = NSMutableAttributedString(string: "Hello World")
 
         let textAttachment = NSTextAttachment()
-        textAttachment.kf.setImage(
-            with: URL(string: "https://onevcat.com/assets/images/avatar.jpg")!,
-            attributedView: label,
-            options: [
-                .processor(
-                    ResizingImageProcessor(referenceSize: .init(width: 30, height: 30))
-                    |> RoundCornerImageProcessor(cornerRadius: 15))
-                ]
-        )
         attributedText.replaceCharacters(in: NSRange(), with: NSAttributedString(attachment: textAttachment))
         label.attributedText = attributedText
+
+        KF.url(URL(string: "https://onevcat.com/assets/images/avatar.jpg")!)
+            .resizing(referenceSize: CGSize(width: 30, height: 30))
+            .roundCorner(radius: .point(15))
+            .set(to: textAttachment, attributedView: label)
     }
 }
 

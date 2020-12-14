@@ -58,13 +58,11 @@ extension ViewController: NSCollectionViewDataSource {
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(indexPath.item + 1).jpg")!
         
         item.imageView?.kf.indicatorType = .activity
-        item.imageView?.kf.setImage(with: url, placeholder: nil, options: nil,
-                                                   progressBlock: { receivedSize, totalSize in
-                                                    print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)")
-                                                    },
-                                              completionHandler: { result in
-                                                    print("\(indexPath.item + 1): Finished")
-                                                    })
+        KF.url(url)
+            .roundCorner(radius: .point(20))
+            .progress { receivedSize, totalSize in print("\(indexPath.item + 1): \(receivedSize)/\(totalSize)") }
+            .done { print($0) }
+            .set(to: item.imageView!)
         
         // Set imageView's `animates` to true if you are loading a GIF.
         // item.imageView?.animates = true

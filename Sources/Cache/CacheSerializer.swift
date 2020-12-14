@@ -52,26 +52,6 @@ public protocol CacheSerializer {
     /// - Returns: An image deserialized or `nil` when no valid image
     ///            could be deserialized.
     func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
-    
-    /// Gets an image deserialized from provided data.
-    ///
-    /// - Parameters:
-    ///   - data: The data from which an image should be deserialized.
-    ///   - options: Options for deserialization.
-    /// - Returns: An image deserialized or `nil` when no valid image
-    ///            could be deserialized.
-    /// - Note:
-    /// This method is deprecated. Please implement the version with
-    /// `KingfisherParsedOptionsInfo` as parameter instead.
-    @available(*, deprecated,
-    message: "Deprecated. Implement the method with same name but with `KingfisherParsedOptionsInfo` instead.")
-    func image(with data: Data, options: KingfisherOptionsInfo?) -> KFCrossPlatformImage?
-}
-
-extension CacheSerializer {
-    public func image(with data: Data, options: KingfisherOptionsInfo?) -> KFCrossPlatformImage? {
-        return image(with: data, options: KingfisherParsedOptionsInfo(options))
-    }
 }
 
 /// Represents a basic and default `CacheSerializer` used in Kingfisher disk cache system.

@@ -60,19 +60,16 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
         // Use different cache key to prevent reuse the same image. It is just for
         // this demo. Normally you can just use the URL to set image.
-        let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
-        
+
         // This should crash most devices due to memory pressure.
+        // let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
         // imageView.kf.setImage(with: resource)
 
         // This would survive on even the lowest spec devices!
-        imageView.kf.setImage(
-            with: resource,
-            options: [
-                .processor(DownsamplingImageProcessor(size: CGSize(width: 250, height: 250))),
-                .cacheOriginalImage
-            ]
-        )
+        KF.url(url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
+            .downsampling(size: CGSize(width: 250, height: 250))
+            .cacheOriginalImage()
+            .set(to: imageView)
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

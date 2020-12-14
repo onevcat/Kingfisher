@@ -26,9 +26,11 @@
 
 #if !os(watchOS)
 
-#if os(macOS)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
-#else
+#endif
+
+#if canImport(UIKit)
 import UIKit
 #endif
 

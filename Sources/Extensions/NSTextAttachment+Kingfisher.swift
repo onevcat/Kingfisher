@@ -88,77 +88,15 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        var mutatingSelf = self
-        guard let source = source else {
-            base.image = placeholder
-            mutatingSelf.taskIdentifier = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
-        }
-
-        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
-        if !options.keepCurrentImageWhileLoading {
-            base.image = placeholder
-        }
-
-        let issuedIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedIdentifier
-
-        if let block = progressBlock {
-            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
-        }
-
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
-            self.base.image = image
-        }) {
-            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
-        }
-
-        options.onDataReceived?.forEach {
-            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
-        }
-
-        let task = KingfisherManager.shared.retrieveImage(
+        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        return setImage(
             with: source,
-            options: options,
-            completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute {
-                    guard issuedIdentifier == self.taskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
-                        }
-                        let error = KingfisherError.imageSettingError(reason: reason)
-                        completionHandler?(.failure(error))
-                        return
-                    }
-
-                    mutatingSelf.imageTask = nil
-                    mutatingSelf.taskIdentifier = nil
-
-                    switch result {
-                    case .success(let value):
-                        self.base.image = value.image
-                        #if canImport(UIKit)
-                        attributedView.setNeedsDisplay()
-                        #else
-                        attributedView.setNeedsDisplay(attributedView.bounds)
-                        #endif
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.image = image
-                        }
-                    }
-                    completionHandler?(result)
-                }
-        }
+            attributedView: attributedView,
+            placeholder: placeholder,
+            parsedOptions: options,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler
         )
-
-        mutatingSelf.imageTask = task
-        return task
     }
 
     /// Sets an image to the text attachment with a source.
@@ -220,6 +158,90 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             options: options,
             progressBlock: progressBlock,
             completionHandler: completionHandler)
+    }
+
+    func setImage(
+        with source: Source?,
+        attributedView: KFCrossPlatformView,
+        placeholder: KFCrossPlatformImage? = nil,
+        parsedOptions: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        var mutatingSelf = self
+        guard let source = source else {
+            base.image = placeholder
+            mutatingSelf.taskIdentifier = nil
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+
+        var options = parsedOptions
+        if !options.keepCurrentImageWhileLoading {
+            base.image = placeholder
+        }
+
+        let issuedIdentifier = Source.Identifier.next()
+        mutatingSelf.taskIdentifier = issuedIdentifier
+
+        if let block = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            self.base.image = image
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
+        }
+
+        options.onDataReceived?.forEach {
+            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
+        }
+
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    guard issuedIdentifier == self.taskIdentifier else {
+                        let reason: KingfisherError.ImageSettingErrorReason
+                        do {
+                            let value = try result.get()
+                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                        } catch {
+                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                        }
+                        let error = KingfisherError.imageSettingError(reason: reason)
+                        completionHandler?(.failure(error))
+                        return
+                    }
+
+                    mutatingSelf.imageTask = nil
+                    mutatingSelf.taskIdentifier = nil
+
+                    switch result {
+                    case .success(let value):
+                        self.base.image = value.image
+                        #if canImport(UIKit)
+                        attributedView.setNeedsDisplay()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            
+                        }
+                        #else
+                        attributedView.setNeedsDisplay(attributedView.bounds)
+                        #endif
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.image = image
+                        }
+                    }
+                    completionHandler?(result)
+                }
+        }
+        )
+
+        mutatingSelf.imageTask = task
+        return task
     }
 
     // MARK: Cancelling Image

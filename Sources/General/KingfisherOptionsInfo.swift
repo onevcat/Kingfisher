@@ -71,7 +71,7 @@ public enum KingfisherOptionsInfoItem {
     /// between 0.0~1.0. If this option not set, the default value (`URLSessionTask.defaultPriority`) will be used.
     case downloadPriority(Float)
     
-    /// If set, Kingfisher will ignore the cache and try to fire a download task for the resource.
+    /// If set, Kingfisher will ignore the cache and try to start a download task for the image source.
     case forceRefresh
 
     /// If set, Kingfisher will try to retrieve the image from memory cache first. If the image is not in memory
@@ -90,19 +90,15 @@ public enum KingfisherOptionsInfoItem {
     /// If set, Kingfisher will wait for caching operation to be completed before calling the completion block.
     case waitForCache
     
-    /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is
-    /// not in cache, the image retrieving will fail with an error.
+    /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is not in
+    /// cache, the image retrieving will fail with the `KingfisherError.cacheError` with `.imageNotExisting` as its
+    /// reason.
     case onlyFromCache
     
     /// Decode the image in background thread before using. It will decode the downloaded image data and do a off-screen
     /// rendering to extract pixel information in background. This can speed up display, but will cost more time to
     /// prepare the image for using.
     case backgroundDecode
-    
-    /// The associated value of this member will be used as the target queue of dispatch callbacks when
-    /// retrieving images from cache. If not set, Kingfisher will use main queue for callbacks.
-    @available(*, deprecated, message: "Use `.callbackQueue(CallbackQueue)` instead.")
-    case callbackDispatchQueue(DispatchQueue?)
 
     /// The associated value will be used as the target queue of dispatch callbacks when retrieving images from
     /// cache. If not set, Kingfisher will use `.mainCurrentOrAsync` for callbacks.
@@ -146,7 +142,7 @@ public enum KingfisherOptionsInfoItem {
     /// If not set, the `DefaultImageProcessor.default` will be used.
     case processor(ImageProcessor)
     
-    /// Supplies a `CacheSerializer` to convert some data to an image object for
+    /// Provides a `CacheSerializer` to convert some data to an image object for
     /// retrieving from disk cache or vice versa for storing to disk cache.
     /// If not set, the `DefaultCacheSerializer.default` will be used.
     case cacheSerializer(CacheSerializer)
@@ -166,7 +162,7 @@ public enum KingfisherOptionsInfoItem {
     
     /// If set, Kingfisher will only load the first frame from an animated image file as a single image.
     /// Loading an animated images may take too much memory. It will be useful when you want to display a
-    /// static preview of the first frame from a animated image.
+    /// static preview of the first frame from an animated image.
     ///
     /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
@@ -179,7 +175,7 @@ public enum KingfisherOptionsInfoItem {
     /// The original image will be only cached to disk storage.
     case cacheOriginalImage
     
-    /// If set and a downloading error occurred Kingfisher will set provided image (or empty)
+    /// If set and an image retrieving error occurred Kingfisher will set provided image (or empty)
     /// in place of requested one. It's useful when you don't want to show placeholder
     /// during loading time but wants to use some default image when requests will be failed.
     case onFailureImage(KFCrossPlatformImage?)
@@ -227,7 +223,8 @@ public enum KingfisherOptionsInfoItem {
     /// blocking the UI, especially if the processor needs a lot of time to run).
     case processingQueue(CallbackQueue)
     
-    /// Enable progressive image loading, Kingfisher will use the `ImageProgressive` of
+    /// Enable progressive image loading, Kingfisher will use the associated `ImageProgressive` value to process the
+    /// progressive JPEG data and display it in a progressive way.
     case progressiveJPEG(ImageProgressive)
 
     /// The alternative sources will be used when the original input `Source` fails. The `Source`s in the associated
@@ -327,7 +324,6 @@ public struct KingfisherParsedOptionsInfo {
             case .onFailureImage(let value): onFailureImage = .some(value)
             case .alsoPrefetchToMemory: alsoPrefetchToMemory = true
             case .loadDiskFileSynchronously: loadDiskFileSynchronously = true
-            case .callbackDispatchQueue(let value): callbackQueue = value.map { .dispatch($0) } ?? .mainCurrentOrAsync
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .memoryCacheAccessExtendingExpiration(let expirationExtending): memoryCacheAccessExtendingExpiration = expirationExtending
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration

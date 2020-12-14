@@ -81,93 +81,59 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        var mutatingSelf = self
-        guard let source = source else {
-            mutatingSelf.placeholder = placeholder
-            mutatingSelf.taskIdentifier = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
-        }
+        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        return setImage(with: source, placeholder: placeholder, parsedOptions: options, progressBlock: progressBlock, completionHandler: completionHandler)
+    }
 
-        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
-
-        let isEmptyImage = base.image == nil && self.placeholder == nil
-        if !options.keepCurrentImageWhileLoading || isEmptyImage {
-            // Always set placeholder while there is no image/placeholder yet.
-            mutatingSelf.placeholder = placeholder
-        }
-
-        let maybeIndicator = indicator
-        maybeIndicator?.startAnimatingView()
-
-        let issuedIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedIdentifier
-
-        if base.shouldPreloadAllAnimation() {
-            options.preloadAllAnimationData = true
-        }
-
-        if let block = progressBlock {
-            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
-        }
-
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
-            self.base.image = image
-        }) {
-            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
-        }
-        
-        options.onDataReceived?.forEach {
-            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
-        }
-
-        let task = KingfisherManager.shared.retrieveImage(
+    /// Sets an image to the image view with a `Source`.
+    ///
+    /// - Parameters:
+    ///   - source: The `Source` object defines data information from network or a data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// This is the easiest way to use Kingfisher to boost the image setting process from a source. Since all parameters
+    /// have a default value except the `source`, you can set an image from a certain URL to an image view like this:
+    ///
+    /// ```
+    /// // Set image from a network source.
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: .network(url))
+    ///
+    /// // Or set image from a data provider.
+    /// let provider = LocalFileImageDataProvider(fileURL: fileURL)
+    /// imageView.kf.setImage(with: .provider(provider))
+    /// ```
+    ///
+    /// For both `.network` and `.provider` source, there are corresponding view extension methods. So the code
+    /// above is equivalent to:
+    ///
+    /// ```
+    /// imageView.kf.setImage(with: url)
+    /// imageView.kf.setImage(with: provider)
+    /// ```
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the source.
+    /// Since this method will perform UI changes, you must call it from the main thread.
+    /// The `completionHandler` will be also executed in the main thread.
+    ///
+    @discardableResult
+    public func setImage(
+        with source: Source?,
+        placeholder: Placeholder? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        return setImage(
             with: source,
+            placeholder: placeholder,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
-            completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute {
-                    maybeIndicator?.stopAnimatingView()
-                    guard issuedIdentifier == self.taskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
-                        }
-                        let error = KingfisherError.imageSettingError(reason: reason)
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    
-                    mutatingSelf.imageTask = nil
-                    mutatingSelf.taskIdentifier = nil
-                    
-                    switch result {
-                    case .success(let value):
-                        guard self.needsTransition(options: options, cacheType: value.cacheType) else {
-                            mutatingSelf.placeholder = nil
-                            self.base.image = value.image
-                            completionHandler?(result)
-                            return
-                        }
-                        
-                        self.makeTransition(image: value.image, transition: options.transition) {
-                            completionHandler?(result)
-                        }
-                        
-                    case .failure:
-                        if let image = options.onFailureImage {
-                            self.base.image = image
-                        }
-                        completionHandler?(result)
-                    }
-                }
-            }
+            progressBlock: nil,
+            completionHandler: completionHandler
         )
-        mutatingSelf.imageTask = task
-        return task
     }
 
     /// Sets an image to the image view with a requested resource.
@@ -210,6 +176,44 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             completionHandler: completionHandler)
     }
 
+    /// Sets an image to the image view with a requested resource.
+    ///
+    /// - Parameters:
+    ///   - resource: The `Resource` object contains information about the resource.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// - Note:
+    /// This is the easiest way to use Kingfisher to boost the image setting process from network. Since all parameters
+    /// have a default value except the `resource`, you can set an image from a certain URL to an image view like this:
+    ///
+    /// ```
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: url)
+    /// ```
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
+    /// or network. Since this method will perform UI changes, you must call it from the main thread.
+    /// The `completionHandler` will be also executed in the main thread.
+    ///
+    @discardableResult
+    public func setImage(
+        with resource: Resource?,
+        placeholder: Placeholder? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        return setImage(
+            with: resource,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: nil,
+            completionHandler: completionHandler
+        )
+    }
+
     /// Sets an image to the image view with a data provider.
     ///
     /// - Parameters:
@@ -239,6 +243,132 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             options: options,
             progressBlock: progressBlock,
             completionHandler: completionHandler)
+    }
+
+    /// Sets an image to the image view with a data provider.
+    ///
+    /// - Parameters:
+    ///   - provider: The `ImageDataProvider` object contains information about the data.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the image retrieved and set finished.
+    /// - Returns: A task represents the image downloading.
+    ///
+    /// Internally, this method will use `KingfisherManager` to get the image data, from either cache
+    /// or the data provider. Since this method will perform UI changes, you must call it from the main thread.
+    /// The `completionHandler` will be also executed in the main thread.
+    ///
+    @discardableResult
+    public func setImage(
+        with provider: ImageDataProvider?,
+        placeholder: Placeholder? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        return setImage(
+            with: provider,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: nil,
+            completionHandler: completionHandler
+        )
+    }
+
+
+    func setImage(
+        with source: Source?,
+        placeholder: Placeholder? = nil,
+        parsedOptions: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
+        var mutatingSelf = self
+        guard let source = source else {
+            mutatingSelf.placeholder = placeholder
+            mutatingSelf.taskIdentifier = nil
+            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
+            return nil
+        }
+
+        var options = parsedOptions
+
+        let isEmptyImage = base.image == nil && self.placeholder == nil
+        if !options.keepCurrentImageWhileLoading || isEmptyImage {
+            // Always set placeholder while there is no image/placeholder yet.
+            mutatingSelf.placeholder = placeholder
+        }
+
+        let maybeIndicator = indicator
+        maybeIndicator?.startAnimatingView()
+
+        let issuedIdentifier = Source.Identifier.next()
+        mutatingSelf.taskIdentifier = issuedIdentifier
+
+        if base.shouldPreloadAllAnimation() {
+            options.preloadAllAnimationData = true
+        }
+
+        if let block = progressBlock {
+            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            self.base.image = image
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
+        }
+
+        options.onDataReceived?.forEach {
+            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
+        }
+
+        let task = KingfisherManager.shared.retrieveImage(
+            with: source,
+            options: options,
+            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            completionHandler: { result in
+                CallbackQueue.mainCurrentOrAsync.execute {
+                    maybeIndicator?.stopAnimatingView()
+                    guard issuedIdentifier == self.taskIdentifier else {
+                        let reason: KingfisherError.ImageSettingErrorReason
+                        do {
+                            let value = try result.get()
+                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
+                        } catch {
+                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
+                        }
+                        let error = KingfisherError.imageSettingError(reason: reason)
+                        completionHandler?(.failure(error))
+                        return
+                    }
+
+                    mutatingSelf.imageTask = nil
+                    mutatingSelf.taskIdentifier = nil
+
+                    switch result {
+                    case .success(let value):
+                        guard self.needsTransition(options: options, cacheType: value.cacheType) else {
+                            mutatingSelf.placeholder = nil
+                            self.base.image = value.image
+                            completionHandler?(result)
+                            return
+                        }
+
+                        self.makeTransition(image: value.image, transition: options.transition) {
+                            completionHandler?(result)
+                        }
+
+                    case .failure:
+                        if let image = options.onFailureImage {
+                            self.base.image = image
+                        }
+                        completionHandler?(result)
+                    }
+                }
+            }
+        )
+        mutatingSelf.imageTask = task
+        return task
     }
 
     // MARK: Cancelling Downloading Task
@@ -406,15 +536,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
 extension KFCrossPlatformImageView {
     @objc func shouldPreloadAllAnimation() -> Bool { return true }
-}
-
-extension KingfisherWrapper where Base: KFCrossPlatformImageView {
-    /// Gets the image URL bound to this image view.
-    @available(*, deprecated, message: "Use `taskIdentifier` instead to identify a setting task.")
-    public private(set) var webURL: URL? {
-        get { return nil }
-        set { }
-    }
 }
 
 #endif

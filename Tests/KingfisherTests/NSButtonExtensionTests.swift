@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 import XCTest
 @testable import Kingfisher
@@ -113,11 +113,11 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
         
-        button.kf.setImage(with: url) { result in
+        button.kf.setImage(with: url, completionHandler: { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
-        }
+        })
         
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
@@ -130,11 +130,11 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
         
-        button.kf.setAlternateImage(with: url) { result in
+        button.kf.setAlternateImage(with: url, completionHandler: { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
-        }
+        })
         
         self.button.kf.cancelAlternateImageDownloadTask()
         _ = stub.go()
@@ -165,10 +165,10 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        button.kf.setImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        button.kf.setImage(with: url, options: [.onFailureImage(testImage)], completionHandler: { result in
             XCTAssertNil(result.value)
             expectation.fulfill()
-        }
+        })
         
         XCTAssertNil(button.image)
         waitForExpectations(timeout: 5, handler: nil)
@@ -180,10 +180,10 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        button.kf.setAlternateImage(with: url, options: [.onFailureImage(testImage)]) { (result) -> Void in
+        button.kf.setAlternateImage(with: url, options: [.onFailureImage(testImage)], completionHandler:  { result in
             XCTAssertNil(result.value)
             expectation.fulfill()
-        }
+        })
         
         XCTAssertNil(button.alternateImage)
         waitForExpectations(timeout: 5, handler: nil)
