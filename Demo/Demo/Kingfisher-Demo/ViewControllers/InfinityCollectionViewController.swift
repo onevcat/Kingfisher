@@ -53,7 +53,7 @@ class InfinityCollectionViewController: UICollectionViewController {
 
         // Mark each row as a new image.
         let resource = ImageResource(downloadURL: url, cacheKey: "key-\(indexPath.row)")
-        cell.cellImageView.kf.setImage(with: resource)
+        KF.resource(resource).set(to: cell.cellImageView)
 
         return cell
     }

@@ -59,27 +59,6 @@ public protocol ImageProcessor {
     /// the `DefaultImageProcessor`. It is recommended to use a reverse domain name notation string of
     /// your own for the identifier.
     var identifier: String { get }
-    
-    /// Processes the input `ImageProcessItem` with this processor.
-    ///
-    /// - Parameters:
-    ///   - item: Input item which will be processed by `self`.
-    ///   - options: Options when processing the item.
-    /// - Returns: The processed image.
-    ///
-    /// - Note: The return value should be `nil` if processing failed while converting an input item to image.
-    ///         If `nil` received by the processing caller, an error will be reported and the process flow stops.
-    ///         If the processing flow is not critical for your flow, then when the input item is already an image
-    ///         (`.image` case) and there is any errors in the processing, you could return the input image itself
-    ///         to keep the processing pipeline continuing.
-    /// - Note: Most processor only supports CG-based images. watchOS is not supported for processors containing
-    ///         a filter, the input image will be returned directly on watchOS.
-    /// - Note:
-    /// This method is deprecated. Please implement the version with
-    /// `KingfisherParsedOptionsInfo` as parameter instead.
-    @available(*, deprecated,
-    message: "Deprecated. Implement the method with same name but with `KingfisherParsedOptionsInfo` instead.")
-    func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> KFCrossPlatformImage?
 
     /// Processes the input `ImageProcessItem` with this processor.
     ///
@@ -96,12 +75,6 @@ public protocol ImageProcessor {
     /// - Note: Most processor only supports CG-based images. watchOS is not supported for processors containing
     ///         a filter, the input image will be returned directly on watchOS.
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
-}
-
-extension ImageProcessor {
-    public func process(item: ImageProcessItem, options: KingfisherOptionsInfo) -> KFCrossPlatformImage? {
-        return process(item: item, options: KingfisherParsedOptionsInfo(options))
-    }
 }
 
 extension ImageProcessor {
@@ -371,20 +344,9 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     /// - Note: See documentation of `ImageProcessor` protocol for more.
     public let identifier: String
 
-    /// Corner radius will be applied in processing. To provide backward compatibility, this property returns `0` unless
-    /// `Radius.point` is specified.
-    @available(*, deprecated, message: "Use `radius` property instead.")
-    public var cornerRadius: CGFloat {
-        switch radius {
-        case .widthFraction, .heightFraction:
-            return 0.0
-        case .point(let value):
-            return value
-        }
-    }
-
     /// The radius will be applied in processing. Specify a certain point value with `.point`, or a fraction of the
-    /// target image with `.fraction`. `.fraction(0.5)` means use half of the
+    /// target image with `.widthFraction`. or `.heightFraction`. For example, given a square image with width and
+    /// height equals,  `.widthFraction(0.5)` means use half of the length of size and makes the final image a round one.
     public let radius: Radius
     
     /// The target corners which will be applied rounding.
@@ -514,7 +476,7 @@ public enum ContentMode {
 
 /// Processor for resizing images.
 /// If you need to resize a data represented image to a smaller size, use `DownsamplingImageProcessor`
-/// instead, which is more efficient and takes less memory.
+/// instead, which is more efficient and uses less memory.
 public struct ResizingImageProcessor: ImageProcessor {
     
     /// Identifier of the processor.
@@ -836,8 +798,9 @@ public struct CroppingImageProcessor: ImageProcessor {
 }
 
 /// Processor for downsampling an image. Compared to `ResizingImageProcessor`, this processor
-/// does not render the images to resize. Instead, it downsample the input data directly to an
-/// image. It is a more efficient than `ResizingImageProcessor`.
+/// does not render the images to resize. Instead, it downsamples the input data directly to an
+/// image. It is a more efficient than `ResizingImageProcessor`. Prefer to use `DownsamplingImageProcessor` as possible
+/// as you can than the `ResizingImageProcessor`.
 ///
 /// Only CG-based images are supported. Animated images (like GIF) is not supported.
 public struct DownsamplingImageProcessor: ImageProcessor {
@@ -878,19 +841,6 @@ public struct DownsamplingImageProcessor: ImageProcessor {
             return KingfisherWrapper.downsampledImage(data: data, to: size, scale: options.scaleFactor)
         }
     }
-}
-
-/// Concatenates two `ImageProcessor`s. `ImageProcessor.append(another:)` is used internally.
-///
-/// - Parameters:
-///   - left: The first processor.
-///   - right: The second processor.
-/// - Returns: The concatenated processor.
-@available(*, deprecated,
-message: "Will be removed soon. Use `|>` instead.",
-renamed: "|>")
-public func >>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
-    return left.append(another: right)
 }
 
 infix operator |>: AdditionPrecedence

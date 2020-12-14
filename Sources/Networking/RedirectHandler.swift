@@ -55,7 +55,7 @@ public protocol ImageDownloadRedirectHandler {
 /// This type conforms to `ImageDownloadRedirectHandler` and wraps a redirect request modify block.
 public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
-    let block: (SessionDataTask, HTTPURLResponse, URLRequest, (URLRequest?) -> Void) -> Void
+    let block: (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void
 
     public func handleHTTPRedirection(
         for task: SessionDataTask,
@@ -70,7 +70,7 @@ public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     ///
     /// - Parameter modify: The request modifying block runs when a request modifying task comes.
     ///
-    public init(handle: @escaping (SessionDataTask, HTTPURLResponse, URLRequest, (URLRequest?) -> Void) -> Void) {
+    public init(handle: @escaping (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
         block = handle
     }
 }

@@ -100,9 +100,10 @@ class IndicatorCollectionViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ImageCollectionViewCell
         cell.cellImageView.kf.indicatorType = selectedIndicatorType
-        cell.cellImageView.kf.setImage(
-            with: ImageLoader.sampleImageURLs[indexPath.row],
-            options: [.memoryCacheExpiration(.expired), .diskCacheExpiration(.expired)])
+        KF.url(ImageLoader.sampleImageURLs[indexPath.row])
+            .memoryCacheExpiration(.expired)
+            .diskCacheExpiration(.expired)
+            .set(to: cell.cellImageView)
         return cell
     }
     
