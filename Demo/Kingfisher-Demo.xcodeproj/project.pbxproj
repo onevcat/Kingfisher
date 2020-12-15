@@ -29,8 +29,6 @@
 		4BE855592320F9D300FE4205 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE855572320F9D300FE4205 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BE8555C2320F9D800FE4205 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE8555A2320F9D800FE4205 /* Kingfisher.framework */; };
 		4BE8555D2320F9D800FE4205 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE8555A2320F9D800FE4205 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		4BE8555E2320F9D800FE4205 /* KingfisherSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE8555B2320F9D800FE4205 /* KingfisherSwiftUI.framework */; };
-		4BE8555F2320F9D800FE4205 /* KingfisherSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE8555B2320F9D800FE4205 /* KingfisherSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BE855612320F9DE00FE4205 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE855602320F9DE00FE4205 /* Kingfisher.framework */; };
 		4BE855622320F9DE00FE4205 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE855602320F9DE00FE4205 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C959EEE622874DC600467A10 /* ProgressiveJPEGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */; };
@@ -87,7 +85,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4BE8555F2320F9D800FE4205 /* KingfisherSwiftUI.framework in Embed Frameworks */,
 				4BE8555D2320F9D800FE4205 /* Kingfisher.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -268,7 +265,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4BE8555E2320F9D800FE4205 /* KingfisherSwiftUI.framework in Frameworks */,
 				4BE8555C2320F9D800FE4205 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
