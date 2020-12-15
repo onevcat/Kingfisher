@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import class Kingfisher.ImageCache
-import KingfisherSwiftUI
+import Kingfisher
 import SwiftUI
 
 struct SwiftUIList : View {
