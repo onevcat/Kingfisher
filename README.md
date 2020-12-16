@@ -137,7 +137,7 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 
 Open source project cannot live long without your help. If you find Kingfisher is useful, please consider to support this project by becoming a sponsor. Your user icon or company logo will show up here with a link to your home page. 
 
-Become a sponsor through [GitHub Sponsors](https://github.com/sponsors/onevcat) or [Open Collective](https://opencollective.com/kingfisher#sponsor)]. :heart:
+Become a sponsor through [GitHub Sponsors](https://github.com/sponsors/onevcat) or [Open Collective](https://opencollective.com/kingfisher#sponsor). :heart:
 
 [![](https://avatars3.githubusercontent.com/u/75399012?s=60&v=4)](https://github.com/platoapp)
 
