@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
   s.social_media_url   = "https://twitter.com/onevcat"
 
-  s.swift_version = "4.2"
+  s.swift_version = "5.0"
   s.swift_versions = ['4.0', '4.2', '5.0']
 
   s.ios.deployment_target = "10.0"
@@ -34,26 +34,8 @@ Pod::Spec.new do |s|
   s.watchos.deployment_target = "3.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
-
-  s.default_subspecs = "Core"
+  s.source_files  = ["Sources/**/*.swift", "Sources/Kingfisher.h"]
 
   s.requires_arc = true
   s.frameworks = "CFNetwork", "Accelerate"
-
-  s.subspec "Core" do |sp|
-    sp.source_files  = ["Sources/**/*.swift", "Sources/Kingfisher.h"]
-    sp.exclude_files = ["Sources/SwiftUI/**"]
-  end
-
-  s.subspec "SwiftUI" do |sp|
-    sp.source_files = ["Sources/SwiftUI/**"]
-    sp.exclude_files = ["Sources/SwiftUI/Delegate.swift"]
-    sp.dependency "Kingfisher/Core"
-    sp.ios.deployment_target = "10.0"
-    sp.tvos.deployment_target = "10.0"
-    sp.osx.deployment_target = "10.12"
-    sp.watchos.deployment_target = "3.0"
-    sp.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS' => '-DKingfisherCocoaPods' }
-  end
-
 end
