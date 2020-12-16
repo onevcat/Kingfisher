@@ -27,9 +27,6 @@
 #if canImport(SwiftUI) && canImport(Combine)
 import Combine
 import SwiftUI
-#if !KingfisherCocoaPods
-import Kingfisher
-#endif
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension SwiftUI.Image {

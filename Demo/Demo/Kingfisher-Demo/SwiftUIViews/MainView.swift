@@ -1,8 +1,8 @@
 //
-//  Delegate.swift
+//  MainView.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2018/10/10.
+//  Created by jp20028 on 2019/08/07.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,30 +24,31 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
+import SwiftUI
+import Kingfisher
 
-/// A delegate helper type to "shadow" weak `self`, to prevent creating an unexpected retain cycle.
-class Delegate<Input, Output> {
-    init() {}
-    
-    private var block: ((Input) -> Output?)?
-    
-    func delegate<T: AnyObject>(on target: T, block: ((T, Input) -> Output)?) {
-        // The `target` is weak inside block, so you do not need to worry about it in the caller side.
-        self.block = { [weak target] input in
-            guard let target = target else { return nil }
-            return block?(target, input)
-        }
-    }
-    
-    func call(_ input: Input) -> Output? {
-        return block?(input)
+@available(iOS 13.0, *)
+struct MainView: View {
+    var body: some View {
+        List {
+            Button(
+                action: {
+                    KingfisherManager.shared.cache.clearMemoryCache()
+                    KingfisherManager.shared.cache.clearDiskCache()
+                },
+                label: {
+                    Text("Clear Cache").foregroundColor(.blue)
+                }
+            )
+            NavigationLink(destination: SwiftUIView()) { Text("Basic Image") }
+            NavigationLink(destination: SwiftUIList()) { Text("List") }
+        }.navigationBarTitle(Text("SwiftUI Sample"))
     }
 }
 
-extension Delegate where Input == Void {
-    // To make syntax better for `Void` input.
-    func call() -> Output? {
-        return call(())
+@available(iOS 13.0, *)
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainView()
     }
 }
