@@ -27,7 +27,7 @@ jobs:
       - name: Upload Documentation Netlify
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=Documentation --functions=functions
+          args: deploy --dir=Documentation --prod
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
