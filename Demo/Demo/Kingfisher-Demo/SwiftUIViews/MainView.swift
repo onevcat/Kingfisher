@@ -1,8 +1,8 @@
 //
-//  SwiftUIView.swift
+//  MainView.swift
 //  Kingfisher
 //
-//  Created by Wei Wang on 2019/06/18.
+//  Created by jp20028 on 2019/08/07.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -24,44 +24,31 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Kingfisher
 import SwiftUI
+import Kingfisher
 
-struct SwiftUIView : View {
-
-    @State private var index = 1
-
+@available(iOS 13.0, *)
+struct MainView: View {
     var body: some View {
-        VStack {
-            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages" +
-                                "/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
-                .onSuccess { r in
-                    print("suc: \(r)")
+        List {
+            Button(
+                action: {
+                    KingfisherManager.shared.cache.clearMemoryCache()
+                    KingfisherManager.shared.cache.clearDiskCache()
+                },
+                label: {
+                    Text("Clear Cache").foregroundColor(.blue)
                 }
-                .onFailure { e in
-                    print("err: \(e)")
-                }
-                .placeholder {
-                    Image(systemName: "arrow.2.circlepath.circle")
-                        .font(.largeTitle)
-                }
-                .resizable()
-                .frame(width: 300, height: 300)
-                .cornerRadius(20)
-                .shadow(radius: 5)
-
-            Button(action: {
-                self.index = (self.index % 10) + 1
-            }) { Text("Next Image") }
-
-        }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
+            )
+            NavigationLink(destination: SwiftUIView()) { Text("Basic Image") }
+            NavigationLink(destination: SwiftUIList()) { Text("List") }
+        }.navigationBarTitle(Text("SwiftUI Sample"))
     }
 }
 
-#if DEBUG
-struct SwiftUIView_Previews : PreviewProvider {
+@available(iOS 13.0, *)
+struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        SwiftUIView()
+        MainView()
     }
 }
-#endif

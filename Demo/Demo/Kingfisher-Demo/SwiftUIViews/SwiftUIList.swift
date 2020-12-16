@@ -24,10 +24,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import class Kingfisher.ImageCache
 import Kingfisher
 import SwiftUI
 
+@available(iOS 13.0, *)
 struct SwiftUIList : View {
 
     let index = 1 ..< 700
@@ -89,10 +89,9 @@ struct SwiftUIList : View {
     }
 }
 
-#if DEBUG
+@available(iOS 13.0, *)
 struct SwiftUIList_Previews : PreviewProvider {
     static var previews: some View {
         SwiftUIList()
     }
 }
-#endif
