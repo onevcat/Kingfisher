@@ -11,8 +11,6 @@
 <br />
 <a href="https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat"></a>
 <a href="http://onevcat.github.io/Kingfisher/"><img src="https://img.shields.io/cocoapods/p/Kingfisher.svg?style=flat"></a>
-<a href="#backers" alt="sponsors on Open Collective"><img src="https://opencollective.com/Kingfisher/backers/badge.svg" /></a>
-<a href="#sponsors" alt="Sponsors on Open Collective"><img src="https://opencollective.com/Kingfisher/sponsors/badge.svg" /></a>
 </p>
 
 Kingfisher is a powerful, pure-Swift library for downloading and caching images from the web. It provides you a chance to use a pure-Swift way to work with remote images in your next app.
@@ -135,33 +133,13 @@ The logo of Kingfisher is inspired by [Tangram (七巧板)](http://en.wikipedia.
 
 Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](http://weibo.com/onevcat). If you find an issue, just [open a ticket](https://github.com/onevcat/Kingfisher/issues/new). Pull requests are warmly welcome as well.
 
-## Contributors
+## Backers & Sponsors
 
-This project exists thanks to all the people who contribute. [[Contribute]](https://github.com/onevcat/Kingfisher/blob/master/CONTRIBUTING.md).
-<a href="https://opencollective.com/kingfisher#backer"><img src="https://opencollective.com/kingfisher/contributors.svg?width=890" /></a>
+Open source project cannot live long without your help. If you find Kingfisher is useful, please consider to support this project by becoming a sponsor.  our logo will show up here with a link to your website. 
 
+Become a sponsor through [GitHub Sponsors](https://github.com/sponsors/onevcat) or [Open Collective](https://opencollective.com/kingfisher#sponsor)]. :heart:
 
-## Backers
-
-Thank you to all our backers! Your support is really important for the project and encourages us to continue. 🙏 [[Become a backer](https://opencollective.com/kingfisher#backer)]
-
-<a href="https://opencollective.com/kingfisher#backers" target="_blank"><img src="https://opencollective.com/kingfisher/backers.svg?width=890"></a>
-
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/kingfisher#sponsor)]
-
-<a href="https://opencollective.com/kingfisher/sponsor/0/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/1/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/2/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/3/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/4/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/5/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/6/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/7/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/8/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/kingfisher/sponsor/9/website" target="_blank"><img src="https://opencollective.com/kingfisher/sponsor/9/avatar.svg"></a>
+[![](https://avatars3.githubusercontent.com/u/75399012?s=60&v=4)](https://github.com/platoapp)
 
 ### License
 
