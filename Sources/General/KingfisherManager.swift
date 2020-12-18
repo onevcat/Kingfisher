@@ -189,7 +189,23 @@ public class KingfisherManager {
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = currentDefaultOptions + (options ?? .empty)
-        var info = KingfisherParsedOptionsInfo(options)
+        let info = KingfisherParsedOptionsInfo(options)
+        return retrieveImage(
+            with: source,
+            options: info,
+            progressBlock: progressBlock,
+            downloadTaskUpdated: downloadTaskUpdated,
+            completionHandler: completionHandler)
+    }
+
+    func retrieveImage(
+        with source: Source,
+        options: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil,
+        downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+    {
+        var info = options
         if let block = progressBlock {
             info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }

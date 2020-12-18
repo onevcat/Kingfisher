@@ -67,7 +67,6 @@ public struct KFImage: SwiftUI.View {
     public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
         binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
         configurations = []
-        binder.start()
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
