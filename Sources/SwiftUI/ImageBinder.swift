@@ -36,7 +36,7 @@ extension KFImage {
     public class ImageBinder: ObservableObject {
 
         let source: Source?
-        let options: KingfisherOptionsInfo?
+        private var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
 
         var downloadTask: DownloadTask?
 
@@ -54,7 +54,11 @@ extension KFImage {
             self.source = source
             // The refreshing of `KFImage` would happen much more frequently then an `UIImageView`, even as a
             // "side-effect". To prevent unintended flickering, add `.loadDiskFileSynchronously` as a default.
-            self.options = (options ?? []) + [.loadDiskFileSynchronously]
+            self.options = KingfisherParsedOptionsInfo(
+                KingfisherManager.shared.defaultOptions +
+                (options ?? []) +
+                [.loadDiskFileSynchronously]
+            )
             self.isLoaded = isLoaded
             self.image = nil
         }
