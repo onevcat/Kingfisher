@@ -65,7 +65,7 @@ public struct ImageResource: Resource {
     ///               Default is `nil`.
     public init(downloadURL: URL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
-        self.cacheKey = cacheKey ?? downloadURL.absoluteString
+        self.cacheKey = cacheKey ?? downloadURL.cacheKey
     }
 
     // MARK: Protocol Conforming
@@ -81,6 +81,13 @@ public struct ImageResource: Resource {
 /// The `absoluteString` of this URL is used as `cacheKey`. And the URL itself will be used as `downloadURL`.
 /// If you need customize the url and/or cache key, use `ImageResource` instead.
 extension URL: Resource {
-    public var cacheKey: String { return absoluteString }
+    public var cacheKey: String {
+        if var urlcomponents = URLComponents(url: self, resolvingAgainstBaseURL: false), urlcomponents.host == "storage.googleapis.com" {
+            urlcomponents.query = nil
+            return urlcomponents.string ?? absoluteString
+        }
+        return absoluteString
+    }
+    
     public var downloadURL: URL { return self }
 }
