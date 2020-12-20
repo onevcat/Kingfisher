@@ -68,10 +68,10 @@ class UIButtonExtensionTests: XCTestCase {
         var progressBlockIsCalled = false
 
         KF.url(url)
-            .progress { _, _ in
+            .onProgress { _, _ in
                 progressBlockIsCalled = true
             }
-            .done { result in
+            .onSuccess { result in
                 XCTAssertTrue(progressBlockIsCalled)
 
                 XCTAssertTrue(result.image.renderEqual(to: testImage))
@@ -93,10 +93,10 @@ class UIButtonExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
         KF.url(url)
-            .progress { _, _ in
+            .onProgress { _, _ in
                 progressBlockIsCalled = true
             }
-            .done { result in
+            .onSuccess { result in
                 XCTAssertTrue(progressBlockIsCalled)
 
                 XCTAssertTrue(result.image.renderEqual(to: testImage))
@@ -116,7 +116,7 @@ class UIButtonExtensionTests: XCTestCase {
         let stub = delayedStub(url, data: testImageData)
 
         KF.url(url)
-            .catch { error in
+            .onFailure { error in
                 XCTAssertTrue(error.isTaskCancelled)
                 delay(0.1) { exp.fulfill() }
             }
@@ -134,7 +134,7 @@ class UIButtonExtensionTests: XCTestCase {
         let stub = delayedStub(url, data: testImageData)
 
         KF.url(url)
-            .catch { error in
+            .onFailure { error in
                 XCTAssertTrue(error.isTaskCancelled)
                 delay(0.1) { exp.fulfill() }
             }
@@ -171,7 +171,7 @@ class UIButtonExtensionTests: XCTestCase {
 
         KF.url(url)
             .onFailureImage(testImage)
-            .catch { error in
+            .onFailure { error in
                 XCTAssertEqual(testImage, self.button.image(for: state))
                 expectation.fulfill()
             }
@@ -188,7 +188,7 @@ class UIButtonExtensionTests: XCTestCase {
 
         KF.url(url)
             .onFailureImage(testImage)
-            .catch { error in
+            .onFailure { error in
                 XCTAssertEqual(testImage, self.button.backgroundImage(for: state))
                 expectation.fulfill()
             }

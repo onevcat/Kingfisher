@@ -167,18 +167,18 @@ class ImageViewExtensionTests: XCTestCase {
         
         group.enter()
         let task1 = KF.url(url)
-            .catch { _ in group.leave() }
+            .onFailure { _ in group.leave() }
             .set(to: imageView)
         
         group.enter()
         KF.url(url)
-            .done { _ in group.leave() }
+            .onSuccess { _ in group.leave() }
             .set(to: imageView)
         
         group.enter()
         let anotherImageView = KFCrossPlatformImageView()
         KF.url(url)
-            .done { _ in group.leave() }
+            .onSuccess { _ in group.leave() }
             .set(to: anotherImageView)
         
         task1?.cancel()
