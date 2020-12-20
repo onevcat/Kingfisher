@@ -97,23 +97,23 @@ extension KF {
         private var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
 
         private var progressBlock: DownloadProgressBlock?
-        private var doneBlock: ((RetrieveImageResult) -> Void)?
-        private var errorBlock: ((KingfisherError) -> Void)?
+        private var successBlock: ((RetrieveImageResult) -> Void)?
+        private var failureBlock: ((KingfisherError) -> Void)?
 
         init(source: Source) {
             self.source = source
         }
 
         private var resultHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? {
-            if doneBlock == nil && errorBlock == nil {
+            if successBlock == nil && failureBlock == nil {
                 return nil
             }
             return { result in
                 switch result {
                 case .success(let result):
-                    self.doneBlock?(result)
+                    self.successBlock?(result)
                 case .failure(let error):
-                    self.errorBlock?(error)
+                    self.failureBlock?(error)
                 }
             }
         }
@@ -250,7 +250,7 @@ extension KF.Builder {
     /// - Parameter block: Called when the image downloading progress gets updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
     /// - Returns: A `KF.Builder` with changes applied.
-    public func progress(_ block: DownloadProgressBlock?) -> Self {
+    public func onProgress(_ block: DownloadProgressBlock?) -> Self {
         self.progressBlock = block
         return self
     }
@@ -258,16 +258,16 @@ extension KF.Builder {
     /// Sets the the done block to current builder.
     /// - Parameter block: Called when the image task successfully completes and the the image set is done.
     /// - Returns: A `KF.Builder` with changes applied.
-    public func done(_ block: ((RetrieveImageResult) -> Void)?) -> Self {
-        self.doneBlock = block
+    public func onSuccess(_ block: ((RetrieveImageResult) -> Void)?) -> Self {
+        self.successBlock = block
         return self
     }
 
     /// Sets the catch block to current builder.
     /// - Parameter block: Called when an error happens during the image task.
     /// - Returns: A `KF.Builder` with changes applied.
-    public func `catch`(_ block: ((KingfisherError) -> Void)?) -> Self {
-        self.errorBlock = block
+    public func onFailure(_ block: ((KingfisherError) -> Void)?) -> Self {
+        self.failureBlock = block
         return self
     }
 }

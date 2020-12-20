@@ -57,15 +57,15 @@ class ProgressiveJPEGViewController: UIViewController {
             .loadDiskFileSynchronously()
             .progressiveJPEG(progressive)
             .roundCorner(radius: .point(30))
-            .progress { receivedSize, totalSize in
+            .onProgress { receivedSize, totalSize in
                 print("\(receivedSize)/\(totalSize)")
                 self.progressLabel.text = "\(receivedSize) / \(totalSize)"
             }
-            .done { result in
+            .onSuccess { result in
                 print(result)
                 print("Finished")
             }
-            .catch { error in
+            .onFailure { error in
                 print(error)
                 self.progressLabel.text = error.localizedDescription
             }
