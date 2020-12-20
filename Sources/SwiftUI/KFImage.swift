@@ -57,6 +57,7 @@ public struct KFImage: SwiftUI.View {
     // Configurations should be performed on the image.
     var configurations: [(SwiftUI.Image) -> SwiftUI.Image]
 
+    #warning("Deprecate this.")
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
@@ -69,6 +70,7 @@ public struct KFImage: SwiftUI.View {
         configurations = []
     }
 
+    #warning("Deprecate this.")
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter url: The image URL from where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
@@ -78,6 +80,11 @@ public struct KFImage: SwiftUI.View {
     ///                       wrapped value from outside.
     public init(_ url: URL?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
         self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
+    }
+
+    public init(source: Source?, loadingState: Binding<KFImageLoadingState>?) {
+        binder = ImageBinder(source: source, loadingState: loadingState)
+        configurations = []
     }
 
     /// Declares the content and behavior of this view.

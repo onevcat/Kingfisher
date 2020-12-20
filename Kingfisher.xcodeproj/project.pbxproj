@@ -91,6 +91,7 @@
 		D16FEA5523079707006E67D5 /* NSButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */; };
 		D1839845216E333E003927D3 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1839844216E333E003927D3 /* Delegate.swift */; };
 		D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186696C21834261002B502E /* ImageDrawingTests.swift */; };
+		D1889534258F7649003B73BE /* KFImageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1889533258F7648003B73BE /* KFImageOptions.swift */; };
 		D18B3222251852E100662F63 /* KF.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18B3221251852E100662F63 /* KF.swift */; };
 		D1A1CC9A219FAB4B00263AD8 /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CC99219FAB4B00263AD8 /* Source.swift */; };
 		D1A1CC9F21A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */; };
@@ -245,6 +246,7 @@
 		D16FEA3923078C63006E67D5 /* LSStubResponseDSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSStubResponseDSL.h; sourceTree = "<group>"; };
 		D1839844216E333E003927D3 /* Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delegate.swift; sourceTree = "<group>"; };
 		D186696C21834261002B502E /* ImageDrawingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDrawingTests.swift; sourceTree = "<group>"; };
+		D1889533258F7648003B73BE /* KFImageOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFImageOptions.swift; sourceTree = "<group>"; };
 		D18B3221251852E100662F63 /* KF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KF.swift; sourceTree = "<group>"; };
 		D1A1CC99219FAB4B00263AD8 /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderTests.swift; sourceTree = "<group>"; };
@@ -648,6 +650,7 @@
 			children = (
 				D1F7607523097532000C5269 /* ImageBinder.swift */,
 				D1F7607623097532000C5269 /* KFImage.swift */,
+				D1889533258F7648003B73BE /* KFImageOptions.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -803,6 +806,7 @@
 				D11D9B72245FA6F700C5A0AE /* RetryStrategy.swift in Sources */,
 				D1A37BE3215D359F009B39B7 /* ImageFormat.swift in Sources */,
 				D12EB83C24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift in Sources */,
+				D1889534258F7649003B73BE /* KFImageOptions.swift in Sources */,
 				D12AB714215D2BB50013BA68 /* ImageCache.swift in Sources */,
 				D12AB6D0215D2BB50013BA68 /* ImagePrefetcher.swift in Sources */,
 				D12AB6F4215D2BB50013BA68 /* ImageView+Kingfisher.swift in Sources */,

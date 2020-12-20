@@ -28,6 +28,12 @@
 import Combine
 import SwiftUI
 
+public enum KFImageLoadingState {
+    case notLoaded
+    case loaded(RetrieveImageResult)
+    case error(KingfisherError)
+}
+
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
@@ -47,6 +53,7 @@ extension KFImage {
         let onProgressDelegate = Delegate<(Int64, Int64), Void>()
 
         var isLoaded: Binding<Bool>
+        var loadingState: Binding<KFImageLoadingState>?
 
         @Published var image: KFCrossPlatformImage?
 
@@ -60,6 +67,16 @@ extension KFImage {
                 [.loadDiskFileSynchronously]
             )
             self.isLoaded = isLoaded
+            self.image = nil
+        }
+
+        init(source: Source?, loadingState: Binding<KFImageLoadingState>? = nil) {
+            self.source = source
+            self.options = KingfisherParsedOptionsInfo(
+                KingfisherManager.shared.defaultOptions + [.loadDiskFileSynchronously]
+            )
+            self.isLoaded = .constant(false)
+            self.loadingState = loadingState
             self.image = nil
         }
 
