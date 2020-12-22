@@ -205,8 +205,8 @@ extension SessionDelegate: URLSessionDataDelegate {
         if let error = error {
             result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
         } else {
-            if let data = onDidDownloadData.call(sessionTask), let finalData = data {
-                result = .success((finalData, task.response))
+            if let data = onDidDownloadData.call(sessionTask) {
+                result = .success((data, task.response))
             } else {
                 result = .failure(KingfisherError.responseError(reason: .dataModifyingFailed(task: sessionTask)))
             }

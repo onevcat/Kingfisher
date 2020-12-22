@@ -42,7 +42,7 @@ extension KFImage {
     public class ImageBinder: ObservableObject {
 
         let source: Source?
-        private var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
+        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
 
         var downloadTask: DownloadTask?
 
@@ -132,24 +132,6 @@ extension KFImage {
         /// Cancels the download task if it is in progress.
         public func cancel() {
             downloadTask?.cancel()
-        }
-
-        func setOnFailure(perform action: ((KingfisherError) -> Void)?) {
-            onFailureDelegate.delegate(on: self) { (self, error) in
-                action?(error)
-            }
-        }
-
-        func setOnSuccess(perform action: ((RetrieveImageResult) -> Void)?) {
-            onSuccessDelegate.delegate(on: self) { (self, result) in
-                action?(result)
-            }
-        }
-
-        func setOnProgress(perform action: ((Int64, Int64) -> Void)?) {
-            onProgressDelegate.delegate(on: self) { (self, result) in
-                action?(result.0, result.1)
-            }
         }
     }
 }
