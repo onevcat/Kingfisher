@@ -36,6 +36,10 @@ import AppKit
 import WatchKit
 #endif
 
+#if canImport(TVUIKit)
+import TVUIKit
+#endif
+
 /// A helper type to create image setting tasks in a builder pattern.
 /// Use methods in this type to create a `KF.Builder` instance and configure image tasks there.
 public enum KF {
@@ -126,6 +130,7 @@ extension KF.Builder {
     /// Builds the image task request and sets it to an image view.
     /// - Parameter imageView: The image view which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func set(to imageView: KFCrossPlatformImageView) -> DownloadTask? {
         imageView.kf.setImage(
@@ -142,6 +147,7 @@ extension KF.Builder {
     ///   - attachment: The text attachment object which loads the task and should be set with the image.
     ///   - attributedView: The owner of the attributed string which this `NSTextAttachment` is added.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func set(to attachment: NSTextAttachment, attributedView: KFCrossPlatformView) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
@@ -162,6 +168,7 @@ extension KF.Builder {
     ///   - button: The button which loads the task and should be set with the image.
     ///   - state: The button state to which the image should be set.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func set(to button: UIButton, for state: UIControl.State) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
@@ -180,6 +187,7 @@ extension KF.Builder {
     ///   - button: The button which loads the task and should be set with the image.
     ///   - state: The button state to which the image should be set.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func setBackground(to button: UIButton, for state: UIControl.State) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
@@ -198,6 +206,7 @@ extension KF.Builder {
     /// Builds the image task request and sets it to a button.
     /// - Parameter button: The button which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func set(to button: NSButton) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
@@ -213,6 +222,7 @@ extension KF.Builder {
     /// Builds the image task request and sets it to the alternative image for a button.
     /// - Parameter button: The button which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func setAlternative(to button: NSButton) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
@@ -231,8 +241,10 @@ extension KF.Builder {
     /// Builds the image task request and sets it to a `WKInterfaceImage` object.
     /// - Parameter interfaceImage: The watch interface image which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func set(to interfaceImage: WKInterfaceImage) -> DownloadTask? {
+        let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
         return interfaceImage.kf.setImage(
             with: source,
             placeholder: placeholder,
@@ -242,6 +254,25 @@ extension KF.Builder {
         )
     }
     #endif // end of canImport(WatchKit)
+
+    #if canImport(TVUIKit)
+    /// Builds the image task request and sets it to a TV monogram view.
+    /// - Parameter monogramView: The monogram view which loads the task and should be set with the image.
+    /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
+    @available(tvOS 12.0, *)
+    @discardableResult
+    public func set(to monogramView: TVMonogramView) -> DownloadTask? {
+        let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
+        return monogramView.kf.setImage(
+            with: source,
+            placeholder: placeholderImage,
+            parsedOptions: options,
+            progressBlock: progressBlock,
+            completionHandler: resultHandler
+        )
+    }
+    #endif // end of canImport(TVUIKit)
 }
 
 extension KF.Builder {
