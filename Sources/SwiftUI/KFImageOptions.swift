@@ -30,38 +30,38 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
     public static func source(
-        _ source: Source, loadingState: Binding<KFImageLoadingState>? = nil
+        _ source: Source, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        KFImage(source: source, loadingState: loadingState)
+        KFImage(source: source, isLoaded: isLoaded)
     }
 
     public static func resource(
-        _ resource: Resource, loadingState: Binding<KFImageLoadingState>? = nil
+        _ resource: Resource, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        .source(.network(resource), loadingState: loadingState)
+        .source(.network(resource), isLoaded: isLoaded)
     }
 
     public static func url(
-        _ url: URL, cacheKey: String? = nil, loadingState: Binding<KFImageLoadingState>? = nil
+        _ url: URL, cacheKey: String? = nil, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        source(.network(ImageResource(downloadURL: url, cacheKey: cacheKey)), loadingState: loadingState)
+        source(.network(ImageResource(downloadURL: url, cacheKey: cacheKey)), isLoaded: isLoaded)
     }
 
     public static func dataProvider(
-        _ provider: ImageDataProvider, loadingState: Binding<KFImageLoadingState>? = nil
+        _ provider: ImageDataProvider, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        source(.provider(provider), loadingState: loadingState)
+        source(.provider(provider), isLoaded: isLoaded)
     }
 
     public static func data(
-        _ data: Data, cacheKey: String, loadingState: Binding<KFImageLoadingState>? = nil
+        _ data: Data, cacheKey: String, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        source(.provider(RawImageDataProvider(data: data, cacheKey: cacheKey)), loadingState: loadingState)
+        source(.provider(RawImageDataProvider(data: data, cacheKey: cacheKey)), isLoaded: isLoaded)
     }
 }
 
