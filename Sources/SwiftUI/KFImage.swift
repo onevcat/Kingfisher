@@ -92,7 +92,7 @@ public struct KFImage: SwiftUI.View {
         Group {
             if binder.image != nil {
                 configurations
-                    .reduce(SwiftUI.Image(crossPlatformImage: binder.image!)) {
+                    .reduce(Image(crossPlatformImage: binder.image!)) {
                         current, config in config(current)
                     }
             } else {
@@ -125,6 +125,7 @@ public struct KFImage: SwiftUI.View {
     }
 }
 
+// MARK: - SwiftUI.Image compatibility.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
@@ -154,56 +155,6 @@ extension KFImage {
 
     public func antialiased(_ isAntialiased: Bool) -> KFImage {
         configure { $0.antialiased(isAntialiased) }
-    }
-
-    /// Sets a placeholder `View` which shows when loading the image.
-    /// - Parameter content: A view that describes the placeholder.
-    /// - Returns: A `KFImage` view that contains `content` as its placeholder.
-    public func placeholder<Content: SwiftUI.View>(@ViewBuilder _ content: () -> Content) -> KFImage {
-        let v = content()
-        var result = self
-        result.placeholder = AnyView(v)
-        return result
-    }
-
-    /// Sets cancelling the download task bound to `self` when the view disappearing.
-    /// - Parameter flag: Whether cancel the task or not.
-    /// - Returns: A `KFImage` view that cancels downloading task when disappears.
-    public func cancelOnDisappear(_ flag: Bool) -> KFImage {
-        var result = self
-        result.cancelOnDisappear = flag
-        return result
-    }
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFImage {
-
-    /// Sets the action to perform when the image setting fails.
-    /// - Parameter action: The action to perform. If `action` is `nil`, the
-    ///   call has no effect.
-    /// - Returns: A `KFImage` view that triggers `action` when setting image fails.
-    public func onFailure(perform action: ((KingfisherError) -> Void)?) -> KFImage {
-        binder.setOnFailure(perform: action)
-        return self
-    }
-
-    /// Sets the action to perform when the image setting successes.
-    /// - Parameter action: The action to perform. If `action` is `nil`, the
-    ///   call has no effect.
-    /// - Returns: A `KFImage` view that triggers `action` when setting image successes.
-    public func onSuccess(perform action: ((RetrieveImageResult) -> Void)?) -> KFImage {
-        binder.setOnSuccess(perform: action)
-        return self
-    }
-
-    /// Sets the action to perform when the image downloading progress receiving new data.
-    /// - Parameter action: The action to perform. If `action` is `nil`, the
-    ///   call has no effect.
-    /// - Returns: A `KFImage` view that triggers `action` when new data arrives when downloading.
-    public func onProgress(perform action: ((Int64, Int64) -> Void)?) -> KFImage {
-        binder.setOnProgress(perform: action)
-        return self
     }
 }
 

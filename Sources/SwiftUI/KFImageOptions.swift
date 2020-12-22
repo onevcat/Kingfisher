@@ -64,3 +64,26 @@ extension KFImage {
         source(.provider(RawImageDataProvider(data: data, cacheKey: cacheKey)), loadingState: loadingState)
     }
 }
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension KFImage {
+    /// Sets a placeholder `View` which shows when loading the image.
+    /// - Parameter content: A view that describes the placeholder.
+    /// - Returns: A `KFImage` view that contains `content` as its placeholder.
+    public func placeholder<Content: SwiftUI.View>(@ViewBuilder _ content: () -> Content) -> KFImage {
+        let v = content()
+        var result = self
+        result.placeholder = AnyView(v)
+        return result
+    }
+
+
+    /// Sets cancelling the download task bound to `self` when the view disappearing.
+    /// - Parameter flag: Whether cancel the task or not.
+    /// - Returns: A `KFImage` view that cancels downloading task when disappears.
+    public func cancelOnDisappear(_ flag: Bool) -> KFImage {
+        var result = self
+        result.cancelOnDisappear = flag
+        return result
+    }
+}
