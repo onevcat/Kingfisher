@@ -82,8 +82,8 @@ public struct KFImage: SwiftUI.View {
         self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
     }
 
-    public init(source: Source?, loadingState: Binding<KFImageLoadingState>?) {
-        binder = ImageBinder(source: source, loadingState: loadingState)
+    public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
+        binder = ImageBinder(source: source, isLoaded: isLoaded)
         configurations = []
     }
 
