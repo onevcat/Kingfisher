@@ -70,7 +70,7 @@ extension KFImage {
     /// Sets a placeholder `View` which shows when loading the image.
     /// - Parameter content: A view that describes the placeholder.
     /// - Returns: A `KFImage` view that contains `content` as its placeholder.
-    public func placeholder<Content: SwiftUI.View>(@ViewBuilder _ content: () -> Content) -> KFImage {
+    public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> KFImage {
         let v = content()
         var result = self
         result.placeholder = AnyView(v)

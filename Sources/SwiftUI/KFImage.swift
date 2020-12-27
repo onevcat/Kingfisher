@@ -29,8 +29,8 @@ import Combine
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension SwiftUI.Image {
-    // Creates an SwiftUI.Image with either UIImage or NSImage.
+extension Image {
+    // Creates an Image with either UIImage or NSImage.
     init(crossPlatformImage: KFCrossPlatformImage) {
         #if canImport(UIKit)
         self.init(uiImage: crossPlatformImage)
@@ -43,7 +43,7 @@ extension SwiftUI.Image {
 /// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
 /// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct KFImage: SwiftUI.View {
+public struct KFImage: View {
 
     /// An image binder that manages loading and cancelling image related task.
     @ObservedObject public private(set) var binder: ImageBinder
@@ -55,9 +55,10 @@ public struct KFImage: SwiftUI.View {
     var cancelOnDisappear: Bool = false
 
     // Configurations should be performed on the image.
-    var configurations: [(SwiftUI.Image) -> SwiftUI.Image]
+    var configurations: [(Image) -> Image]
 
     #warning("Deprecate this.")
+
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
@@ -88,7 +89,7 @@ public struct KFImage: SwiftUI.View {
     }
 
     /// Declares the content and behavior of this view.
-    public var body: some SwiftUI.View {
+    public var body: some View {
         Group {
             if binder.image != nil {
                 configurations
@@ -100,7 +101,7 @@ public struct KFImage: SwiftUI.View {
                     if placeholder != nil {
                         placeholder
                     } else {
-                        SwiftUI.Image(crossPlatformImage: .init())
+                        Image(crossPlatformImage: .init())
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -125,14 +126,14 @@ public struct KFImage: SwiftUI.View {
     }
 }
 
-// MARK: - SwiftUI.Image compatibility.
+// MARK: - Image compatibility.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
 
     /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
     /// - Parameter block: The block applies to loaded image.
     /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
-    public func configure(_ block: @escaping (SwiftUI.Image) -> SwiftUI.Image) -> KFImage {
+    public func configure(_ block: @escaping (Image) -> Image) -> KFImage {
         var result = self
         result.configurations.append(block)
         return result
@@ -140,16 +141,16 @@ extension KFImage {
 
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: SwiftUI.Image.ResizingMode = .stretch) -> KFImage
+        resizingMode: Image.ResizingMode = .stretch) -> KFImage
     {
         configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
     }
 
-    public func renderingMode(_ renderingMode: SwiftUI.Image.TemplateRenderingMode?) -> KFImage {
+    public func renderingMode(_ renderingMode: Image.TemplateRenderingMode?) -> KFImage {
         configure { $0.renderingMode(renderingMode) }
     }
 
-    public func interpolation(_ interpolation: SwiftUI.Image.Interpolation) -> KFImage {
+    public func interpolation(_ interpolation: Image.Interpolation) -> KFImage {
         configure { $0.interpolation(interpolation) }
     }
 
@@ -161,7 +162,7 @@ extension KFImage {
 #if DEBUG
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImage_Previews : PreviewProvider {
-    static var previews: some SwiftUI.View {
+    static var previews: some View {
         Group {
             KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
                 .onSuccess { r in
