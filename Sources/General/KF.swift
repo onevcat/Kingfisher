@@ -46,14 +46,16 @@ public enum KF {
 
     /// Creates a builder for a given `Source`.
     /// - Parameter source: The `Source` object defines data information from network or a data provider.
-    /// - Returns: A `KF.Builder` for future configuration or image setting.
+    /// - Returns: A `KF.Builder` for future configuration. After configuring the builder, call `set(to:)`
+    ///            to start the image loading.
     public static func source(_ source: Source) -> KF.Builder {
         Builder(source: source)
     }
 
     /// Creates a builder for a given `Resource`.
     /// - Parameter resource: The `Resource` object defines data information like key or URL.
-    /// - Returns: A `KF.Builder` for future configuration or image setting.
+    /// - Returns: A `KF.Builder` for future configuration. After configuring the builder, call `set(to:)`
+    ///            to start the image loading.
     public static func resource(_ resource: Resource) -> KF.Builder {
         Builder(source: .network(resource))
     }
@@ -63,14 +65,16 @@ public enum KF {
     ///   - url: The URL where the image should be downloaded.
     ///   - cacheKey: The key used to store the downloaded image in cache.
     ///               If `nil`, the `absoluteString` of `url` is used as the cache key.
-    /// - Returns: A `KF.Builder` for future configuration or image setting.
+    /// - Returns: A `KF.Builder` for future configuration. After configuring the builder, call `set(to:)`
+    ///            to start the image loading.
     public static func url(_ url: URL, cacheKey: String? = nil) -> KF.Builder {
         Builder(source: .network(ImageResource(downloadURL: url, cacheKey: cacheKey)))
     }
 
     /// Creates a builder for a given `ImageDataProvider`.
     /// - Parameter provider: The `ImageDataProvider` object contains information about the data.
-    /// - Returns: A `KF.Builder` for future configuration or image setting.
+    /// - Returns: A `KF.Builder` for future configuration. After configuring the builder, call `set(to:)`
+    ///            to start the image loading.
     public static func dataProvider(_ provider: ImageDataProvider) -> KF.Builder {
         Builder(source: .provider(provider))
     }
@@ -79,7 +83,8 @@ public enum KF {
     /// - Parameters:
     ///   - data: The data object from which the image should be created.
     ///   - cacheKey: The key used to store the downloaded image in cache.
-    /// - Returns: A `KF.Builder` for future configuration or image setting.
+    /// - Returns: A `KF.Builder` for future configuration. After configuring the builder, call `set(to:)`
+    ///            to start the image loading.
     public static func data(_ data: Data, cacheKey: String) -> KF.Builder {
         Builder(source: .provider(RawImageDataProvider(data: data, cacheKey: cacheKey)))
     }

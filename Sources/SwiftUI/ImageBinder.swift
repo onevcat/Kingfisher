@@ -33,7 +33,7 @@ extension KFImage {
 
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
     /// image downloading and progress reporting based on `KingfisherManager`.
-    public class ImageBinder: ObservableObject {
+    class ImageBinder: ObservableObject {
 
         let source: Source?
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
@@ -50,7 +50,8 @@ extension KFImage {
 
         @Published var image: KFCrossPlatformImage?
 
-        init(source: Source?, options: KingfisherOptionsInfo?, isLoaded: Binding<Bool>) {
+        @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
+        init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
             self.source = source
             // The refreshing of `KFImage` would happen much more frequently then an `UIImageView`, even as a
             // "side-effect". To prevent unintended flickering, add `.loadDiskFileSynchronously` as a default.
@@ -65,8 +66,11 @@ extension KFImage {
 
         init(source: Source?, isLoaded: Binding<Bool>) {
             self.source = source
+            // The refreshing of `KFImage` would happen much more frequently then an `UIImageView`, even as a
+            // "side-effect". To prevent unintended flickering, add `.loadDiskFileSynchronously` as a default.
             self.options = KingfisherParsedOptionsInfo(
-                KingfisherManager.shared.defaultOptions + [.loadDiskFileSynchronously]
+                KingfisherManager.shared.defaultOptions +
+                [.loadDiskFileSynchronously]
             )
             self.isLoaded = isLoaded
             self.image = nil
@@ -122,7 +126,7 @@ extension KFImage {
         }
 
         /// Cancels the download task if it is in progress.
-        public func cancel() {
+        func cancel() {
             downloadTask?.cancel()
         }
     }
