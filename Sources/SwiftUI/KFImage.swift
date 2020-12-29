@@ -46,7 +46,7 @@ extension Image {
 public struct KFImage: View {
 
     /// An image binder that manages loading and cancelling image related task.
-    @ObservedObject public private(set) var binder: ImageBinder
+    @ObservedObject private(set) var binder: ImageBinder
 
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
@@ -57,8 +57,6 @@ public struct KFImage: View {
     // Configurations should be performed on the image.
     var configurations: [(Image) -> Image]
 
-    #warning("Deprecate this.")
-
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
@@ -66,26 +64,49 @@ public struct KFImage: View {
     /// - Parameter isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
     ///                       state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
     ///                       wrapped value from outside.
+    /// - Deprecated: Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a
+    ///               `KFImage` and configure the options through modifier instead. See methods of `KFOptionSetter`
+    ///               for more.
+    @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
     public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
         binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
         configurations = []
     }
 
-    #warning("Deprecate this.")
-    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
+    /// Creates a Kingfisher compatible image view to load image from the given `URL`.
     /// - Parameter url: The image URL from where to load the target image.
     /// - Parameter options: The options should be applied when loading the image.
     ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
     /// - Parameter isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
     ///                       state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
     ///                       wrapped value from outside.
+    /// - Deprecated: Some options are not available in SwiftUI yet. Use `KFImage(_:isLoaded:)` to create a
+    ///               `KFImage` and configure the options through modifier instead. See methods of `KFOptionSetter`
+    ///               for more.
+    @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(_:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
     public init(_ url: URL?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
         self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
     }
 
+    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
+    /// - Parameters:
+    ///   - source: The image `Source` defining where to load the target image.
+    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
+    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
+    ///               wrapped value from outside.
     public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
         binder = ImageBinder(source: source, isLoaded: isLoaded)
         configurations = []
+    }
+
+    /// Creates a Kingfisher compatible image view to load image from the given `URL`.
+    /// - Parameters:
+    ///   - source: The image `Source` defining where to load the target image.
+    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
+    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
+    ///               wrapped value from outside.
+    public init(_ url: URL?, isLoaded: Binding<Bool> = .constant(false)) {
+        self.init(source: url?.convertToSource(), isLoaded: isLoaded)
     }
 
     /// Declares the content and behavior of this view.
