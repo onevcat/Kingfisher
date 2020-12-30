@@ -60,9 +60,9 @@ extension NormalLoadingViewController {
         KF.url(url)
             .fade(duration: 1)
             .loadDiskFileSynchronously()
-            .progress { (received, total) in print("\(indexPath.row + 1): \(received)/\(total)") }
-            .done { print($0) }
-            .catch { err in print("Error: \(err)") }
+            .onProgress { (received, total) in print("\(indexPath.row + 1): \(received)/\(total)") }
+            .onSuccess { print($0) }
+            .onFailure { err in print("Error: \(err)") }
             .set(to: imageView)
     }
     

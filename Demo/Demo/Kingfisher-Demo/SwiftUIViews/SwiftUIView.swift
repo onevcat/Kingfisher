@@ -32,10 +32,13 @@ struct SwiftUIView : View {
 
     @State private var index = 1
 
+    var url: URL {
+        URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!
+    }
+
     var body: some View {
         VStack {
-            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages" +
-                                "/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!)
+            KFImage(url)
                 .onSuccess { r in
                     print("suc: \(r)")
                 }
