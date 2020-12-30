@@ -112,11 +112,40 @@ class ImageDownloaderTests: XCTestCase {
         modifier.url = url
         
         let someURL = URL(string: "some_strange_url")!
-        downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)]) { result in
+        let task = downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)]) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value?.url, url)
             exp.fulfill()
         }
+        XCTAssertNotNil(task)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadWithAsyncModifyingRequest() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        var downloadTaskCalled = false
+
+        let asyncModifier = AsyncURLModifier()
+        asyncModifier.url = url
+        asyncModifier.onDownloadTaskStarted = { task in
+            XCTAssertNotNil(task)
+            downloadTaskCalled = true
+        }
+
+
+        let someURL = URL(string: "some_strage_url")!
+        let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(result.value?.url, url)
+            XCTAssertTrue(downloadTaskCalled)
+            exp.fulfill()
+        }
+        // The returned task is nil since the download is not starting immediately.
+        XCTAssertNil(task)
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -535,3 +564,15 @@ class URLModifier: ImageDownloadRequestModifier {
     }
 }
 
+class AsyncURLModifier: AsyncImageDownloadRequestModifier {
+    var url: URL? = nil
+    var onDownloadTaskStarted: ((DownloadTask?) -> Void)?
+
+    func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
+        var r = request
+        r.url = url
+        DispatchQueue.main.async {
+            reportModified(r)
+        }
+    }
+}

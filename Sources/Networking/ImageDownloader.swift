@@ -221,7 +221,7 @@ open class ImageDownloader {
     private func createDownloadContext(
         with url: URL,
         options: KingfisherParsedOptionsInfo,
-        done: ((Result<DownloadingContext, KingfisherError>) -> Void)
+        done: @escaping ((Result<DownloadingContext, KingfisherError>) -> Void)
     )
     {
         func checkRequestAndDone(r: URLRequest) {
@@ -340,7 +340,7 @@ open class ImageDownloader {
         return downloadTask
     }
 
-    // MARK: Dowloading Task
+    // MARK: Downloading Task
     /// Downloads an image with a URL and option. Invoked internally by Kingfisher. Subclasses must invoke super.
     ///
     /// - Parameters:
@@ -364,9 +364,9 @@ open class ImageDownloader {
                 // `AsyncImageDownloadRequestModifier` is used the returned `downloadTask` of this method will be `nil`
                 // and the actual "delayed" task is given in `AsyncImageDownloadRequestModifier.onDownloadTaskStarted`
                 // callback.
-                downloadTask = startDownloadTask(
+                downloadTask = self.startDownloadTask(
                     context: context,
-                    callback: createTaskCallback(completionHandler, options: options)
+                    callback: self.createTaskCallback(completionHandler, options: options)
                 )
                 if let modifier = options.requestModifier {
                     modifier.onDownloadTaskStarted?(downloadTask)
