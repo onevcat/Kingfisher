@@ -30,6 +30,8 @@ import AppKit
 import UIKit
 #endif
 
+typealias DownloadResult = Result<ImageLoadingResult, KingfisherError>
+
 /// Represents a success result of an image downloading progress.
 public struct ImageLoadingResult {
 
@@ -193,6 +195,18 @@ open class ImageDownloader {
         }
     }
 
+    // Wraps `completionHandler` to `onCompleted` respectively.
+    private func createCompletionCallBack(_ completionHandler: ((DownloadResult) -> Void)?) -> Delegate<DownloadResult, Void>? {
+        return completionHandler.map { block -> Delegate<DownloadResult, Void> in
+
+            let delegate =  Delegate<Result<ImageLoadingResult, KingfisherError>, Void>()
+            delegate.delegate(on: self) { (self, callback) in
+                block(callback)
+            }
+            return delegate
+        }
+    }
+
     // MARK: Dowloading Task
     /// Downloads an image with a URL and option. Invoked internally by Kingfisher. Subclasses must invoke super.
     ///
@@ -232,20 +246,9 @@ open class ImageDownloader {
             return nil
         }
 
-        // Wraps `completionHandler` to `onCompleted` respectively.
-
-        let onCompleted = completionHandler.map {
-            block -> Delegate<Result<ImageLoadingResult, KingfisherError>, Void> in
-            let delegate =  Delegate<Result<ImageLoadingResult, KingfisherError>, Void>()
-            delegate.delegate(on: self) { (_, callback) in
-                block(callback)
-            }
-            return delegate
-        }
-
         // SessionDataTask.TaskCallback is a wrapper for `onCompleted` and `options` (for processor info)
         let callback = SessionDataTask.TaskCallback(
-            onCompleted: onCompleted,
+            onCompleted: createCompletionCallBack(completionHandler),
             options: options
         )
 
