@@ -219,25 +219,23 @@ open class ImageDownloader {
     }
 
     private func addDownloadTask(
-        for url: URL,
-        with request: URLRequest,
-        options: KingfisherParsedOptionsInfo,
+        context: DownloadingContext,
         callback: SessionDataTask.TaskCallback
     ) -> DownloadTask
     {
         // Ready to start download. Add it to session task manager (`sessionHandler`)
         let downloadTask: DownloadTask
-        if let existingTask = sessionDelegate.task(for: url) {
-            downloadTask = sessionDelegate.append(existingTask, url: url, callback: callback)
+        if let existingTask = sessionDelegate.task(for: context.url) {
+            downloadTask = sessionDelegate.append(existingTask, url: context.url, callback: callback)
         } else {
-            let sessionDataTask = session.dataTask(with: request)
-            sessionDataTask.priority = options.downloadPriority
-            downloadTask = sessionDelegate.add(sessionDataTask, url: url, callback: callback)
+            let sessionDataTask = session.dataTask(with: context.request)
+            sessionDataTask.priority = context.options.downloadPriority
+            downloadTask = sessionDelegate.add(sessionDataTask, url: context.url, callback: callback)
         }
         return downloadTask
     }
 
-    private func startDownloadTask(_ downloadTask: DownloadTask, url: URL, request: URLRequest, options: KingfisherParsedOptionsInfo) {
+    private func startDownloadTask(_ downloadTask: DownloadTask, context: DownloadingContext) {
 
         let sessionTask = downloadTask.sessionTask
         guard !sessionTask.started else {
@@ -254,14 +252,14 @@ open class ImageDownloader {
                 let value = try result.get()
                 self.delegate?.imageDownloader(
                     self,
-                    didFinishDownloadingImageForURL: url,
+                    didFinishDownloadingImageForURL: context.url,
                     with: value.1,
                     error: nil
                 )
             } catch {
                 self.delegate?.imageDownloader(
                     self,
-                    didFinishDownloadingImageForURL: url,
+                    didFinishDownloadingImageForURL: context.url,
                     with: nil,
                     error: error
                 )
@@ -271,7 +269,7 @@ open class ImageDownloader {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
                 let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: options.processingQueue)
+                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue)
                 processor.onImageProcessed.delegate(on: self) { (self, result) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
                     // `SessionDataTask.TaskCallback` as the input parameter.
@@ -279,10 +277,10 @@ open class ImageDownloader {
                     let (result, callback) = result
 
                     if let image = try? result.get() {
-                        self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
+                        self.delegate?.imageDownloader(self, didDownload: image, for: context.url, with: response)
                     }
 
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data) }
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }
@@ -295,7 +293,7 @@ open class ImageDownloader {
                 }
             }
         }
-        delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
+        delegate?.imageDownloader(self, willDownloadImageForURL: context.url, with: context.request)
         sessionTask.resume()
     }
 
@@ -338,15 +336,12 @@ open class ImageDownloader {
             return nil
         }
 
+        let context = DownloadingContext(url: url, request: request, options: options)
         // Ready to start download. Add it to session task manager (`sessionHandler`)
         let downloadTask = addDownloadTask(
-            for: url,
-            with: request,
-            options: options,
-            callback: createTaskCallback(completionHandler, options: options)
+            context: context, callback: createTaskCallback(completionHandler, options: options)
         )
-
-        startDownloadTask(downloadTask, url: url, request: request, options: options)
+        startDownloadTask(downloadTask, context: context)
         return downloadTask
     }
 
@@ -425,3 +420,11 @@ extension ImageDownloader: AuthenticationChallengeResponsable {}
 
 // Use the default implementation from extension of `ImageDownloaderDelegate`.
 extension ImageDownloader: ImageDownloaderDelegate {}
+
+extension ImageDownloader {
+    struct DownloadingContext {
+        let url: URL
+        let request: URLRequest
+        let options: KingfisherParsedOptionsInfo
+    }
+}
