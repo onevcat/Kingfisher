@@ -207,6 +207,98 @@ open class ImageDownloader {
         }
     }
 
+    private func createTaskCallback(
+        _ completionHandler: ((DownloadResult) -> Void)?,
+        options: KingfisherParsedOptionsInfo
+    ) -> SessionDataTask.TaskCallback
+    {
+        return SessionDataTask.TaskCallback(
+            onCompleted: createCompletionCallBack(completionHandler),
+            options: options
+        )
+    }
+
+    private func addDownloadTask(
+        for url: URL,
+        with request: URLRequest,
+        options: KingfisherParsedOptionsInfo,
+        callback: SessionDataTask.TaskCallback
+    ) -> DownloadTask
+    {
+        // Ready to start download. Add it to session task manager (`sessionHandler`)
+        let downloadTask: DownloadTask
+        if let existingTask = sessionDelegate.task(for: url) {
+            downloadTask = sessionDelegate.append(existingTask, url: url, callback: callback)
+        } else {
+            let sessionDataTask = session.dataTask(with: request)
+            sessionDataTask.priority = options.downloadPriority
+            downloadTask = sessionDelegate.add(sessionDataTask, url: url, callback: callback)
+        }
+        return downloadTask
+    }
+
+    private func startDownloadTask(_ downloadTask: DownloadTask, url: URL, request: URLRequest, options: KingfisherParsedOptionsInfo) {
+
+        let sessionTask = downloadTask.sessionTask
+        guard !sessionTask.started else {
+            return
+        }
+
+        sessionTask.onTaskDone.delegate(on: self) { (self, done) in
+            // Underlying downloading finishes.
+            // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
+            let (result, callbacks) = done
+
+            // Before processing the downloaded data.
+            do {
+                let value = try result.get()
+                self.delegate?.imageDownloader(
+                    self,
+                    didFinishDownloadingImageForURL: url,
+                    with: value.1,
+                    error: nil
+                )
+            } catch {
+                self.delegate?.imageDownloader(
+                    self,
+                    didFinishDownloadingImageForURL: url,
+                    with: nil,
+                    error: error
+                )
+            }
+
+            switch result {
+            // Download finished. Now process the data to an image.
+            case .success(let (data, response)):
+                let processor = ImageDataProcessor(
+                    data: data, callbacks: callbacks, processingQueue: options.processingQueue)
+                processor.onImageProcessed.delegate(on: self) { (self, result) in
+                    // `onImageProcessed` will be called for `callbacks.count` times, with each
+                    // `SessionDataTask.TaskCallback` as the input parameter.
+                    // result: Result<Image>, callback: SessionDataTask.TaskCallback
+                    let (result, callback) = result
+
+                    if let image = try? result.get() {
+                        self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
+                    }
+
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data) }
+                    let queue = callback.options.callbackQueue
+                    queue.execute { callback.onCompleted?.call(imageResult) }
+                }
+                processor.process()
+
+            case .failure(let error):
+                callbacks.forEach { callback in
+                    let queue = callback.options.callbackQueue
+                    queue.execute { callback.onCompleted?.call(.failure(error)) }
+                }
+            }
+        }
+        delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
+        sessionTask.resume()
+    }
+
     // MARK: Dowloading Task
     /// Downloads an image with a URL and option. Invoked internally by Kingfisher. Subclasses must invoke super.
     ///
@@ -246,81 +338,15 @@ open class ImageDownloader {
             return nil
         }
 
-        // SessionDataTask.TaskCallback is a wrapper for `onCompleted` and `options` (for processor info)
-        let callback = SessionDataTask.TaskCallback(
-            onCompleted: createCompletionCallBack(completionHandler),
-            options: options
+        // Ready to start download. Add it to session task manager (`sessionHandler`)
+        let downloadTask = addDownloadTask(
+            for: url,
+            with: request,
+            options: options,
+            callback: createTaskCallback(completionHandler, options: options)
         )
 
-        // Ready to start download. Add it to session task manager (`sessionHandler`)
-
-        let downloadTask: DownloadTask
-        if let existingTask = sessionDelegate.task(for: url) {
-            downloadTask = sessionDelegate.append(existingTask, url: url, callback: callback)
-        } else {
-            let sessionDataTask = session.dataTask(with: request)
-            sessionDataTask.priority = options.downloadPriority
-            downloadTask = sessionDelegate.add(sessionDataTask, url: url, callback: callback)
-        }
-
-        let sessionTask = downloadTask.sessionTask
-
-        // Start the session task if not started yet.
-        if !sessionTask.started {
-            sessionTask.onTaskDone.delegate(on: self) { (self, done) in
-                // Underlying downloading finishes.
-                // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
-                let (result, callbacks) = done
-
-                // Before processing the downloaded data.
-                do {
-                    let value = try result.get()
-                    self.delegate?.imageDownloader(
-                        self,
-                        didFinishDownloadingImageForURL: url,
-                        with: value.1,
-                        error: nil
-                    )
-                } catch {
-                    self.delegate?.imageDownloader(
-                        self,
-                        didFinishDownloadingImageForURL: url,
-                        with: nil,
-                        error: error
-                    )
-                }
-
-                switch result {
-                // Download finished. Now process the data to an image.
-                case .success(let (data, response)):
-                    let processor = ImageDataProcessor(
-                        data: data, callbacks: callbacks, processingQueue: options.processingQueue)
-                    processor.onImageProcessed.delegate(on: self) { (self, result) in
-                        // `onImageProcessed` will be called for `callbacks.count` times, with each
-                        // `SessionDataTask.TaskCallback` as the input parameter.
-                        // result: Result<Image>, callback: SessionDataTask.TaskCallback
-                        let (result, callback) = result
-
-                        if let image = try? result.get() {
-                            self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
-                        }
-
-                        let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data) }
-                        let queue = callback.options.callbackQueue
-                        queue.execute { callback.onCompleted?.call(imageResult) }
-                    }
-                    processor.process()
-
-                case .failure(let error):
-                    callbacks.forEach { callback in
-                        let queue = callback.options.callbackQueue
-                        queue.execute { callback.onCompleted?.call(.failure(error)) }
-                    }
-                }
-            }
-            delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
-            sessionTask.resume()
-        }
+        startDownloadTask(downloadTask, url: url, request: request, options: options)
         return downloadTask
     }
 
