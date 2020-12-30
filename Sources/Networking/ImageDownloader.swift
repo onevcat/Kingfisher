@@ -235,11 +235,17 @@ open class ImageDownloader {
         return downloadTask
     }
 
-    private func startDownloadTask(_ downloadTask: DownloadTask, context: DownloadingContext) {
+    private func startDownloadTask(
+        context: DownloadingContext,
+        callback: SessionDataTask.TaskCallback
+    ) -> DownloadTask
+    {
+
+        let downloadTask = addDownloadTask(context: context, callback: callback)
 
         let sessionTask = downloadTask.sessionTask
         guard !sessionTask.started else {
-            return
+            return downloadTask
         }
 
         sessionTask.onTaskDone.delegate(on: self) { (self, done) in
@@ -295,6 +301,7 @@ open class ImageDownloader {
         }
         delegate?.imageDownloader(self, willDownloadImageForURL: context.url, with: context.request)
         sessionTask.resume()
+        return downloadTask
     }
 
     // MARK: Dowloading Task
@@ -336,12 +343,10 @@ open class ImageDownloader {
             return nil
         }
 
-        let context = DownloadingContext(url: url, request: request, options: options)
-        // Ready to start download. Add it to session task manager (`sessionHandler`)
-        let downloadTask = addDownloadTask(
-            context: context, callback: createTaskCallback(completionHandler, options: options)
+        let downloadTask = startDownloadTask(
+            context: DownloadingContext(url: url, request: request, options: options),
+            callback: createTaskCallback(completionHandler, options: options)
         )
-        startDownloadTask(downloadTask, context: context)
         return downloadTask
     }
 
