@@ -271,6 +271,37 @@ open class ImageDownloader {
         return downloadTask
     }
 
+
+    private func reportWillDownloadImage(url: URL, request: URLRequest) {
+        delegate?.imageDownloader(self, willDownloadImageForURL: url, with: request)
+    }
+
+    private func reportDidDownloadImageData(result: Result<(Data, URLResponse?), KingfisherError>, url: URL) {
+        var response: URLResponse?
+        var err: Error?
+        do {
+            response = try result.get().1
+        } catch {
+            err = error
+        }
+        self.delegate?.imageDownloader(
+            self,
+            didFinishDownloadingImageForURL: url,
+            with: response,
+            error: err
+        )
+    }
+
+    private func reportDidProcessImage(
+        result: Result<KFCrossPlatformImage, KingfisherError>, url: URL, response: URLResponse?
+    )
+    {
+        if let image = try? result.get() {
+            self.delegate?.imageDownloader(self, didDownload: image, for: url, with: response)
+        }
+
+    }
+
     private func startDownloadTask(
         context: DownloadingContext,
         callback: SessionDataTask.TaskCallback
@@ -290,37 +321,21 @@ open class ImageDownloader {
             let (result, callbacks) = done
 
             // Before processing the downloaded data.
-            do {
-                let value = try result.get()
-                self.delegate?.imageDownloader(
-                    self,
-                    didFinishDownloadingImageForURL: context.url,
-                    with: value.1,
-                    error: nil
-                )
-            } catch {
-                self.delegate?.imageDownloader(
-                    self,
-                    didFinishDownloadingImageForURL: context.url,
-                    with: nil,
-                    error: error
-                )
-            }
+            self.reportDidDownloadImageData(result: result, url: context.url)
 
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
                 let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue)
-                processor.onImageProcessed.delegate(on: self) { (self, result) in
+                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue
+                )
+                processor.onImageProcessed.delegate(on: self) { (self, done) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
                     // `SessionDataTask.TaskCallback` as the input parameter.
                     // result: Result<Image>, callback: SessionDataTask.TaskCallback
-                    let (result, callback) = result
+                    let (result, callback) = done
 
-                    if let image = try? result.get() {
-                        self.delegate?.imageDownloader(self, didDownload: image, for: context.url, with: response)
-                    }
+                    self.reportDidProcessImage(result: result, url: context.url, response: response)
 
                     let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data) }
                     let queue = callback.options.callbackQueue
@@ -335,7 +350,8 @@ open class ImageDownloader {
                 }
             }
         }
-        delegate?.imageDownloader(self, willDownloadImageForURL: context.url, with: context.request)
+
+        reportWillDownloadImage(url: context.url, request: context.request)
         sessionTask.resume()
         return downloadTask
     }
