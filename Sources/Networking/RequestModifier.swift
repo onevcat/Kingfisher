@@ -26,8 +26,13 @@
 
 import Foundation
 
+public protocol AsyncImageDownloadRequestModifier {
+    func modified(for request: URLRequest, modify: (URLRequest?) -> Void)
+    var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { get }
+}
+
 /// Represents and wraps a method for modifying request before an image download request starts.
-public protocol ImageDownloadRequestModifier {
+public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier {
 
     /// A method will be called just before the `request` being sent.
     /// This is the last chance you can modify the image download request. You can modify the request for some
@@ -44,6 +49,15 @@ public protocol ImageDownloadRequestModifier {
     ///            a `KingfisherError.requestError` with `.emptyRequest` as its reason will occur.
     ///
     func modified(for request: URLRequest) -> URLRequest?
+}
+
+extension ImageDownloadRequestModifier {
+    public func modified(for request: URLRequest, modify: (URLRequest?) -> Void) {
+        let request = modified(for: request)
+        modify(request)
+    }
+
+    public var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { return nil }
 }
 
 /// A wrapper for creating an `ImageDownloadRequestModifier` easier.

@@ -218,6 +218,42 @@ open class ImageDownloader {
         )
     }
 
+    private func createDownloadContext(
+        with url: URL,
+        options: KingfisherParsedOptionsInfo,
+        done: ((Result<DownloadingContext, KingfisherError>) -> Void)
+    )
+    {
+        func checkRequestAndDone(r: URLRequest) {
+
+            // There is a possibility that request modifier changed the url to `nil` or empty.
+            // In this case, throw an error.
+            guard let url = r.url, !url.absoluteString.isEmpty else {
+                done(.failure(KingfisherError.requestError(reason: .invalidURL(request: r))))
+                return
+            }
+
+            done(.success(DownloadingContext(url: url, request: r, options: options)))
+        }
+
+        // Creates default request.
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
+        request.httpShouldUsePipelining = requestsUsePipelining
+
+        if let requestModifier = options.requestModifier {
+            // Modifies request before sending.
+            requestModifier.modified(for: request) { result in
+                guard let finalRequest = result else {
+                    done(.failure(KingfisherError.requestError(reason: .emptyRequest)))
+                    return
+                }
+                checkRequestAndDone(r: finalRequest)
+            }
+        } else {
+            checkRequestAndDone(r: request)
+        }
+    }
+
     private func addDownloadTask(
         context: DownloadingContext,
         callback: SessionDataTask.TaskCallback
@@ -319,34 +355,29 @@ open class ImageDownloader {
         options: KingfisherParsedOptionsInfo,
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        // Creates default request.
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
-        request.httpShouldUsePipelining = requestsUsePipelining
-
-        if let requestModifier = options.requestModifier {
-            // Modifies request before sending.
-            guard let r = requestModifier.modified(for: request) else {
-                options.callbackQueue.execute {
-                    completionHandler?(.failure(KingfisherError.requestError(reason: .emptyRequest)))
+        var downloadTask: DownloadTask?
+        createDownloadContext(with: url, options: options) { result in
+            switch result {
+            case .success(let context):
+                // `downloadTask` will be set if the downloading started immediately. This is the case when no request
+                // modifier or a sync modifier (`ImageDownloadRequestModifier`) is used. Otherwise, when an
+                // `AsyncImageDownloadRequestModifier` is used the returned `downloadTask` of this method will be `nil`
+                // and the actual "delayed" task is given in `AsyncImageDownloadRequestModifier.onDownloadTaskStarted`
+                // callback.
+                downloadTask = startDownloadTask(
+                    context: context,
+                    callback: createTaskCallback(completionHandler, options: options)
+                )
+                if let modifier = options.requestModifier {
+                    modifier.onDownloadTaskStarted?(downloadTask)
                 }
-                return nil
+            case .failure(let error):
+                options.callbackQueue.execute {
+                    completionHandler?(.failure(error))
+                }
             }
-            request = r
-        }
-        
-        // There is a possibility that request modifier changed the url to `nil` or empty.
-        // In this case, throw an error.
-        guard let url = request.url, !url.absoluteString.isEmpty else {
-            options.callbackQueue.execute {
-                completionHandler?(.failure(KingfisherError.requestError(reason: .invalidURL(request: request))))
-            }
-            return nil
         }
 
-        let downloadTask = startDownloadTask(
-            context: DownloadingContext(url: url, request: request, options: options),
-            callback: createTaskCallback(completionHandler, options: options)
-        )
         return downloadTask
     }
 
