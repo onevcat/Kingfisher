@@ -27,7 +27,7 @@
 import Foundation
 
 public protocol AsyncImageDownloadRequestModifier {
-    func modified(for request: URLRequest, modify: (URLRequest?) -> Void)
+    func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void)
     var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { get }
 }
 
@@ -52,9 +52,9 @@ public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier 
 }
 
 extension ImageDownloadRequestModifier {
-    public func modified(for request: URLRequest, modify: (URLRequest?) -> Void) {
+    public func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
         let request = modified(for: request)
-        modify(request)
+        reportModified(request)
     }
 
     public var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { return nil }
