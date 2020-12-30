@@ -74,8 +74,8 @@ class ProcessorCollectionViewController: UICollectionViewController {
         KF.url(url)
             .setProcessor(currentProcessor)
             .serialize(as: .PNG)
-            .done { print($0) }
-            .catch { print($0) }
+            .onSuccess { print($0) }
+            .onFailure { print($0) }
             .set(to: cell.cellImageView)
 
         return cell

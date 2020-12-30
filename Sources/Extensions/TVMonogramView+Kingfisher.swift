@@ -60,6 +60,23 @@ extension KingfisherWrapper where Base: TVMonogramView {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        return setImage(
+            with: source,
+            placeholder: placeholder,
+            parsedOptions: options,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler
+        )
+    }
+
+    func setImage(
+        with source: Source?,
+        placeholder: KFCrossPlatformImage? = nil,
+        parsedOptions: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+    {
         var mutatingSelf = self
         guard let source = source else {
             base.image = placeholder
@@ -67,29 +84,29 @@ extension KingfisherWrapper where Base: TVMonogramView {
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
-        
-        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+
+        var options = parsedOptions
         if !options.keepCurrentImageWhileLoading {
             base.image = placeholder
         }
-        
+
         let issuedIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
-        
+
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
-        
+
         if let provider = ImageProgressiveProvider(options, refresh: { image in
             base.image = image
         }) {
             options.onDataReceived = (options.onDataReceived ?? []) + [provider]
         }
-        
+
         options.onDataReceived?.forEach {
             $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
         }
-        
+
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
@@ -108,15 +125,15 @@ extension KingfisherWrapper where Base: TVMonogramView {
                         completionHandler?(.failure(error))
                         return
                     }
-                    
+
                     mutatingSelf.imageTask = nil
                     mutatingSelf.taskIdentifier = nil
-                    
+
                     switch result {
                     case .success(let value):
                         self.base.image = value.image
                         completionHandler?(result)
-                        
+
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
@@ -126,7 +143,7 @@ extension KingfisherWrapper where Base: TVMonogramView {
                 }
             }
         )
-        
+
         mutatingSelf.imageTask = task
         return task
     }
