@@ -248,6 +248,9 @@ public enum KingfisherOptionsInfoItem {
     /// when pass to an `ImageDownloader` or `ImageCache`.
     ///
     case retryStrategy(RetryStrategy)
+
+
+    case lowDataSource(Source)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -291,6 +294,7 @@ public struct KingfisherParsedOptionsInfo {
     public var progressiveJPEG: ImageProgressive? = nil
     public var alternativeSources: [Source]? = nil
     public var retryStrategy: RetryStrategy? = nil
+    public var lowDataModeSource: Source? = nil
 
     var onDataReceived: [DataReceivingSideEffect]? = nil
     
@@ -332,6 +336,7 @@ public struct KingfisherParsedOptionsInfo {
             case .progressiveJPEG(let value): progressiveJPEG = value
             case .alternativeSources(let sources): alternativeSources = sources
             case .retryStrategy(let strategy): retryStrategy = strategy
+            case .lowDataSource(let source): lowDataModeSource = source
             }
         }
 
