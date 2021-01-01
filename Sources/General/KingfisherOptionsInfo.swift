@@ -127,7 +127,7 @@ public enum KingfisherOptionsInfoItem {
     /// This is the last chance you can modify the image download request. You can modify the request for some
     /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
     /// The original request will be sent without any modification by default.
-    case requestModifier(ImageDownloadRequestModifier)
+    case requestModifier(AsyncImageDownloadRequestModifier)
     
     /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
     /// This is the possibility you can modify the image download request during redirect. You can modify the request for
@@ -272,7 +272,7 @@ public struct KingfisherParsedOptionsInfo {
     public var preloadAllAnimationData = false
     public var callbackQueue: CallbackQueue = .mainCurrentOrAsync
     public var scaleFactor: CGFloat = 1.0
-    public var requestModifier: ImageDownloadRequestModifier? = nil
+    public var requestModifier: AsyncImageDownloadRequestModifier? = nil
     public var redirectHandler: ImageDownloadRedirectHandler? = nil
     public var processor: ImageProcessor = DefaultImageProcessor.default
     public var imageModifier: ImageModifier? = nil
