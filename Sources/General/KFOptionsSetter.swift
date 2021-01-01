@@ -320,6 +320,11 @@ extension KFOptionSetter {
         options.retryStrategy = strategy
         return self
     }
+
+    public func lowDataModeSource(_ source: Source?) -> Self {
+        options.lowDataModeSource = source
+        return self
+    }
 }
 
 // MARK: - Request Modifier

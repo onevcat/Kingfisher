@@ -241,7 +241,19 @@ public class KingfisherManager {
                 completionHandler?(.failure(error))
                 return
             }
+            // When low data mode constrained error, retry with the low data mode source instead of use alternative on fly.
+            guard !error.isLowDataModeConstrained else {
+                if let source = retrievingContext.options.lowDataModeSource {
+                    retrievingContext.options.lowDataModeSource = nil
+                    startNewRetrieveTask(with: source, downloadTaskUpdated: downloadTaskUpdated)
+                } else {
+                    // This should not happen.
+                    completionHandler?(.failure(error))
+                }
+                return
+            }
             if let nextSource = retrievingContext.popAlternativeSource() {
+                retrievingContext.appendError(error, to: source)
                 startNewRetrieveTask(with: nextSource, downloadTaskUpdated: downloadTaskUpdated)
             } else {
                 // No other alternative source. Finish with error.
@@ -276,27 +288,7 @@ public class KingfisherManager {
                         }
                     }
                 } else {
-
-                    // Skip alternative sources if the user cancelled it.
-                    guard !error.isTaskCancelled else {
-                        completionHandler?(.failure(error))
-                        return
-                    }
-                    if let nextSource = retrievingContext.popAlternativeSource() {
-                        retrievingContext.appendError(error, to: currentSource)
-                        startNewRetrieveTask(with: nextSource, downloadTaskUpdated: downloadTaskUpdated)
-                    } else {
-                        // No other alternative source. Finish with error.
-                        if retrievingContext.propagationErrors.isEmpty {
-                            completionHandler?(.failure(error))
-                        } else {
-                            retrievingContext.appendError(error, to: currentSource)
-                            let finalError = KingfisherError.imageSettingError(
-                                reason: .alternativeSourcesExhausted(retrievingContext.propagationErrors)
-                            )
-                            completionHandler?(.failure(finalError))
-                        }
-                    }
+                    failCurrentSource(currentSource, with: error)
                 }
             }
         }
