@@ -250,7 +250,6 @@ extension KF.Builder {
     ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
     public func set(to interfaceImage: WKInterfaceImage) -> DownloadTask? {
-        let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
         return interfaceImage.kf.setImage(
             with: source,
             placeholder: placeholder,
