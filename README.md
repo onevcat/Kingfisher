@@ -29,6 +29,7 @@ Kingfisher is a powerful, pure-Swift library for downloading and caching images 
 - [x] Built-in transition animation when setting images.
 - [x] Customizable placeholder and indicator while loading images.
 - [x] Extensible image processing and image format easily.
+- [x] Low Data Mode support.
 - [x] SwiftUI support.
 
 ### Kingfisher 101
@@ -36,6 +37,8 @@ Kingfisher is a powerful, pure-Swift library for downloading and caching images 
 The simplest use-case is setting an image to an image view with the `UIImageView` extension:
 
 ```swift
+import Kingfisher
+
 let url = URL(string: "https://example.com/image.png")
 imageView.kf.setImage(with: url)
 ```
@@ -45,8 +48,6 @@ Kingfisher will download the image from `url`, send it to both memory cache and 
 It also works if you use SwiftUI:
 
 ```swift
-import KingfisherSwiftUI
-
 var body: some View {
     KFImage(URL(string: "https://example.com/image.png")!)
 }
@@ -89,21 +90,109 @@ imageView.kf.setImage(
 }
 ```
 
-It is really a very common situation I can meet in my daily work. Think about how many lines you need to write without Kingfisher. You will fall in love with it if you give it a try!
+It is really a very common situation I can meet in my daily work. Think about how many lines you need to write without
+Kingfisher. You will fall in love with it if you give it a try!
+
+### Method Chaining
+
+If you are not a fan of the `kf` extension, you can also prefer to use the `KF` builder and chained the method 
+invocations. The code below is doing the same thing:
+
+```swift
+// Use `kf` extension
+imageView.kf.setImage(
+    with: url,
+    placeholder: placeholderImage,
+    options: [
+        .processor(processor),
+        .loadDiskFileSynchronously,
+        .cacheOriginalImage,
+        .lowDataMode(.network(lowResolutionURL))
+    ],
+    progressBlock: { receivedSize, totalSize in
+        // Progress updated
+    },
+    completionHandler: { result in
+        // Done
+    }
+)
+
+// Use `KF` builder
+KF.url(url)
+  .placeholder(placeholderImage)
+  .setProcessor(processor)
+  .loadDiskFileSynchronously()
+  .cacheMemoryOnly()
+  .lowDataModeSource(.network(lowResolutionURL))
+  .onProgress { receivedSize, totalSize in  }
+  .onSuccess { result in  }
+  .onFailure { error in }
+  .set(to: imageView)
+```
+
+And even better, if later you want to switch to SwiftUI, just make some trivial changes and you've done.
+
+```swift
+struct ContentView: View {
+    var body: some View {
+        KFImage.url(url)
+          .placeholder(placeholderImage)
+          .setProcessor(processor)
+          .loadDiskFileSynchronously()
+          .cacheMemoryOnly()
+          .lowDataModeSource(.network(lowResolutionURL))
+          .onProgress { receivedSize, totalSize in  }
+          .onSuccess { result in  }
+          .onFailure { error in }
+    }
+}
+```
 
 ### Learn More
 
-To learn the use of Kingfisher by more examples, take a look at the [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance in the same page, remember to check them too.
+To learn the use of Kingfisher by more examples, take a look at the well-prepared [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance, remember to check them too.
 
 ## Requirements
 
 - iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+
 - Swift 4.0+
 
-[Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - Kingfisher 5.x is NOT fully compatible with version 4.x. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
+### Installation
+
+A detailed guide for installation can be found in [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide). Here is some shortcuts:
+
+#### Swift Package Manager
+
+- File > Swift Packages > Add Package Dependency
+- Add `https://github.com/onevcat/Kingfisher.git`
+- Select "Up to Next Major" with "6.0.0"
+
+#### CocoaPods
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '10.0'
+use_frameworks!
+
+target 'MyApp' do
+  pod 'Kingfisher', '~> 6.0'
+end
+```
+
+#### Carthage
+
+```
+github "onevcat/Kingfisher" ~> 6.0
+```
+
+
+### Migrating
+
+[Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) - Kingfisher 6.x is NOT fully compatible with the previous version. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
 
 If you are using an even earlier version, see the guides below to know the steps for migrating.
 
+> - [Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - If you are upgrading to Kingfisher 5.x from an 4.x, please read this for more information.
 > - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 has been removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble in migrating, please open an issue to discuss.
 > - [Kingfisher 3.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
 
