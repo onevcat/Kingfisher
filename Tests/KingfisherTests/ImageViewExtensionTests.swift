@@ -864,7 +864,7 @@ class ImageViewExtensionTests: XCTestCase {
         )
         stub(brokenURL, error: error)
 
-        imageView.kf.setImage(with: .network(brokenURL), options: [.lowDataSource(.network(url))]) { result in
+        imageView.kf.setImage(with: .network(brokenURL), options: [.lowDataMode(.network(url))]) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value?.source.url, url)
             XCTAssertEqual(result.value?.originalSource.url, brokenURL)

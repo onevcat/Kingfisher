@@ -257,7 +257,7 @@ public enum KingfisherOptionsInfoItem {
     ///
     /// If not set or the `source` is `nil`, the device Low Data Mode will be ignored and the original source will
     /// be loaded following the system default behavior, in a normal way.
-    case lowDataSource(Source?)
+    case lowDataMode(Source?)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.
@@ -343,7 +343,7 @@ public struct KingfisherParsedOptionsInfo {
             case .progressiveJPEG(let value): progressiveJPEG = value
             case .alternativeSources(let sources): alternativeSources = sources
             case .retryStrategy(let strategy): retryStrategy = strategy
-            case .lowDataSource(let source): lowDataModeSource = source
+            case .lowDataMode(let source): lowDataModeSource = source
             }
         }
 
