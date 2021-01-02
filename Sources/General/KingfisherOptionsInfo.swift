@@ -249,8 +249,15 @@ public enum KingfisherOptionsInfoItem {
     ///
     case retryStrategy(RetryStrategy)
 
-
-    case lowDataSource(Source)
+    /// The `Source` should be loaded when user enables Low Data Mode and the original source fails with an
+    /// `NSURLErrorNetworkUnavailableReason.constrained` error. When this option is set, the
+    /// `allowsConstrainedNetworkAccess` property of the request for the original source will be set to `false` and the
+    /// `Source` in associated value will be used to retrieve the image for low data mode. Usually, you can provide a
+    /// low-resolution version of your image or a local image provider to display a placeholder.
+    ///
+    /// If not set or the `source` is `nil`, the device Low Data Mode will be ignored and the original source will
+    /// be loaded following the system default behavior, in a normal way.
+    case lowDataSource(Source?)
 }
 
 // Improve performance by parsing the input `KingfisherOptionsInfo` (self) first.

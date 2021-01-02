@@ -42,5 +42,9 @@ func delayedStub(_ url: URL, data: Data, statusCode: Int = 200, length: Int? = n
 
 func stub(_ url: URL, errorCode: Int) {
     let error = NSError(domain: "stubError", code: errorCode, userInfo: nil)
+    stub(url, error: error)
+}
+
+func stub(_ url: URL, error: Error) {
     return stubRequest("GET", url.absoluteString as NSString).andFailWithError(error)
 }
