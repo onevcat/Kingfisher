@@ -580,6 +580,14 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, options: [.onFailureImage(testImage)]) {
             result in
             XCTAssertNil(result.value)
+
+            if case KingfisherError.responseError(let reason) = result.error!,
+               case .URLSessionError(error: let nsError) = reason
+            {
+                XCTAssertEqual((nsError as NSError).code, 404)
+            } else {
+                XCTFail()
+            }
             XCTAssertEqual(self.imageView.image, testImage)
             exp.fulfill()
         }
@@ -838,6 +846,30 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternatived url cancelled.")
         }
 
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
+    func testLowDataModeSource() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        // Stub a failure of `.constrained`. It is what happens when an image downloading fails when low data mode on.
+        let brokenURL = testURLs[1]
+        let error = URLError(
+            .notConnectedToInternet,
+            userInfo: [NSURLErrorNetworkUnavailableReasonKey: URLError.NetworkUnavailableReason.constrained.rawValue]
+        )
+        stub(brokenURL, error: error)
+
+        imageView.kf.setImage(with: .network(brokenURL), options: [.lowDataSource(.network(url))]) { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(result.value?.source.url, url)
+            XCTAssertEqual(result.value?.originalSource.url, brokenURL)
+            exp.fulfill()
+        }
         waitForExpectations(timeout: 1, handler: nil)
     }
 
