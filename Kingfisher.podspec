@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => "MIT", :file => "LICENSE" }
 
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
-  s.social_media_url   = "https://twitter.com/onevcat"
+  s.social_media_url   = "https://github.com/onevcat"
 
   s.swift_version = "5.0"
   s.swift_versions = ['4.0', '4.2', '5.0']
