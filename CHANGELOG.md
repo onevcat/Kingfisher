@@ -5,7 +5,33 @@
 ## [6.0.0 - New Year 2021](https://github.com/onevcat/Kingfisher/releases/tag/6.0.0) (2021-01-03)
 
 #### Add
-* A `KF` shorthand to create image setting tasks and config them. It provides a cleaner and modern way to use Kingfisher. Now, instead of using `imageView.kf.setImage(with:options:)`, you can perform chain-able invocation with `KF` helpers. [#1546](https://github.com/onevcat/Kingfisher/pull/1546)
+* A `KF` shorthand to create image setting tasks and config them. It provides a cleaner and modern way to use Kingfisher. Now, instead of using `imageView.kf.setImage(with:options:)`, you can perform chain-able invocation with `KF` helpers. For example, the code below is identical. [#1546](https://github.com/onevcat/Kingfisher/pull/1546)
+
+    ```swift
+    // Old way
+    imageView.kf.setImage(
+      with: url,
+      placeholder: localImage,
+      options: [.transition(.fade(1)), .loadDiskFileSynchronously],
+      progressBlock: { receivedSize, totalSize in
+          print("progressBlock")
+      },
+      completionHandler: { result in
+          print(result)
+      }
+    )
+
+    // New way
+    KF.url(url)
+      .placeholder(localImage)
+      .fade(duration: 1)
+      .loadDiskFileSynchronously()
+      .onProgress { _ in print("progressBlock") }
+      .onSuccess { result in print(result) }
+      .onFailure { err in print("Error: \(err)") }
+      .set(to: imageView)
+    ```
+    
 * Similar to `KF`, The `KFImage` for SwiftUI is now having the similar chain-able syntax to setup an image task and options. This makes the `KFImage` APIs closer to the way how SwiftUI code is written. [#1586](https://github.com/onevcat/Kingfisher/pull/1586)
 * Add support for `TVMonogramView` on tvOS. [#1571](https://github.com/onevcat/Kingfisher/pull/1571)
 * Some important properties and method in `AnimatedImageView.Animator` are marked as `public` now. It provides some useful information of the decoded GIF files. [#1575](https://github.com/onevcat/Kingfisher/pull/1575)
