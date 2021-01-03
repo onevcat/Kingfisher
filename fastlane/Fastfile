@@ -77,8 +77,6 @@ platform :ios do
     log = extract_current_change_log(version: target_version)
     release_log = update_change_log(log: log)
     
-    # doc(version: target_version)
-    
     git_commit_all(message: "Bump version to #{target_version}")
     
     Actions.sh("git tag -s #{target_version} -m ''")
@@ -100,22 +98,6 @@ platform :ios do
   
   lane :podpush do
     pod_push
-  end
-  
-  lane :doc do |options|
-    target_version = options[:version]
-    Actions.sh("cd .. && jazzy \
-      --clean \
-      -x USE_SWIFT_RESPONSE_FILE=NO \
-      --author \"Wei Wang\" \
-      --author_url https://onevcat.com \
-      --github_url https://github.com/onevcat/Kingfisher \
-      --github-file-prefix https://github.com/onevcat/Kingfisher/tree/#{target_version} \
-      --module-version #{target_version} \
-      --module Kingfisher \
-      --root-url http://onevcat.github.io/Kingfisher/ \
-      --output docs/ \
-      --theme fullwidth")
   end
   
   lane :xcframework do |options|
