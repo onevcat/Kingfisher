@@ -2,6 +2,25 @@
 
 -----
 
+## [6.0.0 - New Year 2021](https://github.com/onevcat/Kingfisher/releases/tag/6.0.0) (2021-01-03)
+
+#### Add
+* A `KF` shorthand to create image setting tasks and config them. It provides a cleaner and modern way to use Kingfisher. Now, instead of using `imageView.kf.setImage(with:options:)`, you can perform chain-able invocation with `KF` helpers. [#1546](https://github.com/onevcat/Kingfisher/pull/1546)
+* Similar to `KF`, The `KFImage` for SwiftUI is now having the similar chain-able syntax to setup an image task and options. This makes the `KFImage` APIs closer to the way how SwiftUI code is written. [#1586](https://github.com/onevcat/Kingfisher/pull/1586)
+* Add support for `TVMonogramView` on tvOS. [#1571](https://github.com/onevcat/Kingfisher/pull/1571)
+* Some important properties and method in `AnimatedImageView.Animator` are marked as `public` now. It provides some useful information of the decoded GIF files. [#1575](https://github.com/onevcat/Kingfisher/pull/1575)
+* An `AsyncImageDownloadRequestModifier` to support modifying the request in an asynchronous way. [#1589](https://github.com/onevcat/Kingfisher/pull/1589/files)
+* Add a `.lowDataMode` option to support for Low Data Mode. When the `.lowDataMode` option is provided with an alternative source (usually a low-resolution version of the original image), Kingfisher will respect user's Low Data Mode setting and download the alternative image instead. [#1590](https://github.com/onevcat/Kingfisher/pull/1590)
+
+#### Fix
+* An issue that importing AppKit wrongly in a macCatalyst build. [#1547](https://github.com/onevcat/Kingfisher/pull/1547/commits/096498f7798a6fd34c70efc6f80014dfc6d8a9b7)
+
+#### Remove
+* Deprecated types, methods and properties are removed. If you are still using `Kingfisher.Image`, `Kingfisher.ImageView` or `Kingfisher.Button`, use the equivalent `KFCrossPlatform` types (such as `KFCrossPlatformImage`, etc) instead. Please make sure you do not have any warnings before migrate to Kingfisher v6. For more about the removed deprecated things, check [#1525](https://github.com/onevcat/Kingfisher/pull/1525/files).
+* The standalone framework target of SwiftUI support is removed. Now the SwiftUI support is a part in the main Kingfisher library. To upgrade to v6, first remove `Kingfisher/SwiftUI` subpod (if you are using CocoaPods) or remove the `KingfisherSwiftUI` target (if you are using Carthage or Swift Package Manager), then reinstall Kingfisher. [#1574](https://github.com/onevcat/Kingfisher/pull/1574)
+
+---
+
 ## [5.15.8 - KFImage handler](https://github.com/onevcat/Kingfisher/releases/tag/5.15.8) (2020-11-27)
 
 #### Fix
