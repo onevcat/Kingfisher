@@ -54,6 +54,7 @@ platform :ios do
   lane :lint do
     # carthage(command: "build", no_skip_current: true, platform: "iOS")
     pod_lib_lint
+    spm
   end
   
   desc "Release new version"
