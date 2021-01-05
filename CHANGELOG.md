@@ -2,6 +2,13 @@
 
 -----
 
+## [6.0.1 - Bind & Hug](https://github.com/onevcat/Kingfisher/releases/tag/6.0.1) (2021-01-05)
+
+#### Fix
+* Start the binder again when `KFImage` initialized, to keep the same behavior as previous versions. [#1594](https://github.com/onevcat/Kingfisher/issues/1594)
+
+---
+
 ## [6.0.0 - New Year 2021](https://github.com/onevcat/Kingfisher/releases/tag/6.0.0) (2021-01-03)
 
 #### Add
