@@ -45,6 +45,7 @@ extension Image {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: View {
 
+    // TODO: Replace `@ObservedObject` with `@StateObject` once we do not need to support iOS 13.
     /// An image binder that manages loading and cancelling image related task.
     @ObservedObject private(set) var binder: ImageBinder
 
@@ -69,8 +70,10 @@ public struct KFImage: View {
     ///               for more.
     @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
     public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
-        binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
+        let binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
+        self.binder = binder
         configurations = []
+        binder.start()
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
@@ -95,8 +98,11 @@ public struct KFImage: View {
     ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
     ///               wrapped value from outside.
     public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
-        binder = ImageBinder(source: source, isLoaded: isLoaded)
+        let binder = ImageBinder(source: source, isLoaded: isLoaded)
+        self.binder = binder
         configurations = []
+        // Give the `binder` a chance to accept other configurations.
+        DispatchQueue.main.async { binder.start() }
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
