@@ -98,7 +98,7 @@ extension KingfisherWrapper where Base: TVMonogramView {
         }
 
         if let provider = ImageProgressiveProvider(options, refresh: { image in
-            base.image = image
+            self.base.image = image
         }) {
             options.onDataReceived = (options.onDataReceived ?? []) + [provider]
         }
