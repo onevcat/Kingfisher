@@ -101,7 +101,7 @@ public struct KFImage: View {
         let binder = ImageBinder(source: source, isLoaded: isLoaded)
         self.binder = binder
         configurations = []
-        // Give the `binder` a chance to accept other configurations.
+        // Give the `binder` a chance to accept other options.
         DispatchQueue.main.async { binder.start() }
     }
 
