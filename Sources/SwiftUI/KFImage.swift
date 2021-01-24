@@ -49,6 +49,8 @@ public struct KFImage: View {
     /// An image binder that manages loading and cancelling image related task.
     @ObservedObject private(set) var binder: ImageBinder
 
+    @State private var loadingResult: Result<RetrieveImageResult, KingfisherError>?
+
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
 
@@ -73,7 +75,6 @@ public struct KFImage: View {
         let binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
         self.binder = binder
         configurations = []
-        binder.start()
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
@@ -101,8 +102,6 @@ public struct KFImage: View {
         let binder = ImageBinder(source: source, isLoaded: isLoaded)
         self.binder = binder
         configurations = []
-        // Give the `binder` a chance to accept other options.
-        DispatchQueue.main.async { binder.start() }
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
@@ -117,36 +116,34 @@ public struct KFImage: View {
 
     /// Declares the content and behavior of this view.
     public var body: some View {
-        Group {
-            if binder.image != nil {
-                configurations
-                    .reduce(Image(crossPlatformImage: binder.image!)) {
-                        current, config in config(current)
-                    }
-            } else {
-                Group {
-                    if placeholder != nil {
-                        placeholder
-                    } else {
-                        Image(crossPlatformImage: .init())
-                    }
+
+        if case .success(let r) = loadingResult {
+            configurations
+                .reduce(Image(crossPlatformImage: r.image)) {
+                    current, config in config(current)
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .onAppear { [weak binder = self.binder] in
-                    guard let binder = binder else {
-                        return
-                    }
-                    if !binder.loadingOrSucceeded {
-                        binder.start()
-                    }
+        } else {
+            Group {
+                if placeholder != nil {
+                    placeholder
+                } else {
+                    Image(crossPlatformImage: .init())
                 }
-                .onDisappear { [weak binder = self.binder] in
-                    guard let binder = binder else {
-                        return
-                    }
-                    if self.cancelOnDisappear {
-                        binder.cancel()
-                    }
+            }
+            .onAppear { [weak binder = self.binder] in
+                guard let binder = binder else {
+                    return
+                }
+                if !binder.loadingOrSucceeded {
+                    binder.start { self.loadingResult = $0 }
+                }
+            }
+            .onDisappear { [weak binder = self.binder] in
+                guard let binder = binder else {
+                    return
+                }
+                if self.cancelOnDisappear {
+                    binder.cancel()
                 }
             }
         }
