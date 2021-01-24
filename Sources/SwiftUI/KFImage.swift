@@ -76,8 +76,6 @@ public struct KFImage: View {
         self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
     }
 
-
-
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameters:
     ///   - source: The image `Source` defining where to load the target image.
@@ -88,7 +86,6 @@ public struct KFImage: View {
         let binder = ImageBinder(source: source, isLoaded: isLoaded)
         self.init(binder: binder)
     }
-
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
     /// - Parameters:
@@ -106,7 +103,7 @@ public struct KFImage: View {
 
     public var body: some View {
         KFImageRenderer(context)
-            .id(context.binder.source?.url?.absoluteString ?? "-1")
+            .id(context.binder.source)
     }
 }
 
@@ -129,9 +126,8 @@ extension KFImage {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 struct KFImageRenderer: View {
 
-    // TODO: Replace `@ObservedObject` with `@StateObject` once we do not need to support iOS 13.
     /// An image binder that manages loading and cancelling image related task.
-    @ObservedObject private(set) var binder: KFImage.ImageBinder
+    private let binder: KFImage.ImageBinder
 
     @State private var loadingResult: Result<RetrieveImageResult, KingfisherError>?
 
@@ -163,7 +159,7 @@ struct KFImageRenderer: View {
                 if placeholder != nil {
                     placeholder
                 } else {
-                    Image(crossPlatformImage: .init())
+                    Color.clear
                 }
             }
             .onAppear { [weak binder = self.binder] in
