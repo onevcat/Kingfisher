@@ -136,7 +136,7 @@ extension KFImage {
     }
 }
 
-@available(iOSApplicationExtension 13.0, *)
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage.ImageBinder: Hashable {
     static func == (lhs: KFImage.ImageBinder, rhs: KFImage.ImageBinder) -> Bool {
         return lhs === rhs
