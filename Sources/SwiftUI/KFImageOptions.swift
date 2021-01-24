@@ -113,7 +113,7 @@ extension KFImage {
     public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> KFImage {
         let v = content()
         var result = self
-        result.placeholder = AnyView(v)
+        result.context.placeholder = AnyView(v)
         return result
     }
 
@@ -122,7 +122,7 @@ extension KFImage {
     /// - Returns: A `KFImage` view that cancels downloading task when disappears.
     public func cancelOnDisappear(_ flag: Bool) -> KFImage {
         var result = self
-        result.cancelOnDisappear = flag
+        result.context.cancelOnDisappear = flag
         return result
     }
 }
