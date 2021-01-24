@@ -103,7 +103,7 @@ public struct KFImage: View {
 
     public var body: some View {
         KFImageRenderer(context)
-            .id(context.binder.source)
+            .id(context.binder)
     }
 }
 

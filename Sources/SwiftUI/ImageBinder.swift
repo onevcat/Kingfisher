@@ -135,4 +135,16 @@ extension KFImage {
         }
     }
 }
+
+@available(iOSApplicationExtension 13.0, *)
+extension KFImage.ImageBinder: Hashable {
+    static func == (lhs: KFImage.ImageBinder, rhs: KFImage.ImageBinder) -> Bool {
+        return lhs === rhs
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(source)
+        hasher.combine(options.processor.identifier)
+    }
+}
 #endif
