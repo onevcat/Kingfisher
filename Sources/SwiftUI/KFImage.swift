@@ -130,6 +130,7 @@ struct KFImageRenderer: View {
     private let binder: KFImage.ImageBinder
 
     @State private var loadingResult: Result<RetrieveImageResult, KingfisherError>?
+    @State private var isLoaded = false
 
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
@@ -154,6 +155,8 @@ struct KFImageRenderer: View {
                 .reduce(Image(crossPlatformImage: r.image)) {
                     current, config in config(current)
                 }
+                .opacity(isLoaded ? 1.0 : 0.0)
+                .animation(.default)
         } else {
             Group {
                 if placeholder != nil {
@@ -167,7 +170,12 @@ struct KFImageRenderer: View {
                     return
                 }
                 if !binder.loadingOrSucceeded {
-                    binder.start { self.loadingResult = $0 }
+                    binder.start {
+                        self.loadingResult = $0
+                        loadingResult?.matchSuccess { _ in
+                            CallbackQueue.mainAsync.execute { isLoaded = true }
+                        }
+                    }
                 }
             }
             .onDisappear { [weak binder = self.binder] in
