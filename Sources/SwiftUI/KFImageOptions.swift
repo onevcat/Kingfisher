@@ -125,5 +125,18 @@ extension KFImage {
         result.context.cancelOnDisappear = flag
         return result
     }
+
+    /// Sets a fade transition for the image task.
+    /// - Parameter duration: The duration of the fade transition.
+    /// - Returns: A `KFImage` with changes applied.
+    ///
+    /// Kingfisher will use the fade transition to animate the image in if it is downloaded from web.
+    /// The transition will not happen when the
+    /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
+    /// the image being retrieved from cache, also call `forceRefresh()` on the returned `KFImage`.
+    public func fade(duration: TimeInterval) -> KFImage {
+        context.binder.options.transition = .fade(duration)
+        return self
+    }
 }
 #endif

@@ -339,6 +339,15 @@ extension KFOptionSetter {
         options.lowDataModeSource = source
         return self
     }
+
+    /// Sets whether the image setting for an image view should happen with transition even when retrieved from cache.
+    /// - Parameter enabled: Enable the force transition or not.
+    /// - Returns: A `KF.Builder` with changes applied.
+    public func forceTransition(_ enabled: Bool = true) -> Self {
+        options.forceTransition = enabled
+        return self
+    }
+
 }
 
 // MARK: - Request Modifier

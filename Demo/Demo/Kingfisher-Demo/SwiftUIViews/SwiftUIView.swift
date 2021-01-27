@@ -53,6 +53,8 @@ struct SwiftUIView : View {
                     Image(systemName: "arrow.2.circlepath.circle")
                         .font(.largeTitle)
                 }
+                .fade(duration: 1)
+                .forceTransition()
                 .resizable()
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
