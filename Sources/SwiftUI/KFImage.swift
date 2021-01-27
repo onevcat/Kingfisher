@@ -156,7 +156,6 @@ struct KFImageRenderer: View {
                     current, config in config(current)
                 }
                 .opacity(isLoaded ? 1.0 : 0.0)
-                .animation(.default)
         } else {
             Group {
                 if placeholder != nil {
@@ -172,8 +171,19 @@ struct KFImageRenderer: View {
                 if !binder.loadingOrSucceeded {
                     binder.start {
                         self.loadingResult = $0
-                        loadingResult?.matchSuccess { _ in
-                            CallbackQueue.mainAsync.execute { isLoaded = true }
+                        switch $0 {
+                        case .success(let result):
+                            CallbackQueue.mainAsync.execute {
+                                if let duration = fadeTransitionDuration(cacheType: result.cacheType) {
+                                    withAnimation(.linear(duration: duration)) {
+                                        isLoaded = true
+                                    }
+                                } else {
+                                    isLoaded = true
+                                }
+                            }
+                        case .failure(_):
+                            break
                         }
                     }
                 }
@@ -186,6 +196,26 @@ struct KFImageRenderer: View {
                     binder.cancel()
                 }
             }
+        }
+    }
+
+    private func fadeTransitionDuration(cacheType: CacheType) -> TimeInterval? {
+        if binder.options.forceTransition || cacheType == .none {
+            return binder.options.transition.fadeDuration
+        } else {
+            return nil
+        }
+    }
+}
+
+extension ImageTransition {
+    // Only for fade effect in SwiftUI.
+    var fadeDuration: TimeInterval? {
+        switch self {
+        case .fade(let duration):
+            return duration
+        default:
+            return nil
         }
     }
 }

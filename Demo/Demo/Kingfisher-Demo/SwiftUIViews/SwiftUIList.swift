@@ -75,6 +75,7 @@ struct SwiftUIList : View {
                         }
                         .foregroundColor(.gray)
                     }
+                    .fade(duration: 1)
                     .cancelOnDisappear(true)
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(20)

@@ -333,14 +333,6 @@ extension KF.Builder {
     }
     #endif
 
-    /// Sets whether the image setting for an image view should happen with transition even when retrieved from cache.
-    /// - Parameter enabled: Enable the force transition or not.
-    /// - Returns: A `KF.Builder` with changes applied.
-    public func forceTransition(_ enabled: Bool = true) -> Self {
-        options.forceTransition = enabled
-        return self
-    }
-
     /// Sets whether keeping the existing image of image view while setting another image to it.
     /// - Parameter enabled: Whether the existing image should be kept.
     /// - Returns: A `KF.Builder` with changes applied.
