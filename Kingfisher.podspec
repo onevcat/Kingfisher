@@ -35,6 +35,7 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   s.source_files  = ["Sources/**/*.swift", "Sources/Kingfisher.h"]
+  s.private_header_files = "Sources/Kingfisher.h"
 
   s.requires_arc = true
   s.frameworks = "CFNetwork", "Accelerate"
