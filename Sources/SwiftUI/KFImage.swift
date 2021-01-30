@@ -199,18 +199,20 @@ struct KFImageRenderer: View {
         }
     }
 
+    private func shouldApplyFade(cacheType: CacheType) -> Bool {
+        binder.options.forceTransition || cacheType == .none
+    }
+
     private func fadeTransitionDuration(cacheType: CacheType) -> TimeInterval? {
-        if binder.options.forceTransition || cacheType == .none {
-            return binder.options.transition.fadeDuration
-        } else {
-            return nil
-        }
+        shouldApplyFade(cacheType: cacheType)
+            ? binder.options.transition.fadeDuration
+            : nil
     }
 }
 
 extension ImageTransition {
     // Only for fade effect in SwiftUI.
-    var fadeDuration: TimeInterval? {
+    fileprivate var fadeDuration: TimeInterval? {
         switch self {
         case .fade(let duration):
             return duration
