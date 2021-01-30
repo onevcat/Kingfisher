@@ -474,19 +474,19 @@ open class ImageCache {
                         return
                     }
 
-                    let finalImage = options.imageModifier?.modify(image) ?? image
                     // Cache the disk image to memory.
                     // We are passing `false` to `toDisk`, the memory cache does not change
                     // callback queue, we can call `completionHandler` without another dispatch.
                     var cacheOptions = options
                     cacheOptions.callbackQueue = .untouch
                     self.store(
-                        finalImage,
+                        image,
                         forKey: key,
                         options: cacheOptions,
                         toDisk: false)
                     {
                         _ in
+                        let finalImage = options.imageModifier?.modify(image) ?? image
                         callbackQueue.execute { completionHandler(.success(.disk(finalImage))) }
                     }
                 case .failure(let error):
