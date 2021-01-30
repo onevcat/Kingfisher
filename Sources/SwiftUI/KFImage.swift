@@ -169,18 +169,14 @@ struct KFImageRenderer: View {
                     return
                 }
                 if !binder.loadingOrSucceeded {
-                    binder.start {
-                        self.loadingResult = $0
-                        switch $0 {
-                        case .success(let result):
+                    binder.start { result in
+                        self.loadingResult = result
+                        switch result {
+                        case .success(let value):
                             CallbackQueue.mainAsync.execute {
-                                if let duration = fadeTransitionDuration(cacheType: result.cacheType) {
-                                    withAnimation(.linear(duration: duration)) {
-                                        isLoaded = true
-                                    }
-                                } else {
-                                    isLoaded = true
-                                }
+                                let animation = fadeTransitionDuration(cacheType: value.cacheType)
+                                    .map { duration in Animation.linear(duration: duration) }
+                                withAnimation(animation) { isLoaded = true }
                             }
                         case .failure(_):
                             break
