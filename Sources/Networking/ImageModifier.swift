@@ -26,10 +26,10 @@
 
 import Foundation
 
-/// An `ImageModifier` can be used to change properties on an image in between
-/// cache serialization and use of the image. The modified returned image will be
-/// only used for current rendering purpose, the serialization data will not contain
-/// the changes applied by the `ImageModifier`.
+/// An `ImageModifier` can be used to change properties on an image between cache serialization and the actual use of
+/// the image. The `modify(_:)` method will be called after the image retrieved from its source and before it returned
+/// to the caller. This modified image is expected to be only used for rendering purpose, any changes applied by the
+/// `ImageModifier` will not be serialized or cached.
 public protocol ImageModifier {
     /// Modify an input `Image`.
     ///
