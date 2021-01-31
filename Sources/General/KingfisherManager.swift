@@ -359,9 +359,8 @@ public class KingfisherManager {
                         return
                     }
 
-                    let finalImage = options.imageModifier?.modify(image) ?? image
                     options.callbackQueue.execute {
-                        let result = ImageLoadingResult(image: finalImage, url: nil, originalData: data)
+                        let result = ImageLoadingResult(image: image, url: nil, originalData: data)
                         completionHandler(.success(result))
                     }
                 }
@@ -390,6 +389,12 @@ public class KingfisherManager {
                                            options.processor != DefaultImageProcessor.default
             let coordinator = CacheCallbackCoordinator(
                 shouldWaitForCache: options.waitForCache, shouldCacheOriginal: needToCacheOriginalImage)
+            let result = RetrieveImageResult(
+                image: options.imageModifier?.modify(value.image) ?? value.image,
+                cacheType: .none,
+                source: source,
+                originalSource: context.originalSource
+            )
             // Add image to cache.
             let targetCache = options.targetCache ?? self.cache
             targetCache.store(
@@ -401,12 +406,6 @@ public class KingfisherManager {
             {
                 _ in
                 coordinator.apply(.cachingImage) {
-                    let result = RetrieveImageResult(
-                        image: value.image,
-                        cacheType: .none,
-                        source: source,
-                        originalSource: context.originalSource
-                    )
                     completionHandler?(.success(result))
                 }
             }
@@ -423,24 +422,12 @@ public class KingfisherManager {
                 {
                     _ in
                     coordinator.apply(.cachingOriginalImage) {
-                        let result = RetrieveImageResult(
-                            image: value.image,
-                            cacheType: .none,
-                            source: source,
-                            originalSource: context.originalSource
-                        )
                         completionHandler?(.success(result))
                     }
                 }
             }
 
             coordinator.apply(.cacheInitiated) {
-                let result = RetrieveImageResult(
-                    image: value.image,
-                    cacheType: .none,
-                    source: source,
-                    originalSource: context.originalSource
-                )
                 completionHandler?(.success(result))
             }
 
@@ -537,7 +524,7 @@ public class KingfisherManager {
                             if let image = cacheResult.image {
                                 value = result.map {
                                     RetrieveImageResult(
-                                        image: image,
+                                        image: options.imageModifier?.modify(image) ?? image,
                                         cacheType: $0.cacheType,
                                         source: source,
                                         originalSource: context.originalSource
@@ -603,6 +590,13 @@ public class KingfisherManager {
                             let coordinator = CacheCallbackCoordinator(
                                 shouldWaitForCache: options.waitForCache, shouldCacheOriginal: false)
 
+                            let result = RetrieveImageResult(
+                                image: options.imageModifier?.modify(processedImage) ?? processedImage,
+                                cacheType: .none,
+                                source: source,
+                                originalSource: context.originalSource
+                            )
+
                             targetCache.store(
                                 processedImage,
                                 forKey: key,
@@ -611,24 +605,12 @@ public class KingfisherManager {
                             {
                                 _ in
                                 coordinator.apply(.cachingImage) {
-                                    let value = RetrieveImageResult(
-                                        image: processedImage,
-                                        cacheType: .none,
-                                        source: source,
-                                        originalSource: context.originalSource
-                                    )
-                                    options.callbackQueue.execute { completionHandler?(.success(value)) }
+                                    options.callbackQueue.execute { completionHandler?(.success(result)) }
                                 }
                             }
 
                             coordinator.apply(.cacheInitiated) {
-                                let value = RetrieveImageResult(
-                                    image: processedImage,
-                                    cacheType: .none,
-                                    source: source,
-                                    originalSource: context.originalSource
-                                )
-                                options.callbackQueue.execute { completionHandler?(.success(value)) }
+                                options.callbackQueue.execute { completionHandler?(.success(result)) }
                             }
                         }
                     },
