@@ -75,12 +75,11 @@ struct SwiftUIList : View {
                         }
                         .foregroundColor(.gray)
                     }
+                    .fade(duration: 1)
                     .cancelOnDisappear(true)
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(20)
                     .frame(width: 300, height: 300)
-                    .opacity(done || alreadyCached ? 1.0 : 0.3)
-                    .animation(.linear(duration: 0.4))
 
                 Spacer()
             }.padding(.vertical, 12)

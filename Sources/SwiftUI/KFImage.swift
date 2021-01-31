@@ -40,23 +40,10 @@ extension Image {
     }
 }
 
-/// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
-/// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: View {
 
-    // TODO: Replace `@ObservedObject` with `@StateObject` once we do not need to support iOS 13.
-    /// An image binder that manages loading and cancelling image related task.
-    @ObservedObject private(set) var binder: ImageBinder
-
-    // Acts as a placeholder when loading an image.
-    var placeholder: AnyView?
-
-    // Whether the download task should be cancelled when the view disappears.
-    var cancelOnDisappear: Bool = false
-
-    // Configurations should be performed on the image.
-    var configurations: [(Image) -> Image]
+    var context: Context
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
@@ -70,10 +57,8 @@ public struct KFImage: View {
     ///               for more.
     @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
     public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
-        let binder = ImageBinder(source: source, options: options, isLoaded: isLoaded)
-        self.binder = binder
-        configurations = []
-        binder.start()
+        let binder = KFImage.ImageBinder(source: source, options: options, isLoaded: isLoaded)
+        self.init(binder: binder)
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
@@ -87,7 +72,7 @@ public struct KFImage: View {
     ///               `KFImage` and configure the options through modifier instead. See methods of `KFOptionSetter`
     ///               for more.
     @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(_:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
-    public init(_ url: URL?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
+    init(_ url: URL?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
         self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
     }
 
@@ -99,10 +84,7 @@ public struct KFImage: View {
     ///               wrapped value from outside.
     public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
         let binder = ImageBinder(source: source, isLoaded: isLoaded)
-        self.binder = binder
-        configurations = []
-        // Give the `binder` a chance to accept other options.
-        DispatchQueue.main.async { binder.start() }
+        self.init(binder: binder)
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
@@ -115,40 +97,123 @@ public struct KFImage: View {
         self.init(source: url?.convertToSource(), isLoaded: isLoaded)
     }
 
-    /// Declares the content and behavior of this view.
+    init(binder: ImageBinder) {
+        self.context = Context(binder: binder)
+    }
+
     public var body: some View {
-        Group {
-            if binder.image != nil {
-                configurations
-                    .reduce(Image(crossPlatformImage: binder.image!)) {
-                        current, config in config(current)
-                    }
-            } else {
-                Group {
-                    if placeholder != nil {
-                        placeholder
-                    } else {
-                        Image(crossPlatformImage: .init())
-                    }
+        KFImageRenderer(context)
+            .id(context.binder)
+    }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension KFImage {
+    struct Context {
+        var binder: ImageBinder
+        var configurations: [(Image) -> Image] = []
+        var cancelOnDisappear: Bool = false
+        var placeholder: AnyView? = nil
+
+        init(binder: ImageBinder) {
+            self.binder = binder
+        }
+    }
+}
+
+/// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
+/// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+struct KFImageRenderer: View {
+
+    /// An image binder that manages loading and cancelling image related task.
+    private let binder: KFImage.ImageBinder
+
+    @State private var loadingResult: Result<RetrieveImageResult, KingfisherError>?
+    @State private var isLoaded = false
+
+    // Acts as a placeholder when loading an image.
+    var placeholder: AnyView?
+
+    // Whether the download task should be cancelled when the view disappears.
+    let cancelOnDisappear: Bool
+
+    // Configurations should be performed on the image.
+    let configurations: [(Image) -> Image]
+
+    init(_ context: KFImage.Context) {
+        self.binder = context.binder
+        self.configurations = context.configurations
+        self.placeholder = context.placeholder
+        self.cancelOnDisappear = context.cancelOnDisappear
+    }
+
+    /// Declares the content and behavior of this view.
+    var body: some View {
+        if case .success(let r) = loadingResult {
+            configurations
+                .reduce(Image(crossPlatformImage: r.image)) {
+                    current, config in config(current)
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .onAppear { [weak binder = self.binder] in
-                    guard let binder = binder else {
-                        return
-                    }
-                    if !binder.loadingOrSucceeded {
-                        binder.start()
-                    }
+                .opacity(isLoaded ? 1.0 : 0.0)
+        } else {
+            Group {
+                if placeholder != nil {
+                    placeholder
+                } else {
+                    Color.clear
                 }
-                .onDisappear { [weak binder = self.binder] in
-                    guard let binder = binder else {
-                        return
-                    }
-                    if self.cancelOnDisappear {
-                        binder.cancel()
+            }
+            .onAppear { [weak binder = self.binder] in
+                guard let binder = binder else {
+                    return
+                }
+                if !binder.loadingOrSucceeded {
+                    binder.start { result in
+                        self.loadingResult = result
+                        switch result {
+                        case .success(let value):
+                            CallbackQueue.mainAsync.execute {
+                                let animation = fadeTransitionDuration(cacheType: value.cacheType)
+                                    .map { duration in Animation.linear(duration: duration) }
+                                withAnimation(animation) { isLoaded = true }
+                            }
+                        case .failure(_):
+                            break
+                        }
                     }
                 }
             }
+            .onDisappear { [weak binder = self.binder] in
+                guard let binder = binder else {
+                    return
+                }
+                if self.cancelOnDisappear {
+                    binder.cancel()
+                }
+            }
+        }
+    }
+
+    private func shouldApplyFade(cacheType: CacheType) -> Bool {
+        binder.options.forceTransition || cacheType == .none
+    }
+
+    private func fadeTransitionDuration(cacheType: CacheType) -> TimeInterval? {
+        shouldApplyFade(cacheType: cacheType)
+            ? binder.options.transition.fadeDuration
+            : nil
+    }
+}
+
+extension ImageTransition {
+    // Only for fade effect in SwiftUI.
+    fileprivate var fadeDuration: TimeInterval? {
+        switch self {
+        case .fade(let duration):
+            return duration
+        default:
+            return nil
         }
     }
 }
@@ -162,7 +227,7 @@ extension KFImage {
     /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
     public func configure(_ block: @escaping (Image) -> Image) -> KFImage {
         var result = self
-        result.configurations.append(block)
+        result.context.configurations.append(block)
         return result
     }
 
@@ -191,7 +256,7 @@ extension KFImage {
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {
-            KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
+            KFImage(source: .network(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!))
                 .onSuccess { r in
                     print(r)
                 }
