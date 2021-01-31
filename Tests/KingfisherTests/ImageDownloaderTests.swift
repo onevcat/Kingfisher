@@ -512,7 +512,7 @@ class ImageDownloaderTests: XCTestCase {
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
-    func testDownloadedImageCouldBeModified() {
+    func testModifierShouldOnlyApplyForFinalResultWhenDownload() {
         let exp = expectation(description: #function)
 
         let url = testURLs[0]
@@ -525,8 +525,8 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         downloader.downloadImage(with: url, options: [.imageModifier(modifier)]) { result in
-            XCTAssertTrue(modifierCalled)
-            XCTAssertEqual(result.value?.image.renderingMode, .alwaysTemplate)
+            XCTAssertFalse(modifierCalled)
+            XCTAssertEqual(result.value?.image.renderingMode, .automatic)
             exp.fulfill()
         }
 

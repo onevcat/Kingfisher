@@ -661,6 +661,36 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testImageModifierResultShouldNotBeCached() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+        manager.retrieveImage(with: url, options: [.imageModifier(modifier)]) { result in
+            XCTAssertTrue(modifierCalled)
+            XCTAssertEqual(result.value?.image.renderingMode, .alwaysTemplate)
+
+            let memoryCached = self.manager.cache.retrieveImageInMemoryCache(forKey: url.absoluteString)
+            XCTAssertNotNil(memoryCached)
+            XCTAssertEqual(memoryCached?.renderingMode, .automatic)
+
+            self.manager.cache.retrieveImageInDiskCache(forKey: url.absoluteString) { result in
+                XCTAssertNotNil(result.value!)
+                XCTAssertEqual(result.value??.renderingMode, .automatic)
+
+                exp.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
 #endif
     
     func testRetrieveWithImageProvider() {
