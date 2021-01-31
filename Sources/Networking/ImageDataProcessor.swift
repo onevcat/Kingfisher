@@ -61,13 +61,7 @@ class ImageDataProcessor {
 
             let result: Result<KFCrossPlatformImage, KingfisherError>
             if let image = image {
-                var finalImage = image
-                if let imageModifier = callback.options.imageModifier {
-                    finalImage = imageModifier.modify(image)
-                }
-                if callback.options.backgroundDecode {
-                    finalImage = finalImage.kf.decoded
-                }
+                let finalImage = callback.options.backgroundDecode ? image.kf.decoded : image
                 result = .success(finalImage)
             } else {
                 let error = KingfisherError.processorError(
