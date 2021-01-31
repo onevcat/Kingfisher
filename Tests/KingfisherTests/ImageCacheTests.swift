@@ -385,7 +385,7 @@ class ImageCacheTests: XCTestCase {
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS)
-    func testGettingMemoryCachedImageCouldBeModified() {
+    func testModifierShouldOnlyApplyForFinalResultWhenMemoryLoad() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
 
@@ -397,15 +397,15 @@ class ImageCacheTests: XCTestCase {
 
         cache.store(testImage, original: testImageData, forKey: key) { _ in
             self.cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)]) { result in
-                XCTAssertTrue(modifierCalled)
-                XCTAssertEqual(result.value?.image?.renderingMode, .alwaysTemplate)
+                XCTAssertFalse(modifierCalled)
+                XCTAssertEqual(result.value?.image?.renderingMode, .automatic)
                 exp.fulfill()
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testGettingDiskCachedImageCouldBeModified() {
+    func testModifierShouldOnlyApplyForFinalResultWhenDiskLoad() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
 
@@ -418,8 +418,8 @@ class ImageCacheTests: XCTestCase {
         cache.store(testImage, original: testImageData, forKey: key) { _ in
             self.cache.clearMemoryCache()
             self.cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)]) { result in
-                XCTAssertTrue(modifierCalled)
-                XCTAssertEqual(result.value?.image?.renderingMode, .alwaysTemplate)
+                XCTAssertFalse(modifierCalled)
+                XCTAssertEqual(result.value?.image?.renderingMode, .automatic)
                 exp.fulfill()
             }
         }
