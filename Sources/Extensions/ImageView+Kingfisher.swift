@@ -383,7 +383,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         switch options.transition {
         case .none:
             return false
-        #if !os(macOS)
+        #if os(macOS)
+        case .fade: // Fade is only a placeholder for SwiftUI on macOS.
+            return false
+        #else
         default:
             if options.forceTransition { return true }
             if cacheType == .none { return true }

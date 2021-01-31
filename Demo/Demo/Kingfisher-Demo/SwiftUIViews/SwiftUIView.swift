@@ -32,6 +32,8 @@ struct SwiftUIView : View {
 
     @State private var index = 1
 
+    @State private var blackWhite = false
+
     var url: URL {
         URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-\(self.index).jpg")!
     }
@@ -39,6 +41,8 @@ struct SwiftUIView : View {
     var body: some View {
         VStack {
             KFImage(url)
+                .cacheOriginalImage()
+                .setProcessor(blackWhite ? BlackWhiteProcessor() : DefaultImageProcessor())
                 .onSuccess { r in
                     print("suc: \(r)")
                 }
@@ -49,6 +53,8 @@ struct SwiftUIView : View {
                     Image(systemName: "arrow.2.circlepath.circle")
                         .font(.largeTitle)
                 }
+                .fade(duration: 1)
+                .forceTransition()
                 .resizable()
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
@@ -57,6 +63,9 @@ struct SwiftUIView : View {
             Button(action: {
                 self.index = (self.index % 10) + 1
             }) { Text("Next Image") }
+            Button(action: {
+                self.blackWhite.toggle()
+            }) { Text("Black & White") }
 
         }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
     }

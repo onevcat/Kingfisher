@@ -33,7 +33,7 @@ extension KFImage {
 
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
     /// image downloading and progress reporting based on `KingfisherManager`.
-    class ImageBinder: ObservableObject {
+    class ImageBinder {
 
         let source: Source?
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
@@ -48,8 +48,6 @@ extension KFImage {
 
         var isLoaded: Binding<Bool>
 
-        @Published var image: KFCrossPlatformImage?
-
         @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
         init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
             self.source = source
@@ -61,7 +59,6 @@ extension KFImage {
                 [.loadDiskFileSynchronously]
             )
             self.isLoaded = isLoaded
-            self.image = nil
         }
 
         init(source: Source?, isLoaded: Binding<Bool>) {
@@ -73,10 +70,9 @@ extension KFImage {
                 [.loadDiskFileSynchronously]
             )
             self.isLoaded = isLoaded
-            self.image = nil
         }
 
-        func start() {
+        func start(_ done: @escaping (Result<RetrieveImageResult, KingfisherError>) -> Void) {
 
             guard !loadingOrSucceeded else { return }
 
@@ -103,21 +99,29 @@ extension KFImage {
                         self.downloadTask = nil
                         switch result {
                         case .success(let value):
+
                             // The normalized version of image is used to solve #1395
                             // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
                             // by `Image.init(uiImage:)`. (The orientation information should be already contained in
                             // a `UIImage`)
                             // https://github.com/onevcat/Kingfisher/issues/1395
                             let image = value.image.kf.normalized
+                            let r = RetrieveImageResult(
+                                image: image, cacheType: value.cacheType, source: value.source, originalSource: value.originalSource
+                            )
                             CallbackQueue.mainCurrentOrAsync.execute {
-                                self.image = image
+                                done(.success(r))
                             }
+
                             CallbackQueue.mainAsync.execute {
                                 self.isLoaded.wrappedValue = true
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
                             self.loadingOrSucceeded = false
+                            CallbackQueue.mainCurrentOrAsync.execute {
+                                done(.failure(error))
+                            }
                             CallbackQueue.mainAsync.execute {
                                 self.onFailureDelegate.call(error)
                             }
@@ -129,6 +133,18 @@ extension KFImage {
         func cancel() {
             downloadTask?.cancel()
         }
+    }
+}
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension KFImage.ImageBinder: Hashable {
+    static func == (lhs: KFImage.ImageBinder, rhs: KFImage.ImageBinder) -> Bool {
+        return lhs === rhs
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(source)
+        hasher.combine(options.processor.identifier)
     }
 }
 #endif

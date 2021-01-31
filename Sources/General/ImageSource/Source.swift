@@ -80,6 +80,32 @@ public enum Source {
     }
 }
 
+extension Source: Hashable {
+    public static func == (lhs: Source, rhs: Source) -> Bool {
+        switch (lhs, rhs) {
+        case (.network(let r1), .network(let r2)):
+            return r1.cacheKey == r2.cacheKey && r1.downloadURL == r2.downloadURL
+        case (.provider(let p1), .provider(let p2)):
+            return p1.cacheKey == p2.cacheKey && p1.contentURL == p2.contentURL
+        case (.provider(_), .network(_)):
+            return false
+        case (.network(_), .provider(_)):
+            return false
+        }
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case .network(let r):
+            hasher.combine(r.cacheKey)
+            hasher.combine(r.downloadURL)
+        case .provider(let p):
+            hasher.combine(p.cacheKey)
+            hasher.combine(p.contentURL)
+        }
+    }
+}
+
 extension Source {
     var asResource: Resource? {
         guard case .network(let resource) = self else {
