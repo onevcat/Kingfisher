@@ -456,7 +456,6 @@ open class ImageCache {
 
         // Try to check the image from memory cache first.
         if let image = retrieveImageInMemoryCache(forKey: key, options: options) {
-            let image = options.imageModifier?.modify(image) ?? image
             callbackQueue.execute { completionHandler(.success(.memory(image))) }
         } else if options.fromMemoryCacheOrRefresh {
             callbackQueue.execute { completionHandler(.success(.none)) }
@@ -486,8 +485,7 @@ open class ImageCache {
                         toDisk: false)
                     {
                         _ in
-                        let finalImage = options.imageModifier?.modify(image) ?? image
-                        callbackQueue.execute { completionHandler(.success(.disk(finalImage))) }
+                        callbackQueue.execute { completionHandler(.success(.disk(image))) }
                     }
                 case .failure(let error):
                     callbackQueue.execute { completionHandler(.failure(error)) }
