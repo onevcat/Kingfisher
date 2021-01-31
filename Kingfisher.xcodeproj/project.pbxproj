@@ -36,7 +36,6 @@
 		D12AB6E0215D2BB50013BA68 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6A6215D2BB50013BA68 /* Filter.swift */; };
 		D12AB6E4215D2BB50013BA68 /* Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6A7215D2BB50013BA68 /* Placeholder.swift */; };
 		D12AB6E8215D2BB50013BA68 /* GIFAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6A8215D2BB50013BA68 /* GIFAnimatedImage.swift */; };
-		D12AB6F0215D2BB50013BA68 /* Kingfisher.h in Headers */ = {isa = PBXBuildFile; fileRef = D12AB6AA215D2BB50013BA68 /* Kingfisher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D12AB6F4215D2BB50013BA68 /* ImageView+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AC215D2BB50013BA68 /* ImageView+Kingfisher.swift */; };
 		D12AB6FC215D2BB50013BA68 /* UIButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AE215D2BB50013BA68 /* UIButton+Kingfisher.swift */; };
 		D12AB704215D2BB50013BA68 /* Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6B1215D2BB50013BA68 /* Kingfisher.swift */; };
@@ -159,7 +158,6 @@
 		D12AB6A7215D2BB50013BA68 /* Placeholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Placeholder.swift; sourceTree = "<group>"; };
 		D12AB6A8215D2BB50013BA68 /* GIFAnimatedImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GIFAnimatedImage.swift; sourceTree = "<group>"; };
 		D12AB6A9215D2BB50013BA68 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D12AB6AA215D2BB50013BA68 /* Kingfisher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Kingfisher.h; sourceTree = "<group>"; };
 		D12AB6AC215D2BB50013BA68 /* ImageView+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImageView+Kingfisher.swift"; sourceTree = "<group>"; };
 		D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSButton+Kingfisher.swift"; sourceTree = "<group>"; };
 		D12AB6AE215D2BB50013BA68 /* UIButton+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Kingfisher.swift"; sourceTree = "<group>"; };
@@ -313,7 +311,6 @@
 			isa = PBXGroup;
 			children = (
 				D12AB6A9215D2BB50013BA68 /* Info.plist */,
-				D12AB6AA215D2BB50013BA68 /* Kingfisher.h */,
 				D12AB6B0215D2BB50013BA68 /* General */,
 				D12AB6A2215D2BB50013BA68 /* Image */,
 				D12AB69C215D2BB50013BA68 /* Networking */,
@@ -675,7 +672,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D12AB6F0215D2BB50013BA68 /* Kingfisher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
