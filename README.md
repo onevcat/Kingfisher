@@ -23,8 +23,8 @@ Kingfisher is a powerful, pure-Swift library for downloading and caching images 
 - [x] Multiple-layer hybrid cache for both memory and disk.
 - [x] Fine control on cache behavior. Customizable expiration date and size limit.
 - [x] Cancelable downloading and auto-reusing previous downloaded content to improve performance.
-- [x] Independent components. Use the downloader, caching system and image processors separately as you need.
-- [x] Prefetching images and showing them from cache to boost your app.
+- [x] Independent components. Use the downloader, caching system, and image processors separately as you need.
+- [x] Prefetching images and showing them from the cache to boost your app.
 - [x] View extensions for `UIImageView`, `NSImageView`, `NSButton` and `UIButton` to directly set an image from a URL.
 - [x] Built-in transition animation when setting images.
 - [x] Customizable placeholder and indicator while loading images.
@@ -43,7 +43,8 @@ let url = URL(string: "https://example.com/image.png")
 imageView.kf.setImage(with: url)
 ```
 
-Kingfisher will download the image from `url`, send it to both memory cache and disk cache, and display it in `imageView`. When you set with the same URL later, the image will be retrieved from cache and shown immediately.
+Kingfisher will download the image from `url`, send it to both memory cache and disk cache, and display it in `imageView`. 
+When you set with the same URL later, the image will be retrieved from the cache and shown immediately.
 
 It also works if you use SwiftUI:
 
@@ -90,8 +91,8 @@ imageView.kf.setImage(
 }
 ```
 
-It is really a very common situation I can meet in my daily work. Think about how many lines you need to write without
-Kingfisher. You will fall in love with it if you give it a try!
+It is a common situation I can meet in my daily work. Think about how many lines you need to write without
+Kingfisher!
 
 ### Method Chaining
 
@@ -107,6 +108,7 @@ imageView.kf.setImage(
         .processor(processor),
         .loadDiskFileSynchronously,
         .cacheOriginalImage,
+        .transition(.fade(0.25)),
         .lowDataMode(.network(lowResolutionURL))
     ],
     progressBlock: { receivedSize, totalSize in
@@ -123,6 +125,7 @@ KF.url(url)
   .setProcessor(processor)
   .loadDiskFileSynchronously()
   .cacheMemoryOnly()
+  .fade(duration: 0.25)
   .lowDataModeSource(.network(lowResolutionURL))
   .onProgress { receivedSize, totalSize in  }
   .onSuccess { result in  }
@@ -140,6 +143,7 @@ struct ContentView: View {
           .setProcessor(processor)
           .loadDiskFileSynchronously()
           .cacheMemoryOnly()
+          .fade(duration: 0.25)
           .lowDataModeSource(.network(lowResolutionURL))
           .onProgress { receivedSize, totalSize in  }
           .onSuccess { result in  }
@@ -150,7 +154,9 @@ struct ContentView: View {
 
 ### Learn More
 
-To learn the use of Kingfisher by more examples, take a look at the well-prepared [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). There we summarized most common tasks in Kingfisher, you can get a better idea on what this framework can do. There are also some tips for performance, remember to check them too.
+To learn the use of Kingfisher by more examples, take a look at the well-prepared [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). T
+here we summarized the most common tasks in Kingfisher, you can get a better idea of what this framework can do. 
+There are also some performance tips, remember to check them too.
 
 ## Requirements
 
@@ -159,7 +165,7 @@ To learn the use of Kingfisher by more examples, take a look at the well-prepare
 
 ### Installation
 
-A detailed guide for installation can be found in [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide). Here is some shortcuts:
+A detailed guide for installation can be found in [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide).
 
 #### Swift Package Manager
 
@@ -192,8 +198,8 @@ github "onevcat/Kingfisher" ~> 6.0
 
 If you are using an even earlier version, see the guides below to know the steps for migrating.
 
-> - [Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - If you are upgrading to Kingfisher 5.x from an 4.x, please read this for more information.
-> - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 has been removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble in migrating, please open an issue to discuss.
+> - [Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - If you are upgrading to Kingfisher 5.x from 4.x, please read this for more information.
+> - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 were removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble when migrating, please open an issue to discuss.
 > - [Kingfisher 3.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
 
 ## Next Steps
@@ -208,7 +214,7 @@ We prepared a [wiki page](https://github.com/onevcat/Kingfisher/wiki). You can f
 
 ### Future of Kingfisher
 
-I want to keep Kingfisher lightweight. This framework will focus on providing a simple solution for downloading and caching images. This doesn’t mean the framework can’t be improved. Kingfisher is far from perfect, so necessary and useful updates will be made to make it better.
+I want to keep Kingfisher lightweight. This framework focuses on providing a simple solution for downloading and caching images. This doesn’t mean the framework can’t be improved. Kingfisher is far from perfect, so necessary and useful updates will be made to make it better.
 
 ### Developments and Tests
 
@@ -220,15 +226,14 @@ The logo of Kingfisher is inspired by [Tangram (七巧板)](http://en.wikipedia.
 
 ### Contact
 
-Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](http://weibo.com/onevcat). If you find an issue, just [open a ticket](https://github.com/onevcat/Kingfisher/issues/new). Pull requests are warmly welcome as well.
+Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](http://weibo.com/onevcat). If you find an issue, [open a ticket](https://github.com/onevcat/Kingfisher/issues/new). Pull requests are warmly welcome as well.
 
 ## Backers & Sponsors
 
-Open source project cannot live long without your help. If you find Kingfisher is useful, please consider to support this project by becoming a sponsor. Your user icon or company logo will show up here with a link to your home page. 
+Open-source projects cannot live long without your help. If you find Kingfisher is useful, please consider supporting this 
+project by becoming a sponsor. Your user icon or company logo shows up [on my blog]() with a link to your home page. 
 
 Become a sponsor through [GitHub Sponsors](https://github.com/sponsors/onevcat) or [Open Collective](https://opencollective.com/kingfisher#sponsor). :heart:
-
-[![](https://avatars3.githubusercontent.com/u/75399012?s=60&v=4)](https://github.com/platoapp)
 
 ### License
 
