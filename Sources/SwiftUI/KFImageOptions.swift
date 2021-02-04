@@ -56,7 +56,7 @@ extension KFImage {
         _ resource: Resource?, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        .source(resource?.convertToSource(), isLoaded: isLoaded)
+        source(resource?.convertToSource(), isLoaded: isLoaded)
     }
 
     /// Creates a `KFImage` for a given `URL`.
@@ -72,7 +72,7 @@ extension KFImage {
         _ url: URL?, cacheKey: String? = nil, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        source(url?.convertToSource(), isLoaded: isLoaded)
+        source(url?.convertToSource(overrideCacheKey: cacheKey), isLoaded: isLoaded)
     }
 
     /// Creates a `KFImage` for a given `ImageDataProvider`.
@@ -83,10 +83,10 @@ extension KFImage {
     ///               wrapped value from outside.
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func dataProvider(
-        _ provider: ImageDataProvider, isLoaded: Binding<Bool> = .constant(false)
+        _ provider: ImageDataProvider?, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        source(.provider(provider), isLoaded: isLoaded)
+        source(provider?.convertToSource(), isLoaded: isLoaded)
     }
 
     /// Creates a builder for some given raw data and a cache key.
@@ -98,10 +98,14 @@ extension KFImage {
     ///               wrapped value from outside.
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func data(
-        _ data: Data, cacheKey: String, isLoaded: Binding<Bool> = .constant(false)
+        _ data: Data?, cacheKey: String, isLoaded: Binding<Bool> = .constant(false)
     ) -> KFImage
     {
-        source(.provider(RawImageDataProvider(data: data, cacheKey: cacheKey)), isLoaded: isLoaded)
+        if let data = data {
+            return dataProvider(RawImageDataProvider(data: data, cacheKey: cacheKey), isLoaded: isLoaded)
+        } else {
+            return dataProvider(nil, isLoaded: isLoaded)
+        }
     }
 }
 

@@ -43,10 +43,10 @@ extension Resource {
     /// Converts `self` to a valid `Source` based on its `downloadURL` scheme. A `.provider` with
     /// `LocalFileImageDataProvider` associated will be returned if the URL points to a local file. Otherwise,
     /// `.network` is returned.
-    public func convertToSource() -> Source {
+    public func convertToSource(overrideCacheKey: String? = nil) -> Source {
         return downloadURL.isFileURL ?
-            .provider(LocalFileImageDataProvider(fileURL: downloadURL, cacheKey: cacheKey)) :
-            .network(self)
+            .provider(LocalFileImageDataProvider(fileURL: downloadURL, cacheKey: overrideCacheKey ?? cacheKey)) :
+            .network(ImageResource(downloadURL: downloadURL, cacheKey: overrideCacheKey ?? cacheKey))
     }
 }
 
