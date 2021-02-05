@@ -55,6 +55,9 @@ public protocol ImageDataProvider {
 
 public extension ImageDataProvider {
     var contentURL: URL? { return nil }
+    func convertToSource() -> Source {
+        .provider(self)
+    }
 }
 
 /// Represents an image data provider for loading from a local file URL on disk.
