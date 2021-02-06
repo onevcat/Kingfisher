@@ -263,6 +263,7 @@ extension SessionDelegate: URLSessionDataDelegate {
     
     
     // MARK: - ExtralHandler
+    @available(iOS 7.0, OSX 11.0, tvOS 9.0, watchOS 2.0, *)
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         extralHandler?.urlSessionDidFinishEvents?(forBackgroundURLSession: session)
     }
@@ -273,9 +274,11 @@ extension SessionDelegate: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         extralHandler?.urlSession?(session, taskIsWaitingForConnectivity: task)
     }
+    @available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *)
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         extralHandler?.urlSession?(session, task: task, didFinishCollecting: metrics)
     }
+    @available(iOS 9.0, OSX 10.11, tvOS 9.0, watchOS 2.0, *)
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome streamTask: URLSessionStreamTask) {
         extralHandler?.urlSession?(session, dataTask: dataTask, didBecome: streamTask)
     }
