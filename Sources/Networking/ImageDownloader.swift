@@ -164,7 +164,12 @@ open class ImageDownloader {
         authenticationChallengeResponder = self
         setupSessionHandler()
     }
-
+    
+    /// You could set the extral handler before a downloading task starts.
+    public func addExtraSessionDelegateHandler(_ handler: URLSessionDataDelegate) {
+        sessionDelegate.extralHandler = handler
+    }
+    
     deinit { session.invalidateAndCancel() }
 
     private func setupSessionHandler() {
