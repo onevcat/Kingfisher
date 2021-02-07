@@ -48,6 +48,8 @@ extension KFImage {
 
         var isLoaded: Binding<Bool>
 
+        var loadedImage: KFCrossPlatformImage? = nil
+
         @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
         init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
             self.source = source
@@ -106,6 +108,7 @@ extension KFImage {
                             // a `UIImage`)
                             // https://github.com/onevcat/Kingfisher/issues/1395
                             let image = value.image.kf.normalized
+                            self.loadedImage = image
                             let r = RetrieveImageResult(
                                 image: image, cacheType: value.cacheType, source: value.source, originalSource: value.originalSource
                             )
