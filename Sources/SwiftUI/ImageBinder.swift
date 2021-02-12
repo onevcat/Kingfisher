@@ -109,7 +109,7 @@ extension KFImage {
                             let r = RetrieveImageResult(
                                 image: image, cacheType: value.cacheType, source: value.source, originalSource: value.originalSource
                             )
-                            CallbackQueue.mainCurrentOrAsync.execute {
+                            CallbackQueue.mainAsync.execute {
                                 done(.success(r))
                             }
 
@@ -119,7 +119,7 @@ extension KFImage {
                             }
                         case .failure(let error):
                             self.loadingOrSucceeded = false
-                            CallbackQueue.mainCurrentOrAsync.execute {
+                            CallbackQueue.mainAsync.execute {
                                 done(.failure(error))
                             }
                             CallbackQueue.mainAsync.execute {
