@@ -145,7 +145,8 @@ open class ImageCache {
     /// The default `ImageCache` object. Kingfisher will use this cache for its related methods if there is no
     /// other cache specified. The `name` of this default cache is "default", and you should not use this name
     /// for any of your customize cache.
-    public static let `default` = ImageCache(name: "default")
+    public static let `default` = ImageCache(noThrowName: "default")
+
 
     // MARK: Public Properties
     /// The `MemoryStorage.Backend` object used in this cache. This storage holds loaded images in memory with a
@@ -212,6 +213,7 @@ open class ImageCache {
     /// - Parameter name: The name of cache object. It is used to setup disk cache directories and IO queue.
     ///                   You should not use the same `name` for different caches, otherwise, the disk storage would
     ///                   be conflicting to each other. The `name` should not be an empty string.
+    @available(*, deprecated, message: "When used for the first time while the disk is full, a crash would happen. Use `init(noThrowName:)` or the throwable `init(name:cacheDirectoryURL:) throws` instead.", renamed: "init(noThrowName:)")
     public convenience init(name: String) {
         try! self.init(name: name, cacheDirectoryURL: nil, diskCachePathClosure: nil)
     }
@@ -233,16 +235,38 @@ open class ImageCache {
     public convenience init(
         name: String,
         cacheDirectoryURL: URL?,
-        diskCachePathClosure: DiskCachePathClosure? = nil) throws
+        diskCachePathClosure: DiskCachePathClosure? = nil
+    ) throws
     {
         if name.isEmpty {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
         }
 
         let memoryStorage = ImageCache.createMemoryStorage()
-        let diskStorage = try ImageCache.createDiskStorage(
+
+        let config = ImageCache.createConfig(
             name: name, cacheDirectoryURL: cacheDirectoryURL, diskCachePathClosure: diskCachePathClosure
         )
+        let diskStorage = try DiskStorage.Backend<Data>(config: config)
+        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
+    }
+
+    convenience init(
+        noThrowName name: String,
+        cacheDirectoryURL: URL? = nil,
+        diskCachePathClosure: DiskCachePathClosure? = nil
+    )
+    {
+        if name.isEmpty {
+            fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
+        }
+
+        let memoryStorage = ImageCache.createMemoryStorage()
+
+        let config = ImageCache.createConfig(
+            name: name, cacheDirectoryURL: cacheDirectoryURL, diskCachePathClosure: diskCachePathClosure
+        )
+        let diskStorage = DiskStorage.Backend<Data>(noThrowConfig: config, creatingDirectory: true)
         self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
     }
 
@@ -254,11 +278,11 @@ open class ImageCache {
         return memoryStorage
     }
 
-    private static func createDiskStorage(
+    private static func createConfig(
         name: String,
         cacheDirectoryURL: URL?,
         diskCachePathClosure: DiskCachePathClosure? = nil
-    ) throws -> DiskStorage.Backend<Data>
+    ) -> DiskStorage.Config
     {
         var diskConfig = DiskStorage.Config(
             name: name,
@@ -268,7 +292,7 @@ open class ImageCache {
         if let closure = diskCachePathClosure {
             diskConfig.cachePathBlock = closure
         }
-        return try DiskStorage.Backend<Data>(config: diskConfig)
+        return diskConfig
     }
     
     deinit {
