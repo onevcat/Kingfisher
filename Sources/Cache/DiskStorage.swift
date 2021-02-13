@@ -56,7 +56,7 @@ public enum DiskStorage {
         /// - Throws: An error if the folder for storage cannot be got or created.
         public init(config: Config) throws {
 
-            self.config = config
+            var config = config
 
             let url: URL
             if let directory = config.directory {
@@ -72,8 +72,12 @@ public enum DiskStorage {
             let cacheName = "com.onevcat.Kingfisher.ImageCache.\(config.name)"
             directoryURL = config.cachePathBlock(url, cacheName)
 
-            metaChangingQueue = DispatchQueue(label: cacheName)
+            // Break any possible retain cycle set by outside.
+            config.cachePathBlock = nil
 
+            self.config = config
+
+            metaChangingQueue = DispatchQueue(label: cacheName)
             try prepareDirectory()
 
             maybeCachedCheckingQueue.async {

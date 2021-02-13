@@ -239,11 +239,27 @@ open class ImageCache {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
         }
 
+        let memoryStorage = ImageCache.createMemoryStorage()
+        let diskStorage = try ImageCache.createDiskStorage(
+            name: name, cacheDirectoryURL: cacheDirectoryURL, diskCachePathClosure: diskCachePathClosure
+        )
+        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
+    }
+
+    private static func createMemoryStorage() -> MemoryStorage.Backend<KFCrossPlatformImage> {
         let totalMemory = ProcessInfo.processInfo.physicalMemory
         let costLimit = totalMemory / 4
         let memoryStorage = MemoryStorage.Backend<KFCrossPlatformImage>(config:
             .init(totalCostLimit: (costLimit > Int.max) ? Int.max : Int(costLimit)))
+        return memoryStorage
+    }
 
+    private static func createDiskStorage(
+        name: String,
+        cacheDirectoryURL: URL?,
+        diskCachePathClosure: DiskCachePathClosure? = nil
+    ) throws -> DiskStorage.Backend<Data>
+    {
         var diskConfig = DiskStorage.Config(
             name: name,
             sizeLimit: 0,
@@ -252,10 +268,7 @@ open class ImageCache {
         if let closure = diskCachePathClosure {
             diskConfig.cachePathBlock = closure
         }
-        let diskStorage = try DiskStorage.Backend<Data>(config: diskConfig)
-        diskConfig.cachePathBlock = nil
-
-        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
+        return try DiskStorage.Backend<Data>(config: diskConfig)
     }
     
     deinit {
