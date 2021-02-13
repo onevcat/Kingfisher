@@ -152,7 +152,7 @@ struct KFImageRenderer: View {
     var body: some View {
         if case .success(let r) = loadingResult {
             configurations
-                .reduce(Image(crossPlatformImage: r.image)) {
+                .reduce(imageFromResult(r.image)) {
                     current, config in config(current)
                 }
                 .opacity(isLoaded ? 1.0 : 0.0)
@@ -193,6 +193,30 @@ struct KFImageRenderer: View {
         }
     }
 
+    private func imageFromResult(_ resultImage: KFCrossPlatformImage) -> Image {
+        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
+            return Image(crossPlatformImage: resultImage)
+        } else {
+            #if canImport(UIKit)
+            // The CG image is used to solve #1395
+            // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
+            // by `Image.init(uiImage:)`. (The orientation information should be already contained in
+            // a `UIImage`)
+            // https://github.com/onevcat/Kingfisher/issues/1395
+            //
+            // This issue happens on iOS 13 and was fixed by Apple from iOS 14.
+            if let cgImage = resultImage.cgImage {
+                return Image(decorative: cgImage, scale: resultImage.scale, orientation: resultImage.imageOrientation.toSwiftUI())
+            } else {
+                return Image(crossPlatformImage: resultImage)
+            }
+            #else
+            return Image(crossPlatformImage: resultImage)
+            #endif
+
+        }
+    }
+
     private func shouldApplyFade(cacheType: CacheType) -> Bool {
         binder.options.forceTransition || cacheType == .none
     }
@@ -215,6 +239,25 @@ extension ImageTransition {
         }
     }
 }
+
+#if canImport(UIKit)
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension UIImage.Orientation {
+    func toSwiftUI() -> Image.Orientation {
+        switch self {
+        case .down: return .down
+        case .up: return .up
+        case .left: return .left
+        case .right: return .right
+        case .upMirrored: return .upMirrored
+        case .downMirrored: return .downMirrored
+        case .leftMirrored: return .leftMirrored
+        case .rightMirrored: return .rightMirrored
+        @unknown default: return .up
+        }
+    }
+}
+#endif
 
 // MARK: - Image compatibility.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
