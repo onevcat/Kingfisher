@@ -139,7 +139,7 @@ extension KFImage {
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage.ImageBinder: Hashable {
     static func == (lhs: KFImage.ImageBinder, rhs: KFImage.ImageBinder) -> Bool {
-        return lhs === rhs
+        lhs.source == rhs.source && lhs.options.processor.identifier == rhs.options.processor.identifier
     }
 
     func hash(into hasher: inout Hasher) {
