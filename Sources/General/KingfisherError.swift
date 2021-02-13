@@ -157,6 +157,14 @@ public enum KingfisherError: Error {
         /// - error: The underlying error originally thrown by Foundation when setting the `attributes` to the disk
         ///          file at `filePath`.
         case cannotSetCacheFileAttribute(filePath: String, attributes: [FileAttributeKey : Any], error: Error)
+
+        /// The disk storage of cache is not ready. Code 3011.
+        ///
+        /// This is usually due to extremely lack of space on disk storage, and
+        /// Kingfisher failed even when creating the cache folder. The disk storage will be in unusable state. Normally,
+        /// ask user to free some spaces and restart the app to make the disk storage work again.
+        /// - cacheURL: The intended URL which should be the storage folder.
+        case diskStorageIsNotReady(cacheURL: URL)
     }
     
     
@@ -382,6 +390,9 @@ extension KingfisherError.CacheErrorReason {
         case .cannotSetCacheFileAttribute(let filePath, let attributes, let error):
             return "Cannot set file attribute for the cache file at path: \(filePath), attributes: \(attributes)." +
                    "Underlying foundation error: \(error)."
+        case .diskStorageIsNotReady(let cacheURL):
+            return "The disk storage is not ready to use yet at URL: '\(cacheURL)'. " +
+                "This is usually caused by extremely lack of disk space. Ask users to free up some space and restart the app."
         }
     }
     
@@ -397,6 +408,7 @@ extension KingfisherError.CacheErrorReason {
         case .cannotSerializeImage: return 3008
         case .cannotCreateCacheFile: return 3009
         case .cannotSetCacheFileAttribute: return 3010
+        case .diskStorageIsNotReady: return 3011
         }
     }
 }
