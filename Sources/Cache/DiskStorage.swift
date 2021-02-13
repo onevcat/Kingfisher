@@ -50,36 +50,44 @@ public enum DiskStorage {
         var maybeCached : Set<String>?
         let maybeCachedCheckingQueue = DispatchQueue(label: "com.onevcat.Kingfisher.maybeCachedCheckingQueue")
 
+        // `false` if the storage initialized with an error. This prevents unexpected forcibly crash when creating
+        // storage in the default cache.
+        private var storageReady: Bool = true
+
         /// Creates a disk storage with the given `DiskStorage.Config`.
         ///
         /// - Parameter config: The config used for this disk storage.
         /// - Throws: An error if the folder for storage cannot be got or created.
-        public init(config: Config) throws {
+        public convenience init(config: Config) throws {
+            self.init(noThrowConfig: config, creatingDirectory: false)
+            try prepareDirectory()
+        }
 
+        // If `creatingDirectory` is `false`, the directory preparation will be skipped.
+        // We need to call `prepareDirectory` manually after this returns.
+        init(noThrowConfig config: Config, creatingDirectory: Bool) {
+            var config = config
+
+            let creation = Creation(config)
+            self.directoryURL = creation.directoryURL
+
+            // Break any possible retain cycle set by outside.
+            config.cachePathBlock = nil
             self.config = config
 
-            let url: URL
-            if let directory = config.directory {
-                url = directory
-            } else {
-                url = try config.fileManager.url(
-                    for: .cachesDirectory,
-                    in: .userDomainMask,
-                    appropriateFor: nil,
-                    create: true)
+            metaChangingQueue = DispatchQueue(label: creation.cacheName)
+            setupCacheChecking()
+
+            if creatingDirectory {
+                try? prepareDirectory()
             }
+        }
 
-            let cacheName = "com.onevcat.Kingfisher.ImageCache.\(config.name)"
-            directoryURL = config.cachePathBlock(url, cacheName)
-
-            metaChangingQueue = DispatchQueue(label: cacheName)
-
-            try prepareDirectory()
-
+        private func setupCacheChecking() {
             maybeCachedCheckingQueue.async {
                 do {
                     self.maybeCached = Set()
-                    try config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path).forEach { fileName in
+                    try self.config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path).forEach { fileName in
                         self.maybeCached?.insert(fileName)
                     }
                 } catch {
@@ -91,7 +99,7 @@ public enum DiskStorage {
         }
 
         // Creates the storage folder.
-        func prepareDirectory() throws {
+        private func prepareDirectory() throws {
             let fileManager = config.fileManager
             let path = directoryURL.path
 
@@ -103,6 +111,7 @@ public enum DiskStorage {
                     withIntermediateDirectories: true,
                     attributes: nil)
             } catch {
+                self.storageReady = false
                 throw KingfisherError.cacheError(reason: .cannotCreateDirectory(path: path, error: error))
             }
         }
@@ -112,6 +121,10 @@ public enum DiskStorage {
             forKey key: String,
             expiration: StorageExpiration? = nil) throws
         {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
+
             let expiration = expiration ?? config.expiration
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
@@ -167,6 +180,10 @@ public enum DiskStorage {
             actuallyLoad: Bool,
             extendingExpiration: ExpirationExtending) throws -> T?
         {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
+
             let fileManager = config.fileManager
             let fileURL = cacheFileURL(forKey: key)
             let filePath = fileURL.path
@@ -491,3 +508,21 @@ extension DiskStorage {
     }
 }
 
+extension DiskStorage {
+    struct Creation {
+        let directoryURL: URL
+        let cacheName: String
+
+        init(_ config: Config) {
+            let url: URL
+            if let directory = config.directory {
+                url = directory
+            } else {
+                url = config.fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            }
+
+            cacheName = "com.onevcat.Kingfisher.ImageCache.\(config.name)"
+            directoryURL = config.cachePathBlock(url, cacheName)
+        }
+    }
+}
