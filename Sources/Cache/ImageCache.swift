@@ -145,7 +145,7 @@ open class ImageCache {
     /// The default `ImageCache` object. Kingfisher will use this cache for its related methods if there is no
     /// other cache specified. The `name` of this default cache is "default", and you should not use this name
     /// for any of your customize cache.
-    public static let `default` = ImageCache(noThrowName: "default")
+    public static let `default` = ImageCache(name: "default")
 
 
     // MARK: Public Properties
@@ -213,9 +213,8 @@ open class ImageCache {
     /// - Parameter name: The name of cache object. It is used to setup disk cache directories and IO queue.
     ///                   You should not use the same `name` for different caches, otherwise, the disk storage would
     ///                   be conflicting to each other. The `name` should not be an empty string.
-    @available(*, deprecated, message: "When used for the first time while the disk is full, a crash would happen. Use `init(noThrowName:)` or the throwable `init(name:cacheDirectoryURL:) throws` instead.", renamed: "init(noThrowName:)")
     public convenience init(name: String) {
-        try! self.init(name: name, cacheDirectoryURL: nil, diskCachePathClosure: nil)
+        self.init(noThrowName: name, cacheDirectoryURL: nil, diskCachePathClosure: nil)
     }
 
     /// Creates an `ImageCache` with a given `name`, cache directory `path`
@@ -253,8 +252,8 @@ open class ImageCache {
 
     convenience init(
         noThrowName name: String,
-        cacheDirectoryURL: URL? = nil,
-        diskCachePathClosure: DiskCachePathClosure? = nil
+        cacheDirectoryURL: URL?,
+        diskCachePathClosure: DiskCachePathClosure?
     )
     {
         if name.isEmpty {
