@@ -2,6 +2,18 @@
 
 -----
 
+## [6.1.1 - SwiftUI Issues](https://github.com/onevcat/Kingfisher/releases/tag/6.1.1) (2021-02-17)
+
+#### Fix
+* Remove unnecessary queue dispatch when setting image result. This prevents image flickering when some situation. [#1615](https://github.com/onevcat/Kingfisher/pull/1615)
+* Now the `KF` builder methods also accept optional `URL` or `Source`. It aligns the syntax with the normal view extension methods. [#1617](https://github.com/onevcat/Kingfisher/pull/1617)
+* Fix an issue that wrong hash is calculated for `ImageBinder`. It might cause view state lost for a `KFImage`. [#1624](https://github.com/onevcat/Kingfisher/pull/1624)
+* Now the `ImageCache` will disable the disk storage when there is no free space on disk when creating the cache folder, instead of just crashing it. [#1628](https://github.com/onevcat/Kingfisher/pull/1628)
+* A workaround for `@State` lost when using a view inside another container in a `Lazy` stack or grid. [#1631](https://github.com/onevcat/Kingfisher/pull/1631)
+* Performance improvement for images with an non-up orientation in Exif when displaying in `KFImage`. [#1629](https://github.com/onevcat/Kingfisher/pull/1629)
+
+---
+
 ## [6.1.0 - SwiftUI Rework](https://github.com/onevcat/Kingfisher/releases/tag/6.1.0) (2021-02-01)
 
 #### Add
