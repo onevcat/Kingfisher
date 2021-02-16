@@ -147,6 +147,7 @@ open class ImageCache {
     /// for any of your customize cache.
     public static let `default` = ImageCache(name: "default")
 
+
     // MARK: Public Properties
     /// The `MemoryStorage.Backend` object used in this cache. This storage holds loaded images in memory with a
     /// reasonable expire duration and a maximum memory usage. To modify the configuration of a storage, just set
@@ -213,7 +214,7 @@ open class ImageCache {
     ///                   You should not use the same `name` for different caches, otherwise, the disk storage would
     ///                   be conflicting to each other. The `name` should not be an empty string.
     public convenience init(name: String) {
-        try! self.init(name: name, cacheDirectoryURL: nil, diskCachePathClosure: nil)
+        self.init(noThrowName: name, cacheDirectoryURL: nil, diskCachePathClosure: nil)
     }
 
     /// Creates an `ImageCache` with a given `name`, cache directory `path`
@@ -233,17 +234,55 @@ open class ImageCache {
     public convenience init(
         name: String,
         cacheDirectoryURL: URL?,
-        diskCachePathClosure: DiskCachePathClosure? = nil) throws
+        diskCachePathClosure: DiskCachePathClosure? = nil
+    ) throws
     {
         if name.isEmpty {
             fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
         }
 
+        let memoryStorage = ImageCache.createMemoryStorage()
+
+        let config = ImageCache.createConfig(
+            name: name, cacheDirectoryURL: cacheDirectoryURL, diskCachePathClosure: diskCachePathClosure
+        )
+        let diskStorage = try DiskStorage.Backend<Data>(config: config)
+        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
+    }
+
+    convenience init(
+        noThrowName name: String,
+        cacheDirectoryURL: URL?,
+        diskCachePathClosure: DiskCachePathClosure?
+    )
+    {
+        if name.isEmpty {
+            fatalError("[Kingfisher] You should specify a name for the cache. A cache with empty name is not permitted.")
+        }
+
+        let memoryStorage = ImageCache.createMemoryStorage()
+
+        let config = ImageCache.createConfig(
+            name: name, cacheDirectoryURL: cacheDirectoryURL, diskCachePathClosure: diskCachePathClosure
+        )
+        let diskStorage = DiskStorage.Backend<Data>(noThrowConfig: config, creatingDirectory: true)
+        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
+    }
+
+    private static func createMemoryStorage() -> MemoryStorage.Backend<KFCrossPlatformImage> {
         let totalMemory = ProcessInfo.processInfo.physicalMemory
         let costLimit = totalMemory / 4
         let memoryStorage = MemoryStorage.Backend<KFCrossPlatformImage>(config:
             .init(totalCostLimit: (costLimit > Int.max) ? Int.max : Int(costLimit)))
+        return memoryStorage
+    }
 
+    private static func createConfig(
+        name: String,
+        cacheDirectoryURL: URL?,
+        diskCachePathClosure: DiskCachePathClosure? = nil
+    ) -> DiskStorage.Config
+    {
         var diskConfig = DiskStorage.Config(
             name: name,
             sizeLimit: 0,
@@ -252,10 +291,7 @@ open class ImageCache {
         if let closure = diskCachePathClosure {
             diskConfig.cachePathBlock = closure
         }
-        let diskStorage = try DiskStorage.Backend<Data>(config: diskConfig)
-        diskConfig.cachePathBlock = nil
-
-        self.init(memoryStorage: memoryStorage, diskStorage: diskStorage)
+        return diskConfig
     }
     
     deinit {
