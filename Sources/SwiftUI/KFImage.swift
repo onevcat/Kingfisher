@@ -156,6 +156,11 @@ struct KFImageRenderer: View {
                     current, config in config(current)
                 }
                 .opacity(isLoaded ? 1.0 : 0.0)
+        } else if let image = binder.loadedImage {
+            configurations
+                .reduce(Image(crossPlatformImage: image)) {
+                    current, config in config(current)
+                }
         } else {
             Group {
                 if placeholder != nil {

@@ -48,6 +48,8 @@ extension KFImage {
 
         var isLoaded: Binding<Bool>
 
+        var loadedImage: KFCrossPlatformImage? = nil
+
         @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
         init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
             self.source = source
@@ -99,6 +101,7 @@ extension KFImage {
                         self.downloadTask = nil
                         switch result {
                         case .success(let value):
+                            self.loadedImage = value.image
                             let r = RetrieveImageResult(
                                 image: value.image, cacheType: value.cacheType, source: value.source, originalSource: value.originalSource
                             )
