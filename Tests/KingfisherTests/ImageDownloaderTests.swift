@@ -549,7 +549,7 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testExtralSessionDelegateHandler() {
+    func testExtraSessionDelegateHandler() {
         expectation = expectation(description: #function)
        
         downloader.addExtraSessionDelegateHandler(self)
