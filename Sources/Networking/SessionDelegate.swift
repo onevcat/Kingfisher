@@ -45,7 +45,7 @@ class SessionDelegate: NSObject {
 
     private var tasks: [URL: SessionDataTask] = [:]
     private let lock = NSLock()
-    public var extralHandler: URLSessionDataDelegate?
+    public var extraHandler: URLSessionDataDelegate?
 
     let onValidStatusCode = Delegate<Int, Bool>()
     let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
@@ -262,41 +262,41 @@ extension SessionDelegate: URLSessionDataDelegate {
     }
     
     
-    // MARK: - ExtralHandler
+    // MARK: - extraHandler
     @available(iOS 7.0, OSX 11.0, tvOS 9.0, watchOS 2.0, *)
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        extralHandler?.urlSessionDidFinishEvents?(forBackgroundURLSession: session)
+        extraHandler?.urlSessionDidFinishEvents?(forBackgroundURLSession: session)
     }
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        extralHandler?.urlSession?(session, didBecomeInvalidWithError: error)
+        extraHandler?.urlSession?(session, didBecomeInvalidWithError: error)
     }
     @available(iOS 11.0, OSX 10.13, tvOS 11.0, watchOS 4.0, *)
     func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
-        extralHandler?.urlSession?(session, taskIsWaitingForConnectivity: task)
+        extraHandler?.urlSession?(session, taskIsWaitingForConnectivity: task)
     }
     @available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *)
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
-        extralHandler?.urlSession?(session, task: task, didFinishCollecting: metrics)
+        extraHandler?.urlSession?(session, task: task, didFinishCollecting: metrics)
     }
     @available(iOS 9.0, OSX 10.11, tvOS 9.0, watchOS 2.0, *)
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome streamTask: URLSessionStreamTask) {
-        extralHandler?.urlSession?(session, dataTask: dataTask, didBecome: streamTask)
+        extraHandler?.urlSession?(session, dataTask: dataTask, didBecome: streamTask)
     }
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome downloadTask: URLSessionDownloadTask) {
-        extralHandler?.urlSession?(session, dataTask: dataTask, didBecome: downloadTask)
+        extraHandler?.urlSession?(session, dataTask: dataTask, didBecome: downloadTask)
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
-        extralHandler?.urlSession?(session, task: task, needNewBodyStream: completionHandler)
+        extraHandler?.urlSession?(session, task: task, needNewBodyStream: completionHandler)
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        extralHandler?.urlSession?(session, task: task, didSendBodyData: bytesSent, totalBytesSent: totalBytesSent, totalBytesExpectedToSend: totalBytesExpectedToSend)
+        extraHandler?.urlSession?(session, task: task, didSendBodyData: bytesSent, totalBytesSent: totalBytesSent, totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
-        extralHandler?.urlSession?(session, dataTask: dataTask, willCacheResponse: proposedResponse, completionHandler: completionHandler)
+        extraHandler?.urlSession?(session, dataTask: dataTask, willCacheResponse: proposedResponse, completionHandler: completionHandler)
     }
     @available(iOS 11.0, OSX 10.13, tvOS 11.0, watchOS 4.0, *)
     func urlSession(_ session: URLSession, task: URLSessionTask, willBeginDelayedRequest request: URLRequest, completionHandler: @escaping (URLSession.DelayedRequestDisposition, URLRequest?) -> Void) {
-        extralHandler?.urlSession?(session, task: task, willBeginDelayedRequest: request, completionHandler: completionHandler)
+        extraHandler?.urlSession?(session, task: task, willBeginDelayedRequest: request, completionHandler: completionHandler)
     }
     
 }
