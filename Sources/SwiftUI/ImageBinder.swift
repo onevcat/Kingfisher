@@ -48,7 +48,7 @@ extension KFImage {
 
         var isLoaded: Binding<Bool>
 
-        var loadedImage: KFCrossPlatformImage? = nil
+        weak var loadedImage: KFCrossPlatformImage? = nil
 
         @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
         init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
