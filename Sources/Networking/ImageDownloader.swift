@@ -166,8 +166,9 @@ open class ImageDownloader {
     }
     
     /// You could set the extra handler before a downloading task starts.
-    public func addExtraSessionDelegateHandler(_ handler: URLSessionDataDelegate) {
-        sessionDelegate.extraHandler = handler
+    public weak var extraSessionDelegateHandler:URLSessionDataDelegate? {
+        set {sessionDelegate.setExtraHandler(newValue)}
+        get {return sessionDelegate.getExtraHandler()}
     }
     
     deinit { session.invalidateAndCancel() }
