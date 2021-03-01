@@ -552,8 +552,7 @@ class ImageDownloaderTests: XCTestCase {
     func testExtraSessionDelegateHandler() {
         expectation = expectation(description: #function)
        
-        downloader.addExtraSessionDelegateHandler(self)
-       
+        downloader.extraSessionDelegateHandler = self
         let url = testURLs[0]
         stub(url, data: testImageData)
         
