@@ -40,7 +40,9 @@ extension KFImage {
 
         var downloadTask: DownloadTask?
 
-        var loadingOrSucceeded: Bool = false
+        var loadingOrSucceeded: Bool {
+            return downloadTask != nil || loadedImage != nil
+        }
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
@@ -48,7 +50,7 @@ extension KFImage {
 
         var isLoaded: Binding<Bool>
 
-        var loadedImage: KFCrossPlatformImage? = nil
+        weak var loadedImage: KFCrossPlatformImage? = nil
 
         @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
         init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
@@ -77,8 +79,6 @@ extension KFImage {
         func start(_ done: @escaping (Result<RetrieveImageResult, KingfisherError>) -> Void) {
 
             guard !loadingOrSucceeded else { return }
-
-            loadingOrSucceeded = true
 
             guard let source = source else {
                 CallbackQueue.mainCurrentOrAsync.execute {
@@ -114,7 +114,6 @@ extension KFImage {
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
-                            self.loadingOrSucceeded = false
                             CallbackQueue.mainCurrentOrAsync.execute {
                                 done(.failure(error))
                             }
