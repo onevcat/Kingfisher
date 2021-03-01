@@ -43,7 +43,6 @@ extension KFImage {
         var loadingOrSucceeded: Bool {
             return downloadTask != nil || loadedImage != nil
         }
-        var loading = false
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
