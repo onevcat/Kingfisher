@@ -57,7 +57,7 @@ public struct KFImage: View {
     ///               for more.
     @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
     public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
-        let binder = KFImage.ImageBinder(source: source, options: options, isLoaded: isLoaded)
+        let binder = KFImage.ImageBinder(source: source, options: options)
         self.init(binder: binder)
     }
 
@@ -79,11 +79,8 @@ public struct KFImage: View {
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameters:
     ///   - source: The image `Source` defining where to load the target image.
-    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
-    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
-    ///               wrapped value from outside.
-    public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
-        let binder = ImageBinder(source: source, isLoaded: isLoaded)
+    public init(source: Source?) {
+        let binder = ImageBinder(source: source)
         self.init(binder: binder)
     }
 
@@ -127,10 +124,9 @@ extension KFImage {
 struct KFImageRenderer: View {
 
     /// An image binder that manages loading and cancelling image related task.
-    private let binder: KFImage.ImageBinder
+    @ObservedObject private var binder: KFImage.ImageBinder
 
-    @State private var loadingResult: Result<RetrieveImageResult, KingfisherError>?
-    @State private var isLoaded = false
+
 
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
@@ -150,16 +146,11 @@ struct KFImageRenderer: View {
 
     /// Declares the content and behavior of this view.
     var body: some View {
-        if case .success(let r) = loadingResult {
+        if let image = binder.loadedImage {
             configurations
-                .reduce(imageFromResult(r.image)) {
-                    current, config in config(current)
-                }
-                .opacity(isLoaded ? 1.0 : 0.0)
-        } else if let image = binder.loadedImage {
-            configurations
-                .reduce(Image(crossPlatformImage: image)) {
-                    current, config in config(current)
+                .reduce(image) {
+                    current,
+                    config in config(current)
                 }
         } else {
             Group {
@@ -170,22 +161,7 @@ struct KFImageRenderer: View {
                 }
             }
             .onAppear { [weak binder = self.binder] in
-                guard let binder = binder else {
-                    return
-                }
-                if !binder.loadingOrSucceeded {
-                    binder.start { result in
-                        self.loadingResult = result
-                        switch result {
-                        case .success(let value):
-                            let animation = fadeTransitionDuration(cacheType: value.cacheType)
-                                .map { duration in Animation.linear(duration: duration) }
-                            withAnimation(animation) { isLoaded = true }
-                        case .failure(_):
-                            break
-                        }
-                    }
-                }
+                binder?.start()
             }
             .onDisappear { [weak binder = self.binder] in
                 guard let binder = binder else {
@@ -197,72 +173,7 @@ struct KFImageRenderer: View {
             }
         }
     }
-
-    private func imageFromResult(_ resultImage: KFCrossPlatformImage) -> Image {
-        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-            return Image(crossPlatformImage: resultImage)
-        } else {
-            #if canImport(UIKit)
-            // The CG image is used to solve #1395
-            // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
-            // by `Image.init(uiImage:)`. (The orientation information should be already contained in
-            // a `UIImage`)
-            // https://github.com/onevcat/Kingfisher/issues/1395
-            //
-            // This issue happens on iOS 13 and was fixed by Apple from iOS 14.
-            if let cgImage = resultImage.cgImage {
-                return Image(decorative: cgImage, scale: resultImage.scale, orientation: resultImage.imageOrientation.toSwiftUI())
-            } else {
-                return Image(crossPlatformImage: resultImage)
-            }
-            #else
-            return Image(crossPlatformImage: resultImage)
-            #endif
-
-        }
-    }
-
-    private func shouldApplyFade(cacheType: CacheType) -> Bool {
-        binder.options.forceTransition || cacheType == .none
-    }
-
-    private func fadeTransitionDuration(cacheType: CacheType) -> TimeInterval? {
-        shouldApplyFade(cacheType: cacheType)
-            ? binder.options.transition.fadeDuration
-            : nil
-    }
 }
-
-extension ImageTransition {
-    // Only for fade effect in SwiftUI.
-    fileprivate var fadeDuration: TimeInterval? {
-        switch self {
-        case .fade(let duration):
-            return duration
-        default:
-            return nil
-        }
-    }
-}
-
-#if canImport(UIKit)
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension UIImage.Orientation {
-    func toSwiftUI() -> Image.Orientation {
-        switch self {
-        case .down: return .down
-        case .up: return .up
-        case .left: return .left
-        case .right: return .right
-        case .upMirrored: return .upMirrored
-        case .downMirrored: return .downMirrored
-        case .leftMirrored: return .leftMirrored
-        case .rightMirrored: return .rightMirrored
-        @unknown default: return .up
-        }
-    }
-}
-#endif
 
 // MARK: - Image compatibility.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
