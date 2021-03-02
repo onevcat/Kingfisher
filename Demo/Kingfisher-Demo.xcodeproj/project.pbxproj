@@ -44,6 +44,9 @@
 		D12EB84024DDB9E100329EE1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12EB83F24DDB9E000329EE1 /* LaunchScreen.storyboard */; };
 		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D16CC3D824E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */; };
+		D198F41E25EDC11500C53E0D /* LazyVStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */; };
+		D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */; };
+		D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D198F42125EDC4B900C53E0D /* GridDemo.swift */; };
 		D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA221A1879600263AD8 /* MainViewController.swift */; };
 		D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
 		D1A1CCA821A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */; };
@@ -56,9 +59,9 @@
 		D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */; };
 		D1F06F3921AAF1EE000B1C38 /* IndicatorCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3821AAF1EE000B1C38 /* IndicatorCollectionViewController.swift */; };
 		D1F78A5F2589F0AA00930759 /* SwiftUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A5E2589F0AA00930759 /* SwiftUIViewController.swift */; };
-		D1F78A642589F17200930759 /* SwiftUIList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A612589F17200930759 /* SwiftUIList.swift */; };
+		D1F78A642589F17200930759 /* ListDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A612589F17200930759 /* ListDemo.swift */; };
 		D1F78A652589F17200930759 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A622589F17200930759 /* MainView.swift */; };
-		D1F78A662589F17200930759 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A632589F17200930759 /* SwiftUIView.swift */; };
+		D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A632589F17200930759 /* SingleViewDemo.swift */; };
 		D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -182,6 +185,9 @@
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageGeneratorViewController.swift; sourceTree = "<group>"; };
+		D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyVStackDemo.swift; sourceTree = "<group>"; };
+		D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizingAnimationDemo.swift; sourceTree = "<group>"; };
+		D198F42125EDC4B900C53E0D /* GridDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridDemo.swift; sourceTree = "<group>"; };
 		D1A1CCA221A1879600263AD8 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1A1CCA621A18A3200263AD8 /* UIViewController+KingfisherOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+KingfisherOperation.swift"; sourceTree = "<group>"; };
 		D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewController.swift; sourceTree = "<group>"; };
@@ -192,9 +198,9 @@
 		D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFViewController.swift; sourceTree = "<group>"; };
 		D1F06F3821AAF1EE000B1C38 /* IndicatorCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorCollectionViewController.swift; sourceTree = "<group>"; };
 		D1F78A5E2589F0AA00930759 /* SwiftUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewController.swift; sourceTree = "<group>"; };
-		D1F78A612589F17200930759 /* SwiftUIList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIList.swift; sourceTree = "<group>"; };
+		D1F78A612589F17200930759 /* ListDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDemo.swift; sourceTree = "<group>"; };
 		D1F78A622589F17200930759 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		D1F78A632589F17200930759 /* SwiftUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
+		D1F78A632589F17200930759 /* SingleViewDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleViewDemo.swift; sourceTree = "<group>"; };
 		D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighResolutionCollectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -397,8 +403,11 @@
 			isa = PBXGroup;
 			children = (
 				D1F78A622589F17200930759 /* MainView.swift */,
-				D1F78A612589F17200930759 /* SwiftUIList.swift */,
-				D1F78A632589F17200930759 /* SwiftUIView.swift */,
+				D1F78A612589F17200930759 /* ListDemo.swift */,
+				D198F42125EDC4B900C53E0D /* GridDemo.swift */,
+				D1F78A632589F17200930759 /* SingleViewDemo.swift */,
+				D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */,
+				D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */,
 			);
 			path = SwiftUIViews;
 			sourceTree = "<group>";
@@ -651,16 +660,19 @@
 				D1CE1BD021A1AFA300419000 /* TransitionViewController.swift in Sources */,
 				D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */,
 				D1F06F3921AAF1EE000B1C38 /* IndicatorCollectionViewController.swift in Sources */,
-				D1F78A662589F17200930759 /* SwiftUIView.swift in Sources */,
+				D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */,
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
+				D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
-				D1F78A642589F17200930759 /* SwiftUIList.swift in Sources */,
+				D1F78A642589F17200930759 /* ListDemo.swift in Sources */,
+				D198F41E25EDC11500C53E0D /* LazyVStackDemo.swift in Sources */,
 				D1E4CF5421BACBA6004D029D /* ImageDataProviderCollectionViewController.swift in Sources */,
 				D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */,
 				D1F78A652589F17200930759 /* MainView.swift in Sources */,
 				D1F78A5F2589F0AA00930759 /* SwiftUIViewController.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
+				D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */,
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,

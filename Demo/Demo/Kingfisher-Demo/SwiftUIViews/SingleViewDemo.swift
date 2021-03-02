@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  SingleViewDemo.swift
 //  Kingfisher
 //
 //  Created by Wei Wang on 2019/06/18.
@@ -28,7 +28,7 @@ import Kingfisher
 import SwiftUI
 
 @available(iOS 13.0, *)
-struct SwiftUIView : View {
+struct SingleViewDemo : View {
 
     @State private var index = 1
 
@@ -59,6 +59,7 @@ struct SwiftUIView : View {
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
                 .shadow(radius: 5)
+                .frame(width: 320, height: 320)
 
             Button(action: {
                 self.index = (self.index % 10) + 1
@@ -72,8 +73,8 @@ struct SwiftUIView : View {
 }
 
 @available(iOS 13.0, *)
-struct SwiftUIView_Previews : PreviewProvider {
+struct SingleViewDemo_Previews : PreviewProvider {
     static var previews: some View {
-        SwiftUIView()
+        SingleViewDemo()
     }
 }

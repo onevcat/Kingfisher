@@ -1,10 +1,10 @@
 //
-//  MainView.swift
+//  LazyVStackDemo.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/08/07.
+//  Created by onevcat on 2021/03/02.
 //
-//  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,35 +25,23 @@
 //  THE SOFTWARE.
 
 import SwiftUI
-import Kingfisher
 
-@available(iOS 13.0, *)
-struct MainView: View {
+@available(iOS 14.0, *)
+struct LazyVStackDemo: View {
     var body: some View {
-        List {
-            Button(
-                action: {
-                    KingfisherManager.shared.cache.clearMemoryCache()
-                    KingfisherManager.shared.cache.clearDiskCache()
-                },
-                label: {
-                    Text("Clear Cache").foregroundColor(.blue)
+        ScrollView {
+            LazyVStack {
+                ForEach(1..<700) { i in
+                    ImageCell(index: i).frame(width: 300, height: 300)
                 }
-            )
-            NavigationLink(destination: SingleViewDemo()) { Text("Basic Image") }
-            NavigationLink(destination: SizingAnimationDemo()) { Text("Sizing Toggle") }
-            NavigationLink(destination: ListDemo()) { Text("List") }
-            if #available(iOS 14.0, *) {
-                NavigationLink(destination: LazyVStackDemo()) { Text("Stack") }
-                NavigationLink(destination: GridDemo()) { Text("Grid") }
             }
-        }.navigationBarTitle(Text("SwiftUI Sample"))
+        }.navigationBarTitle(Text("Lazy Stack"), displayMode: .inline)
     }
 }
 
-@available(iOS 13.0, *)
-struct MainView_Previews: PreviewProvider {
+@available(iOS 14.0, *)
+struct LazyVStackDemo_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        LazyVStackDemo()
     }
 }
