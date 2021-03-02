@@ -33,7 +33,7 @@ extension KFImage {
 
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
     /// image downloading and progress reporting based on `KingfisherManager`.
-    class ImageBinder {
+    class ImageBinder: ObservableObject {
 
         let source: Source?
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
@@ -50,7 +50,8 @@ extension KFImage {
 
         var isLoaded: Binding<Bool>
 
-        weak var loadedImage: KFCrossPlatformImage? = nil
+        @Published var loaded = false
+        @Published var loadedImage: KFCrossPlatformImage? = nil
 
         @available(*, deprecated, message: "The `options` version is deprecated And will be removed soon.")
         init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool>) {
@@ -76,7 +77,7 @@ extension KFImage {
             self.isLoaded = isLoaded
         }
 
-        func start(_ done: @escaping (Result<RetrieveImageResult, KingfisherError>) -> Void) {
+        func start() {
 
             guard !loadingOrSucceeded else { return }
 
@@ -102,21 +103,17 @@ extension KFImage {
                         switch result {
                         case .success(let value):
                             self.loadedImage = value.image
-                            let r = RetrieveImageResult(
-                                image: value.image, cacheType: value.cacheType, source: value.source, originalSource: value.originalSource
-                            )
-                            CallbackQueue.mainCurrentOrAsync.execute {
-                                done(.success(r))
-                            }
+
+                            self.isLoaded.wrappedValue = true
+
+                            let animation = self.fadeTransitionDuration(cacheType: value.cacheType)
+                                .map { duration in Animation.linear(duration: duration) }
+                            withAnimation(animation) { self.loaded = true }
 
                             CallbackQueue.mainAsync.execute {
-                                self.isLoaded.wrappedValue = true
                                 self.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
-                            CallbackQueue.mainCurrentOrAsync.execute {
-                                done(.failure(error))
-                            }
                             CallbackQueue.mainAsync.execute {
                                 self.onFailureDelegate.call(error)
                             }
@@ -127,6 +124,17 @@ extension KFImage {
         /// Cancels the download task if it is in progress.
         func cancel() {
             downloadTask?.cancel()
+            downloadTask = nil
+        }
+
+        private func shouldApplyFade(cacheType: CacheType) -> Bool {
+            options.forceTransition || cacheType == .none
+        }
+
+        private func fadeTransitionDuration(cacheType: CacheType) -> TimeInterval? {
+            shouldApplyFade(cacheType: cacheType)
+                ? options.transition.fadeDuration
+                : nil
         }
     }
 }
@@ -140,6 +148,18 @@ extension KFImage.ImageBinder: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(source)
         hasher.combine(options.processor.identifier)
+    }
+}
+
+extension ImageTransition {
+    // Only for fade effect in SwiftUI.
+    fileprivate var fadeDuration: TimeInterval? {
+        switch self {
+        case .fade(let duration):
+            return duration
+        default:
+            return nil
+        }
     }
 }
 #endif

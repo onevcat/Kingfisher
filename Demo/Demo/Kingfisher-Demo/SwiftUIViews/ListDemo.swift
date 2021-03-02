@@ -34,7 +34,8 @@ struct ListDemo : View {
 
     var body: some View {
         List(index) { i in
-            ImageCell(index: i).frame(width: 300, height: 300)
+            ImageCell(index: i)
+                .frame(height: 300)
         }.navigationBarTitle(Text("SwiftUI List"), displayMode: .inline)
     }
 }
