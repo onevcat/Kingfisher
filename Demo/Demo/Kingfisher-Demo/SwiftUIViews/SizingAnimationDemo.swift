@@ -35,10 +35,11 @@ struct SizingAnimationDemo: View {
     var body: some View {
         VStack {
             KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-1.jpg")!)
+                .loadImmediately()
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageSize, height: imageSize)
-                .clipShape(RoundedRectangle(cornerRadius: isPlaying ? 0 : 50, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .frame(width: 350, height: 350)
             Button(action: {
                 playButtonAction()
