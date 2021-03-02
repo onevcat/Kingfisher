@@ -102,13 +102,14 @@ extension KFImage {
                         self.downloadTask = nil
                         switch result {
                         case .success(let value):
-                            self.loadedImage = value.image
 
-                            self.isLoaded.wrappedValue = true
-
-                            let animation = self.fadeTransitionDuration(cacheType: value.cacheType)
-                                .map { duration in Animation.linear(duration: duration) }
-                            withAnimation(animation) { self.loaded = true }
+                            CallbackQueue.mainCurrentOrAsync.execute {
+                                self.loadedImage = value.image
+                                self.isLoaded.wrappedValue = true
+                                let animation = self.fadeTransitionDuration(cacheType: value.cacheType)
+                                    .map { duration in Animation.linear(duration: duration) }
+                                withAnimation(animation) { self.loaded = true }
+                            }
 
                             CallbackQueue.mainAsync.execute {
                                 self.onSuccessDelegate.call(value)
