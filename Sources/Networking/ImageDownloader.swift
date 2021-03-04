@@ -166,9 +166,9 @@ open class ImageDownloader {
     }
     
     /// You could set the extra handler before a downloading task starts.
-    public weak var extraSessionDelegateHandler:URLSessionDataDelegate? {
-        set {sessionDelegate.setExtraHandler(newValue)}
-        get {return sessionDelegate.getExtraHandler()}
+    public var extraSessionDelegateHandler:URLSessionDataDelegate? {
+        set {sessionDelegate.extraHandler = newValue}
+        get {return sessionDelegate.extraHandler}
     }
     
     deinit { session.invalidateAndCancel() }
