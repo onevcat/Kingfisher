@@ -1,10 +1,10 @@
 //
-//  MainView.swift
+//  GridDemo.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/08/07.
+//  Created by onevcat on 2021/03/02.
 //
-//  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,35 +25,41 @@
 //  THE SOFTWARE.
 
 import SwiftUI
-import Kingfisher
 
-@available(iOS 13.0, *)
-struct MainView: View {
+@available(iOS 14.0, *)
+struct GridDemo: View {
+
+    @State var columns = [
+        GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
+    ]
     var body: some View {
-        List {
-            Button(
-                action: {
-                    KingfisherManager.shared.cache.clearMemoryCache()
-                    KingfisherManager.shared.cache.clearDiskCache()
-                },
-                label: {
-                    Text("Clear Cache").foregroundColor(.blue)
+        ScrollView {
+            LazyVGrid(columns: columns) {
+                ForEach(1..<700) { i in
+                    ImageCell(index: i).frame(height: columns.count == 1 ? 300 : 150)
                 }
-            )
-            NavigationLink(destination: SingleViewDemo()) { Text("Basic Image") }
-            NavigationLink(destination: SizingAnimationDemo()) { Text("Sizing Toggle") }
-            NavigationLink(destination: ListDemo()) { Text("List") }
-            if #available(iOS 14.0, *) {
-                NavigationLink(destination: LazyVStackDemo()) { Text("Stack") }
-                NavigationLink(destination: GridDemo()) { Text("Grid") }
             }
-        }.navigationBarTitle(Text("SwiftUI Sample"))
+        }.navigationBarTitle(Text("Grid"))
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+
+                    withAnimation(Animation.easeInOut(duration: 0.25)) {
+                        self.columns = Array(repeating: .init(.flexible()), count: self.columns.count % 4 + 1)
+                    }
+                }) {
+                    Image(systemName: "square.grid.2x2")
+                        .font(.title)
+                        .foregroundColor(.primary)
+                }
+            }
+        }
     }
 }
 
-@available(iOS 13.0, *)
-struct MainView_Previews: PreviewProvider {
+@available(iOS 14.0, *)
+struct GridDemo_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        GridDemo()
     }
 }

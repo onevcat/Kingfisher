@@ -217,8 +217,8 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with changes applied.
     ///
     /// - Note:
-    /// This option does not affect the callbacks for UI related extension methods. You will always get the
-    /// callbacks called from main queue.
+    /// This option does not affect the callbacks for UI related extension methods or `KFImage` result handlers.
+    /// You will always get the callbacks called from main queue.
     public func callbackQueue(_ queue: CallbackQueue) -> Self {
         options.callbackQueue = queue
         return self
