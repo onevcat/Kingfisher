@@ -45,7 +45,7 @@ class SessionDelegate: NSObject {
 
     private var tasks: [URL: SessionDataTask] = [:]
     private let lock = NSLock()
-    private weak var extraHandler: URLSessionDataDelegate?
+    weak var extraHandler: URLSessionDataDelegate?
 
     let onValidStatusCode = Delegate<Int, Bool>()
     let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
@@ -145,14 +145,6 @@ class SessionDelegate: NSObject {
         let task = tasks[url]
         lock.unlock()
         task?.forceCancel()
-    }
-    
-    /// You could set the extra handler before a downloading task starts.
-    func setExtraHandler(_ handler: URLSessionDataDelegate?) {
-        extraHandler = handler
-    }
-    func getExtraHandler() -> URLSessionDataDelegate? {
-        return extraHandler
     }
     
 }
