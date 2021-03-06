@@ -465,7 +465,7 @@ open class ImageCache {
         let computedKey = key.computedKey(with: identifier)
 
         if fromMemory {
-            try? memoryStorage.remove(forKey: computedKey)
+            memoryStorage.remove(forKey: computedKey)
         }
         
         if fromDisk {
@@ -633,7 +633,7 @@ open class ImageCache {
     
     /// Clears the memory storage of this cache.
     @objc public func clearMemoryCache() {
-        try? memoryStorage.removeAll()
+        memoryStorage.removeAll()
     }
     
     /// Clears the disk storage of this cache. This is an async operation.

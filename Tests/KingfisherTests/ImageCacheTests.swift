@@ -345,7 +345,7 @@ class ImageCacheTests: XCTestCase {
             var cacheType = self.cache.imageCachedType(forKey: key)
             XCTAssertEqual(cacheType, .memory)
             
-            try! self.cache.memoryStorage.remove(forKey: key)
+            self.cache.memoryStorage.remove(forKey: key)
             cacheType = self.cache.imageCachedType(forKey: key)
             XCTAssertEqual(cacheType, .disk)
             
@@ -368,7 +368,7 @@ class ImageCacheTests: XCTestCase {
             var cacheType = self.cache.imageCachedType(forKey: key)
             XCTAssertEqual(cacheType, .memory)
             
-            try! self.cache.memoryStorage.remove(forKey: key)
+            self.cache.memoryStorage.remove(forKey: key)
             cacheType = self.cache.imageCachedType(forKey: key)
             XCTAssertEqual(cacheType, .disk)
             
