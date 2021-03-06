@@ -116,7 +116,14 @@ public enum DiskStorage {
             }
         }
 
-        func store(
+        /// Stores a value to the storage under the specified key and expiration policy.
+        /// - Parameters:
+        ///   - value: The value to be stored.
+        ///   - key: The key to which the `value` will be stored. If there is already a value under the key,
+        ///          the old value will be overwritten by `value`.
+        ///   - expiration: The expiration policy used by this store action.
+        /// - Throws: An error during converting the value to a data format or during writing it to disk.
+        public func store(
             value: T,
             forKey key: String,
             expiration: StorageExpiration? = nil) throws
@@ -170,7 +177,13 @@ public enum DiskStorage {
             }
         }
 
-        func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
+        /// Gets a value from the storage.
+        /// - Parameters:
+        ///   - key: The cache key of value.
+        ///   - extendingExpiration: The expiration policy used by this getting action.
+        /// - Throws: An error during converting the data to a value or during operation of disk files.
+        /// - Returns: The value under `key` if it is valid and found in the storage. Otherwise, `nil`.
+        public func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
             return try value(forKey: key, referenceDate: Date(), actuallyLoad: true, extendingExpiration: extendingExpiration)
         }
 
@@ -224,11 +237,28 @@ public enum DiskStorage {
             }
         }
 
-        func isCached(forKey key: String) -> Bool {
+        /// Whether there is valid cached data under a given key.
+        /// - Parameter key: The cache key of value.
+        /// - Returns: If there is valid data under the key, `true`. Otherwise, `false`.
+        ///
+        /// - Note:
+        /// This method does not actually load the data from disk, so it is faster than directly loading the cached value
+        /// by checking the nullability of `value(forKey:extendingExpiration:)` method.
+        ///
+        public func isCached(forKey key: String) -> Bool {
             return isCached(forKey: key, referenceDate: Date())
         }
 
-        func isCached(forKey key: String, referenceDate: Date) -> Bool {
+        /// Whether there is valid cached data under a given key and a reference date.
+        /// - Parameters:
+        ///   - key: The cache key of value.
+        ///   - referenceDate: A reference date to check whether the cache is still valid.
+        /// - Returns: If there is valid data under the key, `true`. Otherwise, `false`.
+        ///
+        /// - Note:
+        /// If you pass `Date()` to `referenceDate`, this method is identical to `isCached(forKey:)`. Use the
+        /// `referenceDate` to determine whether the cache is still valid for a future date.
+        public func isCached(forKey key: String, referenceDate: Date) -> Bool {
             do {
                 let result = try value(
                     forKey: key,
@@ -242,7 +272,10 @@ public enum DiskStorage {
             }
         }
 
-        func remove(forKey key: String) throws {
+        /// Removes a value from a specified key.
+        /// - Parameter key: The cache key of value.
+        /// - Throws: An error during removing the value.
+        public func remove(forKey key: String) throws {
             let fileURL = cacheFileURL(forKey: key)
             try removeFile(at: fileURL)
         }
@@ -251,7 +284,9 @@ public enum DiskStorage {
             try config.fileManager.removeItem(at: url)
         }
 
-        func removeAll() throws {
+        /// Removes all values in this storage.
+        /// - Throws: An error during removing the values.
+        public func removeAll() throws {
             try removeAll(skipCreatingDirectory: false)
         }
 
@@ -264,12 +299,13 @@ public enum DiskStorage {
 
         /// The URL of the cached file with a given computed `key`.
         ///
+        /// - Parameter key: The final computed key used when caching the image. Please note that usually this is not
+        /// the `cacheKey` of an image `Source`. It is the computed key with processor identifier considered.
+        ///
         /// - Note:
         /// This method does not guarantee there is an image already cached in the returned URL. It just gives your
         /// the URL that the image should be if it exists in disk storage, with the give key.
         ///
-        /// - Parameter key: The final computed key used when caching the image. Please note that usually this is not
-        /// the `cacheKey` of an image `Source`. It is the computed key with processor identifier considered.
         public func cacheFileURL(forKey key: String) -> URL {
             let fileName = cacheFileName(forKey: key)
             return directoryURL.appendingPathComponent(fileName, isDirectory: false)
@@ -305,7 +341,14 @@ public enum DiskStorage {
             return urls
         }
 
-        func removeExpiredValues(referenceDate: Date = Date()) throws -> [URL] {
+        /// Removes all expired values from this storage.
+        /// - Throws: A file manager error during removing the file.
+        /// - Returns: The URLs for removed files.
+        public func removeExpiredValues() throws -> [URL] {
+            return try removeExpiredValues(referenceDate: Date())
+        }
+
+        func removeExpiredValues(referenceDate: Date) throws -> [URL] {
             let propertyKeys: [URLResourceKey] = [
                 .isDirectoryKey,
                 .contentModificationDateKey
@@ -330,6 +373,11 @@ public enum DiskStorage {
             return expiredFiles
         }
 
+        /// Removes all size exceeded values from this storage.
+        /// - Throws: A file manager error during removing the file.
+        /// - Returns: The URLs for removed files.
+        ///
+        /// - Note: This method checks `config.sizeLimit` and remove cached files in an LRU (Least Recently Used) way.
         func removeSizeExceededValues() throws -> [URL] {
 
             if config.sizeLimit == 0 { return [] } // Back compatible. 0 means no limit.
@@ -364,8 +412,8 @@ public enum DiskStorage {
             return removed
         }
 
-        /// Get the total file size of the folder in bytes.
-        func totalSize() throws -> UInt {
+        /// Gets the total file size of the folder in bytes.
+        public func totalSize() throws -> UInt {
             let propertyKeys: [URLResourceKey] = [.fileSizeKey]
             let urls = try allFileURLs(for: propertyKeys)
             let keys = Set(propertyKeys)
