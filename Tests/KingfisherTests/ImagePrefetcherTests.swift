@@ -221,7 +221,7 @@ class ImagePrefetcherTests: XCTestCase {
         let key = testKeys[0]
         cache.store(KFCrossPlatformImage(), forKey: key)
         cache.store(testImage, forKey: key) { result in
-            try! cache.memoryStorage.remove(forKey: key)
+            cache.memoryStorage.remove(forKey: key)
             
             XCTAssertEqual(cache.imageCachedType(forKey: key), .disk)
             
@@ -253,7 +253,7 @@ class ImagePrefetcherTests: XCTestCase {
         let key = testKeys[0]
 
         cache.store(testImage, forKey: key) { result in
-            try! cache.memoryStorage.remove(forKey: key)
+            cache.memoryStorage.remove(forKey: key)
             
             XCTAssertEqual(cache.imageCachedType(forKey: key), .disk)
             
