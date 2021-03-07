@@ -63,36 +63,36 @@ class MemoryStorageTests: XCTestCase {
     func testStoreAndGetValue() {
         XCTAssertFalse(storage.isCached(forKey: "1"))
 
-        try! storage.store(value: 1, forKey: "1")
+        storage.store(value: 1, forKey: "1")
 
         XCTAssertTrue(storage.isCached(forKey: "1"))
         XCTAssertEqual(storage.value(forKey: "1"), 1)
     }
 
     func testStoreValueOverwritting() {
-        try! storage.store(value: 1, forKey: "1")
+        storage.store(value: 1, forKey: "1")
         XCTAssertEqual(storage.value(forKey: "1"), 1)
 
-        try! storage.store(value: 100, forKey: "1")
+        storage.store(value: 100, forKey: "1")
         XCTAssertEqual(storage.value(forKey: "1"), 100)
     }
 
     func testRemoveValue() {
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        try! storage.store(value: 1, forKey: "1")
+        storage.store(value: 1, forKey: "1")
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
-        try! storage.remove(forKey: "1")
+        storage.remove(forKey: "1")
         XCTAssertFalse(storage.isCached(forKey: "1"))
     }
 
     func testRemoveAllValues() {
-        try! storage.store(value: 1, forKey: "1")
-        try! storage.store(value: 2, forKey: "2")
+        storage.store(value: 1, forKey: "1")
+        storage.store(value: 2, forKey: "2")
         XCTAssertTrue(storage.isCached(forKey: "1"))
         XCTAssertTrue(storage.isCached(forKey: "2"))
 
-        try! storage.removeAll()
+        storage.removeAll()
         XCTAssertFalse(storage.isCached(forKey: "1"))
         XCTAssertFalse(storage.isCached(forKey: "2"))
     }
@@ -101,11 +101,11 @@ class MemoryStorageTests: XCTestCase {
         let exp = expectation(description: #function)
 
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        try! storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
         XCTAssertFalse(storage.isCached(forKey: "2"))
-        try! storage.store(value: 2, forKey: "2")
+        storage.store(value: 2, forKey: "2")
         XCTAssertTrue(storage.isCached(forKey: "2"))
 
         delay(0.2) {
@@ -126,7 +126,7 @@ class MemoryStorageTests: XCTestCase {
         storage.config.expiration = .seconds(0.1)
 
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        try! storage.store(value: 1, forKey: "1")
+        storage.store(value: 1, forKey: "1")
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
         delay(0.2) {
@@ -143,7 +143,7 @@ class MemoryStorageTests: XCTestCase {
         let exp = expectation(description: #function)
         
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        try! storage.store(value: 1, forKey: "1", expiration: .seconds(1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
         
         delay(0.1) {
@@ -169,7 +169,7 @@ class MemoryStorageTests: XCTestCase {
         let exp = expectation(description: #function)
         
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        try! storage.store(value: 1, forKey: "1", expiration: .seconds(1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
         
         delay(0.1) {
@@ -194,7 +194,7 @@ class MemoryStorageTests: XCTestCase {
         let exp = expectation(description: #function)
 
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        try! storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
         delay(0.2) {
@@ -215,7 +215,7 @@ class MemoryStorageTests: XCTestCase {
         let exp = expectation(description: #function)
 
         let expiration = StorageExpiration.seconds(0.5)
-        try! storage.store(value: 1, forKey: "1", expiration: expiration)
+        storage.store(value: 1, forKey: "1", expiration: expiration)
 
         delay(0.3) {
             // This should extend the expiration to (0.3 + 0.5) from initially created.
@@ -240,7 +240,7 @@ class MemoryStorageTests: XCTestCase {
         let config = MemoryStorage.Config(totalCostLimit: 3, cleanInterval: 0.1)
         storage = MemoryStorage.Backend(config: config)
 
-        try! storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
         XCTAssertEqual(self.storage.keys.count, 1)
         
