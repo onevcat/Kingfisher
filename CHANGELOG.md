@@ -2,6 +2,20 @@
 
 -----
 
+## [6.2.0 - Spring Release](https://github.com/onevcat/Kingfisher/releases/tag/6.2.0) (2021-03-08)
+
+#### Add
+* The backend of Kingfisher's cache solution, `DiskStorage` and `MemoryStorage`, are now marked as `public`. So you can use them standalone in your project. [#1649](https://github.com/onevcat/Kingfisher/pull/1649)
+* An `imageFrameCount` property in image view extensions. It holds the frame count of an animated image if available. [#1647](https://github.com/onevcat/Kingfisher/pull/1647)
+* A new `extraSessionDelegateHandler` in `ImageDownloader`. Now you can receive the related session task delegate method by registering an external delegate object. [#1620](https://github.com/onevcat/Kingfisher/pull/1620)
+* A new method `loadImmediately` for `KFImage` to start the load manually. It is useful if you want to load the image before `onAppear` is called.
+
+#### Fix
+* Drop the use of `@State` for keeping image across `View` update for `KFImage`. This should fix some SwiftUI internal crash when setting the image in `KFImage`. [#1642](https://github.com/onevcat/Kingfisher/pull/1642)
+* The image reference in `ImageBinder` now is marked with `weak`. This helps release memory quicker in some cases. [#1640](https://github.com/onevcat/Kingfisher/pull/1640)
+
+---
+
 ## [6.1.1 - SwiftUI Issues](https://github.com/onevcat/Kingfisher/releases/tag/6.1.1) (2021-02-17)
 
 #### Fix
