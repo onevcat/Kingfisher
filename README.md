@@ -231,7 +231,7 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 ## Backers & Sponsors
 
 Open-source projects cannot live long without your help. If you find Kingfisher is useful, please consider supporting this 
-project by becoming a sponsor. Your user icon or company logo shows up [on my blog]() with a link to your home page. 
+project by becoming a sponsor. Your user icon or company logo shows up [on my blog](https://onevcat.com/tabs/about/) with a link to your home page. 
 
 Become a sponsor through [GitHub Sponsors](https://github.com/sponsors/onevcat) or [Open Collective](https://opencollective.com/kingfisher#sponsor). :heart:
 
