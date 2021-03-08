@@ -54,6 +54,7 @@ class ImageExtensionTests: XCTestCase {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.image(data: testImageJEPGData, options: options)
         XCTAssertNotNil(image)
+        XCTAssertNil(image?.kf.imageFrameCount)
         XCTAssertTrue(image!.renderEqual(to: KFCrossPlatformImage(data: testImageJEPGData)!))
     }
     
@@ -62,8 +63,7 @@ class ImageExtensionTests: XCTestCase {
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image)
         #if os(iOS) || os(tvOS)
-        let count = CGImageSourceGetCount(image!.kf.imageSource!)
-        XCTAssertEqual(count, 8)
+        XCTAssertEqual(image!.kf.imageFrameCount!, 8)
         #else
         XCTAssertEqual(image!.kf.images!.count, 8)
         XCTAssertEqual(image!.kf.duration, 0.8, accuracy: 0.001)
@@ -99,8 +99,7 @@ class ImageExtensionTests: XCTestCase {
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageSingleFrameGIFData, options: options)
         XCTAssertNotNil(image)
         #if os(iOS) || os(tvOS)
-        let count = CGImageSourceGetCount(image!.kf.imageSource!)
-        XCTAssertEqual(count, 1)
+        XCTAssertEqual(image!.kf.imageFrameCount!, 1)
         #else
         XCTAssertEqual(image!.kf.images!.count, 1)
         XCTAssertEqual(image!.kf.duration, Double.infinity)
