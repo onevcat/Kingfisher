@@ -43,12 +43,18 @@ import CoreGraphics
 import ImageIO
 
 private var animatedImageDataKey: Void?
+private var imageFrameCountKey: Void?
 
 // MARK: - Image Properties
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
     private(set) var animatedImageData: Data? {
         get { return getAssociatedObject(base, &animatedImageDataKey) }
         set { setRetainedAssociatedObject(base, &animatedImageDataKey, newValue) }
+    }
+    
+    public var imageFrameCount: Int? {
+        get { return getAssociatedObject(base, &imageFrameCountKey) }
+        set { setRetainedAssociatedObject(base, &imageFrameCountKey, newValue) }
     }
     
     #if os(macOS)
@@ -291,6 +297,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             kf?.duration = animatedImage.duration
         }
         image?.kf.animatedImageData = data
+        image?.kf.imageFrameCount = Int(CGImageSourceGetCount(imageSource))
         return image
         #else
         
@@ -314,6 +321,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             kf?.animatedImageData = data
         }
         
+        image?.kf.imageFrameCount = Int(CGImageSourceGetCount(imageSource))
         return image
         #endif
     }
