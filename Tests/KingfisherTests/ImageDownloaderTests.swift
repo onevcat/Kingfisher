@@ -32,7 +32,6 @@ class ImageDownloaderTests: XCTestCase {
 
     var downloader: ImageDownloader!
     var modifier = URLModifier()
-    var expectation: XCTestExpectation?
 
     override class func setUp() {
         super.setUp()
@@ -548,18 +547,6 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
-    func testExtraSessionDelegateHandler() {
-        expectation = expectation(description: #function)
-       
-        downloader.extraSessionDelegateHandler = self
-        let url = testURLs[0]
-        stub(url, data: testImageData)
-        
-        downloader.downloadImage(with: url)
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-    
 }
 
 extension ImageDownloaderTests: ImageDownloaderDelegate {
@@ -587,11 +574,5 @@ class AsyncURLModifier: AsyncImageDownloadRequestModifier {
         DispatchQueue.main.async {
             reportModified(r)
         }
-    }
-}
-
-extension ImageDownloaderTests: URLSessionDataDelegate {
-    func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
-        expectation?.fulfill()
     }
 }
