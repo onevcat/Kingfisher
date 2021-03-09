@@ -2,6 +2,13 @@
 
 -----
 
+## [6.2.1 - Spring Release Fix](https://github.com/onevcat/Kingfisher/releases/tag/6.2.1) (2021-03-09)
+
+#### Fix
+* Revert changes for the external delegate in [#1620](https://github.com/onevcat/Kingfisher/pull/1620), which caused some image resource loading failing due to a CFNetwork internal error.
+
+---
+
 ## [6.2.0 - Spring Release](https://github.com/onevcat/Kingfisher/releases/tag/6.2.0) (2021-03-08)
 
 #### Add
