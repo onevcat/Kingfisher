@@ -127,6 +127,13 @@ open class ImageDownloader {
             session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
         }
     }
+    var sessionDelegate: SessionDelegate {
+        didSet {
+            session.invalidateAndCancel()
+            session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
+            setupSessionHandler()
+        }
+    }
     
     /// Whether the download requests should use pipeline or not. Default is false.
     open var requestsUsePipelining = false
@@ -139,7 +146,6 @@ open class ImageDownloader {
     open weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
 
     private let name: String
-    private let sessionDelegate: SessionDelegate
     private var session: URLSession
 
     // MARK: Initializers
