@@ -570,7 +570,6 @@ class ExtensionDelegate:SessionDelegate {
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         exp.fulfill()
-        print(exp)
     }
 }
 
