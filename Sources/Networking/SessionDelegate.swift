@@ -149,7 +149,7 @@ open class SessionDelegate: NSObject {
 
 extension SessionDelegate: URLSessionDataDelegate {
 
-    public func urlSession(
+    open func urlSession(
         _ session: URLSession,
         dataTask: URLSessionDataTask,
         didReceive response: URLResponse,
@@ -172,7 +172,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         completionHandler(.allow)
     }
 
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         guard let task = self.task(for: dataTask) else {
             return
         }
@@ -186,7 +186,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
     }
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let sessionTask = self.task(for: task) else { return }
 
         if let url = sessionTask.originalURL {
@@ -214,7 +214,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onCompleted(task: task, result: result)
     }
 
-    public func urlSession(
+    open func urlSession(
         _ session: URLSession,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
@@ -222,7 +222,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onReceiveSessionChallenge.call((session, challenge, completionHandler))
     }
 
-    public func urlSession(
+    open func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         didReceive challenge: URLAuthenticationChallenge,
@@ -231,7 +231,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onReceiveSessionTaskChallenge.call((session, task, challenge, completionHandler))
     }
     
-    public func urlSession(
+    open func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         willPerformHTTPRedirection response: HTTPURLResponse,
