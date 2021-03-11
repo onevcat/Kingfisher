@@ -127,7 +127,7 @@ open class ImageDownloader {
             session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
         }
     }
-    var sessionDelegate: SessionDelegate {
+    open var sessionDelegate: SessionDelegate {
         didSet {
             session.invalidateAndCancel()
             session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
