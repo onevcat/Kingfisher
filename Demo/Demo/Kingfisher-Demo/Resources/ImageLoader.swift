@@ -46,4 +46,8 @@ struct ImageLoader {
         let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Progressive"
         return URL(string: "\(prefix)/progressive.jpg")!
     }()
+    
+    static func roseImage(index: Int) -> URL {
+        return URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(index).jpg")!
+    }
 }
