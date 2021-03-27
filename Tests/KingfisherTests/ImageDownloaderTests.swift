@@ -547,6 +547,28 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    
+    func testSessionDelegate() {
+        class ExtensionDelegate:SessionDelegate {
+            //'exp' only for test
+            public let exp:XCTestExpectation
+            init(_ expectation:XCTestExpectation) {
+                exp = expectation
+            }
+            func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+                exp.fulfill()
+            }
+        }
+        downloader.sessionDelegate = ExtensionDelegate(expectation(description: #function))
+        
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.value)
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 extension ImageDownloaderTests: ImageDownloaderDelegate {
