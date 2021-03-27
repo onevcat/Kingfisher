@@ -28,7 +28,7 @@ import Foundation
 
 // Represents the delegate object of downloader session. It also behave like a task manager for downloading.
 @objc(KFSessionDelegate) // Fix for ObjC header name conflicting. https://github.com/onevcat/Kingfisher/issues/1530
-class SessionDelegate: NSObject {
+open class SessionDelegate: NSObject {
 
     typealias SessionChallengeFunc = (
         URLSession,
@@ -149,7 +149,7 @@ class SessionDelegate: NSObject {
 
 extension SessionDelegate: URLSessionDataDelegate {
 
-    func urlSession(
+    open func urlSession(
         _ session: URLSession,
         dataTask: URLSessionDataTask,
         didReceive response: URLResponse,
@@ -172,7 +172,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         completionHandler(.allow)
     }
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         guard let task = self.task(for: dataTask) else {
             return
         }
@@ -186,7 +186,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let sessionTask = self.task(for: task) else { return }
 
         if let url = sessionTask.originalURL {
@@ -214,7 +214,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onCompleted(task: task, result: result)
     }
 
-    func urlSession(
+    open func urlSession(
         _ session: URLSession,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
@@ -222,7 +222,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onReceiveSessionChallenge.call((session, challenge, completionHandler))
     }
 
-    func urlSession(
+    open func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         didReceive challenge: URLAuthenticationChallenge,
@@ -231,7 +231,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         onReceiveSessionTaskChallenge.call((session, task, challenge, completionHandler))
     }
     
-    func urlSession(
+    open func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         willPerformHTTPRedirection response: HTTPURLResponse,
