@@ -316,6 +316,9 @@ public enum DiskStorage {
                 let hashedKey = key.kf.md5
                 if let ext = config.pathExtension {
                     return "\(hashedKey).\(ext)"
+                } else if config.autoExtAfterHashedFileName,
+                          let ext = key.kf.ext {
+                    return "\(hashedKey).\(ext)"
                 }
                 return hashedKey
             } else {
@@ -447,6 +450,10 @@ extension DiskStorage {
 
         /// Default is `true`, means that the cache file name will be hashed before storing.
         public var usesHashedFileName = true
+
+        /// Default is `false`
+        /// if set to `true`, image extension will be extracted from original file name and append to hasedFileName
+        public var autoExtAfterHashedFileName = false
 
         let name: String
         let fileManager: FileManager
