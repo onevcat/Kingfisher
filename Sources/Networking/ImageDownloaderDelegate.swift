@@ -69,7 +69,7 @@ public protocol ImageDownloaderDelegate: AnyObject {
     ///   decrypting or verification). If `nil` returned, the processing is interrupted and a `KingfisherError` with
     ///   `ResponseErrorReason.dataModifyingFailed` will be raised. You could use this fact to stop the image
     ///   processing flow if you find the data is corrupted or malformed.
-    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with response: URLResponse) -> Data?
 
     /// Called when the `ImageDownloader` object successfully downloads and processes an image from specified URL.
     ///
@@ -121,7 +121,7 @@ extension ImageDownloaderDelegate {
     public func isValidStatusCode(_ code: Int, for downloader: ImageDownloader) -> Bool {
         return (200..<400).contains(code)
     }
-    public func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data? {
+    public func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with response: URLResponse) -> Data? {
         return data
     }
 }
