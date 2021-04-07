@@ -194,7 +194,7 @@ open class ImageDownloader {
             }
         }
         sessionDelegate.onDidDownloadData.delegate(on: self) { (self, task) in
-            guard let response = task.task.response else {
+            guard task.originalURL != nil, let response = task.task.response else {
                 return task.mutableData
             }
             return (self.delegate ?? self).imageDownloader(self, didDownload: task.mutableData, with: response)
