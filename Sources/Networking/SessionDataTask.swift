@@ -43,7 +43,7 @@ public class SessionDataTask {
 
     // This is a copy of `task.originalRequest?.url`. It is for getting a race-safe behavior for a pitfall on iOS 13.
     // Ref: https://github.com/onevcat/Kingfisher/issues/1511
-    let originalURL: URL?
+    public let originalURL: URL?
 
     /// The underlying download task. It is only for debugging purpose when you encountered an error. You should not
     /// modify the content of this task or start it yourself.
