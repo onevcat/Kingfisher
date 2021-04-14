@@ -30,7 +30,7 @@ import UIKit
 @available(iOS 13.0, *)
 class SwiftUIViewController: UIHostingController<MainView> {
     required init?(coder: NSCoder) {
-        super.init(coder: coder,rootView: MainView());
+        super.init(coder: coder, rootView: MainView())
     }
 
     override func viewDidLoad() {
