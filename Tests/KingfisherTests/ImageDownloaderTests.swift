@@ -496,8 +496,10 @@ class ImageDownloaderTests: XCTestCase {
         
         let url = testURLs[0]
         stub(url, data: testImageData)
+        
+        let modifier = URLNilDataModifier()
 
-        downloader.delegate = self
+        downloader.delegate = modifier
         downloader.downloadImage(with: url) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
@@ -506,11 +508,37 @@ class ImageDownloaderTests: XCTestCase {
                 XCTFail()
             }
             self.downloader.delegate = nil
+            // hold delegate
+            _ = modifier
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testDownloadedDataCouldBeModifiedWithTask() {
+        let exp = expectation(description: #function)
+        
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let modifier = TaskNilDataModifier()
+
+        downloader.delegate = modifier
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+            if case .responseError(reason: .dataModifyingFailed) = result.error! {
+            } else {
+                XCTFail()
+            }
+            self.downloader.delegate = nil
+            // hold delegate
+            _ = modifier
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
 #if os(iOS) || os(tvOS) || os(watchOS)
     func testModifierShouldOnlyApplyForFinalResultWhenDownload() {
         let exp = expectation(description: #function)
@@ -571,8 +599,14 @@ class ImageDownloaderTests: XCTestCase {
     }
 }
 
-extension ImageDownloaderTests: ImageDownloaderDelegate {
+class URLNilDataModifier: ImageDownloaderDelegate {
     func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data? {
+        return nil
+    }
+}
+
+class TaskNilDataModifier: ImageDownloaderDelegate {
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with dataTask: SessionDataTask) -> Data? {
         return nil
     }
 }

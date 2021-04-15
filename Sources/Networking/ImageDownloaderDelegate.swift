@@ -60,6 +60,23 @@ public protocol ImageDownloaderDelegate: AnyObject {
     /// - Parameters:
     ///   - downloader: The `ImageDownloader` object which is used for the downloading operation.
     ///   - data: The original downloaded data.
+    ///   - dataTask: The data task contains request and response information of the download.
+    /// - Note:
+    ///   This can be used to pre-process raw image data before creation of `Image` instance (i.e.
+    ///   decrypting or verification). If `nil` returned, the processing is interrupted and a `KingfisherError` with
+    ///   `ResponseErrorReason.dataModifyingFailed` will be raised. You could use this fact to stop the image
+    ///   processing flow if you find the data is corrupted or malformed.
+    ///
+    ///  If this method is implemented, `imageDownloader(_:didDownload:for:)` will not be called anymore.
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with dataTask: SessionDataTask) -> Data?
+  
+    /// Called when the `ImageDownloader` object successfully downloaded image data from specified URL. This is
+    /// your last chance to verify or modify the downloaded data before Kingfisher tries to perform addition
+    /// processing on the image data.
+    ///
+    /// - Parameters:
+    ///   - downloader: The `ImageDownloader` object which is used for the downloading operation.
+    ///   - data: The original downloaded data.
     ///   - url: The URL of the original request URL.
     /// - Returns: The data from which Kingfisher should use to create an image. You need to provide valid data
     ///            which content is one of the supported image file format. Kingfisher will perform process on this
@@ -69,9 +86,8 @@ public protocol ImageDownloaderDelegate: AnyObject {
     ///   decrypting or verification). If `nil` returned, the processing is interrupted and a `KingfisherError` with
     ///   `ResponseErrorReason.dataModifyingFailed` will be raised. You could use this fact to stop the image
     ///   processing flow if you find the data is corrupted or malformed.
-    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with response: URLResponse) -> Data?
-  
-    @available(*, deprecated, message: "use `imageDownloader(_:didDownload:with:)` instead")
+    ///
+    ///   If `imageDownloader(_:didDownload:with:)` is implemented, this method will not be called anymore.
     func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
 
     /// Called when the `ImageDownloader` object successfully downloads and processes an image from specified URL.
@@ -125,12 +141,14 @@ extension ImageDownloaderDelegate {
         return (200..<400).contains(code)
     }
   
-    public func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with response: URLResponse) -> Data? {
-      guard let url = response.url else { return data }
-      return imageDownloader(downloader, didDownload: data, for: url)
+    public func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with task: SessionDataTask) -> Data? {
+        guard let url = task.originalURL else {
+            return data
+        }
+        return imageDownloader(downloader, didDownload: data, for: url)
     }
   
     public func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data? {
-      return data
+        return data
     }
 }
