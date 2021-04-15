@@ -188,6 +188,19 @@ open class AnimatedImageView: UIImageView {
         }
     }
     
+    open override var isHighlighted: Bool {
+        get {
+            super.isHighlighted
+        }
+        set {
+            // Highlighted image is unsupported for animated images.
+            // See https://github.com/onevcat/Kingfisher/issues/1679
+            if displayLink.isPaused {
+                super.isHighlighted = newValue
+            }
+        }
+    }
+    
     deinit {
         if isDisplayLinkInitialized {
             displayLink.invalidate()
