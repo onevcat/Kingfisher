@@ -22,6 +22,7 @@
 		4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD821662189FD330084CC21 /* SessionDataTask.swift */; };
 		4BE688F722FD513100B11168 /* NSButton+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */; };
 		4BE688F822FD513700B11168 /* WKInterfaceImage+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6AF215D2BB50013BA68 /* WKInterfaceImage+Kingfisher.swift */; };
+		76FB4FD2262D773E006D15F8 /* GraphicsContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76FB4FD1262D773E006D15F8 /* GraphicsContext.swift */; };
 		C9286407228584EB00257182 /* ImageProgressive.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9286406228584EB00257182 /* ImageProgressive.swift */; };
 		D1132C9725919F69003E528D /* KFOptionsSetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1132C9625919F69003E528D /* KFOptionsSetter.swift */; };
 		D11D9B72245FA6F700C5A0AE /* RetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D9B71245FA6F700C5A0AE /* RetryStrategy.swift */; };
@@ -142,6 +143,7 @@
 		4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStorageTests.swift; sourceTree = "<group>"; };
 		4BD821612189FC0C0084CC21 /* SessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegate.swift; sourceTree = "<group>"; };
 		4BD821662189FD330084CC21 /* SessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDataTask.swift; sourceTree = "<group>"; };
+		76FB4FD1262D773E006D15F8 /* GraphicsContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphicsContext.swift; sourceTree = "<group>"; };
 		C9286406228584EB00257182 /* ImageProgressive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProgressive.swift; sourceTree = "<group>"; };
 		C959EEE7228940FE00467A10 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D1132C9625919F69003E528D /* KFOptionsSetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFOptionsSetter.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 				D12AB6A6215D2BB50013BA68 /* Filter.swift */,
 				D12AB6A7215D2BB50013BA68 /* Placeholder.swift */,
 				D12AB6A8215D2BB50013BA68 /* GIFAnimatedImage.swift */,
+				76FB4FD1262D773E006D15F8 /* GraphicsContext.swift */,
 			);
 			path = Image;
 			sourceTree = "<group>";
@@ -818,6 +821,7 @@
 				D12AB6E0215D2BB50013BA68 /* Filter.swift in Sources */,
 				4BE688F722FD513100B11168 /* NSButton+Kingfisher.swift in Sources */,
 				D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */,
+				76FB4FD2262D773E006D15F8 /* GraphicsContext.swift in Sources */,
 				D8FCF6A821C5A0E500F9ABC0 /* RedirectHandler.swift in Sources */,
 				D1A37BDE215D34E8009B39B7 /* ImageDrawing.swift in Sources */,
 				4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */,
