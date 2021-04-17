@@ -63,9 +63,9 @@ class AutoSizingTableViewController: UIViewController {
         UIView.setAnimationsEnabled(false)
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         UIView.setAnimationsEnabled(true)
-        super.viewDidDisappear(animated)
     }
 }
 
