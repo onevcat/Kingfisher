@@ -60,7 +60,10 @@ extension KingfisherWrapper where Base == String {
             let extRange = base.index(index, offsetBy: 1)..<base.endIndex
             ext = String(base[extRange])
         }
-        return ext.count > 0 ? ext : nil
+        guard let firstSeg = ext.split(separator: "@").first else {
+            return nil
+        }
+        return firstSeg.count > 0 ? String(firstSeg) : nil
     }
 }
 
