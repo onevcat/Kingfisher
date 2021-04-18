@@ -210,6 +210,24 @@ class DiskStorageTests: XCTestCase {
         let originalFileName = storage.cacheFileName(forKey: key)
         XCTAssertEqual(originalFileName, key)
     }
+    
+    func testConfigUsesHashedFileNameWithAutoExtAndProcessor() {
+        // The key of an image with processor will be as this format.
+        let key = "test.jpeg@abc"
+        
+        // hashed fileName
+        storage.config.usesHashedFileName = true
+        storage.config.autoExtAfterHashedFileName = true
+        let hashedFileName = storage.cacheFileName(forKey: key)
+        XCTAssertNotEqual(hashedFileName, key)
+        // validation md5 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.md5 + ".jpeg")
+
+        // fileName without hash
+        storage.config.usesHashedFileName = false
+        let originalFileName = storage.cacheFileName(forKey: key)
+        XCTAssertEqual(originalFileName, key)
+    }
 
     func testFileMetaOrder() {
         let urls = [URL(string: "test1")!, URL(string: "test2")!, URL(string: "test3")!]

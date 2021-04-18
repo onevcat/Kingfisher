@@ -452,7 +452,8 @@ extension DiskStorage {
         public var usesHashedFileName = true
 
         /// Default is `false`
-        /// if set to `true`, image extension will be extracted from original file name and append to hasedFileName
+        /// If set to `true`, image extension will be extracted from original file name and append to
+        /// the hased file name and used as the cache key on disk.
         public var autoExtAfterHashedFileName = false
 
         let name: String
