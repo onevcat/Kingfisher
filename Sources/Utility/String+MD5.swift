@@ -53,6 +53,18 @@ extension KingfisherWrapper where Base == String {
         }
         return MD5String
     }
+
+    var ext: String? {
+        var ext = ""
+        if let index  = base.lastIndex(of: ".") {
+            let extRange = base.index(index, offsetBy: 1)..<base.endIndex
+            ext = String(base[extRange])
+        }
+        guard let firstSeg = ext.split(separator: "@").first else {
+            return nil
+        }
+        return firstSeg.count > 0 ? String(firstSeg) : nil
+    }
 }
 
 // array of bytes, little-endian representation
