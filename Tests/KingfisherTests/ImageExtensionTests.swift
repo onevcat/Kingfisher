@@ -42,11 +42,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(format, .GIF)
         
         let raw: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8]
-        #if swift(>=5.0)
         format = Data(raw).kf.imageFormat
-        #else
-        format = Data(bytes: raw).kf.imageFormat
-        #endif
         XCTAssertEqual(format, .unknown)
     }
     
