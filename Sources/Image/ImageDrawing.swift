@@ -463,7 +463,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// return the data from it. This could improve the drawing performance when an image is just created from
     /// data but not yet displayed for the first time.
     ///
-    /// - Parameter context: The context for frawing.
+    /// - Parameter context: The context for drawing.
     /// - Returns: The decoded image ready to be displayed.
     ///
     /// - Note: This method only works for CG-based image. The current image scale is kept.
