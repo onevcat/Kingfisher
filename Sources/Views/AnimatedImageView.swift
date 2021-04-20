@@ -57,11 +57,7 @@ extension AnimatedImageViewDelegate {
     public func animatedImageViewDidFinishAnimating(_ imageView: AnimatedImageView) {}
 }
 
-#if swift(>=4.2)
 let KFRunLoopModeCommon = RunLoop.Mode.common
-#else
-let KFRunLoopModeCommon = RunLoopMode.commonModes
-#endif
 
 /// Represents a subclass of `UIImageView` for displaying animated image.
 /// Different from showing animated image in a normal `UIImageView` (which load all frames at one time),
