@@ -157,11 +157,7 @@ final class ActivityIndicator: Indicator {
             }
             #endif
 
-            #if swift(>=4.2)
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
-            #else
-            activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: indicatorStyle)
-            #endif
         #endif
     }
 }
