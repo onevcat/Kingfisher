@@ -30,6 +30,7 @@
 		4BE855592320F9D300FE4205 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE855572320F9D300FE4205 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4BE855612320F9DE00FE4205 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE855602320F9DE00FE4205 /* Kingfisher.framework */; };
 		4BE855622320F9DE00FE4205 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE855602320F9DE00FE4205 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		769F07F126298E2E00610767 /* GIFHeavyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F07F026298E2E00610767 /* GIFHeavyViewController.swift */; };
 		C959EEE622874DC600467A10 /* ProgressiveJPEGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */; };
 		D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */; };
 		D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */; };
@@ -168,6 +169,7 @@
 		4BE8555A2320F9D800FE4205 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE8555B2320F9D800FE4205 /* KingfisherSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KingfisherSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE855602320F9DE00FE4205 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		769F07F026298E2E00610767 /* GIFHeavyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFHeavyViewController.swift; sourceTree = "<group>"; };
 		C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressiveJPEGViewController.swift; sourceTree = "<group>"; };
 		D10AC99721A300C9005F057C /* ProcessorCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessorCollectionViewController.swift; sourceTree = "<group>"; };
 		D12E0C8C1C47F91800AC98AD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 				D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */,
 				D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */,
 				D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */,
+				769F07F026298E2E00610767 /* GIFHeavyViewController.swift */,
 				D1F06F3821AAF1EE000B1C38 /* IndicatorCollectionViewController.swift */,
 				D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */,
 				C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */,
@@ -680,6 +683,7 @@
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,
+				769F07F126298E2E00610767 /* GIFHeavyViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
