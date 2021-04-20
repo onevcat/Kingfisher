@@ -13,7 +13,7 @@ jobs:
           'tvOS Simulator,name=Apple TV', 
           'watchOS Simulator,name=Apple Watch Series 5 - 40mm'
         ]
-        swift-version: [5.0, 4.2, 4.0]
+        swift-version: [5.0]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/cache@v1
