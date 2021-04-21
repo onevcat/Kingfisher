@@ -2,6 +2,19 @@
 
 -----
 
+## [6.3.0 - Open To Better](https://github.com/onevcat/Kingfisher/releases/tag/6.3.0) (2021-04-21)
+
+#### Add
+* Mark `SessionDelegate` as public to allow a subclass to take over the delegate methods from session tasks. [#1658](https://github.com/onevcat/Kingfisher/pull/1658)
+* A new `imageDownloader(_:didDownload:with:)` in `ImageDownloaderDelegate` to pass not only `Data` but also the whole `URLResponse` to delegate method. Now you can determine how to handle these data based on the received response. [#1676](https://github.com/onevcat/Kingfisher/pull/1676)
+* An option `autoExtAfterHashedFileName` in `DiskStorage.Config` to allow appending the file extension extracted from the cache key. [#1671](https://github.com/onevcat/Kingfisher/pull/1671)
+
+#### Fix
+* Now the GIF continues to play in a collection view cell with highlight support. [#1685](https://github.com/onevcat/Kingfisher/pull/1685)
+* Fix a crash when loading GIF files with lots of frames in `AnimatedImageView`. Thanks for contribution from @wow-such-amazing [#1686](https://github.com/onevcat/Kingfisher/pull/1686)
+
+---
+
 ## [6.2.1 - Spring Release Fix](https://github.com/onevcat/Kingfisher/releases/tag/6.2.1) (2021-03-09)
 
 #### Fix
