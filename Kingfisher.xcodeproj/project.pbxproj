@@ -723,7 +723,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Wei Wang";
 				TargetAttributes = {
 					D1ED2D341AD2D09F00CFC3EB = {
