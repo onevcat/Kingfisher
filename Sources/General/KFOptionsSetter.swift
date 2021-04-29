@@ -55,6 +55,20 @@ extension KFImage: KFOptionSetter {
 
     public var delegateObserver: AnyObject { context.binder }
 }
+
+@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+extension KFAnimatedImage: KFOptionSetter {
+    public var options: KingfisherParsedOptionsInfo {
+        get { context.binder.options }
+        nonmutating set { context.binder.options = newValue }
+    }
+
+    public var onFailureDelegate: Delegate<KingfisherError, Void> { context.binder.onFailureDelegate }
+    public var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { context.binder.onSuccessDelegate }
+    public var onProgressDelegate: Delegate<(Int64, Int64), Void> { context.binder.onProgressDelegate }
+
+    public var delegateObserver: AnyObject { context.binder }
+}
 #endif
 
 // MARK: - Life cycles

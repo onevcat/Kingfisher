@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07292245263B02F00089E810 /* KFAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07292244263B02F00089E810 /* KFAnimatedImage.swift */; };
+		07292249263B125F0089E810 /* KFAnimatedImageOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07292248263B125E0089E810 /* KFAnimatedImageOptions.swift */; };
 		4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B46CC5F217449C600D90C4A /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC5E217449C600D90C4A /* MemoryStorage.swift */; };
 		4B46CC64217449E000D90C4A /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC63217449E000D90C4A /* Storage.swift */; };
@@ -127,6 +129,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07292244263B02F00089E810 /* KFAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFAnimatedImage.swift; sourceTree = "<group>"; };
+		07292248263B125E0089E810 /* KFAnimatedImageOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFAnimatedImageOptions.swift; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
 		4B10480C216F157000300C61 /* ImageDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProcessor.swift; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -654,6 +658,8 @@
 				D1F7607523097532000C5269 /* ImageBinder.swift */,
 				D1F7607623097532000C5269 /* KFImage.swift */,
 				D1889533258F7648003B73BE /* KFImageOptions.swift */,
+				07292244263B02F00089E810 /* KFAnimatedImage.swift */,
+				07292248263B125E0089E810 /* KFAnimatedImageOptions.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -803,6 +809,7 @@
 				D12AB70C215D2BB50013BA68 /* KingfisherManager.swift in Sources */,
 				4B8351CC217084660081EED8 /* Runtime.swift in Sources */,
 				D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */,
+				07292249263B125F0089E810 /* KFAnimatedImageOptions.swift in Sources */,
 				4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */,
 				D12AB72C215D2BB50013BA68 /* Indicator.swift in Sources */,
 				D12AB6C8215D2BB50013BA68 /* ImageDownloader.swift in Sources */,
@@ -823,6 +830,7 @@
 				D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */,
 				76FB4FD2262D773E006D15F8 /* GraphicsContext.swift in Sources */,
 				D8FCF6A821C5A0E500F9ABC0 /* RedirectHandler.swift in Sources */,
+				07292245263B02F00089E810 /* KFAnimatedImage.swift in Sources */,
 				D1A37BDE215D34E8009B39B7 /* ImageDrawing.swift in Sources */,
 				4BD821672189FD330084CC21 /* SessionDataTask.swift in Sources */,
 				D12AB708215D2BB50013BA68 /* KingfisherError.swift in Sources */,
