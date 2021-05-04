@@ -474,10 +474,21 @@ open class ImageCache {
         }
     }
 
-    func retrieveImage(forKey key: String,
-                       options: KingfisherParsedOptionsInfo,
-                       callbackQueue: CallbackQueue = .mainCurrentOrAsync,
-                       completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
+    /// Gets an image for a given key from the cache, either from memory storage or disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherParsedOptionsInfo` options setting used for retrieving the image.
+    ///   - callbackQueue: The callback queue on which `completionHandler` is invoked. Default is `.mainCurrentOrAsync`.
+    ///   - completionHandler: A closure which is invoked when the image getting operation finishes. If the
+    ///                        image retrieving operation finishes without problem, an `ImageCacheResult` value
+    ///                        will be sent to this closure as result. Otherwise, a `KingfisherError` result
+    ///                        with detail failing reason will be sent.
+    open func retrieveImage(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo,
+        callbackQueue: CallbackQueue = .mainCurrentOrAsync,
+        completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
     {
         // No completion handler. No need to start working and early return.
         guard let completionHandler = completionHandler else { return }
@@ -534,6 +545,9 @@ open class ImageCache {
     ///                        image retrieving operation finishes without problem, an `ImageCacheResult` value
     ///                        will be sent to this closure as result. Otherwise, a `KingfisherError` result
     ///                        with detail failing reason will be sent.
+    ///
+    /// Note: This method is marked as `open` for only compatible purpose. Do not overide this method. Instead, override
+    ///       the version receives `KingfisherParsedOptionsInfo` instead.
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo? = nil,
                         callbackQueue: CallbackQueue = .mainCurrentOrAsync,
@@ -546,7 +560,14 @@ open class ImageCache {
             completionHandler: completionHandler)
     }
 
-    func retrieveImageInMemoryCache(
+    /// Gets an image for a given key from the memory storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherParsedOptionsInfoKingfisherParsedOptionsInfo` options setting used for retrieving the image.
+    /// - Returns: The image stored in memory cache, if exists and valid. Otherwise, if the image does not exist or
+    ///            has already expired, `nil` is returned.
+    open func retrieveImageInMemoryCache(
         forKey key: String,
         options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
     {
@@ -561,6 +582,9 @@ open class ImageCache {
     ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
     /// - Returns: The image stored in memory cache, if exists and valid. Otherwise, if the image does not exist or
     ///            has already expired, `nil` is returned.
+    ///
+    /// Note: This method is marked as `open` for only compatible purpose. Do not overide this method. Instead, override
+    ///       the version receives `KingfisherParsedOptionsInfo` instead.
     open func retrieveImageInMemoryCache(
         forKey key: String,
         options: KingfisherOptionsInfo? = nil) -> KFCrossPlatformImage?
