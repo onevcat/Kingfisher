@@ -29,9 +29,7 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol KFImageProtocol: View, KFOptionSetter {
-    
     typealias Context = KFImage.Context<HoldingView>
-    
     associatedtype HoldingView: KFImageHoldingView
     var context: Context { get set }
     init(context: Context)
@@ -82,6 +80,15 @@ extension KFImageProtocol {
 
     init(binder: KFImage.ImageBinder) {
         self.init(context: KFImage.Context<HoldingView>(binder: binder))
+    }
+    
+    /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
+    /// - Parameter block: The block applies to loaded image.
+    /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
+    public func configure(_ block: @escaping (HoldingView) -> HoldingView) -> Self {
+        var result = self
+        result.context.configurations.append(block)
+        return result
     }
 }
 

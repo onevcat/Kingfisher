@@ -29,25 +29,42 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: KFImageProtocol {
-    public typealias HoldingView = Image
-    public var context: Context<HoldingView>
+    public var context: Context<Image>
     public init(context: Context<Image>) {
         self.context = context
+    }
+}
+
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+extension Image: KFImageHoldingView {
+    public static func created(from image: KFCrossPlatformImage) -> Image {
+        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
+            return Image(crossPlatformImage: image)
+        } else {
+            #if canImport(UIKit)
+            // The CG image is used to solve #1395
+            // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
+            // by `Image.init(uiImage:)`. (The orientation information should be already contained in
+            // a `UIImage`)
+            // https://github.com/onevcat/Kingfisher/issues/1395
+            //
+            // This issue happens on iOS 13 and was fixed by Apple from iOS 14.
+            if let cgImage = image.cgImage {
+                return Image(decorative: cgImage, scale: image.scale, orientation: image.imageOrientation.toSwiftUI())
+            } else {
+                return Image(crossPlatformImage: image)
+            }
+            #else
+            return Image(crossPlatformImage: image)
+            #endif
+
+        }
     }
 }
 
 // MARK: - Image compatibility.
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImage {
-
-    /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
-    /// - Parameter block: The block applies to loaded image.
-    /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
-    public func configure(_ block: @escaping (Image) -> Image) -> KFImage {
-        var result = self
-        result.context.configurations.append(block)
-        return result
-    }
 
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),

@@ -89,33 +89,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-extension Image: KFImageHoldingView {
-    public static func created(from image: KFCrossPlatformImage) -> Image {
-        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-            return Image(crossPlatformImage: image)
-        } else {
-            #if canImport(UIKit)
-            // The CG image is used to solve #1395
-            // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
-            // by `Image.init(uiImage:)`. (The orientation information should be already contained in
-            // a `UIImage`)
-            // https://github.com/onevcat/Kingfisher/issues/1395
-            //
-            // This issue happens on iOS 13 and was fixed by Apple from iOS 14.
-            if let cgImage = image.cgImage {
-                return Image(decorative: cgImage, scale: image.scale, orientation: image.imageOrientation.toSwiftUI())
-            } else {
-                return Image(crossPlatformImage: image)
-            }
-            #else
-            return Image(crossPlatformImage: image)
-            #endif
-
-        }
-    }
-}
-
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Image {
     // Creates an Image with either UIImage or NSImage.
     init(crossPlatformImage: KFCrossPlatformImage) {
