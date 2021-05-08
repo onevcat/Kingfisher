@@ -33,31 +33,10 @@ public struct KFImage: KFImageProtocol {
     
     public typealias HoldingView = Image
 
-    public internal (set) var context: Context<HoldingView>
-
-    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
-    /// - Parameters:
-    ///   - source: The image `Source` defining where to load the target image.
-    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
-    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
-    ///               wrapped value from outside.
-    public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
-        let binder = ImageBinder(source: source, isLoaded: isLoaded)
-        self.init(binder: binder)
-    }
-
-    /// Creates a Kingfisher compatible image view to load image from the given `URL`.
-    /// - Parameters:
-    ///   - source: The image `Source` defining where to load the target image.
-    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
-    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
-    ///               wrapped value from outside.
-    public init(_ url: URL?, isLoaded: Binding<Bool> = .constant(false)) {
-        self.init(source: url?.convertToSource(), isLoaded: isLoaded)
-    }
-
-    init(binder: ImageBinder) {
-        self.context = Context<HoldingView>(binder: binder)
+    public var context: Context<HoldingView>
+    
+    public init(context: Context<Image>) {
+        self.context = context
     }
 }
 
@@ -148,7 +127,7 @@ extension KFImage {
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {
-            KFImage(source: .network(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!))
+            KFImage.url(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
                 .onSuccess { r in
                     print(r)
                 }

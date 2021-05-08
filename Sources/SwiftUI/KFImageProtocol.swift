@@ -29,7 +29,9 @@ import SwiftUI
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol KFImageProtocol: View {
     associatedtype HoldingView: KFImageHoldingView
-    var context: KFImage.Context<HoldingView> { get }
+    var context: KFImage.Context<HoldingView> { get set }
+    
+    init(context: KFImage.Context<HoldingView>)
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -53,6 +55,32 @@ extension KFImageProtocol {
         }
         return self
     }
+    
+    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
+    /// - Parameters:
+    ///   - source: The image `Source` defining where to load the target image.
+    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
+    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
+    ///               wrapped value from outside.
+    public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
+        let binder = KFImage.ImageBinder(source: source, isLoaded: isLoaded)
+        self.init(binder: binder)
+    }
+
+    /// Creates a Kingfisher compatible image view to load image from the given `URL`.
+    /// - Parameters:
+    ///   - source: The image `Source` defining where to load the target image.
+    ///   - isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
+    ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
+    ///               wrapped value from outside.
+    public init(_ url: URL?, isLoaded: Binding<Bool> = .constant(false)) {
+        self.init(source: url?.convertToSource(), isLoaded: isLoaded)
+    }
+
+    init(binder: KFImage.ImageBinder) {
+        self.init(context: KFImage.Context<HoldingView>(binder: binder))
+    }
+    
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)

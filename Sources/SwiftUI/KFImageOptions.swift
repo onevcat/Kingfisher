@@ -29,7 +29,7 @@ import SwiftUI
 
 // MARK: - KFImage creating.
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFImage {
+extension KFImageProtocol {
 
     /// Creates a `KFImage` for a given `Source`.
     /// - Parameters:
@@ -40,9 +40,9 @@ extension KFImage {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func source(
         _ source: Source?, isLoaded: Binding<Bool> = .constant(false)
-    ) -> KFImage
+    ) -> Self
     {
-        KFImage(source: source, isLoaded: isLoaded)
+        Self.init(source: source, isLoaded: isLoaded)
     }
 
     /// Creates a `KFImage` for a given `Resource`.
@@ -54,7 +54,7 @@ extension KFImage {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func resource(
         _ resource: Resource?, isLoaded: Binding<Bool> = .constant(false)
-    ) -> KFImage
+    ) -> Self
     {
         source(resource?.convertToSource(), isLoaded: isLoaded)
     }
@@ -70,7 +70,7 @@ extension KFImage {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func url(
         _ url: URL?, cacheKey: String? = nil, isLoaded: Binding<Bool> = .constant(false)
-    ) -> KFImage
+    ) -> Self
     {
         source(url?.convertToSource(overrideCacheKey: cacheKey), isLoaded: isLoaded)
     }
@@ -84,7 +84,7 @@ extension KFImage {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func dataProvider(
         _ provider: ImageDataProvider?, isLoaded: Binding<Bool> = .constant(false)
-    ) -> KFImage
+    ) -> Self
     {
         source(provider?.convertToSource(), isLoaded: isLoaded)
     }
@@ -99,7 +99,7 @@ extension KFImage {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func data(
         _ data: Data?, cacheKey: String, isLoaded: Binding<Bool> = .constant(false)
-    ) -> KFImage
+    ) -> Self
     {
         if let data = data {
             return dataProvider(RawImageDataProvider(data: data, cacheKey: cacheKey), isLoaded: isLoaded)
@@ -110,11 +110,11 @@ extension KFImage {
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFImage {
+extension KFImageProtocol {
     /// Sets a placeholder `View` which shows when loading the image.
     /// - Parameter content: A view that describes the placeholder.
     /// - Returns: A `KFImage` view that contains `content` as its placeholder.
-    public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> KFImage {
+    public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> Self {
         let v = content()
         var result = self
         result.context.placeholder = AnyView(v)
@@ -124,7 +124,7 @@ extension KFImage {
     /// Sets cancelling the download task bound to `self` when the view disappearing.
     /// - Parameter flag: Whether cancel the task or not.
     /// - Returns: A `KFImage` view that cancels downloading task when disappears.
-    public func cancelOnDisappear(_ flag: Bool) -> KFImage {
+    public func cancelOnDisappear(_ flag: Bool) -> Self {
         var result = self
         result.context.cancelOnDisappear = flag
         return result
@@ -138,7 +138,7 @@ extension KFImage {
     /// The transition will not happen when the
     /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
     /// the image being retrieved from cache, also call `forceRefresh()` on the returned `KFImage`.
-    public func fade(duration: TimeInterval) -> KFImage {
+    public func fade(duration: TimeInterval) -> Self {
         context.binder.options.transition = .fade(duration)
         return self
     }
