@@ -27,8 +27,8 @@
 #if canImport(SwiftUI)
 import SwiftUI
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public protocol KFImageProtocol: View {
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public protocol KFImageProtocol: View, KFOptionSetter {
     
     typealias Context = KFImage.Context<HoldingView>
     
@@ -37,7 +37,7 @@ public protocol KFImageProtocol: View {
     init(context: Context)
 }
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImageProtocol {
     public var body: some View {
         KFImageRenderer<HoldingView>(context)
@@ -83,10 +83,9 @@ extension KFImageProtocol {
     init(binder: KFImage.ImageBinder) {
         self.init(context: KFImage.Context<HoldingView>(binder: binder))
     }
-    
 }
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol KFImageHoldingView: View {
     static func created(from image: KFCrossPlatformImage) -> Self
 }

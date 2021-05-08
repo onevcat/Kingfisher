@@ -28,7 +28,7 @@
 import SwiftUI
 
 // MARK: - KFImage creating.
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImageProtocol {
 
     /// Creates a `KFImage` for a given `Source`.
@@ -109,7 +109,7 @@ extension KFImageProtocol {
     }
 }
 
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFImageProtocol {
     /// Sets a placeholder `View` which shows when loading the image.
     /// - Parameter content: A view that describes the placeholder.
