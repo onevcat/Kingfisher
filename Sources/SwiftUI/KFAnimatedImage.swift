@@ -28,15 +28,14 @@
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-internal extension KFAnimatedImage {
-    typealias ImageBinder = KFImage.ImageBinder
-    typealias Context = KFImage.Context
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct KFAnimatedImage: View {
+public struct KFAnimatedImage: KFImageProtocol {
     
-    var context: Context
+    public typealias Context = KFImage.Context
+    typealias ImageBinder = KFImage.ImageBinder
+    
+    public typealias HoldingView = KFAnimatedImageViewRepresenter
+    
+    public internal (set) var context: Context<HoldingView>
 
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameters:
@@ -64,57 +63,8 @@ public struct KFAnimatedImage: View {
     }
     
     public var body: some View {
-        KFAnimatedImageRender(context)
+        KFImageRenderer<KFAnimatedImageViewRepresenter>(context)
             .id(context.binder)
-    }
-    
-    /// Starts the loading process of `self` immediately.
-    ///
-    /// By default, a `KFAnimatedImage` will not load its source until the `onAppear` is called. This is a lazily loading
-    /// behavior and provides better performance. However, when you refresh the view, the lazy loading also causes a
-    /// flickering since the loading does not happen immediately. Call this method if you want to start the load at once
-    /// could help avoiding the flickering, with some performance trade-off.
-    ///
-    /// - Returns: The `Self` value with changes applied.
-    public func loadImmediately(_ start: Bool = true) -> KFAnimatedImage {
-        if start {
-            context.binder.start()
-        }
-        return self
-    }
-    
-}
-
-// MARK: - Image compatibility.
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFAnimatedImage {
-
-    /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
-    /// - Parameter block: The block applies to loaded image.
-    /// - Returns: A `KFAnimatedImage` view that configures internal `Image` with `block`.
-    public func configure(_ block: @escaping (Image) -> Image) -> KFAnimatedImage {
-        var result = self
-        result.context.configurations.append(block)
-        return result
-    }
-
-    public func resizable(
-        capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: Image.ResizingMode = .stretch) -> KFAnimatedImage
-    {
-        configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
-    }
-
-    public func renderingMode(_ renderingMode: Image.TemplateRenderingMode?) -> KFAnimatedImage {
-        configure { $0.renderingMode(renderingMode) }
-    }
-
-    public func interpolation(_ interpolation: Image.Interpolation) -> KFAnimatedImage {
-        configure { $0.interpolation(interpolation) }
-    }
-
-    public func antialiased(_ isAntialiased: Bool) -> KFAnimatedImage {
-        configure { $0.antialiased(isAntialiased) }
     }
 }
 
@@ -131,7 +81,7 @@ struct KFAnimatedImageRender: View {
     // Whether the download task should be cancelled when the view disappears.
     let cancelOnDisappear: Bool
 
-    init(_ context: KFAnimatedImage.Context) {
+    init(_ context: KFAnimatedImage.Context<Image>) {
         self.binder = context.binder
         self.placeholder = context.placeholder
         self.cancelOnDisappear = context.cancelOnDisappear
@@ -173,17 +123,20 @@ struct KFAnimatedImageRender: View {
 
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct KFAnimatedImageViewRepresenter: UIViewRepresentable {
+public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
+    public static func created(from image: KFCrossPlatformImage) -> KFAnimatedImageViewRepresenter {
+        KFAnimatedImageViewRepresenter(image: image)
+    }
     
     var image: KFCrossPlatformImage?
     
-    func makeUIView(context: Context) -> AnimatedImageView {
+    public func makeUIView(context: Context) -> AnimatedImageView {
         let view = AnimatedImageView()
         view.image = image
         return view
     }
     
-    func updateUIView(_ uiView: AnimatedImageView, context: Context) {
+    public func updateUIView(_ uiView: AnimatedImageView, context: Context) {
         uiView.image = image
     }
     
@@ -198,8 +151,6 @@ struct KFAnimatedImage_Previews : PreviewProvider {
                 .onSuccess { r in
                     print(r)
                 }
-                .resizable()
-                .aspectRatio(contentMode: .fit)
                 .padding()
         }
     }

@@ -2,7 +2,7 @@
 //  MainView.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/08/07.
+//  Created by onevcat on 2019/08/07.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //
@@ -47,6 +47,7 @@ struct MainView: View {
                 NavigationLink(destination: LazyVStackDemo()) { Text("Stack") }
                 NavigationLink(destination: GridDemo()) { Text("Grid") }
             }
+            NavigationLink(destination: AnimatedImageDemo()) { Text("Animated Image") }
         }.navigationBarTitle(Text("SwiftUI Sample"))
     }
 }

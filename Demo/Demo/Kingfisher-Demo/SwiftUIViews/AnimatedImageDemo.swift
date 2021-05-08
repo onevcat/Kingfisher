@@ -31,9 +31,7 @@ import Kingfisher
 struct AnimatedImageDemo: View {
     
     @State private var index = 1
-    
-    @State private var blackWhite = false
-    
+        
     var url: URL {
         ImageLoader.gifImageURLs[index - 1]
     }
@@ -42,7 +40,6 @@ struct AnimatedImageDemo: View {
         VStack {
             KFAnimatedImage(url)
                 .cacheOriginalImage()
-                .setProcessor(blackWhite ? BlackWhiteProcessor() : DefaultImageProcessor())
                 .onSuccess { r in
                     print("suc: \(r)")
                 }
@@ -55,7 +52,6 @@ struct AnimatedImageDemo: View {
                 }
                 .fade(duration: 1)
                 .forceTransition()
-                .resizable()
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
                 .shadow(radius: 5)
@@ -64,9 +60,6 @@ struct AnimatedImageDemo: View {
             Button(action: {
                 self.index = (self.index % 3) + 1
             }) { Text("Next Image") }
-            Button(action: {
-                self.blackWhite.toggle()
-            }) { Text("Black & White") }
         }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
     }
     
