@@ -24,14 +24,17 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(SwiftUI)
 import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol KFImageProtocol: View {
-    associatedtype HoldingView: KFImageHoldingView
-    var context: KFImage.Context<HoldingView> { get set }
     
-    init(context: KFImage.Context<HoldingView>)
+    typealias Context = KFImage.Context<HoldingView>
+    
+    associatedtype HoldingView: KFImageHoldingView
+    var context: Context { get set }
+    init(context: Context)
 }
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -88,3 +91,4 @@ public protocol KFImageHoldingView: View {
     static func created(from image: KFCrossPlatformImage) -> Self
 }
 
+#endif

@@ -30,27 +30,10 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFImage: KFImageProtocol {
-    
     public typealias HoldingView = Image
-
     public var context: Context<HoldingView>
-    
     public init(context: Context<Image>) {
         self.context = context
-    }
-}
-
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFImage {
-    public struct Context<HoldingView: KFImageHoldingView> {
-        var binder: ImageBinder
-        var configurations: [(HoldingView) -> HoldingView] = []
-        var cancelOnDisappear: Bool = false
-        var placeholder: AnyView? = nil
-
-        init(binder: ImageBinder) {
-            self.binder = binder
-        }
     }
 }
 

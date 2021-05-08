@@ -29,69 +29,10 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
 public struct KFAnimatedImage: KFImageProtocol {
-    
-    public typealias Context = KFImage.Context
-    typealias ImageBinder = KFImage.ImageBinder
-    
     public typealias HoldingView = KFAnimatedImageViewRepresenter
-    
     public var context: Context<HoldingView>
-
     public init(context: KFImage.Context<HoldingView>) {
         self.context = context
-    }
-}
-
-/// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
-/// Declaring a `KFAnimatedImage` in a `View`'s body to trigger loading from the given `Source`.
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-struct KFAnimatedImageRender: View {
-    /// An image binder that manages loading and cancelling image related task.
-    @ObservedObject var binder: KFAnimatedImage.ImageBinder
-
-    // Acts as a placeholder when loading an image.
-    var placeholder: AnyView?
-
-    // Whether the download task should be cancelled when the view disappears.
-    let cancelOnDisappear: Bool
-
-    init(_ context: KFAnimatedImage.Context<Image>) {
-        self.binder = context.binder
-        self.placeholder = context.placeholder
-        self.cancelOnDisappear = context.cancelOnDisappear
-    }
-    
-    /// Declares the content and behavior of this view.
-    @ViewBuilder
-    var body: some View {
-        if let image = binder.loadedImage {
-            KFAnimatedImageViewRepresenter(image: image)
-                .opacity(binder.loaded ? 1.0 : 0.0)
-        } else {
-            Group {
-                if placeholder != nil {
-                    placeholder
-                } else {
-                    Color.clear
-                }
-            }
-            .onAppear { [weak binder = self.binder] in
-                guard let binder = binder else {
-                    return
-                }
-                if !binder.loadingOrSucceeded {
-                    binder.start()
-                }
-            }
-            .onDisappear { [weak binder = self.binder] in
-                guard let binder = binder else {
-                    return
-                }
-                if self.cancelOnDisappear {
-                    binder.cancel()
-                }
-            }
-        }
     }
 }
 
@@ -130,5 +71,4 @@ struct KFAnimatedImage_Previews : PreviewProvider {
     }
 }
 #endif
-
 #endif
