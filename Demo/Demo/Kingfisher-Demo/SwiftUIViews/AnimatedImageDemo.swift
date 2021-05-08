@@ -52,6 +52,7 @@ struct AnimatedImageDemo: View {
                 }
                 .fade(duration: 1)
                 .forceTransition()
+                .aspectRatio(contentMode: .fill)
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
                 .shadow(radius: 5)

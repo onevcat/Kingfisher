@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(SwiftUI) && canImport(Combine)
+#if canImport(SwiftUI) && canImport(UIKit)
 import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
@@ -48,6 +48,10 @@ public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldin
     public func makeUIView(context: Context) -> AnimatedImageView {
         let view = AnimatedImageView()
         view.image = image
+        
+        // Allow SwiftUI scale (fit/fill) working fine.
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return view
     }
     

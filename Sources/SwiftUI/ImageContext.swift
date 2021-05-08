@@ -41,10 +41,12 @@ extension KFImage {
     }
 }
 
+#if canImport(UIKit)
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFAnimatedImage {
     public typealias Context = KFImage.Context
     typealias ImageBinder = KFImage.ImageBinder
 }
+#endif
 
 #endif
