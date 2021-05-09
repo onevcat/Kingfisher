@@ -41,7 +41,7 @@ extension KFImage {
     }
 }
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension KFAnimatedImage {
     public typealias Context = KFImage.Context
