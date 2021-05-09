@@ -29,10 +29,9 @@ import SwiftUI
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol KFImageProtocol: View, KFOptionSetter {
-    typealias Context = KFImage.Context<HoldingView>
     associatedtype HoldingView: KFImageHoldingView
-    var context: Context { get set }
-    init(context: Context)
+    var context: KFImage.Context<HoldingView> { get set }
+    init(context: KFImage.Context<HoldingView>)
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
