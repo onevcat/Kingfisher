@@ -37,7 +37,12 @@ public protocol KFImageProtocol: View, KFOptionSetter {
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     public var body: some View {
-        KFImageRenderer<HoldingView>(context)
+        KFImageRenderer<HoldingView>(
+            binder: context.binder,
+            placeholder: context.placeholder,
+            cancelOnDisappear: context.cancelOnDisappear,
+            configurations: context.configurations
+        )
             .id(context.binder)
     }
     

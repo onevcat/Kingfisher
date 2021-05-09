@@ -27,7 +27,7 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct AnimatedImageDemo: View {
     
     @State private var index = 1
@@ -66,7 +66,7 @@ struct AnimatedImageDemo: View {
     
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct AnimatedImageDemo_Previews: PreviewProvider {
     
     static var previews: some View {

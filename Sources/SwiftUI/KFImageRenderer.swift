@@ -33,7 +33,7 @@ import SwiftUI
 struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView {
     
     /// An image binder that manages loading and cancelling image related task.
-    @ObservedObject var binder: KFImage.ImageBinder
+    @StateObject var binder: KFImage.ImageBinder
 
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
@@ -43,13 +43,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
 
     // Configurations should be performed on the image.
     let configurations: [(HoldingView) -> HoldingView]
-
-    init(_ context: KFImage.Context<HoldingView>) {
-        self.binder = context.binder
-        self.configurations = context.configurations
-        self.placeholder = context.placeholder
-        self.cancelOnDisappear = context.cancelOnDisappear
-    }
 
     /// Declares the content and behavior of this view.
     @ViewBuilder
