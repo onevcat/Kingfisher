@@ -89,7 +89,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: .zero, size: size)
-        return draw(to: rect.size) { _ in
+        return draw(to: rect.size, inverting: false) { _ in
             if let backgroundColor = backgroundColor {
                 backgroundColor.setFill()
                 rect.fill()
@@ -510,7 +510,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         guard let cgImage = context.makeImage() else {
             return base
         }
-        print(base.imageOrientation.rawValue)
         let ref = useRefImage ? (refImage ?? base) : nil
         return KingfisherWrapper.image(cgImage: cgImage, scale: targetScale, refImage: ref)
         #else
@@ -548,7 +547,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let image = KFCrossPlatformImage(cgImage: cgImage, size: base.size)
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
-        return draw(to: self.size) { context in
+        return draw(to: self.size, inverting: false) { context in
             image.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
             return false
         }
