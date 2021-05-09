@@ -498,7 +498,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         draw: (CGContext) -> Bool // Whether use the refImage (`true`) or ignore image orientation (`false`)
     ) -> KFCrossPlatformImage
     {
-        #if os(macOS)
+        #if os(macOS) || os(watchOS)
         let targetScale = scale ?? self.scale
         GraphicsContext.begin(size: size, scale: targetScale)
         guard let context = GraphicsContext.current(size: size, scale: targetScale, inverting: inverting, cgImage: cgImage) else {
