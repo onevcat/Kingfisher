@@ -27,7 +27,7 @@
 #if canImport(SwiftUI)
 import SwiftUI
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
 
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
@@ -139,7 +139,7 @@ extension KFImage {
     }
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage.ImageBinder: Hashable {
     static func == (lhs: KFImage.ImageBinder, rhs: KFImage.ImageBinder) -> Bool {
         lhs.source == rhs.source && lhs.options.processor.identifier == rhs.options.processor.identifier
