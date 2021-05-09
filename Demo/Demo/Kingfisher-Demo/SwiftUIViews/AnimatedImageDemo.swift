@@ -1,10 +1,10 @@
 //
-//  MainView.swift
+//  AnimatedImageDemo.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2019/08/07.
+//  Created by wangxingbin on 2021/4/27.
 //
-//  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -28,33 +28,50 @@ import SwiftUI
 import Kingfisher
 
 @available(iOS 13.0, *)
-struct MainView: View {
-    var body: some View {
-        List {
-            Button(
-                action: {
-                    KingfisherManager.shared.cache.clearMemoryCache()
-                    KingfisherManager.shared.cache.clearDiskCache()
-                },
-                label: {
-                    Text("Clear Cache").foregroundColor(.blue)
-                }
-            )
-            NavigationLink(destination: SingleViewDemo()) { Text("Basic Image") }
-            NavigationLink(destination: SizingAnimationDemo()) { Text("Sizing Toggle") }
-            NavigationLink(destination: ListDemo()) { Text("List") }
-            if #available(iOS 14.0, *) {
-                NavigationLink(destination: LazyVStackDemo()) { Text("Stack") }
-                NavigationLink(destination: GridDemo()) { Text("Grid") }
-            }
-            NavigationLink(destination: AnimatedImageDemo()) { Text("Animated Image") }
-        }.navigationBarTitle(Text("SwiftUI Sample"))
+struct AnimatedImageDemo: View {
+    
+    @State private var index = 1
+        
+    var url: URL {
+        ImageLoader.gifImageURLs[index - 1]
     }
+    
+    var body: some View {
+        VStack {
+            KFAnimatedImage(url)
+                .cacheOriginalImage()
+                .onSuccess { r in
+                    print("suc: \(r)")
+                }
+                .onFailure { e in
+                    print("err: \(e)")
+                }
+                .placeholder {
+                    Image(systemName: "arrow.2.circlepath.circle")
+                        .font(.largeTitle)
+                }
+                .fade(duration: 1)
+                .forceTransition()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 300, height: 300)
+                .cornerRadius(20)
+                .shadow(radius: 5)
+                .frame(width: 320, height: 320)
+
+            Button(action: {
+                self.index = (self.index % 3) + 1
+            }) { Text("Next Image") }
+        }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
+    }
+    
 }
 
 @available(iOS 13.0, *)
-struct MainView_Previews: PreviewProvider {
+struct AnimatedImageDemo_Previews: PreviewProvider {
+    
     static var previews: some View {
-        MainView()
+        AnimatedImageDemo()
     }
+    
 }
+
