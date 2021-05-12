@@ -894,6 +894,50 @@ class KingfisherManagerTests: XCTestCase {
 
         waitForExpectations(timeout: 1, handler: nil)
     }
+    
+    func testDownsamplingHandleScale2x() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        _ = manager.retrieveImage(
+            with: .network(url),
+            options: [.processor(DownsamplingImageProcessor(size: .init(width: 4, height: 4))), .scaleFactor(2)])
+        {
+            result in
+
+            let image = result.value?.image
+            XCTAssertNotNil(image)
+            XCTAssertEqual(image?.size, .init(width: 4, height: 4))
+            XCTAssertEqual(image?.kf.scale, 2)
+            
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
+    func testDownsamplingHandleScale3x() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        _ = manager.retrieveImage(
+            with: .network(url),
+            options: [.processor(DownsamplingImageProcessor(size: .init(width: 4, height: 4))), .scaleFactor(3)])
+        {
+            result in
+
+            let image = result.value?.image
+            XCTAssertNotNil(image)
+            XCTAssertEqual(image?.size, .init(width: 4, height: 4))
+            XCTAssertEqual(image?.kf.scale, 3)
+            
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 
     func testCacheCallbackCoordinatorStateChanging() {
         var coordinator = CacheCallbackCoordinator(

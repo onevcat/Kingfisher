@@ -298,6 +298,8 @@ class ImageExtensionTests: XCTestCase {
     func testDownsampling() {
         let size = CGSize(width: 15, height: 15)
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
+        XCTAssertEqual(testImage.kf.scale, 1.0)
+        
         let image = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 1)
         XCTAssertEqual(image?.size, size)
         XCTAssertEqual(image?.kf.scale, 1.0)
@@ -306,13 +308,24 @@ class ImageExtensionTests: XCTestCase {
     func testDownsamplingWithScale() {
         let size = CGSize(width: 15, height: 15)
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
-        let image = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 2)
+        XCTAssertEqual(testImage.kf.scale, 1.0)
+        
+        let image2x = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 2)
         #if os(macOS)
-        XCTAssertEqual(image?.size, CGSize(width: 30, height: 30))
-        XCTAssertEqual(image?.kf.scale, 1.0)
+        XCTAssertEqual(image2x?.size, CGSize(width: 30, height: 30))
+        XCTAssertEqual(image2x?.kf.scale, 1.0)
         #else
-        XCTAssertEqual(image?.size, size)
-        XCTAssertEqual(image?.kf.scale, 2.0)
+        XCTAssertEqual(image2x?.size, size)
+        XCTAssertEqual(image2x?.kf.scale, 2.0)
+        #endif
+        
+        let image3x = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 3)
+        #if os(macOS)
+        XCTAssertEqual(image3x?.size, CGSize(width: 45, height: 45))
+        XCTAssertEqual(image3x?.kf.scale, 1.0)
+        #else
+        XCTAssertEqual(image3x?.size, size)
+        XCTAssertEqual(image3x?.kf.scale, 3.0)
         #endif
     }
 
