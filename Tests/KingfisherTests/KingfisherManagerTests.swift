@@ -908,8 +908,14 @@ class KingfisherManagerTests: XCTestCase {
 
             let image = result.value?.image
             XCTAssertNotNil(image)
+            
+            #if os(macOS)
+            XCTAssertEqual(image?.size, .init(width: 8, height: 8))
+            XCTAssertEqual(image?.kf.scale, 1)
+            #else
             XCTAssertEqual(image?.size, .init(width: 4, height: 4))
             XCTAssertEqual(image?.kf.scale, 2)
+            #endif
             
             exp.fulfill()
         }
@@ -930,8 +936,13 @@ class KingfisherManagerTests: XCTestCase {
 
             let image = result.value?.image
             XCTAssertNotNil(image)
+            #if os(macOS)
+            XCTAssertEqual(image?.size, .init(width: 12, height: 12))
+            XCTAssertEqual(image?.kf.scale, 1)
+            #else
             XCTAssertEqual(image?.size, .init(width: 4, height: 4))
             XCTAssertEqual(image?.kf.scale, 3)
+            #endif
             
             exp.fulfill()
         }
