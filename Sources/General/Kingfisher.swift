@@ -51,7 +51,7 @@ import WatchKit
 #endif
 
 /// Wrapper for Kingfisher compatible types. This type provides an extension point for
-/// connivence methods in Kingfisher.
+/// convenience methods in Kingfisher.
 public struct KingfisherWrapper<Base> {
     public let base: Base
     public init(_ base: Base) {
