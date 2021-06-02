@@ -26,6 +26,7 @@
 
 #if canImport(SwiftUI) && canImport(Combine)
 import SwiftUI
+import Combine
 
 /// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
 /// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
