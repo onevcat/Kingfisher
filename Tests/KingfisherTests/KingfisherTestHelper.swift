@@ -99,7 +99,7 @@ func clearCaches(_ caches: [ImageCache]) {
     }
 }
 
-func delay(_ time: Double, block: @escaping ()->()) {
+func delay(_ time: Double, block: @escaping () -> Void) {
     DispatchQueue.main.asyncAfter(deadline: .now() + time) { block() }
 }
 
