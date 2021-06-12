@@ -26,8 +26,9 @@
 
 #if canImport(SwiftUI) && canImport(Combine)
 import SwiftUI
+import Combine
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFImage: KFImageProtocol {
     public var context: Context<Image>
     public init(context: Context<Image>) {
@@ -35,35 +36,15 @@ public struct KFImage: KFImageProtocol {
     }
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension Image: KFImageHoldingView {
     public static func created(from image: KFCrossPlatformImage) -> Image {
-        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-            return Image(crossPlatformImage: image)
-        } else {
-            #if canImport(UIKit)
-            // The CG image is used to solve #1395
-            // It should be not necessary if SwiftUI.Image can handle resizing correctly when created
-            // by `Image.init(uiImage:)`. (The orientation information should be already contained in
-            // a `UIImage`)
-            // https://github.com/onevcat/Kingfisher/issues/1395
-            //
-            // This issue happens on iOS 13 and was fixed by Apple from iOS 14.
-            if let cgImage = image.cgImage {
-                return Image(decorative: cgImage, scale: image.scale, orientation: image.imageOrientation.toSwiftUI())
-            } else {
-                return Image(crossPlatformImage: image)
-            }
-            #else
-            return Image(crossPlatformImage: image)
-            #endif
-
-        }
+        Image(crossPlatformImage: image)
     }
 }
 
 // MARK: - Image compatibility.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
 
     public func resizable(
@@ -87,7 +68,7 @@ extension KFImage {
 }
 
 // MARK: - Deprecated
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameter source: The image `Source` defining where to load the target image.
@@ -122,7 +103,7 @@ extension KFImage {
 }
 
 #if DEBUG
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {

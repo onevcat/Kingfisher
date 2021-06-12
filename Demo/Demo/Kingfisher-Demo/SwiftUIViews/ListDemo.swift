@@ -27,7 +27,7 @@
 import Kingfisher
 import SwiftUI
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct ListDemo : View {
 
     let index = 1 ..< 700
@@ -40,7 +40,7 @@ struct ListDemo : View {
     }
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct ImageCell: View {
 
     @State var done = false
@@ -89,7 +89,7 @@ struct ImageCell: View {
 
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SwiftUIList_Previews : PreviewProvider {
     static var previews: some View {
         ListDemo()

@@ -27,7 +27,7 @@
 import Kingfisher
 import SwiftUI
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SingleViewDemo : View {
 
     @State private var index = 1
@@ -72,7 +72,7 @@ struct SingleViewDemo : View {
     }
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SingleViewDemo_Previews : PreviewProvider {
     static var previews: some View {
         SingleViewDemo()

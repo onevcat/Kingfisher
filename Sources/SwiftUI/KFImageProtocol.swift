@@ -26,18 +26,24 @@
 
 #if canImport(SwiftUI) && canImport(Combine)
 import SwiftUI
+import Combine
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public protocol KFImageProtocol: View, KFOptionSetter {
     associatedtype HoldingView: KFImageHoldingView
     var context: KFImage.Context<HoldingView> { get set }
     init(context: KFImage.Context<HoldingView>)
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     public var body: some View {
-        KFImageRenderer<HoldingView>(context)
+        KFImageRenderer<HoldingView>(
+            binder: context.binder,
+            placeholder: context.placeholder,
+            cancelOnDisappear: context.cancelOnDisappear,
+            configurations: context.configurations
+        )
             .id(context.binder)
     }
     
@@ -91,12 +97,12 @@ extension KFImageProtocol {
     }
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public protocol KFImageHoldingView: View {
     static func created(from image: KFCrossPlatformImage) -> Self
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     public var options: KingfisherParsedOptionsInfo {
         get { context.binder.options }

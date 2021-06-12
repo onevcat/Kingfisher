@@ -26,8 +26,9 @@
 
 #if canImport(SwiftUI) && canImport(Combine) && canImport(UIKit) && !os(watchOS)
 import SwiftUI
+import Combine
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImage: KFImageProtocol {
     public typealias HoldingView = KFAnimatedImageViewRepresenter
     public var context: Context<HoldingView>
@@ -37,7 +38,7 @@ public struct KFAnimatedImage: KFImageProtocol {
 }
 
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
     public static func created(from image: KFCrossPlatformImage) -> KFAnimatedImageViewRepresenter {
         KFAnimatedImageViewRepresenter(image: image)
@@ -62,7 +63,7 @@ public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldin
 }
 
 #if DEBUG
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFAnimatedImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {

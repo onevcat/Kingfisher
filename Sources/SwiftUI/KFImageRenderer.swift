@@ -26,14 +26,15 @@
 
 #if canImport(SwiftUI) && canImport(Combine)
 import SwiftUI
+import Combine
 
 /// A Kingfisher compatible SwiftUI `View` to load an image from a `Source`.
 /// Declaring a `KFImage` in a `View`'s body to trigger loading from the given `Source`.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView {
     
     /// An image binder that manages loading and cancelling image related task.
-    @ObservedObject var binder: KFImage.ImageBinder
+    @StateObject var binder: KFImage.ImageBinder
 
     // Acts as a placeholder when loading an image.
     var placeholder: AnyView?
@@ -43,13 +44,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
 
     // Configurations should be performed on the image.
     let configurations: [(HoldingView) -> HoldingView]
-
-    init(_ context: KFImage.Context<HoldingView>) {
-        self.binder = context.binder
-        self.configurations = context.configurations
-        self.placeholder = context.placeholder
-        self.cancelOnDisappear = context.cancelOnDisappear
-    }
 
     /// Declares the content and behavior of this view.
     @ViewBuilder
@@ -88,7 +82,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     }
 }
 
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension Image {
     // Creates an Image with either UIImage or NSImage.
     init(crossPlatformImage: KFCrossPlatformImage) {
@@ -101,7 +95,7 @@ extension Image {
 }
 
 #if canImport(UIKit)
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension UIImage.Orientation {
     func toSwiftUI() -> Image.Orientation {
         switch self {
