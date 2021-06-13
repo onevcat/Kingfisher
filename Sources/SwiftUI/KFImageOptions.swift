@@ -112,12 +112,23 @@ extension KFImageProtocol {
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
+    /// Sets a placeholder `View` which shows when loading the image, with a progress parameter as input.
+    /// - Parameter content: A view that describes the placeholder.
+    /// - Returns: A `KFImage` view that contains `content` as its placeholder.
+    public func placeholder<Content: View>(@ViewBuilder _ content: @escaping (Progress) -> Content) -> Self {
+        context.placeholder = { progress in
+            AnyView(content(progress))
+        }
+        return self
+    }
+    
     /// Sets a placeholder `View` which shows when loading the image.
     /// - Parameter content: A view that describes the placeholder.
     /// - Returns: A `KFImage` view that contains `content` as its placeholder.
-    public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> Self {
-        let v = content()
-        context.placeholder = AnyView(v)
+    public func placeholder<Content: View>(@ViewBuilder _ content: @escaping () -> Content) -> Self {
+        context.placeholder = { _ in
+            AnyView(content())
+        }
         return self
     }
 

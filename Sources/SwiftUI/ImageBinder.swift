@@ -48,6 +48,7 @@ extension KFImage {
 
         @Published var loaded = false
         @Published var loadedImage: KFCrossPlatformImage? = nil
+        @Published var progress: Progress = .init()
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
 
@@ -60,11 +61,13 @@ extension KFImage {
                 return
             }
 
+            progress = .init()
             downloadTask = KingfisherManager.shared
                 .retrieveImage(
                     with: source,
                     options: context.options,
                     progressBlock: { size, total in
+                        self.updateProgress(downloaded: size, total: total)
                         context.onProgressDelegate.call((size, total))
                     },
                     completionHandler: { [weak self] result in
@@ -92,6 +95,12 @@ extension KFImage {
                             }
                         }
                 })
+        }
+        
+        private func updateProgress(downloaded: Int64, total: Int64) {
+            progress.totalUnitCount = total
+            progress.completedUnitCount = downloaded
+            objectWillChange.send()
         }
 
         /// Cancels the download task if it is in progress.

@@ -31,7 +31,6 @@ import SwiftUI
 struct SingleViewDemo : View {
 
     @State private var index = 1
-
     @State private var blackWhite = false
 
     var url: URL {
@@ -49,7 +48,7 @@ struct SingleViewDemo : View {
                 .onFailure { e in
                     print("err: \(e)")
                 }
-                .placeholder {
+                .placeholder { progress in
                     Image(systemName: "arrow.2.circlepath.circle")
                         .font(.largeTitle)
                 }

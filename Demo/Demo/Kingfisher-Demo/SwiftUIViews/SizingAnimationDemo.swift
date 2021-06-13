@@ -35,7 +35,6 @@ struct SizingAnimationDemo: View {
     var body: some View {
         VStack {
             KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-1.jpg")!)
-                .loadImmediately()
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageSize, height: imageSize)

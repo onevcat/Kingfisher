@@ -39,7 +39,7 @@ extension KFImage {
         var configurations: [(HoldingView) -> HoldingView] = []
         
         var cancelOnDisappear: Bool = false
-        var placeholder: AnyView? = nil
+        var placeholder: ((Progress) -> AnyView)? = nil
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
