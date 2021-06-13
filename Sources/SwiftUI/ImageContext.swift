@@ -32,7 +32,9 @@ import Combine
 extension KFImage {
     public class Context<HoldingView: KFImageHoldingView> {
         let source: Source?
-        var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
+        var options = KingfisherParsedOptionsInfo(
+            KingfisherManager.shared.defaultOptions + [.loadDiskFileSynchronously]
+        )
 
         var configurations: [(HoldingView) -> HoldingView] = []
         
