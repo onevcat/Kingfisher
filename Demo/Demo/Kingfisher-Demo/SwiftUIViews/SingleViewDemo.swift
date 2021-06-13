@@ -49,8 +49,7 @@ struct SingleViewDemo : View {
                     print("err: \(e)")
                 }
                 .placeholder { progress in
-                    Image(systemName: "arrow.2.circlepath.circle")
-                        .font(.largeTitle)
+                    ProgressView(progress)
                 }
                 .fade(duration: 1)
                 .forceTransition()

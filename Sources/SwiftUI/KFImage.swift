@@ -76,6 +76,9 @@ struct KFImage_Previews : PreviewProvider {
                 .onSuccess { r in
                     print(r)
                 }
+                .placeholder { p in
+                    ProgressView(p)
+                }
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .padding()

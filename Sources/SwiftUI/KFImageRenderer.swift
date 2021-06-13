@@ -46,8 +46,8 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     .opacity(binder.loaded ? 1.0 : 0.0)
             } else {
                 Group {
-                    if let placeholder = context.placeholder {
-                        placeholder(binder.progress)
+                    if let placeholder = context.placeholder, let view = placeholder(binder.progress) {
+                        view
                     } else {
                         Color.clear
                     }

@@ -35,16 +35,13 @@ extension KFImage {
     /// image downloading and progress reporting based on `KingfisherManager`.
     class ImageBinder: ObservableObject {
         
-        init() {
-            isLoaded = .constant(false)
-        }
+        init() {}
 
         var downloadTask: DownloadTask?
 
         var loadingOrSucceeded: Bool {
             return downloadTask != nil || loadedImage != nil
         }
-        var isLoaded: Binding<Bool>
 
         @Published var loaded = false
         @Published var loadedImage: KFCrossPlatformImage? = nil
@@ -80,7 +77,6 @@ extension KFImage {
 
                             CallbackQueue.mainCurrentOrAsync.execute {
                                 self.loadedImage = value.image
-                                self.isLoaded.wrappedValue = true
                                 let animation = context.fadeTransitionDuration(cacheType: value.cacheType)
                                     .map { duration in Animation.linear(duration: duration) }
                                 withAnimation(animation) { self.loaded = true }
