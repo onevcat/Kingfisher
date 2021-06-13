@@ -42,21 +42,6 @@ extension KFImageProtocol {
             .id(context)
     }
     
-    /// Starts the loading process of `self` immediately.
-    ///
-    /// By default, a `KFImage` will not load its source until the `onAppear` is called. This is a lazily loading
-    /// behavior and provides better performance. However, when you refresh the view, the lazy loading also causes a
-    /// flickering since the loading does not happen immediately. Call this method if you want to start the load at once
-    /// could help avoiding the flickering, with some performance trade-off.
-    ///
-    /// - Returns: The `Self` value with changes applied.
-    public func loadImmediately(_ start: Bool = true) -> Self {
-        if start {
-//            context.binder.start()
-        }
-        return self
-    }
-    
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameters:
     ///   - source: The image `Source` defining where to load the target image.
