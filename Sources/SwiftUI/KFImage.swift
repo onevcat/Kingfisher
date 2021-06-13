@@ -67,41 +67,6 @@ extension KFImage {
     }
 }
 
-// MARK: - Deprecated
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-extension KFImage {
-    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
-    /// - Parameter source: The image `Source` defining where to load the target image.
-    /// - Parameter options: The options should be applied when loading the image.
-    ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
-    /// - Parameter isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
-    ///                       state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
-    ///                       wrapped value from outside.
-    /// - Deprecated: Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a
-    ///               `KFImage` and configure the options through modifier instead. See methods of `KFOptionSetter`
-    ///               for more.
-    @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(source:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
-    public init(source: Source?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
-        let binder = KFImage.ImageBinder(source: source, options: options, isLoaded: isLoaded)
-        self.init(binder: binder)
-    }
-
-    /// Creates a Kingfisher compatible image view to load image from the given `URL`.
-    /// - Parameter url: The image URL from where to load the target image.
-    /// - Parameter options: The options should be applied when loading the image.
-    ///                      Some UIKit related options (such as `ImageTransition.flip`) are not supported.
-    /// - Parameter isLoaded: Whether the image is loaded or not. This provides a way to inspect the internal loading
-    ///                       state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
-    ///                       wrapped value from outside.
-    /// - Deprecated: Some options are not available in SwiftUI yet. Use `KFImage(_:isLoaded:)` to create a
-    ///               `KFImage` and configure the options through modifier instead. See methods of `KFOptionSetter`
-    ///               for more.
-    @available(*, deprecated, message: "Some options are not available in SwiftUI yet. Use `KFImage(_:isLoaded:)` to create a `KFImage` and configure the options through modifier instead.")
-    init(_ url: URL?, options: KingfisherOptionsInfo? = nil, isLoaded: Binding<Bool> = .constant(false)) {
-        self.init(source: url?.convertToSource(), options: options, isLoaded: isLoaded)
-    }
-}
-
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFImage_Previews : PreviewProvider {

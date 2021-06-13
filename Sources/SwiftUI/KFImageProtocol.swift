@@ -38,13 +38,8 @@ public protocol KFImageProtocol: View, KFOptionSetter {
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     public var body: some View {
-        KFImageRenderer<HoldingView>(
-            binder: context.binder,
-            placeholder: context.placeholder,
-            cancelOnDisappear: context.cancelOnDisappear,
-            configurations: context.configurations
-        )
-            .id(context.binder)
+        KFImageRenderer<HoldingView>(context: context)
+            .id(context)
     }
     
     /// Starts the loading process of `self` immediately.
@@ -57,7 +52,7 @@ extension KFImageProtocol {
     /// - Returns: The `Self` value with changes applied.
     public func loadImmediately(_ start: Bool = true) -> Self {
         if start {
-            context.binder.start()
+//            context.binder.start()
         }
         return self
     }
@@ -69,8 +64,8 @@ extension KFImageProtocol {
     ///               state. `true` if the image is loaded successfully. Otherwise, `false`. Do not set the
     ///               wrapped value from outside.
     public init(source: Source?, isLoaded: Binding<Bool> = .constant(false)) {
-        let binder = KFImage.ImageBinder(source: source, isLoaded: isLoaded)
-        self.init(binder: binder)
+        let context = KFImage.Context<HoldingView>(source: source)
+        self.init(context: context)
     }
 
     /// Creates a Kingfisher compatible image view to load image from the given `URL`.
@@ -82,18 +77,13 @@ extension KFImageProtocol {
     public init(_ url: URL?, isLoaded: Binding<Bool> = .constant(false)) {
         self.init(source: url?.convertToSource(), isLoaded: isLoaded)
     }
-
-    init(binder: KFImage.ImageBinder) {
-        self.init(context: KFImage.Context<HoldingView>(binder: binder))
-    }
     
     /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
     /// - Parameter block: The block applies to loaded image.
     /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
     public func configure(_ block: @escaping (HoldingView) -> HoldingView) -> Self {
-        var result = self
-        result.context.configurations.append(block)
-        return result
+        context.configurations.append(block)
+        return self
     }
 }
 
@@ -105,15 +95,15 @@ public protocol KFImageHoldingView: View {
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     public var options: KingfisherParsedOptionsInfo {
-        get { context.binder.options }
-        nonmutating set { context.binder.options = newValue }
+        get { context.options }
+        nonmutating set { context.options = newValue }
     }
 
-    public var onFailureDelegate: Delegate<KingfisherError, Void> { context.binder.onFailureDelegate }
-    public var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { context.binder.onSuccessDelegate }
-    public var onProgressDelegate: Delegate<(Int64, Int64), Void> { context.binder.onProgressDelegate }
+    public var onFailureDelegate: Delegate<KingfisherError, Void> { context.onFailureDelegate }
+    public var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { context.onSuccessDelegate }
+    public var onProgressDelegate: Delegate<(Int64, Int64), Void> { context.onProgressDelegate }
 
-    public var delegateObserver: AnyObject { context.binder }
+    public var delegateObserver: AnyObject { context }
 }
 
 

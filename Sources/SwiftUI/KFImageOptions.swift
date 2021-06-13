@@ -117,18 +117,16 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` view that contains `content` as its placeholder.
     public func placeholder<Content: View>(@ViewBuilder _ content: () -> Content) -> Self {
         let v = content()
-        var result = self
-        result.context.placeholder = AnyView(v)
-        return result
+        context.placeholder = AnyView(v)
+        return self
     }
 
     /// Sets cancelling the download task bound to `self` when the view disappearing.
     /// - Parameter flag: Whether cancel the task or not.
     /// - Returns: A `KFImage` view that cancels downloading task when disappears.
     public func cancelOnDisappear(_ flag: Bool) -> Self {
-        var result = self
-        result.context.cancelOnDisappear = flag
-        return result
+        context.cancelOnDisappear = flag
+        return self
     }
 
     /// Sets a fade transition for the image task.
@@ -140,7 +138,7 @@ extension KFImageProtocol {
     /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
     /// the image being retrieved from cache, also call `forceRefresh()` on the returned `KFImage`.
     public func fade(duration: TimeInterval) -> Self {
-        context.binder.options.transition = .fade(duration)
+        context.options.transition = .fade(duration)
         return self
     }
 }
