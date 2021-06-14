@@ -303,6 +303,29 @@ public struct CompositingImageProcessor: ImageProcessor {
 }
 #endif
 
+/// Represents a radius specified in a `RoundCornerImageProcessor`.
+public enum Radius {
+    /// The radius should be calculated as a fraction of the image width. Typically the associated value should be
+    /// between 0 and 0.5, where 0 represents no radius and 0.5 represents using half of the image width.
+    case widthFraction(CGFloat)
+    /// The radius should be calculated as a fraction of the image height. Typically the associated value should be
+    /// between 0 and 0.5, where 0 represents no radius and 0.5 represents using half of the image height.
+    case heightFraction(CGFloat)
+    /// Use a fixed point value as the round corner radius.
+    case point(CGFloat)
+
+    var radiusIdentifier: String {
+        switch self {
+        case .widthFraction(let f):
+            return "w_frac_\(f)"
+        case .heightFraction(let f):
+            return "h_frac_\(f)"
+        case .point(let p):
+            return p.description
+        }
+    }
+}
+
 /// Processor for making round corner images. Only CG-based images are supported in macOS, 
 /// if a non-CG image passed in, the processor will do nothing.
 ///
@@ -318,27 +341,7 @@ public struct CompositingImageProcessor: ImageProcessor {
 public struct RoundCornerImageProcessor: ImageProcessor {
 
     /// Represents a radius specified in a `RoundCornerImageProcessor`.
-    public enum Radius {
-        /// The radius should be calculated as a fraction of the image width. Typically the associated value should be
-        /// between 0 and 0.5, where 0 represents no radius and 0.5 represents using half of the image width.
-        case widthFraction(CGFloat)
-        /// The radius should be calculated as a fraction of the image height. Typically the associated value should be
-        /// between 0 and 0.5, where 0 represents no radius and 0.5 represents using half of the image height.
-        case heightFraction(CGFloat)
-        /// Use a fixed point value as the round corner radius.
-        case point(CGFloat)
-
-        var radiusIdentifier: String {
-            switch self {
-            case .widthFraction(let f):
-                return "w_frac_\(f)"
-            case .heightFraction(let f):
-                return "h_frac_\(f)"
-            case .point(let p):
-                return p.description
-            }
-        }
-    }
+    public typealias Radius = Kingfisher.Radius
 
     /// Identifier of the processor.
     /// - Note: See documentation of `ImageProcessor` protocol for more.
@@ -459,6 +462,52 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     }
 }
 
+public struct Border {
+    public var color: KFCrossPlatformColor
+    public var lineWidth: CGFloat
+    
+    /// The radius will be applied in processing. Specify a certain point value with `.point`, or a fraction of the
+    /// target image with `.widthFraction`. or `.heightFraction`. For example, given a square image with width and
+    /// height equals,  `.widthFraction(0.5)` means use half of the length of size and makes the final image a round one.
+    public var radius: Radius
+    
+    /// The target corners which will be applied rounding.
+    public var roundingCorners: RectCorner
+    
+    public init(
+        color: KFCrossPlatformColor = .black,
+        lineWidth: CGFloat = 4,
+        radius: Radius = .point(0),
+        roundingCorners: RectCorner = .all
+    ) {
+        self.color = color
+        self.lineWidth = lineWidth
+        self.radius = radius
+        self.roundingCorners = roundingCorners
+    }
+    
+    var identifier: String {
+        "\(color.hex)_\(lineWidth)_\(radius.radiusIdentifier)_\(roundingCorners.cornerIdentifier)"
+    }
+}
+
+public struct BorderImageProcessor: ImageProcessor {
+    public var identifier: String { "com.onevcat.Kingfisher.RoundCornerImageProcessor(\(border)" }
+    public let border: Border
+    
+    public init(border: Border) {
+        self.border = border
+    }
+    
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        switch item {
+        case .image(let image):
+            return image.kf.addingBorder(border)
+        case .data:
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
+        }
+    }
+}
 
 /// Represents how a size adjusts itself to fit a target size.
 ///

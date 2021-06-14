@@ -329,6 +329,30 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return blurredImage
     }
     
+    public func addingBorder(_ border: Border) -> KFCrossPlatformImage
+    {
+        guard let _ = cgImage else {
+            assertionFailure("[Kingfisher] Blend mode image only works for CG-based image.")
+            return base
+        }
+        
+        let rect = CGRect(origin: .zero, size: size)
+        return draw(to: rect.size, inverting: false) { context in
+            
+            base.draw(in: rect, blendMode: .normal, alpha: 1.0)
+            
+            let strokeRect =  rect.insetBy(dx: border.lineWidth / 2, dy: border.lineWidth / 2)
+            context.setStrokeColor(border.color.cgColor)
+            
+            let line: UIBezierPath = .init(ovalIn: strokeRect)
+            line.lineWidth = border.lineWidth
+            
+            line.stroke()
+            
+            return false
+        }
+    }
+    
     // MARK: Overlay
     /// Creates an image from `base` image with a color overlay layer.
     ///
