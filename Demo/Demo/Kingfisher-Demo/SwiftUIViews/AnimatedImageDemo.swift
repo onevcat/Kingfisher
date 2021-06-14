@@ -46,9 +46,8 @@ struct AnimatedImageDemo: View {
                 .onFailure { e in
                     print("err: \(e)")
                 }
-                .placeholder {
-                    Image(systemName: "arrow.2.circlepath.circle")
-                        .font(.largeTitle)
+                .placeholder { p in
+                    ProgressView(p)
                 }
                 .fade(duration: 1)
                 .forceTransition()

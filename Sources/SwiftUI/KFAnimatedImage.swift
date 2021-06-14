@@ -71,6 +71,9 @@ struct KFAnimatedImage_Previews : PreviewProvider {
                 .onSuccess { r in
                     print(r)
                 }
+                .placeholder {
+                    ProgressView()
+                }
                 .padding()
         }
     }

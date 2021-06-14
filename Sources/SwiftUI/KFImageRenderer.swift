@@ -33,49 +33,40 @@ import Combine
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView {
     
-    /// An image binder that manages loading and cancelling image related task.
-    @StateObject var binder: KFImage.ImageBinder
-
-    // Acts as a placeholder when loading an image.
-    var placeholder: AnyView?
-
-    // Whether the download task should be cancelled when the view disappears.
-    let cancelOnDisappear: Bool
-
-    // Configurations should be performed on the image.
-    let configurations: [(HoldingView) -> HoldingView]
-
-    /// Declares the content and behavior of this view.
-    @ViewBuilder
+    @StateObject var binder: KFImage.ImageBinder = .init()
+    let context: KFImage.Context<HoldingView>
+    
     var body: some View {
-        if let image = binder.loadedImage {
-            configurations
-                .reduce(HoldingView.created(from: image)) {
-                    current, config in config(current)
+        Group {
+            if let image = binder.loadedImage {
+                context.configurations
+                    .reduce(HoldingView.created(from: image)) {
+                        current, config in config(current)
+                    }
+                    .opacity(binder.loaded ? 1.0 : 0.0)
+            } else {
+                Group {
+                    if let placeholder = context.placeholder, let view = placeholder(binder.progress) {
+                        view
+                    } else {
+                        Color.clear
+                    }
                 }
-                .opacity(binder.loaded ? 1.0 : 0.0)
-        } else {
-            Group {
-                if placeholder != nil {
-                    placeholder
-                } else {
-                    Color.clear
+                .onAppear { [weak binder = self.binder] in
+                    guard let binder = binder else {
+                        return
+                    }
+                    if !binder.loadingOrSucceeded {
+                        binder.start(context: context)
+                    }
                 }
-            }
-            .onAppear { [weak binder = self.binder] in
-                guard let binder = binder else {
-                    return
-                }
-                if !binder.loadingOrSucceeded {
-                    binder.start()
-                }
-            }
-            .onDisappear { [weak binder = self.binder] in
-                guard let binder = binder else {
-                    return
-                }
-                if self.cancelOnDisappear {
-                    binder.cancel()
+                .onDisappear { [weak binder = self.binder] in
+                    guard let binder = binder else {
+                        return
+                    }
+                    if context.cancelOnDisappear {
+                        binder.cancel()
+                    }
                 }
             }
         }
