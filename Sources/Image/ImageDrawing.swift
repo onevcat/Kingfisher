@@ -101,6 +101,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     #endif
     
     // MARK: Round Corner
+    
     /// Creates a round corner image from on `base` image.
     ///
     /// - Parameters:
@@ -112,11 +113,14 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///
     /// - Note: This method only works for CG-based image. The current image scale is kept.
     ///         For any non-CG-based image, `base` itself is returned.
-    public func image(withRoundRadius radius: CGFloat,
-                      fit size: CGSize,
-                      roundingCorners corners: RectCorner = .all,
-                      backgroundColor: KFCrossPlatformColor? = nil) -> KFCrossPlatformImage
+    public func image(
+        withRadius radius: Radius,
+        fit size: CGSize,
+        roundingCorners corners: RectCorner = .all,
+        backgroundColor: KFCrossPlatformColor? = nil
+    ) -> KFCrossPlatformImage
     {
+
         guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Round corner image only works for CG-based image.")
             return base
@@ -131,8 +135,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
                 rectPath.fill()
             }
             
-            let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius)
-            path.windingRule = .evenOdd
+            let path = pathForRoundCorner(rect: rect, radius: radius, corners: corners, refRect: rect)
             path.addClip()
             base.draw(in: rect)
             #else
@@ -147,11 +150,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
                 rectPath.fill()
             }
             
-            let path = UIBezierPath(
-                roundedRect: rect,
-                byRoundingCorners: corners.uiRectCorner,
-                cornerRadii: CGSize(width: radius, height: radius)
-            )
+            let path = pathForRoundCorner(rect: rect, radius: radius, corners: corners, refRect: rect)
             context.addPath(path.cgPath)
             context.clip()
             base.draw(in: rect)
@@ -159,6 +158,44 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return false
         }
     }
+    
+    /// Creates a round corner image from on `base` image.
+    ///
+    /// - Parameters:
+    ///   - radius: The round corner radius of creating image.
+    ///   - size: The target size of creating image.
+    ///   - corners: The target corners which will be applied rounding.
+    ///   - backgroundColor: The background color for the output image
+    /// - Returns: An image with round corner of `self`.
+    ///
+    /// - Note: This method only works for CG-based image. The current image scale is kept.
+    ///         For any non-CG-based image, `base` itself is returned.
+    public func image(
+        withRoundRadius radius: CGFloat,
+        fit size: CGSize,
+        roundingCorners corners: RectCorner = .all,
+        backgroundColor: KFCrossPlatformColor? = nil
+    ) -> KFCrossPlatformImage
+    {
+        image(withRadius: .point(radius), fit: size, roundingCorners: corners, backgroundColor: backgroundColor)
+    }
+    
+    #if os(macOS)
+    func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner) -> NSBezierPath {
+        let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius)
+        path.windingRule = .evenOdd
+        return path
+    }
+    #else
+    func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner, refRect: CGRect) -> UIBezierPath {
+        let cornerRadius = radius.compute(with: rect.size)
+        return UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners.uiRectCorner,
+            cornerRadii: CGSize(width: cornerRadius / (refRect.width / rect.width), height: cornerRadius / (refRect.height / rect.height))
+        )
+    }
+    #endif
     
     #if os(iOS) || os(tvOS)
     func resize(to size: CGSize, for contentMode: UIView.ContentMode) -> KFCrossPlatformImage {
@@ -344,9 +381,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             let strokeRect =  rect.insetBy(dx: border.lineWidth / 2, dy: border.lineWidth / 2)
             context.setStrokeColor(border.color.cgColor)
             
-            let line: UIBezierPath = .init(ovalIn: strokeRect)
+            let line = pathForRoundCorner(
+                rect: strokeRect,
+                radius: border.radius,
+                corners: border.roundingCorners,
+                refRect: rect
+            )
             line.lineWidth = border.lineWidth
-            
             line.stroke()
             
             return false

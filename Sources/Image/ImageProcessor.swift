@@ -324,6 +324,19 @@ public enum Radius {
             return p.description
         }
     }
+    
+    public func compute(with size: CGSize) -> CGFloat {
+        let cornerRadius: CGFloat
+        switch self {
+        case .point(let point):
+            cornerRadius = point
+        case .widthFraction(let widthFraction):
+            cornerRadius = size.width * widthFraction
+        case .heightFraction(let heightFraction):
+            cornerRadius = size.height * heightFraction
+        }
+        return cornerRadius
+    }
 }
 
 /// Processor for making round corner images. Only CG-based images are supported in macOS, 
@@ -439,20 +452,9 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         switch item {
         case .image(let image):
             let size = targetSize ?? image.kf.size
-
-            let cornerRadius: CGFloat
-            switch radius {
-            case .point(let point):
-                cornerRadius = point
-            case .widthFraction(let widthFraction):
-                cornerRadius = size.width * widthFraction
-            case .heightFraction(let heightFraction):
-                cornerRadius = size.height * heightFraction
-            }
-
             return image.kf.scaled(to: options.scaleFactor)
                         .kf.image(
-                            withRoundRadius: cornerRadius,
+                            withRadius: radius,
                             fit: size,
                             roundingCorners: roundingCorners,
                             backgroundColor: backgroundColor)
