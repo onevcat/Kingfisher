@@ -150,7 +150,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
                 rectPath.fill()
             }
             
-            let path = pathForRoundCorner(rect: rect, radius: radius, corners: corners, refRect: rect)
+            let path = pathForRoundCorner(rect: rect, radius: radius, corners: corners)
             context.addPath(path.cgPath)
             context.clip()
             base.draw(in: rect)
@@ -181,18 +181,21 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
     
     #if os(macOS)
-    func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner) -> NSBezierPath {
-        let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius)
+    func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner, offsetBase: CGFloat = 0) -> NSBezierPath {
+        let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius - offsetBase / 2)
         path.windingRule = .evenOdd
         return path
     }
     #else
-    func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner, refRect: CGRect) -> UIBezierPath {
+    func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner, offsetBase: CGFloat = 0) -> UIBezierPath {
         let cornerRadius = radius.compute(with: rect.size)
         return UIBezierPath(
             roundedRect: rect,
             byRoundingCorners: corners.uiRectCorner,
-            cornerRadii: CGSize(width: cornerRadius / (refRect.width / rect.width), height: cornerRadius / (refRect.height / rect.height))
+            cornerRadii: CGSize(
+                width: cornerRadius - offsetBase / 2,
+                height: cornerRadius - offsetBase / 2
+            )
         )
     }
     #endif
@@ -380,13 +383,15 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             
             let strokeRect =  rect.insetBy(dx: border.lineWidth / 2, dy: border.lineWidth / 2)
             context.setStrokeColor(border.color.cgColor)
+            context.setAlpha(0.5)
             
             let line = pathForRoundCorner(
                 rect: strokeRect,
                 radius: border.radius,
                 corners: border.roundingCorners,
-                refRect: rect
+                offsetBase: border.lineWidth
             )
+            line.lineCapStyle = .square
             line.lineWidth = border.lineWidth
             line.stroke()
             
