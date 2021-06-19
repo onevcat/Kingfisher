@@ -383,7 +383,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             
             let strokeRect =  rect.insetBy(dx: border.lineWidth / 2, dy: border.lineWidth / 2)
             context.setStrokeColor(border.color.cgColor)
-            context.setAlpha(0.5)
+            context.setAlpha(border.color.rgba.a)
             
             let line = pathForRoundCorner(
                 rect: strokeRect,

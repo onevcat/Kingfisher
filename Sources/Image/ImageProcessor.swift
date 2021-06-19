@@ -900,7 +900,8 @@ public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
 }
 
 extension KFCrossPlatformColor {
-    var hex: String {
+    
+    var rgba: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
@@ -911,6 +912,13 @@ extension KFCrossPlatformColor {
         #else
         getRed(&r, green: &g, blue: &b, alpha: &a)
         #endif
+        
+        return (r, g, b, a)
+    }
+    
+    var hex: String {
+        
+        let (r, g, b, a) = rgba
 
         let rInt = Int(r * 255) << 24
         let gInt = Int(g * 255) << 16
