@@ -135,7 +135,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
                 rectPath.fill()
             }
             
-            let path = pathForRoundCorner(rect: rect, radius: radius, corners: corners, refRect: rect)
+            let path = pathForRoundCorner(rect: rect, radius: radius, corners: corners)
             path.addClip()
             base.draw(in: rect)
             #else
@@ -182,7 +182,8 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     
     #if os(macOS)
     func pathForRoundCorner(rect: CGRect, radius: Radius, corners: RectCorner, offsetBase: CGFloat = 0) -> NSBezierPath {
-        let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: radius - offsetBase / 2)
+        let cornerRadius = radius.compute(with: rect.size)
+        let path = NSBezierPath(roundedRect: rect, byRoundingCorners: corners, radius: cornerRadius - offsetBase / 2)
         path.windingRule = .evenOdd
         return path
     }
@@ -379,7 +380,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let rect = CGRect(origin: .zero, size: size)
         return draw(to: rect.size, inverting: false) { context in
             
+            #if os(macOS)
+            base.draw(in: rect)
+            #else
             base.draw(in: rect, blendMode: .normal, alpha: 1.0)
+            #endif
+            
             
             let strokeRect =  rect.insetBy(dx: border.lineWidth / 2, dy: border.lineWidth / 2)
             context.setStrokeColor(border.color.cgColor)
