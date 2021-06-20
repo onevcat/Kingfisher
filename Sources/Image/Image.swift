@@ -229,17 +229,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
 
     /// Returns a data representation for `base` image, with the `format` as the format indicator.
-    ///
-    /// - Parameter format: The format in which the output data should be. If `unknown`, the `base` image will be
-    ///                     converted in the PNG representation.
-    ///
-    /// - Returns: The output data representing.
-
-    /// Returns a data representation for `base` image, with the `format` as the format indicator.
     /// - Parameters:
     ///   - format: The format in which the output data should be. If `unknown`, the `base` image will be
-    ///   converted in the PNG representation.
+    ///             converted in the PNG representation.
     ///   - compressionQuality: The compression quality when converting image to a lossy format data.
+    ///
+    /// - Returns: The output data representing.
     public func data(format: ImageFormat, compressionQuality: CGFloat = 1.0) -> Data? {
         return autoreleasepool { () -> Data? in
             let data: Data?
