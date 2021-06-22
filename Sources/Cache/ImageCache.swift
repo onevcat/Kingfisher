@@ -474,6 +474,8 @@ open class ImageCache {
         }
     }
 
+    // MARK: Getting Images
+
     /// Gets an image for a given key from the cache, either from memory storage or disk storage.
     ///
     /// - Parameters:
@@ -533,8 +535,6 @@ open class ImageCache {
         }
     }
 
-    // MARK: Getting Images
-
     /// Gets an image for a given key from the cache, either from memory storage or disk storage.
     ///
     /// - Parameters:
@@ -564,7 +564,7 @@ open class ImageCache {
     ///
     /// - Parameters:
     ///   - key: The key used for caching the image.
-    ///   - options: The `KingfisherParsedOptionsInfoKingfisherParsedOptionsInfo` options setting used for retrieving the image.
+    ///   - options: The `KingfisherParsedOptionsInfo` options setting used for retrieving the image.
     /// - Returns: The image stored in memory cache, if exists and valid. Otherwise, if the image does not exist or
     ///            has already expired, `nil` is returned.
     open func retrieveImageInMemoryCache(

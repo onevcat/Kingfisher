@@ -115,13 +115,12 @@ extension KingfisherWrapper where Base == Data {
             return false
         }
         
-        var buffer = [UInt8](repeating: 0, count: base.count)
-        base.copyBytes(to: &buffer, count: base.count)
-        for (index, item) in buffer.enumerated() {
+        let bytes = [UInt8](base)
+        let markerBytes = marker.bytes
+        for (index, item) in bytes.enumerated() where bytes.count > index + 1 {
             guard
-                item == marker.bytes.first,
-                buffer.count > index + 1,
-                buffer[index + 1] == marker.bytes[1] else {
+                item == markerBytes.first,
+                bytes[index + 1] == markerBytes[1] else {
                 continue
             }
             return true
