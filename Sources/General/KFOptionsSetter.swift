@@ -287,7 +287,7 @@ extension KFOptionSetter {
     /// Sets a retry strategy that will be used when something gets wrong during the image retrieving.
     /// - Parameter strategy: The provided strategy to define how the retrying should happen.
     /// - Returns: A `Self` value with changes applied.
-    public func retry(_ strategy: RetryStrategy) -> Self {
+    public func retry(_ strategy: RetryStrategy?) -> Self {
         options.retryStrategy = strategy
         return self
     }
