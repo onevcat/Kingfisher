@@ -2,7 +2,7 @@
 //  AutoSizingTableViewController.swift
 //  Kingfisher
 //
-//  Created by JP20028 on 2021/03/15.
+//  Created by Wei Wang on 2021/03/15.
 //
 //  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
