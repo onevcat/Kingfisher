@@ -2,7 +2,7 @@
 //  MainView.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2019/08/07.
+//  Created by Wei Wang on 2019/08/07.
 //
 //  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
 //

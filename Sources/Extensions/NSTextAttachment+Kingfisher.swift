@@ -82,7 +82,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     @discardableResult
     public func setImage(
         with source: Source?,
-        attributedView: KFCrossPlatformView,
+        attributedView: @autoclosure @escaping () -> KFCrossPlatformView,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
@@ -162,7 +162,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
 
     func setImage(
         with source: Source?,
-        attributedView: KFCrossPlatformView,
+        attributedView: @escaping () -> KFCrossPlatformView,
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
@@ -223,9 +223,9 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                     case .success(let value):
                         self.base.image = value.image
                         #if canImport(UIKit)
-                        attributedView.setNeedsDisplay()
+                        attributedView().setNeedsDisplay()
                         #else
-                        attributedView.setNeedsDisplay(attributedView.bounds)
+                        attributedView().setNeedsDisplay(attributedView.bounds)
                         #endif
                     case .failure:
                         if let image = options.onFailureImage {
