@@ -145,19 +145,21 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     @discardableResult
     public func setImage(
         with resource: Resource?,
-        attributedView: KFCrossPlatformView,
+        attributedView: @autoclosure @escaping () -> KFCrossPlatformView,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
+        let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(
             with: resource.map { .network($0) },
             attributedView: attributedView,
             placeholder: placeholder,
-            options: options,
+            parsedOptions: options,
             progressBlock: progressBlock,
-            completionHandler: completionHandler)
+            completionHandler: completionHandler
+        )
     }
 
     func setImage(
