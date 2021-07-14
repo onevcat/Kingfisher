@@ -27,7 +27,7 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SizingAnimationDemo: View {
     @State var imageSize: CGFloat = 250
     @State var isPlaying = false
@@ -35,7 +35,6 @@ struct SizingAnimationDemo: View {
     var body: some View {
         VStack {
             KFImage(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher-1.jpg")!)
-                .loadImmediately()
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: imageSize, height: imageSize)
@@ -62,7 +61,7 @@ struct SizingAnimationDemo: View {
     }
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SizingAnimationDemo_Previews: PreviewProvider {
     static var previews: some View {
         SizingAnimationDemo()

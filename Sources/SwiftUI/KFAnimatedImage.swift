@@ -1,10 +1,10 @@
 //
-//  KFImage.swift
+//  KFAnimatedImage.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2019/06/26.
+//  Created by wangxingbin on 2021/4/29.
 //
-//  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,63 +24,56 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(SwiftUI) && canImport(Combine)
+#if canImport(SwiftUI) && canImport(Combine) && canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import Combine
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-public struct KFImage: KFImageProtocol {
-    public var context: Context<Image>
-    public init(context: Context<Image>) {
+public struct KFAnimatedImage: KFImageProtocol {
+    public typealias HoldingView = KFAnimatedImageViewRepresenter
+    public var context: Context<HoldingView>
+    public init(context: KFImage.Context<HoldingView>) {
         self.context = context
     }
 }
 
+/// A wrapped `UIViewRepresentable` of `AnimatedImageView`
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-extension Image: KFImageHoldingView {
-    public static func created(from image: KFCrossPlatformImage) -> Image {
-        Image(crossPlatformImage: image)
+public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
+    public static func created(from image: KFCrossPlatformImage) -> KFAnimatedImageViewRepresenter {
+        KFAnimatedImageViewRepresenter(image: image)
     }
-}
-
-// MARK: - Image compatibility.
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-extension KFImage {
-
-    public func resizable(
-        capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: Image.ResizingMode = .stretch) -> KFImage
-    {
-        configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
+    
+    var image: KFCrossPlatformImage?
+    
+    public func makeUIView(context: Context) -> AnimatedImageView {
+        let view = AnimatedImageView()
+        view.image = image
+        
+        // Allow SwiftUI scale (fit/fill) working fine.
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        return view
     }
-
-    public func renderingMode(_ renderingMode: Image.TemplateRenderingMode?) -> KFImage {
-        configure { $0.renderingMode(renderingMode) }
+    
+    public func updateUIView(_ uiView: AnimatedImageView, context: Context) {
+        uiView.image = image
     }
-
-    public func interpolation(_ interpolation: Image.Interpolation) -> KFImage {
-        configure { $0.interpolation(interpolation) }
-    }
-
-    public func antialiased(_ isAntialiased: Bool) -> KFImage {
-        configure { $0.antialiased(isAntialiased) }
-    }
+    
 }
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-struct KFImage_Previews : PreviewProvider {
+struct KFAnimatedImage_Previews : PreviewProvider {
     static var previews: some View {
         Group {
-            KFImage.url(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
+            KFAnimatedImage(source: .network(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/GIF/1.gif")!))
                 .onSuccess { r in
                     print(r)
                 }
-                .placeholder { p in
-                    ProgressView(p)
+                .placeholder {
+                    ProgressView()
                 }
-                .resizable()
-                .aspectRatio(contentMode: .fit)
                 .padding()
         }
     }

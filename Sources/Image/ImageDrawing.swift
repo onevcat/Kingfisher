@@ -56,7 +56,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: .zero, size: size)
-        return draw(to: rect.size) { _ in
+        return draw(to: rect.size, inverting: false) { _ in
             if let backgroundColor = backgroundColor {
                 backgroundColor.setFill()
                 UIRectFill(rect)
@@ -89,7 +89,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: .zero, size: size)
-        return draw(to: rect.size) { _ in
+        return draw(to: rect.size, inverting: false) { _ in
             if let backgroundColor = backgroundColor {
                 backgroundColor.setFill()
                 rect.fill()
@@ -123,7 +123,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
-        return draw(to: size) { _ in
+        return draw(to: size, inverting: false) { _ in
             #if os(macOS)
             if let backgroundColor = backgroundColor {
                 let rectPath = NSBezierPath(rect: rect)
@@ -187,7 +187,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
-        return draw(to: size) { _ in
+        return draw(to: size, inverting: false) { _ in
             #if os(macOS)
             base.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
             #else
@@ -348,7 +348,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        return draw(to: rect.size) { context in
+        return draw(to: rect.size, inverting: false) { context in
             #if os(macOS)
             base.draw(in: rect)
             if fraction > 0 {
@@ -492,12 +492,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
     func draw(
         to size: CGSize,
-        inverting: Bool = false,
+        inverting: Bool,
         scale: CGFloat? = nil,
         refImage: KFCrossPlatformImage? = nil,
         draw: (CGContext) -> Bool // Whether use the refImage (`true`) or ignore image orientation (`false`)
     ) -> KFCrossPlatformImage
     {
+        #if os(macOS) || os(watchOS)
         let targetScale = scale ?? self.scale
         GraphicsContext.begin(size: size, scale: targetScale)
         guard let context = GraphicsContext.current(size: size, scale: targetScale, inverting: inverting, cgImage: cgImage) else {
@@ -511,6 +512,33 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         let ref = useRefImage ? (refImage ?? base) : nil
         return KingfisherWrapper.image(cgImage: cgImage, scale: targetScale, refImage: ref)
+        #else
+        
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = scale ?? self.scale
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        
+        var useRefImage: Bool = false
+        let image = renderer.image { rendererContext in
+            
+            let context = rendererContext.cgContext
+            if inverting { // If drawing a CGImage, we need to make context flipped.
+                context.scaleBy(x: 1.0, y: -1.0)
+                context.translateBy(x: 0, y: -size.height)
+            }
+            
+            useRefImage = draw(context)
+        }
+        if useRefImage {
+            guard let cgImage = image.cgImage else {
+                return base
+            }
+            let ref = refImage ?? base
+            return KingfisherWrapper.image(cgImage: cgImage, scale: format.scale, refImage: ref)
+        } else {
+            return image
+        }
+        #endif
     }
     
     #if os(macOS)
@@ -519,7 +547,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let image = KFCrossPlatformImage(cgImage: cgImage, size: base.size)
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
-        return draw(to: self.size) { context in
+        return draw(to: self.size, inverting: false) { context in
             image.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
             return false
         }

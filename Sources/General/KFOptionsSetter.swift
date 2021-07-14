@@ -41,22 +41,6 @@ extension KF.Builder: KFOptionSetter {
     public var delegateObserver: AnyObject { self }
 }
 
-#if canImport(SwiftUI) && canImport(Combine)
-@available(iOS 13.0, OSX 10.15, tvOS 13.0, watchOS 6.0, *)
-extension KFImage: KFOptionSetter {
-    public var options: KingfisherParsedOptionsInfo {
-        get { context.binder.options }
-        nonmutating set { context.binder.options = newValue }
-    }
-
-    public var onFailureDelegate: Delegate<KingfisherError, Void> { context.binder.onFailureDelegate }
-    public var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { context.binder.onSuccessDelegate }
-    public var onProgressDelegate: Delegate<(Int64, Int64), Void> { context.binder.onProgressDelegate }
-
-    public var delegateObserver: AnyObject { context.binder }
-}
-#endif
-
 // MARK: - Life cycles
 extension KFOptionSetter {
     /// Sets the progress block to current builder.
@@ -303,7 +287,7 @@ extension KFOptionSetter {
     /// Sets a retry strategy that will be used when something gets wrong during the image retrieving.
     /// - Parameter strategy: The provided strategy to define how the retrying should happen.
     /// - Returns: A `Self` value with changes applied.
-    public func retry(_ strategy: RetryStrategy) -> Self {
+    public func retry(_ strategy: RetryStrategy?) -> Self {
         options.retryStrategy = strategy
         return self
     }

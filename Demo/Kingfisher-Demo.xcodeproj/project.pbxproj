@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072922422638639D0089E810 /* AnimatedImageDemo.swift */; };
 		277EAE8D2045B39C00547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE892045B39C00547CD3 /* Assets.xcassets */; };
 		277EAE8E2045B39C00547CD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE8A2045B39C00547CD3 /* Interface.storyboard */; };
 		277EAE9D2045B4D500547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE962045B4D500547CD3 /* Assets.xcassets */; };
@@ -16,7 +17,10 @@
 		4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742471D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
+		4B779C8526743C2800FF9C1E /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */; };
 		4B92FE5625FF906B00473088 /* AutoSizingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92FE5525FF906B00473088 /* AutoSizingTableViewController.swift */; };
+		4B9AD88F26480D3B0086A261 /* OrientationImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */; };
+		4B9AD89026480D3C0086A261 /* OrientationImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
 		4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3371D5B02F8003387C2 /* Assets.xcassets */; };
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
@@ -146,6 +150,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		072922422638639D0089E810 /* AnimatedImageDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImageDemo.swift; sourceTree = "<group>"; };
 		277EAE892045B39C00547CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		277EAE8B2045B39C00547CD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		277EAE8C2045B39C00547CD3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -156,7 +161,9 @@
 		4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinityCollectionViewController.swift; sourceTree = "<group>"; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
+		4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryReaderDemo.swift; sourceTree = "<group>"; };
 		4B92FE5525FF906B00473088 /* AutoSizingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoSizingTableViewController.swift; sourceTree = "<group>"; };
+		4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationImagesViewController.swift; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4BCCF3391D5B02F8003387C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -357,6 +364,7 @@
 				4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */,
 				D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */,
 				D12E0C941C47F91800AC98AD /* NormalLoadingViewController.swift */,
+				4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */,
 				4B92FE5525FF906B00473088 /* AutoSizingTableViewController.swift */,
 				D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */,
 				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
@@ -411,9 +419,11 @@
 				D1F78A622589F17200930759 /* MainView.swift */,
 				D1F78A612589F17200930759 /* ListDemo.swift */,
 				D198F42125EDC4B900C53E0D /* GridDemo.swift */,
+				4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */,
 				D1F78A632589F17200930759 /* SingleViewDemo.swift */,
 				D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */,
 				D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */,
+				072922422638639D0089E810 /* AnimatedImageDemo.swift */,
 			);
 			path = SwiftUIViews;
 			sourceTree = "<group>";
@@ -640,6 +650,7 @@
 				D1CE1BD421A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12E0CB61C47F9C100AC98AD /* NormalLoadingViewController.swift in Sources */,
 				D1F06F3521AA5938000B1C38 /* ImageCollectionViewCell.swift in Sources */,
+				4B9AD89026480D3C0086A261 /* OrientationImagesViewController.swift in Sources */,
 				D1A1CCA821A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
 				D12E0CA21C47F92200AC98AD /* AppDelegate.swift in Sources */,
 			);
@@ -669,13 +680,16 @@
 				D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */,
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */,
+				072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
 				4B92FE5625FF906B00473088 /* AutoSizingTableViewController.swift in Sources */,
 				D1F78A642589F17200930759 /* ListDemo.swift in Sources */,
 				D198F41E25EDC11500C53E0D /* LazyVStackDemo.swift in Sources */,
 				D1E4CF5421BACBA6004D029D /* ImageDataProviderCollectionViewController.swift in Sources */,
+				4B9AD88F26480D3B0086A261 /* OrientationImagesViewController.swift in Sources */,
 				D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */,
 				D1F78A652589F17200930759 /* MainView.swift in Sources */,
+				4B779C8526743C2800FF9C1E /* GeometryReaderDemo.swift in Sources */,
 				D1F78A5F2589F0AA00930759 /* SwiftUIViewController.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
@@ -945,16 +959,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 10.0;
-				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
+				WATCHOS_DEPLOYMENT_TARGET = 4.0;
 			};
 			name = Debug;
 		};
@@ -999,16 +1013,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;
-				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+				WATCHOS_DEPLOYMENT_TARGET = 4.0;
 			};
 			name = Release;
 		};

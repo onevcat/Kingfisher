@@ -27,7 +27,7 @@
 import SwiftUI
 import UIKit
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 class SwiftUIViewController: UIHostingController<MainView> {
     required init?(coder: NSCoder) {
         super.init(coder: coder, rootView: MainView())

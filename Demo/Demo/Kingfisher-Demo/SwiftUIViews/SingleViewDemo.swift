@@ -27,11 +27,10 @@
 import Kingfisher
 import SwiftUI
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SingleViewDemo : View {
 
     @State private var index = 1
-
     @State private var blackWhite = false
 
     var url: URL {
@@ -49,9 +48,8 @@ struct SingleViewDemo : View {
                 .onFailure { e in
                     print("err: \(e)")
                 }
-                .placeholder {
-                    Image(systemName: "arrow.2.circlepath.circle")
-                        .font(.largeTitle)
+                .placeholder { progress in
+                    ProgressView(progress)
                 }
                 .fade(duration: 1)
                 .forceTransition()
@@ -72,7 +70,7 @@ struct SingleViewDemo : View {
     }
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 struct SingleViewDemo_Previews : PreviewProvider {
     static var previews: some View {
         SingleViewDemo()
