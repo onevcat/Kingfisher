@@ -222,10 +222,11 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                     switch result {
                     case .success(let value):
                         self.base.image = value.image
+                        let view = attributedView()
                         #if canImport(UIKit)
-                        attributedView().setNeedsDisplay()
+                        view.setNeedsDisplay()
                         #else
-                        attributedView().setNeedsDisplay(attributedView.bounds)
+                        view.setNeedsDisplay(view.bounds)
                         #endif
                     case .failure:
                         if let image = options.onFailureImage {
