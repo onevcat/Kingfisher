@@ -171,7 +171,7 @@ A detailed guide for installation can be found in [Installation Guide](https://g
 
 - File > Swift Packages > Add Package Dependency
 - Add `https://github.com/onevcat/Kingfisher.git`
-- Select "Up to Next Major" with "7.0.0"
+- Select "Up to Next Major" with "6.0.0"
 
 #### CocoaPods
 
@@ -181,20 +181,20 @@ platform :ios, '11.0'
 use_frameworks!
 
 target 'MyApp' do
-  pod 'Kingfisher', '~> 7.0'
+  pod 'Kingfisher', '~> 6.0'
 end
 ```
 
 #### Carthage
 
 ```
-github "onevcat/Kingfisher" ~> 7.0
+github "onevcat/Kingfisher" ~> 6.0
 ```
 
 
 ### Migrating
 
-[Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) - Kingfisher 7.x is NOT fully compatible with the previous version, especially for its SwiftUI support. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
+[WIP] [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) - Kingfisher 7.x is NOT fully compatible with the previous version, especially for its SwiftUI support. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
 
 If you are using an even earlier version, see the guides below to know the steps for migrating.
 
