@@ -2,7 +2,7 @@
 //  ImageContext.swift
 //  Kingfisher
 //
-//  Created by JP20028 on 2021/05/08.
+//  Created by onevcat on 2021/05/08.
 //
 //  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //

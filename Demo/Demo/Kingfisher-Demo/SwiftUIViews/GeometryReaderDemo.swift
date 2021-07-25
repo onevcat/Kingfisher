@@ -2,7 +2,7 @@
 //  GeometryReaderDemo.swift
 //  Kingfisher
 //
-//  Created by JP20028 on 2021/06/12.
+//  Created by onevcat on 2021/06/12.
 //
 //  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
