@@ -65,6 +65,11 @@ extension KFImage {
     public func antialiased(_ isAntialiased: Bool) -> KFImage {
         configure { $0.antialiased(isAntialiased) }
     }
+    
+    @available(*, deprecated, message: "This is not necessary anymore since `@StateObject` is used. It does nothing now and please just remove it.")
+    public func loadImmediately() -> KFImage {
+        return self
+    }
 }
 
 #if DEBUG
