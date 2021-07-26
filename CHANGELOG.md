@@ -2,6 +2,28 @@
 
 -----
 
+## [7.0.0-beta.1 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.1) (2021-07-27)
+
+#### Add
+* Rewrite SwiftUI support based on `@StateObject` instead of the old `@ObservedObject`. It provides a stable and better data model backs the image rendering in SwiftUI. For this, Kingfisher SwiftUI supports from iOS 14 now. [#1707](https://github.com/onevcat/Kingfisher/pull/1707)
+* Mark `ImageCache.retrieveImageInMemoryCache(forKey:options:)` as `open` to expose a correct override entry point to outside. [#1703](https://github.com/onevcat/Kingfisher/pull/1703)
+* The `NSTextAttachment` extension method now accepts closure instead of a evaluated view. This allows delaying the passing in view to the timing which actually it is needed. [#1746](https://github.com/onevcat/Kingfisher/pull/1746)
+* A `KFAnimatedImage` type to display a GIF image in SwiftUI. [#1705](https://github.com/onevcat/Kingfisher/pull/1705)
+* Add a `progress` parameter to the `KFImage`'s `placeholder` closure. This allows you create a view based on the loading progress. [#1707](https://github.com/onevcat/Kingfisher/pull/1707)
+
+#### Fix
+* Uses `UIGraphicsImageRenderer` on iOS and tvOS for better image drawing. [#1706](https://github.com/onevcat/Kingfisher/pull/1706)
+* An issue that prevents Kingfisher compiling on mac Catalyst target in some certain of Xcode versions. [#1692](https://github.com/onevcat/Kingfisher/pull/1692)
+* The `KF.retry(:_)` method now accepts an optional value. It allows to reset the retry strategy by passing in a `nil` value. [#1729](https://github.com/onevcat/Kingfisher/pull/1729)
+* The `placeholder` view builder of `KFImage` now works when it gets changed instead of using its initial value forever. [#1707](https://github.com/onevcat/Kingfisher/pull/1707)
+* Some minor performance improvement. [#1739](https://github.com/onevcat/Kingfisher/pull/1739)
+
+#### Remove
+* Drop support for iOS 10, macOS 10.13, tvOS 10 and watch OS 3.
+* The workaround of `KFImage.loadImmediately` is not necessary anymore due to the model switching to `@StateObject`. The interface is kept for backward compatibility, but it does nothing in the new version. [#1707](https://github.com/onevcat/Kingfisher/pull/1707)
+
+---
+
 ## [6.3.0 - Open To Better](https://github.com/onevcat/Kingfisher/releases/tag/6.3.0) (2021-04-21)
 
 #### Add
