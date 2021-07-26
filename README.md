@@ -133,7 +133,7 @@ KF.url(url)
   .set(to: imageView)
 ```
 
-And even better, if later you want to switch to SwiftUI, just make some trivial changes and you've done.
+And even better, if later you want to switch to SwiftUI, just change the `KF` above to `KFImage`, and you've done:
 
 ```swift
 struct ContentView: View {
@@ -160,7 +160,8 @@ There are also some performance tips, remember to check them too.
 
 ## Requirements
 
-- iOS 11.0+ / macOS 10.13+ / tvOS 11.0+ / watchOS 4.0+
+- iOS 12.0+ / macOS 10.14+ / tvOS 12.0+ / watchOS 5.0+ (if you use only UIKit/AppKit)
+- iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ (if you use it in SwiftUI)
 - Swift 5.0+
 
 ### Installation
@@ -171,34 +172,34 @@ A detailed guide for installation can be found in [Installation Guide](https://g
 
 - File > Swift Packages > Add Package Dependency
 - Add `https://github.com/onevcat/Kingfisher.git`
-- Select "Up to Next Major" with "6.0.0"
+- Select "Up to Next Major" with "7.0.0"
 
 #### CocoaPods
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '11.0'
+platform :ios, '12.0'
 use_frameworks!
 
 target 'MyApp' do
-  pod 'Kingfisher', '~> 6.0'
+  pod 'Kingfisher', '~> 7.0'
 end
 ```
 
 #### Carthage
 
 ```
-github "onevcat/Kingfisher" ~> 6.0
+github "onevcat/Kingfisher" ~> 7.0
 ```
 
 
 ### Migrating
 
-[WIP] [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) - Kingfisher 7.x is NOT fully compatible with the previous version, especially for its SwiftUI support. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
+[Kingfisher 7.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) - Kingfisher 7.x is NOT fully compatible with the previous version. However, changes should be trivial or not required at all. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
 
 If you are using an even earlier version, see the guides below to know the steps for migrating.
 
-> - [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) - If you are upgrading to Kingfisher 6.x from 5.x, please read this for more information.
+> - [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) - Kingfisher 6.x is NOT fully compatible with the previous version. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
 > - [Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - If you are upgrading to Kingfisher 5.x from 4.x, please read this for more information.
 > - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 were removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble when migrating, please open an issue to discuss.
 > - [Kingfisher 3.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
