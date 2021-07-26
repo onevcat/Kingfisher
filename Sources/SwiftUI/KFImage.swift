@@ -66,8 +66,19 @@ extension KFImage {
         configure { $0.antialiased(isAntialiased) }
     }
     
+    /// Starts the loading process of `self` immediately.
+    ///
+    /// By default, a `KFImage` will not load its source until the `onAppear` is called. This is a lazily loading
+    /// behavior and provides better performance. However, when you refresh the view, the lazy loading also causes a
+    /// flickering since the loading does not happen immediately. Call this method if you want to start the load at once
+    /// could help avoiding the flickering, with some performance trade-off.
+    ///
+    /// - Deprecated: This is not necessary anymore since `@StateObject` is used for holding the image data.
+    /// It does nothing now and please just remove it.
+    ///
+    /// - Returns: The `Self` value with changes applied.
     @available(*, deprecated, message: "This is not necessary anymore since `@StateObject` is used. It does nothing now and please just remove it.")
-    public func loadImmediately() -> KFImage {
+    public func loadImmediately(_ start: Bool = true) -> KFImage {
         return self
     }
 }
