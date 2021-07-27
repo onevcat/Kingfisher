@@ -182,37 +182,6 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    // Since we could not receive one challage, no test for trusted hosts currently.
-    // See http://stackoverflow.com/questions/27065372/ for more.
-    func testSSLCertificateValidation() {
-        LSNocilla.sharedInstance().stop()
-
-        let exp = expectation(description: #function)
-
-        let downloader = ImageDownloader(name: "ssl.test")
-        let url = URL(string: "https://testssl-expire.disig.sk/Expired.png")!
-        
-        downloader.downloadImage(with: url) { result in
-            XCTAssertNotNil(result.error)
-            if case .responseError(reason: .URLSessionError(let error)) = result.error! {
-                let nsError = error as NSError
-                XCTAssert(nsError.code == NSURLErrorServerCertificateUntrusted ||
-                          nsError.code == NSURLErrorSecureConnectionFailed,
-                          "Error should be NSURLErrorServerCertificateUntrusted, but \(String(describing: error))")
-            } else {
-                XCTFail()
-            }
-            exp.fulfill()
-            LSNocilla.sharedInstance().start()
-        }
-        
-        waitForExpectations(timeout: 20) { error in
-            XCTAssertNil(error, "\(String(describing: error))")
-            LSNocilla.sharedInstance().start()
-        }
-    }
- 
-    
     func testDownloadResultErrorAndRetry() {
         let exp = expectation(description: #function)
         
