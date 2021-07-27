@@ -164,6 +164,8 @@ There are also some performance tips, remember to check them too.
 - iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ (if you use it in SwiftUI)
 - Swift 5.0+
 
+> If you need to support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x.
+
 ### Installation
 
 A detailed guide for installation can be found in [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide).
