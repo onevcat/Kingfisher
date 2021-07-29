@@ -344,33 +344,35 @@ public class KingfisherManager {
         completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)?)
     {
         guard let  completionHandler = completionHandler else { return }
-        provider.data { result in
-            switch result {
-            case .success(let data):
-                (options.processingQueue ?? self.processingQueue).execute {
-                    let processor = options.processor
-                    let processingItem = ImageProcessItem.data(data)
-                    guard let image = processor.process(item: processingItem, options: options) else {
-                        options.callbackQueue.execute {
-                            let error = KingfisherError.processorError(
-                                reason: .processingFailed(processor: processor, item: processingItem))
-                            completionHandler(.failure(error))
+        (options.processingQueue ?? self.processingQueue).execute {
+            provider.data { result in
+                switch result {
+                case .success(let data):
+                    (options.processingQueue ?? self.processingQueue).execute {
+                        let processor = options.processor
+                        let processingItem = ImageProcessItem.data(data)
+                        guard let image = processor.process(item: processingItem, options: options) else {
+                            options.callbackQueue.execute {
+                                let error = KingfisherError.processorError(
+                                    reason: .processingFailed(processor: processor, item: processingItem))
+                                completionHandler(.failure(error))
+                            }
+                            return
                         }
-                        return
+                        
+                        options.callbackQueue.execute {
+                            let result = ImageLoadingResult(image: image, url: nil, originalData: data)
+                            completionHandler(.success(result))
+                        }
                     }
-
+                case .failure(let error):
                     options.callbackQueue.execute {
-                        let result = ImageLoadingResult(image: image, url: nil, originalData: data)
-                        completionHandler(.success(result))
+                        let error = KingfisherError.imageSettingError(
+                            reason: .dataProviderError(provider: provider, error: error))
+                        completionHandler(.failure(error))
                     }
+                    
                 }
-            case .failure(let error):
-                options.callbackQueue.execute {
-                    let error = KingfisherError.imageSettingError(
-                        reason: .dataProviderError(provider: provider, error: error))
-                    completionHandler(.failure(error))
-                }
-
             }
         }
     }
