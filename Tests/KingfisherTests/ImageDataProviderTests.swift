@@ -39,14 +39,14 @@ class ImageDataProviderTests: XCTestCase {
         XCTAssertEqual(provider.cacheKey, fileURL.absoluteString)
         XCTAssertEqual(provider.fileURL, fileURL)
         
-        var syncCalled = false
+        let exp = expectation(description: #function)
         provider.data { result in
             XCTAssertEqual(result.value, testImageData)
-            syncCalled = true
+            try! fm.removeItem(at: fileURL)
+            exp.fulfill()
         }
-        
-        XCTAssertTrue(syncCalled)
-        try! fm.removeItem(at: fileURL)
+
+        waitForExpectations(timeout: 1, handler: nil)
     }
     
     func testBase64ImageDataProvider() {
