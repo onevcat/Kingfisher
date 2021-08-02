@@ -2,6 +2,10 @@
 
 -----
 
+## [7.0.0-beta.2 - Version 7 - `LocalFileImageDataProvider` now loads data in a background queue by default. This prevents loading performance issue when the loading is created on main thread. [#1764]](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.2) (2021-08-02)
+
+---
+
 ## [7.0.0-beta.1 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.1) (2021-07-27)
 
 #### Add
