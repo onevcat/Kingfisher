@@ -89,8 +89,10 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
     /// The key used in cache.
     public var cacheKey: String
 
-    public func data(handler: (Result<Data, Error>) -> Void) {
-        handler(Result(catching: { try Data(contentsOf: fileURL) }))
+    public func data(handler:@escaping (Result<Data, Error>) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            handler(Result(catching: { try Data(contentsOf: fileURL) }))
+        }
     }
 
     /// The URL of the local file on the disk.
