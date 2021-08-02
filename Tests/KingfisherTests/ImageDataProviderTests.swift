@@ -49,6 +49,26 @@ class ImageDataProviderTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
+    func testLocalFileImageDataProviderMainQueue() {
+        let fm = FileManager.default
+        let document = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let fileURL = document.appendingPathComponent("test")
+        try! testImageData.write(to: fileURL)
+        
+        let provider = LocalFileImageDataProvider(fileURL: fileURL, loadingQueue: .mainCurrentOrAsync)
+        XCTAssertEqual(provider.cacheKey, fileURL.absoluteString)
+        XCTAssertEqual(provider.fileURL, fileURL)
+        
+        var called = false
+        provider.data { result in
+            XCTAssertEqual(result.value, testImageData)
+            try! fm.removeItem(at: fileURL)
+            called = true
+        }
+
+        XCTAssertTrue(called)
+    }
+    
     func testBase64ImageDataProvider() {
         let base64String = testImageData.base64EncodedString()
         let provider = Base64ImageDataProvider(base64String: base64String, cacheKey: "123")

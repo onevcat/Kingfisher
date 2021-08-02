@@ -26,6 +26,8 @@
 
 import Foundation
 
+public typealias ExecutionQueue = CallbackQueue
+
 /// Represents callback queue behaviors when an calling of closure be dispatched.
 ///
 /// - asyncMain: Dispatch the calling to `DispatchQueue.main` with an `async` behavior.
