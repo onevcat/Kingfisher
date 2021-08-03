@@ -51,7 +51,7 @@ platform :ios do
     target_version = options[:version]
     raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
     
-    ensure_git_branch
+    ensure_git_branch(branch: 'release/version6')
     ensure_git_status_clean
     
     skip_tests =  options[:skip_tests]
