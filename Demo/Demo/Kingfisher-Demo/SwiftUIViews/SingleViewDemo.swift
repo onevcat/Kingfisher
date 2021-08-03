@@ -51,7 +51,7 @@ struct SingleViewDemo : View {
                 .placeholder { progress in
                     ProgressView(progress)
                 }
-                .fade(duration: 1)
+                .fade(duration: index == 1 ? 0 : 1) // Do not animate for the first image. Otherwise it causes an unwanted animation when the page is shown.
                 .forceTransition()
                 .resizable()
                 .frame(width: 300, height: 300)
