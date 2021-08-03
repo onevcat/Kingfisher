@@ -39,6 +39,9 @@ struct AnimatedImageDemo: View {
     var body: some View {
         VStack {
             KFAnimatedImage(url)
+                .configure { view in
+                    view.framePreloadCount = 3
+                }
                 .cacheOriginalImage()
                 .onSuccess { r in
                     print("suc: \(r)")
