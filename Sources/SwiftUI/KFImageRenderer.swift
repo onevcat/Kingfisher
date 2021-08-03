@@ -37,14 +37,14 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     let context: KFImage.Context<HoldingView>
     
     var body: some View {
-        Group {
-            if let image = binder.loadedImage {
-                context.configurations
-                    .reduce(HoldingView.created(from: image)) {
-                        current, config in config(current)
-                    }
-                    .opacity(binder.loaded ? 1.0 : 0.0)
-            } else {
+        
+        ZStack {
+            context.configurations
+                .reduce(HoldingView.created(from: binder.loadedImage)) {
+                    current, config in config(current)
+                }
+                .opacity(binder.loaded ? 1.0 : 0.0)
+            if binder.loadedImage == nil {
                 Group {
                     if let placeholder = context.placeholder, let view = placeholder(binder.progress) {
                         view
@@ -76,11 +76,11 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension Image {
     // Creates an Image with either UIImage or NSImage.
-    init(crossPlatformImage: KFCrossPlatformImage) {
+    init(crossPlatformImage: KFCrossPlatformImage?) {
         #if canImport(UIKit)
-        self.init(uiImage: crossPlatformImage)
+        self.init(uiImage: crossPlatformImage ?? KFCrossPlatformImage())
         #elseif canImport(AppKit)
-        self.init(nsImage: crossPlatformImage)
+        self.init(nsImage: crossPlatformImage ?? KFCrossPlatformImage())
         #endif
     }
 }

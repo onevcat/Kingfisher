@@ -1,10 +1,10 @@
 //
-//  MainView.swift
+//  TransitionViewDemo.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2019/08/07.
+//  Created by onevcat on 2021/08/03.
 //
-//  Copyright (c) 2019 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2021 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -28,33 +28,28 @@ import SwiftUI
 import Kingfisher
 
 @available(iOS 14.0, *)
-struct MainView: View {
+struct TransitionViewDemo: View {
+    @State private var showDetails = false
+    
     var body: some View {
-        List {
-            Button(
-                action: {
-                    KingfisherManager.shared.cache.clearMemoryCache()
-                    KingfisherManager.shared.cache.clearDiskCache()
-                },
-                label: {
-                    Text("Clear Cache").foregroundColor(.blue)
+        VStack {
+            Button(showDetails ? "Hide" : "Show") {
+                withAnimation {
+                    showDetails.toggle()
                 }
-            )
-            NavigationLink(destination: SingleViewDemo()) { Text("Basic Image") }
-            NavigationLink(destination: SizingAnimationDemo()) { Text("Sizing Toggle") }
-            NavigationLink(destination: ListDemo()) { Text("List") }
-            NavigationLink(destination: LazyVStackDemo()) { Text("Stack") }
-            NavigationLink(destination: GridDemo()) { Text("Grid") }
-            NavigationLink(destination: AnimatedImageDemo()) { Text("Animated Image") }
-            NavigationLink(destination: GeometryReaderDemo()) { Text("Geometry Reader") }
-            NavigationLink(destination: TransitionViewDemo()) { Text("Transition") }
-        }.navigationBarTitle(Text("SwiftUI Sample"))
+            }
+            if showDetails {
+                KFImage(ImageLoader.sampleImageURLs.first)
+                    .transition(.slide)
+            }
+            Spacer()
+        }.frame(height: 500)
     }
 }
 
 @available(iOS 14.0, *)
-struct MainView_Previews: PreviewProvider {
+struct TransitionViewDemo_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        TransitionViewDemo()
     }
 }

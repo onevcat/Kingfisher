@@ -40,7 +40,7 @@ public struct KFAnimatedImage: KFImageProtocol {
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
-    public static func created(from image: KFCrossPlatformImage) -> KFAnimatedImageViewRepresenter {
+    public static func created(from image: KFCrossPlatformImage?) -> KFAnimatedImageViewRepresenter {
         KFAnimatedImageViewRepresenter(image: image)
     }
     
