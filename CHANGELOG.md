@@ -2,6 +2,13 @@
 
 -----
 
+## [6.3.1 - Published Wrapper](https://github.com/onevcat/Kingfisher/releases/tag/6.3.1) (2021-08-03)
+
+#### Fix
+* An issue which causes runtime crash on `@Published` metadata when using Kingfisher on iOS 12 in some certain rare cases. [#1717](https://github.com/onevcat/Kingfisher/issues/1717)
+
+---
+
 ## [6.3.0 - Open To Better](https://github.com/onevcat/Kingfisher/releases/tag/6.3.0) (2021-04-21)
 
 #### Add
