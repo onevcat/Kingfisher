@@ -37,6 +37,7 @@ extension KFImage {
         )
 
         var configurations: [(HoldingView) -> HoldingView] = []
+        var renderConfigurations: [(HoldingView.RenderingView) -> Void] = []
         
         var cancelOnDisappear: Bool = false
         var placeholder: ((Progress) -> AnyView)? = nil

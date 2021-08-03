@@ -35,19 +35,34 @@ public struct KFAnimatedImage: KFImageProtocol {
     public init(context: KFImage.Context<HoldingView>) {
         self.context = context
     }
+    
+    /// Configures current rendering view with a `block`. This block will be applied when the under-hood
+    /// `AnimatedImageView` is created in `UIViewRepresentable.makeUIView(context:)`
+    ///
+    /// - Parameter block: The block applies to the animated image view.
+    /// - Returns: A `KFAnimatedImage` view that being configured by the `block`.
+    public func configure(_ block: @escaping (HoldingView.RenderingView) -> Void) -> Self {
+        context.renderConfigurations.append(block)
+        return self
+    }
 }
 
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
-    public static func created(from image: KFCrossPlatformImage?) -> KFAnimatedImageViewRepresenter {
-        KFAnimatedImageViewRepresenter(image: image)
+    public typealias RenderingView = AnimatedImageView
+    public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
+        KFAnimatedImageViewRepresenter(image: image, context: context)
     }
     
     var image: KFCrossPlatformImage?
+    let context: KFImage.Context<KFAnimatedImageViewRepresenter>
     
     public func makeUIView(context: Context) -> AnimatedImageView {
         let view = AnimatedImageView()
+        
+        self.context.renderConfigurations.forEach { $0(view) }
+        
         view.image = image
         
         // Allow SwiftUI scale (fit/fill) working fine.
