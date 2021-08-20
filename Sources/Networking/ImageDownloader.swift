@@ -143,7 +143,7 @@ open class ImageDownloader {
     
     /// A responder for authentication challenge. 
     /// Downloader will forward the received authentication challenge for the downloading session to this responder.
-    open weak var authenticationChallengeResponder: AuthenticationChallengeResponsable?
+    open weak var authenticationChallengeResponder: AuthenticationChallengeResponsible?
 
     private let name: String
     private var session: URLSession
@@ -473,8 +473,8 @@ extension ImageDownloader {
     }
 }
 
-// Use the default implementation from extension of `AuthenticationChallengeResponsable`.
-extension ImageDownloader: AuthenticationChallengeResponsable {}
+// Use the default implementation from extension of `AuthenticationChallengeResponsible`.
+extension ImageDownloader: AuthenticationChallengeResponsible {}
 
 // Use the default implementation from extension of `ImageDownloaderDelegate`.
 extension ImageDownloader: ImageDownloaderDelegate {}

@@ -26,8 +26,11 @@
 
 import Foundation
 
+@available(*, deprecated, message: "Typo. Use `AuthenticationChallengeResponsible` instead", renamed: "AuthenticationChallengeResponsible")
+public typealias AuthenticationChallengeResponsable = AuthenticationChallengeResponsible
+
 /// Protocol indicates that an authentication challenge could be handled.
-public protocol AuthenticationChallengeResponsable: AnyObject {
+public protocol AuthenticationChallengeResponsible: AnyObject {
 
     /// Called when a session level authentication challenge is received.
     /// This method provide a chance to handle and response to the authentication
@@ -61,7 +64,7 @@ public protocol AuthenticationChallengeResponsable: AnyObject {
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
 
-extension AuthenticationChallengeResponsable {
+extension AuthenticationChallengeResponsible {
 
     public func downloader(
         _ downloader: ImageDownloader,
