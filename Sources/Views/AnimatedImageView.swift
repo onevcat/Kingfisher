@@ -230,7 +230,7 @@ open class AnimatedImageView: UIImageView {
         if let currentFrame = animator?.currentFrameImage {
             layer.contents = currentFrame.cgImage
         } else {
-            layer.contents = image?.cgImage
+            super.display(layer)
         }
     }
     
