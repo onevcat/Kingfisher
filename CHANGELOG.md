@@ -2,6 +2,14 @@
 
 -----
 
+## [Unreleased]
+
+#### Fix
+
+* Fix `AnimatedImageView` not changing the `tintColor` for templated images. [#1785]
+
+---
+
 ## [7.0.0-beta.2 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.2) (2021-08-02)
 
 #### Fix
