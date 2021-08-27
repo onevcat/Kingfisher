@@ -378,7 +378,6 @@ extension AnimatedImageView {
 
         private let maxTimeStep: TimeInterval = 1.0
         private let animatedFrames = SafeArray<AnimatedFrame>()
-        private var frameCount = 0
         private var timeSinceLastFrameChange: TimeInterval = 0.0
         private var currentRepeatCount: UInt = 0
 
@@ -390,8 +389,11 @@ extension AnimatedImageView {
 
         weak var delegate: AnimatorDelegate?
 
-        // Total duration of one animation loop
-        var loopDuration: TimeInterval = 0
+        /// The total number of frames in the animation.
+        public private(set) var frameCount = 0
+
+        /// Total duration of one animation loop
+        public internal(set) var loopDuration: TimeInterval = 0
 
         /// The image of the current frame.
         public var currentFrameImage: UIImage? {
@@ -408,6 +410,11 @@ extension AnimatedImageView {
             didSet {
                 previousFrameIndex = oldValue
             }
+        }
+
+        /// Whether the current frame is the last frame or not in the animation sequence.
+        public var isLastFrame: Bool {
+            return currentFrameIndex == frameCount - 1
         }
 
         var previousFrameIndex = 0 {
@@ -427,11 +434,6 @@ extension AnimatedImageView {
             case .infinite:
                 return false
             }
-        }
-
-        /// Whether the current frame is the last frame or not in the animation sequence.
-        public var isLastFrame: Bool {
-            return currentFrameIndex == frameCount - 1
         }
 
         var preloadingIsNeeded: Bool {
@@ -486,6 +488,7 @@ extension AnimatedImageView {
             return animatedFrames[index]?.image
         }
 
+        /// Gets the duration of the frame at the given index.
         public func duration(at index: Int) -> TimeInterval {
             return animatedFrames[index]?.duration  ?? .infinity
         }
