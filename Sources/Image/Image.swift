@@ -90,7 +90,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     var duration: TimeInterval { return base.duration }
     var size: CGSize { return base.size }
     
-    private(set) var imageSource: CGImageSource? {
+    public private(set) var imageSource: CGImageSource? {
         get { return getAssociatedObject(base, &imageSourceKey) }
         set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
     }
