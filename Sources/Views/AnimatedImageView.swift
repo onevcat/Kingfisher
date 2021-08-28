@@ -573,12 +573,19 @@ extension AnimatedImageView {
         }
 
         private func incrementCurrentFrameIndex() {
+            let wasLastFrame = isLastFrame
             currentFrameIndex = increment(frameIndex: currentFrameIndex)
             if isLastFrame {
                 currentRepeatCount += 1
                 if isReachMaxRepeatCount {
                     isFinished = true
+
+                    // Notify the delegate here because the animation is stopping.
+                    delegate?.animator(self, didPlayAnimationLoops: currentRepeatCount)
                 }
+            } else if wasLastFrame {
+
+                // Notify the delegate that the loop completed
                 delegate?.animator(self, didPlayAnimationLoops: currentRepeatCount)
             }
         }
