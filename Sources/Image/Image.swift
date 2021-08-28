@@ -47,7 +47,7 @@ private var imageFrameCountKey: Void?
 
 // MARK: - Image Properties
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
-    public private(set) var animatedImageData: Data? {
+    private(set) var animatedImageData: Data? {
         get { return getAssociatedObject(base, &animatedImageDataKey) }
         set { setRetainedAssociatedObject(base, &animatedImageDataKey, newValue) }
     }
