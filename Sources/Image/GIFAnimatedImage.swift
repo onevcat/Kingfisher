@@ -68,8 +68,8 @@ public struct ImageCreatingOptions {
     }
 }
 
-// Represents the decoding for a GIF image. This class extracts frames from an `imageSource`, then
-// hold the images for later use.
+/// Represents the decoding for a GIF image. This class extracts frames from an `imageSource`, then
+/// hold the images for later use.
 public class GIFAnimatedImage {
     let images: [KFCrossPlatformImage]
     let duration: TimeInterval
@@ -97,7 +97,7 @@ public class GIFAnimatedImage {
         self.duration = gifDuration
     }
     
-    // Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary.
+    /// Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary.
     public static func getFrameDuration(from gifInfo: [String: Any]?) -> TimeInterval {
         let defaultFrameDuration = 0.1
         guard let gifInfo = gifInfo else { return defaultFrameDuration }
@@ -110,7 +110,7 @@ public class GIFAnimatedImage {
         return frameDuration.doubleValue > 0.011 ? frameDuration.doubleValue : defaultFrameDuration
     }
 
-    // Calculates frame duration at a specific index for a gif from an `imageSource`.
+    /// Calculates frame duration at a specific index for a gif from an `imageSource`.
     public static func getFrameDuration(from imageSource: CGImageSource, at index: Int) -> TimeInterval {
         guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, index, nil)
             as? [String: Any] else { return 0.0 }
