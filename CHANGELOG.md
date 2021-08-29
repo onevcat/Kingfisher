@@ -2,6 +2,19 @@
 
 -----
 
+## [7.0.0-beta.3 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.3) (2021-08-29)
+
+#### Add
+* Now `KFAnimatedImage` also supports `configure` modifier so you can set options to the underhood `AnimatedImageView`. [#1768](https://github.com/onevcat/Kingfisher/pull/1768)
+* Expose `AnimatedImageView` fields to allow consumers to observe GIF progress. [#1789](https://github.com/onevcat/Kingfisher/pull/1789)
+
+#### Fix
+* Respect transition for SwiftUI view when using `KFImage`. [#1767](https://github.com/onevcat/Kingfisher/pull/1767)
+* A type of `AuthenticationChallengeResponsable`. Now use `AuthenticationChallengeResponsible` instead. [#1780](https://github.com/onevcat/Kingfisher/pull/1780/files)
+* An issue that `AnimatedImageView` dose not change the `tintColor` for templated images. [#1786](https://github.com/onevcat/Kingfisher/pull/1786)
+
+---
+
 ## [7.0.0-beta.2 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.2) (2021-08-02)
 
 #### Fix
