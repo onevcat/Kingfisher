@@ -293,6 +293,7 @@ public struct KingfisherParsedOptionsInfo {
     public var onFailureImage: Optional<KFCrossPlatformImage?> = .none
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
+    public var diskStoreWriteOptions: Data.WritingOptions = []
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var memoryCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
     public var diskCacheExpiration: StorageExpiration? = nil
