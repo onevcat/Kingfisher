@@ -193,7 +193,11 @@ public enum KingfisherOptionsInfoItem {
     /// Set this options will stop that flickering by keeping all loading in the same queue (typically the UI queue
     /// if you are using Kingfisher's extension methods to set an image), with a tradeoff of loading performance.
     case loadDiskFileSynchronously
-    
+
+    /// Options to control the writing of data to disk storage
+    /// If set, options will be passed the store operation for a new files.
+    case diskStoreWriteOptions(Data.WritingOptions)
+
     /// The expiration setting for memory cache. By default, the underlying `MemoryStorage.Backend` uses the
     /// expiration in its config for all items. If set, the `MemoryStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
@@ -293,6 +297,7 @@ public struct KingfisherParsedOptionsInfo {
     public var onFailureImage: Optional<KFCrossPlatformImage?> = .none
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
+    public var diskStoreWriteOptions: Data.WritingOptions = []
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var memoryCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
     public var diskCacheExpiration: StorageExpiration? = nil
@@ -335,6 +340,7 @@ public struct KingfisherParsedOptionsInfo {
             case .onFailureImage(let value): onFailureImage = .some(value)
             case .alsoPrefetchToMemory: alsoPrefetchToMemory = true
             case .loadDiskFileSynchronously: loadDiskFileSynchronously = true
+            case .diskStoreWriteOptions(let options): diskStoreWriteOptions = options
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .memoryCacheAccessExtendingExpiration(let expirationExtending): memoryCacheAccessExtendingExpiration = expirationExtending
             case .diskCacheExpiration(let expiration): diskCacheExpiration = expiration

@@ -323,6 +323,7 @@ open class ImageCache {
                     processorIdentifier: identifier,
                     callbackQueue: callbackQueue,
                     expiration: options.diskCacheExpiration,
+                    writeOptions: options.diskStoreWriteOptions,
                     completionHandler: completionHandler)
             } else {
                 guard let completionHandler = completionHandler else { return }
@@ -408,12 +409,13 @@ open class ImageCache {
         processorIdentifier identifier: String = "",
         callbackQueue: CallbackQueue = .untouch,
         expiration: StorageExpiration? = nil,
+        writeOptions: Data.WritingOptions = [],
         completionHandler: ((CacheStoreResult) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
         let result: CacheStoreResult
         do {
-            try self.diskStorage.store(value: data, forKey: computedKey, expiration: expiration)
+            try self.diskStorage.store(value: data, forKey: computedKey, expiration: expiration, writeOptions: writeOptions)
             result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
         } catch {
             let diskError: KingfisherError
