@@ -30,10 +30,8 @@ import SwiftUI
 @available(iOS 14.0, *)
 struct ListDemo : View {
 
-    let index = 1 ..< 700
-
     var body: some View {
-        List(index) { i in
+        List(1 ..< 700) { i in
             ImageCell(index: i)
                 .frame(height: 300)
         }.navigationBarTitle(Text("SwiftUI List"), displayMode: .inline)
