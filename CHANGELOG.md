@@ -2,6 +2,16 @@
 
 -----
 
+## [7.0.0-beta.4 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.4) (2021-09-16)
+
+#### Add
+* An option to pass in an [write option](https://developer.apple.com/documentation/foundation/nsdata/writingoptions) for writing data to the disk cache. This allows writing cache in a fine-tuned way, such as `.atomic` or `.completeFileProtection`. [#1793](https://github.com/onevcat/Kingfisher/pull/1793)
+
+#### Fix
+* A crash when loading a GIF image in iOS 13 and below. [#1805](https://github.com/onevcat/Kingfisher/pull/1805/files)
+
+---
+
 ## [7.0.0-beta.3 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.3) (2021-08-29)
 
 #### Add
