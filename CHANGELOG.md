@@ -2,6 +2,14 @@
 
 -----
 
+## [Unreleased]
+
+#### Fix
+
+* Fix `AnimatedImageView` crashing on iOS 13 and below. [#1804]
+
+---
+
 ## [7.0.0-beta.3 - Version 7](https://github.com/onevcat/Kingfisher/releases/tag/7.0.0-beta.3) (2021-08-29)
 
 #### Add
