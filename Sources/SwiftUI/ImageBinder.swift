@@ -79,7 +79,10 @@ extension KFImage {
                                 self.loadedImage = value.image
                                 let animation = context.fadeTransitionDuration(cacheType: value.cacheType)
                                     .map { duration in Animation.linear(duration: duration) }
-                                withAnimation(animation) { self.loaded = true }
+                                
+                                var transaction = Transaction(animation: animation)
+                                transaction.disablesAnimations = true
+                                withTransaction(transaction) { self.loaded = true }
                             }
 
                             CallbackQueue.mainAsync.execute {
