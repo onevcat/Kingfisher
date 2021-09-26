@@ -28,7 +28,7 @@
 #if canImport(CarPlay)
 import CarPlay
 
-@available(iOSApplicationExtension 14.0, *)
+@available(iOS 14.0, *)
 extension KingfisherWrapper where Base: CPListItem {
     
     // MARK: Setting Image
