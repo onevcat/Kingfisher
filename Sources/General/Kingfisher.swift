@@ -45,6 +45,9 @@ public typealias KFCrossPlatformButton = UIButton
 #if canImport(TVUIKit)
 import TVUIKit
 #endif
+#if canImport(CarPlay)
+import CarPlay
+#endif
 #else
 import WatchKit
 #endif
@@ -95,4 +98,9 @@ extension WKInterfaceImage: KingfisherCompatible { }
 #if os(tvOS) && canImport(TVUIKit)
 @available(tvOS 12.0, *)
 extension TVMonogramView: KingfisherCompatible { }
+#endif
+
+#if canImport(CarPlay)
+@available(iOS 14.0, *)
+extension CPListItem: KingfisherCompatible { }
 #endif
