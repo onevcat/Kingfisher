@@ -216,7 +216,7 @@ public struct BlendImageProcessor: ImageProcessor {
         self.backgroundColor = backgroundColor
         var identifier = "com.onevcat.Kingfisher.BlendImageProcessor(\(blendMode.rawValue),\(alpha))"
         if let color = backgroundColor {
-            identifier.append("_\(color.hex)")
+            identifier.append("_\(color.rgbaDescription)")
         }
         self.identifier = identifier
     }
@@ -489,7 +489,7 @@ public struct Border {
     }
     
     var identifier: String {
-        "\(color.hex)_\(lineWidth)_\(radius.radiusIdentifier)_\(roundingCorners.cornerIdentifier)"
+        "\(color.rgbaDescription)_\(lineWidth)_\(radius.radiusIdentifier)_\(roundingCorners.cornerIdentifier)"
     }
 }
 
@@ -650,7 +650,7 @@ public struct OverlayImageProcessor: ImageProcessor {
     public init(overlay: KFCrossPlatformColor, fraction: CGFloat = 0.5) {
         self.overlay = overlay
         self.fraction = fraction
-        self.identifier = "com.onevcat.Kingfisher.OverlayImageProcessor(\(overlay.hex)_\(fraction))"
+        self.identifier = "com.onevcat.Kingfisher.OverlayImageProcessor(\(overlay.rgbaDescription)_\(fraction))"
     }
     
     /// Processes the input `ImageProcessItem` with this processor.
@@ -687,7 +687,7 @@ public struct TintImageProcessor: ImageProcessor {
     /// - parameter tint: Tint color will be used to tint the input image.
     public init(tint: KFCrossPlatformColor) {
         self.tint = tint
-        self.identifier = "com.onevcat.Kingfisher.TintImageProcessor(\(tint.hex))"
+        self.identifier = "com.onevcat.Kingfisher.TintImageProcessor(\(tint.rgbaDescription))"
     }
     
     /// Processes the input `ImageProcessItem` with this processor.
@@ -908,7 +908,7 @@ extension KFCrossPlatformColor {
         var a: CGFloat = 0
 
         #if os(macOS)
-        (usingColorSpace(.sRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        (usingColorSpace(.extendedSRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
         #else
         getRed(&r, green: &g, blue: &b, alpha: &a)
         #endif
@@ -916,6 +916,12 @@ extension KFCrossPlatformColor {
         return (r, g, b, a)
     }
     
+    var rgbaDescription: String {
+        let components = self.rgba
+        return String(format: "(%.2f,%.2f,%.2f,%.2f)", components.r, components.g, components.b, components.a)
+    }
+    
+    @available(*, deprecated, message: "`hex` is not safe for colors in extended space. Do not use this.")
     var hex: String {
         
         let (r, g, b, a) = rgba
