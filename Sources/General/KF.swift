@@ -28,6 +28,10 @@
 import UIKit
 #endif
 
+#if canImport(CarPlay)
+import CarPlay
+#endif
+
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 #endif
@@ -211,6 +215,29 @@ extension KF.Builder {
         )
     }
     #endif // end of canImport(UIKit)
+    
+    #if canImport(CarPlay)
+    
+    /// Builds the image task request and sets it to the image for a list item.
+    /// - Parameters:
+    ///   - listItem: The list item which loads the task and should be set with the image.
+    /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
+    @available(iOSApplicationExtension 14.0, *)
+    @discardableResult
+    public func set(to listItem: CPListItem) -> DownloadTask? {
+        let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
+        return listItem.kf.setImage(
+            with: source,
+            placeholder: placeholderImage,
+            parsedOptions: options,
+            progressBlock: progressBlock,
+            completionHandler: resultHandler
+        )
+        
+    }
+    
+    #endif
 
     #if canImport(AppKit) && !targetEnvironment(macCatalyst)
     /// Builds the image task request and sets it to a button.

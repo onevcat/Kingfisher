@@ -110,7 +110,21 @@ extension KingfisherWrapper where Base: CPListItem {
     {
         var mutatingSelf = self
         guard let source = source else {
-            base.setImage(placeholder)
+            /**
+             * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
+             * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
+             * which allows >=14.5 SDK to set a `nil` image. This compile check allows
+             * newer SDK users to set the image to `nil`, while still allowing older SDK
+             * users to compile the framework.
+             */
+            #if compiler(>=5.4)
+            self.base.setImage(placeholder)
+            #else
+            if let placeholder = placeholder {
+                self.base.setImage(placeholder)
+            }
+            #endif
+
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
@@ -118,7 +132,20 @@ extension KingfisherWrapper where Base: CPListItem {
         
         var options = parsedOptions
         if !options.keepCurrentImageWhileLoading {
-            base.setImage(placeholder)
+            /**
+             * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
+             * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
+             * which allows >=14.5 SDK to set a `nil` image. This compile check allows
+             * newer SDK users to set the image to `nil`, while still allowing older SDK
+             * users to compile the framework.
+             */
+            #if compiler(>=5.4)
+            self.base.setImage(placeholder)
+            #else // Let older SDK users deal with the older behavior.
+            if let placeholder = placeholder {
+                self.base.setImage(placeholder)
+            }
+            #endif
         }
         
         let issuedIdentifier = Source.Identifier.next()
@@ -167,7 +194,25 @@ extension KingfisherWrapper where Base: CPListItem {
                             
                         case .failure:
                             if let image = options.onFailureImage {
+                                /**
+                                 * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
+                                 * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
+                                 * which allows >=14.5 SDK to set a `nil` image. This compile check allows
+                                 * newer SDK users to set the image to `nil`, while still allowing older SDK
+                                 * users to compile the framework.
+                                 */
+                                #if compiler(>=5.4)
                                 self.base.setImage(image)
+                                #else // Let older SDK users deal with the older behavior.
+                                if let unwrapped = image {
+                                    self.base.setImage(unwrapped)
+                                }
+                                #endif
+                                
+                            } else {
+                                #if compiler(>=5.4)
+                                self.base.setImage(nil)
+                                #endif
                             }
                             completionHandler?(result)
                     }
