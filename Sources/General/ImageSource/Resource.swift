@@ -45,7 +45,7 @@ extension Resource {
     /// `.network` is returned.
     public func convertToSource(overrideCacheKey: String? = nil) -> Source {
         return downloadURL.isFileURL ?
-            .provider(LocalFileImageDataProvider(fileURL: downloadURL, cacheKey: overrideCacheKey ?? cacheKey)) :
+            .provider(LocalFileImageDataProvider(fileURL: downloadURL, cacheKey: overrideCacheKey ?? downloadURL.localFileCacheKey)) :
             .network(ImageResource(downloadURL: downloadURL, cacheKey: overrideCacheKey ?? cacheKey))
     }
 }
