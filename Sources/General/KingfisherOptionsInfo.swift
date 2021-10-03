@@ -386,8 +386,7 @@ class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         guard self.onShouldApply() else { return }
         guard let expectedContentLength = task.task.response?.expectedContentLength,
-                  expectedContentLength != -1 else
-        {
+                  expectedContentLength != -1 else {
             return
         }
 

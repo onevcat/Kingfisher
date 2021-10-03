@@ -123,18 +123,15 @@ public class ImagePrefetcher: CustomStringConvertible {
     /// the downloader and cache target respectively. You can specify another downloader or cache by using
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
     /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
-    public convenience init(
-        urls: [URL],
-        options: KingfisherOptionsInfo? = nil,
-        progressBlock: PrefetcherProgressBlock? = nil,
-        completionHandler: PrefetcherCompletionHandler? = nil)
-    {
+    public convenience init(urls: [URL],
+                            options: KingfisherOptionsInfo? = nil,
+                            progressBlock: PrefetcherProgressBlock? = nil,
+                            completionHandler: PrefetcherCompletionHandler? = nil) {
         let resources: [Resource] = urls.map { $0 }
-        self.init(
-            resources: resources,
-            options: options,
-            progressBlock: progressBlock,
-            completionHandler: completionHandler)
+        self.init(resources: resources,
+                  options: options,
+                  progressBlock: progressBlock,
+                  completionHandler: completionHandler)
     }
 
     /// Creates an image prefetcher with an array of URLs.
@@ -153,17 +150,14 @@ public class ImagePrefetcher: CustomStringConvertible {
     /// the downloader and cache target respectively. You can specify another downloader or cache by using
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
     /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
-    public convenience init(
-        urls: [URL],
-        options: KingfisherOptionsInfo? = nil,
-        completionHandler: PrefetcherCompletionHandler? = nil)
-    {
+    public convenience init(urls: [URL],
+                            options: KingfisherOptionsInfo? = nil,
+                            completionHandler: PrefetcherCompletionHandler? = nil) {
         let resources: [Resource] = urls.map { $0 }
-        self.init(
-            resources: resources,
-            options: options,
-            progressBlock: nil,
-            completionHandler: completionHandler)
+        self.init(resources: resources,
+                  options: options,
+                  progressBlock: nil,
+                  completionHandler: completionHandler)
     }
 
     /// Creates an image prefetcher with an array of resources.
@@ -201,10 +195,9 @@ public class ImagePrefetcher: CustomStringConvertible {
     /// the downloader and cache target respectively. You can specify another downloader or cache by using
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
     /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
-    public convenience init(
-        resources: [Resource],
-        options: KingfisherOptionsInfo? = nil,
-        completionHandler: PrefetcherCompletionHandler? = nil) {
+    public convenience init(resources: [Resource],
+                            options: KingfisherOptionsInfo? = nil,
+                            completionHandler: PrefetcherCompletionHandler? = nil) {
         self.init(sources: resources.map { $0.convertToSource() }, options: options)
         self.completionHandler = completionHandler
     }

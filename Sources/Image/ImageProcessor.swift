@@ -87,8 +87,7 @@ extension ImageProcessor {
     ///            of the two processors concatenated.
     public func append(another: ImageProcessor) -> ImageProcessor {
         let newIdentifier = identifier.appending("|>\(another.identifier)")
-        return GeneralProcessor(identifier: newIdentifier) {
-            item, options in
+        return GeneralProcessor(identifier: newIdentifier) { item, options in
             if let image = self.process(item: item, options: options) {
                 return another.process(item: .image(image), options: options)
             } else {
@@ -268,8 +267,7 @@ public struct CompositingImageProcessor: ImageProcessor {
     ///   - backgroundColor: Background color to apply for the output image. Default is `nil`.
     public init(compositingOperation: NSCompositingOperation,
                 alpha: CGFloat = 1.0,
-                backgroundColor: KFCrossPlatformColor? = nil)
-    {
+                backgroundColor: KFCrossPlatformColor? = nil) {
         self.compositingOperation = compositingOperation
         self.alpha = alpha
         self.backgroundColor = backgroundColor

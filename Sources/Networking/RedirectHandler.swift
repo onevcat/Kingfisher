@@ -61,8 +61,7 @@ public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
         for task: SessionDataTask,
         response: HTTPURLResponse,
         newRequest: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
-    {
+        completionHandler: @escaping (URLRequest?) -> Void) {
         block(task, response, newRequest, completionHandler)
     }
     

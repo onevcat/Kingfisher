@@ -52,8 +52,7 @@ enum GraphicsContext {
             isPlanar: false,
             colorSpaceName: .calibratedRGB,
             bytesPerRow: 0,
-            bitsPerPixel: 0) else
-        {
+            bitsPerPixel: 0) else {
             assertionFailure("[Kingfisher] Image representation cannot be created.")
             return nil
         }
@@ -85,4 +84,3 @@ enum GraphicsContext {
         #endif
     }
 }
-

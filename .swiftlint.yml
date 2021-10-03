@@ -22,6 +22,9 @@ disabled_rules:
   - weak_delegate
   - operator_whitespace
   - switch_case_alignment
+  - unused_setter_value
+  - nesting
+  - redundant_void_return
   
 vertical_whitespace:
     severity: error

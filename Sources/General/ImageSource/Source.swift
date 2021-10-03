@@ -87,9 +87,9 @@ extension Source: Hashable {
             return r1.cacheKey == r2.cacheKey && r1.downloadURL == r2.downloadURL
         case (.provider(let p1), .provider(let p2)):
             return p1.cacheKey == p2.cacheKey && p1.contentURL == p2.contentURL
-        case (.provider(_), .network(_)):
+        case (.provider, .network):
             return false
-        case (.network(_), .provider(_)):
+        case (.network, .provider):
             return false
         }
     }

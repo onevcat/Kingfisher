@@ -119,7 +119,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         backgroundColor: KFCrossPlatformColor? = nil
     ) -> KFCrossPlatformImage
     {
-
         guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Round corner image only works for CG-based image.")
             return base

@@ -50,8 +50,7 @@ public struct ImageProgressive {
     public init(isBlur: Bool,
                 isFastestScan: Bool,
                 scanInterval: TimeInterval
-    )
-    {
+    ) {
         self.isBlur = isBlur
         self.isFastestScan = isFastestScan
         self.scanInterval = scanInterval

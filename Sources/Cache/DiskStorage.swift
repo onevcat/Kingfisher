@@ -127,8 +127,7 @@ public enum DiskStorage {
             value: T,
             forKey key: String,
             expiration: StorageExpiration? = nil,
-            writeOptions: Data.WritingOptions = []) throws
-        {
+            writeOptions: Data.WritingOptions = []) throws {
             guard storageReady else {
                 throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
             }
@@ -192,8 +191,7 @@ public enum DiskStorage {
             forKey key: String,
             referenceDate: Date,
             actuallyLoad: Bool,
-            extendingExpiration: ExpirationExtending) throws -> T?
-        {
+            extendingExpiration: ExpirationExtending) throws -> T? {
             guard storageReady else {
                 throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
             }
@@ -334,8 +332,7 @@ public enum DiskStorage {
             let fileManager = config.fileManager
 
             guard let directoryEnumerator = fileManager.enumerator(
-                at: directoryURL, includingPropertiesForKeys: propertyKeys, options: .skipsHiddenFiles) else
-            {
+                at: directoryURL, includingPropertiesForKeys: propertyKeys, options: .skipsHiddenFiles) else {
                 throw KingfisherError.cacheError(reason: .fileEnumeratorCreationFailed(url: directoryURL))
             }
 
@@ -461,8 +458,7 @@ extension DiskStorage {
         let fileManager: FileManager
         let directory: URL?
 
-        var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
-            (directory, cacheName) in
+        var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = { (directory, cacheName) in
             return directory.appendingPathComponent(cacheName, isDirectory: true)
         }
 
@@ -481,8 +477,7 @@ extension DiskStorage {
             name: String,
             sizeLimit: UInt,
             fileManager: FileManager = .default,
-            directory: URL? = nil)
-        {
+            directory: URL? = nil) {
             self.name = name
             self.fileManager = fileManager
             self.directory = directory
@@ -515,13 +510,11 @@ extension DiskStorage {
                 fileSize: meta.fileSize ?? 0)
         }
         
-        init(
-            fileURL: URL,
-            lastAccessDate: Date?,
-            estimatedExpirationDate: Date?,
-            isDirectory: Bool,
-            fileSize: Int)
-        {
+        init(fileURL: URL,
+             lastAccessDate: Date?,
+             estimatedExpirationDate: Date?,
+             isDirectory: Bool,
+             fileSize: Int) {
             self.url = fileURL
             self.lastAccessDate = lastAccessDate
             self.estimatedExpirationDate = estimatedExpirationDate
@@ -535,8 +528,7 @@ extension DiskStorage {
         
         func extendExpiration(with fileManager: FileManager, extendingExpiration: ExpirationExtending) {
             guard let lastAccessDate = lastAccessDate,
-                  let lastEstimatedExpiration = estimatedExpirationDate else
-            {
+                  let lastEstimatedExpiration = estimatedExpirationDate else {
                 return
             }
 

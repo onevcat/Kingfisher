@@ -258,7 +258,7 @@ public enum KingfisherError: Error {
     /// set and the old one is overwritten. A `.notCurrentSourceTask` error will be raised when the old task finishes
     /// to let you know the setting process finishes with a certain result, but the image view or button is not set.
     public var isNotCurrentTask: Bool {
-        if case .imageSettingError(reason: .notCurrentSourceTask(_, _, _)) = self {
+        if case .imageSettingError(reason: .notCurrentSourceTask) = self {
             return true
         }
         return false
@@ -268,8 +268,7 @@ public enum KingfisherError: Error {
         if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *),
            case .responseError(reason: .URLSessionError(let sessionError)) = self,
            let urlError = sessionError as? URLError,
-           urlError.networkUnavailableReason == .constrained
-        {
+           urlError.networkUnavailableReason == .constrained {
             return true
         }
         return false

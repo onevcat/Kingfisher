@@ -50,8 +50,7 @@ extension KFImage {
 
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: Image.ResizingMode = .stretch) -> KFImage
-    {
+        resizingMode: Image.ResizingMode = .stretch) -> KFImage {
         configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
     }
 

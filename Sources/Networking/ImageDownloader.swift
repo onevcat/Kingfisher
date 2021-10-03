@@ -203,7 +203,7 @@ open class ImageDownloader {
         return completionHandler.map { block -> Delegate<DownloadResult, Void> in
 
             let delegate =  Delegate<Result<ImageLoadingResult, KingfisherError>, Void>()
-            delegate.delegate(on: self) { (self, callback) in
+            delegate.delegate(on: self) { (_, callback) in
                 block(callback)
             }
             return delegate
@@ -213,8 +213,7 @@ open class ImageDownloader {
     private func createTaskCallback(
         _ completionHandler: ((DownloadResult) -> Void)?,
         options: KingfisherParsedOptionsInfo
-    ) -> SessionDataTask.TaskCallback
-    {
+    ) -> SessionDataTask.TaskCallback {
         return SessionDataTask.TaskCallback(
             onCompleted: createCompletionCallBack(completionHandler),
             options: options
@@ -225,8 +224,7 @@ open class ImageDownloader {
         with url: URL,
         options: KingfisherParsedOptionsInfo,
         done: @escaping ((Result<DownloadingContext, KingfisherError>) -> Void)
-    )
-    {
+    ) {
         func checkRequestAndDone(r: URLRequest) {
 
             // There is a possibility that request modifier changed the url to `nil` or empty.
@@ -242,7 +240,7 @@ open class ImageDownloader {
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
         request.httpShouldUsePipelining = requestsUsePipelining
-        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) , options.lowDataModeSource != nil {
+        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *), options.lowDataModeSource != nil {
             request.allowsConstrainedNetworkAccess = false
         }
 

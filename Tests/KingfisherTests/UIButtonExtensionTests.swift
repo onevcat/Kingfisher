@@ -150,7 +150,7 @@ class UIButtonExtensionTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url: URL? = nil
-        button.kf.setBackgroundImage(with: url, for: .normal, completionHandler:  { result in
+        button.kf.setBackgroundImage(with: url, for: .normal, completionHandler: { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             guard case .imageSettingError(reason: .emptySource) = result.error! else {

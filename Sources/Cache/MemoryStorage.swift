@@ -108,8 +108,7 @@ public enum MemoryStorage {
         public func store(
             value: T,
             forKey key: String,
-            expiration: StorageExpiration? = nil)
-        {
+            expiration: StorageExpiration? = nil) {
             storeNoThrow(value: value, forKey: key, expiration: expiration)
         }
 
@@ -118,8 +117,7 @@ public enum MemoryStorage {
         func storeNoThrow(
             value: T,
             forKey key: String,
-            expiration: StorageExpiration? = nil)
-        {
+            expiration: StorageExpiration? = nil) {
             lock.lock()
             defer { lock.unlock() }
             let expiration = expiration ?? config.expiration

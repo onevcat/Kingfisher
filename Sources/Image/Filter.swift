@@ -71,10 +71,8 @@ public struct Filter {
     }
     
     /// Tint filter which will apply a tint color to images.
-    public static var tint: (KFCrossPlatformColor) -> Filter = {
-        color in
-        Filter {
-            input in
+    public static var tint: (KFCrossPlatformColor) -> Filter = { color in
+        Filter { input in
             
             let colorFilter = CIFilter(name: "CIConstantColorGenerator")!
             colorFilter.setValue(CIColor(color: color), forKey: kCIInputColorKey)
