@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import XCTest
-import Kingfisher
+@testable import Kingfisher
 
 class ImageProcessorTests: XCTestCase {
 
@@ -56,5 +56,29 @@ class ImageProcessorTests: XCTestCase {
 
         XCTAssertNotNil(two)
         XCTAssertNotNil(three)
+    }
+    
+    func testParsingColorRGBA() {
+        let sRGB = KFCrossPlatformColor(red: 0.5, green: 0.6, blue: 0.7, alpha: 0.8)
+        let rgba = sRGB.rgba
+        XCTAssertEqual(rgba.r, 0.5, accuracy: 0.01)
+        XCTAssertEqual(rgba.g, 0.6, accuracy: 0.01)
+        XCTAssertEqual(rgba.b, 0.7, accuracy: 0.01)
+        XCTAssertEqual(rgba.a, 0.8, accuracy: 0.01)
+        
+        let extended = KFCrossPlatformColor(displayP3Red: 0, green: 1, blue: 0, alpha: 0.8)
+        let rgbaExt = extended.rgba
+        // extended sRGB
+        XCTAssertTrue(rgbaExt.r < 0)
+        XCTAssertTrue(rgbaExt.g > 1)
+        XCTAssertTrue(rgbaExt.b < 0)
+        XCTAssertEqual(rgbaExt.a, 0.8)
+        
+        let blackWhite = KFCrossPlatformColor(white: 0.3, alpha: 1.0)
+        let rgbaBlackWhite = blackWhite.rgba
+        XCTAssertEqual(rgbaBlackWhite.r, 0.3, accuracy: 0.01)
+        XCTAssertEqual(rgbaBlackWhite.g, 0.3, accuracy: 0.01)
+        XCTAssertEqual(rgbaBlackWhite.b, 0.3, accuracy: 0.01)
+        XCTAssertEqual(rgbaBlackWhite.a, 1.0, accuracy: 0.01)
     }
 }
