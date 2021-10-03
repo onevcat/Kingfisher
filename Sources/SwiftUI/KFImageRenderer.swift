@@ -37,8 +37,8 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     let context: KFImage.Context<HoldingView>
     
     var body: some View {
-        
-        ZStack {
+        binder.start(context: context)
+        return ZStack {
             context.configurations
                 .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
                     current, config in config(current)
@@ -50,14 +50,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                         view
                     } else {
                         Color.clear
-                    }
-                }
-                .onAppear { [weak binder = self.binder] in
-                    guard let binder = binder else {
-                        return
-                    }
-                    if !binder.loadingOrSucceeded {
-                        binder.start(context: context)
                     }
                 }
                 .onDisappear { [weak binder = self.binder] in

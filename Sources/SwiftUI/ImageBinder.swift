@@ -38,9 +38,10 @@ extension KFImage {
         init() {}
 
         var downloadTask: DownloadTask?
+        private var loading = false
 
         var loadingOrSucceeded: Bool {
-            return downloadTask != nil || loadedImage != nil
+            return loading || loadedImage != nil
         }
 
         @Published var loaded = false
@@ -58,6 +59,8 @@ extension KFImage {
                 return
             }
 
+            loading = true
+            
             progress = .init()
             downloadTask = KingfisherManager.shared
                 .retrieveImage(
@@ -71,11 +74,14 @@ extension KFImage {
 
                         guard let self = self else { return }
 
-                        self.downloadTask = nil
+                        CallbackQueue.mainCurrentOrAsync.execute {
+                            self.downloadTask = nil
+                        }
+                        
                         switch result {
                         case .success(let value):
-
                             CallbackQueue.mainCurrentOrAsync.execute {
+                                self.loading = false
                                 self.loadedImage = value.image
                                 let animation = context.fadeTransitionDuration(cacheType: value.cacheType)
                                     .map { duration in Animation.linear(duration: duration) }
@@ -103,6 +109,7 @@ extension KFImage {
         func cancel() {
             downloadTask?.cancel()
             downloadTask = nil
+            loading = false
         }
     }
 }
