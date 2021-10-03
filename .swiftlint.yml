@@ -1,0 +1,35 @@
+disabled_rules:
+  - line_length
+  - force_try
+  - identifier_name
+  - trailing_whitespace
+  - force_cast
+  - colon
+  - implicit_getter
+  - void_return
+  - unused_enumerated
+  - function_parameter_count
+  - file_length
+  - multiple_closures_with_trailing_closure
+  - type_name
+  - function_body_length
+  - type_body_length
+  - redundant_optional_initialization
+  - cyclomatic_complexity
+  - syntactic_sugar
+  - comment_spacing
+  - large_tuple
+  - weak_delegate
+  - operator_whitespace
+  - switch_case_alignment
+  
+vertical_whitespace:
+    severity: error
+
+opt_in_rules:
+  - comma
+
+excluded: # paths to ignore during linting. Takes precedence over `included`.
+  - Pods
+  - Carthage
+  - Fastlane

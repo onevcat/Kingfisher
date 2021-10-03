@@ -36,8 +36,7 @@ extension CGFloat {
 import AppKit
 extension NSBezierPath {
     convenience init(roundedRect rect: NSRect, topLeftRadius: CGFloat, topRightRadius: CGFloat,
-                     bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat)
-    {
+                     bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat) {
         self.init()
         
         let maxCorner = min(rect.width, rect.height) / 2

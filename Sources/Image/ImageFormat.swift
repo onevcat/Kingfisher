@@ -79,7 +79,6 @@ public enum ImageFormat {
     }
 }
 
-
 extension Data: KingfisherCompatibleValue {}
 
 // MARK: - Misc Helpers
@@ -93,17 +92,13 @@ extension KingfisherWrapper where Base == Data {
         
         if buffer == ImageFormat.HeaderData.PNG {
             return .PNG
-            
         } else if buffer[0] == ImageFormat.HeaderData.JPEG_SOI[0],
             buffer[1] == ImageFormat.HeaderData.JPEG_SOI[1],
-            buffer[2] == ImageFormat.HeaderData.JPEG_IF[0]
-        {
+            buffer[2] == ImageFormat.HeaderData.JPEG_IF[0] {
             return .JPEG
-            
         } else if buffer[0] == ImageFormat.HeaderData.GIF[0],
             buffer[1] == ImageFormat.HeaderData.GIF[1],
-            buffer[2] == ImageFormat.HeaderData.GIF[2]
-        {
+            buffer[2] == ImageFormat.HeaderData.GIF[2] {
             return .GIF
         }
         

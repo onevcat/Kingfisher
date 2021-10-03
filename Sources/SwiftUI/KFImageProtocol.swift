@@ -85,6 +85,4 @@ extension KFImageProtocol {
 
     public var delegateObserver: AnyObject { context }
 }
-
-
 #endif

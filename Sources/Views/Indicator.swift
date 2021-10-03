@@ -85,7 +85,6 @@ extension Indicator {
     /// no offset for the indicator view.
     public var centerOffset: CGPoint { return .zero }
 
-
     /// Default implementation of `centerOffset` of `Indicator`. The default value is `.full`, means that the indicator
     /// will pin to the same height and width as the image view.
     public func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy {
@@ -186,8 +185,7 @@ final class ImageIndicator: Indicator {
     init?(
         imageData data: Data,
         processor: ImageProcessor = DefaultImageProcessor.default,
-        options: KingfisherParsedOptionsInfo? = nil)
-    {
+        options: KingfisherParsedOptionsInfo? = nil) {
         var options = options ?? KingfisherParsedOptionsInfo(nil)
         // Use normal image view to show animations, so we need to preload all animation data.
         if !options.preloadAllAnimationData {

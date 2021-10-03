@@ -395,8 +395,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         targetSize: CGSize? = nil,
         roundingCorners corners: RectCorner = .all,
         backgroundColor: KFCrossPlatformColor? = nil
-    )
-    {
+    ) {
         let radius = Radius.point(cornerRadius)
         self.init(radius: radius, targetSize: targetSize, roundingCorners: corners, backgroundColor: backgroundColor)
     }
@@ -415,8 +414,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
         targetSize: CGSize? = nil,
         roundingCorners corners: RectCorner = .all,
         backgroundColor: KFCrossPlatformColor? = nil
-    )
-    {
+    ) {
         self.radius = radius
         self.targetSize = targetSize
         self.roundingCorners = corners

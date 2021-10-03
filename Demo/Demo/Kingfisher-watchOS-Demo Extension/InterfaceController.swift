@@ -24,7 +24,6 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 import WatchKit
 import Foundation
 import Kingfisher
@@ -36,7 +35,6 @@ class InterfaceController: WKInterfaceController {
     @IBOutlet var interfaceImage: WKInterfaceImage!
     
     var currentIndex: Int?
-    
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)

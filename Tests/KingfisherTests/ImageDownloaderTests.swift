@@ -24,7 +24,6 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 import XCTest
 @testable import Kingfisher
 
@@ -136,7 +135,6 @@ class ImageDownloaderTests: XCTestCase {
             downloadTaskCalled = true
         }
 
-
         let someURL = URL(string: "some_strage_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
             XCTAssertNotNil(result.value)
@@ -213,9 +211,7 @@ class ImageDownloaderTests: XCTestCase {
         downloader.downloadImage(
             with: url,
             options: [.requestModifier(modifier)],
-            progressBlock: { received, totalSize in XCTFail("The progress block should not be called.") })
-        {
-            result in
+            progressBlock: { _, _ in XCTFail("The progress block should not be called.") }) { result in
             XCTAssertNotNil(result.error)
             if case .requestError(reason: .invalidURL(let request)) = result.error! {
                 XCTAssertNil(request.url)
@@ -240,9 +236,9 @@ class ImageDownloaderTests: XCTestCase {
         
         let task = downloader.downloadImage(
             with: url,
-            progressBlock: { _, _ in XCTFail() })
-        {
-            result in
+            progressBlock: { _, _ in
+                XCTFail()
+            }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             delay(0.1) { exp.fulfill() }
@@ -370,9 +366,7 @@ class ImageDownloaderTests: XCTestCase {
         group.enter()
         let downloadTask = downloader.downloadImage(
             with: url,
-            progressBlock: { _, _ in XCTFail()})
-        {
-            result in
+            progressBlock: { _, _ in XCTFail()}) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             group.leave()
@@ -384,8 +378,7 @@ class ImageDownloaderTests: XCTestCase {
         _ = stub.go()
         
         group.enter()
-        downloader.downloadImage(with: url) {
-            result in
+        downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.value)
             if let error = result.error {
                 print(error)
@@ -536,15 +529,12 @@ class ImageDownloaderTests: XCTestCase {
         
         let url = testURLs[0]
         stub(url, data: testImageData)
-        let task = downloader.downloadImage(with: url, options: [.downloadPriority(URLSessionTask.highPriority)])
-        {
-            _ in
+        let task = downloader.downloadImage(with: url, options: [.downloadPriority(URLSessionTask.highPriority)]) { _ in
             exp.fulfill()
         }
         XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
     
     func testSessionDelegate() {
         class ExtensionDelegate:SessionDelegate {

@@ -65,7 +65,6 @@ class RetryStrategyTests: XCTestCase {
         XCTAssertEqual(strategy.retryInterval.timeInterval(for: 0), 5)
     }
 
-
     func testDelayRetryIntervalCalculating() {
         let secondInternal = DelayRetryStrategy.Interval.seconds(10)
         XCTAssertEqual(secondInternal.timeInterval(for: 0), 10)
@@ -94,7 +93,7 @@ class RetryStrategyTests: XCTestCase {
         _ = manager.retrieveImage(
             with: .network(brokenURL),
             options: [.retryStrategy(retry)],
-            completionHandler: { result in
+            completionHandler: { _ in
                 XCTAssertEqual(retry.count, 3)
                 exp.fulfill()
             }

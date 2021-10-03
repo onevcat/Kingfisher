@@ -69,8 +69,7 @@ class NSButtonExtensionTests: XCTestCase {
         
         var progressBlockIsCalled = false
 
-        button.kf.setImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) {
-            result in
+        button.kf.setImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) { result in
             XCTAssertTrue(progressBlockIsCalled)
             
             let image = result.value?.image
@@ -91,8 +90,7 @@ class NSButtonExtensionTests: XCTestCase {
         stub(url, data: testImageData, length: 123)
 
         var progressBlockIsCalled = false
-        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) {
-            result in
+        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in progressBlockIsCalled = true }) { result in
             XCTAssertTrue(progressBlockIsCalled)
             
             let image = result.value?.image
@@ -145,8 +143,7 @@ class NSButtonExtensionTests: XCTestCase {
     func testSettingNilURL() {
         let exp = expectation(description: #function)
         let url: URL? = nil
-        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in XCTFail() }) {
-            result in
+        button.kf.setAlternateImage(with: url, progressBlock: { _, _ in XCTFail() }) { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             
@@ -180,7 +177,7 @@ class NSButtonExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, errorCode: 404)
         
-        button.kf.setAlternateImage(with: url, options: [.onFailureImage(testImage)], completionHandler:  { result in
+        button.kf.setAlternateImage(with: url, options: [.onFailureImage(testImage)], completionHandler: { result in
             XCTAssertNil(result.value)
             expectation.fulfill()
         })

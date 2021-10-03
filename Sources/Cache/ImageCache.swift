@@ -95,7 +95,6 @@ extension Data: DataTransformable {
     public static let empty = Data()
 }
 
-
 /// Represents the getting image operation from the cache.
 ///
 /// - disk: The image can be retrieved from disk cache.
@@ -146,7 +145,6 @@ open class ImageCache {
     /// other cache specified. The `name` of this default cache is "default", and you should not use this name
     /// for any of your customize cache.
     public static let `default` = ImageCache(name: "default")
-
 
     // MARK: Public Properties
     /// The `MemoryStorage.Backend` object used in this cache. This storage holds loaded images in memory with a
@@ -360,14 +358,13 @@ open class ImageCache {
     ///                    value.
     ///   - completionHandler: A closure which is invoked when the cache operation finishes.
     open func store(_ image: KFCrossPlatformImage,
-                      original: Data? = nil,
-                      forKey key: String,
-                      processorIdentifier identifier: String = "",
-                      cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
-                      toDisk: Bool = true,
-                      callbackQueue: CallbackQueue = .untouch,
-                      completionHandler: ((CacheStoreResult) -> Void)? = nil)
-    {
+                    original: Data? = nil,
+                    forKey key: String,
+                    processorIdentifier identifier: String = "",
+                    cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
+                    toDisk: Bool = true,
+                    callbackQueue: CallbackQueue = .untouch,
+                    completionHandler: ((CacheStoreResult) -> Void)? = nil) {
         struct TempProcessor: ImageProcessor {
             let identifier: String
             func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
@@ -390,8 +387,7 @@ open class ImageCache {
         processorIdentifier identifier: String = "",
         expiration: StorageExpiration? = nil,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: ((CacheStoreResult) -> Void)? = nil)
-    {
+        completionHandler: ((CacheStoreResult) -> Void)? = nil) {
         ioQueue.async {
             self.syncStoreToDisk(
                 data,
@@ -410,8 +406,7 @@ open class ImageCache {
         callbackQueue: CallbackQueue = .untouch,
         expiration: StorageExpiration? = nil,
         writeOptions: Data.WritingOptions = [],
-        completionHandler: ((CacheStoreResult) -> Void)? = nil)
-    {
+        completionHandler: ((CacheStoreResult) -> Void)? = nil) {
         let computedKey = key.computedKey(with: identifier)
         let result: CacheStoreResult
         do {

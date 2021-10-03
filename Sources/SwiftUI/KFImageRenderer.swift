@@ -43,8 +43,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         
         return ZStack {
             context.configurations
-                .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
-                    current, config in config(current)
+                .reduce(HoldingView.created(from: binder.loadedImage, context: context)) { current, config in config(current)
                 }
                 .opacity(binder.loaded ? 1.0 : 0.0)
             if binder.loadedImage == nil {

@@ -41,21 +41,18 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return ImageLoader.highResolutionImageURLs.count * 30
     }
 
-    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
-    {
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
     
     override func collectionView(
         _ collectionView: UICollectionView,
         willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath)
-    {
+        forItemAt indexPath: IndexPath) {
         let imageView = (cell as! ImageCollectionViewCell).cellImageView!
         let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
         // Use different cache key to prevent reuse the same image. It is just for

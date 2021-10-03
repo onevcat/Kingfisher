@@ -30,7 +30,6 @@ import AppKit
 import UIKit
 #endif
     
-
 /// KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoItem].
 /// You can use the enum of option item with value to control some behaviors of Kingfisher.
 public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]

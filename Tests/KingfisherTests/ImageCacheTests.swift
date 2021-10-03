@@ -233,7 +233,6 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectations(timeout: 3, handler: nil)
     }
-
   
     func testCachedImageIsFetchedSyncronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false)
@@ -265,8 +264,7 @@ class ImageCacheTests: XCTestCase {
             self.observer = NotificationCenter.default.addObserver(
                 forName: .KingfisherDidCleanDiskCache,
                 object: self.cache,
-                queue: .main) {
-                    noti in
+                queue: .main) { noti in
                     let receivedCache = noti.object as? ImageCache
                     XCTAssertNotNil(receivedCache)
                     XCTAssertTrue(receivedCache === self.cache)
@@ -314,9 +312,7 @@ class ImageCacheTests: XCTestCase {
             original: testImageData,
             forKey: key,
             processorIdentifier: p.identifier,
-            toDisk: true)
-        {
-            _ in
+            toDisk: true) { _ in
             self.cache.retrieveImage(forKey: key, options: [.processor(p)]) { result in
                 XCTAssertNotNil(result.value?.image)
                 exp.fulfill()
@@ -350,8 +346,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertEqual(cacheType, .disk)
             
             var dispatched = false
-            self.cache.retrieveImageInDiskCache(forKey: key, options:  [.loadDiskFileSynchronously]) {
-                result in
+            self.cache.retrieveImageInDiskCache(forKey: key, options:  [.loadDiskFileSynchronously]) { _ in
                 XCTAssertFalse(dispatched)
                 exp.fulfill()
             }
@@ -373,8 +368,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertEqual(cacheType, .disk)
             
             var dispatched = false
-            self.cache.retrieveImageInDiskCache(forKey: key, options:  nil) {
-                result in
+            self.cache.retrieveImageInDiskCache(forKey: key, options:  nil) { _ in
                 XCTAssertTrue(dispatched)
                 exp.fulfill()
             }
@@ -435,9 +429,7 @@ class ImageCacheTests: XCTestCase {
             original: testImageData,
             forKey: key,
             options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.2))]),
-            toDisk: true)
-        {
-            _ in
+            toDisk: true) { _ in
             XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
             delay(1) {
                 XCTAssertEqual(self.cache.imageCachedType(forKey: key), .disk)
@@ -455,9 +447,7 @@ class ImageCacheTests: XCTestCase {
             original: testImageData,
             forKey: key,
             options: KingfisherParsedOptionsInfo([.diskCacheExpiration(.expired)]),
-            toDisk: true)
-        {
-            _ in
+            toDisk: true) { _ in
             XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
             self.cache.clearMemoryCache()
             XCTAssertEqual(self.cache.imageCachedType(forKey: key), .none)

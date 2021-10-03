@@ -62,7 +62,9 @@ struct AnimatedImageDemo: View {
 
             Button(action: {
                 self.index = (self.index % 3) + 1
-            }) { Text("Next Image") }
+            }) {
+                Text("Next Image")
+            }
         }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
     }
     
@@ -76,4 +78,3 @@ struct AnimatedImageDemo_Previews: PreviewProvider {
     }
     
 }
-

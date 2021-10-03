@@ -26,7 +26,6 @@
 
 import Foundation
 
-
 /// Represents a set of conception related to storage which stores a certain type of value in disk.
 /// This is a namespace for the disk storage types. A `Backend` with a certain `Config` will be used to describe the
 /// storage. See these composed types for more information.

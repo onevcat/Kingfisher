@@ -82,7 +82,7 @@ extension UIViewController: KingfisherActionAlertPopup {
     }
 }
 
-extension UIViewController  {
+extension UIViewController {
     func setupOperationNavigationBar() {
         navigationItem.rightBarButtonItem =
             UIBarButtonItem(title: "Action", style: .plain, target: self, action: #selector(performKingfisherAction))

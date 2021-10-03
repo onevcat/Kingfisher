@@ -38,8 +38,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func source(
         _ source: Source?
-    ) -> Self
-    {
+    ) -> Self {
         Self.init(source: source)
     }
 
@@ -49,8 +48,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func resource(
         _ resource: Resource?
-    ) -> Self
-    {
+    ) -> Self {
         source(resource?.convertToSource())
     }
 
@@ -62,8 +60,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func url(
         _ url: URL?, cacheKey: String? = nil
-    ) -> Self
-    {
+    ) -> Self {
         source(url?.convertToSource(overrideCacheKey: cacheKey))
     }
 
@@ -73,8 +70,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func dataProvider(
         _ provider: ImageDataProvider?
-    ) -> Self
-    {
+    ) -> Self {
         source(provider?.convertToSource())
     }
 
@@ -85,8 +81,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func data(
         _ data: Data?, cacheKey: String
-    ) -> Self
-    {
+    ) -> Self {
         if let data = data {
             return dataProvider(RawImageDataProvider(data: data, cacheKey: cacheKey))
         } else {

@@ -230,7 +230,7 @@ private final class ImageProgressiveDecoder {
                 callbacks: callbacks,
                 processingQueue: processingQueue
             )
-            processor.onImageProcessed.delegate(on: self) { (self, result) in
+            processor.onImageProcessed.delegate(on: self) { _, result in
                 guard let image = try? result.0.get() else {
                     CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
                     return

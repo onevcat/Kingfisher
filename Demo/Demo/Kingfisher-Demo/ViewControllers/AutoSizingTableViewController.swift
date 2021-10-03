@@ -87,6 +87,4 @@ extension AutoSizingTableViewController: UITableViewDataSource {
         }
         return cell
     }
-    
-    
 }

@@ -107,7 +107,6 @@ class ImagePrefetcherTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-
     func testPrefetcherCouldSkipCachedImages() {
         let exp = expectation(description: #function)
         KingfisherManager.shared.cache.store(KFCrossPlatformImage(), forKey: testKeys[0])

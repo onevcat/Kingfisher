@@ -74,7 +74,6 @@ extension ImageTransition {
     }
 }
 
-
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage.Context: Hashable {
     public static func == (lhs: KFImage.Context<HoldingView>, rhs: KFImage.Context<HoldingView>) -> Bool {

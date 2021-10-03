@@ -59,8 +59,7 @@ public struct ImageCreatingOptions {
         scale: CGFloat = 1.0,
         duration: TimeInterval = 0.0,
         preloadAll: Bool = false,
-        onlyFirstFrame: Bool = false)
-    {
+        onlyFirstFrame: Bool = false) {
         self.scale = scale
         self.duration = duration
         self.preloadAll = preloadAll

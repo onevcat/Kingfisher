@@ -167,7 +167,6 @@ public enum KingfisherError: Error {
         case diskStorageIsNotReady(cacheURL: URL)
     }
     
-    
     /// Represents the error reason during image processing phase.
     ///
     /// - processingFailed: Image processing fails. There is no valid output image from the processor. Code 4001.
@@ -292,7 +291,6 @@ extension KingfisherError: LocalizedError {
         }
     }
 }
-
 
 // MARK: - CustomNSError Conforming
 extension KingfisherError: CustomNSError {

@@ -46,14 +46,14 @@ class GIFHeavyViewController: UIViewController {
                 stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
                 stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-                stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             ])
         } else {
             NSLayoutConstraint.activate([
                 stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 stackView.topAnchor.constraint(equalTo: view.topAnchor),
                 stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
         

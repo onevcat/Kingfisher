@@ -136,9 +136,7 @@ class KingfisherManagerTests: XCTestCase {
             forKey: url.cacheKey,
             processorIdentifier: DefaultImageProcessor.default.identifier,
             cacheSerializer: DefaultCacheSerializer.default,
-            toDisk: true)
-        {
-            _ in
+            toDisk: true) { _ in
             XCTAssertTrue(self.manager.cache.imageCachedType(forKey: url.cacheKey).cached)
             self.manager.retrieveImage(with: url, options: [.forceRefresh]) { result in
                 XCTAssertNotNil(result.value?.image)
@@ -158,9 +156,7 @@ class KingfisherManagerTests: XCTestCase {
         
         manager.retrieveImage(with: url, options: nil, progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
-            progressExpectation.fulfill()})
-        {
-            result in
+            progressExpectation.fulfill()}) { result in
             XCTAssertNil(result.error)
             XCTAssertTrue(Thread.isMainThread)
             completionExpectation.fulfill()
@@ -212,9 +208,7 @@ class KingfisherManagerTests: XCTestCase {
         manager.retrieveImage(with: url, options: options, progressBlock: { _, _ in
             XCTAssertTrue(Thread.isMainThread)
             progressExpectation.fulfill()
-        })
-        {
-            result in
+        }) { result in
             XCTAssertNil(result.error)
             dispatchPrecondition(condition: .onQueue(customQueue))
             completionExpectation.fulfill()
@@ -229,8 +223,7 @@ class KingfisherManagerTests: XCTestCase {
         manager.cache.store(testImage, forKey: url.cacheKey)
 
         let customQueue = DispatchQueue(label: "com.kingfisher.testQueue")
-        manager.retrieveImage(with: url, options: [.callbackQueue(.dispatch(customQueue))]) {
-            result in
+        manager.retrieveImage(with: url, options: [.callbackQueue(.dispatch(customQueue))]) { result in
             XCTAssertNil(result.error)
             dispatchPrecondition(condition: .onQueue(customQueue))
             completionExpectation.fulfill()
@@ -263,7 +256,7 @@ class KingfisherManagerTests: XCTestCase {
         let options = KingfisherParsedOptionsInfo([.processor(p), .cacheOriginalImage])
         let source = Source.network(url)
         let context = RetrievingContext(options: options, originalSource: source)
-        manager.loadAndCacheImage(source: .network(url), context: context) { result in
+        manager.loadAndCacheImage(source: .network(url), context: context) { _ in
             
             var imageCached = manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
             var originalCached = manager.cache.imageCachedType(forKey: url.cacheKey)
@@ -294,8 +287,7 @@ class KingfisherManagerTests: XCTestCase {
         let options = KingfisherParsedOptionsInfo([.processor(p), .waitForCache])
         let source = Source.network(url)
         let context = RetrievingContext(options: options, originalSource: source)
-        manager.loadAndCacheImage(source: .network(url), context: context) {
-            result in
+        manager.loadAndCacheImage(source: .network(url), context: context) { _ in
             var imageCached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
             var originalCached = self.manager.cache.imageCachedType(forKey: url.cacheKey)
             
@@ -324,9 +316,7 @@ class KingfisherManagerTests: XCTestCase {
             forKey: url.cacheKey,
             processorIdentifier: DefaultImageProcessor.default.identifier,
             cacheSerializer: DefaultCacheSerializer.default,
-            toDisk: true)
-        {
-            _ in
+            toDisk: true) { _ in
             let p = SimpleProcessor()
             
             let cached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
@@ -357,9 +347,7 @@ class KingfisherManagerTests: XCTestCase {
             forKey: url.cacheKey,
             processorIdentifier: DefaultImageProcessor.default.identifier,
             cacheSerializer: DefaultCacheSerializer.default,
-            toDisk: true)
-        {
-            _ in
+            toDisk: true) { _ in
             let p = FailingProcessor()
             
             let cached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
@@ -414,9 +402,7 @@ class KingfisherManagerTests: XCTestCase {
             let p = RoundCornerImageProcessor(cornerRadius: 20)
             self.manager.retrieveImage(
                 with: url,
-                options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache)])
-            {
-                result in
+                options: [.processor(p), .cacheOriginalImage, .originalCache(originalCache)]) { _ in
                 let originalCached = originalCache.imageCachedType(forKey: url.cacheKey)
                 XCTAssertEqual(originalCached, .disk)
                 exp.fulfill()
@@ -440,17 +426,14 @@ class KingfisherManagerTests: XCTestCase {
                 forKey: url.cacheKey,
                 processorIdentifier: DefaultImageProcessor.default.identifier,
                 cacheSerializer: DefaultCacheSerializer.default,
-                toDisk: true)
-            {
-                _ in
+                toDisk: true) { _ in
                 let p = SimpleProcessor()
                 
                 let cached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
                 XCTAssertFalse(cached.cached)
                 
                 // No downloading will happen
-                self.manager.retrieveImage(with: url, options: [.processor(p), .originalCache(originalCache)]) {
-                    result in
+                self.manager.retrieveImage(with: url, options: [.processor(p), .originalCache(originalCache)]) { result in
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertEqual(result.value!.cacheType, .none)
                     XCTAssertTrue(p.processed)
@@ -697,8 +680,7 @@ class KingfisherManagerTests: XCTestCase {
         let provider = SimpleImageDataProvider(cacheKey: "key") { .success(testImageData) }
         var called = false
         manager.defaultOptions = .empty
-        _ = manager.retrieveImage(with: .provider(provider), options: [.processingQueue(.mainCurrentOrAsync)]) {
-            result in
+        _ = manager.retrieveImage(with: .provider(provider), options: [.processingQueue(.mainCurrentOrAsync)]) { result in
             called = true
             XCTAssertNotNil(result.value)
             XCTAssertTrue(result.value!.image.renderEqual(to: testImage))
@@ -759,9 +741,7 @@ class KingfisherManagerTests: XCTestCase {
 
         _ = manager.retrieveImage(
             with: .network(brokenURL),
-            options: [.alternativeSources([.network(url)])])
-        {
-            result in
+            options: [.alternativeSources([.network(url)])]) { result in
 
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value!.source.url, url)
@@ -786,9 +766,7 @@ class KingfisherManagerTests: XCTestCase {
 
         _ = manager.retrieveImage(
             with: .network(brokenURL),
-            options: [.alternativeSources([.network(anotherBrokenURL), .network(url)])])
-        {
-            result in
+            options: [.alternativeSources([.network(anotherBrokenURL), .network(url)])]) { result in
 
             defer { exp.fulfill() }
 
@@ -829,9 +807,7 @@ class KingfisherManagerTests: XCTestCase {
           downloadTaskUpdated: { newTask in
             downloadTaskUpdatedCount += 1
             XCTAssertEqual(newTask?.sessionTask.task.currentRequest?.url, url)
-          })
-          {
-            result in
+          }) { _ in
             XCTAssertEqual(downloadTaskUpdatedCount, 1)
             exp.fulfill()
         }
@@ -852,9 +828,7 @@ class KingfisherManagerTests: XCTestCase {
         let task = manager.retrieveImage(
             with: .network(brokenURL),
             options: [.alternativeSources([.network(url)])]
-        )
-        {
-            result in
+        ) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             exp.fulfill()
@@ -880,9 +854,7 @@ class KingfisherManagerTests: XCTestCase {
                 task = newTask
                 task.cancel()
             }
-        )
-        {
-            result in
+        ) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error?.isTaskCancelled ?? false)
 
@@ -902,9 +874,7 @@ class KingfisherManagerTests: XCTestCase {
         
         _ = manager.retrieveImage(
             with: .network(url),
-            options: [.processor(DownsamplingImageProcessor(size: .init(width: 4, height: 4))), .scaleFactor(2)])
-        {
-            result in
+            options: [.processor(DownsamplingImageProcessor(size: .init(width: 4, height: 4))), .scaleFactor(2)]) { result in
 
             let image = result.value?.image
             XCTAssertNotNil(image)
@@ -930,10 +900,8 @@ class KingfisherManagerTests: XCTestCase {
         
         _ = manager.retrieveImage(
             with: .network(url),
-            options: [.processor(DownsamplingImageProcessor(size: .init(width: 4, height: 4))), .scaleFactor(3)])
-        {
-            result in
-
+            options: [.processor(DownsamplingImageProcessor(size: .init(width: 4, height: 4))), .scaleFactor(3)]) { result in
+            
             let image = result.value?.image
             XCTAssertNotNil(image)
             #if os(macOS)
@@ -1013,9 +981,7 @@ class KingfisherManagerTests: XCTestCase {
             original: testImageData,
             forKey: url.cacheKey,
             processorIdentifier: DefaultImageProcessor.default.identifier,
-            cacheSerializer: cacheSerializer, toDisk: true) {
-                result in
-
+            cacheSerializer: cacheSerializer, toDisk: true) { _ in
                 let computedKey = url.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
                 let fileURL = self.manager.cache.diskStorage.cacheFileURL(forKey: computedKey)
                 let data = try! Data(contentsOf: fileURL)
@@ -1038,8 +1004,7 @@ class KingfisherManagerTests: XCTestCase {
             original: testImageJEPGData,
             forKey: url.cacheKey,
             processorIdentifier: DefaultImageProcessor.default.identifier,
-            cacheSerializer: cacheSerializer, toDisk: true) {
-                result in
+            cacheSerializer: cacheSerializer, toDisk: true) { _ in
 
                 let computedKey = url.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
                 let fileURL = self.manager.cache.diskStorage.cacheFileURL(forKey: computedKey)

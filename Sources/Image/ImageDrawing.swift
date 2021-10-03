@@ -48,8 +48,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     #if !os(macOS)
     public func image(withBlendMode blendMode: CGBlendMode,
                       alpha: CGFloat = 1.0,
-                      backgroundColor: KFCrossPlatformColor? = nil) -> KFCrossPlatformImage
-    {
+                      backgroundColor: KFCrossPlatformColor? = nil) -> KFCrossPlatformImage {
         guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Blend mode image only works for CG-based image.")
             return base
@@ -370,8 +369,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return blurredImage
     }
     
-    public func addingBorder(_ border: Border) -> KFCrossPlatformImage
-    {
+    public func addingBorder(_ border: Border) -> KFCrossPlatformImage {
         guard let _ = cgImage else {
             assertionFailure("[Kingfisher] Blend mode image only works for CG-based image.")
             return base
@@ -385,7 +383,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             #else
             base.draw(in: rect, blendMode: .normal, alpha: 1.0)
             #endif
-            
             
             let strokeRect =  rect.insetBy(dx: border.lineWidth / 2, dy: border.lineWidth / 2)
             context.setStrokeColor(border.color.cgColor)
@@ -424,7 +421,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        return draw(to: rect.size, inverting: false) { context in
+        return draw(to: rect.size, inverting: false) { _ in
             #if os(macOS)
             base.draw(in: rect)
             if fraction > 0 {
@@ -572,8 +569,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         scale: CGFloat? = nil,
         refImage: KFCrossPlatformImage? = nil,
         draw: (CGContext) -> Bool // Whether use the refImage (`true`) or ignore image orientation (`false`)
-    ) -> KFCrossPlatformImage
-    {
+    ) -> KFCrossPlatformImage {
         #if os(macOS) || os(watchOS)
         let targetScale = scale ?? self.scale
         GraphicsContext.begin(size: size, scale: targetScale)
@@ -623,7 +619,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let image = KFCrossPlatformImage(cgImage: cgImage, size: base.size)
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
         
-        return draw(to: self.size, inverting: false) { context in
+        return draw(to: self.size, inverting: false) { _ in
             image.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
             return false
         }

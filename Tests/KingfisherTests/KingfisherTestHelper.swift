@@ -108,24 +108,20 @@ extension KFCrossPlatformImage {
         
         guard size == image.size else { return false }
         guard let imageData1 = kf.pngRepresentation(),
-              let imageData2 = image.kf.pngRepresentation() else
-        {
+              let imageData2 = image.kf.pngRepresentation() else {
             return false
         }
         guard let unifiedImage1 = KFCrossPlatformImage(data: imageData1),
-              let unifiedImage2 = KFCrossPlatformImage(data: imageData2) else
-        {
+              let unifiedImage2 = KFCrossPlatformImage(data: imageData2) else {
             return false
         }
         
         guard let rendered1 = unifiedImage1.rendered(),
-              let rendered2 = unifiedImage2.rendered() else
-        {
+              let rendered2 = unifiedImage2.rendered() else {
             return false
         }
         guard let data1 = rendered1.kf.cgImage?.dataProvider?.data,
-              let data2 = rendered2.kf.cgImage?.dataProvider?.data else
-        {
+              let data2 = rendered2.kf.cgImage?.dataProvider?.data else {
             return false
         }
         
@@ -168,8 +164,7 @@ extension KFCrossPlatformImage {
             bitmapInfo.remove(.alphaInfoMask)
             bitmapInfo = CGBitmapInfo(rawValue: bitmapInfo.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue)
         } else if !(alpha == CGImageAlphaInfo.noneSkipFirst.rawValue) ||
-                  !(alpha == CGImageAlphaInfo.noneSkipLast.rawValue)
-        {
+                  !(alpha == CGImageAlphaInfo.noneSkipLast.rawValue) {
             bitmapInfo.remove(.alphaInfoMask)
             bitmapInfo = CGBitmapInfo(rawValue: bitmapInfo.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)
         }
@@ -181,8 +176,7 @@ extension KFCrossPlatformImage {
                                       bitsPerComponent: cgImage.bitsPerComponent,
                                       bytesPerRow: 0,
                                       space: colorSpace,
-                                      bitmapInfo: bitmapInfo.rawValue) else
-        {
+                                      bitmapInfo: bitmapInfo.rawValue) else {
             return nil
         }
         

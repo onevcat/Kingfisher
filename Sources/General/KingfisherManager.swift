@@ -24,7 +24,6 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 import Foundation
 
 /// The downloading progress block type.
@@ -62,7 +61,6 @@ public struct PropagationError {
     /// The actual error happens in framework.
     public let error: KingfisherError
 }
-
 
 /// The downloading task updated block type. The parameter `newTask` is the updated new task of image setting process.
 /// It is a `nil` if the image loading does not require an image downloading process. If an image downloading is issued,
@@ -459,7 +457,6 @@ public class KingfisherManager {
             let task = downloader.downloadImage(
                 with: resource.downloadURL, options: options, completionHandler: _cacheImage
             )
-
 
             // The code below is neat, but it fails the Swift 5.2 compiler with a runtime crash when 
             // `BUILD_LIBRARY_FOR_DISTRIBUTION` is turned on. I believe it is a bug in the compiler. 

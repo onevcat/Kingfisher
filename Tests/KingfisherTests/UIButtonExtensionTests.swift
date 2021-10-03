@@ -171,7 +171,7 @@ class UIButtonExtensionTests: XCTestCase {
 
         KF.url(url)
             .onFailureImage(testImage)
-            .onFailure { error in
+            .onFailure { _ in
                 XCTAssertEqual(testImage, self.button.image(for: state))
                 expectation.fulfill()
             }
@@ -188,7 +188,7 @@ class UIButtonExtensionTests: XCTestCase {
 
         KF.url(url)
             .onFailureImage(testImage)
-            .onFailure { error in
+            .onFailure { _ in
                 XCTAssertEqual(testImage, self.button.backgroundImage(for: state))
                 expectation.fulfill()
             }

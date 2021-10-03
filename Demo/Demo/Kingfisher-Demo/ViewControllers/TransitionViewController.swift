@@ -78,7 +78,7 @@ class TransitionViewController: UIViewController {
 
 extension TransitionViewController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        switch PickerComponent(rawValue: component)!  {
+        switch PickerComponent(rawValue: component)! {
         case .transitionType: return transitions[row]
         case .duration: return String(durations[row])
         }
@@ -95,7 +95,7 @@ extension TransitionViewController: UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        switch PickerComponent(rawValue: component)!  {
+        switch PickerComponent(rawValue: component)! {
         case .transitionType: return transitions.count
         case .duration: return durations.count
         }

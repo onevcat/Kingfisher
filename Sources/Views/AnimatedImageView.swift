@@ -233,8 +233,7 @@ open class AnimatedImageView: UIImageView {
             if #available(iOS 15, *),
                // https://developer.apple.com/documentation/xcode-release-notes/xcode-13-release-notes
                // Apple Xcode 13 issue 83378814
-                ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 15
-            {
+                ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 15 {
                 super.display(layer)
             } else {
                 layer.contents = image?.cgImage

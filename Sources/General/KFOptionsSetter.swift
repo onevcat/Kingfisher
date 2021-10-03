@@ -550,7 +550,6 @@ extension KFOptionSetter {
         }
     }
 
-
     /// Appends a `ResizingImageProcessor` to current processors.
     ///
     /// If you need to resize a data represented image to a smaller size, use `DownsamplingImageProcessor`
@@ -633,7 +632,6 @@ extension KFOptionSetter {
         return self
     }
 }
-
 
 // MARK: - Cache Expiration
 extension KFOptionSetter {

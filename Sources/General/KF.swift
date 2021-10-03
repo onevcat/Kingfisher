@@ -98,7 +98,6 @@ public enum KF {
     }
 }
 
-
 extension KF {
 
     /// A builder class to configure an image retrieving task and set it to a holder view or component.

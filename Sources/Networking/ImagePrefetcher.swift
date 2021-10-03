@@ -24,7 +24,6 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
 #if os(macOS)
 import AppKit
 #else
@@ -184,8 +183,7 @@ public class ImagePrefetcher: CustomStringConvertible {
         resources: [Resource],
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherProgressBlock? = nil,
-        completionHandler: PrefetcherCompletionHandler? = nil)
-    {
+        completionHandler: PrefetcherCompletionHandler? = nil) {
         self.init(sources: resources.map { $0.convertToSource() }, options: options)
         self.progressBlock = progressBlock
         self.completionHandler = completionHandler
@@ -206,8 +204,7 @@ public class ImagePrefetcher: CustomStringConvertible {
     public convenience init(
         resources: [Resource],
         options: KingfisherOptionsInfo? = nil,
-        completionHandler: PrefetcherCompletionHandler? = nil)
-    {
+        completionHandler: PrefetcherCompletionHandler? = nil) {
         self.init(sources: resources.map { $0.convertToSource() }, options: options)
         self.completionHandler = completionHandler
     }
@@ -226,10 +223,9 @@ public class ImagePrefetcher: CustomStringConvertible {
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
     /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
     public convenience init(sources: [Source],
-        options: KingfisherOptionsInfo? = nil,
-        progressBlock: PrefetcherSourceProgressBlock? = nil,
-        completionHandler: PrefetcherSourceCompletionHandler? = nil)
-    {
+                            options: KingfisherOptionsInfo? = nil,
+                            progressBlock: PrefetcherSourceProgressBlock? = nil,
+                            completionHandler: PrefetcherSourceCompletionHandler? = nil) {
         self.init(sources: sources, options: options)
         self.progressSourceBlock = progressBlock
         self.completionSourceHandler = completionHandler
@@ -248,9 +244,8 @@ public class ImagePrefetcher: CustomStringConvertible {
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
     /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
     public convenience init(sources: [Source],
-        options: KingfisherOptionsInfo? = nil,
-        completionHandler: PrefetcherSourceCompletionHandler? = nil)
-    {
+                            options: KingfisherOptionsInfo? = nil,
+                            completionHandler: PrefetcherSourceCompletionHandler? = nil) {
         self.init(sources: sources, options: options)
         self.completionSourceHandler = completionHandler
     }
@@ -317,7 +312,7 @@ public class ImagePrefetcher: CustomStringConvertible {
         let downloadTaskCompletionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { result in
             self.tasks.removeValue(forKey: source.cacheKey)
             do {
-                let _ = try result.get()
+                _ = try result.get()
                 self.completedSources.append(source)
             } catch {
                 self.failedSources.append(source)
@@ -357,8 +352,7 @@ public class ImagePrefetcher: CustomStringConvertible {
         reportCompletionOrStartNext()
     }
     
-    private func startPrefetching(_ source: Source)
-    {
+    private func startPrefetching(_ source: Source) {
         if optionsInfo.forceRefresh {
             downloadAndCache(source)
             return
@@ -375,9 +369,7 @@ public class ImagePrefetcher: CustomStringConvertible {
                 let context = RetrievingContext(options: optionsInfo, originalSource: source)
                 _ = manager.retrieveImageFromCache(
                     source: source,
-                    context: context)
-                {
-                    _ in
+                    context: context) { _ in
                     self.append(cached: source)
                 }
             } else {

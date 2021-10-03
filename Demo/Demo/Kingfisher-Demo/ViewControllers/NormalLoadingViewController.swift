@@ -44,8 +44,7 @@ extension NormalLoadingViewController {
     override func collectionView(
         _ collectionView: UICollectionView,
         didEndDisplaying cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath)
-    {
+        forItemAt indexPath: IndexPath) {
         // This will cancel all unfinished downloading task when the cell disappearing.
         (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
@@ -53,8 +52,7 @@ extension NormalLoadingViewController {
     override func collectionView(
         _ collectionView: UICollectionView,
         willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath)
-    {
+        forItemAt indexPath: IndexPath) {
         let imageView = (cell as! ImageCollectionViewCell).cellImageView!
         let url = ImageLoader.sampleImageURLs[indexPath.row]
         KF.url(url)
@@ -68,8 +66,7 @@ extension NormalLoadingViewController {
     
     override func collectionView(
         _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: "collectionViewCell",
             for: indexPath) as! ImageCollectionViewCell
