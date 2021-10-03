@@ -326,12 +326,24 @@ extension KFOptionSetter {
 
     /// Sets whether the image setting for an image view should happen with transition even when retrieved from cache.
     /// - Parameter enabled: Enable the force transition or not.
-    /// - Returns: A `KF.Builder` with changes applied.
+    /// - Returns: A `Self` with changes applied.
     public func forceTransition(_ enabled: Bool = true) -> Self {
         options.forceTransition = enabled
         return self
     }
 
+    /// Sets the image that will be used if an image retrieving task fails.
+    /// - Parameter image: The image that will be used when something goes wrong.
+    /// - Returns: A `Self` with changes applied.
+    ///
+    /// If set and an image retrieving error occurred Kingfisher will set provided image (or empty)
+    /// in place of requested one. It's useful when you don't want to show placeholder
+    /// during loading time but wants to use some default image when requests will be failed.
+    ///
+    public func onFailureImage(_ image: KFCrossPlatformImage?) -> Self {
+        options.onFailureImage = .some(image)
+        return self
+    }
 }
 
 // MARK: - Request Modifier

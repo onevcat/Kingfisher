@@ -86,6 +86,13 @@ extension KFImage {
                                 context.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
+                            CallbackQueue.mainCurrentOrAsync.execute {
+                                if let image = context.options.onFailureImage {
+                                    self.loadedImage = image
+                                }
+                                self.loaded = true
+                            }
+                            
                             CallbackQueue.mainAsync.execute {
                                 context.onFailureDelegate.call(error)
                             }
