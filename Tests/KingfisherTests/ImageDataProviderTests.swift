@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import XCTest
-import Kingfisher
+@testable import Kingfisher
 
 class ImageDataProviderTests: XCTestCase {
     
@@ -36,7 +36,7 @@ class ImageDataProviderTests: XCTestCase {
         try! testImageData.write(to: fileURL)
         
         let provider = LocalFileImageDataProvider(fileURL: fileURL)
-        XCTAssertEqual(provider.cacheKey, fileURL.absoluteString)
+        XCTAssertEqual(provider.cacheKey, fileURL.localFileCacheKey)
         XCTAssertEqual(provider.fileURL, fileURL)
         
         let exp = expectation(description: #function)
@@ -56,7 +56,7 @@ class ImageDataProviderTests: XCTestCase {
         try! testImageData.write(to: fileURL)
         
         let provider = LocalFileImageDataProvider(fileURL: fileURL, loadingQueue: .mainCurrentOrAsync)
-        XCTAssertEqual(provider.cacheKey, fileURL.absoluteString)
+        XCTAssertEqual(provider.cacheKey, fileURL.localFileCacheKey)
         XCTAssertEqual(provider.fileURL, fileURL)
         
         var called = false
@@ -67,6 +67,23 @@ class ImageDataProviderTests: XCTestCase {
         }
 
         XCTAssertTrue(called)
+    }
+    
+    func testLocalFileCacheKey() {
+        let url1 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/DEF/Kingfisher-Demo.app/images/kingfisher-1.jpg")!
+        XCTAssertEqual(url1.localFileCacheKey, "\(URL.localFileCacheKeyPrefix)/Kingfisher-Demo.app/images/kingfisher-1.jpg")
+    
+        let url2 = URL(string: "file:///private/var/containers/Bundle/Application/ABC/Kingfisher-Demo.app/images/kingfisher-1.jpg")!
+        XCTAssertEqual(url2.localFileCacheKey, "\(URL.localFileCacheKeyPrefix)/Kingfisher-Demo.app/images/kingfisher-1.jpg")
+        
+        let url3 = URL(string: "file:///private/var/containers/Bundle/Application/ABC/Kingfisher-Demo.app/images/kingfisher-1.jpg?foo=bar")!
+        XCTAssertEqual(url3.localFileCacheKey, "\(URL.localFileCacheKeyPrefix)/Kingfisher-Demo.app/images/kingfisher-1.jpg?foo=bar")
+        
+        let url4 = URL(string: "file:///private/var/containers/Bundle/Application/ABC/Kingfisher-Demo.appex/images/kingfisher-1.jpg")!
+        XCTAssertEqual(url4.localFileCacheKey, "\(URL.localFileCacheKeyPrefix)/Kingfisher-Demo.appex/images/kingfisher-1.jpg")
+        
+        let url5 = URL(string: "file:///private/var/containers/Bundle/Application/ABC/Kingfisher-Demo.other/images/kingfisher-1.jpg")!
+        XCTAssertEqual(url5.localFileCacheKey, "\(URL.localFileCacheKeyPrefix)///private/var/containers/Bundle/Application/ABC/Kingfisher-Demo.other/images/kingfisher-1.jpg")
     }
     
     func testBase64ImageDataProvider() {

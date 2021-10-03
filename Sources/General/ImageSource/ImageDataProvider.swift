@@ -88,7 +88,7 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
         loadingQueue: ExecutionQueue = .dispatch(DispatchQueue.global(qos: .userInitiated))
     ) {
         self.fileURL = fileURL
-        self.cacheKey = cacheKey ?? fileURL.absoluteString
+        self.cacheKey = cacheKey ?? fileURL.localFileCacheKey
         self.loadingQueue = loadingQueue
     }
 
@@ -106,6 +106,34 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
     /// The URL of the local file on the disk.
     public var contentURL: URL? {
         return fileURL
+    }
+}
+
+extension URL {
+    static let localFileCacheKeyPrefix = "kingfisher.local.cacheKey"
+    
+    // The special version of cache key for a local file on disk. Every time the app is reinstalled on the disk,
+    // the system assigns a new container folder to hold the .app (and the extensions, .appex) folder. So the URL for
+    // the same image in bundle might be different.
+    //
+    // This getter only uses the fixed part in the URL (until the bundle name folder) to provide a stable cache key
+    // for the image under the same path inside the bundle.
+    //
+    // See #1825 (https://github.com/onevcat/Kingfisher/issues/1825)
+    var localFileCacheKey: String {
+        var validComponents: [String] = []
+        for part in pathComponents.reversed() {
+            validComponents.append(part)
+            if part.hasSuffix(".app") || part.hasSuffix(".appex") {
+                break
+            }
+        }
+        let fixedPath = "\(Self.localFileCacheKeyPrefix)/\(validComponents.reversed().joined(separator: "/"))"
+        if let q = query {
+            return "\(fixedPath)?\(q)"
+        } else {
+            return fixedPath
+        }
     }
 }
 
