@@ -25,6 +25,7 @@ disabled_rules:
   - unused_setter_value
   - nesting
   - redundant_void_return
+  - unused_optional_binding
   
 vertical_whitespace:
     severity: error
@@ -36,3 +37,4 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Pods
   - Carthage
   - Fastlane
+  - Tests/KingfisherTests
