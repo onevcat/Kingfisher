@@ -390,19 +390,6 @@ extension KF.Builder {
         return self
     }
 
-    /// Sets the image that will be used if an image retrieving task fails.
-    /// - Parameter image: The image that will be used when something goes wrong.
-    /// - Returns: A `KF.Builder` with changes applied.
-    ///
-    /// If set and an image retrieving error occurred Kingfisher will set provided image (or empty)
-    /// in place of requested one. It's useful when you don't want to show placeholder
-    /// during loading time but wants to use some default image when requests will be failed.
-    ///
-    public func onFailureImage(_ image: KFCrossPlatformImage?) -> Self {
-        options.onFailureImage = .some(image)
-        return self
-    }
-
     /// Enables progressive image loading with a specified `ImageProgressive` setting to process the
     /// progressive JPEG data and display it in a progressive way.
     /// - Parameter progressive: The progressive settings which is used while loading.
