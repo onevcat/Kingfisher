@@ -223,7 +223,7 @@ extension KF.Builder {
     ///   - listItem: The list item which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
     ///            This value is `nil` if the image is being loaded from cache.
-    @available(iOSApplicationExtension 14.0, *)
+    @available(iOS 14.0, *)
     @discardableResult
     public func set(to listItem: CPListItem) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
