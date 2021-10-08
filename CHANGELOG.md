@@ -1,6 +1,11 @@
 # Change Log
 
------
+## [6.4.0 - Published Wrapper](https://github.com/onevcat/Kingfisher/releases/tag/6.4.0) (2021-08-03)
+
+#### Fix
+* Increate iOS minimum supported version from 10 to 12, to fix Xcode 13 build issue. [#1725](https://github.com/onevcat/Kingfisher/issues/1725)
+
+---
 
 ## [6.3.1 - Published Wrapper](https://github.com/onevcat/Kingfisher/releases/tag/6.3.1) (2021-08-03)
 
