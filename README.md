@@ -164,7 +164,17 @@ There are also some performance tips, remember to check them too.
 - iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ (if you use it in SwiftUI)
 - Swift 5.0+
 
-> If you need to support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x.
+> If you need to support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x. But it won't work 
+> with Xcode 13 [#1802](https://github.com/onevcat/Kingfisher/issues/1802).
+>
+> If you need to use Xcode 13 but cannot upgrade to v7, use the `version6-xcode13` branch. However, you have to drop 
+> iOS 10 support due to an Xcode 13 bug.
+>
+> | UIKit | SwiftUI | Xcode | Kingfisher |
+> |---|---|---|---|
+> | iOS 10+ | iOS 13+ | 12 | ~> 6.3.1 |
+> | iOS 11+ | iOS 13+ | 13 | `version6-xcode13` |
+> | iOS 12+ | iOS 14+ | 13 | ~> 7.0 |
 
 ### Installation
 
