@@ -275,7 +275,7 @@ public struct CompositingImageProcessor: ImageProcessor {
         self.backgroundColor = backgroundColor
         var identifier = "com.onevcat.Kingfisher.CompositingImageProcessor(\(compositingOperation.rawValue),\(alpha))"
         if let color = backgroundColor {
-            identifier.append("_\(color.hex)")
+            identifier.append("_\(color.rgbaDescription)")
         }
         self.identifier = identifier
     }
