@@ -280,7 +280,7 @@ public class ImagePrefetcher: CustomStringConvertible {
     public func start() {
         pretchQueue.async {
             guard !self.stopped else {
-                assertionFailure("You can not restart the same prefetcher. Try to create a new prefetcher.")
+ //               assertionFailure("You can not restart the same prefetcher. Try to create a new prefetcher.")
                 self.handleComplete()
                 return
             }
