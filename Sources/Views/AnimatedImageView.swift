@@ -413,9 +413,12 @@ extension AnimatedImageView {
 
         var previousFrameIndex = 0 {
             didSet {
-                preloadQueue.async {
+                preloadQueue.async(flags: .barrier) {
                     self.updatePreloadedFrames()
                 }
+//                preloadQueue.async {
+//                    self.updatePreloadedFrames()
+//                }
             }
         }
 
@@ -494,9 +497,12 @@ extension AnimatedImageView {
         func prepareFramesAsynchronously() {
             frameCount = Int(CGImageSourceGetCount(imageSource))
             animatedFrames.reserveCapacity(frameCount)
-            preloadQueue.async { [weak self] in
+            preloadQueue.async(flags: .barrier) { [weak self] in
                 self?.setupAnimatedFrames()
             }
+//            preloadQueue.async { [weak self] in
+//                self?.setupAnimatedFrames()
+//            }
         }
 
         func shouldChangeFrame(with duration: CFTimeInterval, handler: (Bool) -> Void) {
