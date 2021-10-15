@@ -37,11 +37,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     let context: KFImage.Context<HoldingView>
     
     var body: some View {
-        if !context.options.forceTransition {
-            binder.start(context: context)
-        }
-        
-        return ZStack {
+        ZStack {
             context.configurations
                 .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
                     current, config in config(current)
@@ -59,7 +55,9 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     guard let binder = binder else {
                         return
                     }
-                    binder.start(context: context)
+                    if !binder.loadingOrSucceeded {
+                        binder.start(context: context)
+                    }
                 }
                 .onDisappear { [weak binder = self.binder] in
                     guard let binder = binder else {

@@ -49,9 +49,6 @@ extension KFImage {
         @Published var progress: Progress = .init()
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
-
-            guard !loadingOrSucceeded else { return }
-
             guard let source = context.source else {
                 CallbackQueue.mainCurrentOrAsync.execute {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
