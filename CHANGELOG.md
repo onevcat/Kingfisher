@@ -2,6 +2,14 @@
 
 -----
 
+## [7.1.1 - Double Ninth](https://github.com/onevcat/Kingfisher/releases/tag/7.1.1) (2021-10-16)
+
+#### Fix
+* In some cases the `KFImage` loading causes a freeze on certain iOS 14 systems. [#1849](https://github.com/onevcat/Kingfisher/issues/1849) Thanks reporting from @JetForMe @benjamincombes @aralatpulat
+* Setting image to an `AnimatedImageView` now correctly replaces its layer contents. [#1836](https://github.com/onevcat/Kingfisher/issues/1836) @phantomato
+
+---
+
 ## [7.1.0 - Autumn Patch](https://github.com/onevcat/Kingfisher/releases/tag/7.1.0) (2021-10-12)
 
 #### Add
