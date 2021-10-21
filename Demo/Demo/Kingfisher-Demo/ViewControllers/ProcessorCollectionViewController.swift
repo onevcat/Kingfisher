@@ -43,7 +43,7 @@ class ProcessorCollectionViewController: UICollectionViewController {
         (RoundCornerImageProcessor(radius: .point(20)), "Round Corner"),
         (RoundCornerImageProcessor(radius: .widthFraction(0.5), roundingCorners: [.topLeft, .bottomRight]), "Round Corner Partial"),
         (BorderImageProcessor(border: .init(color: .systemBlue, lineWidth: 8)), "Border"),
-        (RoundCornerImageProcessor(radius: .widthFraction(0.2)) |> BorderImageProcessor(border: .init(color: .systemBlue.withAlphaComponent(0.7), lineWidth: 12, radius: .widthFraction(0.2))), "Round Border"),
+        (RoundCornerImageProcessor(radius: .widthFraction(0.2)) |> BorderImageProcessor(border: .init(color: UIColor.systemBlue.withAlphaComponent(0.7), lineWidth: 12, radius: .widthFraction(0.2))), "Round Border"),
         (BlendImageProcessor(blendMode: .lighten, alpha: 1.0, backgroundColor: .red), "Blend"),
         (BlurImageProcessor(blurRadius: 5), "Blur"),
         (OverlayImageProcessor(overlay: .red, fraction: 0.5), "Overlay"),
