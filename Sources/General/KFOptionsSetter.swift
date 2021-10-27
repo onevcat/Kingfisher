@@ -237,6 +237,18 @@ extension KFOptionSetter {
         return self
     }
 
+    /// Sets writing options for an original image on a first write
+    /// - Parameter writingOptions: Options to control the writing of data to a disk storage.
+    /// - Returns: A `Self` value with changes applied.
+    /// If set, options will be passed the store operation for a new files.
+    ///
+    /// This is useful if you want to implement file enctyption on first write - eg [.completeFileProtection]
+    ///
+    public func diskStoreWriteOptions(_ writingOptions: Data.WritingOptions) -> Self {
+        options.diskStoreWriteOptions = writingOptions
+        return self
+    }
+
     /// Sets whether the disk storage loading should happen in the same calling queue.
     /// - Parameter enabled: Whether the disk storage loading should happen in the same calling queue.
     /// - Returns: A `Self` value with changes applied.
