@@ -52,6 +52,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.keepCurrentImageWhileLoading)
         XCTAssertFalse(options.onlyLoadFirstFrame)
         XCTAssertFalse(options.cacheOriginalImage)
+        XCTAssertEqual(options.diskStoreWriteOptions, [])
     }
     
     func testSetOptionsShouldParseCorrectly() {
@@ -89,6 +90,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
             .cacheOriginalImage,
+            .diskStoreWriteOptions([.atomic]),
             .alternativeSources([alternativeSource]),
             .retryStrategy(DelayRetryStrategy(maxRetryCount: 10))
         ])
@@ -126,6 +128,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)
+        XCTAssertEqual(options.diskStoreWriteOptions, [Data.WritingOptions.atomic])
         XCTAssertEqual(options.alternativeSources?.count, 1)
         XCTAssertEqual(options.alternativeSources?.first?.url, alternativeSource.url)
 
