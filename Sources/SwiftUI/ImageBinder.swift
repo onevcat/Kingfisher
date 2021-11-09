@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(SwiftUI) && canImport(Combine)
+#if !(os(iOS) && (arch(i386) || arch(arm)))
 import Combine
 import SwiftUI
 
