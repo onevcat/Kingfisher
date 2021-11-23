@@ -79,10 +79,15 @@ extension KFImage {
                         switch result {
                         case .success(let value):
                             CallbackQueue.mainCurrentOrAsync.execute {
+                                if let animation = (context
+                                    .fadeTransitionDuration(cacheType: value.cacheType)
+                                    .map { duration in Animation.linear(duration: duration) })
+                                {
+                                    withAnimation(animation) { self.loaded = true }
+                                } else {
+                                    self.loaded = true
+                                }
                                 self.loadedImage = value.image
-                                let animation = context.fadeTransitionDuration(cacheType: value.cacheType)
-                                    .map { duration in Animation.linear(duration: duration) }
-                                withAnimation(animation) { self.loaded = true }
                             }
 
                             CallbackQueue.mainAsync.execute {
