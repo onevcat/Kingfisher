@@ -44,9 +44,11 @@ extension KFImage {
             return loading || loadedImage != nil
         }
 
-        @Published var loaded = false
-        @Published var loadedImage: KFCrossPlatformImage? = nil
-        @Published var progress: Progress = .init()
+        // Do not use @Published due to https://github.com/onevcat/Kingfisher/issues/1717. Revert to @Published once
+        // we can drop iOS 12.
+        var loaded = false                           { willSet { objectWillChange.send() } }
+        var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        var progress: Progress = .init()             { willSet { objectWillChange.send() } }
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
             guard let source = context.source else {
