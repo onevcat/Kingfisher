@@ -25,7 +25,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(CarPlay)
+#if canImport(CarPlay) && !targetEnvironment(macCatalyst)
 import CarPlay
 
 @available(iOS 14.0, *)
