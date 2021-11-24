@@ -46,34 +46,55 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         return ImageLoader.highResolutionImageURLs.count * 30
     }
 
-    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
-    {
-        (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
-    }
-    
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath)
-    {
-        let imageView = (cell as! ImageCollectionViewCell).cellImageView!
-        let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
-        // Use different cache key to prevent reuse the same image. It is just for
-        // this demo. Normally you can just use the URL to set image.
-
-        // This should crash most devices due to memory pressure.
-        // let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
-        // imageView.kf.setImage(with: resource)
-
-        // This would survive on even the lowest spec devices!
-        KF.url(url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
-            .downsampling(size: CGSize(width: 250, height: 250))
-            .cacheOriginalImage()
-            .set(to: imageView)
-    }
-    
+//    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath)
+//    {
+//        (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
+//    }
+//
+//    override func collectionView(
+//        _ collectionView: UICollectionView,
+//        willDisplay cell: UICollectionViewCell,
+//        forItemAt indexPath: IndexPath)
+//    {
+//        let imageView = (cell as! ImageCollectionViewCell).cellImageView!
+//        let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
+//        // Use different cache key to prevent reuse the same image. It is just for
+//        // this demo. Normally you can just use the URL to set image.
+//
+//        // This should crash most devices due to memory pressure.
+//        // let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
+//        // imageView.kf.setImage(with: resource)
+//
+//        // This would survive on even the lowest spec devices!
+//        KF.url(url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
+//            .downsampling(size: CGSize(width: 250, height: 250))
+//            .cacheOriginalImage()
+//            .set(to: imageView)
+//    }
+    var data: [IndexPath: Bool] = [:]
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        print("Load: \(indexPath)")
+        if data[indexPath] == nil {
+            print("data is nil: \(indexPath)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.data[indexPath] = true
+                self.collectionView.reloadItems(at: [indexPath])
+            }
+        }
+        
+        if data[indexPath] != nil {
+            print("data is not nil: \(indexPath)")
+            let imageView = (cell as! ImageCollectionViewCell).cellImageView!
+            let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
+            KF.url(url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
+                .downsampling(size: CGSize(width: 250, height: 250))
+                .cacheOriginalImage()
+                .onSuccess { print("Load done: \(indexPath): \($0)") }
+                .onFailure { print("Error: \($0)") }
+                .set(to: imageView)
+        }
+        
         return cell
     }
     
