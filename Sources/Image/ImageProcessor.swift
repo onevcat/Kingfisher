@@ -353,9 +353,6 @@ public enum Radius {
 ///
 public struct RoundCornerImageProcessor: ImageProcessor {
 
-    /// Represents a radius specified in a `RoundCornerImageProcessor`.
-    public typealias Radius = Kingfisher.Radius
-
     /// Identifier of the processor.
     /// - Note: See documentation of `ImageProcessor` protocol for more.
     public let identifier: String

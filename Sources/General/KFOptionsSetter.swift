@@ -476,7 +476,7 @@ extension KFOptionSetter {
     ///   - backgroundColor: Background color of the output image. If `nil`, it will use a transparent background.
     /// - Returns: A `Self` value with changes applied.
     public func roundCorner(
-        radius: RoundCornerImageProcessor.Radius,
+        radius: Radius,
         targetSize: CGSize? = nil,
         roundingCorners corners: RectCorner = .all,
         backgroundColor: KFCrossPlatformColor? = nil
