@@ -33,3 +33,10 @@ class MainViewController: UITableViewController {
         setupOperationNavigationBar()
     }
 }
+
+extension MainViewController: UITabBarDelegate {
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		let attempt1870 = Attempt1870CollectionViewController(collectionViewLayout: Attempt1870CollectionViewController.Layout())
+		show(attempt1870, sender: nil)
+	}
+}

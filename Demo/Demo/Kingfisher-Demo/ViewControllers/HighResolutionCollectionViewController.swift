@@ -88,7 +88,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
             let imageView = (cell as! ImageCollectionViewCell).cellImageView!
             let url = ImageLoader.highResolutionImageURLs[indexPath.row % ImageLoader.highResolutionImageURLs.count]
             KF.url(url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
-                .downsampling(size: CGSize(width: 250, height: 250))
+				.downsampling(size: imageView.bounds.size)
                 .cacheOriginalImage()
                 .onSuccess { print("Load done: \(indexPath): \($0)") }
                 .onFailure { print("Error: \($0)") }

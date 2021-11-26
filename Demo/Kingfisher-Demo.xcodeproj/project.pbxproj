@@ -70,6 +70,7 @@
 		D1F78A652589F17200930759 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A622589F17200930759 /* MainView.swift */; };
 		D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A632589F17200930759 /* SingleViewDemo.swift */; };
 		D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */; };
+		E68000322750ED0D001C58ED /* Attempt1870CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68000312750ED0D001C58ED /* Attempt1870CollectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -215,6 +216,7 @@
 		D1F78A622589F17200930759 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D1F78A632589F17200930759 /* SingleViewDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleViewDemo.swift; sourceTree = "<group>"; };
 		D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighResolutionCollectionViewController.swift; sourceTree = "<group>"; };
+		E68000312750ED0D001C58ED /* Attempt1870CollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attempt1870CollectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -371,6 +373,7 @@
 				D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */,
 				D1A1CCA221A1879600263AD8 /* MainViewController.swift */,
 				D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */,
+				E68000312750ED0D001C58ED /* Attempt1870CollectionViewController.swift */,
 				D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */,
 				D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */,
 				769F07F026298E2E00610767 /* GIFHeavyViewController.swift */,
@@ -696,6 +699,7 @@
 				D1F78A5F2589F0AA00930759 /* SwiftUIViewController.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
+				E68000322750ED0D001C58ED /* Attempt1870CollectionViewController.swift in Sources */,
 				D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */,
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
