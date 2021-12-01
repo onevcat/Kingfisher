@@ -57,7 +57,7 @@ extension KingfisherWrapper where Base == String {
         guard let firstSeg = ext.split(separator: "@").first else {
             return nil
         }
-        return firstSeg.count > 0 ? String(firstSeg) : nil
+        return firstSeg.isEmpty ? nil : String(firstSeg)
     }
 }
 
@@ -159,7 +159,7 @@ struct BytesIterator: IteratorProtocol {
         let end = min(chunkSize, data.count - offset)
         let result = data[offset..<offset + end]
         offset += result.count
-        return result.count > 0 ? result : nil
+        return result.isEmpty ? nil : result
     }
 }
 

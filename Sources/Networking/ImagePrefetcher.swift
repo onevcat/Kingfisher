@@ -289,7 +289,7 @@ public class ImagePrefetcher: CustomStringConvertible {
             }
 
             // Empty case.
-            guard self.prefetchSources.count > 0 else {
+            guard !self.prefetchSources.isEmpty else {
                 self.handleComplete()
                 return
             }

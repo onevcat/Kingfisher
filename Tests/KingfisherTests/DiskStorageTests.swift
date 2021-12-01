@@ -175,7 +175,7 @@ class DiskStorageTests: XCTestCase {
 
         let urls = try! storage.removeSizeExceededValues()
         XCTAssertTrue(urls.count < count)
-        XCTAssertTrue(urls.count > 0)
+        XCTAssertTrue(!urls.isEmpty)
     }
 
     func testConfigUsesHashedFileName() {
