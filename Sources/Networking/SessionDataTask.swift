@@ -29,7 +29,6 @@ import Foundation
 /// Represents a session data task in `ImageDownloader`. It consists of an underlying `URLSessionDataTask` and
 /// an array of `TaskCallback`. Multiple `TaskCallback`s could be added for a single downloading data task.
 public class SessionDataTask {
-
     /// Represents the type of token which used for cancelling a task.
     public typealias CancelToken = Int
 

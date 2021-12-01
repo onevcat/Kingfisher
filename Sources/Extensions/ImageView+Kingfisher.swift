@@ -33,7 +33,6 @@ import UIKit
 #endif
 
 extension KingfisherWrapper where Base: KFCrossPlatformImageView {
-
     // MARK: Setting Image
 
     /// Sets an image to the image view with a `Source`.
@@ -79,8 +78,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         placeholder: Placeholder? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(with: source, placeholder: placeholder, parsedOptions: options, progressBlock: progressBlock, completionHandler: completionHandler)
     }
@@ -125,8 +123,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         with source: Source?,
         placeholder: Placeholder? = nil,
         options: KingfisherOptionsInfo? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         return setImage(
             with: source,
             placeholder: placeholder,
@@ -166,8 +163,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         placeholder: Placeholder? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         return setImage(
             with: resource?.convertToSource(),
             placeholder: placeholder,
@@ -203,8 +199,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         with resource: Resource?,
         placeholder: Placeholder? = nil,
         options: KingfisherOptionsInfo? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         return setImage(
             with: resource,
             placeholder: placeholder,
@@ -235,8 +230,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         placeholder: Placeholder? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         return setImage(
             with: provider.map { .provider($0) },
             placeholder: placeholder,
@@ -263,8 +257,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         with provider: ImageDataProvider?,
         placeholder: Placeholder? = nil,
         options: KingfisherOptionsInfo? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         return setImage(
             with: provider,
             placeholder: placeholder,
@@ -274,14 +267,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         )
     }
 
-
     func setImage(
         with source: Source?,
         placeholder: Placeholder? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         var mutatingSelf = self
         guard let source = source else {
             mutatingSelf.placeholder = placeholder
@@ -432,7 +423,6 @@ private var placeholderKey: Void?
 private var imageTaskKey: Void?
 
 extension KingfisherWrapper where Base: KFCrossPlatformImageView {
-
     // MARK: Properties
     public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
@@ -451,7 +441,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         get {
             return getAssociatedObject(base, &indicatorTypeKey) ?? .none
         }
-        
+
         set {
             switch newValue {
             case .none: indicator = nil
@@ -463,7 +453,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             setRetainedAssociatedObject(base, &indicatorTypeKey, newValue)
         }
     }
-    
+
     /// Holds any type that conforms to the protocol `Indicator`.
     /// The protocol `Indicator` has a `view` property that will be shown when loading an image.
     /// It will be `nil` if `indicatorType` is `.none`.
@@ -472,18 +462,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             let box: Box<Indicator>? = getAssociatedObject(base, &indicatorKey)
             return box?.value
         }
-        
+
         set {
             // Remove previous
             if let previousIndicator = indicator {
                 previousIndicator.view.removeFromSuperview()
             }
-            
+
             // Add new
             if let newIndicator = newValue {
                 // Set default indicator layout
                 let view = newIndicator.view
-                
+
                 base.addSubview(view)
                 view.translatesAutoresizingMaskIntoConstraints = false
                 view.centerXAnchor.constraint(
@@ -501,7 +491,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                     view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
                     view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
                 }
-                
+
                 newIndicator.view.isHidden = true
             }
 
@@ -511,10 +501,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             setRetainedAssociatedObject(base, &indicatorKey, newValue.map(Box.init))
         }
     }
-    
+
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue) }
     }
 
     /// Represents the `Placeholder` used for this image view. A `Placeholder` will be shown in the view while
@@ -525,7 +515,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             if let previousPlaceholder = placeholder {
                 previousPlaceholder.remove(from: base)
             }
-            
+
             if let newPlaceholder = newValue {
                 newPlaceholder.add(to: base)
             } else {
@@ -535,7 +525,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         }
     }
 }
-
 
 extension KFCrossPlatformImageView {
     @objc func shouldPreloadAllAnimation() -> Bool { return true }

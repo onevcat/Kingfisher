@@ -33,7 +33,6 @@ import UIKit
 #endif
 
 extension KingfisherWrapper where Base: NSTextAttachment {
-
     // MARK: Setting Image
 
     /// Sets an image to the text attachment with a source.
@@ -86,8 +85,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(
             with: source,
@@ -149,8 +147,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(
             with: resource.map { .network($0) },
@@ -168,8 +165,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask? {
         var mutatingSelf = self
         guard let source = source else {
             base.image = placeholder
@@ -237,7 +233,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                     }
                     completionHandler?(result)
                 }
-        }
+            }
         )
 
         mutatingSelf.imageTask = task
@@ -258,7 +254,6 @@ private var imageTaskKey: Void?
 
 // MARK: Properties
 extension KingfisherWrapper where Base: NSTextAttachment {
-
     public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
@@ -272,7 +267,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
 
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue) }
     }
 }
 

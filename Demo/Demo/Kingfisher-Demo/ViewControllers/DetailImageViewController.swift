@@ -27,7 +27,6 @@
 import UIKit
 
 class DetailImageViewController: UIViewController {
-
     var imageURL: URL!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -36,7 +35,7 @@ class DetailImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.delegate = self
-        
+
         imageView.kf.setImage(with: imageURL, options: [.memoryCacheExpiration(.expired)]) { result in
             guard let image = try? result.get().image else {
                 return
@@ -49,7 +48,7 @@ class DetailImageViewController: UIViewController {
             DispatchQueue.main.async {
                 self.scrollView.zoomScale = minScale
             }
-            
+
             self.infoLabel.text = "\(image.size)"
         }
     }

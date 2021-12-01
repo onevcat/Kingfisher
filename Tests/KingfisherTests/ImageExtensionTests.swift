@@ -24,28 +24,27 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import XCTest
 import ImageIO
 @testable import Kingfisher
+import XCTest
 
 class ImageExtensionTests: XCTestCase {
-
     func testImageFormat() {
         var format: ImageFormat
         format = testImageJEPGData.kf.imageFormat
         XCTAssertEqual(format, .JPEG)
-        
+
         format = testImagePNGData.kf.imageFormat
         XCTAssertEqual(format, .PNG)
-        
+
         format = testImageGIFData.kf.imageFormat
         XCTAssertEqual(format, .GIF)
-        
+
         let raw: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8]
         format = Data(raw).kf.imageFormat
         XCTAssertEqual(format, .unknown)
     }
-    
+
     func testGenerateJPEGImage() {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.image(data: testImageJEPGData, options: options)
@@ -53,7 +52,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertNil(image?.kf.imageFrameCount)
         XCTAssertTrue(image!.renderEqual(to: KFCrossPlatformImage(data: testImageJEPGData)!))
     }
-    
+
     func testGenerateGIFImage() {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)
@@ -79,17 +78,17 @@ class ImageExtensionTests: XCTestCase {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)!
         let data = image.kf.gifRepresentation()
-        
+
         XCTAssertNotNil(data)
         XCTAssertEqual(data?.kf.imageFormat, ImageFormat.GIF)
-        
+
         let preloadOptions = ImageCreatingOptions(preloadAll: true)
         let allLoadImage = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: data!, options: preloadOptions)!
         let allLoadData = allLoadImage.kf.gifRepresentation()
         XCTAssertNotNil(allLoadData)
         XCTAssertEqual(allLoadData?.kf.imageFormat, ImageFormat.GIF)
     }
-    
+
     func testGenerateSingleFrameGIFImage() {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageSingleFrameGIFData, options: options)
@@ -101,14 +100,14 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(image!.kf.duration, Double.infinity)
         #endif
     }
-    
+
     func testGenerateFromNonImage() {
         let data = "hello".data(using: .utf8)!
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options)
         XCTAssertNil(image)
     }
-    
+
     func testPreloadAllAnimationData() {
         let preloadOptions = ImageCreatingOptions(preloadAll: true)
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageSingleFrameGIFData, options: preloadOptions)!
@@ -119,47 +118,47 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(image.kf.duration, image.kf.duration)
         XCTAssertEqual(image.kf.images!.count, image.kf.images!.count)
     }
-    
+
     func testLoadOnlyFirstFrame() {
         let preloadOptions = ImageCreatingOptions(preloadAll: true, onlyFirstFrame: true)
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: preloadOptions)!
         XCTAssertNotNil(image, "The image should be initiated.")
         XCTAssertNil(image.kf.images, "The image should be nil")
     }
-    
+
     func testSizeContent() {
         func getRatio(image: KFCrossPlatformImage) -> CGFloat {
             return image.size.height / image.size.width
         }
-        
+
         let image = testImage
         let ratio = getRatio(image: image)
-        
+
         let targetSize = CGSize(width: 100, height: 50)
-        
+
         let fillImage = image.kf.resize(to: targetSize, for: .aspectFill)
         XCTAssertEqual(getRatio(image: fillImage), ratio)
         XCTAssertEqual(max(fillImage.size.width, fillImage.size.height), 100)
-        
+
         let fitImage = image.kf.resize(to: targetSize, for: .aspectFit)
         XCTAssertEqual(getRatio(image: fitImage), ratio)
         XCTAssertEqual(max(fitImage.size.width, fitImage.size.height), 50)
-        
+
         let resizeImage = image.kf.resize(to: targetSize)
         XCTAssertEqual(resizeImage.size.width, 100)
         XCTAssertEqual(resizeImage.size.height, 50)
     }
-    
+
     func testSizeConstraintByAnchor() {
         let size = CGSize(width: 100, height: 100)
-        
+
         let topLeft = CGPoint(x: 0, y: 0)
         let top = CGPoint(x: 0.5, y: 0)
         let topRight = CGPoint(x: 1, y: 0)
         let center = CGPoint(x: 0.5, y: 0.5)
         let bottomRight = CGPoint(x: 1, y: 1)
         let invalidAnchor = CGPoint(x: -1, y: 2)
-        
+
         let inSize = CGSize(width: 20, height: 20)
         let outX = CGSize(width: 120, height: 20)
         let outY = CGSize(width: 20, height: 120)
@@ -179,7 +178,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(
             kf.constrainedRect(for: outSize, anchor: topLeft),
             CGRect(x: 0, y: 0, width: 100, height: 100))
-        
+
         XCTAssertEqual(
             kf.constrainedRect(for: inSize, anchor: top),
             CGRect(x: 40, y: 0, width: 20, height: 20))
@@ -192,7 +191,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(
             kf.constrainedRect(for: outSize, anchor: top),
             CGRect(x: 0, y: 0, width: 100, height: 100))
-        
+
         XCTAssertEqual(
             kf.constrainedRect(for: inSize, anchor: topRight),
             CGRect(x: 80, y: 0, width: 20, height: 20))
@@ -205,7 +204,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(
             kf.constrainedRect(for: outSize, anchor: topRight),
             CGRect(x: 0, y: 0, width: 100, height: 100))
-        
+
         XCTAssertEqual(
             kf.constrainedRect(for: inSize, anchor: center),
             CGRect(x: 40, y: 40, width: 20, height: 20))
@@ -218,7 +217,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(
             kf.constrainedRect(for: outSize, anchor: center),
             CGRect(x: 0, y: 0, width: 100, height: 100))
-        
+
         XCTAssertEqual(
             kf.constrainedRect(for: inSize, anchor: bottomRight),
             CGRect(x: 80, y: 80, width: 20, height: 20))
@@ -227,11 +226,11 @@ class ImageExtensionTests: XCTestCase {
             CGRect(x: 0, y: 80, width: 100, height: 20))
         XCTAssertEqual(
             kf.constrainedRect(for: outY, anchor: bottomRight),
-            CGRect(x:80, y: 0, width: 20, height: 100))
+            CGRect(x: 80, y: 0, width: 20, height: 100))
         XCTAssertEqual(
             kf.constrainedRect(for: outSize, anchor: bottomRight),
             CGRect(x: 0, y: 0, width: 100, height: 100))
-        
+
         XCTAssertEqual(
             kf.constrainedRect(for: inSize, anchor: invalidAnchor),
             CGRect(x: 0, y: 80, width: 20, height: 20))
@@ -240,12 +239,12 @@ class ImageExtensionTests: XCTestCase {
             CGRect(x: 0, y: 80, width: 100, height: 20))
         XCTAssertEqual(
             kf.constrainedRect(for: outY, anchor: invalidAnchor),
-            CGRect(x:0, y: 0, width: 20, height: 100))
+            CGRect(x: 0, y: 0, width: 20, height: 100))
         XCTAssertEqual(
             kf.constrainedRect(for: outSize, anchor: invalidAnchor),
             CGRect(x: 0, y: 0, width: 100, height: 100))
     }
-    
+
     func testDecodeScale() {
         #if os(iOS) || os(tvOS)
         let image = testImage
@@ -255,29 +254,29 @@ class ImageExtensionTests: XCTestCase {
         let image_2x = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
         XCTAssertEqual(image_2x.size, CGSize(width: 32, height: 32))
         XCTAssertEqual(image_2x.scale, 2.0)
-        
+
         let decoded = image.kf.decoded
         XCTAssertEqual(decoded.size, CGSize(width: 64, height: 64))
         XCTAssertEqual(decoded.scale, 1.0)
-        
+
         let decodedDifferentScale = image.kf.decoded(scale: 2.0)
         XCTAssertEqual(decodedDifferentScale.size, CGSize(width: 32, height: 32))
         XCTAssertEqual(decodedDifferentScale.scale, 2.0)
-        
+
         let decoded_2x = image_2x.kf.decoded
         XCTAssertEqual(decoded_2x.size, CGSize(width: 32, height: 32))
         XCTAssertEqual(decoded_2x.scale, 2.0)
         #endif
     }
-    
+
     func testNormalized() {
         // Full loaded GIF image should not be normalized since it is a set of images.
         let options = ImageCreatingOptions()
         let gifImage = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)
-        
+
         XCTAssertNotNil(gifImage)
         XCTAssertEqual(gifImage!.kf.normalized, gifImage!)
-        
+
         #if os(iOS) || os(tvOS)
         // No need to normalize up orientation image.
         let normalImage = testImage
@@ -294,22 +293,22 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(rotatedNormalizedImage.size, CGSize(width: 200, height: 100))
         #endif
     }
-    
+
     func testDownsampling() {
         let size = CGSize(width: 15, height: 15)
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
         XCTAssertEqual(testImage.kf.scale, 1.0)
-        
+
         let image = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 1)
         XCTAssertEqual(image?.size, size)
         XCTAssertEqual(image?.kf.scale, 1.0)
     }
-    
+
     func testDownsamplingWithScale() {
         let size = CGSize(width: 15, height: 15)
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
         XCTAssertEqual(testImage.kf.scale, 1.0)
-        
+
         let image2x = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 2)
         #if os(macOS)
         XCTAssertEqual(image2x?.size, CGSize(width: 30, height: 30))
@@ -318,7 +317,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(image2x?.size, size)
         XCTAssertEqual(image2x?.kf.scale, 2.0)
         #endif
-        
+
         let image3x = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: size, scale: 3)
         #if os(macOS)
         XCTAssertEqual(image3x?.size, CGSize(width: 45, height: 45))
@@ -330,7 +329,6 @@ class ImageExtensionTests: XCTestCase {
     }
 
     func testDownsamplingWithEdgeCaseSize() {
-
         // Zero size would fail downsampling.
         let nilImage = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: .zero, scale: 1)
         XCTAssertNil(nilImage)

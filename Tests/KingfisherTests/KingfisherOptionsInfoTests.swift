@@ -24,12 +24,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-
-import XCTest
 @testable import Kingfisher
+import XCTest
 
 class KingfisherOptionsInfoTests: XCTestCase {
-
     func testEmptyOptionsShouldParseCorrectly() {
         let options = KingfisherParsedOptionsInfo(KingfisherOptionsInfo.empty)
         XCTAssertTrue(options.targetCache === nil)
@@ -41,7 +39,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
         }
 #endif
-        
+
         XCTAssertEqual(options.downloadPriority, URLSessionTask.defaultPriority)
         XCTAssertFalse(options.forceRefresh)
         XCTAssertFalse(options.fromMemoryCacheOrRefresh)
@@ -54,11 +52,11 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.cacheOriginalImage)
         XCTAssertEqual(options.diskStoreWriteOptions, [])
     }
-    
+
     func testSetOptionsShouldParseCorrectly() {
         let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
-        
+
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()
         let testRedirectHandler = TestRedirectHandler()
@@ -94,7 +92,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .alternativeSources([alternativeSource]),
             .retryStrategy(DelayRetryStrategy(maxRetryCount: 10))
         ])
-        
+
         XCTAssertTrue(options.targetCache === cache)
         XCTAssertTrue(options.originalCache === cache)
         XCTAssertTrue(options.downloader === downloader)
@@ -107,7 +105,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         default: XCTFail()
         }
         #endif
-        
+
         XCTAssertEqual(options.downloadPriority, 0.8)
         XCTAssertTrue(options.forceRefresh)
         XCTAssertTrue(options.fromMemoryCacheOrRefresh)
@@ -116,7 +114,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.waitForCache)
         XCTAssertTrue(options.onlyFromCache)
         XCTAssertTrue(options.backgroundDecode)
-        
+
         XCTAssertEqual(options.callbackQueue.queue.label, queue.label)
         XCTAssertEqual(options.scaleFactor, 2.0)
         XCTAssertTrue(options.preloadAllAnimationData)
@@ -136,7 +134,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertNotNil(retry)
         XCTAssertEqual(retry?.maxRetryCount, 10)
     }
-    
+
     func testOptionCouldBeOverwritten() {
         var options = KingfisherParsedOptionsInfo([.downloadPriority(0.5), .onlyFromCache])
         XCTAssertEqual(options.downloadPriority, 0.5)

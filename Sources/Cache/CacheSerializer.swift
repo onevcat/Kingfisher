@@ -24,14 +24,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
 import CoreGraphics
+import Foundation
 
 /// An `CacheSerializer` is used to convert some data to an image object after
 /// retrieving it from disk storage, and vice versa, to convert an image to data object
 /// for storing to the disk storage.
 public protocol CacheSerializer {
-    
     /// Gets the serialized data from a provided image
     /// and optional original data for caching to disk.
     ///
@@ -58,7 +57,6 @@ public protocol CacheSerializer {
 /// It could serialize and deserialize images in PNG, JPEG and GIF format. For
 /// image other than these formats, a normalized `pngRepresentation` will be used.
 public struct DefaultCacheSerializer: CacheSerializer {
-    
     /// The default general cache serializer used across Kingfisher's cache.
     public static let `default` = DefaultCacheSerializer()
 
@@ -68,7 +66,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// Whether the original data should be preferred when serializing the image.
     /// If `true`, the input original data will be checked first and used unless the data is `nil`.
     /// In that case, the serialization will fall back to creating data from image.
-    public var preferCacheOriginalData: Bool = false
+    public var preferCacheOriginalData = false
 
     /// Creates a cache serializer that serialize and deserialize images in PNG, JPEG and GIF format.
     ///
@@ -103,7 +101,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
             )
         }
     }
-    
+
     /// Gets an image deserialized from provided data.
     ///
     /// - Parameters:

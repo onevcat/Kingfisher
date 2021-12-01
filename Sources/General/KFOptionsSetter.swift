@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
 import CoreGraphics
+import Foundation
 
 public protocol KFOptionSetter {
     var options: KingfisherParsedOptionsInfo { get nonmutating set }
@@ -424,7 +424,6 @@ extension KFOptionSetter {
 
 // MARK: - Processor
 extension KFOptionSetter {
-
     /// Sets an image processor for the image task. It replaces the current image processor settings.
     ///
     /// - Parameter processor: The processor you want to use to process the image after it is downloaded.
@@ -480,8 +479,7 @@ extension KFOptionSetter {
         targetSize: CGSize? = nil,
         roundingCorners corners: RectCorner = .all,
         backgroundColor: KFCrossPlatformColor? = nil
-    ) -> Self
-    {
+    ) -> Self {
         let processor = RoundCornerImageProcessor(
             radius: radius,
             targetSize: targetSize,
@@ -562,7 +560,6 @@ extension KFOptionSetter {
         }
     }
 
-
     /// Appends a `ResizingImageProcessor` to current processors.
     ///
     /// If you need to resize a data represented image to a smaller size, use `DownsamplingImageProcessor`
@@ -581,7 +578,6 @@ extension KFOptionSetter {
 
 // MARK: - Cache Serializer
 extension KFOptionSetter {
-
     /// Uses a given `CacheSerializer` to convert some data to an image object for retrieving from disk cache or vice
     /// versa for storing to disk cache.
     /// - Parameter cacheSerializer: The `CacheSerializer` which will be used.
@@ -616,7 +612,6 @@ extension KFOptionSetter {
 
 // MARK: - Image Modifier
 extension KFOptionSetter {
-
     /// Sets an `ImageModifier` to the image task. Use this to modify the fetched image object properties if needed.
     ///
     /// If the image was fetched directly from the downloader, the modifier will run directly after the
@@ -646,10 +641,8 @@ extension KFOptionSetter {
     }
 }
 
-
 // MARK: - Cache Expiration
 extension KFOptionSetter {
-
     /// Sets the expiration setting for memory cache of this image task.
     ///
     /// By default, the underlying `MemoryStorage.Backend` uses the

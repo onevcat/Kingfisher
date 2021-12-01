@@ -24,11 +24,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import XCTest
 @testable import Kingfisher
+import XCTest
 
 class StorageExpirationTests: XCTestCase {
-
     func testExpirationNever() {
         let e = StorageExpiration.never
         XCTAssertEqual(e.estimatedExpirationSinceNow, .distantFuture)
@@ -45,7 +44,7 @@ class StorageExpirationTests: XCTestCase {
         XCTAssertEqual(e.timeInterval, 100)
         XCTAssertFalse(e.isExpired)
     }
-    
+
     func testExpirationDays() {
         let e = StorageExpiration.days(1)
         let oneDayInSecond = TimeInterval(TimeConstants.secondsInOneDay)
@@ -56,7 +55,7 @@ class StorageExpirationTests: XCTestCase {
         XCTAssertEqual(e.timeInterval, oneDayInSecond, accuracy: 0.1)
         XCTAssertFalse(e.isExpired)
     }
-    
+
     func testExpirationDate() {
         let oneDayInSecond = TimeInterval(TimeConstants.secondsInOneDay)
         let targetDate = Date().addingTimeInterval(oneDayInSecond)
@@ -68,7 +67,7 @@ class StorageExpirationTests: XCTestCase {
         XCTAssertEqual(e.timeInterval, oneDayInSecond, accuracy: 0.1)
         XCTAssertFalse(e.isExpired)
     }
-    
+
     func testAlreadyExpired() {
         let e = StorageExpiration.expired
         XCTAssertTrue(e.isExpired)

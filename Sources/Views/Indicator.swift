@@ -54,17 +54,16 @@ public enum IndicatorType {
 
 /// An indicator type which can be used to show the download task is in progress.
 public protocol Indicator {
-    
     /// Called when the indicator should start animating.
     func startAnimatingView()
-    
+
     /// Called when the indicator should stop animating.
     func stopAnimatingView()
 
     /// Center offset of the indicator. Kingfisher will use this value to determine the position of
     /// indicator in the super view.
     var centerOffset: CGPoint { get }
-    
+
     /// The indicator view which would be added to the super view.
     var view: IndicatorView { get }
 
@@ -80,11 +79,9 @@ public enum IndicatorSizeStrategy {
 }
 
 extension Indicator {
-    
     /// Default implementation of `centerOffset` of `Indicator`. The default value is `.zero`, means that there is
     /// no offset for the indicator view.
     public var centerOffset: CGPoint { return .zero }
-
 
     /// Default implementation of `centerOffset` of `Indicator`. The default value is `.full`, means that the indicator
     /// will pin to the same height and width as the image view.
@@ -95,7 +92,6 @@ extension Indicator {
 
 // Displays a NSProgressIndicator / UIActivityIndicatorView
 final class ActivityIndicator: Indicator {
-
     #if os(macOS)
     private let activityIndicatorView: NSProgressIndicator
     #else
@@ -186,21 +182,20 @@ final class ImageIndicator: Indicator {
     init?(
         imageData data: Data,
         processor: ImageProcessor = DefaultImageProcessor.default,
-        options: KingfisherParsedOptionsInfo? = nil)
-    {
+        options: KingfisherParsedOptionsInfo? = nil) {
         var options = options ?? KingfisherParsedOptionsInfo(nil)
         // Use normal image view to show animations, so we need to preload all animation data.
         if !options.preloadAllAnimationData {
             options.preloadAllAnimationData = true
         }
-        
+
         guard let image = processor.process(item: .data(data), options: options) else {
             return nil
         }
 
         animatedImageIndicatorView = KFCrossPlatformImageView()
         animatedImageIndicatorView.image = image
-        
+
         #if os(macOS)
             // Need for gif to animate on macOS
             animatedImageIndicatorView.imageScaling = .scaleNone

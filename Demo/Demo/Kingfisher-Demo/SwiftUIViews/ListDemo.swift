@@ -28,8 +28,7 @@ import Kingfisher
 import SwiftUI
 
 @available(iOS 14.0, *)
-struct ListDemo : View {
-
+struct ListDemo: View {
     var body: some View {
         List(1 ..< 700) { i in
             ImageCell(index: i)
@@ -40,7 +39,6 @@ struct ListDemo : View {
 
 @available(iOS 14.0, *)
 struct ImageCell: View {
-
     var alreadyCached: Bool {
         ImageCache.default.isCached(forKey: url.absoluteString)
     }
@@ -82,11 +80,10 @@ struct ImageCell: View {
             Spacer()
         }.padding(.vertical, 12)
     }
-
 }
 
 @available(iOS 14.0, *)
-struct SwiftUIList_Previews : PreviewProvider {
+struct SwiftUIList_Previews: PreviewProvider {
     static var previews: some View {
         ListDemo()
     }

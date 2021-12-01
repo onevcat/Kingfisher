@@ -24,18 +24,17 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 class GIFViewController: UIViewController {
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var animatedImageView: AnimatedImageView!
 
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var animatedImageView: AnimatedImageView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         let url = ImageLoader.gifImageURLs.last!
-        
+
         // Should need to use different cache key to prevent data overwritten by each other.
         KF.url(url, cacheKey: "\(url)-imageview").set(to: imageView)
         KF.url(url, cacheKey: "\(url)-animated_imageview").set(to: animatedImageView)

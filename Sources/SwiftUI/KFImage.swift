@@ -25,8 +25,8 @@
 //  THE SOFTWARE.
 
 #if canImport(SwiftUI) && canImport(Combine)
-import SwiftUI
 import Combine
+import SwiftUI
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFImage: KFImageProtocol {
@@ -47,11 +47,9 @@ extension Image: KFImageHoldingView {
 // MARK: - Image compatibility.
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
-
     public func resizable(
         capInsets: EdgeInsets = EdgeInsets(),
-        resizingMode: Image.ResizingMode = .stretch) -> KFImage
-    {
+        resizingMode: Image.ResizingMode = .stretch) -> KFImage {
         configure { $0.resizable(capInsets: capInsets, resizingMode: resizingMode) }
     }
 
@@ -66,7 +64,7 @@ extension KFImage {
     public func antialiased(_ isAntialiased: Bool) -> KFImage {
         configure { $0.antialiased(isAntialiased) }
     }
-    
+
     /// Starts the loading process of `self` immediately.
     ///
     /// By default, a `KFImage` will not load its source until the `onAppear` is called. This is a lazily loading
@@ -86,7 +84,7 @@ extension KFImage {
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-struct KFImage_Previews : PreviewProvider {
+struct KFImage_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             KFImage.url(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)

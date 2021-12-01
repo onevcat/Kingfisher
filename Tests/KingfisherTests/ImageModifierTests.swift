@@ -24,11 +24,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import XCTest
 import Kingfisher
+import XCTest
 
 class ImageModifierTests: XCTestCase {
-
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -77,5 +76,4 @@ class ImageModifierTests: XCTestCase {
     }
 
 #endif
-
 }

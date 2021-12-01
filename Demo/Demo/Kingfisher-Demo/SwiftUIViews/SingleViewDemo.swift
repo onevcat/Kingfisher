@@ -28,8 +28,7 @@ import Kingfisher
 import SwiftUI
 
 @available(iOS 14.0, *)
-struct SingleViewDemo : View {
-
+struct SingleViewDemo: View {
     @State private var index = 1
     @State private var blackWhite = false
     @State private var forceTransition = true
@@ -68,13 +67,12 @@ struct SingleViewDemo : View {
             }) { Text("Black & White") }
             Toggle("Force Transition?", isOn: $forceTransition)
                 .frame(width: 300)
-
         }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
     }
 }
 
 @available(iOS 14.0, *)
-struct SingleViewDemo_Previews : PreviewProvider {
+struct SingleViewDemo_Previews: PreviewProvider {
     static var previews: some View {
         SingleViewDemo()
     }

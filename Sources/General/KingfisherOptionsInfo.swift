@@ -29,7 +29,6 @@ import AppKit
 #else
 import UIKit
 #endif
-    
 
 /// KingfisherOptionsInfo is a typealias for [KingfisherOptionsInfoItem].
 /// You can use the enum of option item with value to control some behaviors of Kingfisher.
@@ -41,11 +40,10 @@ extension Array where Element == KingfisherOptionsInfoItem {
 
 /// Represents the available option items could be used in `KingfisherOptionsInfo`.
 public enum KingfisherOptionsInfoItem {
-    
     /// Kingfisher will use the associated `ImageCache` object when handling related operations,
     /// including trying to retrieve the cached images and store the downloaded image to it.
     case targetCache(ImageCache)
-    
+
     /// The `ImageCache` for storing and retrieving original images. If `originalCache` is
     /// contained in the options, it will be preferred for storing and retrieving original images.
     /// If there is no `.originalCache` in the options, `.targetCache` will be used to store original images.
@@ -57,7 +55,7 @@ public enum KingfisherOptionsInfoItem {
     /// it will be used and applied with the given processor. It is an optimization for not downloading
     /// the same image for multiple times.
     case originalCache(ImageCache)
-    
+
     /// Kingfisher will use the associated `ImageDownloader` object to download the requested images.
     case downloader(ImageDownloader)
 
@@ -66,11 +64,11 @@ public enum KingfisherOptionsInfoItem {
     /// image is retrieved from either memory or disk cache by default. If you need to do the transition even when
     /// the image being retrieved from cache, set `.forceRefresh` as well.
     case transition(ImageTransition)
-    
+
     /// Associated `Float` value will be set as the priority of image download task. The value for it should be
     /// between 0.0~1.0. If this option not set, the default value (`URLSessionTask.defaultPriority`) will be used.
     case downloadPriority(Float)
-    
+
     /// If set, Kingfisher will ignore the cache and try to start a download task for the image source.
     case forceRefresh
 
@@ -79,22 +77,22 @@ public enum KingfisherOptionsInfoItem {
     /// you want to display a changeable image behind the same url at the same app session, while avoiding download
     /// it for multiple times.
     case fromMemoryCacheOrRefresh
-    
+
     /// If set, setting the image to an image view will happen with transition even when retrieved from cache.
     /// See `.transition` option for more.
     case forceTransition
-    
+
     /// If set, Kingfisher will only cache the value in memory but not in disk.
     case cacheMemoryOnly
-    
+
     /// If set, Kingfisher will wait for caching operation to be completed before calling the completion block.
     case waitForCache
-    
+
     /// If set, Kingfisher will only try to retrieve the image from cache, but not from network. If the image is not in
     /// cache, the image retrieving will fail with the `KingfisherError.cacheError` with `.imageNotExisting` as its
     /// reason.
     case onlyFromCache
-    
+
     /// Decode the image in background thread before using. It will decode the downloaded image data and do a off-screen
     /// rendering to extract pixel information in background. This can speed up display, but will cost more time to
     /// prepare the image for using.
@@ -107,7 +105,7 @@ public enum KingfisherOptionsInfoItem {
     /// This option does not affect the callbacks for UI related extension methods. You will always get the
     /// callbacks called from main queue.
     case callbackQueue(CallbackQueue)
-    
+
     /// The associated value will be used as the scale factor when converting retrieved data to an image.
     /// Specify the image scale, instead of your screen scale. You may need to set the correct scale when you dealing
     /// with 2x or 3x retina images. Otherwise, Kingfisher will convert the data to image object at `scale` 1.0.
@@ -122,26 +120,26 @@ public enum KingfisherOptionsInfoItem {
     /// uses more CPU when display. While a normal image view (`UIImageView` or `NSImageView`) loads all data at once,
     /// which uses more memory but only decode image frames once.
     case preloadAllAnimationData
-    
+
     /// The `ImageDownloadRequestModifier` contained will be used to change the request before it being sent.
     /// This is the last chance you can modify the image download request. You can modify the request for some
     /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
     /// The original request will be sent without any modification by default.
     case requestModifier(AsyncImageDownloadRequestModifier)
-    
+
     /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
     /// This is the possibility you can modify the image download request during redirect. You can modify the request for
     /// some customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url
     /// mapping.
     /// The original redirection request will be sent without any modification by default.
     case redirectHandler(ImageDownloadRedirectHandler)
-    
+
     /// Processor for processing when the downloading finishes, a processor will convert the downloaded data to an image
     /// and/or apply some filter on it. If a cache is connected to the downloader (it happens when you are using
     /// KingfisherManager or any of the view extension methods), the converted image will also be sent to cache as well.
     /// If not set, the `DefaultImageProcessor.default` will be used.
     case processor(ImageProcessor)
-    
+
     /// Provides a `CacheSerializer` to convert some data to an image object for
     /// retrieving from disk cache or vice versa for storing to disk cache.
     /// If not set, the `DefaultCacheSerializer.default` will be used.
@@ -154,19 +152,19 @@ public enum KingfisherOptionsInfoItem {
     /// Use `ImageModifier` when you need to set properties that do not persist when caching the image on a concrete
     /// type of `Image`, such as the `renderingMode` or the `alignmentInsets` of `UIImage`.
     case imageModifier(ImageModifier)
-    
+
     /// Keep the existing image of image view while setting another image to it.
     /// By setting this option, the placeholder image parameter of image view extension method
     /// will be ignored and the current image will be kept while loading or downloading the new image.
     case keepCurrentImageWhileLoading
-    
+
     /// If set, Kingfisher will only load the first frame from an animated image file as a single image.
     /// Loading an animated images may take too much memory. It will be useful when you want to display a
     /// static preview of the first frame from an animated image.
     ///
     /// This option will be ignored if the target image is not animated image data.
     case onlyLoadFirstFrame
-    
+
     /// If set and an `ImageProcessor` is used, Kingfisher will try to cache both the final result and original
     /// image. Kingfisher will have a chance to use the original image when another processor is applied to the same
     /// resource, instead of downloading it again. You can use `.originalCache` to specify a cache or the original
@@ -174,17 +172,17 @@ public enum KingfisherOptionsInfoItem {
     ///
     /// The original image will be only cached to disk storage.
     case cacheOriginalImage
-    
+
     /// If set and an image retrieving error occurred Kingfisher will set provided image (or empty)
     /// in place of requested one. It's useful when you don't want to show placeholder
     /// during loading time but wants to use some default image when requests will be failed.
     case onFailureImage(KFCrossPlatformImage?)
-    
+
     /// If set and used in `ImagePrefetcher`, the prefetching operation will load the images into memory storage
     /// aggressively. By default this is not contained in the options, that means if the requested image is already
     /// in disk cache, Kingfisher will not try to load it to memory.
     case alsoPrefetchToMemory
-    
+
     /// If set, the disk storage loading will happen in the same calling queue. By default, disk storage file loading
     /// happens in its own queue with an asynchronous dispatch behavior. Although it provides better non-blocking disk
     /// loading performance, it also causes a flickering when you reload an image from disk, if the image view already
@@ -202,7 +200,7 @@ public enum KingfisherOptionsInfoItem {
     /// expiration in its config for all items. If set, the `MemoryStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
     case memoryCacheExpiration(StorageExpiration)
-    
+
     /// The expiration extending setting for memory cache. The item expiration time will be incremented by this
     /// value after access.
     /// By default, the underlying `MemoryStorage.Backend` uses the initial cache expiration as extending
@@ -210,7 +208,7 @@ public enum KingfisherOptionsInfoItem {
     ///
     /// To disable extending option at all add memoryCacheAccessExtendingExpiration(.none) to options.
     case memoryCacheAccessExtendingExpiration(ExpirationExtending)
-    
+
     /// The expiration setting for disk cache. By default, the underlying `DiskStorage.Backend` uses the
     /// expiration in its config for all items. If set, the `DiskStorage.Backend` will use this associated
     /// value to overwrite the config setting for this caching item.
@@ -220,13 +218,13 @@ public enum KingfisherOptionsInfoItem {
     /// By default, the underlying `DiskStorage.Backend` uses the initial cache expiration as extending value: .cacheTime.
     /// To disable extending option at all add diskCacheAccessExtendingExpiration(.none) to options.
     case diskCacheAccessExtendingExpiration(ExpirationExtending)
-    
+
     /// Decides on which queue the image processing should happen. By default, Kingfisher uses a pre-defined serial
     /// queue to process images. Use this option to change this behavior. For example, specify a `.mainCurrentOrAsync`
     /// to let the image be processed in main queue to prevent a possible flickering (but with a possibility of
     /// blocking the UI, especially if the processor needs a lot of time to run).
     case processingQueue(CallbackQueue)
-    
+
     /// Enable progressive image loading, Kingfisher will use the associated `ImageProgressive` value to process the
     /// progressive JPEG data and display it in a progressive way.
     case progressiveJPEG(ImageProgressive)
@@ -270,10 +268,9 @@ public enum KingfisherOptionsInfoItem {
 /// in `KingfisherOptionsInfoItem`. When a `KingfisherOptionsInfo` sent to Kingfisher related methods, it will be
 /// parsed and converted to a `KingfisherParsedOptionsInfo` first, and pass through the internal methods.
 public struct KingfisherParsedOptionsInfo {
-
-    public var targetCache: ImageCache? = nil
-    public var originalCache: ImageCache? = nil
-    public var downloader: ImageDownloader? = nil
+    public var targetCache: ImageCache?
+    public var originalCache: ImageCache?
+    public var downloader: ImageDownloader?
     public var transition: ImageTransition = .none
     public var downloadPriority: Float = URLSessionTask.defaultPriority
     public var forceRefresh = false
@@ -286,10 +283,10 @@ public struct KingfisherParsedOptionsInfo {
     public var preloadAllAnimationData = false
     public var callbackQueue: CallbackQueue = .mainCurrentOrAsync
     public var scaleFactor: CGFloat = 1.0
-    public var requestModifier: AsyncImageDownloadRequestModifier? = nil
-    public var redirectHandler: ImageDownloadRedirectHandler? = nil
+    public var requestModifier: AsyncImageDownloadRequestModifier?
+    public var redirectHandler: ImageDownloadRedirectHandler?
     public var processor: ImageProcessor = DefaultImageProcessor.default
-    public var imageModifier: ImageModifier? = nil
+    public var imageModifier: ImageModifier?
     public var cacheSerializer: CacheSerializer = DefaultCacheSerializer.default
     public var keepCurrentImageWhileLoading = false
     public var onlyLoadFirstFrame = false
@@ -298,18 +295,18 @@ public struct KingfisherParsedOptionsInfo {
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
     public var diskStoreWriteOptions: Data.WritingOptions = []
-    public var memoryCacheExpiration: StorageExpiration? = nil
+    public var memoryCacheExpiration: StorageExpiration?
     public var memoryCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
-    public var diskCacheExpiration: StorageExpiration? = nil
+    public var diskCacheExpiration: StorageExpiration?
     public var diskCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
-    public var processingQueue: CallbackQueue? = nil
-    public var progressiveJPEG: ImageProgressive? = nil
-    public var alternativeSources: [Source]? = nil
-    public var retryStrategy: RetryStrategy? = nil
-    public var lowDataModeSource: Source? = nil
+    public var processingQueue: CallbackQueue?
+    public var progressiveJPEG: ImageProgressive?
+    public var alternativeSources: [Source]?
+    public var retryStrategy: RetryStrategy?
+    public var lowDataModeSource: Source?
 
-    var onDataReceived: [DataReceivingSideEffect]? = nil
-    
+    var onDataReceived: [DataReceivingSideEffect]?
+
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
         for option in info {
@@ -375,9 +372,8 @@ protocol DataReceivingSideEffect: AnyObject {
 }
 
 class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
-
     var onShouldApply: () -> Bool = { return true }
-    
+
     let block: DownloadProgressBlock
 
     init(_ block: @escaping DownloadProgressBlock) {
@@ -387,8 +383,7 @@ class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         guard self.onShouldApply() else { return }
         guard let expectedContentLength = task.task.response?.expectedContentLength,
-                  expectedContentLength != -1 else
-        {
+                  expectedContentLength != -1 else {
             return
         }
 

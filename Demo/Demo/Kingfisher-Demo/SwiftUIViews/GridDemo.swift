@@ -28,7 +28,6 @@ import SwiftUI
 
 @available(iOS 14.0, *)
 struct GridDemo: View {
-
     @State var columns = [
         GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())
     ]
@@ -43,7 +42,6 @@ struct GridDemo: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-
                     withAnimation(Animation.easeInOut(duration: 0.25)) {
                         self.columns = Array(repeating: .init(.flexible()), count: self.columns.count % 4 + 1)
                     }

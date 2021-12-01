@@ -45,7 +45,7 @@ public enum CallbackQueue {
     case untouch
     /// Dispatches to a specified `DispatchQueue`.
     case dispatch(DispatchQueue)
-    
+
     public func execute(_ block: @escaping () -> Void) {
         switch self {
         case .mainAsync:

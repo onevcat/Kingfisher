@@ -26,8 +26,8 @@
 
 #if !os(watchOS)
 
-import Foundation
 import AVKit
+import Foundation
 
 #if canImport(MobileCoreServices)
 import MobileCoreServices
@@ -37,7 +37,6 @@ import CoreServices
 
 /// A data provider to provide thumbnail data from a given AVKit asset.
 public struct AVAssetImageDataProvider: ImageDataProvider {
-
     /// The possible error might be caused by the `AVAssetImageDataProvider`.
     /// - userCancelled: The data provider process is cancelled.
     /// - invalidImage: The retrieved image is invalid.

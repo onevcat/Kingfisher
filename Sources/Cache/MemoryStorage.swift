@@ -30,7 +30,6 @@ import Foundation
 /// This is a namespace for the memory storage types. A `Backend` with a certain `Config` will be used to describe the
 /// storage. See these composed types for more information.
 public enum MemoryStorage {
-
     /// Represents a storage which stores a certain type of value in memory. It provides fast access,
     /// but limited storing size. The stored value type needs to conform to `CacheCostCalculable`,
     /// and its `cacheCost` will be used to determine the cost of size for the cache item.
@@ -52,7 +51,7 @@ public enum MemoryStorage {
         // See https://github.com/onevcat/Kingfisher/issues/1233
         var keys = Set<String>()
 
-        private var cleanTimer: Timer? = nil
+        private var cleanTimer: Timer?
         private let lock = NSLock()
 
         /// The config used in this storage. It is a value you can set and
@@ -108,8 +107,7 @@ public enum MemoryStorage {
         public func store(
             value: T,
             forKey key: String,
-            expiration: StorageExpiration? = nil)
-        {
+            expiration: StorageExpiration? = nil) {
             storeNoThrow(value: value, forKey: key, expiration: expiration)
         }
 
@@ -118,19 +116,18 @@ public enum MemoryStorage {
         func storeNoThrow(
             value: T,
             forKey key: String,
-            expiration: StorageExpiration? = nil)
-        {
+            expiration: StorageExpiration? = nil) {
             lock.lock()
             defer { lock.unlock() }
             let expiration = expiration ?? config.expiration
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
-            
+
             let object = StorageObject(value, key: key, expiration: expiration)
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
         }
-        
+
         /// Gets a value from the storage.
         ///
         /// - Parameters:
@@ -180,7 +177,6 @@ public enum MemoryStorage {
 extension MemoryStorage {
     /// Represents the config used in a `MemoryStorage`.
     public struct Config {
-
         /// Total cost limit of the storage in bytes.
         public var totalCostLimit: Int
 
@@ -215,14 +211,14 @@ extension MemoryStorage {
         let value: T
         let expiration: StorageExpiration
         let key: String
-        
+
         private(set) var estimatedExpiration: Date
-        
+
         init(_ value: T, key: String, expiration: StorageExpiration) {
             self.value = value
             self.key = key
             self.expiration = expiration
-            
+
             self.estimatedExpiration = expiration.estimatedExpirationSinceNow
         }
 
@@ -236,7 +232,7 @@ extension MemoryStorage {
                 self.estimatedExpiration = expirationTime.estimatedExpirationSinceNow
             }
         }
-        
+
         var expired: Bool {
             return estimatedExpiration.isPast
         }

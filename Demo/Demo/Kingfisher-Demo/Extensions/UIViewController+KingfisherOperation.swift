@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 protocol MainDataViewReloadable {
     func reload()
@@ -66,9 +66,9 @@ func createAlert(_ sender: Any, actions: [UIAlertAction]) -> UIAlertController {
     let alert = UIAlertController(title: "Action", message: nil, preferredStyle: .actionSheet)
     alert.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
     alert.popoverPresentationController?.permittedArrowDirections = .any
-    
+
     actions.forEach { alert.addAction($0) }
-    
+
     return alert
 }
 
@@ -82,12 +82,12 @@ extension UIViewController: KingfisherActionAlertPopup {
     }
 }
 
-extension UIViewController  {
+extension UIViewController {
     func setupOperationNavigationBar() {
         navigationItem.rightBarButtonItem =
             UIBarButtonItem(title: "Action", style: .plain, target: self, action: #selector(performKingfisherAction))
     }
-    
+
     @objc func performKingfisherAction(_ sender: Any) {
         present(alertPopup(sender), animated: true)
     }

@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import XCTest
 @testable import Kingfisher
+import XCTest
 
 extension String: DataTransformable {
     public func toData() throws -> Data {
@@ -100,7 +100,6 @@ class DiskStorageTests: XCTestCase {
     }
 
     func testConfigExpiration() {
-
         let now = Date()
 
         storage.config.expiration = .seconds(1)
@@ -110,7 +109,6 @@ class DiskStorageTests: XCTestCase {
     }
 
     func testExtendExpirationByAccessing() {
-
         let exp = expectation(description: #function)
         let now = Date()
         try! storage.store(value: "1", forKey: "1", expiration: .seconds(2))
@@ -132,7 +130,6 @@ class DiskStorageTests: XCTestCase {
     }
 
     func testNotExtendExpirationByAccessing() {
-
         let exp = expectation(description: #function)
         let now = Date()
         try! storage.store(value: "1", forKey: "1", expiration: .seconds(2))
@@ -154,7 +151,6 @@ class DiskStorageTests: XCTestCase {
     }
 
     func testRemoveExpired() {
-
         let expiration = StorageExpiration.seconds(1)
         try! storage.store(value: "1", forKey: "1", expiration: expiration)
         try! storage.store(value: "2", forKey: "2", expiration: expiration)
@@ -210,11 +206,11 @@ class DiskStorageTests: XCTestCase {
         let originalFileName = storage.cacheFileName(forKey: key)
         XCTAssertEqual(originalFileName, key)
     }
-    
+
     func testConfigUsesHashedFileNameWithAutoExtAndProcessor() {
         // The key of an image with processor will be as this format.
         let key = "test.jpeg@abc"
-        
+
         // hashed fileName
         storage.config.usesHashedFileName = true
         storage.config.autoExtAfterHashedFileName = true

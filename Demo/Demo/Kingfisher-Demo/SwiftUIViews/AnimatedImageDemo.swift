@@ -24,18 +24,17 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 @available(iOS 14.0, *)
 struct AnimatedImageDemo: View {
-    
     @State private var index = 1
-        
+
     var url: URL {
         ImageLoader.gifImageURLs[index - 1]
     }
-    
+
     var body: some View {
         VStack {
             KFAnimatedImage(url)
@@ -65,15 +64,11 @@ struct AnimatedImageDemo: View {
             }) { Text("Next Image") }
         }.navigationBarTitle(Text("Basic Image"), displayMode: .inline)
     }
-    
 }
 
 @available(iOS 14.0, *)
 struct AnimatedImageDemo_Previews: PreviewProvider {
-    
     static var previews: some View {
         AnimatedImageDemo()
     }
-    
 }
-

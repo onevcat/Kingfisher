@@ -24,13 +24,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 @available(iOS 14.0, *)
 struct TransitionViewDemo: View {
     @State private var showDetails = false
-    
+
     var body: some View {
         VStack {
             Button(showDetails ? "Hide" : "Show") {

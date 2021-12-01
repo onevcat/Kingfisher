@@ -25,33 +25,32 @@
 //  THE SOFTWARE.
 
 #if canImport(UIKit)
+@testable import Kingfisher
 import UIKit
 import XCTest
-@testable import Kingfisher
 
 class UIButtonExtensionTests: XCTestCase {
+    private var button: UIButton!
 
-    var button: UIButton!
-    
     override class func setUp() {
         super.setUp()
         LSNocilla.sharedInstance().start()
     }
-    
+
     override class func tearDown() {
         LSNocilla.sharedInstance().stop()
         super.tearDown()
     }
-    
+
     override func setUp() {
         super.setUp()
         button = UIButton()
         KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
         KingfisherManager.shared.defaultOptions = [.waitForCache]
-        
+
         cleanDefaultCache()
     }
-    
+
     override func tearDown() {
         LSNocilla.sharedInstance().clearStubs()
         button = nil
@@ -85,12 +84,12 @@ class UIButtonExtensionTests: XCTestCase {
 
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
+
     func testDownloadAndSetBackgroundImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
-        
+
         var progressBlockIsCalled = false
         KF.url(url)
             .onProgress { _, _ in
@@ -109,7 +108,7 @@ class UIButtonExtensionTests: XCTestCase {
             .setBackground(to: button, for: .normal)
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
+
     func testCacnelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -121,13 +120,13 @@ class UIButtonExtensionTests: XCTestCase {
                 delay(0.1) { exp.fulfill() }
             }
             .set(to: button, for: .highlighted)
-        
+
         self.button.kf.cancelImageDownloadTask()
         _ = stub.go()
 
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
+
     func testCacnelBackgroundImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -139,18 +138,18 @@ class UIButtonExtensionTests: XCTestCase {
                 delay(0.1) { exp.fulfill() }
             }
             .setBackground(to: button, for: .highlighted)
-        
+
         self.button.kf.cancelBackgroundImageDownloadTask()
         _ = stub.go()
-        
+
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
+
     func testSettingNilURL() {
         let exp = expectation(description: #function)
-        
+
         let url: URL? = nil
-        button.kf.setBackgroundImage(with: url, for: .normal, completionHandler:  { result in
+        button.kf.setBackgroundImage(with: url, for: .normal, completionHandler: { result in
             XCTAssertNil(result.value)
             XCTAssertNotNil(result.error)
             guard case .imageSettingError(reason: .emptySource) = result.error! else {
@@ -159,10 +158,10 @@ class UIButtonExtensionTests: XCTestCase {
             }
             exp.fulfill()
         })
-        
+
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
+
     func testSettingNonWorkingImageWithFailureImage() {
         let expectation = self.expectation(description: "wait for downloading image")
         let url = testURLs[0]
@@ -179,7 +178,7 @@ class UIButtonExtensionTests: XCTestCase {
         XCTAssertNil(button.image(for: state))
         waitForExpectations(timeout: 5, handler: nil)
     }
-    
+
     func testSettingNonWorkingBackgroundImageWithFailureImage() {
         let expectation = self.expectation(description: "wait for downloading image")
         let url = testURLs[0]
@@ -196,7 +195,6 @@ class UIButtonExtensionTests: XCTestCase {
 
         XCTAssertNil(button.backgroundImage(for: state))
         waitForExpectations(timeout: 5, handler: nil)
-
     }
 }
 #endif

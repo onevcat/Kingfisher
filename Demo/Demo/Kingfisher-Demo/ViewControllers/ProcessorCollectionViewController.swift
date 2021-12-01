@@ -24,19 +24,18 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 private let reuseIdentifier = "ProcessorCell"
 
 class ProcessorCollectionViewController: UICollectionViewController {
-
     var currentProcessor: ImageProcessor = DefaultImageProcessor.default {
         didSet {
             collectionView.reloadData()
         }
     }
-    
+
     var processors: [(ImageProcessor, String)] = [
         (DefaultImageProcessor.default, "Default"),
         (ResizingImageProcessor(referenceSize: CGSize(width: 50, height: 50)), "Resizing"),
@@ -54,7 +53,7 @@ class ProcessorCollectionViewController: UICollectionViewController {
         (DownsamplingImageProcessor(size: CGSize(width: 25, height: 25)), "Downsampling"),
         (BlurImageProcessor(blurRadius: 5) |> RoundCornerImageProcessor(cornerRadius: 20), "Blur + Round Corner")
     ]
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Processor"
@@ -82,7 +81,7 @@ class ProcessorCollectionViewController: UICollectionViewController {
 
         return cell
     }
-    
+
     override func alertPopup(_ sender: Any) -> UIAlertController {
         let alert = super.alertPopup(sender)
         alert.addAction(UIAlertAction(title: "Processor", style: .default, handler: { _ in

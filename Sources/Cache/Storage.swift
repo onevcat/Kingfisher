@@ -58,7 +58,7 @@ public enum StorageExpiration {
         case .seconds(let seconds):
             return date.addingTimeInterval(seconds)
         case .days(let days):
-            let duration: TimeInterval = TimeInterval(TimeConstants.secondsInOneDay) * TimeInterval(days)
+            let duration = TimeInterval(TimeConstants.secondsInOneDay) * TimeInterval(days)
             return date.addingTimeInterval(duration)
         case .date(let ref):
             return ref
@@ -66,11 +66,11 @@ public enum StorageExpiration {
             return .distantPast
         }
     }
-    
+
     var estimatedExpirationSinceNow: Date {
         return estimatedExpirationSince(Date())
     }
-    
+
     var isExpired: Bool {
         return timeInterval <= 0
     }

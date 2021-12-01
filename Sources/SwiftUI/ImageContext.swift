@@ -25,8 +25,8 @@
 //  THE SOFTWARE.
 
 #if canImport(SwiftUI) && canImport(Combine)
-import SwiftUI
 import Combine
+import SwiftUI
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
@@ -39,8 +39,8 @@ extension KFImage {
         var configurations: [(HoldingView) -> HoldingView] = []
         var renderConfigurations: [(HoldingView.RenderingView) -> Void] = []
         
-        var cancelOnDisappear: Bool = false
-        var placeholder: ((Progress) -> AnyView)? = nil
+        var cancelOnDisappear = false
+        var placeholder: ((Progress) -> AnyView)?
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
@@ -49,7 +49,7 @@ extension KFImage {
         init(source: Source?) {
             self.source = source
         }
-        
+
         func shouldApplyFade(cacheType: CacheType) -> Bool {
             options.forceTransition || cacheType == .none
         }
@@ -73,7 +73,6 @@ extension ImageTransition {
         }
     }
 }
-
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage.Context: Hashable {

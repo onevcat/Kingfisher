@@ -25,22 +25,20 @@
 //  THE SOFTWARE.
 
 #if canImport(SwiftUI) && canImport(Combine)
-import SwiftUI
 import Combine
+import SwiftUI
 
 // MARK: - KFImage creating.
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
-
     /// Creates a `KFImage` for a given `Source`.
     /// - Parameters:
     ///   - source: The `Source` object defines data information from network or a data provider.
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func source(
         _ source: Source?
-    ) -> Self
-    {
-        Self.init(source: source)
+    ) -> Self {
+        Self(source: source)
     }
 
     /// Creates a `KFImage` for a given `Resource`.
@@ -49,8 +47,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func resource(
         _ resource: Resource?
-    ) -> Self
-    {
+    ) -> Self {
         source(resource?.convertToSource())
     }
 
@@ -62,8 +59,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func url(
         _ url: URL?, cacheKey: String? = nil
-    ) -> Self
-    {
+    ) -> Self {
         source(url?.convertToSource(overrideCacheKey: cacheKey))
     }
 
@@ -73,8 +69,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func dataProvider(
         _ provider: ImageDataProvider?
-    ) -> Self
-    {
+    ) -> Self {
         source(provider?.convertToSource())
     }
 
@@ -85,8 +80,7 @@ extension KFImageProtocol {
     /// - Returns: A `KFImage` for future configuration or embedding to a `SwiftUI.View`.
     public static func data(
         _ data: Data?, cacheKey: String
-    ) -> Self
-    {
+    ) -> Self {
         if let data = data {
             return dataProvider(RawImageDataProvider(data: data, cacheKey: cacheKey))
         } else {
@@ -106,7 +100,7 @@ extension KFImageProtocol {
         }
         return self
     }
-    
+
     /// Sets a placeholder `View` which shows when loading the image.
     /// - Parameter content: A view that describes the placeholder.
     /// - Returns: A `KFImage` view that contains `content` as its placeholder.

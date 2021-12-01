@@ -28,7 +28,6 @@ import Foundation
 
 /// Represents and wraps a method for modifying request before an image download request starts in an asynchronous way.
 public protocol AsyncImageDownloadRequestModifier {
-
     /// This method will be called just before the `request` being sent.
     /// This is the last chance you can modify the image download request. You can modify the request for some
     /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
@@ -56,7 +55,6 @@ public protocol AsyncImageDownloadRequestModifier {
 
 /// Represents and wraps a method for modifying request before an image download request starts.
 public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier {
-
     /// This method will be called just before the `request` being sent.
     /// This is the last chance you can modify the image download request. You can modify the request for some
     /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
@@ -88,14 +86,13 @@ extension ImageDownloadRequestModifier {
 /// A wrapper for creating an `ImageDownloadRequestModifier` easier.
 /// This type conforms to `ImageDownloadRequestModifier` and wraps an image modify block.
 public struct AnyModifier: ImageDownloadRequestModifier {
-    
     let block: (URLRequest) -> URLRequest?
 
     /// For `ImageDownloadRequestModifier` conformation.
     public func modified(for request: URLRequest) -> URLRequest? {
         return block(request)
     }
-    
+
     /// Creates a value of `ImageDownloadRequestModifier` which runs `modify` block.
     ///
     /// - Parameter modify: The request modifying block runs when a request modifying task comes.

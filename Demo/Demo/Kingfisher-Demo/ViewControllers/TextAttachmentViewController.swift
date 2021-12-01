@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 class TextAttachmentViewController: UIViewController {
     @IBOutlet weak var label: UILabel!
@@ -51,7 +51,7 @@ class TextAttachmentViewController: UIViewController {
             .roundCorner(radius: .point(15))
             .set(to: textAttachment, attributedView: self.getLabel())
     }
-    
+
     func getLabel() -> UILabel {
         return label
     }

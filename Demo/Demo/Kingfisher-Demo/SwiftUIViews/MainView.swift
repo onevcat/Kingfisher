@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 @available(iOS 14.0, *)
 struct MainView: View {

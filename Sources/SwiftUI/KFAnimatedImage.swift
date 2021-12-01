@@ -25,8 +25,8 @@
 //  THE SOFTWARE.
 
 #if canImport(SwiftUI) && canImport(Combine) && canImport(UIKit) && !os(watchOS)
-import SwiftUI
 import Combine
+import SwiftUI
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImage: KFImageProtocol {
@@ -35,7 +35,7 @@ public struct KFAnimatedImage: KFImageProtocol {
     public init(context: KFImage.Context<HoldingView>) {
         self.context = context
     }
-    
+
     /// Configures current rendering view with a `block`. This block will be applied when the under-hood
     /// `AnimatedImageView` is created in `UIViewRepresentable.makeUIView(context:)`
     ///
@@ -54,32 +54,31 @@ public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldin
     public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
         KFAnimatedImageViewRepresenter(image: image, context: context)
     }
-    
+
     var image: KFCrossPlatformImage?
     let context: KFImage.Context<KFAnimatedImageViewRepresenter>
-    
+
     public func makeUIView(context: Context) -> AnimatedImageView {
         let view = AnimatedImageView()
-        
+
         self.context.renderConfigurations.forEach { $0(view) }
-        
+
         view.image = image
-        
+
         // Allow SwiftUI scale (fit/fill) working fine.
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return view
     }
-    
+
     public func updateUIView(_ uiView: AnimatedImageView, context: Context) {
         uiView.image = image
     }
-    
 }
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-struct KFAnimatedImage_Previews : PreviewProvider {
+struct KFAnimatedImage_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             KFAnimatedImage(source: .network(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/GIF/1.gif")!))

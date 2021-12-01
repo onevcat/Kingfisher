@@ -24,29 +24,28 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 class ProgressiveJPEGViewController: UIViewController {
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var progressLabel: UILabel!
 
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var progressLabel: UILabel!
-    
     private var isBlur = true
     private var isFastestScan = true
-    
+
     private let processor = RoundCornerImageProcessor(cornerRadius: 30)
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Progressive JPEG"
         setupOperationNavigationBar()
         loadImage()
     }
-    
+
     private func loadImage() {
         progressLabel.text = "- / -"
-        
+
         let progressive = ImageProgressive(
             isBlur: isBlur,
             isFastestScan: isFastestScan,
@@ -71,10 +70,10 @@ class ProgressiveJPEGViewController: UIViewController {
             }
             .set(to: imageView)
     }
-    
+
     override func alertPopup(_ sender: Any) -> UIAlertController {
         let alert = super.alertPopup(sender)
-        
+
         func reloadImage() {
             // Cancel
             imageView.kf.cancelDownloadTask()
@@ -88,7 +87,7 @@ class ProgressiveJPEGViewController: UIViewController {
                 }
             )
         }
-        
+
         do {
             let title = isBlur ? "Disable Blur" : "Enable Blur"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in
@@ -96,7 +95,7 @@ class ProgressiveJPEGViewController: UIViewController {
                 reloadImage()
             })
         }
-        
+
         do {
             let title = isFastestScan ? "Disable Fastest Scan" : "Enable Fastest Scan"
             alert.addAction(UIAlertAction(title: title, style: .default) { _ in

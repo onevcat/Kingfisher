@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
 import CommonCrypto
+import Foundation
 
 extension String: KingfisherCompatibleValue { }
 extension KingfisherWrapper where Base == String {
@@ -50,7 +50,7 @@ extension KingfisherWrapper where Base == String {
 
     var ext: String? {
         var ext = ""
-        if let index  = base.lastIndex(of: ".") {
+        if let index = base.lastIndex(of: ".") {
             let extRange = base.index(index, offsetBy: 1)..<base.endIndex
             ext = String(base[extRange])
         }
@@ -75,7 +75,7 @@ func arrayOfBytes<T>(_ value: T, length: Int? = nil) -> [UInt8] {
         }
         return bytes
     }
-    
+
     valuePointer.deinitialize(count: 1)
     valuePointer.deallocate()
 
@@ -87,16 +87,13 @@ extension Int {
     func bytes(_ totalBytes: Int = MemoryLayout<Int>.size) -> [UInt8] {
         return arrayOfBytes(self, length: totalBytes)
     }
-
 }
 
 extension NSMutableData {
-
     // Convenient way to append bytes
     func appendBytes(_ arrayOfBytes: [UInt8]) {
         append(arrayOfBytes, length: arrayOfBytes.count)
     }
-
 }
 
 protocol HashProtocol {
@@ -106,7 +103,6 @@ protocol HashProtocol {
 }
 
 extension HashProtocol {
-
     func prepare(_ len: Int) -> [UInt8] {
         var tmpMessage = message
 
@@ -144,7 +140,6 @@ func toUInt32Array(_ slice: ArraySlice<UInt8>) -> [UInt32] {
 }
 
 struct BytesIterator: IteratorProtocol {
-
     let chunkSize: Int
     let data: [UInt8]
 
@@ -177,7 +172,6 @@ func rotateLeft(_ value: UInt32, bits: UInt32) -> UInt32 {
 }
 
 class MD5: HashProtocol {
-
     static let size = 16 // 128 / 8
     let message: [UInt8]
 

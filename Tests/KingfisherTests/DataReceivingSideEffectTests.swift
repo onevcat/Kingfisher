@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import XCTest
 @testable import Kingfisher
+import XCTest
 
 class DataReceivingSideEffectTests: XCTestCase {
 
@@ -94,7 +94,7 @@ class DataReceivingSideEffectTests: XCTestCase {
 }
 
 class DataReceivingStub: DataReceivingSideEffect {
-    var called: Bool = false
+    var called = false
     var onShouldApply: () -> Bool = { return true }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         self.called = true
@@ -102,9 +102,8 @@ class DataReceivingStub: DataReceivingSideEffect {
 }
 
 class DataReceivingNotAppyStub: DataReceivingSideEffect {
-
-    var called: Bool = false
-    var appied: Bool = false
+    var called = false
+    var appied = false
 
     var onShouldApply: () -> Bool = { return false }
 

@@ -47,7 +47,6 @@ public protocol ImageModifier {
 /// This type conforms to `ImageModifier` and wraps an image modify block.
 /// If the `block` throws an error, the original image will be used.
 public struct AnyImageModifier: ImageModifier {
-
     /// A block which modifies images, or returns the original image
     /// if modification cannot be performed with an error.
     let block: (KFCrossPlatformImage) throws -> KFCrossPlatformImage
@@ -68,7 +67,6 @@ import UIKit
 
 /// Modifier for setting the rendering mode of images.
 public struct RenderingModeImageModifier: ImageModifier {
-
     /// The rendering mode to apply to the image.
     public let renderingMode: UIImage.RenderingMode
 
@@ -87,7 +85,6 @@ public struct RenderingModeImageModifier: ImageModifier {
 
 /// Modifier for setting the `flipsForRightToLeftLayoutDirection` property of images.
 public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
-
     /// Creates a `FlipsForRightToLeftLayoutDirectionImageModifier`.
     public init() {}
 
@@ -99,7 +96,6 @@ public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
 
 /// Modifier for setting the `alignmentRectInsets` property of images.
 public struct AlignmentRectInsetsImageModifier: ImageModifier {
-
     /// The alignment insets to apply to the image
     public let alignmentInsets: UIEdgeInsets
 

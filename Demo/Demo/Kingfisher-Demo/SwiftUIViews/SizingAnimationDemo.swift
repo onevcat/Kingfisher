@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 @available(iOS 14.0, *)
 struct SizingAnimationDemo: View {
@@ -47,7 +47,6 @@ struct SizingAnimationDemo: View {
                     .font(.system(size: 60))
             }
         }
-
     }
     func playButtonAction() {
         withAnimation(Animation.spring(response: 0.45, dampingFraction: 0.475, blendDuration: 0)) {

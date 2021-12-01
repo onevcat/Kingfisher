@@ -24,13 +24,12 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 private let reuseIdentifier = "InfinityCell"
 
 class InfinityCollectionViewController: UICollectionViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Infinity"
@@ -42,7 +41,7 @@ class InfinityCollectionViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10000000
+        return 10_000_000
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

@@ -24,9 +24,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+import CoreGraphics
 import Foundation
 @testable import Kingfisher
-import CoreGraphics
 
 let testImageString =
     "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAD8GlDQ1BJQ0MgUHJvZmlsZQAAOI2NVd1v21QUP4lvXKQWP6Cxjg4Vi69VU1u5GxqtxgZJk6XpQhq5zdgqpMl1bhpT1za2021V" +
@@ -105,75 +105,69 @@ func delay(_ time: Double, block: @escaping () -> Void) {
 
 extension KFCrossPlatformImage {
     func renderEqual(to image: KFCrossPlatformImage, withinTolerance tolerance: UInt8 = 3) -> Bool {
-        
         guard size == image.size else { return false }
         guard let imageData1 = kf.pngRepresentation(),
-              let imageData2 = image.kf.pngRepresentation() else
-        {
+              let imageData2 = image.kf.pngRepresentation() else {
             return false
         }
         guard let unifiedImage1 = KFCrossPlatformImage(data: imageData1),
-              let unifiedImage2 = KFCrossPlatformImage(data: imageData2) else
-        {
+              let unifiedImage2 = KFCrossPlatformImage(data: imageData2) else {
             return false
         }
-        
+
         guard let rendered1 = unifiedImage1.rendered(),
-              let rendered2 = unifiedImage2.rendered() else
-        {
+              let rendered2 = unifiedImage2.rendered() else {
             return false
         }
         guard let data1 = rendered1.kf.cgImage?.dataProvider?.data,
-              let data2 = rendered2.kf.cgImage?.dataProvider?.data else
-        {
+              let data2 = rendered2.kf.cgImage?.dataProvider?.data else {
             return false
         }
-        
+
         let length1 = CFDataGetLength(data1)
         let length2 = CFDataGetLength(data2)
         guard length1 == length2 else { return false }
-        
+
         let dataPtr1: UnsafePointer<UInt8> = CFDataGetBytePtr(data1)
         let dataPtr2: UnsafePointer<UInt8> = CFDataGetBytePtr(data2)
-        
+
         for index in 0..<length1 {
             let byte1 = dataPtr1[index]
             let byte2 = dataPtr2[index]
             let delta = UInt8(abs(Int(byte1) - Int(byte2)))
-            
+
             guard delta <= tolerance else {
                 return false
             }
         }
-        
+
         return true
     }
-    
+
     func rendered() -> KFCrossPlatformImage? {
         // Ignore non CG images
         guard let cgImage = kf.cgImage else {
             return nil
         }
-        
+
         var bitmapInfo = cgImage.bitmapInfo
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let alpha = (bitmapInfo.rawValue & CGBitmapInfo.alphaInfoMask.rawValue)
-        
+
         let w = cgImage.width
         let h = cgImage.height
-        
+
         let size = CGSize(width: w, height: h)
-        
+
         if alpha == CGImageAlphaInfo.none.rawValue {
             bitmapInfo.remove(.alphaInfoMask)
             bitmapInfo = CGBitmapInfo(rawValue: bitmapInfo.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue)
         } else if !(alpha == CGImageAlphaInfo.noneSkipFirst.rawValue) ||
-                  !(alpha == CGImageAlphaInfo.noneSkipLast.rawValue)
-        {
+                  !(alpha == CGImageAlphaInfo.noneSkipLast.rawValue) {
             bitmapInfo.remove(.alphaInfoMask)
             bitmapInfo = CGBitmapInfo(rawValue: bitmapInfo.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)
         }
-        
+
         // Render the image
         guard let context = CGContext(data: nil,
                                       width: w,
@@ -181,13 +175,12 @@ extension KFCrossPlatformImage {
                                       bitsPerComponent: cgImage.bitsPerComponent,
                                       bytesPerRow: 0,
                                       space: colorSpace,
-                                      bitmapInfo: bitmapInfo.rawValue) else
-        {
+                                      bitmapInfo: bitmapInfo.rawValue) else {
             return nil
         }
-        
+
         context.draw(cgImage, in: CGRect(origin: CGPoint.zero, size: size))
-        
+
         #if os(macOS)
         return context.makeImage().flatMap { KFCrossPlatformImage(cgImage: $0, size: kf.size) }
         #else
@@ -218,7 +211,7 @@ extension Data {
         guard comp.count == 2 else { fatalError() }
         self.init(named: comp[0], type: comp[1])
     }
-    
+
     init(named name: String, type: String) {
         guard let path = Bundle.test.path(forResource: name, ofType: type) else {
             fatalError()
@@ -228,7 +221,7 @@ extension Data {
 }
 
 extension Bundle {
-    static let test: Bundle = Bundle(for: ImageExtensionTests.self)
+    static let test = Bundle(for: ImageExtensionTests.self)
 }
 
 // Make tests happier with old Result type

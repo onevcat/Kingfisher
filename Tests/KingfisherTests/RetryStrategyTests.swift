@@ -24,8 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import XCTest
 @testable import Kingfisher
+import XCTest
 
 class RetryStrategyTests: XCTestCase {
 
@@ -65,7 +65,6 @@ class RetryStrategyTests: XCTestCase {
         XCTAssertEqual(strategy.retryInterval.timeInterval(for: 0), 5)
     }
 
-
     func testDelayRetryIntervalCalculating() {
         let secondInternal = DelayRetryStrategy.Interval.seconds(10)
         XCTAssertEqual(secondInternal.timeInterval(for: 0), 10)
@@ -103,7 +102,6 @@ class RetryStrategyTests: XCTestCase {
     }
 
     func testDelayRetryStrategyExceededCount() {
-
         var blockCalled: [Bool] = []
 
         let source = Source.network(URL(string: "url")!)
@@ -200,11 +198,9 @@ class RetryStrategyTests: XCTestCase {
 private struct E: Error {}
 
 class StubRetryStrategy: RetryStrategy {
-
     var count = 0
 
     func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void) {
-
         if count == 0 {
             XCTAssertNil(context.userInfo)
         } else {

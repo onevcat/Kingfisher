@@ -28,7 +28,6 @@ import CoreGraphics
 
 extension CGSize: KingfisherCompatibleValue {}
 extension KingfisherWrapper where Base == CGSize {
-    
     /// Returns a size by resizing the `base` size to a target size under a given content mode.
     ///
     /// - Parameters:
@@ -45,7 +44,7 @@ extension KingfisherWrapper where Base == CGSize {
             return size
         }
     }
-    
+
     /// Returns a size by resizing the `base` size by making it aspect fitting the given `size`.
     ///
     /// - Parameter size: The size in which the `base` should fit in.
@@ -53,12 +52,12 @@ extension KingfisherWrapper where Base == CGSize {
     public func constrained(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
-        
+
         return aspectWidth > size.width ?
             CGSize(width: size.width, height: aspectHeight) :
             CGSize(width: aspectWidth, height: size.height)
     }
-    
+
     /// Returns a size by resizing the `base` size by making it aspect filling the given `size`.
     ///
     /// - Parameter size: The size in which the `base` should fill.
@@ -66,12 +65,12 @@ extension KingfisherWrapper where Base == CGSize {
     public func filling(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
-        
+
         return aspectWidth < size.width ?
             CGSize(width: size.width, height: aspectHeight) :
             CGSize(width: aspectWidth, height: size.height)
     }
-    
+
     /// Returns a `CGRect` for which the `base` size is constrained to an input `size` at a given `anchor` point.
     ///
     /// - Parameters:
@@ -79,18 +78,17 @@ extension KingfisherWrapper where Base == CGSize {
     ///   - anchor: An anchor point in which the size constraint should happen.
     /// - Returns: The result `CGRect` for the constraint operation.
     public func constrainedRect(for size: CGSize, anchor: CGPoint) -> CGRect {
-        
         let unifiedAnchor = CGPoint(x: anchor.x.clamped(to: 0.0...1.0),
                                     y: anchor.y.clamped(to: 0.0...1.0))
-        
+
         let x = unifiedAnchor.x * base.width - unifiedAnchor.x * size.width
         let y = unifiedAnchor.y * base.height - unifiedAnchor.y * size.height
         let r = CGRect(x: x, y: y, width: size.width, height: size.height)
-        
+
         let ori = CGRect(origin: .zero, size: base)
         return ori.intersection(r)
     }
-    
+
     private var aspectRatio: CGFloat {
         return base.height == 0.0 ? 1.0 : base.width / base.height
     }

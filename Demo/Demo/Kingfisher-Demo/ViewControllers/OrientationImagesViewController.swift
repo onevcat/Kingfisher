@@ -24,11 +24,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
 import Kingfisher
+import UIKit
 
 class OrientationImagesViewController: UICollectionViewController {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "EXIF"
@@ -40,21 +39,19 @@ extension OrientationImagesViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return ImageLoader.orientationImageURLs.count
     }
-    
+
     override func collectionView(
         _ collectionView: UICollectionView,
         didEndDisplaying cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath)
-    {
+        forItemAt indexPath: IndexPath) {
         // This will cancel all unfinished downloading task when the cell disappearing.
         (cell as! ImageCollectionViewCell).cellImageView.kf.cancelDownloadTask()
     }
-    
+
     override func collectionView(
         _ collectionView: UICollectionView,
         willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath)
-    {
+        forItemAt indexPath: IndexPath) {
         let imageView = (cell as! ImageCollectionViewCell).cellImageView!
         let url = ImageLoader.orientationImageURLs[indexPath.row]
         KF.url(url)
@@ -66,11 +63,10 @@ extension OrientationImagesViewController {
             .onFailure { err in print("Error: \(err)") }
             .set(to: imageView)
     }
-    
+
     override func collectionView(
         _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: "collectionViewCell",
             for: indexPath) as! ImageCollectionViewCell

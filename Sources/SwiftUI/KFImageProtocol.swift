@@ -25,8 +25,8 @@
 //  THE SOFTWARE.
 
 #if canImport(SwiftUI) && canImport(Combine)
-import SwiftUI
 import Combine
+import SwiftUI
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public protocol KFImageProtocol: View, KFOptionSetter {
@@ -44,7 +44,7 @@ extension KFImageProtocol {
             ).id(context)
         }
     }
-    
+
     /// Creates a Kingfisher compatible image view to load image from the given `Source`.
     /// - Parameters:
     ///   - source: The image `Source` defining where to load the target image.
@@ -59,7 +59,7 @@ extension KFImageProtocol {
     public init(_ url: URL?) {
         self.init(source: url?.convertToSource())
     }
-    
+
     /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
     /// - Parameter block: The block applies to loaded image.
     /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
@@ -88,6 +88,5 @@ extension KFImageProtocol {
 
     public var delegateObserver: AnyObject { context }
 }
-
 
 #endif

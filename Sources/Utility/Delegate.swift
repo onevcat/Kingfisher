@@ -125,8 +125,8 @@ extension Delegate where Output: OptionalProtocol {
 public protocol OptionalProtocol {
     static var _createNil: Self { get }
 }
-extension Optional : OptionalProtocol {
-    public static var _createNil: Optional<Wrapped> {
+extension Optional: OptionalProtocol {
+    public static var _createNil: Wrapped? {
          return nil
     }
 }

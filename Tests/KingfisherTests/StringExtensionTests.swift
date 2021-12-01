@@ -6,8 +6,8 @@
 //  Copyright © 2019 Wei Wang. All rights reserved.
 //
 
-import XCTest
 @testable import Kingfisher
+import XCTest
 
 class StringExtensionTests: XCTestCase {
     func testStringMD5() {
