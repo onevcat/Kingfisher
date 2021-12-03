@@ -28,9 +28,9 @@ import AppKit
 import Kingfisher
 
 class ViewController: NSViewController {
-    
+
     @IBOutlet weak var collectionView: NSCollectionView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.

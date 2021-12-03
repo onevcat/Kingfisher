@@ -30,7 +30,7 @@ import XCTest
 class KingfisherManagerTests: XCTestCase {
     
     var manager: KingfisherManager!
-    
+
     override class func setUp() {
         super.setUp()
         LSNocilla.sharedInstance().start()

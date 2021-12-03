@@ -32,10 +32,10 @@ class TransitionViewController: UIViewController {
         case transitionType
         case duration
     }
-    
+
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var transitionPickerView: UIPickerView!
-    
+
     let durations: [TimeInterval] = [0.5, 1, 2, 4, 10]
     let transitions: [String] = ["none", "fade", "flip - left", "flip - right", "flip - top", "flip - bottom"]
 

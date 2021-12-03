@@ -31,7 +31,7 @@ class DetailImageViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var infoLabel: UILabel!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.delegate = self
