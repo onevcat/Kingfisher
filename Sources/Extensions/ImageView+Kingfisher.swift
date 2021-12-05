@@ -294,6 +294,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
         let isEmptyImage = base.image == nil && self.placeholder == nil
         if !options.keepCurrentImageWhileLoading || isEmptyImage {
+            
+            #if canImport(UIKit)
+            if KingfisherManager.shared.cache.memoryStorage.config.shouldUseWeakMemoryCache {
+                _ = KingfisherManager.shared.cache.memoryStorage.value(forKey: source.cacheKey)
+            }
+            #endif
+            
             // Always set placeholder while there is no image/placeholder yet.
             mutatingSelf.placeholder = placeholder
         }

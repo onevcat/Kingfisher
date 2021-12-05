@@ -26,6 +26,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 /// Represents a set of conception related to storage which stores a certain type of value in memory.
 /// This is a namespace for the memory storage types. A `Backend` with a certain `Config` will be used to describe the
 /// storage. See these composed types for more information.
@@ -43,7 +47,9 @@ public enum MemoryStorage {
     /// items from memory.
     public class Backend<T: CacheCostCalculable> {
         let storage = NSCache<NSString, StorageObject<T>>()
-
+        #if canImport(UIKit)
+        let weakMapTable = NSMapTable<NSString, UIImage>(keyOptions: .strongMemory, valueOptions: .weakMemory, capacity: 0)
+        #endif
         // Keys trackes the objects once inside the storage. For object removing triggered by user, the corresponding
         // key would be also removed. However, for the object removing triggered by cache rule/policy of system, the
         // key will be remained there until next `removeExpired` happens.
@@ -95,6 +101,11 @@ public enum MemoryStorage {
                 if object.estimatedExpiration.isPast {
                     storage.removeObject(forKey: nsKey)
                     keys.remove(key)
+                    #if canImport(UIKit)
+                    if config.shouldUseWeakMemoryCache {
+                        weakMapTable.removeObject(forKey: nsKey)
+                    }
+                    #endif
                 }
             }
         }
@@ -129,6 +140,13 @@ public enum MemoryStorage {
             let object = StorageObject(value, key: key, expiration: expiration)
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
+            
+            #if canImport(UIKit)
+            if config.shouldUseWeakMemoryCache,
+               let image = object.value as? UIImage {
+                weakMapTable.setObject(image, forKey: key as NSString)
+            }
+            #endif
         }
         
         /// Gets a value from the storage.
@@ -138,13 +156,35 @@ public enum MemoryStorage {
         ///   - extendingExpiration: The expiration policy used by this getting action.
         /// - Returns: The value under `key` if it is valid and found in the storage. Otherwise, `nil`.
         public func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) -> T? {
-            guard let object = storage.object(forKey: key as NSString) else {
-                return nil
+            var storageObject = storage.object(forKey: key as NSString)
+            
+            #if canImport(UIKit)
+            var isWeakMapTableCache = false
+            if config.shouldUseWeakMemoryCache,
+               storageObject == nil,
+               let image = weakMapTable.object(forKey: key as NSString) as? T {
+                storageObject = .init(image, key: key, expiration: config.expiration)
+                isWeakMapTableCache = true
             }
+            #endif
+            
+            guard let object = storageObject else { return nil }
+            
             if object.expired {
                 return nil
             }
             object.extendExpiration(extendingExpiration)
+            
+            #if canImport(UIKit)
+            if config.shouldUseWeakMemoryCache,
+                isWeakMapTableCache {
+                lock.lock()
+                // Sync cache
+                storage.setObject(object, forKey: key as NSString, cost: object.value.cacheCost)
+                lock.unlock()
+            }
+            #endif
+            
             return object.value
         }
 
@@ -165,6 +205,11 @@ public enum MemoryStorage {
             defer { lock.unlock() }
             storage.removeObject(forKey: key as NSString)
             keys.remove(key)
+            #if canImport(UIKit)
+            if config.shouldUseWeakMemoryCache {
+                weakMapTable.removeObject(forKey: key as NSString)
+            }
+            #endif
         }
 
         /// Removes all values in this storage.
@@ -173,6 +218,11 @@ public enum MemoryStorage {
             defer { lock.unlock() }
             storage.removeAllObjects()
             keys.removeAll()
+            #if canImport(UIKit)
+            if config.shouldUseWeakMemoryCache {
+                weakMapTable.removeAllObjects()
+            }
+            #endif
         }
     }
 }
@@ -193,7 +243,13 @@ extension MemoryStorage {
 
         /// The time interval between the storage do clean work for swiping expired items.
         public let cleanInterval: TimeInterval
-
+        
+        #if canImport(UIKit)
+        /// The option to control weak memory cache, Defaults to false.
+        /// FIX: https://github.com/onevcat/Kingfisher/issues/1598
+        public var shouldUseWeakMemoryCache = false
+        #endif
+        
         /// Creates a config from a given `totalCostLimit` value.
         ///
         /// - Parameters:
