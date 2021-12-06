@@ -77,7 +77,6 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNotNil(image)
             XCTAssertTrue(image!.renderEqual(to: testImage))
             XCTAssertTrue(self.button.image!.renderEqual(to: testImage))
-            //XCTAssertEqual(self.button.kf.taskIdentifier, Source.Identifier.current)
             XCTAssertEqual(result.value!.cacheType, .none)
             
             exp.fulfill()
@@ -99,7 +98,6 @@ class NSButtonExtensionTests: XCTestCase {
             XCTAssertNotNil(image)
             XCTAssertTrue(image!.renderEqual(to: testImage))
             XCTAssertTrue(self.button.alternateImage!.renderEqual(to: testImage))
-            //XCTAssertEqual(self.button.kf.alternateTaskIdentifier, Source.Identifier.current)
             XCTAssertEqual(result.value!.cacheType, .none)
             
             exp.fulfill()
