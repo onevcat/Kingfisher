@@ -2,6 +2,18 @@
 
 -----
 
+## [7.1.2 - Cold Days](https://github.com/onevcat/Kingfisher/releases/tag/7.1.2) (2021-12-07)
+
+#### Fix
+* Lacking of `diskStoreWriteOptions` from `KFOptionSetter`. Now it supports to be set in a chainable way. [#1862](https://github.com/onevcat/Kingfisher/issues/1862) @ignotusverum
+* A duplicated nested `Radius` type which prevents the framework being used in Playground. [#1872](https://github.com/onevcat/Kingfisher/pull/1872)
+* An issue that sometimes `KFImage` does not load images correctly when a huge amount of images are being loaded due to animation setting. [#1873](https://github.com/onevcat/Kingfisher/pull/1873) @tatsuz0u
+* Remove explicit usage of `@Published` to allow refering `KFImage` even under a deploy target below iOS 13. [#1875](https://github.com/onevcat/Kingfisher/pull/1875)
+* Now the image cache calculats the cost animated images correctly with all frames. [#1881](https:://github.com/onevcat/Kingfisher/pull/1881) @pal-aspringfield
+* Remove CarPlay support when building against macCatalyst, which is not properly conditionally supported. [#1876](https://github.com/onevcat/Kingfisher/pull/1876)
+
+---
+
 ## [7.1.1 - Double Ninth](https://github.com/onevcat/Kingfisher/releases/tag/7.1.1) (2021-10-16)
 
 #### Fix
