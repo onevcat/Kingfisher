@@ -126,7 +126,7 @@ public enum MemoryStorage {
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
             
-            let object = StorageObject(value, key: key, expiration: expiration)
+            let object = BackgroundKeepingStorageObject(value, key: key, expiration: expiration)
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
         }
@@ -211,8 +211,33 @@ extension MemoryStorage {
 }
 
 extension MemoryStorage {
+    
+    class BackgroundKeepingStorageObject<T>: StorageObject<T>, NSDiscardableContent {
+        var accessing = true
+        func beginContentAccess() -> Bool {
+            if value != nil {
+                accessing = true
+            } else {
+                accessing = false
+            }
+            return accessing
+        }
+        
+        func endContentAccess() {
+            accessing = false
+        }
+        
+        func discardContentIfPossible() {
+            value = nil
+        }
+        
+        func isContentDiscarded() -> Bool {
+            return value == nil
+        }
+    }
+    
     class StorageObject<T> {
-        let value: T
+        var value: T?
         let expiration: StorageExpiration
         let key: String
         
