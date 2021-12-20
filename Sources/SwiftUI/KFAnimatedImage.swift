@@ -74,12 +74,11 @@ public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldin
     public func updateUIView(_ uiView: AnimatedImageView, context: Context) {
         uiView.image = image
     }
-    
 }
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-struct KFAnimatedImage_Previews : PreviewProvider {
+struct KFAnimatedImage_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             KFAnimatedImage(source: .network(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/GIF/1.gif")!))
