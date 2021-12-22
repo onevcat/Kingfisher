@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   run-test:
-    runs-on: macOS-latest
+    runs-on: macos-11
     strategy:
       matrix:
         destination: [
@@ -15,19 +15,11 @@ jobs:
         ]
         swift-version: [5.0]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/cache@v1
-        id: bundler-cache
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Bundle setup
-        run: bundle config path vendor/bundle
-      - name: Bundle install
-        if: steps.bundler-cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
+          ruby-version: 2.7.4
+          bundler-cache: true
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
