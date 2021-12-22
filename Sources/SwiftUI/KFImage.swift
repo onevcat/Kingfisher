@@ -86,7 +86,7 @@ extension KFImage {
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-struct KFImage_Previews : PreviewProvider {
+struct KFImage_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             KFImage.url(URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/logo.png")!)
