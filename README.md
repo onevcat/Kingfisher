@@ -165,7 +165,7 @@ There are also some performance tips, remember to check them too.
 - Swift 5.0+
 
 > If you need to support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x. But it won't work 
-> with Xcode 13 [#1802](https://github.com/onevcat/Kingfisher/issues/1802).
+> with Xcode 13.0 and Xcode 13.1 [#1802](https://github.com/onevcat/Kingfisher/issues/1802).
 >
 > If you need to use Xcode 13 but cannot upgrade to v7, use the `version6-xcode13` branch. However, you have to drop 
 > iOS 10 support due to an Xcode 13 bug.
