@@ -44,9 +44,10 @@ extension Resource {
     /// `LocalFileImageDataProvider` associated will be returned if the URL points to a local file. Otherwise,
     /// `.network` is returned.
     public func convertToSource(overrideCacheKey: String? = nil) -> Source {
+        let key = overrideCacheKey ?? cacheKey
         return downloadURL.isFileURL ?
-            .provider(LocalFileImageDataProvider(fileURL: downloadURL, cacheKey: overrideCacheKey ?? downloadURL.localFileCacheKey)) :
-            .network(ImageResource(downloadURL: downloadURL, cacheKey: overrideCacheKey ?? cacheKey))
+            .provider(LocalFileImageDataProvider(fileURL: downloadURL, cacheKey: key)) :
+            .network(ImageResource(downloadURL: downloadURL, cacheKey: key))
     }
 }
 
@@ -65,7 +66,7 @@ public struct ImageResource: Resource {
     ///               Default is `nil`.
     public init(downloadURL: URL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
-        self.cacheKey = cacheKey ?? downloadURL.absoluteString
+        self.cacheKey = cacheKey ?? (downloadURL.isFileURL ? downloadURL.localFileCacheKey : downloadURL.absoluteString)
     }
 
     // MARK: Protocol Conforming
