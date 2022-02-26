@@ -2,6 +2,17 @@
 
 -----
 
+## [7.2.0 - End of the tunnel](https://github.com/onevcat/Kingfisher/releases/tag/7.2.0) (2022-02-27)
+
+#### Add
+* An option in memory cache that allows the cached images not be purged while the app is switchted to background. [#1890](https://github.com/onevcat/Kingfisher/pull/1890)
+
+#### Fix
+* Now the animated images are reset when deinit. This might fix some ocasional crash when destroying the `AnimatedImageView`. [#1886](https://github.com/onevcat/Kingfisher/pull/1886)
+* Fix wrong key override when a local resource created by `ImageResource`'s initializer. [#1903](https://github.com/onevcat/Kingfisher/pull/1903)
+
+---
+
 ## [7.1.2 - Cold Days](https://github.com/onevcat/Kingfisher/releases/tag/7.1.2) (2021-12-07)
 
 #### Fix
