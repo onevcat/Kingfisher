@@ -105,6 +105,7 @@ open class SessionDelegate: NSObject {
         guard let url = task.originalURL else {
             return
         }
+        task.removeAllCallbacks()
         tasks[url] = nil
     }
 
@@ -256,7 +257,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
-        remove(sessionTask)
         sessionTask.onTaskDone.call((result, sessionTask.callbacks))
+        remove(sessionTask)
     }
 }
