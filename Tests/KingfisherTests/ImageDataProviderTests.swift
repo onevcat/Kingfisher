@@ -37,6 +37,8 @@ class ImageDataProviderTests: XCTestCase {
         
         let provider = LocalFileImageDataProvider(fileURL: fileURL)
         XCTAssertEqual(provider.cacheKey, fileURL.localFileCacheKey)
+        XCTAssertEqual(fileURL.cacheKey, fileURL.localFileCacheKey)
+        
         XCTAssertEqual(provider.fileURL, fileURL)
         
         let exp = expectation(description: #function)

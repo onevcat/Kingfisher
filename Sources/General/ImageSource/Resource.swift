@@ -66,7 +66,7 @@ public struct ImageResource: Resource {
     ///               Default is `nil`.
     public init(downloadURL: URL, cacheKey: String? = nil) {
         self.downloadURL = downloadURL
-        self.cacheKey = cacheKey ?? (downloadURL.isFileURL ? downloadURL.localFileCacheKey : downloadURL.absoluteString)
+        self.cacheKey = cacheKey ?? downloadURL.cacheKey
     }
 
     // MARK: Protocol Conforming
@@ -82,6 +82,34 @@ public struct ImageResource: Resource {
 /// The `absoluteString` of this URL is used as `cacheKey`. And the URL itself will be used as `downloadURL`.
 /// If you need customize the url and/or cache key, use `ImageResource` instead.
 extension URL: Resource {
-    public var cacheKey: String { return absoluteString }
+    public var cacheKey: String { return isFileURL ? localFileCacheKey : absoluteString }
     public var downloadURL: URL { return self }
+}
+
+extension URL {
+    static let localFileCacheKeyPrefix = "kingfisher.local.cacheKey"
+    
+    // The special version of cache key for a local file on disk. Every time the app is reinstalled on the disk,
+    // the system assigns a new container folder to hold the .app (and the extensions, .appex) folder. So the URL for
+    // the same image in bundle might be different.
+    //
+    // This getter only uses the fixed part in the URL (until the bundle name folder) to provide a stable cache key
+    // for the image under the same path inside the bundle.
+    //
+    // See #1825 (https://github.com/onevcat/Kingfisher/issues/1825)
+    var localFileCacheKey: String {
+        var validComponents: [String] = []
+        for part in pathComponents.reversed() {
+            validComponents.append(part)
+            if part.hasSuffix(".app") || part.hasSuffix(".appex") {
+                break
+            }
+        }
+        let fixedPath = "\(Self.localFileCacheKeyPrefix)/\(validComponents.reversed().joined(separator: "/"))"
+        if let q = query {
+            return "\(fixedPath)?\(q)"
+        } else {
+            return fixedPath
+        }
+    }
 }
