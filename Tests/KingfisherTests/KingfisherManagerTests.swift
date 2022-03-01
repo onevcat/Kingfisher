@@ -1000,6 +1000,28 @@ class KingfisherManagerTests: XCTestCase {
         coordinator.apply(.cachingOriginalImage) { called = true }
         XCTAssertEqual(coordinator.state, .done)
     }
+    
+    func testCallbackClearAfterSuccess() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        
+        stub(url, data: testImageData)
+        
+        var task: DownloadTask?
+        var called = false
+        task = manager.retrieveImage(with: url) { result in
+            XCTAssertFalse(called)
+            XCTAssertNotNil(result.value?.image)
+            if !called {
+                called = true
+                task?.cancel()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    exp.fulfill()
+                }
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 
     func testCanUseCustomizeDefaultCacheSerializer() {
         let exp = expectation(description: #function)
