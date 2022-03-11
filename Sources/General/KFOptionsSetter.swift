@@ -367,7 +367,7 @@ extension KFOptionSetter {
     /// This is the last chance you can modify the image download request. You can modify the request for some
     /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
     ///
-    public func requestModifier(_ modifier: ImageDownloadRequestModifier) -> Self {
+    public func requestModifier(_ modifier: AsyncImageDownloadRequestModifier) -> Self {
         options.requestModifier = modifier
         return self
     }
