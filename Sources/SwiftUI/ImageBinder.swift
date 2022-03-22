@@ -57,6 +57,7 @@ extension KFImage {
                     if let image = context.options.onFailureImage {
                         self.loadedImage = image
                     }
+                    self.loading = false
                     self.loaded = true
                 }
                 return
