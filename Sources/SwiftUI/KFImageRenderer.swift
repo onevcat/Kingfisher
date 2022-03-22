@@ -38,11 +38,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     
     var body: some View {
         ZStack {
-            context.configurations
-                .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
-                    current, config in config(current)
-                }
-                .opacity(binder.loaded ? 1.0 : 0.0)
             if binder.loadedImage == nil {
                 Group {
                     if let placeholder = context.placeholder, let view = placeholder(binder.progress) {
@@ -68,6 +63,11 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     }
                 }
             }
+            context.configurations
+                .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
+                    current, config in config(current)
+                }
+                .opacity(binder.loaded ? 1.0 : 0.0)
         }
     }
 }
