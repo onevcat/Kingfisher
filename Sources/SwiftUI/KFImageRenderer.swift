@@ -51,7 +51,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                         Color.clear
                     }
                 }
-                .opacity(binder.loaded ? 0.0 : 1.0)
                 .onAppear { [weak binder = self.binder] in
                     guard let binder = binder else {
                         return
