@@ -133,7 +133,7 @@ public enum ImageCacheResult {
 }
 
 /// Represents a hybrid caching system which is composed by a `MemoryStorage.Backend` and a `DiskStorage.Backend`.
-/// `ImageCache` is a high level abstract for storing an image as well as its data to disk memory and disk, and
+/// `ImageCache` is a high level abstract for storing an image as well as its data to memory and disk, and
 /// retrieving them back.
 ///
 /// While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create
