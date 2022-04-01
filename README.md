@@ -154,8 +154,8 @@ struct ContentView: View {
 
 ### Learn More
 
-To learn the use of Kingfisher by more examples, take a look at the well-prepared [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet). T
-here we summarized the most common tasks in Kingfisher, you can get a better idea of what this framework can do. 
+To learn the use of Kingfisher by more examples, take a look at the well-prepared [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet).
+There we summarized the most common tasks in Kingfisher, you can get a better idea of what this framework can do. 
 There are also some performance tips, remember to check them too.
 
 ## Requirements
@@ -222,7 +222,7 @@ We prepared a [wiki page](https://github.com/onevcat/Kingfisher/wiki). You can f
 
 * [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) - Follow it to integrate Kingfisher into your project.
 * [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet)- Curious about what Kingfisher could do and how would it look like when used in your project? See this page for useful code snippets. If you are already familiar with Kingfisher, you could also learn new tricks to improve the way you use Kingfisher!
-* [API Reference](https://kingfisher.onevcat.com/) - Lastly, please remember to read the full whenever you may need a more detailed reference.
+* [API Reference](https://kingfisher.onevcat.com/) - Lastly, please remember to read the full API reference whenever you need more detailed documentation.
 
 ## Other
 
