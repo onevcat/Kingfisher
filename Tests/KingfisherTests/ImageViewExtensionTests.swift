@@ -569,6 +569,28 @@ class ImageViewExtensionTests: XCTestCase {
 
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testSettingNonWorkingImageWithCustomizePlaceholderAndFailureImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        stub(url, errorCode: 404)
+
+        let view = KFCrossPlatformView()
+
+        imageView.kf.setImage(
+            with: url,
+            placeholder: view,
+            options: [.onFailureImage(testImage)])
+        {
+            result in
+            XCTAssertEqual(self.imageView.image, testImage)
+            XCTAssertFalse(self.imageView.subviews.contains(view))
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testSettingNonWorkingImageWithFailureImage() {
         let exp = expectation(description: #function)

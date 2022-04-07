@@ -54,6 +54,11 @@ extension KFImage {
             guard let source = context.source else {
                 CallbackQueue.mainCurrentOrAsync.execute {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
+                    if let image = context.options.onFailureImage {
+                        self.loadedImage = image
+                    }
+                    self.loading = false
+                    self.loaded = true
                 }
                 return
             }
