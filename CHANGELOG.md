@@ -2,6 +2,17 @@
 
 -----
 
+## [7.2.1 - Spring Earth](https://github.com/onevcat/Kingfisher/releases/tag/7.2.1) (2022-04-11)
+
+#### Fix
+* Align `requestModifier` parameter with `AsyncImageDownloadRequestModifier` to allow async request changing. [#1918](https://github.com/onevcat/Kingfisher/pull/1918) @KKirsten
+* Fix an issue that data downloading task callbacks are held even when the task is removed. [#1913](https://github.com/onevcat/Kingfisher/pull/1913) @onevcat
+* Give correct cache key for local urls in its conformance of `Resource`. [#1914](https://github.com/onevcat/Kingfisher/pull/1914) @onevcat
+* Reset placeholder image when loading fails. [#1925](https://github.com/onevcat/Kingfisher/pull/1925) @PJ-LT
+* Fix several typos and grammar. [#1926](https://github.com/onevcat/Kingfisher/pull/1926) @johnmckerrell [#1927](https://github.com/onevcat/Kingfisher/pull/1927) @SunsetWan
+
+---
+
 ## [7.2.0 - End of the tunnel](https://github.com/onevcat/Kingfisher/releases/tag/7.2.0) (2022-02-27)
 
 #### Add
