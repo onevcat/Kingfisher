@@ -2,6 +2,13 @@
 
 -----
 
+## [7.2.2 - Rainy Season](https://github.com/onevcat/Kingfisher/releases/tag/7.2.2) (2022-05-08)
+
+#### Fix
+* Loading an animated images from cache now respects the received options. [#1935](https://github.com/onevcat/Kingfisher/pull/1935) @uclort
+
+---
+
 ## [7.2.1 - Spring Earth](https://github.com/onevcat/Kingfisher/releases/tag/7.2.1) (2022-04-11)
 
 #### Fix
