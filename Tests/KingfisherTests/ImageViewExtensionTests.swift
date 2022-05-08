@@ -492,6 +492,27 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    // https://github.com/onevcat/Kingfisher/issues/1923
+    func testLoadGIFImageWithDifferentOptions() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageGIFData)
+        
+        imageView.kf.setImage(with: url) { result in
+            let fullImage = result.value?.image
+            XCTAssertNotNil(fullImage)
+            XCTAssertEqual(fullImage?.images?.count, 8)
+            
+            self.imageView.kf.setImage(with: url, options: [.onlyLoadFirstFrame]) { result in
+                let firstFrameImage = result.value?.image
+                XCTAssertNotNil(firstFrameImage)
+                XCTAssertNil(firstFrameImage?.images)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3)
+    }
+    
     // https://github.com/onevcat/Kingfisher/issues/665
     // The completion handler should be called even when the image view loading url gets changed.
     func testIssue665() {
