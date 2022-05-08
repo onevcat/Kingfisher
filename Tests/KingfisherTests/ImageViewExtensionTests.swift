@@ -501,12 +501,12 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url) { result in
             let fullImage = result.value?.image
             XCTAssertNotNil(fullImage)
-            XCTAssertEqual(fullImage?.images?.count, 8)
+            XCTAssertEqual(fullImage!.kf.images?.count, 8)
             
             self.imageView.kf.setImage(with: url, options: [.onlyLoadFirstFrame]) { result in
                 let firstFrameImage = result.value?.image
                 XCTAssertNotNil(firstFrameImage)
-                XCTAssertNil(firstFrameImage?.images)
+                XCTAssertNil(firstFrameImage!.kf.images)
                 exp.fulfill()
             }
         }
