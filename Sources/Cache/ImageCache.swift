@@ -159,7 +159,7 @@ open class ImageCache {
     /// the storage `config` and its properties.
     public let diskStorage: DiskStorage.Backend<Data>
     
-    private let ioQueue: DispatchQueue
+    public let ioQueue: DispatchQueue
     
     /// Closure that defines the disk cache path from a given path and cacheName.
     public typealias DiskCachePathClosure = (URL, String) -> URL
@@ -594,7 +594,7 @@ open class ImageCache {
         return retrieveImageInMemoryCache(forKey: key, options: KingfisherParsedOptionsInfo(options))
     }
 
-    func retrieveImageInDiskCache(
+   open func retrieveImageInDiskCache(
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
         callbackQueue: CallbackQueue = .untouch,
@@ -868,7 +868,7 @@ extension KingfisherWrapper where Base: UIApplication {
 #endif
 
 extension String {
-    func computedKey(with identifier: String) -> String {
+   open func computedKey(with identifier: String) -> String {
         if identifier.isEmpty {
             return self
         } else {
