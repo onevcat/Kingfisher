@@ -4,13 +4,13 @@
 
 <p align="center">
 <a href="https://github.com/onevcat/Kingfisher/actions?query=workflow%3Abuild"><img src="https://github.com/onevcat/kingfisher/workflows/build/badge.svg?branch=master"></a>
-<a href="https://kingfisher.onevcat.com/"><img src="https://img.shields.io/badge/Swift-Doc-DE5C43.svg?style=flat"></a>
+<a href="https://swiftpackageindex.com/onevcat/Kingfisher/master/documentation/kingfisher"><img src="https://img.shields.io/badge/Swift-Doc-DE5C43.svg?style=flat"></a>
 <a href="https://cocoapods.org/pods/Kingfisher"><img src="https://img.shields.io/cocoapods/v/Kingfisher.svg?style=flat"></a>
 <a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
 <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 <br />
 <a href="https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/Kingfisher.svg?style=flat"></a>
-<a href="https://kingfisher.onevcat.com/"><img src="https://img.shields.io/cocoapods/p/Kingfisher.svg?style=flat"></a>
+<a href="https://swiftpackageindex.com/onevcat/Kingfisher/master/documentation/kingfisher"><img src="https://img.shields.io/cocoapods/p/Kingfisher.svg?style=flat"></a>
 </p>
 
 Kingfisher is a powerful, pure-Swift library for downloading and caching images from the web. It provides you a chance to use a pure-Swift way to work with remote images in your next app.
@@ -222,7 +222,7 @@ We prepared a [wiki page](https://github.com/onevcat/Kingfisher/wiki). You can f
 
 * [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) - Follow it to integrate Kingfisher into your project.
 * [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet)- Curious about what Kingfisher could do and how would it look like when used in your project? See this page for useful code snippets. If you are already familiar with Kingfisher, you could also learn new tricks to improve the way you use Kingfisher!
-* [API Reference](https://kingfisher.onevcat.com/) - Lastly, please remember to read the full API reference whenever you need more detailed documentation.
+* [API Reference](https://swiftpackageindex.com/onevcat/Kingfisher/master/documentation/kingfisher) - Lastly, please remember to read the full API reference whenever you need more detailed documentation.
 
 ## Other
 
