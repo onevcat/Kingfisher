@@ -81,6 +81,7 @@ public struct AVAssetImageDataProvider: ImageDataProvider {
     public init(assetURL: URL, time: CMTime) {
         let asset = AVAsset(url: assetURL)
         let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
         self.init(assetImageGenerator: generator, time: time)
     }
 
