@@ -2,6 +2,14 @@
 
 -----
 
+## [7.2.3 - Track Transform](https://github.com/onevcat/Kingfisher/releases/tag/7.2.3) (2022-06-09)
+
+#### Fix
+* Now the URL based `AVAssetImageDataProvider` support tracking transform by default. This could solve some cases that the video thumbnail were not at correct orientation. [#1951](https://github.com/onevcat/Kingfisher/pull/1951) @sgarg4008
+* Use DocC as documentation generator and switch to [Swift Package Index as the host](https://swiftpackageindex.com/onevcat/Kingfisher/master/documentation/kingfisher). Big thanks to @daveverwer and all other fellows for the fantastic work!
+
+---
+
 ## [7.2.2 - Rainy Season](https://github.com/onevcat/Kingfisher/releases/tag/7.2.2) (2022-05-08)
 
 #### Fix
