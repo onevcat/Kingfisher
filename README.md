@@ -44,7 +44,7 @@ imageView.kf.setImage(with: url)
 ```
 
 Kingfisher will download the image from `url`, send it to both memory cache and disk cache, and display it in `imageView`. 
-When you set with the same URL later, the image will be retrieved from the cache and shown immediately.
+When you set it with the same URL later, the image will be retrieved from the cache and shown immediately.
 
 It also works if you use SwiftUI:
 
@@ -164,7 +164,7 @@ There are also some performance tips, remember to check them too.
 - iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ (if you use it in SwiftUI)
 - Swift 5.0+
 
-> If you need to support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x. But it won't work 
+> If you need support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x. But it won't work 
 > with Xcode 13.0 and Xcode 13.1 [#1802](https://github.com/onevcat/Kingfisher/issues/1802).
 >
 > If you need to use Xcode 13.0 and 13.1 but cannot upgrade to v7, use the `version6-xcode13` branch. However, you have to drop 
@@ -211,9 +211,9 @@ github "onevcat/Kingfisher" ~> 7.0
 
 If you are using an even earlier version, see the guides below to know the steps for migrating.
 
-> - [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) - Kingfisher 6.x is NOT fully compatible with the previous version. However, the migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
+> - [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) - Kingfisher 6.x is NOT fully compatible with the previous version. However, migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
 > - [Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - If you are upgrading to Kingfisher 5.x from 4.x, please read this for more information.
-> - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 were removed, so please ensure you have no warning left before you migrate from Kingfisher 3 to Kingfisher 4. If you have any trouble when migrating, please open an issue to discuss.
+> - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 were removed, so please ensure you have no warning left before you migrate from Kingfisher 3 with Kingfisher 4. If you have any trouble when migrating, please open an issue to discuss.
 > - [Kingfisher 3.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
 
 ## Next Steps
@@ -232,7 +232,7 @@ I want to keep Kingfisher lightweight. This framework focuses on providing a sim
 
 ### Developments and Tests
 
-Any contributing and pull requests are warmly welcome. However, before you plan to implement some features or try to fix an uncertain issue, it is recommended to open a discussion first. It would be appreciated if your pull requests could build and with all tests green. :)
+Any contributing and pull requests are warmly welcome. However, before you plan to implement some features or try to fix an uncertain issue, it is recommended to open a discussion first. It would be appreciated if your pull requests could build with all tests green. :)
 
 ### About the logo
 
@@ -244,7 +244,7 @@ Follow and contact me on [Twitter](http://twitter.com/onevcat) or [Sina Weibo](h
 
 ## Backers & Sponsors
 
-Open-source projects cannot live long without your help. If you find Kingfisher is useful, please consider supporting this 
+Open-source projects cannot live long without your help. If you find Kingfisher to be useful, please consider supporting this 
 project by becoming a sponsor. Your user icon or company logo shows up [on my blog](https://onevcat.com/tabs/about/) with a link to your home page. 
 
 Become a sponsor through [GitHub Sponsors](https://github.com/sponsors/onevcat). :heart:
