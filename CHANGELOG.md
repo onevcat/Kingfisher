@@ -2,6 +2,13 @@
 
 -----
 
+## [7.2.4 - Removing DocC plugin](https://github.com/onevcat/Kingfisher/releases/tag/7.2.4) (2022-06-15)
+
+#### Fix
+* Dependency of DocC plugin is now removed and Swift Package Index can still generate and host the documentation. [#1952](https://github.com/onevcat/Kingfisher/discussions/1952) @marcusziade
+
+---
+
 ## [7.2.3 - Track Transform](https://github.com/onevcat/Kingfisher/releases/tag/7.2.3) (2022-06-09)
 
 #### Fix
