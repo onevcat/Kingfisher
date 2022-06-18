@@ -560,7 +560,8 @@ extension AnimatedImageView {
                 return
             }
 
-            animatedFrames[previousFrameIndex] = animatedFrames[previousFrameIndex]?.placeholderFrame
+            let previousFrame = animatedFrames[previousFrameIndex]
+            animatedFrames[previousFrameIndex] = previousFrame?.placeholderFrame
 
             preloadIndexes(start: currentFrameIndex).forEach { index in
                 guard let currentAnimatedFrame = animatedFrames[index] else { return }
