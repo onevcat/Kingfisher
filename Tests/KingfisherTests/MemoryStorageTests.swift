@@ -256,7 +256,7 @@ class MemoryStorageTests: XCTestCase {
 
     func testStorageObject() {
         let now = Date()
-        let obj = MemoryStorage.StorageObject(1, key: "1", expiration: .seconds(1))
+        let obj = MemoryStorage.StorageObject(1, expiration: .seconds(1))
         XCTAssertEqual(obj.value, 1)
 
         XCTAssertEqual(
