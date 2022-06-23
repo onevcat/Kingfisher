@@ -609,12 +609,10 @@ open class ImageCache {
                     image = options.cacheSerializer.image(with: data, options: options)
                 }
                 callbackQueue.execute { completionHandler(.success(image)) }
+            } catch let error as KingfisherError {
+                callbackQueue.execute { completionHandler(.failure(error)) }
             } catch {
-                if let error = error as? KingfisherError {
-                    callbackQueue.execute { completionHandler(.failure(error)) }
-                } else {
-                    assertionFailure("The internal thrown error should be a `KingfisherError`.")
-                }
+                assertionFailure("The internal thrown error should be a `KingfisherError`.")
             }
         }
     }
@@ -810,13 +808,10 @@ open class ImageCache {
             do {
                 let size = try self.diskStorage.totalSize()
                 DispatchQueue.main.async { handler(.success(size)) }
+            } catch let error as KingfisherError {
+                DispatchQueue.main.async { handler(.failure(error)) }
             } catch {
-                if let error = error as? KingfisherError {
-                    DispatchQueue.main.async { handler(.failure(error)) }
-                } else {
-                    assertionFailure("The internal thrown error should be a `KingfisherError`.")
-                }
-                
+                assertionFailure("The internal thrown error should be a `KingfisherError`.")
             }
         }
     }
