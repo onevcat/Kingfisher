@@ -104,16 +104,8 @@ extension Date {
         return isPast(referenceDate: Date())
     }
 
-    var isFuture: Bool {
-        return !isPast
-    }
-
     func isPast(referenceDate: Date) -> Bool {
         return timeIntervalSince(referenceDate) <= 0
-    }
-
-    func isFuture(referenceDate: Date) -> Bool {
-        return !isPast(referenceDate: referenceDate)
     }
 
     // `Date` in memory is a wrap for `TimeInterval`. But in file attribute it can only accept `Int` number.

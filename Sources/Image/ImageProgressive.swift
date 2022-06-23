@@ -58,10 +58,6 @@ public struct ImageProgressive {
     }
 }
 
-protocol ImageSettable: AnyObject {
-    var image: KFCrossPlatformImage? { get set }
-}
-
 final class ImageProgressiveProvider: DataReceivingSideEffect {
     
     var onShouldApply: () -> Bool = { return true }
@@ -269,7 +265,6 @@ private final class ImageProgressiveSerialQueue {
     private var items: [DispatchWorkItem] = []
     private var notify: (() -> Void)?
     private var lastTime: TimeInterval?
-    var count: Int { return items.count }
 
     init() {
         self.queue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageProgressive.SerialQueue")
@@ -312,10 +307,6 @@ private final class ImageProgressiveSerialQueue {
             }
             self.items.append(item)
         }
-    }
-    
-    func notify(_ closure: @escaping () -> Void) {
-        self.notify = closure
     }
     
     func clean() {

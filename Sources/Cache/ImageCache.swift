@@ -846,12 +846,6 @@ open class ImageCache {
     }
 }
 
-extension Dictionary {
-    func keysSortedByValue(_ isOrderedBefore: (Value, Value) -> Bool) -> [Key] {
-        return Array(self).sorted{ isOrderedBefore($0.1, $1.1) }.map{ $0.0 }
-    }
-}
-
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
 extension UIApplication: KingfisherCompatible { }

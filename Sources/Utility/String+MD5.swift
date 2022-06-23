@@ -90,15 +90,6 @@ extension Int {
 
 }
 
-extension NSMutableData {
-
-    // Convenient way to append bytes
-    func appendBytes(_ arrayOfBytes: [UInt8]) {
-        append(arrayOfBytes, length: arrayOfBytes.count)
-    }
-
-}
-
 protocol HashProtocol {
     var message: [UInt8] { get }
     // Common part for hash calculation. Prepare header data.
@@ -178,7 +169,6 @@ func rotateLeft(_ value: UInt32, bits: UInt32) -> UInt32 {
 
 class MD5: HashProtocol {
 
-    static let size = 16 // 128 / 8
     let message: [UInt8]
 
     init (_ message: [UInt8]) {
