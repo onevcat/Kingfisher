@@ -91,7 +91,6 @@ open class SessionDelegate: NSObject {
 
     func append(
         _ task: SessionDataTask,
-        url: URL,
         callback: SessionDataTask.TaskCallback) -> DownloadTask
     {
         let token = task.addCallback(callback)
