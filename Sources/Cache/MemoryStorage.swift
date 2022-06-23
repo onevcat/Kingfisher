@@ -92,7 +92,7 @@ public enum MemoryStorage {
                     keys.remove(key)
                     continue
                 }
-                if object.estimatedExpiration.isPast {
+                if object.isExpired {
                     storage.removeObject(forKey: nsKey)
                     keys.remove(key)
                 }
@@ -146,7 +146,7 @@ public enum MemoryStorage {
             guard let object = storage.object(forKey: key as NSString) else {
                 return nil
             }
-            if object.expired {
+            if object.isExpired {
                 return nil
             }
             object.extendExpiration(extendingExpiration)
@@ -278,7 +278,7 @@ extension MemoryStorage {
             }
         }
         
-        var expired: Bool {
+        var isExpired: Bool {
             return estimatedExpiration.isPast
         }
     }
