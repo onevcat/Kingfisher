@@ -38,7 +38,7 @@ DerivedData
 Carthage/Build
 Kingfisher.framework.zip
 
-# OSX
+# macOS
 .DS_Store
 .AppleDouble
 .LSOverride
