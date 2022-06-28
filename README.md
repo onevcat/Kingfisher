@@ -25,7 +25,7 @@ Kingfisher is a powerful, pure-Swift library for downloading and caching images 
 - [x] Cancelable downloading and auto-reusing previous downloaded content to improve performance.
 - [x] Independent components. Use the downloader, caching system, and image processors separately as you need.
 - [x] Prefetching images and showing them from the cache to boost your app.
-- [x] View extensions for `UIImageView`, `NSImageView`, `NSButton` and `UIButton` to directly set an image from a URL.
+- [x] Extensions for `UIImageView`, `NSImageView`, `NSButton`, `UIButton`, `NSTextAttachment`, `WKInterfaceImage`, `TVMonogramView` and `CPListItem` to directly set an image from a URL.
 - [x] Built-in transition animation when setting images.
 - [x] Customizable placeholder and indicator while loading images.
 - [x] Extensible image processing and image format easily.
