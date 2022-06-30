@@ -234,7 +234,8 @@ public class KingfisherManager {
                 return
             }
             switch strategy {
-            case .keep: setter(image)
+            case .default: setter(image)
+            case .keepCurrent: break
             case .replace(let newImage): setter(newImage)
             }
         }) {

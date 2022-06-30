@@ -34,11 +34,13 @@ public struct ImageProgressive {
     
     /// The updating strategy when an intermediate progressive image is generated and about to be set to the hosting view.
     ///
-    /// - keep: Do not change the received intermediate progressive image. Just use as it is.
+    /// - default: Use the progressive image as it is. It is the standard behavior when handling the progressive image.
+    /// - keepCurrent: Discard this progressive image and keep the current displayed one.
     /// - replace: Replace the image to a new one. If the progressive loading is initialized by a view extension in
     ///            Kingfisher, the replacing image will be used to update the view.
     public enum UpdatingStrategy {
-        case keep
+        case `default`
+        case keepCurrent
         case replace(KFCrossPlatformImage?)
     }
     
