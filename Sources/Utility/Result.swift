@@ -47,25 +47,4 @@ extension Result where Failure: Error {
             return onFailure(error)
         }
     }
-
-    func matchSuccess<Output>(with folder: (Success?) -> Output) -> Output {
-        return match(
-            onSuccess: { value in return folder(value) },
-            onFailure: { _ in return folder(nil) }
-        )
-    }
-
-    func matchFailure<Output>(with folder: (Error?) -> Output) -> Output {
-        return match(
-            onSuccess: { _ in return folder(nil) },
-            onFailure: { error in return folder(error) }
-        )
-    }
-
-    func match<Output>(with folder: (Success?, Error?) -> Output) -> Output {
-        return match(
-            onSuccess: { return folder($0, nil) },
-            onFailure: { return folder(nil, $0) }
-        )
-    }
 }
