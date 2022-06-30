@@ -221,14 +221,22 @@ public class KingfisherManager {
         with source: Source,
         options: KingfisherParsedOptionsInfo,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        progressiveImageSetter: ((KFCrossPlatformImage) -> Void)? = nil,
+        progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
         referenceTaskIdentifierChecker: (() -> Bool)? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         var options = options
         if let provider = ImageProgressiveProvider(options, refresh: { image in
-            options.progressiveJPEG?.onImageUpdated(image)
-            progressiveImageSetter?(image)
+            guard let strategy = options.progressiveJPEG?.onImageUpdated(image) else {
+                return
+            }
+            guard let setter = progressiveImageSetter else {
+                return
+            }
+            switch strategy {
+            case .keep: setter(image)
+            case .replace(let newImage): setter(newImage)
+            }
         }) {
             options.onDataReceived = (options.onDataReceived ?? []) + [provider]
         }
