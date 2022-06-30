@@ -133,20 +133,12 @@ extension KingfisherWrapper where Base: UIButton {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
 
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
-            self.base.setImage(image, for: state)
-        }) {
-            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
-        }
-
-        options.onDataReceived?.forEach {
-            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier(for: state) }
-        }
-
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            progressiveImageSetter: { self.base.setImage($0, for: state) },
+            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier(for: state) },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     guard issuedIdentifier == self.taskIdentifier(for: state) else {
@@ -294,20 +286,12 @@ extension KingfisherWrapper where Base: UIButton {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
 
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
-            self.base.setBackgroundImage(image, for: state)
-        }) {
-            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
-        }
-
-        options.onDataReceived?.forEach {
-            $0.onShouldApply = { issuedIdentifier == self.backgroundTaskIdentifier(for: state) }
-        }
-
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             downloadTaskUpdated: { mutatingSelf.backgroundImageTask = $0 },
+            progressiveImageSetter: { self.base.setBackgroundImage($0, for: state) },
+            referenceTaskIdentifierChecker: { issuedIdentifier == self.backgroundTaskIdentifier(for: state) },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     guard issuedIdentifier == self.backgroundTaskIdentifier(for: state) else {

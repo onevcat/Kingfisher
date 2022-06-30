@@ -213,6 +213,7 @@ public class KingfisherManager {
             with: source,
             options: info,
             downloadTaskUpdated: downloadTaskUpdated,
+            progressiveImageSetter: nil,
             completionHandler: completionHandler)
     }
 
@@ -220,8 +221,23 @@ public class KingfisherManager {
         with source: Source,
         options: KingfisherParsedOptionsInfo,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
+        progressiveImageSetter: ((KFCrossPlatformImage) -> Void)? = nil,
+        referenceTaskIdentifierChecker: (() -> Bool)? = nil,
         completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
+        var options = options
+        if let provider = ImageProgressiveProvider(options, refresh: { image in
+            options.progressiveJPEG?.onImageUpdated(image)
+            progressiveImageSetter?(image)
+        }) {
+            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
+        }
+        if let checker = referenceTaskIdentifierChecker {
+            options.onDataReceived?.forEach {
+                $0.onShouldApply = checker
+            }
+        }
+        
         let retrievingContext = RetrievingContext(options: options, originalSource: source)
         var retryContext: RetryContext?
 

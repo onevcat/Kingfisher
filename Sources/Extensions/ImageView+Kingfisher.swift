@@ -312,21 +312,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
 
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
-            options.progressiveJPEG?.onImageUpdated(image)
-            self.base.image = image
-        }) {
-            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
-        }
-
-        options.onDataReceived?.forEach {
-            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
-        }
-
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            progressiveImageSetter: { self.base.image = $0 },
+            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     maybeIndicator?.stopAnimatingView()
