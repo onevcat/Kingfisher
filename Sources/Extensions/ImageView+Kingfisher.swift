@@ -313,6 +313,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         }
 
         if let provider = ImageProgressiveProvider(options, refresh: { image in
+            options.progressiveJPEG?.onImageUpdated(image)
             self.base.image = image
         }) {
             options.onDataReceived = (options.onDataReceived ?? []) + [provider]

@@ -47,6 +47,8 @@ public struct ImageProgressive {
     /// Minimum time interval for each scan
     let scanInterval: TimeInterval
     
+    public let onImageUpdated = Delegate<KFCrossPlatformImage, Void>()
+    
     public init(isBlur: Bool,
                 isFastestScan: Bool,
                 scanInterval: TimeInterval
