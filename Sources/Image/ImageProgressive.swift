@@ -46,6 +46,7 @@ public struct ImageProgressive {
     
     /// A default `ImageProgressive` could be used across. It blurs the progressive loading with the fastest
     /// scan enabled and scan interval as 0.
+    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax symatic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
     public static let `default` = ImageProgressive(
         isBlur: true,
         isFastestScan: true,
@@ -64,6 +65,17 @@ public struct ImageProgressive {
     /// image retrieving is not happening from a view extension method), the returned `UpdatingStrategy` is ignored.
     public let onImageUpdated = Delegate<KFCrossPlatformImage, UpdatingStrategy>()
     
+    /// Creates an `ImageProgressive` value with default sets. It blurs the progressive loading with the fastest
+    /// scan enabled and scan interval as 0.
+    public init() {
+        self.init(isBlur: true, isFastestScan: true, scanInterval: 0)
+    }
+    
+    /// Creates an `ImageProgressive` value the given values.
+    /// - Parameters:
+    ///   - isBlur: Whether to enable blur effect processing.
+    ///   - isFastestScan: Whether to enable the fastest scan.
+    ///   - scanInterval: Minimum time interval for each scan.
     public init(isBlur: Bool,
                 isFastestScan: Bool,
                 scanInterval: TimeInterval
