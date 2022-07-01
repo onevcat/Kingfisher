@@ -227,10 +227,11 @@ public class KingfisherManager {
     {
         var options = options
         if let provider = ImageProgressiveProvider(options, refresh: { image in
-            guard let strategy = options.progressiveJPEG?.onImageUpdated(image) else {
+            guard let setter = progressiveImageSetter else {
                 return
             }
-            guard let setter = progressiveImageSetter else {
+            guard let strategy = options.progressiveJPEG?.onImageUpdated(image) else {
+                setter(image)
                 return
             }
             switch strategy {
