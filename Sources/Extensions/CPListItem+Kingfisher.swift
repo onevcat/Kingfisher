@@ -155,20 +155,12 @@ extension KingfisherWrapper where Base: CPListItem {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
         
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
-            self.base.setImage(image)
-        }) {
-            options.onDataReceived = (options.onDataReceived ?? []) + [provider]
-        }
-        
-        options.onDataReceived?.forEach {
-            $0.onShouldApply = { issuedIdentifier == self.taskIdentifier }
-        }
-        
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
             downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            progressiveImageSetter: { self.base.setImage($0) },
+            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
                     guard issuedIdentifier == self.taskIdentifier else {
