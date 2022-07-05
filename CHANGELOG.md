@@ -2,6 +2,21 @@
 
 -----
 
+## [7.3.0 - Progressive Progress](https://github.com/onevcat/Kingfisher/releases/tag/7.3.0) (2022-07-06)
+
+#### Add
+* Added `ImageProgressive` now contains a delegate `onImageUpdated` which will notify you everytime the progressive scanner can decode an intermediate image. You also have a chance to choose an image update strategy to respond the delegate. [#1957](https://github.com/onevcat/Kingfisher/issues/1957) @jyounus
+* Now the `progressive` option can work with `KingfisherManager`. Previously it only works when set in the view extension methods under `kf`. [#1961](https://github.com/onevcat/Kingfisher/pull/1961) @onevcat
+
+#### Fix
+* A potential crash in `AnimatedImageView` that releasing on another thread. [#1956](https://github.com/onevcat/Kingfisher/pull/1956) @ufosky
+* A few internal clean up and removal of unused code. [#1958](https://github.com/onevcat/Kingfisher/pull/1958) @idrougge
+
+#### Remove
+* With the support of `ImageProgressive.onImageUpdated`, the semantic of `ImageProgressive.default` is conflicting with the behavior. `ImageProgressive.default` is now marked as deprecated. To initilize a default `ImageProgressive`, use `ImageProgressive.init()` instead.
+
+---
+
 ## [7.2.4 - Removing DocC plugin](https://github.com/onevcat/Kingfisher/releases/tag/7.2.4) (2022-06-15)
 
 #### Fix
