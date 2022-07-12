@@ -34,6 +34,8 @@ extension KFImage {
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
     /// image downloading and progress reporting based on `KingfisherManager`.
     class ImageBinder: ObservableObject {
+        
+        var objectWillChange = ObservableObjectPublisher()
 
         let source: Source?
         var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
