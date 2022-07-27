@@ -530,19 +530,27 @@ extension AnimatedImageView {
 
         private func loadFrame(at index: Int) -> UIImage? {
             let resize = needsPrescaling && size != .zero
-            let options: [CFString: Any]?
+            var currentCgImage: CGImage?
+
             if resize {
-                options = [
-                    kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+                let options: [CFString: Any] = [
+                    kCGImageSourceCreateThumbnailFromImageAlways: true,
                     kCGImageSourceCreateThumbnailWithTransform: true,
                     kCGImageSourceShouldCacheImmediately: true,
+                    kCGImageSourceShouldCache: true,
                     kCGImageSourceThumbnailMaxPixelSize: max(size.width, size.height)
                 ]
+                currentCgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, index, options as CFDictionary)
+
             } else {
-                options = nil
+                let options: [CFString: Any] = [
+                    kCGImageSourceShouldCacheImmediately: true,
+                    kCGImageSourceShouldCache: true
+                ]
+                currentCgImage = CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary)
             }
 
-            guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary?) else {
+            guard let cgImage = currentCgImage else {
                 return nil
             }
 
