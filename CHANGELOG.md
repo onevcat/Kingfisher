@@ -2,6 +2,13 @@
 
 -----
 
+## [7.3.1 - Empty Not Void](https://github.com/onevcat/Kingfisher/releases/tag/7.3.1) (2022-07-31)
+
+#### Fix
+* An issue that `EmptyView` as `KFImage` placeholder fails loading of the image. [#1973](https://github.com/onevcat/Kingfisher/pull/1973) [@damian-rzeszot]
+
+---
+
 ## [7.3.0 - Progressive Progress](https://github.com/onevcat/Kingfisher/releases/tag/7.3.0) (2022-07-06)
 
 #### Add
