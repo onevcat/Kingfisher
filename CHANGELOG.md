@@ -2,6 +2,13 @@
 
 -----
 
+## [7.3.2 - Align Layout](https://github.com/onevcat/Kingfisher/releases/tag/7.3.2) (2022-08-10)
+
+#### Fix
+* A regression introduced by the previous version, which changed the default layout behavior when setting a placeholder. Now the `KFImage` should have the same layout behavior as SwiftUI's `AsyncImage` while loading. if no placeholder is set, it takes all the proposed size while loading. If a placeholder is set, it propose size to the placeholder and follow placeholder's layout. [#1975](https://github.com/onevcat/Kingfisher/pull/1975)
+
+---
+
 ## [7.3.1 - Empty Not Void](https://github.com/onevcat/Kingfisher/releases/tag/7.3.1) (2022-07-31)
 
 #### Fix
