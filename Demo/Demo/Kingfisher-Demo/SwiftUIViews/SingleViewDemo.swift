@@ -50,13 +50,15 @@ struct SingleViewDemo : View {
                     print("err: \(e)")
                 }
                 .placeholder { progress in
-                    ProgressView(progress)
+                    ProgressView(progress).frame(width: 100, height: 100)
+                        .border(Color.blue)
                 }
                 .fade(duration: index == 1 ? 0 : 1) // Do not animate for the first image. Otherwise it causes an unwanted animation when the page is shown.
                 .forceTransition(forceTransition)
                 .resizable()
                 .frame(width: 300, height: 300)
                 .cornerRadius(20)
+                .border(Color.red)
                 .shadow(radius: 5)
                 .frame(width: 320, height: 320)
 
