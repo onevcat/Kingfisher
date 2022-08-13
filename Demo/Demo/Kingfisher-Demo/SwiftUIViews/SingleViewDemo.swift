@@ -60,7 +60,6 @@ struct SingleViewDemo : View {
                 .cornerRadius(20)
                 .border(Color.red)
                 .shadow(radius: 5)
-                .frame(width: 320, height: 320)
 
             Button(action: {
                 self.index = (self.index % 10) + 1
