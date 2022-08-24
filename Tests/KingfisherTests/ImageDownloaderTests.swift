@@ -209,7 +209,7 @@ class ImageDownloaderTests: XCTestCase {
     func testSSLCertificateValidation() {
         LSNocilla.sharedInstance().stop()
 
-        let url = URL(string: "https://testssl-expire-r2i2.disig.sk:2445/Expired.png")!
+        let url = URL(string: "https://testssl-expire-r2i2.disig.sk/Expired.png")!
         stub(url, data: testImageData)
 
         let expectation = expectation(description: "wait for download from an invalid ssl site.")
