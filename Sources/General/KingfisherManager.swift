@@ -35,7 +35,6 @@ public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: I
 
 /// Represents the result of a Kingfisher retrieving image task.
 public struct RetrieveImageResult {
-
     /// Gets the image object of this result.
     public let image: KFCrossPlatformImage
 
@@ -50,6 +49,8 @@ public struct RetrieveImageResult {
     /// When an alternative source loading happened, the `source` will be the replacing loading target, while the
     /// `originalSource` will be kept as the initial `source` which issued the image loading process.
     public let originalSource: Source
+    
+    public let data: () -> Data?
 }
 
 /// A struct that stores some related information of an `KingfisherError`. It provides some context information for
@@ -419,7 +420,8 @@ public class KingfisherManager {
                 image: options.imageModifier?.modify(value.image) ?? value.image,
                 cacheType: .none,
                 source: source,
-                originalSource: context.originalSource
+                originalSource: context.originalSource,
+                data: {  value.originalData }
             )
             // Add image to cache.
             let targetCache = options.targetCache ?? self.cache
@@ -561,7 +563,8 @@ public class KingfisherManager {
                                         image: image,
                                         cacheType: $0.cacheType,
                                         source: source,
-                                        originalSource: context.originalSource
+                                        originalSource: context.originalSource,
+                                        data: { options.cacheSerializer.data(with: image, original: nil) }
                                     )
                                 }
                             } else {
@@ -624,11 +627,13 @@ public class KingfisherManager {
                             let coordinator = CacheCallbackCoordinator(
                                 shouldWaitForCache: options.waitForCache, shouldCacheOriginal: false)
 
+                            let image = options.imageModifier?.modify(processedImage) ?? processedImage
                             let result = RetrieveImageResult(
-                                image: options.imageModifier?.modify(processedImage) ?? processedImage,
+                                image: image,
                                 cacheType: .none,
                                 source: source,
-                                originalSource: context.originalSource
+                                originalSource: context.originalSource,
+                                data: { options.cacheSerializer.data(with: processedImage, original: nil) }
                             )
 
                             targetCache.store(
