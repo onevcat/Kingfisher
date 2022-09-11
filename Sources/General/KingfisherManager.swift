@@ -50,6 +50,15 @@ public struct RetrieveImageResult {
     /// `originalSource` will be kept as the initial `source` which issued the image loading process.
     public let originalSource: Source
     
+    /// Gets the data behind the result.
+    ///
+    /// If this result is from a network downloading (when `cacheType == .none`), calling this returns the downloaded
+    /// data. If the reuslt is from cache, it serializes the image with the given cache serializer in the loading option
+    /// and returns the result.
+    ///
+    /// - Note:
+    /// This can be a time-consuming action, so if you need to use the data for multiple times, it is suggested to hold
+    /// it and prevent keeping calling this too frequently.
     public let data: () -> Data?
 }
 

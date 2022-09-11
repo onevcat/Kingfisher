@@ -1073,6 +1073,62 @@ class KingfisherManagerTests: XCTestCase {
             }
         waitForExpectations(timeout: 1.0)
     }
+    
+    func testImageResultContainsDataWhenDownloaded() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        manager.retrieveImage(with: url) { result in
+            XCTAssertNotNil(result.value?.data())
+            XCTAssertEqual(result.value!.data(), testImageData)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testImageResultContainsDataWhenLoadFromMemoryCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        manager.retrieveImage(with: url) { _ in
+            self.manager.retrieveImage(with: url) { result in
+                XCTAssertEqual(result.value!.cacheType, .memory)
+                XCTAssertNotNil(result.value?.data())
+                XCTAssertEqual(
+                    result.value!.data(),
+                    DefaultCacheSerializer.default.data(with: result.value!.image, original: nil)
+                )
+                exp.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testImageResultContainsDataWhenLoadFromDiskCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        manager.retrieveImage(with: url) { _ in
+            self.manager.cache.clearMemoryCache()
+            self.manager.retrieveImage(with: url) { result in
+                XCTAssertEqual(result.value!.cacheType, .disk)
+                XCTAssertNotNil(result.value?.data())
+                XCTAssertEqual(
+                    result.value!.data(),
+                    DefaultCacheSerializer.default.data(with: result.value!.image, original: nil)
+                )
+                exp.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
