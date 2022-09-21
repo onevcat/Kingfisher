@@ -16,6 +16,7 @@
 		4B120CA726B91BB70060B092 /* TransitionViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */; };
 		4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */; };
 		4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
+		4B6E1B6D28DB4E8C0023B54B /* SingleListDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E1B6C28DB4E8C0023B54B /* SingleListDemo.swift */; };
 		4B7742471D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B779C8526743C2800FF9C1E /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */; };
@@ -162,6 +163,7 @@
 		4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewDemo.swift; sourceTree = "<group>"; };
 		4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinityCollectionViewController.swift; sourceTree = "<group>"; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B6E1B6C28DB4E8C0023B54B /* SingleListDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleListDemo.swift; sourceTree = "<group>"; };
 		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
 		4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryReaderDemo.swift; sourceTree = "<group>"; };
 		4B92FE5525FF906B00473088 /* AutoSizingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoSizingTableViewController.swift; sourceTree = "<group>"; };
@@ -420,6 +422,7 @@
 			children = (
 				D1F78A622589F17200930759 /* MainView.swift */,
 				D1F78A612589F17200930759 /* ListDemo.swift */,
+				4B6E1B6C28DB4E8C0023B54B /* SingleListDemo.swift */,
 				D198F42125EDC4B900C53E0D /* GridDemo.swift */,
 				4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */,
 				D1F78A632589F17200930759 /* SingleViewDemo.swift */,
@@ -684,6 +687,7 @@
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */,
 				072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */,
+				4B6E1B6D28DB4E8C0023B54B /* SingleListDemo.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
 				4B92FE5625FF906B00473088 /* AutoSizingTableViewController.swift in Sources */,
 				D1F78A642589F17200930759 /* ListDemo.swift in Sources */,
