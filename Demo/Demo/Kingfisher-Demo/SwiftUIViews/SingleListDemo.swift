@@ -2,7 +2,7 @@
 //  SingleListDemo.swift
 //  Kingfisher
 //
-//  Created by jp20028 on 2022/09/21.
+//  Created by onevcat on 2022/09/21.
 //
 //  Copyright (c) 2022 Wei Wang <onevcat@gmail.com>
 //
