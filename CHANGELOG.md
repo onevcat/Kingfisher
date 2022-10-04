@@ -2,6 +2,17 @@
 
 -----
 
+## [7.4.0 - Summer Ends](https://github.com/onevcat/Kingfisher/releases/tag/7.4.0) (2022-10-05)
+
+#### Add
+* A `data` property in `RetrieveImageResult` for reading the original data when an image loading is done. [#1986](https://github.com/onevcat/Kingfisher/pull/1986)
+* An async `data` getter in `ImageDataProvider`. More async methods are on the way. [#1989](https://github.com/onevcat/Kingfisher/pull/1989)
+
+#### Fix
+* A workaround for some cases the `KFImage` does not load images when embedded in the SwiftUI List on iOS 16. This only alleviates the problem when shallow embedded. For deeper nested, waiting for Apple's fix. [#1988](https://github.com/onevcat/Kingfisher/issues/1988) FB11564208
+
+---
+
 ## [7.3.2 - Align Layout](https://github.com/onevcat/Kingfisher/releases/tag/7.3.2) (2022-08-10)
 
 #### Fix
