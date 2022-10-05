@@ -816,6 +816,28 @@ open class ImageCache {
         }
     }
     
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    open var diskStorageSize: UInt {
+        get async throws {
+            try await withCheckedThrowingContinuation { continuation in
+                ioQueue.async {
+                    do {
+                        let size = try self.diskStorage.totalSize()
+                        Task { @MainActor in continuation.resume(returning: size) }
+                    } catch let error as KingfisherError {
+                        Task { @MainActor in continuation.resume(throwing: error) }
+                    } catch {
+                        assertionFailure("The internal thrown error should be a `KingfisherError`.")
+                    }
+                }
+            }
+        }
+    }
+    #endif
+    #endif
+    
     /// Gets the cache path for the key.
     /// It is useful for projects with web view or anyone that needs access to the local file path.
     ///
