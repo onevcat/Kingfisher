@@ -861,7 +861,7 @@ class KingfisherManagerTests: XCTestCase {
         }
         task?.cancel()
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
