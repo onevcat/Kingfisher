@@ -96,7 +96,7 @@ platform :ios do
     xcversion(version: "~> 14.0")
     FileUtils.rm_rf '../build'
     
-    frameworks = []
+    frameworks = {}
     
     ["macosx",
      "iphoneos", 
@@ -117,25 +117,15 @@ platform :ios do
           "SKIP_INSTALL" => "NO"
         }
       )
-      frameworks.push("#{archive_path}/Products/Library/Frameworks/Kingfisher.framework")
 
-      dSYM_path = "../#{archive_path}/dSYMs/Kingfisher.framework.dSYM"
-      FileUtils.mkdir_p("#{supporting_root}/#{sdk}/dSYMs/")
-      FileUtils.cp_r(dSYM_path, "#{supporting_root}/#{sdk}/dSYMs/Kingfisher.framework.dSYM")
+      dSYM_path = "#{Dir.pwd}/../#{archive_path}/dSYMs/Kingfisher.framework.dSYM"
+      frameworks["#{archive_path}/Products/Library/Frameworks/Kingfisher.framework"] = { dsyms: dSYM_path }
+    end
 
-      bitcode_symbol_map_path = "../#{archive_path}/BCSymbolMaps/"
-      if Dir.exist?(bitcode_symbol_map_path)
-        FileUtils.mkdir_p("#{supporting_root}/#{sdk}/BCSymbolMaps/")
-        FileUtils.cp_r(bitcode_symbol_map_path, "#{supporting_root}/#{sdk}")
-      end
-    end
-    # `xcodebuild` action in fastlane does not support `-create-xcframework` arg yet.
-    # Change it back to use fastlane action later when it is prepared.
-    framework_args = frameworks.map { |framework_path| "-framework '#{framework_path}'"}
-    args = "-create-xcframework #{framework_args.join(" ")} -output 'build/#{target_version}/Kingfisher.xcframework'"
-    Dir.chdir("..") do
-      Action.sh "xcodebuild #{args}"
-    end
+    create_xcframework(
+      frameworks_with_dsyms: frameworks, 
+      output: "build/#{target_version}/Kingfisher.xcframework"
+    )
 
     zip(
       path: "build/#{target_version}",
