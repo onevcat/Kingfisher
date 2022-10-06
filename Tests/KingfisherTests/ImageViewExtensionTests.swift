@@ -696,7 +696,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
         
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testMemoryImageCacheExtendingExpirationTask() {
