@@ -465,6 +465,63 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testCouldProcessDoNotHappenWhenSerializerCachesTheProcessedData() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        
+        stub(url, data: testImageData)
+        
+        let s = DefaultCacheSerializer()
+
+        let p1 = SimpleProcessor()
+        let options1: KingfisherOptionsInfo = [.processor(p1), .cacheSerializer(s), .waitForCache]
+        let source = Source.network(url)
+        
+        manager.retrieveImage(with: source, options: options1) { result in
+            XCTAssertTrue(p1.processed)
+            
+            let p2 = SimpleProcessor()
+            let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
+            self.manager.cache.clearMemoryCache()
+            
+            self.manager.retrieveImage(with: source, options: options2) { result in
+                XCTAssertEqual(result.value?.cacheType, .disk)
+                XCTAssertFalse(p2.processed)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testCouldProcessAgainWhenSerializerCachesOriginalData() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        
+        stub(url, data: testImageData)
+        
+        var s = DefaultCacheSerializer()
+        s.preferCacheOriginalData = true
+
+        let p1 = SimpleProcessor()
+        let options1: KingfisherOptionsInfo = [.processor(p1), .cacheSerializer(s), .waitForCache]
+        let source = Source.network(url)
+        
+        manager.retrieveImage(with: source, options: options1) { result in
+            XCTAssertTrue(p1.processed)
+            
+            let p2 = SimpleProcessor()
+            let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
+            self.manager.cache.clearMemoryCache()
+            
+            self.manager.retrieveImage(with: source, options: options2) { result in
+                XCTAssertEqual(result.value?.cacheType, .disk)
+                XCTAssertTrue(p2.processed)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
     func testWaitForCacheOnRetrieveImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

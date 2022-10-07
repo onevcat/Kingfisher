@@ -52,6 +52,12 @@ public protocol CacheSerializer {
     /// - Returns: An image deserialized or `nil` when no valid image
     ///            could be deserialized.
     func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
+    
+    var originalDataUsed: Bool { get }
+}
+
+public extension CacheSerializer {
+    var originalDataUsed: Bool { false }
 }
 
 /// Represents a basic and default `CacheSerializer` used in Kingfisher disk cache system.
@@ -70,6 +76,8 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// In that case, the serialization will fall back to creating data from image.
     public var preferCacheOriginalData: Bool = false
 
+    public var originalDataUsed: Bool { preferCacheOriginalData }
+    
     /// Creates a cache serializer that serialize and deserialize images in PNG, JPEG and GIF format.
     ///
     /// - Note:
