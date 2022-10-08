@@ -43,7 +43,6 @@ class ImageProcessorTests: XCTestCase {
 
         let resultFromImage = downsamplingProcessor.process(item: .image(testImage), options: emptyOption)
         XCTAssertEqual(resultFromImage!.size, CGSize(width: 40, height: 40))
-
     }
 
     func testProcessorConcating() {
