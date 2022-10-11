@@ -466,8 +466,46 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testCalculateDiskStorageSize() {
+        let exp = expectation(description: #function)
+        cache.calculateDiskStorageSize { result in
+            switch result {
+            case .success(let size):
+                XCTAssertEqual(size, 0)
+                self.storeMultipleImages {
+                    self.cache.calculateDiskStorageSize { result in
+                        switch result {
+                        case .success(let size):
+                            XCTAssertEqual(size, UInt(testImagePNGData.count * testKeys.count))
+                        case .failure:
+                            XCTAssert(false)
+                        }
+                        exp.fulfill()
+                    }
+                }
+            case .failure:
+                XCTAssert(false)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func testCalculateDiskStorageSizeAsync() async throws {
+        let size = try await cache.diskStorageSize
+        XCTAssertEqual(size, 0)
+        _ = await storeMultipleImagesAsync()
+        let sizeAfterStoreMultipleImages = try await cache.diskStorageSize
+        XCTAssertEqual(sizeAfterStoreMultipleImages, UInt(testImagePNGData.count * testKeys.count))
+    }
+    #endif
+    #endif
+    
     // MARK: - Helper
-    func storeMultipleImages(_ completionHandler: @escaping () -> Void) {
+    private func storeMultipleImages(_ completionHandler: @escaping () -> Void) {
         let group = DispatchGroup()
         testKeys.forEach {
             group.enter()
@@ -477,4 +515,17 @@ class ImageCacheTests: XCTestCase {
         }
         group.notify(queue: .main, execute: completionHandler)
     }
+
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    private func storeMultipleImagesAsync() async {
+        await withCheckedContinuation { continuation in
+            storeMultipleImages {
+                continuation.resume()
+            }
+        }
+    }
+    #endif
+    #endif
 }
