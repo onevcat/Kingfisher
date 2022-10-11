@@ -822,15 +822,8 @@ open class ImageCache {
     open var diskStorageSize: UInt {
         get async throws {
             try await withCheckedThrowingContinuation { continuation in
-                ioQueue.async {
-                    do {
-                        let size = try self.diskStorage.totalSize()
-                        Task { @MainActor in continuation.resume(returning: size) }
-                    } catch let error as KingfisherError {
-                        Task { @MainActor in continuation.resume(throwing: error) }
-                    } catch {
-                        assertionFailure("The internal thrown error should be a `KingfisherError`.")
-                    }
+                calculateDiskStorageSize { result in
+                    continuation.resume(with: result)
                 }
             }
         }
