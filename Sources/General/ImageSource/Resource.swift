@@ -98,14 +98,7 @@ extension URL {
     //
     // See #1825 (https://github.com/onevcat/Kingfisher/issues/1825)
     var localFileCacheKey: String {
-        var validComponents: [String] = []
-        for part in pathComponents.reversed() {
-            validComponents.append(part)
-            if part.hasSuffix(".app") || part.hasSuffix(".appex") {
-                break
-            }
-        }
-        let fixedPath = "\(Self.localFileCacheKeyPrefix)/\(validComponents.reversed().joined(separator: "/"))"
+        let fixedPath = "\(Self.localFileCacheKeyPrefix)/\((path as NSString).abbreviatingWithTildeInPath)"
         if let q = query {
             return "\(fixedPath)?\(q)"
         } else {
