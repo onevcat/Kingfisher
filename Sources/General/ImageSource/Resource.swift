@@ -98,8 +98,10 @@ extension URL {
     //
     // See #1825 (https://github.com/onevcat/Kingfisher/issues/1825)
     var localFileCacheKey: String {
+        // We should trans `URL` to `~` format due to dynamic sandbox path mechanism
+        let tildeURL = URL(fileURLWithPath: (path as NSString).abbreviatingWithTildeInPath)
         var validComponents: [String] = []
-        for part in pathComponents.reversed() {
+        for part in tildeURL.pathComponents.reversed() {
             validComponents.append(part)
             if part.hasSuffix(".app") || part.hasSuffix(".appex") {
                 break
