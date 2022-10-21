@@ -389,21 +389,18 @@ public class ImagePrefetcher: CustomStringConvertible {
     }
     
     private func reportProgress() {
-
         if progressBlock == nil && progressSourceBlock == nil {
             return
         }
-
         let skipped = self.skippedSources
         let failed = self.failedSources
         let completed = self.completedSources
+        let skippedResources = skipped.compactMap { $0.asResource }
+        let failedResources = failed.compactMap { $0.asResource }
+        let completedResources = completed.compactMap { $0.asResource }
         CallbackQueue.mainCurrentOrAsync.execute {
             self.progressSourceBlock?(skipped, failed, completed)
-            self.progressBlock?(
-                skipped.compactMap { $0.asResource },
-                failed.compactMap { $0.asResource },
-                completed.compactMap { $0.asResource }
-            )
+            self.progressBlock?(skippedResources, failedResources, completedResources)
         }
     }
     
