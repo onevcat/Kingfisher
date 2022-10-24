@@ -548,20 +548,24 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         if images != nil { return base }
         #endif
 
-        guard let refImage = cgImage else {
+        guard let refImage = cgImage,
+              let decodedRefImage = refImage.decoded(on: context, scale: scale) else
+        {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
             return base
         }
+        return KingfisherWrapper.image(cgImage: decodedRefImage, scale: scale, refImage: base)
+    }
+}
 
-        let size = CGSize(width: CGFloat(refImage.width) / scale, height: CGFloat(refImage.height) / scale)
-
-        context.draw(refImage, in: CGRect(origin: .zero, size: size))
-
-        guard let cgImage = context.makeImage() else {
-            return base
+extension CGImage {
+    func decoded(on context: CGContext, scale: CGFloat) -> CGImage? {
+        let size = CGSize(width: CGFloat(self.width) / scale, height: CGFloat(self.height) / scale)
+        context.draw(self, in: CGRect(origin: .zero, size: size))
+        guard let decodedImageRef = context.makeImage() else {
+            return nil
         }
-
-        return KingfisherWrapper.image(cgImage: cgImage, scale: scale, refImage: base)
+        return decodedImageRef
     }
 }
 
