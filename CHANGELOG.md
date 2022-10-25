@@ -2,6 +2,15 @@
 
 -----
 
+## [7.4.1 - Maple Days](https://github.com/onevcat/Kingfisher/releases/tag/7.4.1) (2022-10-26)
+
+#### Fix
+* A rare crash from `_UIImageCGImageContent` when loading GIF files on iOS 15 or later. [#2004](https://github.com/onevcat/Kingfisher/pull/2004)
+* Now the dSYM symbols are contained inside the xcframework bundle instead of as standalone files. [#1998](https://github.com/onevcat/Kingfisher/pull/1998)
+* An issue that the processor is not applied to original image data when `DefaultCacheSerializer.preferCacheOriginalData` is set to `true`. [#1999](https://github.com/onevcat/Kingfisher/pull/1999)
+
+---
+
 ## [7.4.0 - Summer Ends](https://github.com/onevcat/Kingfisher/releases/tag/7.4.0) (2022-10-05)
 
 #### Add
