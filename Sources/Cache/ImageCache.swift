@@ -608,6 +608,9 @@ open class ImageCache {
                 if let data = try self.diskStorage.value(forKey: computedKey, extendingExpiration: options.diskCacheAccessExtendingExpiration) {
                     image = options.cacheSerializer.image(with: data, options: options)
                 }
+                if options.backgroundDecode {
+                    image = image?.kf.decoded(scale: options.scaleFactor)
+                }
                 callbackQueue.execute { completionHandler(.success(image)) }
             } catch let error as KingfisherError {
                 callbackQueue.execute { completionHandler(.failure(error)) }
