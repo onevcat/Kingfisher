@@ -134,5 +134,10 @@ extension KFImageProtocol {
         context.options.transition = .fade(duration)
         return self
     }
+    
+    public func startLoadingBeforeViewAppear(_ flag: Bool = true) -> Self {
+        context.startLoadingBeforeViewAppear = flag
+        return self
+    }
 }
 #endif
