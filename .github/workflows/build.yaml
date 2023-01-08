@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   run-test:
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         destination: [
