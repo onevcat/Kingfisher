@@ -9,9 +9,9 @@ jobs:
       matrix:
         destination: [
           'macOS', 
-          'iOS Simulator,name=iPhone 8', 
+          'iOS Simulator,name=iPhone 14', 
           'tvOS Simulator,name=Apple TV', 
-          'watchOS Simulator,name=Apple Watch Series 5 - 40mm'
+          'watchOS Simulator,name=Apple Watch Series 8 (41mm)'
         ]
         swift-version: [5.0]
     steps:

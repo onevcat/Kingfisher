@@ -9,7 +9,7 @@ platform :ios do
     test(destination: "platform=macOS", swift_version: "5.0")
     test(destination: "platform=iOS Simulator,name=iPhone 14", swift_version: "5.0")
     test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "5.0")
-    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 6 - 44mm", swift_version: "5.0")
+    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 8 (41mm)", swift_version: "5.0")
   end
     
   lane :test_ci do
