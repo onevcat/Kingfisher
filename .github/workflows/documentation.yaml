@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Generate Documentation
         uses: SwiftDocOrg/swift-doc@master
         with:
