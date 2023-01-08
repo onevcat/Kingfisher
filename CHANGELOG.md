@@ -2,6 +2,16 @@
 
 -----
 
+## [7.5.0 - Aggressive New Year](https://github.com/onevcat/Kingfisher/releases/tag/7.5.0) (2023-01-08)
+
+#### Add
+* Add a `KFImage` modifier `startLoadingBeforeViewAppear` to allow image loading before SwiftUI view's `onAppear`. This is a workaround for [#1988](https://github.com/onevcat/Kingfisher/issues/1988).
+
+#### Fix
+* Now loading images from local disk also respects the `backgroundDecode` option. [#2009](https://github.com/onevcat/Kingfisher/pull/2009)
+
+---
+
 ## [7.4.1 - Maple Days](https://github.com/onevcat/Kingfisher/releases/tag/7.4.1) (2022-10-26)
 
 #### Fix
