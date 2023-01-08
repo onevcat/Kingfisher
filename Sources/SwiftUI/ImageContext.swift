@@ -46,6 +46,8 @@ extension KFImage {
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
         let onProgressDelegate = Delegate<(Int64, Int64), Void>()
         
+        var startLoadingBeforeViewAppear: Bool = false
+        
         init(source: Source?) {
             self.source = source
         }

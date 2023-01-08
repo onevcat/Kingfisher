@@ -134,5 +134,25 @@ extension KFImageProtocol {
         context.options.transition = .fade(duration)
         return self
     }
+    
+    /// Sets whether to start the image loading before the view actually appears.
+    ///
+    /// By default, Kingfisher performs a lazy loading for `KFImage`. The image loading won't start until the view's
+    /// `onAppear` is called. However, sometimes you may want to trigger an aggressive loading for the view. By enabling
+    /// this, the `KFImage` will try to load the view when its `body` is evaluated when the image loading is not yet
+    /// started or a previous loading did fail.
+    ///
+    /// - Parameter flag: Whether the image loading should happen before view appear. Default is `true`.
+    /// - Returns: A `KFImage` with changes applied.
+    ///
+    /// - Note: This is a temporary workaround for an issue from iOS 16, where the SwiftUI view's `onAppear` is not
+    /// called when it is deeply embedded inside a `List` or `ForEach`.
+    /// See [#1988](https://github.com/onevcat/Kingfisher/issues/1988). It may cause performance regression, especially
+    /// if you have a lot of images to load in the view. Use it as your own risk.
+    ///
+    public func startLoadingBeforeViewAppear(_ flag: Bool = true) -> Self {
+        context.startLoadingBeforeViewAppear = flag
+        return self
+    }
 }
 #endif
