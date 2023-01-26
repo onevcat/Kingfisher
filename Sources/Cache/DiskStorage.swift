@@ -457,15 +457,17 @@ extension DiskStorage {
         /// If set to `true`, image extension will be extracted from original file name and append to
         /// the hased file name and used as the cache key on disk.
         public var autoExtAfterHashedFileName = false
+        
+        /// Closure that takes in initial directory path and generates
+        /// the final disk cache path. You can use it to fully customize your cache path.
+        public var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
+            (directory, cacheName) in
+            return directory.appendingPathComponent(cacheName, isDirectory: true)
+        }
 
         let name: String
         let fileManager: FileManager
         let directory: URL?
-
-        var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
-            (directory, cacheName) in
-            return directory.appendingPathComponent(cacheName, isDirectory: true)
-        }
 
         /// Creates a config value based on given parameters.
         ///
