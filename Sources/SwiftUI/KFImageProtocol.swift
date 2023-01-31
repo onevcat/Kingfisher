@@ -60,11 +60,30 @@ extension KFImageProtocol {
         self.init(source: url?.convertToSource())
     }
     
-    /// Configures current image with a `block`. This block will be lazily applied when creating the final `Image`.
-    /// - Parameter block: The block applies to loaded image.
+    /// Configures current image with a `block` and return another `Image` to use as the final content.
+    ///
+    /// This block will be lazily applied when creating the final `Image`.
+    ///
+    /// If multiple `configure` modifiers are added to the image, they will be evaluated by order. If you want to
+    /// configure the input image (which is usually an `Image` value) to a non-`Image` value, use `contentConfigure`.
+    ///
+    /// - Parameter block: The block applies to loaded image. The block should return an `Image` that is configured.
     /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
     public func configure(_ block: @escaping (HoldingView) -> HoldingView) -> Self {
         context.configurations.append(block)
+        return self
+    }
+
+    /// Configures current image with a `block` and return a `View` to use as the final content.
+    ///
+    /// This block will be lazily applied when creating the final `Image`.
+    ///
+    /// If multiple `contentConfigure` modifiers are added to the image, only the last one will be stored and used.
+    ///
+    /// - Parameter block: The block applies to the loaded image. The block should return a `View` that is configured.
+    /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
+    public func contentConfigure<V: View>(_ block: @escaping (HoldingView) -> V) -> Self {
+        context.contentConfiguration = { AnyView(block($0)) }
         return self
     }
 }

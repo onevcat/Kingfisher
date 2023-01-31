@@ -42,11 +42,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         }
         
         return ZStack {
-            context.configurations
-                .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
-                    current, config in config(current)
-                }
-                .opacity(binder.loaded ? 1.0 : 0.0)
+            renderedImage().opacity(binder.loaded ? 1.0 : 0.0)
             if binder.loadedImage == nil {
                 ZStack {
                     if let placeholder = context.placeholder, let view = placeholder(binder.progress) {
@@ -83,6 +79,19 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         //
         // It should be a bug in iOS 16, I guess it is some kinds of over-optimization in list cell loading caused it.
         .onAppear()
+    }
+    
+    @ViewBuilder
+    private func renderedImage() -> some View {
+        let configuredImage = context.configurations
+            .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
+                current, config in config(current)
+            }
+        if let contentConfiguration = context.contentConfiguration {
+            contentConfiguration(configuredImage)
+        } else {
+            configuredImage
+        }
     }
 }
 
