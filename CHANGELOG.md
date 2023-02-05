@@ -2,6 +2,14 @@
 
 -----
 
+## [7.6.0 - Content Configuration](https://github.com/onevcat/Kingfisher/releases/tag/7.6.0) (2023-02-05)
+
+#### Add
+* Add a `contentConfigure` modifier to `KFImage` and related view types under SwiftUI. This allows you returning a non-image view to finish the configuation and display it as the loading result of `KFImage`. [#2027](https://github.com/onevcat/Kingfisher/pull/2027)
+* Make the `cachePathBlock` public so you can also configure it when creating a custom `DiskStorage.Config`. [#2025](https://github.com/onevcat/Kingfisher/pull/2025) by @zarechnyy
+
+---
+
 ## [7.5.0 - Aggressive New Year](https://github.com/onevcat/Kingfisher/releases/tag/7.5.0) (2023-01-08)
 
 #### Add
