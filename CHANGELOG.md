@@ -2,6 +2,13 @@
 
 -----
 
+## [7.6.1 - Strict for Compiling](https://github.com/onevcat/Kingfisher/releases/tag/7.6.1) (2023-02-13)
+
+#### Fix
+* A compiling issue that new version of Swift (Swift 5.8) refuses to accept the false-positive optional binding. [#2029](https://github.com/onevcat/Kingfisher/pull/2029) @JetForMe
+
+---
+
 ## [7.6.0 - Content Configuration](https://github.com/onevcat/Kingfisher/releases/tag/7.6.0) (2023-02-05)
 
 #### Add
