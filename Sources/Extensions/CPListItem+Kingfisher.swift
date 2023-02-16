@@ -203,7 +203,7 @@ extension KingfisherWrapper where Base: CPListItem {
                                 
                             } else {
                                 #if compiler(>=5.4)
-                                self.base.setImage(nil)
+                                self.base.setImage(placeholder)
                                 #endif
                             }
                             completionHandler?(result)

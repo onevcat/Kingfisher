@@ -225,6 +225,8 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
+                        } else {
+                          self.base.image = placeholder
                         }
                     }
                     completionHandler?(result)

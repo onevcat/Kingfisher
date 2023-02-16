@@ -165,6 +165,8 @@ extension KingfisherWrapper where Base: UIButton {
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.setImage(image, for: state)
+                        } else {
+                          self.base.setImage(placeholder, for: state)
                         }
                         completionHandler?(result)
                     }

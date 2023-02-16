@@ -129,6 +129,8 @@ extension KingfisherWrapper where Base: TVMonogramView {
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
+                        } else {
+                          self.base.image = placeholder
                         }
                         completionHandler?(result)
                     }
