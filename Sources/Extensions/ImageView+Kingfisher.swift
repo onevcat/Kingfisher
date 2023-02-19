@@ -354,8 +354,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                         if let image = options.onFailureImage {
                             mutatingSelf.placeholder = nil
                             self.base.image = image
-                        } else {
-                          mutatingSelf.placeholder = placeholder
                         }
                         completionHandler?(result)
                     }

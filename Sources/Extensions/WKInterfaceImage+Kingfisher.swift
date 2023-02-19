@@ -159,8 +159,6 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.setImage(image)
-                        } else {
-                          self.base.setImage(placeholder)
                         }
                         completionHandler?(result)
                     }
