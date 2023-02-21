@@ -105,7 +105,7 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
     
     #if swift(>=5.5)
     #if canImport(_Concurrency)
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    @available(iOS 15.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     public var data: Data {
         get async throws {
             try await withCheckedThrowingContinuation { continuation in
