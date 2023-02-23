@@ -46,9 +46,23 @@ extension KFImage {
 
         // Do not use @Published due to https://github.com/onevcat/Kingfisher/issues/1717. Revert to @Published once
         // we can drop iOS 12.
-        var loaded = false                           { willSet { objectWillChange.send() } }
+        private(set) var loaded = false
+
+        private(set) var animating = false
+
         var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
-        var progress: Progress = .init()             { willSet { objectWillChange.send() } }
+        var progress: Progress = .init()
+
+        func markLoading() {
+            loading = true
+        }
+
+        func markLoaded(sendChangeEvent: Bool) {
+            loaded = true
+            if sendChangeEvent {
+                objectWillChange.send()
+            }
+        }
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
             guard let source = context.source else {
@@ -58,7 +72,7 @@ extension KFImage {
                         self.loadedImage = image
                     }
                     self.loading = false
-                    self.loaded = true
+                    self.markLoaded(sendChangeEvent: false)
                 }
                 return
             }
@@ -87,12 +101,17 @@ extension KFImage {
                         case .success(let value):
                             CallbackQueue.mainCurrentOrAsync.execute {
                                 if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
+                                    self.animating = true
                                     let animation = Animation.linear(duration: fadeDuration)
-                                    withAnimation(animation) { self.loaded = true }
+                                    withAnimation(animation) {
+                                        // Trigger the view render to apply the animation.
+                                        self.markLoaded(sendChangeEvent: true)
+                                    }
                                 } else {
-                                    self.loaded = true
+                                    self.markLoaded(sendChangeEvent: false)
                                 }
                                 self.loadedImage = value.image
+                                self.animating = false
                             }
 
                             CallbackQueue.mainAsync.execute {
@@ -103,7 +122,7 @@ extension KFImage {
                                 if let image = context.options.onFailureImage {
                                     self.loadedImage = image
                                 }
-                                self.loaded = true
+                                self.markLoaded(sendChangeEvent: true)
                             }
                             
                             CallbackQueue.mainAsync.execute {
