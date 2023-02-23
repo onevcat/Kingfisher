@@ -55,7 +55,8 @@ struct MainView: View {
             }
             
             Section(header: Text("Regression Cases")) {
-                NavigationLink(destination: SingleListDemo()) { Text("#1998") }
+                NavigationLink(destination: Issue1998View()) { Text("#1998") }
+                NavigationLink(destination: Issue2035View()) { Text("#2035") }
             }
         }.navigationBarTitle(Text("SwiftUI Sample"))
     }

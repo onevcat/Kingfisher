@@ -16,13 +16,14 @@
 		4B120CA726B91BB70060B092 /* TransitionViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */; };
 		4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */; };
 		4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
-		4B6E1B6D28DB4E8C0023B54B /* SingleListDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E1B6C28DB4E8C0023B54B /* SingleListDemo.swift */; };
+		4B6E1B6D28DB4E8C0023B54B /* Issue1998View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6E1B6C28DB4E8C0023B54B /* Issue1998View.swift */; };
 		4B7742471D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B7742481D87E42E0077024E /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
 		4B779C8526743C2800FF9C1E /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */; };
 		4B92FE5625FF906B00473088 /* AutoSizingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92FE5525FF906B00473088 /* AutoSizingTableViewController.swift */; };
 		4B9AD88F26480D3B0086A261 /* OrientationImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */; };
 		4B9AD89026480D3C0086A261 /* OrientationImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */; };
+		4BC0ED4A29A6EE78003E9CD1 /* Issue2035View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0ED4929A6EE78003E9CD1 /* Issue2035View.swift */; };
 		4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */; };
 		4BCCF33E1D5B02F8003387C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3371D5B02F8003387C2 /* Assets.xcassets */; };
 		4BCCF33F1D5B02F8003387C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BCCF3381D5B02F8003387C2 /* Main.storyboard */; };
@@ -163,10 +164,11 @@
 		4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewDemo.swift; sourceTree = "<group>"; };
 		4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinityCollectionViewController.swift; sourceTree = "<group>"; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B6E1B6C28DB4E8C0023B54B /* SingleListDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleListDemo.swift; sourceTree = "<group>"; };
+		4B6E1B6C28DB4E8C0023B54B /* Issue1998View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue1998View.swift; sourceTree = "<group>"; };
 		4B7742461D87E42E0077024E /* loader.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader.gif; sourceTree = "<group>"; };
 		4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryReaderDemo.swift; sourceTree = "<group>"; };
 		4B92FE5525FF906B00473088 /* AutoSizingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoSizingTableViewController.swift; sourceTree = "<group>"; };
+		4BC0ED4929A6EE78003E9CD1 /* Issue2035View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue2035View.swift; sourceTree = "<group>"; };
 		4BCC51AA26480CD5007004E8 /* OrientationImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationImagesViewController.swift; sourceTree = "<group>"; };
 		4BCCF3361D5B02F8003387C2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BCCF3371D5B02F8003387C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -298,6 +300,15 @@
 			path = "Demo/Kingfisher-watchOS-Demo Extension";
 			sourceTree = "<group>";
 		};
+		4BC0ED4829A6EE4F003E9CD1 /* Regression */ = {
+			isa = PBXGroup;
+			children = (
+				4B6E1B6C28DB4E8C0023B54B /* Issue1998View.swift */,
+				4BC0ED4929A6EE78003E9CD1 /* Issue2035View.swift */,
+			);
+			path = Regression;
+			sourceTree = "<group>";
+		};
 		4BCCF3351D5B02F8003387C2 /* Kingfisher-macOS-Demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -420,9 +431,9 @@
 		D1F78A602589F14C00930759 /* SwiftUIViews */ = {
 			isa = PBXGroup;
 			children = (
+				4BC0ED4829A6EE4F003E9CD1 /* Regression */,
 				D1F78A622589F17200930759 /* MainView.swift */,
 				D1F78A612589F17200930759 /* ListDemo.swift */,
-				4B6E1B6C28DB4E8C0023B54B /* SingleListDemo.swift */,
 				D198F42125EDC4B900C53E0D /* GridDemo.swift */,
 				4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */,
 				D1F78A632589F17200930759 /* SingleViewDemo.swift */,
@@ -687,7 +698,7 @@
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */,
 				072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */,
-				4B6E1B6D28DB4E8C0023B54B /* SingleListDemo.swift in Sources */,
+				4B6E1B6D28DB4E8C0023B54B /* Issue1998View.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
 				4B92FE5625FF906B00473088 /* AutoSizingTableViewController.swift in Sources */,
 				D1F78A642589F17200930759 /* ListDemo.swift in Sources */,
@@ -703,6 +714,7 @@
 				D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */,
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
+				4BC0ED4A29A6EE78003E9CD1 /* Issue2035View.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,
 				4B120CA726B91BB70060B092 /* TransitionViewDemo.swift in Sources */,
 				769F07F126298E2E00610767 /* GIFHeavyViewController.swift in Sources */,
