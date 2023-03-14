@@ -47,6 +47,7 @@ open class SessionDelegate: NSObject {
     private let lock = NSLock()
 
     let onValidStatusCode = Delegate<Int, Bool>()
+    let onResponseReceived = Delegate<(URLResponse, (URLSession.ResponseDisposition) -> Void), Void>()
     let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
     let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
@@ -169,7 +170,15 @@ extension SessionDelegate: URLSessionDataDelegate {
             completionHandler(.cancel)
             return
         }
-        completionHandler(.allow)
+
+        let inspectedHandler: (URLSession.ResponseDisposition) -> Void = { disposition in
+            if disposition == .cancel {
+                let error = KingfisherError.responseError(reason: .cancelledByDelegate(response: response))
+                self.onCompleted(task: dataTask, result: .failure(error))
+            }
+            completionHandler(disposition)
+        }
+        onResponseReceived.call((response, inspectedHandler))
     }
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
