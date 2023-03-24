@@ -184,6 +184,9 @@ open class ImageDownloader {
         sessionDelegate.onValidStatusCode.delegate(on: self) { (self, code) in
             return (self.delegate ?? self).isValidStatusCode(code, for: self)
         }
+        sessionDelegate.onResponseReceived.delegate(on: self) { (self, invoke) in
+            (self.delegate ?? self).imageDownloader(self, didReceive: invoke.0, completionHandler: invoke.1)
+        }
         sessionDelegate.onDownloadingFinished.delegate(on: self) { (self, value) in
             let (url, result) = value
             do {

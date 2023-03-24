@@ -547,9 +547,9 @@ class ImageDownloaderTests: XCTestCase {
     
     
     func testSessionDelegate() {
-        class ExtensionDelegate:SessionDelegate {
+        class ExtensionDelegate: SessionDelegate {
             //'exp' only for test
-            public let exp:XCTestExpectation
+            public let exp: XCTestExpectation
             init(_ expectation:XCTestExpectation) {
                 exp = expectation
             }
@@ -566,6 +566,78 @@ class ImageDownloaderTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testDownloaderReceiveResponsePass() {
+
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["someKey": "someValue"])
+
+        let handler = TaskResponseCompletion()
+        let obj = NSObject()
+        handler.onReceiveResponse.delegate(on: obj) { (obj, response) in
+            guard let httpResponse = response as? HTTPURLResponse else {
+                XCTFail("Should be an HTTP response.")
+                return .cancel
+            }
+            XCTAssertEqual(httpResponse.statusCode, 200)
+            XCTAssertEqual(httpResponse.url, url)
+            XCTAssertEqual(httpResponse.allHeaderFields["someKey"] as? String, "someValue")
+
+            return .allow
+        }
+
+        downloader.delegate = handler
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertNil(result.error)
+
+            self.downloader.delegate = nil
+            // hold delegate
+            _ = handler
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloaderReceiveResponseFailure() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["someKey": "someValue"])
+
+        let handler = TaskResponseCompletion()
+        let obj = NSObject()
+        handler.onReceiveResponse.delegate(on: obj) { (obj, response) in
+            guard let httpResponse = response as? HTTPURLResponse else {
+                XCTFail("Should be an HTTP response.")
+                return .cancel
+            }
+            XCTAssertEqual(httpResponse.statusCode, 200)
+            XCTAssertEqual(httpResponse.url, url)
+            XCTAssertEqual(httpResponse.allHeaderFields["someKey"] as? String, "someValue")
+
+            return .cancel
+        }
+
+        downloader.delegate = handler
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+
+            if case .responseError(reason: .cancelledByDelegate) = result.error! {
+            } else {
+                XCTFail()
+            }
+
+            self.downloader.delegate = nil
+            // hold delegate
+            _ = handler
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 class URLNilDataModifier: ImageDownloaderDelegate {
@@ -577,6 +649,19 @@ class URLNilDataModifier: ImageDownloaderDelegate {
 class TaskNilDataModifier: ImageDownloaderDelegate {
     func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with dataTask: SessionDataTask) -> Data? {
         return nil
+    }
+}
+
+class TaskResponseCompletion: ImageDownloaderDelegate {
+
+    let onReceiveResponse = Delegate<URLResponse, URLSession.ResponseDisposition>()
+
+    func imageDownloader(
+        _ downloader: ImageDownloader,
+        didReceive response: URLResponse,
+        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+    ) {
+        completionHandler(onReceiveResponse.call(response)!)
     }
 }
 

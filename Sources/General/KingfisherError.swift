@@ -88,6 +88,10 @@ public enum KingfisherError: Error {
         /// The task is done but no URL response found. Code 2005.
         /// - task: The failed task.
         case noURLResponse(task: SessionDataTask)
+
+        /// The task is cancelled by `ImageDownloaderDelegate` due to the `.cancel` response disposition is
+        /// specified by the delegate method. Code 2006.
+        case cancelledByDelegate(response: URLResponse)
     }
     
     /// Represents the error reason during Kingfisher caching system.
@@ -345,7 +349,10 @@ extension KingfisherError.ResponseErrorReason {
         case .dataModifyingFailed(let task):
             return "The data modifying delegate returned `nil` for the downloaded data. Task: \(task)."
         case .noURLResponse(let task):
-            return "No URL response received. Task: \(task),"
+            return "No URL response received. Task: \(task)."
+        case .cancelledByDelegate(let response):
+            return "The downloading task is cancelled by the downloader delegate. Response: \(response)."
+
         }
     }
     
@@ -356,6 +363,7 @@ extension KingfisherError.ResponseErrorReason {
         case .URLSessionError: return 2003
         case .dataModifyingFailed: return 2004
         case .noURLResponse: return 2005
+        case .cancelledByDelegate: return 2006
         }
     }
 }
