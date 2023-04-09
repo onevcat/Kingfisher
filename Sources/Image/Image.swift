@@ -364,12 +364,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
-        let downsampleOptions = [
+        let downsampleOptions: [CFString : Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceShouldCacheImmediately: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
-        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else {
+            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
+        ]
+        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions as CFDictionary) else {
             return nil
         }
         return KingfisherWrapper.image(cgImage: downsampledImage, scale: scale, refImage: nil)
