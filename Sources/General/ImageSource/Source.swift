@@ -41,7 +41,7 @@ public enum Source {
 
         /// The underlying value type of source identifier.
         public typealias Value = UInt
-        static var current: Value = 0
+        static private(set) var current: Value = 0
         static func next() -> Value {
             current += 1
             return current
