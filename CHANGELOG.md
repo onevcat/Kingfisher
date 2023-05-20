@@ -2,6 +2,17 @@
 
 -----
 
+## [7.7.0 - The Last Chance](https://github.com/onevcat/Kingfisher/releases/tag/7.7.0) (2023-05-20)
+
+#### Add
+* Expose a new `imageDownloader(_:didReceive:completionHandler:)` delegate method in `ImageDownloaderDelegate` to allow making `ResponseDisposition` decision to the download task. [#2048](https://github.com/onevcat/Kingfisher/pull/2048) @onevcat
+
+#### Fix
+* Some type conversion warnings which might annoy under Swift 6 compiler. [#2060](https://github.com/onevcat/Kingfisher/pull/2060) [#2063](https://github.com/onevcat/Kingfisher/pull/2063) @zunda-pixel
+* Apply access limitation to the internal `Source.Identifier`. [#2074](https://github.com/onevcat/Kingfisher/pull/2074) @iwill-hwang
+
+---
+
 ## [7.6.2 - Fix Dead Loop](https://github.com/onevcat/Kingfisher/releases/tag/7.6.2) (2023-02-23)
 
 #### Fix
