@@ -194,6 +194,22 @@ open class AnimatedImageView: UIImageView {
             }
         }
     }
+
+// Workaround for Apple xcframework creating issue on Apple TV in Swift 5.8.
+// https://github.com/apple/swift/issues/66015
+#if os(tvOS)
+    public override init(image: UIImage?, highlightedImage: UIImage?) {
+        super.init(image: image, highlightedImage: highlightedImage)
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    init() {
+        super.init(frame: .zero)
+    }
+#endif
     
     deinit {
         if isDisplayLinkInitialized {
