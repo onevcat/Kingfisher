@@ -62,7 +62,7 @@ class HighResolutionCollectionViewController: UICollectionViewController {
         // this demo. Normally you can just use the URL to set image.
 
         // This should crash most devices due to memory pressure.
-        // let resource = ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
+        // let resource = KF.ImageResource(downloadURL: url, cacheKey: "\(url.absoluteString)-\(indexPath.row)")
         // imageView.kf.setImage(with: resource)
 
         // This would survive on even the lowest spec devices!
