@@ -136,7 +136,7 @@ class ImageDataProviderTests: XCTestCase {
     
     func testLocalFileExplicitKey() {
         let url1 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/DEF/Kingfisher-Demo.app/images/kingfisher-1.jpg")!
-        let imageResource = ImageResource(downloadURL: url1, cacheKey: "hello")
+        let imageResource = KF.ImageResource(downloadURL: url1, cacheKey: "hello")
         let source = imageResource.convertToSource()
         XCTAssertEqual(source.cacheKey, "hello")
     }

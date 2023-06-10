@@ -114,7 +114,7 @@ class ImageViewExtensionTests: XCTestCase {
 
         var progressBlockIsCalled = false
 
-        let resource = ImageResource(downloadURL: url)
+        let resource = KF.ImageResource(downloadURL: url)
         imageView.kf.setImage(
             with: resource,
             progressBlock: { _, _ in progressBlockIsCalled = true })
