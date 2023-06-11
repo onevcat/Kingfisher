@@ -74,13 +74,13 @@ public class GIFAnimatedImage {
     let images: [KFCrossPlatformImage]
     let duration: TimeInterval
     
-    init?(from imageSource: CGImageSource, for info: [String: Any], options: ImageCreatingOptions) {
-        let frameCount = CGImageSourceGetCount(imageSource)
+    init?(from frameSource: ImageFrameSource, options: ImageCreatingOptions) {
+        let frameCount = frameSource.frameCount
         var images = [KFCrossPlatformImage]()
         var gifDuration = 0.0
         
         for i in 0 ..< frameCount {
-            guard let imageRef = CGImageSourceCreateImageAtIndex(imageSource, i, info as CFDictionary) else {
+            guard let imageRef = frameSource.frame(at: i) else {
                 return nil
             }
             
@@ -88,13 +88,18 @@ public class GIFAnimatedImage {
                 gifDuration = .infinity
             } else {
                 // Get current animated GIF frame duration
-                gifDuration += GIFAnimatedImage.getFrameDuration(from: imageSource, at: i)
+                gifDuration += frameSource.duration(at: i)
             }
             images.append(KingfisherWrapper.image(cgImage: imageRef, scale: options.scale, refImage: nil))
             if options.onlyFirstFrame { break }
         }
         self.images = images
         self.duration = gifDuration
+    }
+    
+    convenience init?(from imageSource: CGImageSource, for info: [String: Any], options: ImageCreatingOptions) {
+        let frameSource = CGImageFrameSource(data: nil, imageSource: imageSource, options: info)
+        self.init(from: frameSource, options: options)
     }
     
     /// Calculates frame duration for a gif frame out of the kCGImagePropertyGIFDictionary dictionary.
@@ -119,3 +124,30 @@ public class GIFAnimatedImage {
         return getFrameDuration(from: gifInfo)
     }
 }
+
+/// Represents a frame source for animated image
+public protocol ImageFrameSource {
+    var data: Data? { get }
+    var frameCount: Int { get }
+    func frame(at index: Int) -> CGImage?
+    func duration(at index: Int) -> TimeInterval
+}
+
+struct CGImageFrameSource: ImageFrameSource {
+    let data: Data?
+    let imageSource: CGImageSource
+    let options: [String: Any]?
+    
+    var frameCount: Int {
+        return CGImageSourceGetCount(imageSource)
+    }
+
+    func frame(at index: Int) -> CGImage? {
+        return CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary?)
+    }
+
+    func duration(at index: Int) -> TimeInterval {
+        return GIFAnimatedImage.getFrameDuration(from: imageSource, at: index)
+    }
+}
+
