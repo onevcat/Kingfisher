@@ -98,6 +98,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
     }
     
+    /// The custom frame source of current image.
     public private(set) var frameSource: ImageFrameSource? {
         get { return getAssociatedObject(base, &imageSourceKey) }
         set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }

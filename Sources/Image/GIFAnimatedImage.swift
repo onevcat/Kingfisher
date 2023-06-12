@@ -127,9 +127,16 @@ public class GIFAnimatedImage {
 
 /// Represents a frame source for animated image
 public protocol ImageFrameSource {
+    /// Source data associated with this frame source.
     var data: Data? { get }
+    
+    /// Count of total frames in this frame source.
     var frameCount: Int { get }
+    
+    /// Retrieves the frame at a specific index. If the index is invalid, implementors should return `nil`.
     func frame(at index: Int) -> CGImage?
+    
+    /// Retrieves the duration at a specific index. If the index is invalid, implementors should return `0.0`.
     func duration(at index: Int) -> TimeInterval
 }
 
