@@ -133,11 +133,19 @@ public protocol ImageFrameSource {
     /// Count of total frames in this frame source.
     var frameCount: Int { get }
     
-    /// Retrieves the frame at a specific index. If the index is invalid, implementors should return `nil`.
-    func frame(at index: Int) -> CGImage?
+    /// Retrieves the frame at a specific index. The result image is expected to be
+    /// no larger than `maxSize`. If the index is invalid, implementors should return `nil`.
+    func frame(at index: Int, maxSize: CGSize?) -> CGImage?
     
     /// Retrieves the duration at a specific index. If the index is invalid, implementors should return `0.0`.
     func duration(at index: Int) -> TimeInterval
+}
+
+public extension ImageFrameSource {
+    /// Retrieves the frame at a specific index. If the index is invalid, implementors should return `nil`.
+    func frame(at index: Int) -> CGImage? {
+        return frame(at: index, maxSize: nil)
+    }
 }
 
 struct CGImageFrameSource: ImageFrameSource {
@@ -149,7 +157,16 @@ struct CGImageFrameSource: ImageFrameSource {
         return CGImageSourceGetCount(imageSource)
     }
 
-    func frame(at index: Int) -> CGImage? {
+    func frame(at index: Int, maxSize: CGSize?) -> CGImage? {
+        var options = self.options as? [CFString: Any]
+        if let maxSize = maxSize, maxSize != .zero {
+            options = (options ?? [:]).merging([
+                kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceShouldCacheImmediately: true,
+                kCGImageSourceThumbnailMaxPixelSize: max(maxSize.width, maxSize.height)
+            ], uniquingKeysWith: { $1 })
+        }
         return CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary?)
     }
 
