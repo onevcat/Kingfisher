@@ -514,7 +514,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     public func decoded(scale: CGFloat) -> KFCrossPlatformImage {
         // Prevent animated image (GIF) losing it's images
         #if os(iOS)
-        if imageSource != nil { return base }
+        if frameSource != nil { return base }
         #else
         if images != nil { return base }
         #endif
@@ -543,7 +543,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     public func decoded(on context: CGContext) -> KFCrossPlatformImage {
         // Prevent animated image (GIF) losing it's images
         #if os(iOS)
-        if imageSource != nil { return base }
+        if frameSource != nil { return base }
         #else
         if images != nil { return base }
         #endif

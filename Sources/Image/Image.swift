@@ -91,7 +91,15 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     var size: CGSize { return base.size }
     
     /// The image source reference of current image.
-    public private(set) var imageSource: CGImageSource? {
+    public var imageSource: CGImageSource? {
+        get {
+            guard let frameSource = frameSource as? CGImageFrameSource else { return nil }
+            return frameSource.imageSource
+        }
+    }
+    
+    /// The custom frame source of current image.
+    public private(set) var frameSource: ImageFrameSource? {
         get { return getAssociatedObject(base, &imageSourceKey) }
         set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
     }
@@ -274,29 +282,51 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, info as CFDictionary) else {
             return nil
         }
-        
+        let frameSource = CGImageFrameSource(data: data, imageSource: imageSource, options: info)
         #if os(macOS)
-        guard let animatedImage = GIFAnimatedImage(from: imageSource, for: info, options: options) else {
+        let baseImage = KFCrossPlatformImage(data: data)
+        #else
+        let baseImage = KFCrossPlatformImage(data: data, scale: options.scale)
+        #endif
+        return animatedImage(source: frameSource, options: options, baseImage: baseImage)
+    }
+    
+    /// Creates an animated image from a given frame source.
+    ///
+    /// - Parameters:
+    ///   - source: The frame source to create animated image from.
+    ///   - options: Options to use when creating the animated image.
+    ///   - baseImage: An optional image object to be used as the key frame of the animated image. If `nil`, the first
+    ///                frame of the `source` will be used.
+    /// - Returns: An `Image` object represents the animated image. It is in form of an array of image frames with a
+    ///           certain duration. `nil` if anything wrong when creating animated image.
+    public static func animatedImage(source: ImageFrameSource, options: ImageCreatingOptions, baseImage: KFCrossPlatformImage? = nil) -> KFCrossPlatformImage? {
+        #if os(macOS)
+        guard let animatedImage = GIFAnimatedImage(from: source, options: options) else {
             return nil
         }
         var image: KFCrossPlatformImage?
         if options.onlyFirstFrame {
             image = animatedImage.images.first
         } else {
-            image = KFCrossPlatformImage(data: data)
+            if let baseImage = baseImage {
+                image = baseImage
+            } else {
+                image = animatedImage.images.first
+            }
             var kf = image?.kf
             kf?.images = animatedImage.images
             kf?.duration = animatedImage.duration
         }
-        image?.kf.animatedImageData = data
-        image?.kf.imageFrameCount = Int(CGImageSourceGetCount(imageSource))
+        image?.kf.animatedImageData = source.data
+        image?.kf.imageFrameCount = source.frameCount
         return image
         #else
         
         var image: KFCrossPlatformImage?
         if options.preloadAll || options.onlyFirstFrame {
             // Use `images` image if you want to preload all animated data
-            guard let animatedImage = GIFAnimatedImage(from: imageSource, for: info, options: options) else {
+            guard let animatedImage = GIFAnimatedImage(from: source, options: options) else {
                 return nil
             }
             if options.onlyFirstFrame {
@@ -305,15 +335,22 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
                 let duration = options.duration <= 0.0 ? animatedImage.duration : options.duration
                 image = .animatedImage(with: animatedImage.images, duration: duration)
             }
-            image?.kf.animatedImageData = data
+            image?.kf.animatedImageData = source.data
         } else {
-            image = KFCrossPlatformImage(data: data, scale: options.scale)
+            if let baseImage = baseImage {
+                image = baseImage
+            } else {
+                guard let firstFrame = source.frame(at: 0) else {
+                    return nil
+                }
+                image = KFCrossPlatformImage(cgImage: firstFrame, scale: options.scale, orientation: .up)
+            }
             var kf = image?.kf
-            kf?.imageSource = imageSource
-            kf?.animatedImageData = data
+            kf?.frameSource = source
+            kf?.animatedImageData = source.data
         }
         
-        image?.kf.imageFrameCount = Int(CGImageSourceGetCount(imageSource))
+        image?.kf.imageFrameCount = source.frameCount
         return image
         #endif
     }
