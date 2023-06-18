@@ -1186,6 +1186,35 @@ class KingfisherManagerTests: XCTestCase {
         
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    // https://github.com/onevcat/Kingfisher/issues/1923
+    func testAnimatedImageShouldRecreateFromCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let data = testImageGIFData
+        stub(url, data: data)
+        let p = SimpleProcessor()
+        manager.retrieveImage(with: url, options: [.processor(p), .onlyLoadFirstFrame]) { result in
+            XCTAssertTrue(p.processed)
+            XCTAssertTrue(result.value!.image.creatingOptions!.onlyFirstFrame)
+            p.processed = false
+            self.manager.retrieveImage(with: url, options: [.processor(p)]) { result in
+                XCTAssertTrue(p.processed)
+                XCTAssertFalse(result.value!.image.creatingOptions!.onlyFirstFrame)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+}
+
+private var imageCreatingOptionsKey: Void?
+
+extension KFCrossPlatformImage {
+    var creatingOptions: ImageCreatingOptions? {
+        get { return getAssociatedObject(self, &imageCreatingOptionsKey) }
+        set { setRetainedAssociatedObject(self, &imageCreatingOptionsKey, newValue) }
+    }
 }
 
 class SimpleProcessor: ImageProcessor {
@@ -1208,7 +1237,10 @@ class SimpleProcessor: ImageProcessor {
         case .image(let image):
             return image
         case .data(let data):
-            return KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options.imageCreatingOptions)
+            let creatingOptions = options.imageCreatingOptions
+            let image = KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: creatingOptions)
+            image?.creatingOptions = creatingOptions
+            return image
         }
     }
 }
