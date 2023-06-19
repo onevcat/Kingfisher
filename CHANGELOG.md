@@ -2,6 +2,13 @@
 
 -----
 
+## [7.8.1 - Animated <3 Processor](https://github.com/onevcat/Kingfisher/releases/tag/7.8.1) (2023-06-19)
+
+#### Fix
+* Now the animated image creation from disk cache will use the input processor correctly. [#2099](https://github.com/onevcat/Kingfisher/pull/2099) @yeatse
+
+---
+
 ## [7.8.0 - ImageSource Protocol](https://github.com/onevcat/Kingfisher/releases/tag/7.8.0) (2023-06-13)
 
 #### Add
