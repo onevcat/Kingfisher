@@ -1079,8 +1079,13 @@
 				PRODUCT_BUNDLE_PACKAGE_TYPE = FMWK;
 				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1128,7 +1133,12 @@
 				PRODUCT_BUNDLE_PACKAGE_TYPE = FMWK;
 				PRODUCT_NAME = Kingfisher;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

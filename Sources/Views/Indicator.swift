@@ -148,6 +148,8 @@ final class ActivityIndicator: Indicator {
             } else {
                 indicatorStyle = UIActivityIndicatorView.Style.white
             }
+            #elseif os(xrOS)
+            indicatorStyle = UIActivityIndicatorView.Style.medium
             #else
             if #available(iOS 13.0, * ) {
                 indicatorStyle = UIActivityIndicatorView.Style.medium
