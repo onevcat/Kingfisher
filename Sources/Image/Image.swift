@@ -281,7 +281,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         #if os(xrOS)
         let info: [String: Any] = [
             kCGImageSourceShouldCache as String: true,
-            kCGImageSourceTypeIdentifierHint as String: UTType.gif
+            kCGImageSourceTypeIdentifierHint as String: UTType.gif.identifier
         ]
         #else
         let info: [String: Any] = [
