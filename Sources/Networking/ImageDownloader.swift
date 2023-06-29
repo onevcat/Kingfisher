@@ -43,6 +43,17 @@ public struct ImageLoadingResult {
 
     /// The raw data received from downloader.
     public let originalData: Data
+
+    /// Creates an `ImageDownloadResult`
+    ///
+    /// - parameter image: Image of the download result
+    /// - parameter url: URL from where the image was downloaded from
+    /// - parameter originalData: The image's binary data
+    public init(image: KFCrossPlatformImage, url: URL? = nil, originalData: Data) {
+        self.image = image
+        self.url = url
+        self.originalData = originalData
+    }
 }
 
 /// Represents a task of an image downloading process.
