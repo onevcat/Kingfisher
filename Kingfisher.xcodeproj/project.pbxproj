@@ -268,6 +268,7 @@
 		D1A37BF1215D3850009B39B7 /* SizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeExtensions.swift; sourceTree = "<group>"; };
 		D1BA781C2174D07800C69D7B /* CallbackQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackQueue.swift; sourceTree = "<group>"; };
 		D1BFED94222ACC6B009330C8 /* ImageProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessorTests.swift; sourceTree = "<group>"; };
+		D1C04A3E2A45D20500B3775F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		D1D2C3291C70A3230018F2F9 /* single-frame.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "single-frame.gif"; sourceTree = "<group>"; };
 		D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensionTests.swift; sourceTree = "<group>"; };
 		D1E564402199C21E0057AAE3 /* StorageExpirationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageExpirationTests.swift; sourceTree = "<group>"; };
@@ -323,6 +324,7 @@
 			isa = PBXGroup;
 			children = (
 				D12AB6A9215D2BB50013BA68 /* Info.plist */,
+				D1C04A3E2A45D20500B3775F /* PrivacyInfo.xcprivacy */,
 				D12AB6B0215D2BB50013BA68 /* General */,
 				D12AB6A2215D2BB50013BA68 /* Image */,
 				D12AB69C215D2BB50013BA68 /* Networking */,
