@@ -89,6 +89,38 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func testRetrieveImageAsync() async throws {
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+
+        let noneResult = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(noneResult.image)
+        XCTAssertEqual(noneResult.cacheType, .none)
+
+        let memoryResult = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(memoryResult.image)
+        XCTAssertEqual(memoryResult.cacheType, .memory)
+
+        manager.cache.clearMemoryCache()
+
+        let diskResult = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(diskResult.image)
+        XCTAssertEqual(diskResult.cacheType, .disk)
+
+        manager.cache.clearMemoryCache()
+        await manager.cache.clearDiskCache()
+        let noneResult2 = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(noneResult2.image)
+        XCTAssertEqual(noneResult2.cacheType, .none)
+    }
+    #endif
+    #endif
+
     func testRetrieveImageWithProcessor() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

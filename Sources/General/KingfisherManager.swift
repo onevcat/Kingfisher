@@ -169,6 +169,34 @@ public class KingfisherManager {
         )
     }
 
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    public func retrieveImage(
+        with resource: Resource,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil) async throws -> RetrieveImageResult
+    {
+        var task: DownloadTask?
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                task = retrieveImage(
+                    with: resource.convertToSource(),
+                    options: options,
+                    progressBlock: progressBlock,
+                    downloadTaskUpdated: downloadTaskUpdated
+                ) { result in
+                    continuation.resume(with: result)
+                }
+            }
+        } onCancel: { [task] in
+            task?.cancel()
+        }
+    }
+    #endif
+    #endif
+
     /// Gets an image from a given resource.
     ///
     /// - Parameters:
@@ -208,6 +236,35 @@ public class KingfisherManager {
             downloadTaskUpdated: downloadTaskUpdated,
             completionHandler: completionHandler)
     }
+
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    @discardableResult
+    public func retrieveImage(
+        with source: Source,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil) async throws -> RetrieveImageResult
+    {
+        var task: DownloadTask?
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                task = retrieveImage(
+                    with: source,
+                    options: options,
+                    progressBlock: progressBlock,
+                    downloadTaskUpdated: downloadTaskUpdated
+                ) { result in
+                    continuation.resume(with: result)
+                }
+            }
+        } onCancel: { [task] in
+            task?.cancel()
+        }
+    }
+    #endif
+    #endif
 
     func retrieveImage(
         with source: Source,

@@ -669,7 +669,20 @@ open class ImageCache {
             }
         }
     }
-    
+
+    #if swift(>=5.5)
+    #if canImport(_Concurrency)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    open func clearDiskCache() async {
+        await withCheckedContinuation { continuation in
+            clearDiskCache {
+                continuation.resume()
+            }
+        }
+    }
+    #endif
+    #endif
+
     /// Clears the expired images from memory & disk storage. This is an async operation.
     open func cleanExpiredCache(completion handler: (() -> Void)? = nil) {
         cleanExpiredMemoryCache()
