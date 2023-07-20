@@ -250,7 +250,7 @@ Special thanks to:
 
 [![imgly](https://user-images.githubusercontent.com/1812216/106253726-271ed000-6218-11eb-98e0-c9c681925770.png)](https://img.ly/)
 
-[![emergetools](https://github.com/onevcat/Kingfisher/assets/1019875/d44f6f50-993f-42e3-b79c-960f69c4adc1)](https://www.emergetools.com)
+[![emergetools](https://github-production-user-asset-6210df.s3.amazonaws.com/1019875/254794187-d44f6f50-993f-42e3-b79c-960f69c4adc1.png)](https://www.emergetools.com)
 
 
 
