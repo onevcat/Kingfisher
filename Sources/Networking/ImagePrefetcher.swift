@@ -119,7 +119,6 @@ public class ImagePrefetcher: CustomStringConvertible {
     ///   - progressBlock: Called every time an resource is downloaded, skipped or cancelled.
     ///   - completionHandler: Called when the whole prefetching process finished.
     ///
-    /// - Note:
     /// By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as
     /// the downloader and cache target respectively. You can specify another downloader or cache by using
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
@@ -141,7 +140,7 @@ public class ImagePrefetcher: CustomStringConvertible {
     /// Creates an image prefetcher with an array of URLs.
     ///
     /// The prefetcher should be initiated with a list of prefetching targets. The URLs list is immutable.
-    /// After you get a valid `ImagePrefetcher` object, you call `start()` on it to begin the prefetching process.
+    /// After you get a valid `ImagePrefetcher` object, you call ``start()`` on it to begin the prefetching process.
     /// The images which are already cached will be skipped without downloading again.
     ///
     /// - Parameters:
@@ -149,8 +148,7 @@ public class ImagePrefetcher: CustomStringConvertible {
     ///   - options: Options could control some behaviors. See `KingfisherOptionsInfo` for more.
     ///   - completionHandler: Called when the whole prefetching process finished.
     ///
-    /// - Note:
-    /// By default, the `ImageDownloader.defaultDownloader` and `ImageCache.defaultCache` will be used as
+    /// By default, the ``ImageDownloader/default`` and ``ImageCache/default`` will be used as
     /// the downloader and cache target respectively. You can specify another downloader or cache by using
     /// a customized `KingfisherOptionsInfo`. Both the progress and completion block will be invoked in
     /// main thread. The `.callbackQueue` value in `optionsInfo` will be ignored in this method.
