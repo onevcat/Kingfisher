@@ -315,7 +315,7 @@ public enum DiskStorage {
 
         func cacheFileName(forKey key: String) -> String {
             if config.usesHashedFileName {
-                let hashedKey = key.kf.md5
+                let hashedKey = key.kf.sha256
                 if let ext = config.pathExtension {
                     return "\(hashedKey).\(ext)"
                 } else if config.autoExtAfterHashedFileName,
