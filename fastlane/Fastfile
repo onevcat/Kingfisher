@@ -41,8 +41,9 @@ platform :ios do
 
   desc "Lint"
   lane :lint do
-    # carthage(command: "build", no_skip_current: true, platform: "iOS")
-    pod_lib_lint
+    # Allows warnings temporarily before CocoaPods 1.13.0 (visionOS support) and Xcode 15.0
+    # pod_lib_lint
+    pod_lib_lint(allow_warnings: true)
     spm
   end
   
