@@ -35,8 +35,8 @@ class AVAssetImageGeneratorViewController: UIViewController {
         super.viewDidLoad()
 
         let provider = AVAssetImageDataProvider(
-            assetURL: URL(string: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4")!,
-            seconds: 15.0
+            assetURL: URL(string: "https://github.com/onevcat/sample-files/raw/main/video/mp4/astronaut_flying_fantasy.mp4")!,
+            seconds: 6.0
         )
         KF.dataProvider(provider).set(to: imageView)
     }
