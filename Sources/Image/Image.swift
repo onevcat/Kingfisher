@@ -42,6 +42,10 @@ import CoreImage
 import CoreGraphics
 import ImageIO
 
+#if canImport(UniformTypeIdentifiers)
+import UniformTypeIdentifiers
+#endif
+
 private var animatedImageDataKey: Void?
 private var imageFrameCountKey: Void?
 
@@ -274,10 +278,17 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// - Returns: An `Image` object represents the animated image. It is in form of an array of image frames with a
     ///            certain duration. `nil` if anything wrong when creating animated image.
     public static func animatedImage(data: Data, options: ImageCreatingOptions) -> KFCrossPlatformImage? {
+        #if os(xrOS)
+        let info: [String: Any] = [
+            kCGImageSourceShouldCache as String: true,
+            kCGImageSourceTypeIdentifierHint as String: UTType.gif.identifier
+        ]
+        #else
         let info: [String: Any] = [
             kCGImageSourceShouldCache as String: true,
             kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF
         ]
+        #endif
         
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, info as CFDictionary) else {
             return nil
