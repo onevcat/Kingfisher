@@ -2,6 +2,19 @@
 
 -----
 
+## [7.9.0 - visionOS & Xcode 15](https://github.com/onevcat/Kingfisher/releases/tag/7.9.0) (2023-07-29)
+
+#### Add
+* Add visionOS as support target. Now Kingfisher can run natively on visionOS, in both UIKit or SwiftUI mode. [#2103](https://github.com/onevcat/Kingfisher/pull/2103)
+* Add private manifest file (`PrivacyInfo.xcprivacy`) to the project to meet Apple's requirement of describing data collected and use of required reason API. [#2104](https://github.com/onevcat/Kingfisher/pull/2104)
+* Support digital signature in xcframework. Now the xcframework of Kingfisher is signed with the Apple Developer ID of the maintainer team. [#2106](https://github.com/onevcat/Kingfisher/pull/2106)
+* A public initializer of `ImageDownloadResult`. This allows overriding side to construct and return a valid download result. [#2107](https://github.com/onevcat/Kingfisher/pull/2107) @kmaschke85
+
+#### Fix
+* Some documentation fixes.
+
+---
+
 ## [7.8.1 - Animated <3 Processor](https://github.com/onevcat/Kingfisher/releases/tag/7.8.1) (2023-06-19)
 
 #### Fix
