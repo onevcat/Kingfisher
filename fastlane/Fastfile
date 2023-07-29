@@ -91,9 +91,8 @@ platform :ios do
   
   lane :xcframework do |options|
     target_version = "Kingfisher-#{options[:version]}"
-    supporting_root = "../build/#{target_version}/Supporting Files"
     
-    xcversion(version: "~> 14.0")
+    xcversion(version: "~> 15.0")
     FileUtils.rm_rf '../build'
     
     frameworks = {}
@@ -104,7 +103,9 @@ platform :ios do
      "appletvos", 
      "appletvsimulator", 
      "watchos", 
-     "watchsimulator"
+     "watchsimulator",
+     "xros",
+     "xrsimulator"
     ].each do |sdk|
       archive_path = "build/Kingfisher-#{sdk}.xcarchive"
       xcodebuild(
@@ -126,6 +127,8 @@ platform :ios do
       frameworks_with_dsyms: frameworks, 
       output: "build/#{target_version}/Kingfisher.xcframework"
     )
+
+    Actions.sh("codesign --timestamp -v --sign 'Apple Distribution: Wei Wang (A4YJ9MRZ66)' ../build/#{target_version}/Kingfisher.xcframework")
 
     zip(
       path: "build/#{target_version}",

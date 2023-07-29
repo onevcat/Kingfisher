@@ -265,7 +265,11 @@ open class AnimatedImageView: UIImageView {
     private func reset() {
         animator = nil
         if let image = image, let frameSource = image.kf.frameSource {
+            #if os(xrOS)
+            let targetSize = bounds.scaled(UITraitCollection.current.displayScale).size
+            #else
             let targetSize = bounds.scaled(UIScreen.main.scale).size
+            #endif
             let animator = Animator(
                 frameSource: frameSource,
                 contentMode: contentMode,
