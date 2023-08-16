@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 import Foundation
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
 import UIKit
 
 /// Transition effect which will be used when an image downloaded and set by `UIImageView`

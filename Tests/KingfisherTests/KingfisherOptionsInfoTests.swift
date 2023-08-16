@@ -35,7 +35,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.targetCache === nil)
         XCTAssertTrue(options.downloader === nil)
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
         switch options.transition {
         case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
@@ -99,7 +99,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.originalCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
         let transition = ImageTransition.fade(0.5)
         options.transition = transition
         switch options.transition {

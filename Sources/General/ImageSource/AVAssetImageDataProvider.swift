@@ -127,7 +127,7 @@ extension CGImage {
         guard let mutableData = CFDataCreateMutable(nil, 0) else {
             return nil
         }
-#if os(xrOS)
+#if os(visionOS)
         guard let destination = CGImageDestinationCreateWithData(
             mutableData, UTType.jpeg.identifier as CFString , 1, nil
         ) else {

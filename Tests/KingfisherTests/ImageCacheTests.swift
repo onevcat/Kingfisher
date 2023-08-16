@@ -384,7 +384,7 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-#if os(iOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
     func testModifierShouldOnlyApplyForFinalResultWhenMemoryLoad() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
