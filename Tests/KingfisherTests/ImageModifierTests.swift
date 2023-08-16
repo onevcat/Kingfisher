@@ -48,7 +48,7 @@ class ImageModifierTests: XCTestCase {
         XCTAssert(modifiedImage == image)
     }
 
-#if os(iOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
 
     func testRenderingModeImageModifier() {
         let m1 = RenderingModeImageModifier(renderingMode: .alwaysOriginal)

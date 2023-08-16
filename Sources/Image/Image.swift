@@ -278,7 +278,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// - Returns: An `Image` object represents the animated image. It is in form of an array of image frames with a
     ///            certain duration. `nil` if anything wrong when creating animated image.
     public static func animatedImage(data: Data, options: ImageCreatingOptions) -> KFCrossPlatformImage? {
-        #if os(xrOS)
+        #if os(visionOS)
         let info: [String: Any] = [
             kCGImageSourceShouldCache as String: true,
             kCGImageSourceTypeIdentifierHint as String: UTType.gif.identifier
