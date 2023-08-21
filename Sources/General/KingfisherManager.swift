@@ -708,6 +708,113 @@ public class KingfisherManager {
     }
 }
 
+// Concurrency
+extension KingfisherManager {
+    /// Gets an image from a given resource.
+    /// - Parameters:
+    ///   - resource: The `Resource` object defines data information like key or URL.
+    ///   - options: Options to use when creating the image.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called. `progressBlock` is always called in
+    ///                    main queue.
+    ///
+    /// - Note: This method will first check whether the requested `resource` is already in cache or not. If cached,
+    ///    it returns the value after the cached image retrieved. Otherwise, it
+    ///    will download the `resource`, store it in cache, then returns the value.
+    public func retrieveImage(
+        with resource: Resource,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil
+    ) async throws -> RetrieveImageResult
+    {
+        try await retrieveImage(
+            with: resource.convertToSource(),
+            options: options,
+            progressBlock: progressBlock
+        )
+    }
+    
+    /// Gets an image from a given resource.
+    ///
+    /// - Parameters:
+    ///   - source: The `Source` object defines data information from network or a data provider.
+    ///   - options: Options to use when creating the image.
+    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called. `progressBlock` is always called in
+    ///                    main queue.
+    ///
+    /// - Note: This method will first check whether the requested `resource` is already in cache or not. If cached,
+    ///    it returns the value after the cached image retrieved. Otherwise, it
+    ///    will download the `resource`, store it in cache, then returns the value.
+    ///
+    public func retrieveImage(
+        with source: Source,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil
+    ) async throws -> RetrieveImageResult
+    {
+        let options = currentDefaultOptions + (options ?? .empty)
+        let info = KingfisherParsedOptionsInfo(options)
+        return try await retrieveImage(
+            with: source,
+            options: info,
+            progressBlock: progressBlock
+        )
+    }
+    
+    func retrieveImage(
+        with source: Source,
+        options: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil
+    ) async throws -> RetrieveImageResult
+    {
+        var info = options
+        if let block = progressBlock {
+            info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+        return try await retrieveImage(
+            with: source,
+            options: info,
+            progressiveImageSetter: nil
+        )
+    }
+    
+    func retrieveImage(
+        with source: Source,
+        options: KingfisherParsedOptionsInfo,
+        progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
+        referenceTaskIdentifierChecker: (() -> Bool)? = nil
+    ) async throws -> RetrieveImageResult
+    {
+        let task = CancellationDownloadTask()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                let downloadTask = retrieveImage(
+                    with: source,
+                    options: options,
+                    downloadTaskUpdated: { newTask in
+                        Task {
+                            await task.setTask(newTask)
+                        }
+                    },
+                    progressiveImageSetter: progressiveImageSetter,
+                    referenceTaskIdentifierChecker: referenceTaskIdentifierChecker,
+                    completionHandler: { result in
+                        continuation.resume(with: result)
+                    }
+                )
+                Task {
+                    await task.setTask(downloadTask)
+                }
+            }
+        } onCancel: {
+            Task {
+                await task.task?.cancel()
+            }
+        }
+    }
+}
+
 class RetrievingContext {
 
     var options: KingfisherParsedOptionsInfo

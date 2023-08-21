@@ -89,6 +89,32 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testRetrieveImageAsync() async throws {
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+        
+        var result = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .none)
+        
+        result = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .memory)
+        
+        manager.cache.clearMemoryCache()
+        result = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .disk)
+        
+        manager.cache.clearMemoryCache()
+        await manager.cache.clearDiskCache()
+        result = try await manager.retrieveImage(with: url)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .none)
+    }
+    
     func testRetrieveImageWithProcessor() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -147,6 +173,53 @@ class KingfisherManagerTests: XCTestCase {
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testRetrieveImageCancel() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        let task = manager.retrieveImage(with: url) {
+            result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(result.error!.isTaskCancelled)
+            exp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        task?.cancel()
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    actor CallingChecker {
+        var called = false
+        func mark() {
+            called = true
+        }
+    }
+    
+    func testRetrieveImageCancelAsync() async throws {
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        let checker = CallingChecker()
+        let task = Task {
+            do {
+                _ = try await manager.retrieveImage(with: url)
+                XCTFail()
+            } catch {
+                await checker.mark()
+                XCTAssertTrue((error as! KingfisherError).isTaskCancelled)
+            }
+        }
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+        task.cancel()
+         _ = stub.go()
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+        let catchCalled = await checker.called
+        XCTAssertTrue(catchCalled)
     }
     
     func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {

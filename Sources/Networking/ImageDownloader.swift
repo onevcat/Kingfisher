@@ -87,6 +87,13 @@ public struct DownloadTask {
     }
 }
 
+actor CancellationDownloadTask {
+    var task: DownloadTask?
+    func setTask(_ task: DownloadTask?) {
+        self.task = task
+    }
+}
+
 extension DownloadTask {
     enum WrappedTask {
         case download(DownloadTask)
