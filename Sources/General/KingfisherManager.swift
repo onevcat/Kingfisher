@@ -26,6 +26,11 @@
 
 
 import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 /// The downloading progress block type.
 /// The parameter value is the `receivedSize` of current response.
