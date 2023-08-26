@@ -26,6 +26,11 @@
 
 import Foundation
 import CoreGraphics
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 private let sharedProcessingQueue: CallbackQueue =
     .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))

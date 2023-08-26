@@ -26,6 +26,12 @@
 
 #if !os(watchOS)
 
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 import CoreImage
 
 // Reuse the same CI Context for all CI drawing.

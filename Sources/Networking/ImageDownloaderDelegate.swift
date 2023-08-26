@@ -25,6 +25,11 @@
 //  THE SOFTWARE.
 
 import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 /// Protocol of `ImageDownloader`. This protocol provides a set of methods which are related to image downloader
 /// working stages and rules.
