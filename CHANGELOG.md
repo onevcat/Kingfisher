@@ -2,6 +2,15 @@
 
 -----
 
+## [7.9.1 - Lastest Xcode 15 beta](https://github.com/onevcat/Kingfisher/releases/tag/7.9.1) (2023-08-26)
+
+#### Fix
+* Update to the terminology for the latest Xcode 15 beta. It prevents building failing and warnings from previous beta versions. [#2123](https://github.com/onevcat/Kingfisher/pull/2123) @simonbs
+* A misused reason in the privacy manifest file. Now Kingfisher should declare the reason of using file creation and access time correctly. (However, the manifest file mechanism of SDK seems not working yet in Xcode 15 beta 7) [#2135](https://github.com/onevcat/Kingfisher/pull/2135) @CloudosaurusRex @onevcat
+* Some warnings which happens when building xcframework. This prevents them from becoming errors in the coming Swift 6. [#2136](https://github.com/onevcat/Kingfisher/pull/2136)
+
+---
+
 ## [7.9.0 - visionOS & Xcode 15](https://github.com/onevcat/Kingfisher/releases/tag/7.9.0) (2023-07-29)
 
 #### Add

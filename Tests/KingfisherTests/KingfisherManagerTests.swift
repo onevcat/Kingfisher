@@ -656,7 +656,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-#if os(iOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
     func testShouldApplyImageModifierWhenDownload() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

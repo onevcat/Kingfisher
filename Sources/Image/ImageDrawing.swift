@@ -201,7 +201,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
     #endif
     
-    #if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS) || os(visionOS)
     func resize(to size: CGSize, for contentMode: UIView.ContentMode) -> KFCrossPlatformImage {
         switch contentMode {
         case .scaleAspectFit:
@@ -513,7 +513,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///         For any non-CG-based image or animated image, `base` itself is returned.
     public func decoded(scale: CGFloat) -> KFCrossPlatformImage {
         // Prevent animated image (GIF) losing it's images
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         if frameSource != nil { return base }
         #else
         if images != nil { return base }
@@ -542,7 +542,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///         For any non-CG-based image or animated image, `base` itself is returned.
     public func decoded(on context: CGContext) -> KFCrossPlatformImage {
         // Prevent animated image (GIF) losing it's images
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         if frameSource != nil { return base }
         #else
         if images != nil { return base }

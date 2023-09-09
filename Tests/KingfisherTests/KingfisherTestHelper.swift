@@ -196,7 +196,7 @@ extension KFCrossPlatformImage {
     }
 }
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
 import UIKit
 extension KFCrossPlatformImage {
     static func from(color: KFCrossPlatformColor, size: CGSize) -> KFCrossPlatformImage {
