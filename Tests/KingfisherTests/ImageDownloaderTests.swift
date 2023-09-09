@@ -67,6 +67,14 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testDownloadAnImageAsync() async throws {
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        
+        let result = try await downloader.downloadImage(with: url, options: .empty)
+        XCTAssertEqual(result.originalData, testImageData)
+    }
+    
     func testDownloadMultipleImages() {
         let exp = expectation(description: #function)
         let group = DispatchGroup()
@@ -82,6 +90,21 @@ class ImageDownloaderTests: XCTestCase {
         
         group.notify(queue: .main, execute: exp.fulfill)
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testDownloadMultipleImagesAsync() async throws {
+        try await withThrowingTaskGroup(of: ImageLoadingResult.self) { group in
+            for url in testURLs {
+                stub(url, data: testImageData)
+                group.addTask {
+                    try await self.downloader.downloadImage(with: url)
+                }
+            }
+            
+            for try await result in group {
+                XCTAssertEqual(result.originalData, testImageData)
+            }
+        }
     }
     
     func testDownloadAnImageWithMultipleCallback() {
@@ -135,7 +158,6 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertNotNil(task)
             downloadTaskCalled = true
         }
-
 
         let someURL = URL(string: "some_strage_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
@@ -254,6 +276,16 @@ class ImageDownloaderTests: XCTestCase {
         _ = stub.go()
         
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testCancelDownloadTaskAsync() async throws {
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+        
+        let checker = CallingChecker()
+        try await checker.checkCancelBehavior(stub: stub) {
+            _ = try await self.downloader.downloadImage(with: url)
+        }
     }
 
     func testCancelOneDownloadTask() {

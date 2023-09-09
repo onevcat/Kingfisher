@@ -803,8 +803,12 @@ extension KingfisherManager {
                         continuation.resume(with: result)
                     }
                 )
-                Task {
-                    await task.setTask(downloadTask)
+                if Task.isCancelled {
+                    downloadTask?.cancel()
+                } else {
+                    Task {
+                        await task.setTask(downloadTask)
+                    }
                 }
             }
         } onCancel: {

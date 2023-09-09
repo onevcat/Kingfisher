@@ -27,6 +27,33 @@
 import XCTest
 @testable import Kingfisher
 
+actor CallingChecker {
+    var called = false
+    func mark() {
+        called = true
+    }
+    
+    func checkCancelBehavior(
+        stub: LSStubResponseDSL,
+        block: @escaping () async throws -> Void
+    ) async throws {
+        let task = Task {
+            do {
+                _ = try await block()
+                XCTFail()
+            } catch {
+                mark()
+                XCTAssertTrue((error as! KingfisherError).isTaskCancelled)
+            }
+        }
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+        task.cancel()
+        _ = stub.go()
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+        XCTAssertTrue(called)
+    }
+}
+
 class KingfisherManagerTests: XCTestCase {
     
     var manager: KingfisherManager!
@@ -193,33 +220,14 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    actor CallingChecker {
-        var called = false
-        func mark() {
-            called = true
-        }
-    }
-    
     func testRetrieveImageCancelAsync() async throws {
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData, length: 123)
 
         let checker = CallingChecker()
-        let task = Task {
-            do {
-                _ = try await manager.retrieveImage(with: url)
-                XCTFail()
-            } catch {
-                await checker.mark()
-                XCTAssertTrue((error as! KingfisherError).isTaskCancelled)
-            }
+        try await checker.checkCancelBehavior(stub: stub) {
+            _ = try await self.manager.retrieveImage(with: url)
         }
-        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
-        task.cancel()
-         _ = stub.go()
-        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
-        let catchCalled = await checker.called
-        XCTAssertTrue(catchCalled)
     }
     
     func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {
