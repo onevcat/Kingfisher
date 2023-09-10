@@ -30,6 +30,7 @@ import Foundation
 public protocol ImageDownloadRedirectHandler {
 
     /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
+    /// 
     /// This is the posibility you can modify the image download request during redirection. You can modify the
     /// request for some customizing purpose, such as adding auth token to the header, do basic HTTP auth or
     /// something like url mapping.
@@ -43,7 +44,7 @@ public protocol ImageDownloadRedirectHandler {
     ///   - task: The current `SessionDataTask` which triggers this redirect.
     ///   - response: The response received during redirection.
     ///   - newRequest: The request for redirection which can be modified.
-    ///   - completionHandler: A closure for being called with modified request.
+    /// - Returns: The modified requst.
     func handleHTTPRedirection(
         for task: SessionDataTask,
         response: HTTPURLResponse,
