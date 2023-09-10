@@ -47,8 +47,8 @@ public protocol ImageDownloadRedirectHandler {
     func handleHTTPRedirection(
         for task: SessionDataTask,
         response: HTTPURLResponse,
-        newRequest: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
+        newRequest: URLRequest
+    ) async -> URLRequest?
 }
 
 /// A wrapper for creating an `ImageDownloadRedirectHandler` easier.
@@ -56,14 +56,15 @@ public protocol ImageDownloadRedirectHandler {
 public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
     let block: (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void
-
+    
     public func handleHTTPRedirection(
-        for task: SessionDataTask,
-        response: HTTPURLResponse,
-        newRequest: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
-    {
-        block(task, response, newRequest, completionHandler)
+        for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest
+    ) async -> URLRequest? {
+        return await withCheckedContinuation { continuation in
+            block(task, response, newRequest, { urlRequest in
+                continuation.resume(returning: urlRequest)
+            })
+        }
     }
     
     /// Creates a value of `ImageDownloadRedirectHandler` which runs `modify` block.
@@ -73,4 +74,5 @@ public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     public init(handle: @escaping (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
         block = handle
     }
+    
 }

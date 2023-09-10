@@ -244,21 +244,15 @@ extension SessionDelegate: URLSessionDataDelegate {
         _ session: URLSession,
         task: URLSessionTask,
         willPerformHTTPRedirection response: HTTPURLResponse,
-        newRequest request: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
+        newRequest request: URLRequest
+    ) async -> URLRequest?
     {
         guard let sessionDataTask = self.task(for: task),
               let redirectHandler = Array(sessionDataTask.callbacks).last?.options.redirectHandler else
         {
-            completionHandler(request)
-            return
+            return request
         }
-        
-        redirectHandler.handleHTTPRedirection(
-            for: sessionDataTask,
-            response: response,
-            newRequest: request,
-            completionHandler: completionHandler)
+        return await redirectHandler.handleHTTPRedirection(for: sessionDataTask, response: response, newRequest: request)
     }
 
     private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?), KingfisherError>) {
