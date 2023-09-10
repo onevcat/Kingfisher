@@ -153,7 +153,9 @@ class TestModifier: ImageDownloadRequestModifier {
 }
 
 class TestRedirectHandler: ImageDownloadRedirectHandler {
-    func handleHTTPRedirection(for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        completionHandler(newRequest)
+    func handleHTTPRedirection(
+        for task: Kingfisher.SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest
+    ) async -> URLRequest? {
+        newRequest
     }
 }

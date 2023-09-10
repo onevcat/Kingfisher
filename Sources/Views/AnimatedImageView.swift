@@ -325,10 +325,8 @@ open class AnimatedImageView: UIImageView {
             duration = 1.0 / TimeInterval(preferredFramesPerSecond)
         }
 
-        animator.shouldChangeFrame(with: duration) { [weak self] hasNewFrame in
-            if hasNewFrame {
-                self?.layer.setNeedsDisplay()
-            }
+        if animator.shouldChangeFrame(with: duration) {
+            layer.setNeedsDisplay()
         }
     }
 }
@@ -545,15 +543,15 @@ extension AnimatedImageView {
             }
         }
 
-        func shouldChangeFrame(with duration: CFTimeInterval, handler: (Bool) -> Void) {
+        func shouldChangeFrame(with duration: CFTimeInterval) -> Bool {
             incrementTimeSinceLastFrameChange(with: duration)
 
             if currentFrameDuration > timeSinceLastFrameChange {
-                handler(false)
+                return false
             } else {
                 resetTimeSinceLastFrameChange()
                 incrementCurrentFrameIndex()
-                handler(true)
+                return true
             }
         }
 

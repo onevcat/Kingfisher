@@ -87,6 +87,13 @@ public struct DownloadTask {
     }
 }
 
+actor CancellationDownloadTask {
+    var task: DownloadTask?
+    func setTask(_ task: DownloadTask?) {
+        self.task = task
+    }
+}
+
 extension DownloadTask {
     enum WrappedTask {
         case download(DownloadTask)
@@ -462,6 +469,74 @@ open class ImageDownloader {
             options: KingfisherParsedOptionsInfo(options),
             completionHandler: completionHandler
         )
+    }
+}
+
+// Concurrency
+extension ImageDownloader {
+    /// Downloads an image with a URL and option. Invoked internally by Kingfisher. Subclasses must invoke super.
+    ///
+    /// - Parameters:
+    ///   - url: Target URL.
+    ///   - options: The options could control download behavior. See `KingfisherOptionsInfo`.
+    /// - Returns: The image loading result.
+    public func downloadImage(
+        with url: URL,
+        options: KingfisherParsedOptionsInfo
+    ) async throws -> ImageLoadingResult {
+        let task = CancellationDownloadTask()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                let downloadTask = downloadImage(with: url, options: options) { result in
+                    continuation.resume(with: result)
+                }
+                if Task.isCancelled {
+                    downloadTask?.cancel()
+                } else {
+                    Task {
+                        await task.setTask(downloadTask)
+                    }
+                }
+            }
+        } onCancel: {
+            Task {
+                await task.task?.cancel()
+            }
+        }
+    }
+    
+    /// Downloads an image with a URL and option.
+    ///
+    /// - Parameters:
+    ///   - url: Target URL.
+    ///   - options: The options could control download behavior. See `KingfisherOptionsInfo`.
+    ///   - progressBlock: Called when the download progress updated. This block will be always be called in main queue.
+    /// - Returns: The image loading result.
+    public func downloadImage(
+        with url: URL,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil
+    ) async throws -> ImageLoadingResult
+    {
+        var info = KingfisherParsedOptionsInfo(options)
+        if let block = progressBlock {
+            info.onDataReceived = (info.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
+        }
+        return try await downloadImage(with: url, options: info)
+    }
+    
+    /// Downloads an image with a URL and option.
+    ///
+    /// - Parameters:
+    ///   - url: Target URL.
+    ///   - options: The options could control download behavior. See `KingfisherOptionsInfo`.
+    /// - Returns: The image loading result.
+    public func downloadImage(
+        with url: URL,
+        options: KingfisherOptionsInfo? = nil
+    ) async throws -> ImageLoadingResult
+    {
+        return try await downloadImage(with: url, options: KingfisherParsedOptionsInfo(options))
     }
 }
 

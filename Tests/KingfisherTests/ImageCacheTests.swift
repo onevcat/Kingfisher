@@ -119,6 +119,19 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler:nil)
     }
     
+    func testClearDiskCacheAsync() async throws {
+        let key = testKeys[0]
+        try await cache.store(testImage, original: testImageData, forKey: key, toDisk: true)
+        cache.clearMemoryCache()
+        var cacheResult = self.cache.imageCachedType(forKey: key)
+        XCTAssertTrue(cacheResult.cached)
+        XCTAssertEqual(cacheResult, .disk)
+        
+        await cache.clearDiskCache()
+        cacheResult = cache.imageCachedType(forKey: key)
+        XCTAssertFalse(cacheResult.cached)
+    }
+    
     func testClearMemoryCache() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
@@ -133,6 +146,15 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testClearMemoryCacheAsync() async throws {
+        let key = testKeys[0]
+        try await cache.store(testImage, original: testImageData, forKey: key, toDisk: true)
+        cache.clearMemoryCache()
+        let result = try await cache.retrieveImage(forKey: key)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .disk)
+    }
+    
     func testNoImageFound() {
         let exp = expectation(description: #function)
         cache.retrieveImage(forKey: testKeys[0]) { result in
@@ -141,6 +163,11 @@ class ImageCacheTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testNoImageFoundAsync() async throws {
+        let result = try await cache.retrieveImage(forKey: testKeys[0])
+        XCTAssertNil(result.image)
     }
 
     func testCachedFileDoesNotExist() {
@@ -164,6 +191,14 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testStoreImageInMemoryAsync() async throws {
+        let key = testKeys[0]
+        try await cache.store(testImage, forKey: key, toDisk: false)
+        let result = try await cache.retrieveImage(forKey: key)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .memory)
+    }
+    
     func testStoreMultipleImages() {
         let exp = expectation(description: #function)
         storeMultipleImages {
@@ -178,6 +213,14 @@ class ImageCacheTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testStoreMultipleImagesAsync() async throws {
+        await storeMultipleImages()
+    
+        let diskCachePath = cache.diskStorage.directoryURL.path
+        let files = try FileManager.default.contentsOfDirectory(atPath: diskCachePath)
+        XCTAssertEqual(files.count, testKeys.count)
     }
     
     func testCachedFileExists() {
@@ -217,6 +260,30 @@ class ImageCacheTests: XCTestCase {
         
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testCachedFileExistsAsync() async throws {
+        let key = testKeys[0]
+        let url = URL(string: key)!
+        
+        let exists = cache.imageCachedType(forKey: url.cacheKey).cached
+        XCTAssertFalse(exists)
+        
+        var result = try await cache.retrieveImage(forKey: key)
+        XCTAssertNil(result.image)
+        XCTAssertEqual(result.cacheType, .none)
+        
+        try await cache.store(testImage, forKey: key, toDisk: true)
+        
+        result = try await cache.retrieveImage(forKey: key)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .memory)
+        
+        cache.clearMemoryCache()
+        
+        result = try await cache.retrieveImage(forKey: key)
+        XCTAssertNotNil(result.image)
+        XCTAssertEqual(result.cacheType, .disk)
+    }
 
     func testCachedFileWithCustomPathExtensionExists() {
         cache.diskStorage.config.pathExtension = "jpg"
@@ -234,6 +301,14 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testCachedFileWithCustomPathExtensionExistsAsync() async throws {
+        cache.diskStorage.config.pathExtension = "jpg"
+        let key = testKeys[0]
+        let url = URL(string: key)!
+        try await cache.store(testImage, forKey: key, toDisk: true)
+        let cachePath = self.cache.cachePath(forKey: url.cacheKey)
+        XCTAssertTrue(cachePath.hasSuffix(".jpg"))
+    }
   
     func testCachedImageIsFetchedSyncronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false)
@@ -242,6 +317,12 @@ class ImageCacheTests: XCTestCase {
             foundImage = result.value?.image
         }
         XCTAssertEqual(testImage, foundImage)
+    }
+    
+    func testCachedImageIsFetchedSyncronouslyFromTheMemoryCacheAsync() async throws {
+        try await cache.store(testImage, forKey: testKeys[0], toDisk: false)
+        let result = try await cache.retrieveImage(forKey: testKeys[0])
+        XCTAssertEqual(testImage, result.image)
     }
 
     func testIsImageCachedForKey() {
@@ -253,6 +334,13 @@ class ImageCacheTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testIsImageCachedForKeyAsync() async throws {
+        let key = testKeys[0]
+        XCTAssertFalse(cache.imageCachedType(forKey: key).cached)
+        try await cache.store(testImage, original: testImageData, forKey: key, toDisk: true)
+        XCTAssertTrue(cache.imageCachedType(forKey: key).cached)
     }
     
     func testCleanDiskCacheNotification() {
@@ -304,6 +392,15 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testCannotRetrieveCacheWithProcessorIdentifierAsync() async throws {
+        let key = testKeys[0]
+        let p = RoundCornerImageProcessor(cornerRadius: 40)
+        try await cache.store(testImage, original: testImageData, forKey: key, toDisk: true)
+        let result = try await cache.retrieveImage(forKey: key, options: [.processor(p)])
+        XCTAssertNotNil(result)
+        XCTAssertNil(result.image)
+    }
 
     func testRetrieveCacheWithProcessorIdentifier() {
         let exp = expectation(description: #function)
@@ -324,6 +421,20 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testRetrieveCacheWithProcessorIdentifierAsync() async throws {
+        let key = testKeys[0]
+        let p = RoundCornerImageProcessor(cornerRadius: 40)
+        try await cache.store(
+            testImage,
+            original: testImageData,
+            forKey: key,
+            processorIdentifier: p.identifier,
+            toDisk: true
+        )
+        let result = try await cache.retrieveImage(forKey: key, options: [.processor(p)])
+        XCTAssertNotNil(result.image)
+    }
 
     func testDefaultCache() {
         let exp = expectation(description: #function)
@@ -336,6 +447,15 @@ class ImageCacheTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testDefaultCacheAsync() async throws {
+        let key = testKeys[0]
+        let cache = ImageCache.default
+        try await cache.store(testImage, forKey: key)
+        XCTAssertTrue(cache.memoryStorage.isCached(forKey: key))
+        XCTAssertTrue(cache.diskStorage.isCached(forKey: key))
+        cleanDefaultCache()
     }
     
     func testRetrieveDiskCacheSynchronously() {
@@ -373,7 +493,7 @@ class ImageCacheTests: XCTestCase {
             XCTAssertEqual(cacheType, .disk)
             
             var dispatched = false
-            self.cache.retrieveImageInDiskCache(forKey: key, options:  nil) {
+            self.cache.retrieveImageInDiskCache(forKey: key, options: nil) {
                 result in
                 XCTAssertTrue(dispatched)
                 exp.fulfill()
@@ -404,6 +524,21 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testModifierShouldOnlyApplyForFinalResultWhenMemoryLoadAsync() async throws {
+        let key = testKeys[0]
+
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+
+        try await cache.store(testImage, original: testImageData, forKey: key)
+        let result = try await cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)])
+        XCTAssertFalse(modifierCalled)
+        XCTAssertEqual(result.image?.renderingMode, .automatic)
+    }
 
     func testModifierShouldOnlyApplyForFinalResultWhenDiskLoad() {
         let exp = expectation(description: #function)
@@ -424,6 +559,23 @@ class ImageCacheTests: XCTestCase {
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testModifierShouldOnlyApplyForFinalResultWhenDiskLoadAsync() async throws {
+        let key = testKeys[0]
+        var modifierCalled = false
+        let modifier = AnyImageModifier { image in
+            modifierCalled = true
+            return image.withRenderingMode(.alwaysTemplate)
+        }
+        
+        try await cache.store(testImage, original: testImageData, forKey: key)
+        cache.clearMemoryCache()
+        let result = try await cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)])
+        XCTAssertFalse(modifierCalled)
+        // The renderingMode is expected to be the default value `.automatic`. The image modifier should only apply to
+        // the image manager result.
+        XCTAssertEqual(result.image?.renderingMode, .automatic)
     }
 #endif
     
@@ -447,6 +599,21 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
+    func testStoreToMemoryWithExpirationAsync() async throws {
+        let key = testKeys[0]
+        try await cache.store(
+            testImage,
+            original: testImageData,
+            forKey: key,
+            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.2))]),
+            toDisk: true
+        )
+        XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
+        // After 1 sec, the cache only remains on disk.
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+        XCTAssertEqual(self.cache.imageCachedType(forKey: key), .disk)
+    }
+    
     func testStoreToDiskWithExpiration() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
@@ -464,6 +631,21 @@ class ImageCacheTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testStoreToDiskWithExpirationAsync() async throws {
+        let key = testKeys[0]
+        try await cache.store(
+            testImage,
+            original: testImageData,
+            forKey: key,
+            options: KingfisherParsedOptionsInfo([.diskCacheExpiration(.expired)]),
+            toDisk: true
+        )
+        
+        XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
+        self.cache.clearMemoryCache()
+        XCTAssertEqual(self.cache.imageCachedType(forKey: key), .none)
     }
 
     func testCalculateDiskStorageSize() {
@@ -490,19 +672,14 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
-    #if swift(>=5.5)
-    #if canImport(_Concurrency)
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+
     func testCalculateDiskStorageSizeAsync() async throws {
         let size = try await cache.diskStorageSize
         XCTAssertEqual(size, 0)
-        _ = await storeMultipleImagesAsync()
-        let sizeAfterStoreMultipleImages = try await cache.diskStorageSize
-        XCTAssertEqual(sizeAfterStoreMultipleImages, UInt(testImagePNGData.count * testKeys.count))
+        await storeMultipleImages()
+        let newSize = try await cache.diskStorageSize
+        XCTAssertEqual(newSize, UInt(testImagePNGData.count * testKeys.count))
     }
-    #endif
-    #endif
     
     // MARK: - Helper
     private func storeMultipleImages(_ completionHandler: @escaping () -> Void) {
@@ -515,17 +692,10 @@ class ImageCacheTests: XCTestCase {
         }
         group.notify(queue: .main, execute: completionHandler)
     }
-
-    #if swift(>=5.5)
-    #if canImport(_Concurrency)
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    private func storeMultipleImagesAsync() async {
-        await withCheckedContinuation { continuation in
-            storeMultipleImages {
-                continuation.resume()
-            }
+    
+    private func storeMultipleImages() async {
+        await withCheckedContinuation {
+            storeMultipleImages($0.resume)
         }
     }
-    #endif
-    #endif
 }

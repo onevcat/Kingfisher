@@ -42,7 +42,10 @@ public enum Source {
         /// The underlying value type of source identifier.
         public typealias Value = UInt
         static private(set) var current: Value = 0
+        
+        // Not thread safe. Expected to be always called on the main thread.
         static func next() -> Value {
+            assert(Thread.isMainThread, "The identifier `next()` should only be called on main thread.")
             current += 1
             return current
         }

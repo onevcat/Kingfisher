@@ -456,23 +456,46 @@ open class ImageCache {
                           callbackQueue: CallbackQueue = .untouch,
                           completionHandler: (() -> Void)? = nil)
     {
+        removeImage(
+            forKey: key,
+            processorIdentifier: identifier,
+            fromMemory: fromMemory,
+            fromDisk: fromDisk,
+            callbackQueue: callbackQueue,
+            completionHandler: { _ in completionHandler?() } // This is a version which ignores error.
+        )
+    }
+    
+    func removeImage(forKey key: String,
+                          processorIdentifier identifier: String = "",
+                          fromMemory: Bool = true,
+                          fromDisk: Bool = true,
+                          callbackQueue: CallbackQueue = .untouch,
+                          completionHandler: ((Error?) -> Void)? = nil)
+    {
         let computedKey = key.computedKey(with: identifier)
 
         if fromMemory {
             memoryStorage.remove(forKey: computedKey)
         }
         
+        func callHandler(_ error: Error?) {
+            if let completionHandler = completionHandler {
+                callbackQueue.execute { completionHandler(error) }
+            }
+        }
+        
         if fromDisk {
             ioQueue.async{
-                try? self.diskStorage.remove(forKey: computedKey)
-                if let completionHandler = completionHandler {
-                    callbackQueue.execute { completionHandler() }
+                do {
+                    try self.diskStorage.remove(forKey: computedKey)
+                    callHandler(nil)
+                } catch {
+                    callHandler(error)
                 }
             }
         } else {
-            if let completionHandler = completionHandler {
-                callbackQueue.execute { completionHandler() }
-            }
+            callHandler(nil)
         }
     }
 
@@ -819,21 +842,6 @@ open class ImageCache {
         }
     }
     
-    #if swift(>=5.5)
-    #if canImport(_Concurrency)
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    open var diskStorageSize: UInt {
-        get async throws {
-            try await withCheckedThrowingContinuation { continuation in
-                calculateDiskStorageSize { result in
-                    continuation.resume(with: result)
-                }
-            }
-        }
-    }
-    #endif
-    #endif
-    
     /// Gets the cache path for the key.
     /// It is useful for projects with web view or anyone that needs access to the local file path.
     ///
@@ -857,7 +865,197 @@ open class ImageCache {
         let computedKey = key.computedKey(with: identifier)
         return diskStorage.cacheFileURL(forKey: computedKey).path
     }
+    
+    // MARK: - Concurrency
+    
+    open func store(
+        _ image: KFCrossPlatformImage,
+        original: Data? = nil,
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo,
+        toDisk: Bool = true
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            store(image, original: original, forKey: key, options: options, toDisk: toDisk) {
+                continuation.resume(with: $0.diskCacheResult)
+            }
+        }
+    }
+    
+    
+    open func store(
+        _ image: KFCrossPlatformImage,
+        original: Data? = nil,
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
+        toDisk: Bool = true
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            store(
+                image,
+                original: original,
+                forKey: key,
+                processorIdentifier: identifier,
+                cacheSerializer: serializer,
+                toDisk: toDisk) {
+                    // Only `diskCacheResult` can fail
+                    continuation.resume(with: $0.diskCacheResult)
+                }
+        }
+    }
+    
+    open func storeToDisk(
+        _ data: Data,
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        expiration: StorageExpiration? = nil
+    ) async throws
+    {
+        try await withCheckedThrowingContinuation { continuation in
+            storeToDisk(
+                data,
+                forKey: key,
+                processorIdentifier: identifier,
+                expiration: expiration) {
+                    // Only `diskCacheResult` can fail
+                    continuation.resume(with: $0.diskCacheResult)
+                }
+        }
+    }
+    
+    /// Removes the image for the given key from the cache.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: The identifier of processor being used for caching. If you are using a processor for the
+    ///                 image, pass the identifier of processor to this parameter.
+    ///   - fromMemory: Whether this image should be removed from memory storage or not.
+    ///                 If `false`, the image won't be removed from the memory storage. Default is `true`.
+    ///   - fromDisk: Whether this image should be removed from disk storage or not.
+    ///               If `false`, the image won't be removed from the disk storage. Default is `true`.
+    open func removeImage(
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        fromMemory: Bool = true,
+        fromDisk: Bool = true
+    ) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            removeImage(
+                forKey: key,
+                processorIdentifier: identifier,
+                fromMemory: fromMemory,
+                fromDisk: fromDisk,
+                completionHandler: { error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            )
+        }
+    }
+    
+    /// Gets an image for a given key from the cache, either from memory storage or disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherParsedOptionsInfo` options setting used for retrieving the image.
+    ///
+    /// - Returns:
+    /// If the image retrieving operation finishes without problem, an `ImageCacheResult` value.
+    ///
+    /// - Throws: An error of type `KingfisherError`, if any error happens inside Kingfisher framework.
+    open func retrieveImage(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo
+    ) async throws -> ImageCacheResult {
+        try await withCheckedThrowingContinuation {
+            retrieveImage(forKey: key, options: options, completionHandler: $0.resume)
+        }
+    }
+    
+    /// Gets an image for a given key from the cache, either from memory storage or disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    ///
+    /// - Returns:
+    /// If the image retrieving operation finishes without problem, an `ImageCacheResult` value.
+    ///
+    /// - Throws: An error of type `KingfisherError`, if any error happens inside Kingfisher framework.
+    ///
+    /// - Note: This method is marked as `open` for only compatible purpose. Do not overide this method.
+    /// Instead, override the version receives `KingfisherParsedOptionsInfo` instead.
+    open func retrieveImage(
+        forKey key: String,
+        options: KingfisherOptionsInfo? = nil
+    ) async throws -> ImageCacheResult {
+        try await withCheckedThrowingContinuation {
+            retrieveImage(forKey: key, options: options, completionHandler: $0.resume)
+        }
+    }
+    
+    /// Gets an image for a given key from the disk storage.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - options: The `KingfisherOptionsInfo` options setting used for retrieving the image.
+    ///
+    /// - Throws: An error of type `KingfisherError`, if any error happens inside Kingfisher framework.
+    open func retrieveImageInDiskCache(
+        forKey key: String,
+        options: KingfisherOptionsInfo? = nil
+    ) async throws -> KFCrossPlatformImage? {
+        try await withCheckedThrowingContinuation {
+            retrieveImageInDiskCache(forKey: key, options: options, completionHandler: $0.resume)
+        }
+    }
+    
+    /// Clears the memory & disk storage of this cache. This is an async operation.
+    open func clearCache() async {
+        await withCheckedContinuation {
+            clearCache(completion: $0.resume)
+        }
+    }
+    
+    /// Clears the disk storage of this cache. This is an async operation.
+    open func clearDiskCache() async {
+        await withCheckedContinuation {
+            clearDiskCache(completion: $0.resume)
+        }
+    }
+    
+    /// Clears the expired images from memory & disk storage. This is an async operation.
+    open func cleanExpiredCache() async {
+        await withCheckedContinuation {
+            cleanExpiredCache(completion: $0.resume)
+        }
+    }
+    
+    /// Clears the expired images from disk storage. This is an async operation.
+    open func cleanExpiredDiskCache() async {
+        await withCheckedContinuation {
+            cleanExpiredDiskCache(completion: $0.resume)
+        }
+    }
+    
+    /// Calculates and returns the size taken by the disk storage.
+    /// It is the total file size of all cached files in the `diskStorage` on disk in bytes.
+    open var diskStorageSize: UInt {
+        get async throws {
+            try await withCheckedThrowingContinuation {
+                calculateDiskStorageSize(completion: $0.resume)
+            }
+        }
+    }
+    
 }
+
+// Concurrency
+
 
 #if !os(macOS) && !os(watchOS)
 // MARK: - For App Extensions
