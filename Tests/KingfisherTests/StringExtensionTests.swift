@@ -10,8 +10,8 @@ import XCTest
 @testable import Kingfisher
 
 class StringExtensionTests: XCTestCase {
-    func testStringMD5() {
+    func testStringSHA256() {
         let s = "hello"
-        XCTAssertEqual(s.kf.md5, "5d41402abc4b2a76b9719d911017c592")
+        XCTAssertEqual(s.kf.sha256, "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824")
     }
 }

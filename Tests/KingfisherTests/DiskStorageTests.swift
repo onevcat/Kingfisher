@@ -185,8 +185,8 @@ class DiskStorageTests: XCTestCase {
         storage.config.usesHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
-        // validation md5 hash of the key
-        XCTAssertEqual(hashedFileName, key.kf.md5)
+        // validation sha256 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.sha256)
 
         // fileName without hash
         storage.config.usesHashedFileName = false
@@ -202,8 +202,8 @@ class DiskStorageTests: XCTestCase {
         storage.config.autoExtAfterHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
-        // validation md5 hash of the key
-        XCTAssertEqual(hashedFileName, key.kf.md5 + ".gif")
+        // validation sha256 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.sha256 + ".gif")
 
         // fileName without hash
         storage.config.usesHashedFileName = false
@@ -220,8 +220,8 @@ class DiskStorageTests: XCTestCase {
         storage.config.autoExtAfterHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
-        // validation md5 hash of the key
-        XCTAssertEqual(hashedFileName, key.kf.md5 + ".jpeg")
+        // validation sha256 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.sha256 + ".jpeg")
 
         // fileName without hash
         storage.config.usesHashedFileName = false
