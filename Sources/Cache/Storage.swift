@@ -91,7 +91,7 @@ public enum StorageExpiration {
 public enum ExpirationExtending {
     /// The item expires after the original time, without extending after access.
     case none
-    /// The item expiration extends by the original cache time after each access.
+    /// The item expiration extends to the original cache time after each access.
     case cacheTime
     /// The item expiration extends by the provided time after each access.
     case expirationTime(_ expiration: StorageExpiration)

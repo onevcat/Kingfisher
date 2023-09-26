@@ -26,14 +26,16 @@
 
 import Foundation
 
+
 /// Represents an image source setting for Kingfisher methods.
 ///
-/// A `Source` value indicates the way in which the target image can be retrieved and cached.
+/// A ``Source`` value indicates the way in which the target image can be retrieved and cached.
 ///
-/// - network: The target image should be retrieved from the network remotely. The associated ``Resource``
+/// - `network`: The target image should be retrieved from the network remotely. The associated ``Resource``
 ///            value defines detailed information like image URL and cache key.
-/// - provider: The target image should be provided in a data format. Normally, it can be an image
+/// - `provider`: The target image should be provided in a data format. Normally, it can be an image
 ///             from local storage or in any other encoding format (like Base64).
+///
 public enum Source {
 
     /// Represents the source task identifier when setting an image to a view with extension methods.

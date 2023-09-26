@@ -47,6 +47,7 @@ extension Resource {
     /// - Parameter overrideCacheKey: The key should be used to override the ``Resource/cacheKey`` when performing the
     /// conversion. `nil` if not overriden and ``Resource/cacheKey`` of `self` is used.
     /// - Returns: The converted source.
+    ///
     public func convertToSource(overrideCacheKey: String? = nil) -> Source {
         let key = overrideCacheKey ?? cacheKey
         return downloadURL.isFileURL ?
@@ -74,6 +75,7 @@ extension KF {
         ///   - cacheKey: 
         ///   The cache key. If `nil`, Kingfisher will use the `absoluteString` of ``ImageResource/downloadURL`` as
         ///   the key. Default is `nil`.
+        ///   
         public init(downloadURL: URL, cacheKey: String? = nil) {
             self.downloadURL = downloadURL
             self.cacheKey = cacheKey ?? downloadURL.cacheKey
