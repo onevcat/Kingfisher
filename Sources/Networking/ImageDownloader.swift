@@ -248,7 +248,7 @@ open class ImageDownloader {
         done: @escaping ((Result<DownloadingContext, KingfisherError>) -> Void)
     )
     {
-        func checkRequestAndDone(r: URLRequest) {
+        @Sendable func checkRequestAndDone(r: URLRequest) {
 
             // There is a possibility that request modifier changed the url to `nil` or empty.
             // In this case, throw an error.
@@ -269,13 +269,24 @@ open class ImageDownloader {
 
         if let requestModifier = options.requestModifier {
             // Modifies request before sending.
-            requestModifier.modified(for: request) { result in
-                guard let finalRequest = result else {
+            // FIXME: A temporary solution for keep the sync `ImageDownloadRequestModifier` behavior as before.
+            // We should be able to combine two cases once the full async support can be introduced to Kingfisher.
+            if let m = requestModifier as? ImageDownloadRequestModifier {
+                guard let result = m.modified(for: request) else {
                     done(.failure(KingfisherError.requestError(reason: .emptyRequest)))
                     return
                 }
-                checkRequestAndDone(r: finalRequest)
+                checkRequestAndDone(r: result)
+            } else  {
+                Task { [request] in
+                    guard let result = await requestModifier.modified(for: request) else {
+                        done(.failure(KingfisherError.requestError(reason: .emptyRequest)))
+                        return
+                    }
+                    checkRequestAndDone(r: result)
+                }
             }
+            
         } else {
             checkRequestAndDone(r: request)
         }
