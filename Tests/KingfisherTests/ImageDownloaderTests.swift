@@ -710,11 +710,11 @@ class AsyncURLModifier: AsyncImageDownloadRequestModifier {
     var url: URL? = nil
     var onDownloadTaskStarted: ((DownloadTask?) -> Void)?
 
-    func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
+    func modified(for request: URLRequest) async -> URLRequest? {
         var r = request
         r.url = url
-        DispatchQueue.main.async {
-            reportModified(r)
-        }
+        // Simulate an async action
+        try? await Task.sleep(nanoseconds: 1_000_000)
+        return r
     }
 }
