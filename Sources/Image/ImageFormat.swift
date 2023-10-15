@@ -26,12 +26,7 @@
 
 import Foundation
 
-/// Represents image format.
-///
-/// - unknown: The format cannot be recognized or not supported yet.
-/// - PNG: PNG image format.
-/// - JPEG: JPEG image format.
-/// - GIF: GIF image format.
+/// Represents the image format.
 public enum ImageFormat {
     /// The format cannot be recognized or not supported yet.
     case unknown
@@ -49,7 +44,9 @@ public enum ImageFormat {
         static var GIF: [UInt8] = [0x47, 0x49, 0x46]
     }
     
-    /// https://en.wikipedia.org/wiki/JPEG
+    /// JPEG marker of each sequence of segments.
+    ///
+    /// See also [here](https://www.digicamsoft.com/itu/itu-t81-36.html).
     public enum JPEGMarker {
         case SOF0           //baseline
         case SOF2           //progressive

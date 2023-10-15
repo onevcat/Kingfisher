@@ -28,25 +28,16 @@ import Foundation
 #if os(iOS) || os(tvOS) || os(visionOS)
 import UIKit
 
-/// Transition effect which will be used when an image downloaded and set by `UIImageView`
-/// extension API in Kingfisher. You can assign an enum value with transition duration as
-/// an item in `KingfisherOptionsInfo` to enable the animation transition.
+/// Transition effect to be used when an image is downloaded and set using the `UIImageView` extension API in Kingfisher.
 ///
-/// Apple's UIViewAnimationOptions is used under the hood.
-/// For custom transition, you should specified your own transition options, animations and
-/// completion handler as well.
+/// You can assign an enum value with a transition duration as an item in `KingfisherOptionsInfo` to enable the animation
+/// transition. Apple's `UIViewAnimationOptions` are used under the hood.
 ///
-/// - none: No animation transition.
-/// - fade: Fade in the loaded image in a given duration.
-/// - flipFromLeft: Flip from left transition.
-/// - flipFromRight: Flip from right transition.
-/// - flipFromTop: Flip from top transition.
-/// - flipFromBottom: Flip from bottom transition.
-/// - custom: Custom transition.
+/// For custom transitions, you should specify your own transition options, animations, and completion handler as well.
 public enum ImageTransition {
     /// No animation transition.
     case none
-    /// Fade in the loaded image in a given duration.
+    /// Fade effect to the loaded image over a specified duration.
     case fade(TimeInterval)
     /// Flip from left transition.
     case flipFromLeft(TimeInterval)
@@ -57,9 +48,11 @@ public enum ImageTransition {
     /// Flip from bottom transition.
     case flipFromBottom(TimeInterval)
     /// Custom transition defined by a general animation block.
-    ///    - duration: The time duration of this custom transition.
-    ///    - options: `UIView.AnimationOptions` should be used in the transition.
-    ///    - animations: The animation block will be applied when setting image.
+    ///
+    /// - Parameters:
+    ///    - duration: The duration of this custom transition.
+    ///    - options: The `UIView.AnimationOptions` to use in the transition.
+    ///    - animations: The animation block to apply when setting the image.
     ///    - completion: A block called when the transition animation finishes.
     case custom(duration: TimeInterval,
                  options: UIView.AnimationOptions,
