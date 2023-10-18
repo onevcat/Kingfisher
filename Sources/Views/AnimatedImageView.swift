@@ -272,7 +272,7 @@ open class AnimatedImageView: UIImageView {
             
             if #available(iOS 13.0, *) {
                 let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-                scale = windowScene?.screen.scale ?? .zero
+                scale = windowScene?.screen.scale ?? 1.0
             } else {
                 scale = UIScreen.main.scale
             }
