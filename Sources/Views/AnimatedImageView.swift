@@ -268,7 +268,15 @@ open class AnimatedImageView: UIImageView {
             #if os(visionOS)
             let targetSize = bounds.scaled(UITraitCollection.current.displayScale).size
             #else
-            let targetSize = bounds.scaled(UIScreen.main.scale).size
+            var scale: CGFloat = 0
+            
+            if #available(iOS 13.0, *) {
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+                scale = windowScene?.screen.scale ?? .zero
+            } else {
+                scale = UIScreen.main.scale
+            }
+            let targetSize = bounds.scaled(scale).size
             #endif
             let animator = Animator(
                 frameSource: frameSource,
