@@ -508,7 +508,7 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     /// - Note: To append processors to the current ones instead of replacing them all, concatenate them using the
-    /// ``|>`` operator, and then use ``appendProcessor(_:)``.
+    /// `|>` operator, and then use ``KFOptionSetter/appendProcessor(_:)``.
     ///
     public func setProcessors(_ processors: [ImageProcessor]) -> Self {
         switch processors.count {

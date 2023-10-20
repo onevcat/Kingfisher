@@ -72,10 +72,19 @@ public class Delegate<Input, Output> {
     public init() {}
 
     private var block: ((Input) -> Output?)?
+    private var asyncBlock: ((Input) async -> Output?)?
+    
     public func delegate<T: AnyObject>(on target: T, block: ((T, Input) -> Output)?) {
         self.block = { [weak target] input in
             guard let target = target else { return nil }
             return block?(target, input)
+        }
+    }
+    
+    public func delegate<T: AnyObject>(on target: T, block: ((T, Input) async -> Output)?) {
+        self.asyncBlock = { [weak target] input in
+            guard let target = target else { return nil }
+            return await block?(target, input)
         }
     }
 
@@ -85,6 +94,10 @@ public class Delegate<Input, Output> {
 
     public func callAsFunction(_ input: Input) -> Output? {
         return call(input)
+    }
+    
+    public func callAsync(_ input: Input) async -> Output? {
+        return await asyncBlock?(input)
     }
 }
 

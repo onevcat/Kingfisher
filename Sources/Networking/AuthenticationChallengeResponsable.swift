@@ -33,27 +33,30 @@ public typealias AuthenticationChallengeResponsable = AuthenticationChallengeRes
 public protocol AuthenticationChallengeResponsible: AnyObject {
 
     /// Called when a session level authentication challenge is received.
-    /// This method provide a chance to handle and response to the authentication
-    /// challenge before downloading could start.
+    ///
+    /// This method provides a chance to handle and respond to the authentication challenge before the downloading can
+    /// start.
     ///
     /// - Parameters:
-    ///   - downloader: The downloader which receives this challenge.
+    ///   - downloader: The downloader that receives this challenge.
     ///   - challenge: An object that contains the request for authentication.
     ///   - completionHandler: A handler that your delegate method must call.
     ///
-    /// - Note: This method is a forward from `URLSessionDelegate.urlSession(:didReceiveChallenge:completionHandler:)`.
-    ///         Please refer to the document of it in `URLSessionDelegate`.
+    /// > This method is a forward from `URLSessionDelegate.urlSession(:didReceiveChallenge:completionHandler:)`.
+    /// > Please refer to the documentation of it in `URLSessionDelegate`.
     func downloader(
         _ downloader: ImageDownloader,
         didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    )
 
-    /// Called when a task level authentication challenge is received.
-    /// This method provide a chance to handle and response to the authentication
-    /// challenge before downloading could start.
+    /// Called when a task level authentication challenge is received. 
+    ///
+    /// This method provides a chance to handle and respond to the authentication challenge before the downloading can
+    /// start.
     ///
     /// - Parameters:
-    ///   - downloader: The downloader which receives this challenge.
+    ///   - downloader: The downloader that receives this challenge.
     ///   - task: The task whose request requires authentication.
     ///   - challenge: An object that contains the request for authentication.
     ///   - completionHandler: A handler that your delegate method must call.
@@ -61,7 +64,8 @@ public protocol AuthenticationChallengeResponsible: AnyObject {
         _ downloader: ImageDownloader,
         task: URLSessionTask,
         didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    )
 }
 
 extension AuthenticationChallengeResponsible {
