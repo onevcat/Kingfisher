@@ -86,15 +86,14 @@ class ImagePrefetcherTests: XCTestCase {
         let maxConcurrentCount = 2
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
-            options: [.waitForCache])
-        {
-            skippedResources, failedResources, completedResources in
-            
-            XCTAssertEqual(skippedResources.count, 0)
-            XCTAssertEqual(failedResources.count, testURLs.count)
-            XCTAssertEqual(completedResources.count, 0)
-            delay(0.1) { exp.fulfill() }
-        }
+            options: [.waitForCache],
+            completionHandler: { skippedResources, failedResources, completedResources in
+                XCTAssertEqual(skippedResources.count, 0)
+                XCTAssertEqual(failedResources.count, testURLs.count)
+                XCTAssertEqual(completedResources.count, 0)
+                delay(0.1) { exp.fulfill() }
+            }
+        )
         
         prefetcher.maxConcurrentDownloads = maxConcurrentCount
         
@@ -115,15 +114,15 @@ class ImagePrefetcherTests: XCTestCase {
         testURLs.forEach { stub($0, data: testImageData) }
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
-            options: [.waitForCache])
-        {
-            skippedResources, failedResources, completedResources in
-            XCTAssertEqual(skippedResources.count, 1)
-            XCTAssertEqual(skippedResources[0].downloadURL, testURLs[0])
-            XCTAssertEqual(failedResources.count, 0)
-            XCTAssertEqual(completedResources.count, testURLs.count - 1)
-            exp.fulfill()
-        }
+            options: [.waitForCache],
+            completionHandler: { skippedResources, failedResources, completedResources in
+                XCTAssertEqual(skippedResources.count, 1)
+                XCTAssertEqual(skippedResources[0].downloadURL, testURLs[0])
+                XCTAssertEqual(failedResources.count, 0)
+                XCTAssertEqual(completedResources.count, testURLs.count - 1)
+                exp.fulfill()
+            }
+        )
         
         prefetcher.start()
         
@@ -135,13 +134,13 @@ class ImagePrefetcherTests: XCTestCase {
         KingfisherManager.shared.cache.store(KFCrossPlatformImage(), forKey: testKeys[0])
         
         testURLs.forEach { stub($0, data: testImageData) }
-        let prefetcher = ImagePrefetcher(urls: testURLs, options: [.forceRefresh, .waitForCache]) {
+        let prefetcher = ImagePrefetcher(urls: testURLs, options: [.forceRefresh, .waitForCache], completionHandler:  {
             skippedResources, failedResources, completedResources in
             XCTAssertEqual(skippedResources.count, 0)
             XCTAssertEqual(failedResources.count, 0)
             XCTAssertEqual(completedResources.count, testURLs.count)
             exp.fulfill()
-        }
+        })
         
         prefetcher.start()
         waitForExpectations(timeout: 3, handler: nil)
@@ -149,13 +148,13 @@ class ImagePrefetcherTests: XCTestCase {
     
     func testPrefetchWithWrongInitParameters() {
         let exp = expectation(description: #function)
-        let prefetcher = ImagePrefetcher(urls: [], options: [.waitForCache]) {
+        let prefetcher = ImagePrefetcher(urls: [], options: [.waitForCache], completionHandler:  {
             skippedResources, failedResources, completedResources in
             XCTAssertEqual(skippedResources.count, 0)
             XCTAssertEqual(failedResources.count, 0)
             XCTAssertEqual(completedResources.count, 0)
             exp.fulfill()
-        }
+        })
         
         prefetcher.start()
         waitForExpectations(timeout: 3, handler: nil)
@@ -228,18 +227,17 @@ class ImagePrefetcherTests: XCTestCase {
             testURLs.forEach { stub($0, data: testImageData) }
             let prefetcher = ImagePrefetcher(
                 urls: testURLs,
-                options: [.waitForCache, .alsoPrefetchToMemory])
-            {
-                skippedResources, failedResources, completedResources in
-                
-                XCTAssertEqual(cache.imageCachedType(forKey: key), .memory)
-                
-                XCTAssertEqual(skippedResources.count, 1)
-                XCTAssertEqual(skippedResources[0].downloadURL, testURLs[0])
-                XCTAssertEqual(failedResources.count, 0)
-                XCTAssertEqual(completedResources.count, testURLs.count - 1)
-                exp.fulfill()
-            }
+                options: [.waitForCache, .alsoPrefetchToMemory], 
+                completionHandler: { skippedResources, failedResources, completedResources in
+                        
+                    XCTAssertEqual(cache.imageCachedType(forKey: key), .memory)
+                    XCTAssertEqual(skippedResources.count, 1)
+                    XCTAssertEqual(skippedResources[0].downloadURL, testURLs[0])
+                    XCTAssertEqual(failedResources.count, 0)
+                    XCTAssertEqual(completedResources.count, testURLs.count - 1)
+                    exp.fulfill()
+                }
+            )
             
             prefetcher.start()
             
@@ -260,18 +258,18 @@ class ImagePrefetcherTests: XCTestCase {
             testURLs.forEach { stub($0, data: testImageData) }
             let prefetcher = ImagePrefetcher(
                 urls: testURLs,
-                options: [.waitForCache])
-            {
-                skippedResources, failedResources, completedResources in
-                
-                XCTAssertEqual(cache.imageCachedType(forKey: key), .disk)
-                
-                XCTAssertEqual(skippedResources.count, 1)
-                XCTAssertEqual(skippedResources[0].downloadURL, testURLs[0])
-                XCTAssertEqual(failedResources.count, 0)
-                XCTAssertEqual(completedResources.count, testURLs.count - 1)
-                exp.fulfill()
-            }
+                options: [.waitForCache],
+                completionHandler: { skippedResources, failedResources, completedResources in
+                        
+                    XCTAssertEqual(cache.imageCachedType(forKey: key), .disk)
+                    
+                    XCTAssertEqual(skippedResources.count, 1)
+                    XCTAssertEqual(skippedResources[0].downloadURL, testURLs[0])
+                    XCTAssertEqual(failedResources.count, 0)
+                    XCTAssertEqual(completedResources.count, testURLs.count - 1)
+                    exp.fulfill()
+                }
+            )
             
             prefetcher.start()
             
@@ -285,14 +283,14 @@ class ImagePrefetcherTests: XCTestCase {
         testURLs.forEach { stub($0, data: testImageData) }
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
-            options: [.waitForCache])
-        {
-            skippedResources, failedResources, completedResources in
-            XCTAssertEqual(skippedResources.count, 0)
-            XCTAssertEqual(failedResources.count, 0)
-            XCTAssertEqual(completedResources.count, testURLs.count)
-            exp.fulfill()
-        }
+            options: [.waitForCache], 
+            completionHandler: { skippedResources, failedResources, completedResources in
+                XCTAssertEqual(skippedResources.count, 0)
+                XCTAssertEqual(failedResources.count, 0)
+                XCTAssertEqual(completedResources.count, testURLs.count)
+                exp.fulfill()
+            }
+        )
         prefetcher.maxConcurrentDownloads = 1
         prefetcher.start()
         
@@ -307,8 +305,11 @@ class ImagePrefetcherTests: XCTestCase {
             group.enter()
             let prefetcher = ImagePrefetcher(
                 resources: testURLs,
-                options: [.cacheMemoryOnly])
-            { _, _, _ in group.leave() }
+                options: [.cacheMemoryOnly], 
+                completionHandler: {
+                    _, _, _ in group.leave()
+                }
+            )
             prefetcher.start()
         }
         group.notify(queue: .main) { exp.fulfill() }
