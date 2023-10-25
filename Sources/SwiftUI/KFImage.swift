@@ -28,9 +28,53 @@
 import SwiftUI
 import Combine
 
+/// Represents an image view in SwiftUI that manages its content using Kingfisher.
+///
+/// This view asynchronously loads the content. You can set a ``Source`` to load for the ``KFImage`` through
+/// its ``KFImage/init(source:)`` or ``KFImage/init(_:)`` initializers or other relevant methods in ``KF`` Builder type.
+///  Kingfisher will first look for the required image in the cache. If it is not found, it will load it via the
+///  ``Source`` and provide the result for display, following sending the result to cache and for the future use.
+///
+/// When using a `URL` valve as the ``Source``, it is similar to SwiftUI's `AsyncImage` but with additional support
+/// for caching.
+///
+/// Here is a basic example of using ``KFImage``:
+///
+/// ```swift
+/// var body: some View {
+///   KFImage(URL(string: "https://example.com/image.png")!)
+/// }
+/// ```
+///
+/// Usually, you can also use the value by calling additional modifiers defined on it, to configure the view:
+///
+/// ```swift
+/// var body: some View {
+///     KFImage.url(url)
+///       .placeholder(placeholderImage)
+///       .setProcessor(processor)
+///       .loadDiskFileSynchronously()
+///       .cacheMemoryOnly()
+///       .onSuccess { result in  }
+/// }
+/// ```
+/// Here only very few are listed as demonstration. To check other available modifiers, see ``KFOptionSetter`` and its
+/// extension methods.
+///
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFImage: KFImageProtocol {
+    
+    /// Represent the wrapping context of the image view.
+    ///
+    /// Inside ``KFImage`` it is using the `SwiftUI.Image` to render the image.
     public var context: Context<Image>
+    
+    /// Initializes the ``KFImage`` with a context.
+    ///
+    /// This should be only used internally in Kingfisher. Do not use this initializer yourself. Instead, use
+    ///  ``KFImage/init(source:)`` or ``KFImage/init(_:)`` initializers or other relevant methods in ``KF`` Builder
+    ///  type.
+    /// - Parameter context: The context value that the image view should wrap.
     public init(context: Context<Image>) {
         self.context = context
     }

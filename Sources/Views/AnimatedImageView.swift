@@ -36,19 +36,21 @@
 import UIKit
 import ImageIO
 
-/// Protocol of `AnimatedImageView`.
+/// Delegate of the ``AnimatedImageView``.
+///
+/// It reports back some events of the animated image view.
 public protocol AnimatedImageViewDelegate: AnyObject {
 
-    /// Called after the animatedImageView has finished each animation loop.
+    /// Called after the ``AnimatedImageView`` has finished each animation loop.
     ///
     /// - Parameters:
-    ///   - imageView: The `AnimatedImageView` that is being animated.
-    ///   - count: The looped count.
+    ///   - imageView: The ``AnimatedImageView`` that is being animated.
+    ///   - count: The loop count.
     func animatedImageView(_ imageView: AnimatedImageView, didPlayAnimationLoops count: UInt)
 
-    /// Called after the `AnimatedImageView` has reached the max repeat count.
+    /// Called after the ``AnimatedImageView`` has reached the maximum repeat count.
     ///
-    /// - Parameter imageView: The `AnimatedImageView` that is being animated.
+    /// - Parameter imageView: The ``AnimatedImageView`` that is being animated.
     func animatedImageViewDidFinishAnimating(_ imageView: AnimatedImageView)
 }
 
@@ -59,15 +61,17 @@ extension AnimatedImageViewDelegate {
 
 let KFRunLoopModeCommon = RunLoop.Mode.common
 
-/// Represents a subclass of `UIImageView` for displaying animated image.
-/// Different from showing animated image in a normal `UIImageView` (which load all frames at one time),
-/// `AnimatedImageView` only tries to load several frames (defined by `framePreloadCount`) to reduce memory usage.
-/// It provides a tradeoff between memory usage and CPU time. If you have a memory issue when using a normal image
-/// view to load GIF data, you could give this class a try.
+/// Represents a subclass of `UIImageView` for displaying animated images.
 ///
-/// Kingfisher supports setting GIF animated data to either `UIImageView` and `AnimatedImageView` out of box. So
+/// Different from showing an animated image in a normal `UIImageView` (which loads all frames at one time),
+/// ``AnimatedImageView`` only tries to load several frames (defined by ``AnimatedImageView/framePreloadCount``) to
+/// reduce memory usage. It provides a tradeoff between memory usage and CPU time. If you have a memory issue when
+/// using a normal image view to load GIF data, you could give this class a try.
+///
+/// Kingfisher supports setting GIF animated data to either `UIImageView` or ``AnimatedImageView`` out of the box. So
 /// it would be fairly easy to switch between them.
 open class AnimatedImageView: UIImageView {
+    
     /// Proxy object for preventing a reference cycle between the `CADDisplayLink` and `AnimatedImageView`.
     class TargetProxy {
         private weak var target: AnimatedImageView?
@@ -81,10 +85,13 @@ open class AnimatedImageView: UIImageView {
         }
     }
 
-    /// Enumeration that specifies repeat count of GIF
+    /// An enumeration that specifies the repeat count of a GIF.
     public enum RepeatCount: Equatable {
+        /// The animated image should be only played once.
         case once
+        /// The animated image should be played by a finite times defined in the associated value.
         case finite(count: UInt)
+        /// The animated image should be played infinitely.
         case infinite
 
         public static func ==(lhs: RepeatCount, rhs: RepeatCount) -> Bool {
@@ -106,23 +113,30 @@ open class AnimatedImageView: UIImageView {
     }
     
     // MARK: - Public property
-    /// Whether automatically play the animation when the view become visible. Default is `true`.
+    /// Whether to automatically play the animation when the view becomes visible. 
+    ///
+    /// The default is `true`.
     public var autoPlayAnimatedImage = true
     
-    /// The count of the frames should be preloaded before shown.
+    /// The count of frames that should be preloaded before being shown.
     public var framePreloadCount = 10
     
     /// Specifies whether the GIF frames should be pre-scaled to the image view's size or not.
-    /// If the downloaded image is larger than the image view's size, it will help to reduce some memory use.
-    /// Default is `true`.
+    ///
+    /// If the downloaded image is larger than the image view's size, it will help reduce some memory usage.
+    ///
+    /// The default is `true`.
     public var needsPrescaling = true
 
-    /// Decode the GIF frames in background thread before using. It will decode frames data and do a off-screen
-    /// rendering to extract pixel information in background. This can reduce the main thread CPU usage.
+    /// Decode the GIF frames in a background thread before use.
+    ///
+    /// It will decode frames data and perform an off-screen rendering to extract pixel information in the background.
+    /// This can reduce the main thread's CPU usage.
     public var backgroundDecode = true
 
-    /// The animation timer's run loop mode. Default is `RunLoop.Mode.common`.
-    /// Set this property to `RunLoop.Mode.default` will make the animation pause during UIScrollView scrolling.
+    /// The animation timer's run loop mode. The default is `RunLoop.Mode.common`.
+    ///
+    /// Setting this property to `RunLoop.Mode.default` will make the animation pause during UIScrollView scrolling.
     public var runLoopMode = KFRunLoopModeCommon {
         willSet {
             guard runLoopMode != newValue else { return }
@@ -133,10 +147,11 @@ open class AnimatedImageView: UIImageView {
         }
     }
     
-    /// The repeat count. The animated image will keep animate until it the loop count reaches this value.
-    /// Setting this value to another one will reset current animation.
+    /// The repeat count. The animated image will keep animating until the loop count reaches this value.
     ///
-    /// Default is `.infinite`, which means the animation will last forever.
+    /// Setting this value to another one will reset the current animation.
+    ///
+    /// The default is ``RepeatCount/infinite``, which means the animation will last forever.
     public var repeatCount = RepeatCount.infinite {
         didSet {
             if oldValue != repeatCount {
@@ -147,10 +162,12 @@ open class AnimatedImageView: UIImageView {
         }
     }
 
-    /// Delegate of this `AnimatedImageView` object. See `AnimatedImageViewDelegate` protocol for more.
+    /// The delegate of this `AnimatedImageView` object. 
+    ///
+    /// See the ``AnimatedImageViewDelegate`` protocol for more information.
     public weak var delegate: AnimatedImageViewDelegate?
 
-    /// The `Animator` instance that holds the frames of a specific image in memory.
+    /// The ``Animator`` instance that holds the frames of a specific image in memory.
     public private(set) var animator: Animator?
 
     // MARK: - Private property
@@ -225,7 +242,6 @@ open class AnimatedImageView: UIImageView {
         }
     }
     
-    /// Starts the animation.
     override open func startAnimating() {
         guard !isAnimating else { return }
         guard let animator = animator else { return }
@@ -234,7 +250,6 @@ open class AnimatedImageView: UIImageView {
         displayLink.isPaused = false
     }
     
-    /// Stops the animation.
     override open func stopAnimating() {
         super.stopAnimating()
         if isDisplayLinkInitialized {
@@ -298,7 +313,7 @@ open class AnimatedImageView: UIImageView {
         }
     }
     
-    /// Update the current frame with the displayLink duration.
+    // Update the current frame with the displayLink duration.
     private func updateFrameIfNeeded() {
         guard let animator = animator else {
             return
@@ -377,14 +392,14 @@ extension AnimatedImageView {
 
     // MARK: - Animator
 
-    /// An animator which used to drive the data behind `AnimatedImageView`.
+    /// An animator which is used to drive the data behind ``AnimatedImageView``.
     public class Animator {
         private let size: CGSize
 
         private let imageSize: CGSize
         private let imageScale: CGFloat
 
-        /// The maximum count of image frames that needs preload.
+        /// The maximum count of image frames that need to be preloaded.
         public let maxFrameCount: Int
 
         private let frameSource: ImageFrameSource
@@ -412,7 +427,7 @@ extension AnimatedImageView {
             return frame(at: currentFrameIndex)
         }
 
-        /// The duration of the current active frame duration.
+        /// The duration of the current active frame.
         public var currentFrameDuration: TimeInterval {
             return duration(at: currentFrameIndex)
         }
@@ -525,12 +540,15 @@ extension AnimatedImageView {
         }
 
         /// Gets the image frame of a given index.
-        /// - Parameter index: The index of desired image.
-        /// - Returns: The decoded image at the frame. `nil` if the index is out of bound or the image is not yet loaded.
+        /// - Parameter index: The index of the desired image.
+        /// - Returns: The decoded image at the frame. `nil` if the index is out of bounds or the image is not yet loaded.
         public func frame(at index: Int) -> KFCrossPlatformImage? {
             return animatedFrames[index]?.image
         }
 
+        /// Gets the duration of an image for the given frame index.
+        /// - Parameter index: The index of the desired image.
+        /// - Returns: The duration of that frame.
         public func duration(at index: Int) -> TimeInterval {
             return animatedFrames[index]?.duration  ?? .infinity
         }

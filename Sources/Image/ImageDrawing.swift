@@ -563,7 +563,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return base
         }
         
-        #if !os(watchOS)
+        #if !os(watchOS) && !os(macOS)
         // In newer system versions, use `preparingForDisplay`.
         if #available(iOS 15.0, tvOS 15.0, visionOS 1.0, *) {
             if base.scale == scale, let image = base.preparingForDisplay() {

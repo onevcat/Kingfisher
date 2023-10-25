@@ -25,8 +25,9 @@
 //  THE SOFTWARE.
 
 import Foundation
-/// A class that keeps a weakly reference for `self` when implementing `onXXX` behaviors.
-/// Instead of remembering to keep `self` as weak in a stored closure:
+
+/// A class that maintains a weak reference to `self` when implementing `onXXX` behaviors.
+/// Instead of manually ensuring that `self` is kept as weak in a stored closure:
 ///
 /// ```swift
 /// // MyClass.swift
@@ -46,7 +47,7 @@ import Foundation
 /// }
 /// ```
 ///
-/// You can create a `Delegate` and observe on `self`. Now, there is no retain cycle inside:
+/// You can create a `Delegate` and observe it on `self`. This ensures there is no retain cycle:
 ///
 /// ```swift
 /// // MyClass.swift
@@ -57,16 +58,15 @@ import Foundation
 ///
 /// // ViewController.swift
 /// var obj: MyClass?
-///
+/// 
 /// func doSomething() {
 ///     obj = MyClass()
-///     obj!.onDone.delegate(on: self) { (self, _)
-///         // `self` here is shadowed and does not keep a strong ref.
-///         // So you can release both `MyClass` instance and `ViewController` instance.
+///     obj!.onDone.delegate(on: self) { (self, _) in
+///         // The `self` here is shadowed and does not retain a strong reference.
+///         // Thus, both the `MyClass` instance and the `ViewController` instance can be released.
 ///         self.reportDone()
 ///     }
 /// }
-/// ```
 ///
 public class Delegate<Input, Output> {
     public init() {}
