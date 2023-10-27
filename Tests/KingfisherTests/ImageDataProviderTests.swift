@@ -93,6 +93,29 @@ class ImageDataProviderTests: XCTestCase {
         XCTAssertTrue(called)
     }
     
+    func testAVAssetImageDataProviderCacheKeyVariesForRemote() {
+        let remoteURL1 = URL(string: "https://example.com/1/hello.mp4")!
+        let remoteURL2 = URL(string: "https://example.com/2/hello.mp4")!
+        
+        let provider1 = AVAssetImageDataProvider(assetURL: remoteURL1, seconds: 10)
+        XCTAssertEqual(provider1.cacheKey, "https://example.com/1/hello.mp4_10.0")
+        
+        let provider2 = AVAssetImageDataProvider(assetURL: remoteURL2, seconds: 10)
+        XCTAssertNotEqual(provider1.cacheKey, provider2.cacheKey)
+    }
+    
+    // AVAssetImageDataProvider fix for appending to #1825
+    func testAVAssetImageDataProviderCacheKeyConsistForDifferentAppSandbox() {
+        let localURL1 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/DEF/Kingfisher-Demo.app/video/hello.mp4")!
+        let localURL2 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/XYZ/Kingfisher-Demo.app/video/hello.mp4")!
+        
+        let provider1 = AVAssetImageDataProvider(assetURL: localURL1, seconds: 10)
+        XCTAssertEqual(provider1.cacheKey, "\(URL.localFileCacheKeyPrefix)/Kingfisher-Demo.app/video/hello.mp4_10.0")
+    
+        let provider2 = AVAssetImageDataProvider(assetURL: localURL2, seconds: 10)
+        XCTAssertEqual(provider1.cacheKey, provider2.cacheKey)
+    }
+    
     #if swift(>=5.5)
     #if canImport(_Concurrency)
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
