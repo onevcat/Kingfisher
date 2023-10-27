@@ -110,6 +110,7 @@
 		D1BA781D2174D07800C69D7B /* CallbackQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1BA781C2174D07800C69D7B /* CallbackQueue.swift */; };
 		D1BFED95222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1BFED94222ACC6B009330C8 /* ImageProcessorTests.swift */; };
 		D1D2C32A1C70A3230018F2F9 /* single-frame.gif in Resources */ = {isa = PBXBuildFile; fileRef = D1D2C3291C70A3230018F2F9 /* single-frame.gif */; };
+		D1D550D52AEB9E8700AAD79D /* PrivacyInfo.xcprivacy in CopyFiles */ = {isa = PBXBuildFile; fileRef = D1C04A3E2A45D20500B3775F /* PrivacyInfo.xcprivacy */; };
 		D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */; };
 		D1E564412199C21E0057AAE3 /* StorageExpirationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E564402199C21E0057AAE3 /* StorageExpirationTests.swift */; };
 		D1E56445219B16330057AAE3 /* ImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E56444219B16330057AAE3 /* ImageDataProvider.swift */; };
@@ -130,6 +131,19 @@
 			remoteInfo = Kingfisher;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D1D550D42AEB9E7300AAD79D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				D1D550D52AEB9E8700AAD79D /* PrivacyInfo.xcprivacy in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		07292244263B02F00089E810 /* KFAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFAnimatedImage.swift; sourceTree = "<group>"; };
@@ -703,6 +717,7 @@
 			buildConfigurationList = D1ED2D4E1AD2D09F00CFC3EB /* Build configuration list for PBXNativeTarget "Kingfisher" */;
 			buildPhases = (
 				D1ED2D301AD2D09F00CFC3EB /* Sources */,
+				D1D550D42AEB9E7300AAD79D /* CopyFiles */,
 				D1ED2D311AD2D09F00CFC3EB /* Frameworks */,
 				D1ED2D321AD2D09F00CFC3EB /* Headers */,
 			);
