@@ -53,7 +53,10 @@ public struct AVAssetImageDataProvider: ImageDataProvider {
     public let time: CMTime
 
     private var internalKey: String {
-        return (assetImageGenerator.asset as? AVURLAsset)?.url.absoluteString ?? UUID().uuidString
+        guard let url = (assetImageGenerator.asset as? AVURLAsset)?.url else {
+            return UUID().uuidString
+        }
+        return url.cacheKey
     }
 
     /// The cache key used by `self`.
