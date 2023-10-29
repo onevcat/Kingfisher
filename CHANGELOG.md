@@ -2,6 +2,20 @@
 
 -----
 
+## [7.10.0 - Privacy Manifest](https://github.com/onevcat/Kingfisher/releases/tag/7.10.0) (2023-10-29)
+
+#### Add
+* Actually add the privacy manifest files to the xcframework, Swift Package Manager and CocoaPods. [#2122](https://github.com/onevcat/Kingfisher/issues/2122)[#2156](https://github.com/onevcat/Kingfisher/pull/2156) @CloudosaurusRex @NikcN22
+* Enable the modulemap generation and `-Swift.h` header again for ObjC compatibility. [#2138](https://github.com/onevcat/Kingfisher/pull/2138) @yev-kanivets
+
+#### Fix
+* Use the trait collection to determine animated image scale, instead of the deprecated `UIScreen` API. [#2157](https://github.com/onevcat/Kingfisher/pull/2157) @hyun99999
+* An issue that a local AV asset creates multiple disk caches when connected to Xcode during Debug phase. [#2158](https://github.com/onevcat/Kingfisher/pull/2157) @onevcat @elijahdou
+* The disk cache now is still availiable when the whole cache folder is removed by external operations instead of the methods in Kingfisher. [#2162](https://github.com/onevcat/Kingfisher/pull/2162) @onevcat @uclort
+* Some documentation and CI impro/vements.
+
+---
+
 ## [7.9.1 - Lastest Xcode 15 beta](https://github.com/onevcat/Kingfisher/releases/tag/7.9.1) (2023-08-26)
 
 #### Fix
