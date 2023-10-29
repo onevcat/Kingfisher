@@ -491,6 +491,43 @@ class ImageCacheTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testDiskCacheStillWorkWhenFolderDeletedExternally() {
+        let exp = expectation(description: #function)
+        let key = testKeys[0]
+        let url = URL(string: key)!
+        
+        let exists = cache.imageCachedType(forKey: url.cacheKey).cached
+        XCTAssertFalse(exists)
+        
+        cache.store(testImage, forKey: key, toDisk: true) { _ in
+            self.cache.retrieveImage(forKey: key) { result in
+
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(result.value?.cacheType, .memory)
+
+                self.cache.clearMemoryCache()
+                self.cache.retrieveImage(forKey: key) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertEqual(result.value?.cacheType, .disk)
+
+                    try! FileManager.default.removeItem(at: self.cache.diskStorage.directoryURL)
+                    
+                    let exist = self.cache.imageCachedType(forKey: url.cacheKey).cached
+                    XCTAssertFalse(exists)
+                    
+                    self.cache.store(testImage, forKey: key, toDisk: true) { _ in
+                        self.cache.clearMemoryCache()
+                        let cacheType = self.cache.imageCachedType(forKey: url.cacheKey)
+                        XCTAssertEqual(cacheType, .disk)
+                        exp.fulfill()
+                    }
+                }
+            }
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
     #if swift(>=5.5)
     #if canImport(_Concurrency)
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
