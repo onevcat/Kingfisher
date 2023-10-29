@@ -496,8 +496,8 @@ class ImageCacheTests: XCTestCase {
         let key = testKeys[0]
         let url = URL(string: key)!
         
-        let exists = cache.imageCachedType(forKey: url.cacheKey).cached
-        XCTAssertFalse(exists)
+        let exists = cache.imageCachedType(forKey: url.cacheKey)
+        XCTAssertEqual(exists, .none)
         
         cache.store(testImage, forKey: key, toDisk: true) { _ in
             self.cache.retrieveImage(forKey: key) { result in
@@ -509,11 +509,12 @@ class ImageCacheTests: XCTestCase {
                 self.cache.retrieveImage(forKey: key) { result in
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertEqual(result.value?.cacheType, .disk)
-
+                    self.cache.clearMemoryCache()
+                    
                     try! FileManager.default.removeItem(at: self.cache.diskStorage.directoryURL)
                     
-                    let exist = self.cache.imageCachedType(forKey: url.cacheKey).cached
-                    XCTAssertFalse(exists)
+                    let exists = self.cache.imageCachedType(forKey: url.cacheKey)
+                    XCTAssertEqual(exists, .none)
                     
                     self.cache.store(testImage, forKey: key, toDisk: true) { _ in
                         self.cache.clearMemoryCache()
@@ -525,6 +526,30 @@ class ImageCacheTests: XCTestCase {
             }
         }
         
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testDiskCacheCalculateSizeWhenFolderDeletedExternally() {
+        let exp = expectation(description: #function)
+        
+        let key = testKeys[0]
+        
+        cache.calculateDiskStorageSize { result in
+            XCTAssertEqual(result.value, 0)
+            
+            self.cache.store(testImage, forKey: key, toDisk: true) { _ in
+                self.cache.calculateDiskStorageSize { result in
+                    XCTAssertEqual(result.value, UInt(testImagePNGData.count))
+                    
+                    try! FileManager.default.removeItem(at: self.cache.diskStorage.directoryURL)
+                    self.cache.calculateDiskStorageSize { result in
+                        XCTAssertEqual(result.value, 0)
+                        exp.fulfill()
+                    }
+                    
+                }
+            }
+        }
         waitForExpectations(timeout: 3, handler: nil)
     }
     
