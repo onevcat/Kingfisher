@@ -26,7 +26,9 @@
 
 import Foundation
 
-// Represents the delegate object of downloader session. It also behave like a task manager for downloading.
+/// Represents the delegate object of the downloader session.
+///
+/// It also behaves like a task manager for downloading.
 @objc(KFSessionDelegate) // Fix for ObjC header name conflicting. https://github.com/onevcat/Kingfisher/issues/1530
 open class SessionDelegate: NSObject {
 
@@ -47,7 +49,7 @@ open class SessionDelegate: NSObject {
     private let lock = NSLock()
 
     let onValidStatusCode = Delegate<Int, Bool>()
-    let onResponseReceived = Delegate<(URLResponse, (URLSession.ResponseDisposition) -> Void), Void>()
+    let onResponseReceived = Delegate<URLResponse, URLSession.ResponseDisposition>()
     let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
     let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
@@ -153,32 +155,31 @@ extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(
         _ session: URLSession,
         dataTask: URLSessionDataTask,
-        didReceive response: URLResponse,
-        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void)
-    {
+        didReceive response: URLResponse
+    ) async -> URLSession.ResponseDisposition {
         guard let httpResponse = response as? HTTPURLResponse else {
             let error = KingfisherError.responseError(reason: .invalidURLResponse(response: response))
             onCompleted(task: dataTask, result: .failure(error))
-            completionHandler(.cancel)
-            return
+            return .cancel
         }
-
+        
         let httpStatusCode = httpResponse.statusCode
         guard onValidStatusCode.call(httpStatusCode) == true else {
             let error = KingfisherError.responseError(reason: .invalidHTTPStatusCode(response: httpResponse))
             onCompleted(task: dataTask, result: .failure(error))
-            completionHandler(.cancel)
-            return
+            return .cancel
         }
-
-        let inspectedHandler: (URLSession.ResponseDisposition) -> Void = { disposition in
-            if disposition == .cancel {
-                let error = KingfisherError.responseError(reason: .cancelledByDelegate(response: response))
-                self.onCompleted(task: dataTask, result: .failure(error))
-            }
-            completionHandler(disposition)
+        
+        guard let disposition = await onResponseReceived.callAsync(response) else {
+            return .cancel
         }
-        onResponseReceived.call((response, inspectedHandler))
+        
+        if disposition == .cancel {
+            let error = KingfisherError.responseError(reason: .cancelledByDelegate(response: response))
+            self.onCompleted(task: dataTask, result: .failure(error))
+        }
+        
+        return disposition
     }
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
@@ -252,7 +253,11 @@ extension SessionDelegate: URLSessionDataDelegate {
         {
             return request
         }
-        return await redirectHandler.handleHTTPRedirection(for: sessionDataTask, response: response, newRequest: request)
+        return await redirectHandler.handleHTTPRedirection(
+            for: sessionDataTask,
+            response: response,
+            newRequest: request
+        )
     }
 
     private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?), KingfisherError>) {

@@ -33,8 +33,8 @@ extension KingfisherWrapper where Base == CGSize {
     ///
     /// - Parameters:
     ///   - size: The target size to resize to.
-    ///   - contentMode: Content mode of the target size should be when resizing.
-    /// - Returns: The resized size under the given `ContentMode`.
+    ///   - contentMode: The content mode of the target size when resizing.
+    /// - Returns: The resized size under the given ``ContentMode``.
     public func resize(to size: CGSize, for contentMode: ContentMode) -> CGSize {
         switch contentMode {
         case .aspectFit:
@@ -46,10 +46,10 @@ extension KingfisherWrapper where Base == CGSize {
         }
     }
     
-    /// Returns a size by resizing the `base` size by making it aspect fitting the given `size`.
+    /// Returns a size by resizing the `base` size to make it aspect-fit the given `size`.
     ///
-    /// - Parameter size: The size in which the `base` should fit in.
-    /// - Returns: The size fitted in by the input `size`, while keeps `base` aspect.
+    /// - Parameter size: The size in which the `base` should fit.
+    /// - Returns: The size that fits the `base` within the input `size`, while keeping the `base` aspect.
     public func constrained(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
@@ -59,10 +59,10 @@ extension KingfisherWrapper where Base == CGSize {
             CGSize(width: aspectWidth, height: size.height)
     }
     
-    /// Returns a size by resizing the `base` size by making it aspect filling the given `size`.
+    /// Returns a size by resizing the `base` size to make it aspect-fill the given `size`.
     ///
-    /// - Parameter size: The size in which the `base` should fill.
-    /// - Returns: The size be filled by the input `size`, while keeps `base` aspect.
+    /// - Parameter size: The size that the `base` should fill.
+    /// - Returns: The size filled by the input `size`, while keeping the `base` aspect.
     public func filling(_ size: CGSize) -> CGSize {
         let aspectWidth = round(aspectRatio * size.height)
         let aspectHeight = round(size.width / aspectRatio)
@@ -72,12 +72,13 @@ extension KingfisherWrapper where Base == CGSize {
             CGSize(width: aspectWidth, height: size.height)
     }
     
-    /// Returns a `CGRect` for which the `base` size is constrained to an input `size` at a given `anchor` point.
+    /// Returns a `CGRect` in which the `base` size is constrained to fit within a specified `size`, anchored at a 
+    /// particular `anchor` point.
     ///
     /// - Parameters:
-    ///   - size: The size in which the `base` should be constrained to.
-    ///   - anchor: An anchor point in which the size constraint should happen.
-    /// - Returns: The result `CGRect` for the constraint operation.
+    ///   - size: The size to which the `base` should be constrained.
+    ///   - anchor: The anchor point where the size constraint is applied.
+    /// - Returns: A `CGRect` that results from the constraint operation.
     public func constrainedRect(for size: CGSize, anchor: CGPoint) -> CGRect {
         
         let unifiedAnchor = CGPoint(x: anchor.x.clamped(to: 0.0...1.0),

@@ -30,7 +30,7 @@ import Foundation
 // However, they are just wrapper of `ResultUtil` static methods.
 extension Result where Failure: Error {
 
-    /// Evaluates the given transform closures to create a single output value.
+    /// Evaluates the given transformation closures to create a single output value.
     ///
     /// - Parameters:
     ///   - onSuccess: A closure that transforms the success value.

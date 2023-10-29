@@ -32,22 +32,21 @@ extension KingfisherWrapper where Base: NSButton {
 
     // MARK: Setting Image
 
-    /// Sets an image to the button with a source.
+    /// Sets an image to the button with a ``Source``.
     ///
     /// - Parameters:
-    ///   - source: The `Source` object contains information about how to get the image.
-    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
-    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
-    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///   - source: The ``Source`` object that defines data information from the network or a data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - progressBlock: Called when the image downloading progress is updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
-    ///   - completionHandler: Called when the image retrieved and set finished.
-    /// - Returns: A task represents the image downloading.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
     ///
-    /// - Note:
-    /// Internally, this method will use `KingfisherManager` to get the requested source.
-    /// Since this method will perform UI changes, you must call it from the main thread.
-    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
     ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
         with source: Source?,
@@ -66,22 +65,21 @@ extension KingfisherWrapper where Base: NSButton {
         )
     }
 
-    /// Sets an image to the button with a requested resource.
+    /// Sets an image to the button with a ``Resource``.
     ///
     /// - Parameters:
-    ///   - resource: The `Resource` object contains information about the resource.
-    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
-    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
-    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///   - resource: The ``Resource`` object that defines data information from the network or a data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - progressBlock: Called when the image downloading progress is updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
-    ///   - completionHandler: Called when the image retrieved and set finished.
-    /// - Returns: A task represents the image downloading.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
     ///
-    /// - Note:
-    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
-    /// or network. Since this method will perform UI changes, you must call it from the main thread.
-    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
     ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
         with resource: Resource?,
@@ -196,22 +194,21 @@ extension KingfisherWrapper where Base: NSButton {
         )
     }
 
-    /// Sets an alternate image to the button with a requested resource.
+    /// Sets an alternate image to the button with a ``Resource``.
     ///
     /// - Parameters:
-    ///   - resource: The `Resource` object contains information about the resource.
-    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
-    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
-    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///   - resource: The ``Resource`` object that defines data information from the network or a data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - progressBlock: Called when the image downloading progress is updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
-    ///   - completionHandler: Called when the image retrieved and set finished.
-    /// - Returns: A task represents the image downloading.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
     ///
-    /// - Note:
-    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
-    /// or network. Since this method will perform UI changes, you must call it from the main thread.
-    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
     ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setAlternateImage(
         with resource: Resource?,
@@ -255,7 +252,7 @@ extension KingfisherWrapper where Base: NSButton {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
 
-        if let provider = ImageProgressiveProvider(options, refresh: { image in
+        if let provider = ImageProgressiveProvider(options: options, refresh: { image in
             self.base.alternateImage = image
         }) {
             options.onDataReceived = (options.onDataReceived ?? []) + [provider]
@@ -308,7 +305,8 @@ extension KingfisherWrapper where Base: NSButton {
 
     // MARK: Cancelling Alternate Image Downloading Task
 
-    /// Cancels the alternate image download task of the button if it is running.
+    /// Cancels the image download task of the image view if it is running.
+    ///
     /// Nothing will happen if the downloading has already finished.
     public func cancelAlternateImageDownloadTask() {
         alternateImageTask?.cancel()

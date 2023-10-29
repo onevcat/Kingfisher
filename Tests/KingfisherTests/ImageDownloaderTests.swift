@@ -687,13 +687,8 @@ class TaskNilDataModifier: ImageDownloaderDelegate {
 class TaskResponseCompletion: ImageDownloaderDelegate {
 
     let onReceiveResponse = Delegate<URLResponse, URLSession.ResponseDisposition>()
-
-    func imageDownloader(
-        _ downloader: ImageDownloader,
-        didReceive response: URLResponse,
-        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
-    ) {
-        completionHandler(onReceiveResponse.call(response)!)
+    func imageDownloader(_ downloader: ImageDownloader, didReceive response: URLResponse) async -> URLSession.ResponseDisposition {
+        return onReceiveResponse.call(response)!
     }
 }
 
