@@ -149,9 +149,21 @@ public enum DiskStorage {
             do {
                 try data.write(to: fileURL, options: writeOptions)
             } catch {
-                throw KingfisherError.cacheError(
-                    reason: .cannotCreateCacheFile(fileURL: fileURL, key: key, data: data, error: error)
-                )
+                if error.isFolderMissing {
+                    // The whole cache folder is deleted. Try to recreate it and write file again.
+                    do {
+                        try prepareDirectory()
+                        try data.write(to: fileURL, options: writeOptions)
+                    } catch {
+                        throw KingfisherError.cacheError(
+                            reason: .cannotCreateCacheFile(fileURL: fileURL, key: key, data: data, error: error)
+                        )
+                    }
+                } else {
+                    throw KingfisherError.cacheError(
+                        reason: .cannotCreateCacheFile(fileURL: fileURL, key: key, data: data, error: error)
+                    )
+                }
             }
 
             let now = Date()
@@ -584,5 +596,21 @@ extension DiskStorage {
             cacheName = "com.onevcat.Kingfisher.ImageCache.\(config.name)"
             directoryURL = config.cachePathBlock(url, cacheName)
         }
+    }
+}
+
+fileprivate extension Error {
+    var isFolderMissing: Bool {
+        let nsError = self as NSError
+        guard nsError.domain == NSCocoaErrorDomain, nsError.code == 4 else {
+            return false
+        }
+        guard let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError else {
+            return false
+        }
+        guard underlyingError.domain == NSPOSIXErrorDomain, underlyingError.code == 2 else {
+            return false
+        }
+        return true
     }
 }
