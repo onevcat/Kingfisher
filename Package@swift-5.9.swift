@@ -16,7 +16,8 @@ let package = Package(
     targets: [
         .target(
             name: "Kingfisher",
-            path: "Sources"
+            path: "Sources",
+            resources: [.copy("PrivacyInfo.xcprivacy")]
         )
     ]
 )

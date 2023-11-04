@@ -41,9 +41,7 @@ platform :ios do
 
   desc "Lint"
   lane :lint do
-    # Allows warnings temporarily before CocoaPods 1.13.0 (visionOS support) and Xcode 15.0
-    # pod_lib_lint
-    pod_lib_lint(allow_warnings: true)
+    pod_lib_lint
     spm
   end
   
@@ -83,7 +81,7 @@ platform :ios do
       upload_assets: ["build/Kingfisher-#{target_version}.zip"]
     )
     
-    pod_push(allow_warnings: true)
+    pod_push
   end
 
   lane :xcframework do |options|
