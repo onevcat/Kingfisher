@@ -122,7 +122,7 @@ extension KFImage {
                                 if let image = context.options.onFailureImage {
                                     self.loadedImage = image
                                 }
-                                self.markLoaded(sendChangeEvent: true)
+                                self.markLoaded(sendChangeEvent: false)
                             }
                             
                             CallbackQueue.mainAsync.execute {
