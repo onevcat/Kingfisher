@@ -623,10 +623,10 @@ extension AnimatedImageView {
                 return
             }
 
-            let previousFrame = animatedFrames[previousFrameIndex]
-            animatedFrames[previousFrameIndex] = previousFrame?.placeholderFrame
-            // ensure the image dealloc in main thread
-            defer {
+            if isReachMaxRepeatCount {
+                let previousFrame = animatedFrames[previousFrameIndex]
+                animatedFrames[previousFrameIndex] = previousFrame?.placeholderFrame
+                // ensure the image dealloc in main thread
                 if let image = previousFrame?.image {
                     DispatchQueue.main.async {
                         _ = image
