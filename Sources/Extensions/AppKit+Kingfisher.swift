@@ -30,8 +30,12 @@ public protocol KingfisherHasImageComponent: AnyObject {
     var image: NSImage? { set get }
 }
 
-
 import AppKit
+
+@available(macOS 13.0, *)
+extension NSComboButton: KingfisherHasImageComponent {}
+
+extension NSMenuItem: KingfisherHasImageComponent {}
 
 extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
