@@ -26,7 +26,7 @@
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
-public protocol KingfisherHasImageComponent: AnyObject {
+public protocol KingfisherHasImageComponent: KingfisherCompatible {
     var image: NSImage? { set get }
 }
 
@@ -35,7 +35,24 @@ import AppKit
 @available(macOS 13.0, *)
 extension NSComboButton: KingfisherHasImageComponent {}
 
+@available(macOS 13.0, *)
+extension NSColorWell: KingfisherHasImageComponent {}
+
+extension NSImageView: KingfisherHasImageComponent {}
+
+extension NSTableViewRowAction: KingfisherHasImageComponent {}
+
 extension NSMenuItem: KingfisherHasImageComponent {}
+
+extension NSPathControlItem: KingfisherHasImageComponent {}
+
+extension NSToolbarItem: KingfisherHasImageComponent {}
+
+extension NSTabViewItem: KingfisherHasImageComponent {}
+
+extension NSStatusItem: KingfisherHasImageComponent {}
+
+extension NSCell: KingfisherHasImageComponent {}
 
 extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
