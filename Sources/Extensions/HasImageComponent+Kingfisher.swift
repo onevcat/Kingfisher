@@ -24,12 +24,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-
 public protocol KingfisherHasImageComponent: KingfisherCompatible {
-    var image: NSImage? { set get }
+    var image: KFCrossPlatformImage? { set get }
 }
 
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 
 @available(macOS 13.0, *)
@@ -54,11 +53,12 @@ extension NSStatusItem: KingfisherHasImageComponent {}
 
 extension NSCell: KingfisherHasImageComponent {}
 
-extension KingfisherWrapper where Base: KingfisherHasImageComponent {
+#endif
 
+extension KingfisherWrapper where Base: KingfisherHasImageComponent {
     // MARK: Setting Image
 
-    /// Sets an image to the button with a source.
+    /// Sets an image to the component with a source.
     ///
     /// - Parameters:
     ///   - source: The `Source` object contains information about how to get the image.
@@ -80,8 +80,8 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask? {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(
             with: source,
@@ -92,7 +92,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         )
     }
 
-    /// Sets an image to the button with a requested resource.
+    /// Sets an image to the component with a requested resource.
     ///
     /// - Parameters:
     ///   - resource: The `Resource` object contains information about the resource.
@@ -114,14 +114,15 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask? {
         return setImage(
             with: resource?.convertToSource(),
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
-            completionHandler: completionHandler)
+            completionHandler: completionHandler
+        )
     }
 
     func setImage(
@@ -129,10 +130,10 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
-    {
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask? {
         var mutatingSelf = self
-        guard let source = source else {
+        guard let source else {
             base.image = placeholder
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
@@ -176,7 +177,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
                     mutatingSelf.taskIdentifier = nil
 
                     switch result {
-                    case .success(let value):
+                    case let .success(value):
                         self.base.image = value.image
                         completionHandler?(result)
 
@@ -196,15 +197,15 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
     // MARK: Cancelling Downloading Task
 
-    /// Cancels the image download task of the button if it is running.
+    /// Cancels the image download task of the component if it is running.
     /// Nothing will happen if the downloading has already finished.
     public func cancelImageDownloadTask() {
         imageTask?.cancel()
     }
 }
 
-
 // MARK: - Associated Object
+
 private var taskIdentifierKey: Void?
 private var imageTaskKey: Void?
 
@@ -212,9 +213,8 @@ private var alternateTaskIdentifierKey: Void?
 private var alternateImageTaskKey: Void?
 
 extension KingfisherWrapper where Base: KingfisherHasImageComponent {
-
     // MARK: Properties
-    
+
     public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
@@ -225,26 +225,9 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
     }
-    
+
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
-    }
-
-    public private(set) var alternateTaskIdentifier: Source.Identifier.Value? {
-        get {
-            let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &alternateTaskIdentifierKey)
-            return box?.value
-        }
-        set {
-            let box = newValue.map { Box($0) }
-            setRetainedAssociatedObject(base, &alternateTaskIdentifierKey, box)
-        }
-    }
-
-    private var alternateImageTask: DownloadTask? {
-        get { return getAssociatedObject(base, &alternateImageTaskKey) }
-        set { setRetainedAssociatedObject(base, &alternateImageTaskKey, newValue)}
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue) }
     }
 }
-#endif
