@@ -2,6 +2,14 @@
 
 -----
 
+## [7.10.1 - Compilation & Infinity](https://github.com/onevcat/Kingfisher/releases/tag/7.10.1) (2023-12-09)
+
+#### Fix
+* Now the CarPlay support (`CPListItem`) compiles again for iOS SDK 14.0 to 14.4. It was because an undocumented API change in the `CPListItem` property. [#2172](https://github.com/onevcat/Kingfisher/pull/2172) @brendonjkding
+* Fix an infinite `View` refreshing loop when `KFImage` is set with `startLoadingBeforeViewAppear` to `true` and the loading keeping fails. [#2169](https://github.com/onevcat/Kingfisher/pull/2169) @onevcat @sisoje @mirkokg
+
+---
+
 ## [7.10.0 - Privacy Manifest](https://github.com/onevcat/Kingfisher/releases/tag/7.10.0) (2023-10-29)
 
 #### Add

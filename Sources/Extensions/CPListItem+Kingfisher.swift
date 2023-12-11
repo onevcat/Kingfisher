@@ -159,7 +159,22 @@ extension KingfisherWrapper where Base: CPListItem {
             with: source,
             options: options,
             downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
-            progressiveImageSetter: { self.base.setImage($0) },
+            progressiveImageSetter: { image in
+                /**
+                 * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
+                 * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
+                 * which allows >=14.5 SDK to set a `nil` image. This compile check allows
+                 * newer SDK users to set the image to `nil`, while still allowing older SDK
+                 * users to compile the framework.
+                 */
+                #if compiler(>=5.4)
+                self.base.setImage(image)
+                #else // Let older SDK users deal with the older behavior.
+                if let image = image {
+                    self.base.setImage(image)
+                }
+                #endif
+            },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
                 CallbackQueue.mainCurrentOrAsync.execute {
