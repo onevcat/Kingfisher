@@ -1,0 +1,14 @@
+@Tutorials(name: "Kingfisher Tutorials") {
+    @Intro(title: "Kingfisher Tutorials") {
+        
+        
+        @Image(source: "", alt: "")
+    }
+    
+    @Chapter(name: "Getting Started with Kingfisher") {
+        
+        @Image(source: <#file#>, alt: "<#accessible description#>")
+        
+        @TutorialReference(tutorial: "doc:GettingStarted")
+    }
+}

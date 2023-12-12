@@ -1,0 +1,30 @@
+@Tutorial(time: 15) {
+    @Intro(title: "Getting Started with Kingfhser") {
+        Installs Kingfisher to your project, setup everything and some starter examples of the core functionality.
+        
+        @Image(source: "getting-started-card", alt: "")
+    }
+    
+    @Section(title: "Installation") {
+        
+        @ContentAndMedia {
+            Hello
+            
+            @Image(source: "", alt: "123")
+        }
+        
+        @Steps {
+            @Step {
+                <#text#>
+                
+                @Image(source: <#file#>, alt: "<#accessible description#>")
+            }
+            
+            @Step {
+                <#text#>
+                
+                @Code(name: "<#display name#>", file: <#filename.swift#>)
+            }
+        }
+    }
+}
