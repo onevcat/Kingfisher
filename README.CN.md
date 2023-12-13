@@ -10,8 +10,6 @@
 <a href="https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-black"></a>
 </p>
 
-Kingfisher is a powerful, pure-Swift library for downloading and caching images from the web. It provides you a chance to use a pure-Swift way to work with remote images in your next app.
-
 Kingfisher是一个功能强大的纯Swift库，用于从网络上下载和缓存图像。在下一个App中，它为你提供了可能性——使用纯Swift库来处理远程图像。
 
 ## 功能
