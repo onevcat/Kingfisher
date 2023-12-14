@@ -9,6 +9,6 @@
         
         @Image(source: <#file#>, alt: "<#accessible description#>")
         
-        @TutorialReference(tutorial: "doc:GettingStarted")
+        @TutorialReference(tutorial: "doc:GettingStartedUIKit")
     }
 }

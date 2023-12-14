@@ -1,29 +1,91 @@
 @Tutorial(time: 15) {
     @Intro(title: "Getting Started with Kingfisher (UIKit)") {
         Installs Kingfisher and basic usage of the framework with UIKit.
-        
         @Image(source: "getting-started-card", alt: "")
     }
     
-    @Section(title: "Installation") {
-        
+    @Section(title: "Overview") {
         @ContentAndMedia {
-            Hello
-            
-            @Image(source: "", alt: "123")
+            This tutorial guides you through building a UITableView list that displays rounded images of Kingfisher 
+            birds, downloaded using the Kingfisher library. It includes:
+
+            - Setting Up UITableView: Quick setup for a basic list.
+            - Using Kingfisher: Download and display bird images.
+            - Image Processing: Convert images to rounded corners for display.
+            - Cache Size Button: A feature to check cache usage.
+        }
+    }
+    
+    @Section(title: "Installing") {
+                
+        @ContentAndMedia {
+            After creating your UIKit app, the first step is to install Kingfisher. For this, we use Swift Package Manager.
+            @Image(source: create-project, alt: "")
         }
         
         @Steps {
             @Step {
-                <#text#>
+                Choose "File" → "Add Package Dependencies…". In the pop-up window, enter the URL below to the search 
+                bar, and click the "Copy Dependency" button. 
                 
-                @Image(source: <#file#>, alt: "<#accessible description#>")
+                `https://github.com/onevcat/Kingfisher.git` 
+                
+                @Image(source: add-dependency.png, alt: "Add Kingfisher as the dependency of your project.")
             }
             
             @Step {
-                <#text#>
-                
-                @Code(name: "<#display name#>", file: <#filename.swift#>)
+                After downloading, add the package to your created project.
+                @Image(source: add-to-project, alt: "")
+            }
+            
+            @Step {
+                Select your app target in the "project and target list", switch to the "Build Phases" tab, expand the "Link Binary With Libraries" section, and confirm that "Kingfisher" is added. If not, click the "+" button and add it to the list.
+                @Image(source: add-library, alt: "")
+            }
+            
+            @Step {
+                To verify the installation. Choose "ViewController.swift" file.
+                @Code(name: "ViewController.swift", file: 01-ViewController-1.swift)
+            }
+            
+            @Step {
+                Import `Kingfisher`. And try to print the `KingfisherManager.shared`. If you see something like 
+                "Kingfisher.KingfisherManager" in the Xcode debugger console, it means Kingfisher is ready in your 
+                project.
+                @Code(name: "ViewController.swift", file: 01-ViewController-2.swift)
+            }
+        }
+    }
+    
+    @Section(title: "Creating the Table View") {
+        @ContentAndMedia {
+            Creating and setting up `UITableView` is not the focus of this tutorial, as it does not involve Kingfisher. 
+            However, we will later use Kingfisher to manage images in the `UIImageView` within the table cells. 
+        }
+        
+        @Steps {
+            @Step {
+                Create a `SampleCell` file. We will use it as the cell type of the table view.
+                @Code(name: "SampleCell.swift", file: 01-SampleCell-1.swift)
+            }
+            @Step {
+                Add a `sampleImageView` to the class. It is the main target image view we are going to set later.
+                @Code(name: "SampleCell.swift", file: 01-SampleCell-2.swift)
+            }
+            @Step {
+                Add other necessary views and layout code. (Boring, just copy it!)
+                @Code(name: "SampleCell.swift", file: 01-SampleCell-3.swift)
+            }
+            @Step {
+                In the "ViewController.swift".
+                @Code(name: "ViewController.swift", file: 01-ViewController-3.swift)
+            }
+            @Step {
+                Add a `tableView` to the view controller.
+                @Code(name: "ViewController.swift", file: 01-ViewController-4.swift)
+            }
+            @Step {
+                Extend `ViewController` to conform the `UI
             }
         }
     }

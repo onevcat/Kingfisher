@@ -20,7 +20,7 @@ Learn how to integrate Kingfisher into your project setup.
 #### 􀏆 Loading and Displaying Images
 Discover how to effortlessly fetch and display images from remote URLs using convenient view extensions.
 
-#### 􀙅 Processing Images with ImageProcessor
+#### 􀙅 Processing Images with Processors
 
 Understand how to manipulate and transform images using the ImageProcessor functionality.
 

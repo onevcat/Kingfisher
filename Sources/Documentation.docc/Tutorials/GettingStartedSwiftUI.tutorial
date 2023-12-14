@@ -1,8 +1,7 @@
 @Tutorial(time: 15) {
     @Intro(title: "Getting Started with Kingfisher (SwiftUI)") {
         Installs Kingfisher and basic usage of the framework with SwiftUI.
-        
-        @Image(source: <#file#>, alt: "<#accessible description#>")
+        @Image(source: "getting-started-card", alt: "")
     }
     
     @Section(title: "<#text#>") {
