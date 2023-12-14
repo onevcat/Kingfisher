@@ -127,7 +127,8 @@ platform :ios do
 
     zip(
       path: "build/#{target_version}",
-      output_path: "build/#{target_version}.zip"
+      output_path: "build/#{target_version}.zip",
+      symlinks: true
     )
   end
 
