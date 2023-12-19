@@ -27,7 +27,11 @@
 import Foundation
 
 func getAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer) -> T? {
-    return objc_getAssociatedObject(object, key) as? T
+    if #available(iOS 14, macOS 11, *) {
+        return objc_getAssociatedObject(object, key) as? T
+    } else {
+        return objc_getAssociatedObject(object, key) as AnyObject as? T
+    }
 }
 
 func setRetainedAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer, _ value: T) {
