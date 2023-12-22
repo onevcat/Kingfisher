@@ -30,7 +30,7 @@ import Foundation
 public protocol ImageDownloadRedirectHandler {
 
     /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
-    /// This is the posibility you can modify the image download request during redirection. You can modify the
+    /// This is the possibility you can modify the image download request during redirection. You can modify the
     /// request for some customizing purpose, such as adding auth token to the header, do basic HTTP auth or
     /// something like url mapping.
     ///

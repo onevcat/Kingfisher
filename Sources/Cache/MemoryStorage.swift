@@ -44,7 +44,7 @@ public enum MemoryStorage {
     public class Backend<T: CacheCostCalculable> {
         let storage = NSCache<NSString, StorageObject<T>>()
 
-        // Keys trackes the objects once inside the storage. For object removing triggered by user, the corresponding
+        // Keys track the objects once inside the storage. For object removing triggered by user, the corresponding
         // key would be also removed. However, for the object removing triggered by cache rule/policy of system, the
         // key will be remained there until next `removeExpired` happens.
         //

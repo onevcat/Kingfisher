@@ -303,7 +303,7 @@ public class ImagePrefetcher: CustomStringConvertible {
         }
     }
 
-    /// Stops current downloading progress, and cancel any future prefetching activity that might be occuring.
+    /// Stops current downloading progress, and cancel any future prefetching activity that might be occurring.
     public func stop() {
         prefetchQueue.async {
             if self.finished { return }
@@ -409,7 +409,7 @@ public class ImagePrefetcher: CustomStringConvertible {
     
     private func reportCompletionOrStartNext() {
         if let resource = self.pendingSources.popFirst() {
-            // Loose call stack for huge ammount of sources.
+            // Loose call stack for huge amount of sources.
             prefetchQueue.async { self.startPrefetching(resource) }
         } else {
             guard allFinished else { return }

@@ -235,7 +235,7 @@ class ImageCacheTests: XCTestCase {
     }
 
   
-    func testCachedImageIsFetchedSyncronouslyFromTheMemoryCache() {
+    func testCachedImageIsFetchedSynchronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false)
         var foundImage: KFCrossPlatformImage?
         cache.retrieveImage(forKey: testKeys[0]) { result in

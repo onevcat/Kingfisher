@@ -86,7 +86,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// In that case, the serialization will fall back to creating data from image.
     public var preferCacheOriginalData: Bool = false
 
-    /// Returnes the `preferCacheOriginalData` value. When the original data is used, Kingfisher needs to re-apply the
+    /// Returns the `preferCacheOriginalData` value. When the original data is used, Kingfisher needs to re-apply the
     /// processors to get the desired final image.
     public var originalDataUsed: Bool { preferCacheOriginalData }
     

@@ -86,7 +86,7 @@ class RetryStrategyTests: XCTestCase {
     func testKingfisherManagerCanRetry() {
         let exp = expectation(description: #function)
 
-        let brokenURL = URL(string: "brokenurl")!
+        let brokenURL = URL(string: "broken_url")!
         stub(brokenURL, data: Data())
 
         let retry = StubRetryStrategy()
@@ -115,7 +115,7 @@ class RetryStrategyTests: XCTestCase {
         )
         retry.retry(context: context1) { decision in
             guard case RetryDecision.retry(let userInfo) = decision else {
-                XCTFail("The deicision should be `retry`")
+                XCTFail("The decision should be `retry`")
                 return
             }
             XCTAssertNil(userInfo)
@@ -131,7 +131,7 @@ class RetryStrategyTests: XCTestCase {
         context2.increaseRetryCount() // 3
         retry.retry(context: context2) { decision in
             guard case RetryDecision.stop = decision else {
-                XCTFail("The deicision should be `stop`")
+                XCTFail("The decision should be `stop`")
                 return
             }
             blockCalled.append(true)

@@ -51,7 +51,7 @@ public struct ImageProgressive {
     
     /// A default `ImageProgressive` could be used across. It blurs the progressive loading with the fastest
     /// scan enabled and scan interval as 0.
-    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax symatic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
+    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax semantic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
     public static let `default` = ImageProgressive(
         isBlur: true,
         isFastestScan: true,

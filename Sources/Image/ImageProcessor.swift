@@ -589,7 +589,7 @@ public struct ResizingImageProcessor: ImageProcessor {
     }
 }
 
-/// Processor for adding blur effect to images. `Accelerate.framework` is used underhood for 
+/// Processor for adding blur effect to images. `Accelerate.framework` is used under the hood for
 /// a better performance. A simulated Gaussian blur with specified blur radius will be applied.
 public struct BlurImageProcessor: ImageProcessor {
     

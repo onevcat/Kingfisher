@@ -347,7 +347,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testDownloadForMutipleURLs() {
+    func testDownloadForMultipleURLs() {
         let exp = expectation(description: #function)
 
         stub(testURLs[0], data: testImageData)
@@ -837,7 +837,7 @@ class ImageViewExtensionTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        let brokenURL = URL(string: "brokenurl")!
+        let brokenURL = URL(string: "broken_url")!
         stub(brokenURL, data: Data())
 
         imageView.kf.setImage(
@@ -884,7 +884,7 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTFail("The error should be a task cancelled.")
                 return
             }
-            XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternatived url cancelled.")
+            XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternative URL canceled.")
         }
 
         waitForExpectations(timeout: 1, handler: nil)

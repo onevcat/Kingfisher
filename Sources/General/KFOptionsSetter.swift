@@ -247,7 +247,7 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with changes applied.
     /// If set, options will be passed the store operation for a new files.
     ///
-    /// This is useful if you want to implement file enctyption on first write - eg [.completeFileProtection]
+    /// This is useful if you want to implement file encryption on first write - eg [.completeFileProtection]
     ///
     public func diskStoreWriteOptions(_ writingOptions: Data.WritingOptions) -> Self {
         options.diskStoreWriteOptions = writingOptions

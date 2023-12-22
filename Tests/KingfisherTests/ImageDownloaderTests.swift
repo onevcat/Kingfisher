@@ -137,7 +137,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
 
-        let someURL = URL(string: "some_strage_url")!
+        let someURL = URL(string: "some_strange_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value?.url, url)
@@ -412,13 +412,13 @@ class ImageDownloaderTests: XCTestCase {
         stub(url, data: testImageData)
 
         let p = RoundCornerImageProcessor(cornerRadius: 40)
-        let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
+        let roundCornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
         
         downloader.downloadImage(with: url, options: [.processor(p)]) { result in
             XCTAssertNotNil(result.value)
             let image = result.value!.image
             XCTAssertFalse(image.renderEqual(to: testImage))
-            XCTAssertTrue(image.renderEqual(to: roundcornered))
+            XCTAssertTrue(image.renderEqual(to: roundCornered))
             XCTAssertEqual(result.value!.originalData, testImageData)
             exp.fulfill()
         }
@@ -432,7 +432,7 @@ class ImageDownloaderTests: XCTestCase {
         let stub = delayedStub(url, data: testImageData)
 
         let p1 = RoundCornerImageProcessor(cornerRadius: 40)
-        let roundcornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
+        let roundCornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
 
         let p2 = BlurImageProcessor(blurRadius: 3.0)
         let blurred = testImage.kf.blurred(withRadius: 3.0)
@@ -441,7 +441,7 @@ class ImageDownloaderTests: XCTestCase {
 
         group.enter()
         let task1 = downloader.downloadImage(with: url, options: [.processor(p1)]) { result in
-            XCTAssertTrue(result.value!.image.renderEqual(to: roundcornered))
+            XCTAssertTrue(result.value!.image.renderEqual(to: roundCornered))
             group.leave()
         }
 
