@@ -20,13 +20,13 @@
                 
         @ContentAndMedia {
             After creating your UIKit app, the first step is to install Kingfisher. For this, we use Swift Package Manager.
-            @Image(source: create-project, alt: "")
+            @Image(source: create-project.png, alt: "")
         }
         
         @Steps {
             @Step {
                 Choose "File" → "Add Package Dependencies…". In the pop-up window, enter the URL below to the search 
-                bar, and click the "Copy Dependency" button. 
+                bar, and click the "Add Package" button. 
                 
                 `https://github.com/onevcat/Kingfisher.git` 
                 
@@ -35,12 +35,12 @@
             
             @Step {
                 After downloading, add the package to your created project.
-                @Image(source: add-to-project, alt: "")
+                @Image(source: add-to-project.png, alt: "")
             }
             
             @Step {
                 Select your app target in the "project and target list", switch to the "Build Phases" tab, expand the "Link Binary With Libraries" section, and confirm that "Kingfisher" is added. If not, click the "+" button and add it to the list.
-                @Image(source: add-library, alt: "")
+                @Image(source: add-library.png, alt: "")
             }
             
             @Step {
@@ -85,8 +85,19 @@
                 @Code(name: "ViewController.swift", file: 01-ViewController-4.swift)
             }
             @Step {
-                Extend `ViewController` to conform the `UI
+                Extend `ViewController` to conform the `UITableViewDataSource`. For the sake of simplicity, we will 
+                only return one cell at first.
+                @Code(name: "ViewController.swift", file: 01-ViewController-5.swift) {
+                    @Image(source:preview-1.png, alt:"An iOS app with a list which contains a single cell.")
+                }
+                Run the app, now you should see a list which contains a single cell with a light grey placeholder and a
+                text label.
+                
             }
         }
+    }
+        
+    @Section(title: "Loading image with Kingfisher") {
+        
     }
 }
