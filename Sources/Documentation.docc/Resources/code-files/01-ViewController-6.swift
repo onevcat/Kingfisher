@@ -43,6 +43,11 @@ extension ViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SampleCell", for: indexPath) as! SampleCell
         cell.sampleLabel.text = "Index \(indexPath.row)"
         cell.sampleImageView.backgroundColor = .lightGray
+        
+        let urlPrefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher"
+        let url = URL(string: "\(urlPrefix)-1.jpg")
+        cell.sampleImageView.kf.setImage(with: url)
+        
         return cell
     }
 }

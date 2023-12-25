@@ -98,6 +98,73 @@
     }
         
     @Section(title: "Loading image with Kingfisher") {
+        @ContentAndMedia {
+            Kingfisher simplifies the task of loading images from remote URLs. It also offers a range of user-friendly 
+            processors and helper methods. In this section, we will cover how to use these features to streamline common 
+            tasks.
+        }
         
+        @Steps {
+            @Step {
+                The simplest way to start loading a remote image into an image view in Kingfisher, is using the `kf`
+                wrapper and its method. In the code above, we already have a `sampleImageView` in the cell.
+                @Code(name: "ViewController.swift", file: 01-ViewController-5.swift)
+            }
+            @Step {
+                To load the first image, call `kf.setImage(with:)` on the image view, with the desired URL.
+                @Code(name: "ViewController.swift", file: 01-ViewController-6.swift) {
+                    @Image(source:preview-2.png, alt:"The first image is loaded into the image view in cell.")
+                }
+                Now, running the app again, you can see the image is already loaded and set to the image view.
+            }
+            @Step {
+                To actually load the images based on the index, we can try to add more cells. We prepared 10 kingfisher
+                images, let's change the item count to 10: 
+                @Code(name: "ViewController.swift", file: 01-ViewController-7.swift) {
+                    @Image(source:preview-3.png, alt:"The first image is loaded into the image view in cell.")
+                }
+                Kingfisher also downloads and caches these images. Now, even if you turn off the network of
+                your iOS device (or the simulator), and restart the app, these images can be loaded from cache and 
+                still displayed.
+            }
+            @Step {
+                Kingfisher also comes with a bundle of useful processors and helper methods. For example, we can add a
+                loading indicator and some partial round corner effect easily. 
+                @Code(name: "ViewController.swift", file: 01-ViewController-8.swift) {
+                    @Image(source:preview-4.png, alt:"The first image is loaded into the image view in cell.")
+                }
+            }
+            @Step {
+                The `setImage(with:)` method accepts other parameters, including a completion handler too. Let us add
+                some logs before we continue to the next section.
+                @Code(name: "ViewController.swift", file: 01-ViewController-9.swift)
+                Now, running the app again, in the console you can see some text like "Image loaded from cache: disk".
+                This is because the images are already in the disk cache, and they are loaded from the disk locally. By 
+                scrolling the table view up and down and triggering the cell reuse, it should print things like "Image 
+                loaded from cache: memory", which indicates the images are already cache in memory. 
+            }
+        }
+    }
+    
+    @Section(title: "Manipulating the Cache") {
+        @ContentAndMedia {
+            In this last section, we will check some basic operation of the image cache: checking the disk cache size, 
+            and clear the whole cache. By default, Kingfisher has its own policy when manage the cache itself. You don't
+            need to worry about it in most cases. If you require more fine-grained control over caching, the following
+            section will provide insights on this topic.
+        }
+        
+        @Steps {
+            @Step {
+                First we want to tell the space that is taken by the image cache. For the sake of simplicity, we are 
+                not going to add any additional button to this sample. But usually the calculation is triggered by a
+                button or navigation, and the result is displayed in a label.
+                @Code(name: "ViewController.swift", file: 01-ViewController-9.swift)
+            }
+            @Step {
+                In `viewDidLoad`, we call                 
+                @Code(name: "ViewController.swift", file: 01-ViewController-10.swift)
+            }
+        }
     }
 }

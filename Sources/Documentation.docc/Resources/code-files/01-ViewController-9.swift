@@ -36,13 +36,29 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        10
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SampleCell", for: indexPath) as! SampleCell
         cell.sampleLabel.text = "Index \(indexPath.row)"
-        cell.sampleImageView.backgroundColor = .lightGray
+        cell.sampleImageView.backgroundColor = .clear
+        
+        let urlPrefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/Loading/kingfisher"
+        let url = URL(string: "\(urlPrefix)-\(indexPath.row + 1).jpg")
+        
+        cell.sampleImageView.kf.indicatorType = .activity
+        
+        let roundCorner = RoundCornerImageProcessor(radius: .widthFraction(0.5), roundingCorners: [.topLeft, .bottomRight])
+        cell.sampleImageView.kf.setImage(with: url, options: [.processor(roundCorner)]) { result in
+            switch result {
+            case .success(let imageResult):
+                print("Image loaded from cache: \(imageResult.cacheType)")
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+        }
+        
         return cell
     }
 }
