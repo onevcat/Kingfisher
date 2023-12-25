@@ -80,13 +80,13 @@ class DataReceivingSideEffectTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
 
-        let receiver = DataReceivingNotAppyStub()
+        let receiver = DataReceivingNotApplyStub()
 
         let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
         KingfisherManager.shared.retrieveImage(with: url, options: options) {
             result in
             XCTAssertTrue(receiver.called)
-            XCTAssertFalse(receiver.appied)
+            XCTAssertFalse(receiver.applied)
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -101,17 +101,17 @@ class DataReceivingStub: DataReceivingSideEffect {
     }
 }
 
-class DataReceivingNotAppyStub: DataReceivingSideEffect {
+class DataReceivingNotApplyStub: DataReceivingSideEffect {
 
     var called: Bool = false
-    var appied: Bool = false
+    var applied: Bool = false
 
     var onShouldApply: () -> Bool = { return false }
 
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         called = true
         if onShouldApply() {
-            appied = true
+            applied = true
         }
     }
 }

@@ -28,7 +28,7 @@ import Foundation
 
 /// Represents a session data task in ``ImageDownloader``.
 ///
-/// Essetially, a ``SessionDataTask`` wraps a `URLSessionDataTask` and manages the download data.
+/// Essentially, a ``SessionDataTask`` wraps a `URLSessionDataTask` and manages the download data.
 /// It uses a ``SessionDataTask/CancelToken`` to track the task and manage its cancellation.
 public class SessionDataTask {
 

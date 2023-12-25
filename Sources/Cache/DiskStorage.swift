@@ -483,7 +483,7 @@ extension DiskStorage {
         /// Whether the cache file name will be hashed before storing.
         ///
         /// The default is `true`, which means that file name is hashed to protect user information (for example, the
-        /// orignial download URL which is used as the cache key).
+        /// original download URL which is used as the cache key).
         public var usesHashedFileName = true
 
         

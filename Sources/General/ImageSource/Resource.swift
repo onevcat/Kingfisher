@@ -45,7 +45,7 @@ extension Resource {
     /// ``Source/network(_:)`` is returned.
     ///
     /// - Parameter overrideCacheKey: The key should be used to override the ``Resource/cacheKey`` when performing the
-    /// conversion. `nil` if not overriden and ``Resource/cacheKey`` of `self` is used.
+    /// conversion. `nil` if not overridden and ``Resource/cacheKey`` of `self` is used.
     /// - Returns: The converted source.
     ///
     public func convertToSource(overrideCacheKey: String? = nil) -> Source {

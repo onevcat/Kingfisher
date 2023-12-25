@@ -110,7 +110,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacnelImageTask() {
+    func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -128,7 +128,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacnelBackgroundImageTask() {
+    func testCancelBackgroundImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)

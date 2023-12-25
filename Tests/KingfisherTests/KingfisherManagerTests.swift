@@ -230,7 +230,7 @@ class KingfisherManagerTests: XCTestCase {
         }
     }
     
-    func testSuccessCompletionHandlerRunningOnMainQueueDefaultly() {
+    func testSuccessCompletionHandlerRunningOnMainQueueByDefault() {
         let progressExpectation = expectation(description: "progressBlock running on main queue")
         let completionExpectation = expectation(description: "completionHandler running on main queue")
 
@@ -267,7 +267,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testErrorCompletionHandlerRunningOnMainQueueDefaultly() {
+    func testErrorCompletionHandlerRunningOnMainQueueByDefault() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, statusCode: 404)
@@ -281,7 +281,7 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testSucessCompletionHandlerRunningOnCustomQueue() {
+    func testSuccessCompletionHandlerRunningOnCustomQueue() {
         let progressExpectation = expectation(description: "progressBlock running on custom queue")
         let completionExpectation = expectation(description: "completionHandler running on custom queue")
 

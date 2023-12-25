@@ -69,7 +69,7 @@ class MemoryStorageTests: XCTestCase {
         XCTAssertEqual(storage.value(forKey: "1"), 1)
     }
 
-    func testStoreValueOverwritting() {
+    func testStoreValueOverwriting() {
         storage.store(value: 1, forKey: "1")
         XCTAssertEqual(storage.value(forKey: "1"), 1)
 

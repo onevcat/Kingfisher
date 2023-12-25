@@ -95,7 +95,7 @@ public struct AVAssetImageDataProvider: ImageDataProvider {
     ///   - seconds: At which time in seconds in the asset the image should be generated.
     ///
     /// This method uses the `assetURL` parameter to create an `AVAssetImageGenerator` object, uses the `seconds`
-    /// paremeter to create a `CMTime`, then calls the ``init(assetImageGenerator:time:)`` initializer.
+    /// parameter to create a `CMTime`, then calls the ``init(assetImageGenerator:time:)`` initializer.
     ///
     public init(assetURL: URL, seconds: TimeInterval) {
         let time = CMTime(seconds: seconds, preferredTimescale: 600)

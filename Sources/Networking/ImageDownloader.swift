@@ -59,7 +59,7 @@ public struct ImageLoadingResult {
 
 /// Represents a task in the image downloading process.
 ///
-/// When a download starts in Kingfisher, the invovled methods always return you an instance of ``DownloadTask``. If you
+/// When a download starts in Kingfisher, the involved methods always return you an instance of ``DownloadTask``. If you
 /// need to cancel the task during the download process, you can keep a reference to the instance and call ``cancel()``
 /// on it.
 public class DownloadTask {
@@ -176,7 +176,7 @@ open class ImageDownloader {
         }
     }
     
-    /// The session delegate which is used to hadnle the session related tasks.
+    /// The session delegate which is used to handle the session related tasks.
     ///
     /// > Setting a new session delegate to the downloader will invalidate the existing session and create a new one 
     /// > with the new value and the ``sessionConfiguration``.
@@ -190,7 +190,7 @@ open class ImageDownloader {
     
     /// Whether the download requests should use pipeline or not. 
     ///
-    /// It sets the `httpShouldUsePipelining` of the `URLRequest` for the downlaod task. Default is false.
+    /// It sets the `httpShouldUsePipelining` of the `URLRequest` for the download task. Default is false.
     open var requestsUsePipelining = false
 
     /// The delegate of this `ImageDownloader` object.

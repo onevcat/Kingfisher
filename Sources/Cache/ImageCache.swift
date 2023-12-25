@@ -724,7 +724,7 @@ open class ImageCache {
     // MARK: Cleaning
     /// Clears the memory and disk storage of this cache. 
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the `handler` will be invoked.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the `handler` will be invoked.
     ///
     /// - Parameter handler: A closure that is invoked when the cache clearing operation finishes.
     ///                      This `handler` will be called from the main queue.
@@ -740,7 +740,7 @@ open class ImageCache {
     
     /// Clears the disk storage of this cache. 
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the `handler` will be invoked.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the `handler` will be invoked.
     ///
     /// - Parameter handler: A closure that is invoked when the cache clearing operation finishes.
     ///                      This `handler` will be called from the main queue.
@@ -757,7 +757,7 @@ open class ImageCache {
     
     /// Clears the expired images from the memory and disk storage.
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the `handler` will be invoked.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the `handler` will be invoked.
     open func cleanExpiredCache(completion handler: (() -> Void)? = nil) {
         cleanExpiredMemoryCache()
         cleanExpiredDiskCache(completion: handler)
@@ -777,7 +777,7 @@ open class ImageCache {
 
     /// Clears the expired images from disk storage.
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the `handler` will be invoked.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the `handler` will be invoked.
     ///
     /// - Parameter handler: A closure which is invoked when the cache clearing operation finishes.
     ///                      This `handler` will be called from the main queue.
@@ -811,7 +811,7 @@ open class ImageCache {
 #if !os(macOS) && !os(watchOS)
     /// Clears the expired images from disk storage when the app is in the background. 
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the `handler` will be invoked.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the `handler` will be invoked.
     ///
     /// In most cases, you should not call this method explicitly. It will be called automatically when a
     ///  `UIApplicationDidEnterBackgroundNotification` is received.
@@ -1120,7 +1120,7 @@ open class ImageCache {
     
     /// Clears the memory and disk storage of this cache.
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the whole method returns.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func clearCache() async {
         await withCheckedContinuation {
             clearCache(completion: $0.resume)
@@ -1129,7 +1129,7 @@ open class ImageCache {
     
     /// Clears the disk storage of this cache.
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the whole method returns.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func clearDiskCache() async {
         await withCheckedContinuation {
             clearDiskCache(completion: $0.resume)
@@ -1138,7 +1138,7 @@ open class ImageCache {
     
     /// Clears the expired images from the memory and disk storage.
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the whole method returns.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func cleanExpiredCache() async {
         await withCheckedContinuation {
             cleanExpiredCache(completion: $0.resume)
@@ -1147,7 +1147,7 @@ open class ImageCache {
     
     /// Clears the expired images from disk storage.
     ///
-    /// This is an asynchronous operation. When the cache clearing opertaion finishes, the whole method returns.
+    /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func cleanExpiredDiskCache() async {
         await withCheckedContinuation {
             cleanExpiredDiskCache(completion: $0.resume)
