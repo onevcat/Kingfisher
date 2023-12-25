@@ -350,7 +350,7 @@ public class ImagePrefetcher: CustomStringConvertible {
     
     private func reportCompletionOrStartNext() {
         if let resource = self.pendingSources.popFirst() {
-            // Loose call stack for huge ammount of sources.
+            // Loose call stack for huge amount of sources.
             prefetchQueue.async { self.startPrefetching(resource) }
         } else {
             guard allFinished else { return }

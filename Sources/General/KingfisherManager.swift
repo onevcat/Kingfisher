@@ -741,7 +741,7 @@ extension KingfisherManager {
     ///   contains an `expectedContentLength` and always runs on the main queue.
     ///
     /// - Returns: The ``RetrieveImageResult`` containing the retrieved image object and cache type.
-    /// - Throws: A ``KingfisherError`` if any issue occured during the image retrieving progress.
+    /// - Throws: A ``KingfisherError`` if any issue occurred during the image retrieving progress.
     ///
     /// - Note: This method first checks whether the requested `resource` is already in the cache. If it is cached,
     /// it returns `nil` and invokes the `completionHandler` after retrieving the cached image. Otherwise, it downloads
@@ -769,7 +769,7 @@ extension KingfisherManager {
     ///   contains an `expectedContentLength` and always runs on the main queue.
     ///
     /// - Returns: The ``RetrieveImageResult`` containing the retrieved image object and cache type.
-    /// - Throws: A ``KingfisherError`` if any issue occured during the image retrieving progress.
+    /// - Throws: A ``KingfisherError`` if any issue occurred during the image retrieving progress.
     ///
     /// - Note: This method first checks whether the requested `source` is already in the cache. If it is cached,
     /// it returns `nil` and invokes the `completionHandler` after retrieving the cached image. Otherwise, it downloads

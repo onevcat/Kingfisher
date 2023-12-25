@@ -347,7 +347,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testDownloadForMutipleURLs() {
+    func testDownloadForMultipleURLs() {
         let exp = expectation(description: #function)
 
         stub(testURLs[0], data: testImageData)
@@ -357,7 +357,7 @@ class ImageViewExtensionTests: XCTestCase {
         
         group.enter()
         imageView.kf.setImage(with: testURLs[0]) { result in
-            // The download successed, but not the resource we want.
+            // The download succeeded, but not with the resource we want.
             XCTAssertNotNil(result.error)
             if case .imageSettingError(
                 reason: .notCurrentSourceTask(let result, _, let source)) = result.error!
@@ -884,7 +884,7 @@ class ImageViewExtensionTests: XCTestCase {
                 XCTFail("The error should be a task cancelled.")
                 return
             }
-            XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternatived url cancelled.")
+            XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternative url cancelled.")
         }
 
         waitForExpectations(timeout: 1, handler: nil)

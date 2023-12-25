@@ -58,7 +58,7 @@ public struct ImageProgressive {
     
     /// A default `ImageProgressive` could be used across. It blurs the progressive loading with the fastest
     /// scan enabled and scan interval as 0.
-    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax symatic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
+    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax semantic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
     public static let `default` = ImageProgressive(
         isBlur: true,
         isFastestScan: true,
@@ -76,7 +76,7 @@ public struct ImageProgressive {
     
     /// Called when an intermediate image is prepared and about to be set to the image view. 
     ///
-    /// If implemneted, you should return an ``UpdatingStrategy`` value from this delegate. This value will be used to
+    /// If implemented, you should return an ``UpdatingStrategy`` value from this delegate. This value will be used to
     /// update the hosting view, if any. Otherwise, if there is no hosting view (i.e., the image retrieval is not
     /// happening from a view extension method), the returned ``UpdatingStrategy`` is ignored.
     public let onImageUpdated = Delegate<KFCrossPlatformImage, UpdatingStrategy>()

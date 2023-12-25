@@ -120,6 +120,6 @@ public protocol DataTransformable {
     /// An empty object of `Self`.
     ///
     /// > In the cache, when the data is not actually loaded, this value will be returned as a placeholder.
-    /// > This varible should be returned quickly without any heavy operation inside.
+    /// > This variable should be returned quickly without any heavy operation inside.
     static var empty: Self { get }
 }
