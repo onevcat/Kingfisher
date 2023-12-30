@@ -178,7 +178,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         #endif
         }
 
-        //Flip image one more time if needed to, this is to prevent flipped image
+        // Flip image one more time if needed to, this is to prevent flipped image
         switch orientation {
         case .upMirrored, .downMirrored:
             transform = transform.translatedBy(x: size.width, y: 0)
