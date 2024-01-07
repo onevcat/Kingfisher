@@ -13,6 +13,7 @@
 		277EAE9D2045B4D500547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE962045B4D500547CD3 /* Assets.xcassets */; };
 		277EAEA12045B52800547CD3 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277EAE9E2045B52800547CD3 /* InterfaceController.swift */; };
 		277EAEA32045B52800547CD3 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277EAEA02045B52800547CD3 /* ExtensionDelegate.swift */; };
+		3887E1602B4AD7200062C53C /* GIFHeavyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3887E15F2B4AD7200062C53C /* GIFHeavyViewController.swift */; };
 		4B120CA726B91BB70060B092 /* TransitionViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */; };
 		4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */; };
 		4B4307A51D87E6A700ED2DA9 /* loader.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4B7742461D87E42E0077024E /* loader.gif */; };
@@ -161,6 +162,7 @@
 		277EAE9E2045B52800547CD3 /* InterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
 		277EAE9F2045B52800547CD3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		277EAEA02045B52800547CD3 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		3887E15F2B4AD7200062C53C /* GIFHeavyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFHeavyViewController.swift; sourceTree = "<group>"; };
 		4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewDemo.swift; sourceTree = "<group>"; };
 		4B1C7A3C21A256E300CE9D31 /* InfinityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinityCollectionViewController.swift; sourceTree = "<group>"; };
 		4B2944551C3D03880088C3E7 /* Kingfisher-macOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-macOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -318,6 +320,7 @@
 				4BCCF33A1D5B02F8003387C2 /* Cell.xib */,
 				4BCCF33B1D5B02F8003387C2 /* Info.plist */,
 				4BCCF33C1D5B02F8003387C2 /* ViewController.swift */,
+				3887E15F2B4AD7200062C53C /* GIFHeavyViewController.swift */,
 			);
 			name = "Kingfisher-macOS-Demo";
 			path = "Demo/Kingfisher-macOS-Demo";
@@ -656,6 +659,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BCCF3421D5B02F8003387C2 /* ViewController.swift in Sources */,
+				3887E1602B4AD7200062C53C /* GIFHeavyViewController.swift in Sources */,
 				4BCCF33D1D5B02F8003387C2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
