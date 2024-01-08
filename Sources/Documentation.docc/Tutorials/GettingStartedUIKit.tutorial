@@ -6,23 +6,28 @@
     
     @Section(title: "Overview") {
         @ContentAndMedia {
-            This tutorial guides you through building a UITableView list that displays rounded images of Kingfisher 
+            This tutorial guides you through building a UITableView list that displays rounded images of kingfisher 
             birds, downloaded using the Kingfisher library. It includes:
 
-            - Setting Up UITableView: Quick setup for a basic list.
+            - Setting Up `UITableView`: Quick setup for a basic list.
             - Using Kingfisher: Download and display bird images.
             - Image Processing: Convert images to rounded corners for display.
             - Cache Size Button: A feature to check cache usage.
+            
+            At the final stage of this tutorial, you will have a list like this:
             
             @Image(source:preview-4.png, alt:"The first image is loaded into the image view in cell.")
         }
     }
     
     @Section(title: "Installing") {
-                
         @ContentAndMedia {
-            After creating your UIKit app, the first step is to install Kingfisher. For this, we use Swift Package Manager.
+            After creating your UIKit app, the first step is to install Kingfisher. For this, we use Swift Package Manager. 
+            
+            > There are also other way to add Kingfisher to your project, such as CocoaPods or manually. Check the related documentation for more information.
+            
             @Image(source: create-project.png, alt: "")
+            
         }
         
         @Steps {
@@ -36,7 +41,7 @@
             }
             
             @Step {
-                After downloading, add the package to your created project.
+                After downloading, add the `Kingfisher` library to your created project.
                 @Image(source: add-to-project.png, alt: "")
             }
             
@@ -155,18 +160,20 @@
             In this last section, we will check some basic operation of the image cache: checking the disk cache size, 
             and clear the whole cache. By default, Kingfisher has its own policy when manage the cache itself. You don't
             need to worry about it in most cases. If you require more fine-grained control over caching, the following
-            section will provide insights on this topic.
+            section will provide some insights on this topic.
         }
         
         @Steps {
             @Step {
-                First we want to tell the space that is taken by the image cache. For the sake of simplicity, we are 
-                not going to add any additional button to this sample. But usually the calculation is triggered by a
-                button or navigation, and the result is displayed in a label.
+                First we want to tell the space that is taken by the image cache. 
+                Usually, cache size calculation and cache clear is triggered by a
+                button or navigation. But for the sake of simplicity, we are 
+                not going to add any additional button to this sample.
+                
                 @Code(name: "ViewController.swift", file: 01-ViewController-10.swift)
             }
             @Step {
-                In `viewDidLoad`, we call the `asyncAfter` method on the `DispatchQueue.main` queue, which trigger a calculation of the current disk cache size there. This value indicates the disk space taken by Kingfisher as the disk cache.
+                In `viewDidLoad`, we call the `asyncAfter` method on the `DispatchQueue.main` queue, which triggers a calculation of the current disk cache size there. This value indicates the disk space taken by Kingfisher as the disk cache.
                 
                 @Code(name: "ViewController.swift", file: 01-ViewController-11.swift)
             }
@@ -181,6 +188,27 @@
                 @Code(name: "ViewController.swift", file: 01-ViewController-13.swift)
                 The cache cleaning is only for demonstration purpose. In practice, usually you do not need to call it yourself. Kingfisher will manage and purge the data based on its default policy.
             }
+        }
+    }
+    
+    @Section(title: "Next Steps") {
+        @ContentAndMedia {
+            
+            Congratulations! 
+            
+            You have now mastered some basic uses of Kingfisher: including loading images from the web or cache using
+            the `UIImageView` extension, processing images before display using ``ImageProcessor``, and basic methods
+            for inspecting and clearing the cache. 
+            
+            Kingfisher also contains a considerable number of other features, and it has been designed to be simple to
+            use while considering flexibility. As you deepen your understanding of the framework, we hope you will
+            gradually grow to like it. 
+            
+            Next, we recommend that you start using Kingfisher in your projects to help you accomplish tasks. You can 
+            also read the <doc:CommonTasks> or <doc:KingfisherInDepth> articles to get a better understanding. When 
+            you encounter problems, come back to consult the documentation or ask the community. 
+            
+            Have a nice day!
         }
     }
 }
