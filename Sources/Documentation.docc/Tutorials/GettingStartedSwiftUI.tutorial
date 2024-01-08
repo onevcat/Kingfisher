@@ -1,28 +1,67 @@
 @Tutorial(time: 15) {
     @Intro(title: "Getting Started with Kingfisher (SwiftUI)") {
         Installs Kingfisher and basic usage of the framework with SwiftUI.
-        @Image(source: "getting-started-card", alt: "")
+        @Image(source: "getting-started-card", alt: "Title image of the tutorial. A kingfisher bird standing on a tree.")    
     }
     
-    @Section(title: "<#text#>") {
+    @Section(title: "Overview") {
         @ContentAndMedia {
-            <#text#>
+            This tutorial guides you through building a SwiftUI `List` that displays rounded images of kingfisher birds, 
+            downloaded using the Kingfisher library. It includes:
+
+            - Setting Up `List`: Quick setup for a basic list.
+            - Using Kingfisher: Download and display bird images.
+            - Image Processing: Convert images to rounded corners for display.
+            - Cache Size Button: A feature to check cache usage.
             
-            @Image(source: <#file#>, alt: "<#accessible description#>")
+            At the final stage of this tutorial, you will have a list like this:
+            
+            @Image(source:preview-4.png, alt:"The first image is loaded into the image view in cell.")
+        }
+    }
+    
+    @Section(title: "Installing") {
+        @ContentAndMedia {
+            After creating your SwiftUI app, the first step is to install Kingfisher. For this, we use Swift Package Manager. 
+            
+            > There are also other way to add Kingfisher to your project, such as CocoaPods or manually. Check the related documentation for more information.
+            
+            @Image(source: create-project-swiftui.png, alt: "")
+            
         }
         
         @Steps {
             @Step {
-                <#text#>
+                Choose "File" → "Add Package Dependencies…". In the pop-up window, enter the URL below to the search 
+                bar, and click the "Add Package" button. 
                 
-                @Image(source: <#file#>, alt: "<#accessible description#>")
+                `https://github.com/onevcat/Kingfisher.git` 
+                
+                @Image(source: add-dependency.png, alt: "Add Kingfisher as the dependency of your project.")
             }
             
             @Step {
-                <#text#>
-                
-                @Code(name: "<#display name#>", file: <#filename.swift#>)
+                After downloading, add the `Kingfisher` library to your created project.
+                @Image(source: add-to-project.png, alt: "")
+            }
+            
+            @Step {
+                Select your app target in the "project and target list", switch to the "Build Phases" tab, expand the "Link Binary With Libraries" section, and confirm that "Kingfisher" is added. If not, click the "+" button and add it to the list.
+                @Image(source: add-library-swiftui.png, alt: "")
+            }
+            
+            @Step {
+                To verify the installation. Choose "ContentView.swift" file.
+                @Code(name: "ContentView.swift", file: 02-ContentView-1.swift)
+            }
+            
+            @Step {
+                Import `Kingfisher`. And try to print the `KingfisherManager.shared` in the `onAppear`. If you see 
+                something like "Kingfisher.KingfisherManager" in the Xcode debugger console, it means Kingfisher is 
+                ready in your project.
+                @Code(name: "ContentView.swift", file: 02-ContentView-2.swift)
             }
         }
     }
+    
 }
