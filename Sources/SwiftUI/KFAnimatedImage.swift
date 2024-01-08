@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if canImport(SwiftUI) && canImport(Combine) && canImport(UIKit) && !os(watchOS)
+#if canImport(SwiftUI) && canImport(Combine) && !os(watchOS)
 import SwiftUI
 import Combine
 
@@ -47,8 +47,9 @@ public struct KFAnimatedImage: KFImageProtocol {
     }
 }
 
+#if !os(macOS)
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+@available(iOS 14.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
     public typealias RenderingView = AnimatedImageView
     public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
@@ -75,6 +76,35 @@ public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldin
         uiView.image = image
     }
 }
+#else
+@available(macOS 11.0, *)
+public struct KFAnimatedImageViewRepresenter: NSViewRepresentable, KFImageHoldingView {
+    public typealias RenderingView = AnimatedImageView
+    public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
+        KFAnimatedImageViewRepresenter(image: image, context: context)
+    }
+    
+    var image: KFCrossPlatformImage?
+    let context: KFImage.Context<KFAnimatedImageViewRepresenter>
+    
+    public func makeNSView(context: Context) -> AnimatedImageView {
+        let view = AnimatedImageView()
+        
+        self.context.renderConfigurations.forEach { $0(view) }
+        
+        view.image = image
+        
+        // Allow SwiftUI scale (fit/fill) working fine.
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        return view
+    }
+    
+    public func updateNSView(_ nsView: AnimatedImageView, context: Context) {
+        nsView.image = image
+    }
+}
+#endif
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)

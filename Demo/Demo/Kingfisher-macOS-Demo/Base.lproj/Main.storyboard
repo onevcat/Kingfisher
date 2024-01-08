@@ -737,6 +737,16 @@
                                     <action selector="reloadPressedWithSender:" target="XfG-lQ-9wD" id="k24-Wi-NRd"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Du-le-fYN">
+                                <rect key="frame" x="417" y="448" width="78" height="32"/>
+                                <buttonCell key="cell" type="push" title="SwiftUI" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wIi-ia-bgi">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <segue destination="ei1-kq-tvV" kind="show" id="Ub0-4z-BqC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="MlO-xV-qug" secondAttribute="trailing" id="18w-Qc-Jr6"/>
@@ -745,11 +755,13 @@
                             <constraint firstItem="yIr-uo-Quc" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="AhA-g2-Cms"/>
                             <constraint firstItem="eLA-Ce-crP" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="yIr-uo-Quc" secondAttribute="trailing" constant="12" symbolic="YES" id="BRb-HY-Dny"/>
                             <constraint firstItem="MlO-xV-qug" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="30" id="Bzu-9v-r7G"/>
+                            <constraint firstItem="0Du-le-fYN" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="DMs-p7-JWV"/>
                             <constraint firstAttribute="bottom" secondItem="MlO-xV-qug" secondAttribute="bottom" id="HY0-vM-k0l"/>
                             <constraint firstItem="MlO-xV-qug" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="Pp3-O7-2Bs"/>
                             <constraint firstItem="eLA-Ce-crP" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="cJE-Zj-BEy"/>
                             <constraint firstAttribute="trailing" secondItem="Ejh-qu-qmy" secondAttribute="trailing" constant="20" id="eoW-Xb-6wq"/>
                             <constraint firstItem="eLA-Ce-crP" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="xRm-9b-mgK"/>
+                            <constraint firstItem="Ejh-qu-qmy" firstAttribute="leading" secondItem="0Du-le-fYN" secondAttribute="trailing" constant="50" id="xc2-W0-bu0"/>
                             <constraint firstItem="Ejh-qu-qmy" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="xnX-II-7iN"/>
                         </constraints>
                     </view>
@@ -760,6 +772,19 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="831"/>
+        </scene>
+        <!--SwiftUI View Controller-->
+        <scene sceneID="Z7V-ea-dRX">
+            <objects>
+                <viewController id="ei1-kq-tvV" customClass="SwiftUIViewController" customModule="Kingfisher_macOS_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="JMh-S8-QlI">
+                        <rect key="frame" x="0.0" y="0.0" width="620" height="474"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="BB8-QC-got" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="75" y="1406"/>
         </scene>
         <!--Heavy View Controller-->
         <scene sceneID="kQM-gs-M6P">
