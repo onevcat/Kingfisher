@@ -24,7 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if !os(macOS)
+#if !os(watchOS)
+#if canImport(UIKit)
 import UIKit
 #else
 import AppKit
@@ -45,7 +46,6 @@ protocol DisplayLinkCompatible: AnyObject {
 }
 
 #if !os(macOS)
-
 extension UIView {
     func compatibleDisplayLink(target: Any, selector: Selector) -> DisplayLinkCompatible {
         return CADisplayLink(target: target, selector: selector)
@@ -55,21 +55,26 @@ extension UIView {
 extension CADisplayLink: DisplayLinkCompatible {}
 
 #else
-
 extension NSView {
     func compatibleDisplayLink(target: Any, selector: Selector) -> DisplayLinkCompatible {
+#if swift(>=5.9) // macOS 14 SDK is included in Xcode 15, which comes with swift 5.9. Add this check to make old compilers happy.
         if #available(macOS 14.0, *) {
             return displayLink(target: target, selector: selector)
         } else {
             return DisplayLink(target: target, selector: selector)
         }
+#else
+        return DisplayLink(target: target, selector: selector)
+#endif
     }
 }
 
+#if swift(>=5.9)
 @available(macOS 14.0, *)
 extension CADisplayLink: DisplayLinkCompatible {
     var preferredFramesPerSecond: NSInteger { return 0 }
 }
+#endif
 
 class DisplayLink: DisplayLinkCompatible {
     private var link: CVDisplayLink?
@@ -154,4 +159,5 @@ class DisplayLink: DisplayLinkCompatible {
         }
     }
 }
+#endif
 #endif
