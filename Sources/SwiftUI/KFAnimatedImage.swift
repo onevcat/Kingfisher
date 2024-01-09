@@ -47,38 +47,17 @@ public struct KFAnimatedImage: KFImageProtocol {
     }
 }
 
-#if !os(macOS)
-/// A wrapped `UIViewRepresentable` of `AnimatedImageView`
-@available(iOS 14.0, tvOS 14.0, watchOS 7.0, *)
-public struct KFAnimatedImageViewRepresenter: UIViewRepresentable, KFImageHoldingView {
-    public typealias RenderingView = AnimatedImageView
-    public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
-        KFAnimatedImageViewRepresenter(image: image, context: context)
-    }
-    
-    var image: KFCrossPlatformImage?
-    let context: KFImage.Context<KFAnimatedImageViewRepresenter>
-    
-    public func makeUIView(context: Context) -> AnimatedImageView {
-        let view = AnimatedImageView()
-        
-        self.context.renderConfigurations.forEach { $0(view) }
-        
-        view.image = image
-        
-        // Allow SwiftUI scale (fit/fill) working fine.
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        return view
-    }
-    
-    public func updateUIView(_ uiView: AnimatedImageView, context: Context) {
-        uiView.image = image
-    }
-}
-#else
+#if os(macOS)
 @available(macOS 11.0, *)
-public struct KFAnimatedImageViewRepresenter: NSViewRepresentable, KFImageHoldingView {
+typealias KFCrossPlatformViewRepresentable = NSViewRepresentable
+#else
+@available(iOS 14.0, tvOS 14.0, watchOS 7.0, *)
+typealias KFCrossPlatformViewRepresentable = UIViewRepresentable
+#endif
+
+/// A wrapped `UIViewRepresentable` of `AnimatedImageView`
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, KFImageHoldingView {
     public typealias RenderingView = AnimatedImageView
     public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
         KFAnimatedImageViewRepresenter(image: image, context: context)
@@ -87,24 +66,41 @@ public struct KFAnimatedImageViewRepresenter: NSViewRepresentable, KFImageHoldin
     var image: KFCrossPlatformImage?
     let context: KFImage.Context<KFAnimatedImageViewRepresenter>
     
+    #if os(macOS)
     public func makeNSView(context: Context) -> AnimatedImageView {
-        let view = AnimatedImageView()
-        
-        self.context.renderConfigurations.forEach { $0(view) }
-        
-        view.image = image
-        
-        // Allow SwiftUI scale (fit/fill) working fine.
-        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        return view
+        return makeImageView()
     }
     
     public func updateNSView(_ nsView: AnimatedImageView, context: Context) {
-        nsView.image = image
+        updateImageView(nsView)
+    }
+    #else
+    public func makeUIView(context: Context) -> AnimatedImageView {
+        return makeImageView()
+    }
+    
+    public func updateUIView(_ uiView: AnimatedImageView, context: Context) {
+        updateImageView(uiView)
+    }
+    #endif
+    
+    private func makeImageView() -> AnimatedImageView {
+        let view = AnimatedImageView()
+        
+        self.context.renderConfigurations.forEach { $0(view) }
+        
+        view.image = image
+        
+        // Allow SwiftUI scale (fit/fill) working fine.
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        return view
+    }
+    
+    private func updateImageView(_ imageView: AnimatedImageView) {
+        imageView.image = image
     }
 }
-#endif
 
 #if DEBUG
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
