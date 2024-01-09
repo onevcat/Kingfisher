@@ -35,11 +35,10 @@
 #if canImport(UIKit)
 import UIKit
 import ImageIO
-public typealias KFCrossPlatformContentMode = UIView.ContentMode
+typealias KFCrossPlatformContentMode = UIView.ContentMode
 #elseif canImport(AppKit)
 import AppKit
-import CoreVideo
-public typealias KFCrossPlatformContentMode = NSImageScaling
+typealias KFCrossPlatformContentMode = NSImageScaling
 #endif
 
 /// Protocol of `AnimatedImageView`.
@@ -246,6 +245,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     
     private func commonInit() {
         super.animates = false
+        wantsLayer = true
     }
     
     open override var animates: Bool {
@@ -283,9 +283,30 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
     
     open override func updateLayer() {
-        if let frame = animator?.currentFrameImage ?? currentFrame {
-            layer?.contents = frame.kf.cgImage
+        if let frame = animator?.currentFrameImage ?? currentFrame, let layer = layer {
+            layer.contents = frame.kf.cgImage
+            layer.contentsScale = frame.kf.scale
+            layer.contentsGravity = determineContentsGravity(for: frame)
             currentFrame = frame
+        }
+    }
+    
+    private func determineContentsGravity(for image: NSImage) -> CALayerContentsGravity {
+        switch imageScaling {
+            case .scaleProportionallyDown:
+                if image.size.width > bounds.width || image.size.height > bounds.height {
+                    return .resizeAspect
+                } else {
+                    return .center
+                }
+            case .scaleProportionallyUpOrDown:
+                return .resizeAspect
+            case .scaleAxesIndependently:
+                return .resize
+            case .scaleNone:
+                return .center
+            default:
+                return .resizeAspect
         }
     }
     
@@ -697,7 +718,15 @@ extension AnimatedImageView {
             }
             
             #if os(macOS)
-            return KFCrossPlatformImage(cgImage: cgImage, size: .zero)
+            let image = KFCrossPlatformImage(cgImage: cgImage, size: .zero)
+            if backgroundDecode {
+                guard let context = GraphicsContext.current(size: image.size, scale: image.kf.scale, inverting: false, cgImage: cgImage) else {
+                    return image
+                }
+                return image.kf.decoded(on: context)
+            } else {
+                return image
+            }
             #else
             if #available(iOS 15, tvOS 15, *) {
                 // From iOS 15, a plain image loading causes iOS calling `-[_UIImageCGImageContent initWithCGImage:scale:]`

@@ -44,6 +44,8 @@ class GIFHeavyViewController: NSViewController {
         
         for imageView in imageViews {
             stackView.addArrangedSubview(imageView)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
             imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
             imageView.imageScaling = .scaleProportionallyDown
