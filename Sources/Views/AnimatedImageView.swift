@@ -173,110 +173,14 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     // A flag to avoid invalidating the displayLink on deinit if it was never created, because displayLink is so lazy.
     private var isDisplayLinkInitialized: Bool = false
     
-#if os(macOS)
-    class DisplayLink {
-        private let link: UnsafeMutablePointer<CVDisplayLink?>
-        private var target: Any?
-        private var selector: Selector?
-        
-        private var schedulers: [RunLoop: [RunLoop.Mode]] = [:]
-        
-        init(target: Any, selector: Selector) {
-            link = UnsafeMutablePointer<CVDisplayLink?>.allocate(capacity: 1)
-            self.target = target
-            self.selector = selector
-            CVDisplayLinkCreateWithActiveCGDisplays(link)
-            if let link = link.pointee {
-                CVDisplayLinkSetOutputHandler(link, displayLinkCallback(_:inNow:inOutputTime:flagsIn:flagsOut:))
-            }
-        }
-        
-        deinit {
-            self.invalidate()
-            link.deallocate()
-        }
-        
-        private func displayLinkCallback(_ link: CVDisplayLink,
-                                         inNow: UnsafePointer<CVTimeStamp>,
-                                         inOutputTime: UnsafePointer<CVTimeStamp>,
-                                         flagsIn: CVOptionFlags,
-                                         flagsOut: UnsafeMutablePointer<CVOptionFlags>) -> CVReturn
-        {
-            let outputTime = inOutputTime.pointee
-            DispatchQueue.main.async {
-                guard let selector = self.selector, let target = self.target else { return }
-                if outputTime.videoTimeScale != 0 {
-                    self.duration = CFTimeInterval(Double(outputTime.videoRefreshPeriod) / Double(outputTime.videoTimeScale))
-                }
-                if self.timestamp != 0 {
-                    for scheduler in self.schedulers {
-                        scheduler.key.perform(selector, target: target, argument: nil, order: 0, modes: scheduler.value)
-                    }
-                }
-                self.timestamp = CFTimeInterval(Double(outputTime.hostTime) / 1_000_000_000)
-            }
-            return kCVReturnSuccess
-        }
-        
-        var isPaused: Bool = true {
-            didSet {
-                guard let link = link.pointee else { return }
-                if isPaused {
-                    if CVDisplayLinkIsRunning(link) {
-                        CVDisplayLinkStop(link)
-                    }
-                } else {
-                    if !CVDisplayLinkIsRunning(link) {
-                        CVDisplayLinkStart(link)
-                    }
-                }
-            }
-        }
-        
-        var preferredFramesPerSecond: NSInteger = 0
-        var timestamp: CFTimeInterval = 0
-        var duration: CFTimeInterval = 0
-        
-        func add(to runLoop: RunLoop, forMode mode: RunLoop.Mode) {
-            assert(runLoop == .main)
-            schedulers[runLoop, default: []].append(mode)
-        }
-        
-        func remove(from runLoop: RunLoop, forMode mode: RunLoop.Mode) {
-            schedulers[runLoop]?.removeAll { $0 == mode }
-            if let modes = schedulers[runLoop], modes.isEmpty {
-                schedulers.removeValue(forKey: runLoop)
-            }
-        }
-        
-        func invalidate() {
-            schedulers = [:]
-            isPaused = true
-            target = nil
-            selector = nil
-            if let link = link.pointee {
-                CVDisplayLinkSetOutputHandler(link) { _, _, _, _, _ in kCVReturnSuccess }
-            }
-        }
-    }
     // A display link that keeps calling the `updateFrame` method on every screen refresh.
-    private lazy var displayLink: DisplayLink = {
+    private lazy var displayLink: DisplayLinkCompatible = {
         isDisplayLinkInitialized = true
-        let displayLink = DisplayLink(target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
+        let displayLink = self.compatibleDisplayLink(target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
         displayLink.add(to: .main, forMode: runLoopMode)
         displayLink.isPaused = true
         return displayLink
     }()
-#else
-    // A display link that keeps calling the `updateFrame` method on every screen refresh.
-    private lazy var displayLink: CADisplayLink = {
-        isDisplayLinkInitialized = true
-        let displayLink = CADisplayLink(target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
-        displayLink.add(to: .main, forMode: runLoopMode)
-        displayLink.isPaused = true
-        return displayLink
-    }()
-#endif
     
     // MARK: - Override
     override open var image: KFCrossPlatformImage? {
