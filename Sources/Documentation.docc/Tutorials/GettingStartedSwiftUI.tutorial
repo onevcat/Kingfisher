@@ -1,4 +1,4 @@
-@Tutorial(time: 15) {
+@Tutorial(time: 10) {
     @Intro(title: "Getting Started with Kingfisher (SwiftUI)") {
         Installs Kingfisher and basic usage of the framework with SwiftUI.
         @Image(source: "getting-started-card", alt: "Title image of the tutorial. A kingfisher bird standing on a tree.")    
@@ -62,6 +62,38 @@
                 @Code(name: "ContentView.swift", file: 02-ContentView-2.swift)
             }
         }
+    }
+    
+    @Section(title: "Loading image with Kingfisher") {
+        @ContentAndMedia {
+            In this section, we will create a `List` and use Kingfisher to load some images from the network.
+        }
+        
+        @Steps {
+            @Step {
+                Setting up a `List` in SwiftUI is easy. With the `ContentView` from the SwiftUI template.
+                @Code(name: "ContentView.swift", file: 02-ContentView-2.swift)
+            }
+            @Step {
+                Replace the `body` of the `ContentView` with a `List` and the embedded `ForEach`.
+                @Code(name: "ContentView.swift", file: 02-ContentView-3.swift) {
+                    @Image(source: preview-1-swiftui.png, alt: "")
+                }
+            }
+            @Step {
+                To load an image from network, the easiest way is using the `KFImage` struct provided in Kingfisher. It
+                accepts a URL, loads and shows the image when its `onAppear` is called. `KFImage` has a set of similar
+                APIs to SwiftUI's `Image` type. Here we call `resizable()` to allow the image fit into the given frame.
+                
+                @Code(name: "ContentView.swift", file: 02-ContentView-4.swift) {
+                    @Image(source: preview-2-swiftui.png, alt: "")
+                }
+            }
+        }
+    }
+        
+    @Section(title: "Loading Options") {
+        
     }
     
 }
