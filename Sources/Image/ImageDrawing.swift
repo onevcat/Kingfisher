@@ -567,6 +567,25 @@ extension CGImage {
         }
         return decodedImageRef
     }
+    
+    static func create(ref: CGImage) -> CGImage? {
+        guard let space = ref.colorSpace, let provider = ref.dataProvider else {
+            return nil
+        }
+        return CGImage(
+            width: ref.width,
+            height: ref.height,
+            bitsPerComponent: ref.bitsPerComponent,
+            bitsPerPixel: ref.bitsPerPixel,
+            bytesPerRow: ref.bytesPerRow,
+            space: space,
+            bitmapInfo: ref.bitmapInfo,
+            provider: provider,
+            decode: ref.decode,
+            shouldInterpolate: ref.shouldInterpolate,
+            intent: ref.renderingIntent
+        )
+    }
 }
 
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
