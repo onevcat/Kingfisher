@@ -2,6 +2,15 @@
 
 -----
 
+## [7.10.2 - GIF crash fix](https://github.com/onevcat/Kingfisher/releases/tag/7.10.2) (2024-01-11)
+
+#### Fix
+* An issue that loading the same GIF image in differnet image views may crash the app. [#2194](https://github.com/onevcat/Kingfisher/pull/2194)
+* A build script issue that exported the xcframeworks does not have the correct cert signing. [#2179](https://github.com/onevcat/Kingfisher/pull/2179)
+* In iOS 13 and earlier, the new Swift runtime fails to convert `Any?` to a protocol value. [#2182](https://github.com/onevcat/Kingfisher/pull/2182)
+
+---
+
 ## [7.10.1 - Compilation & Infinity](https://github.com/onevcat/Kingfisher/releases/tag/7.10.1) (2023-12-09)
 
 #### Fix
