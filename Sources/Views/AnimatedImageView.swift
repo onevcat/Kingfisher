@@ -595,6 +595,7 @@ extension AnimatedImageView {
                 // To get a workaround, create another image ref and use that to create the final image. This leads to
                 // some performance loss, but there is little we can do.
                 // https://github.com/onevcat/Kingfisher/issues/1844
+                // https://github.com/onevcat/Kingfisher/pulls/2194
                 guard let unretainedImage = CGImage.create(ref: cgImage) else {
                     return KFCrossPlatformImage(cgImage: cgImage)
                 }
