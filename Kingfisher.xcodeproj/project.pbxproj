@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		07292245263B02F00089E810 /* KFAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07292244263B02F00089E810 /* KFAnimatedImage.swift */; };
 		22FDCE0E2700078B0044D11E /* CPListItem+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */; };
+		388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388F37372B4D9CDB0089705C /* DisplayLink.swift */; };
 		4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B46CC5F217449C600D90C4A /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC5E217449C600D90C4A /* MemoryStorage.swift */; };
 		4B46CC64217449E000D90C4A /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC63217449E000D90C4A /* Storage.swift */; };
@@ -149,6 +150,7 @@
 		07292244263B02F00089E810 /* KFAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFAnimatedImage.swift; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
 		22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPListItem+Kingfisher.swift"; sourceTree = "<group>"; };
+		388F37372B4D9CDB0089705C /* DisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
 		4B10480C216F157000300C61 /* ImageDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProcessor.swift; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
@@ -438,6 +440,7 @@
 				D1839844216E333E003927D3 /* Delegate.swift */,
 				4B8351CB217084660081EED8 /* Runtime.swift */,
 				D1BA781C2174D07800C69D7B /* CallbackQueue.swift */,
+				388F37372B4D9CDB0089705C /* DisplayLink.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -847,6 +850,7 @@
 				D12AB714215D2BB50013BA68 /* ImageCache.swift in Sources */,
 				4B88CEB02646C056009EBB41 /* KFImageProtocol.swift in Sources */,
 				D12AB6D0215D2BB50013BA68 /* ImagePrefetcher.swift in Sources */,
+				388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */,
 				D12AB6F4215D2BB50013BA68 /* ImageView+Kingfisher.swift in Sources */,
 				D12AB6FC215D2BB50013BA68 /* UIButton+Kingfisher.swift in Sources */,
 				D12AB6E8215D2BB50013BA68 /* GIFAnimatedImage.swift in Sources */,

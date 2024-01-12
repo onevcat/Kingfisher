@@ -542,11 +542,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///         For any non-CG-based image or animated image, `base` itself is returned.
     public func decoded(on context: CGContext) -> KFCrossPlatformImage {
         // Prevent animated image (GIF) losing it's images
-        #if os(iOS) || os(visionOS)
         if frameSource != nil { return base }
-        #else
-        if images != nil { return base }
-        #endif
 
         guard let refImage = cgImage,
               let decodedRefImage = refImage.decoded(on: context, scale: scale) else
