@@ -124,6 +124,11 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 
     /// Decode the GIF frames in background thread before using. It will decode frames data and do a off-screen
     /// rendering to extract pixel information in background. This can reduce the main thread CPU usage.
+    ///
+    @available(*, deprecated, message: """
+        This property does not perform as declared and may lead to performance degradation.
+        It is currently obsolete and scheduled for removal in a future version.
+    """)
     public var backgroundDecode = true
 
     /// The animation timer's run loop mode. Default is `RunLoop.Mode.common`.
@@ -396,7 +401,6 @@ open class AnimatedImageView: KFCrossPlatformImageView {
                 preloadQueue: preloadQueue)
             animator.delegate = self
             animator.needsPrescaling = needsPrescaling
-            animator.backgroundDecode = backgroundDecode
             animator.prepareFramesAsynchronously()
             self.animator = animator
         }
@@ -525,8 +529,6 @@ extension AnimatedImageView {
         var isFinished: Bool = false
 
         var needsPrescaling = true
-
-        var backgroundDecode = true
 
         weak var delegate: AnimatorDelegate?
 
@@ -711,15 +713,7 @@ extension AnimatedImageView {
             }
             
             #if os(macOS)
-            let image = KFCrossPlatformImage(cgImage: cgImage, size: .zero)
-            if backgroundDecode {
-                guard let context = GraphicsContext.current(size: image.size, scale: image.kf.scale, inverting: false, cgImage: cgImage) else {
-                    return image
-                }
-                return image.kf.decoded(on: context)
-            } else {
-                return image
-            }
+            return KFCrossPlatformImage(cgImage: cgImage, size: .zero)
             #else
             if #available(iOS 15, tvOS 15, *) {
                 // From iOS 15, a plain image loading causes iOS calling `-[_UIImageCGImageContent initWithCGImage:scale:]`
@@ -734,15 +728,7 @@ extension AnimatedImageView {
                 
                 return KFCrossPlatformImage(cgImage: unretainedImage)
             } else {
-                let image = KFCrossPlatformImage(cgImage: cgImage)
-                if backgroundDecode {
-                    guard let context = GraphicsContext.current(size: imageSize, scale: imageScale, inverting: true, cgImage: cgImage) else {
-                        return image
-                    }
-                    return image.kf.decoded(on: context)
-                } else {
-                    return image
-                }
+                return KFCrossPlatformImage(cgImage: cgImage)
             }
             #endif
         }
