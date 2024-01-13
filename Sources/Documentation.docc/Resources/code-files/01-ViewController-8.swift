@@ -13,7 +13,11 @@ extension ViewController: UITableViewDataSource {
         cell.sampleImageView.kf.indicatorType = .activity
         
         let roundCorner = RoundCornerImageProcessor(radius: .widthFraction(0.5), roundingCorners: [.topLeft, .bottomRight])
-        cell.sampleImageView.kf.setImage(with: url, options: [.processor(roundCorner)])
+        let pngSerializer = FormatIndicatedCacheSerializer.png
+        cell.sampleImageView.kf.setImage(
+            with: url,
+            options: [.processor(roundCorner), .cacheSerializer(pngSerializer)]
+        )
         cell.sampleImageView.backgroundColor = .clear
         return cell
     }
