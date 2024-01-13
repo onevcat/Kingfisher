@@ -460,15 +460,13 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             // Some devices (like iPad Pro 10.5) will have a different FPS.
             duration = 1.0 / TimeInterval(preferredFramesPerSecond)
         }
-
-        animator.shouldChangeFrame(with: duration) { [weak self] hasNewFrame in
-            if hasNewFrame {
-                #if os(macOS)
-                self?.layer?.setNeedsDisplay()
-                #else
-                self?.layer.setNeedsDisplay()
-                #endif
-            }
+        
+        if animator.shouldChangeFrame(with: duration) {
+            #if os(macOS)
+            layer?.setNeedsDisplay()
+            #else
+            layer.setNeedsDisplay()
+            #endif
         }
     }
 }
