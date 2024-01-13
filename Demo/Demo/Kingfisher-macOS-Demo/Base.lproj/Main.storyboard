@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -708,7 +708,7 @@
                                 </scroller>
                             </scrollView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yIr-uo-Quc">
-                                <rect key="frame" x="14" y="447" width="114" height="32"/>
+                                <rect key="frame" x="13" y="448" width="108" height="32"/>
                                 <buttonCell key="cell" type="push" title="Clear Cache" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ebf-qp-Vwt">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -717,8 +717,18 @@
                                     <action selector="clearCachePressedWithSender:" target="XfG-lQ-9wD" id="lfl-RU-nX5"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eLA-Ce-crP" userLabel="Heavy GIFs">
+                                <rect key="frame" x="259" y="448" width="103" height="32"/>
+                                <buttonCell key="cell" type="push" title="Heavy GIFs" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YYz-yg-1MB">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <segue destination="19n-lE-hND" kind="show" id="NZO-24-0LI"/>
+                                </connections>
+                            </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ejh-qu-qmy">
-                                <rect key="frame" x="524" y="447" width="82" height="32"/>
+                                <rect key="frame" x="531" y="448" width="76" height="32"/>
                                 <buttonCell key="cell" type="push" title="Reload" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DhD-Tg-Bw3">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -727,16 +737,31 @@
                                     <action selector="reloadPressedWithSender:" target="XfG-lQ-9wD" id="k24-Wi-NRd"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Du-le-fYN">
+                                <rect key="frame" x="417" y="448" width="78" height="32"/>
+                                <buttonCell key="cell" type="push" title="SwiftUI" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wIi-ia-bgi">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <segue destination="ei1-kq-tvV" kind="show" id="Ub0-4z-BqC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="MlO-xV-qug" secondAttribute="trailing" id="18w-Qc-Jr6"/>
                             <constraint firstItem="yIr-uo-Quc" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="35L-th-6RE"/>
+                            <constraint firstItem="Ejh-qu-qmy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="eLA-Ce-crP" secondAttribute="trailing" constant="12" symbolic="YES" id="7TA-fc-yjU"/>
                             <constraint firstItem="yIr-uo-Quc" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="AhA-g2-Cms"/>
-                            <constraint firstItem="Ejh-qu-qmy" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="yIr-uo-Quc" secondAttribute="trailing" constant="12" symbolic="YES" id="BRb-HY-Dny"/>
+                            <constraint firstItem="eLA-Ce-crP" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="yIr-uo-Quc" secondAttribute="trailing" constant="12" symbolic="YES" id="BRb-HY-Dny"/>
                             <constraint firstItem="MlO-xV-qug" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="30" id="Bzu-9v-r7G"/>
+                            <constraint firstItem="0Du-le-fYN" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="DMs-p7-JWV"/>
                             <constraint firstAttribute="bottom" secondItem="MlO-xV-qug" secondAttribute="bottom" id="HY0-vM-k0l"/>
                             <constraint firstItem="MlO-xV-qug" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="Pp3-O7-2Bs"/>
+                            <constraint firstItem="eLA-Ce-crP" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="cJE-Zj-BEy"/>
                             <constraint firstAttribute="trailing" secondItem="Ejh-qu-qmy" secondAttribute="trailing" constant="20" id="eoW-Xb-6wq"/>
+                            <constraint firstItem="eLA-Ce-crP" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="xRm-9b-mgK"/>
+                            <constraint firstItem="Ejh-qu-qmy" firstAttribute="leading" secondItem="0Du-le-fYN" secondAttribute="trailing" constant="50" id="xc2-W0-bu0"/>
                             <constraint firstItem="Ejh-qu-qmy" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="5" id="xnX-II-7iN"/>
                         </constraints>
                     </view>
@@ -747,6 +772,46 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="831"/>
+        </scene>
+        <!--SwiftUI View Controller-->
+        <scene sceneID="Z7V-ea-dRX">
+            <objects>
+                <viewController id="ei1-kq-tvV" customClass="SwiftUIViewController" customModule="Kingfisher_macOS_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="JMh-S8-QlI">
+                        <rect key="frame" x="0.0" y="0.0" width="620" height="474"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="BB8-QC-got" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="75" y="1406"/>
+        </scene>
+        <!--Heavy View Controller-->
+        <scene sceneID="kQM-gs-M6P">
+            <objects>
+                <viewController id="19n-lE-hND" customClass="GIFHeavyViewController" customModule="Kingfisher_macOS_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="4Qc-Su-iB9">
+                        <rect key="frame" x="0.0" y="0.0" width="569" height="480"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fillEqually" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b04-pQ-0pR">
+                                <rect key="frame" x="0.0" y="0.0" width="569" height="480"/>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="b04-pQ-0pR" secondAttribute="bottom" id="WP7-Ep-JhF"/>
+                            <constraint firstItem="b04-pQ-0pR" firstAttribute="leading" secondItem="4Qc-Su-iB9" secondAttribute="leading" id="t0Z-wK-nRD"/>
+                            <constraint firstAttribute="trailing" secondItem="b04-pQ-0pR" secondAttribute="trailing" id="yeI-o0-y8O"/>
+                            <constraint firstItem="b04-pQ-0pR" firstAttribute="top" secondItem="4Qc-Su-iB9" secondAttribute="top" id="yhl-hr-4Mw"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="stackView" destination="b04-pQ-0pR" id="nsI-xM-cZe"/>
+                    </connections>
+                </viewController>
+                <customObject id="Hmf-j6-h1n" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="766.5" y="831"/>
         </scene>
     </scenes>
 </document>
