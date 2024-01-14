@@ -32,7 +32,6 @@ private var durationKey: Void?
 #else
 import UIKit
 import MobileCoreServices
-private var imageSourceKey: Void?
 #endif
 
 #if !os(watchOS)
@@ -48,6 +47,7 @@ import UniformTypeIdentifiers
 
 private var animatedImageDataKey: Void?
 private var imageFrameCountKey: Void?
+private var imageSourceKey: Void?
 
 // MARK: - Image Properties
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
@@ -101,13 +101,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return frameSource.imageSource
         }
     }
+    #endif
     
     /// The custom frame source of current image.
     public private(set) var frameSource: ImageFrameSource? {
         get { return getAssociatedObject(base, &imageSourceKey) }
         set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
     }
-    #endif
 
     // Bitmap memory cost with bytes.
     var cost: Int {
@@ -331,6 +331,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         image?.kf.animatedImageData = source.data
         image?.kf.imageFrameCount = source.frameCount
+        image?.kf.frameSource = source
         return image
         #else
         
