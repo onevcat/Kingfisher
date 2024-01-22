@@ -731,7 +731,7 @@ open class ImageCache {
         }
         
         var backgroundTask: UIBackgroundTaskIdentifier!
-        backgroundTask = sharedApplication.beginBackgroundTask {
+        backgroundTask = sharedApplication.beginBackgroundTask(withName: "Kingfisher:backgroundCleanExpiredDiskCache") {
             endBackgroundTask(&backgroundTask!)
         }
         
