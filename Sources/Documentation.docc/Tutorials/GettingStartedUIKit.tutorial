@@ -143,6 +143,9 @@
                 @Code(name: "ViewController.swift", file: 01-ViewController-8.swift) {
                     @Image(source:preview-4.png, alt:"The first image is loaded into the image view in cell.")
                 }
+                Besides of the `RoundCornerImageProcessor`, we also apply a `pngSerializer` to forcibly convert the
+                loaded JPG file to PNG format when storing in the disk cache. This is necessary since JPG format does
+                not contain an alpha channel, which is necessary when storing a round corner image.
             }
             @Step {
                 The `setImage(with:)` method accepts other parameters, including a completion handler too. Let us add
@@ -158,35 +161,41 @@
     
     @Section(title: "Manipulating the Cache") {
         @ContentAndMedia {
-            In this last section, we will check some basic operation of the image cache: checking the disk cache size, 
-            and clear the whole cache. By default, Kingfisher has its own policy when manage the cache itself. You don't
-            need to worry about it in most cases. If you require more fine-grained control over caching, the following
-            section will provide some insights on this topic.
+            In this final part, we'll look at basic tasks related to image caching, like finding out the size of the 
+            disk cache and clearing all the cache. Usually, Kingfisher handles cache management automatically, so you 
+            don't need to think about it much. But if you need more detailed control over how caching works, this 
+            section will give you helpful tips and information.
         }
         
         @Steps {
             @Step {
-                First we want to tell the space that is taken by the image cache. 
-                Usually, cache size calculation and cache clear is triggered by a
-                button or navigation. But for the sake of simplicity, we are 
-                not going to add any additional button to this sample.
-                
+                First, we need to find out how much space the image cache is using. Normally, you would check the cache 
+                size or clear the cache using a button. But to keep things simple, we won't add any extra buttons to 
+                this example.
                 @Code(name: "ViewController.swift", file: 01-ViewController-10.swift)
             }
             @Step {
-                In `viewDidLoad`, we call the `asyncAfter` method on the `DispatchQueue.main` queue, which triggers a calculation of the current disk cache size there. This value indicates the disk space taken by Kingfisher as the disk cache.
+                In the `viewDidLoad` method, we use the `asyncAfter` method on the `DispatchQueue.main` queue. There we 
+                start a process to calculate the current size of the disk cache. The size we get tells us how much disk 
+                space Kingfisher is using for caching images.
                 
                 @Code(name: "ViewController.swift", file: 01-ViewController-11.swift)
             }
             @Step {
-                To make it clear, we can create an alert and display it to the user, with a button to clear the cache manually.
+                To make it clear, we can create an alert and display it to the user, with a button to clear the cache 
+                manually.
                 @Code(name: "ViewController.swift", file: 01-ViewController-12.swift) {
                     @Image(source:preview-5.png, alt:"An alert which shows the disk cache size used by Kingfisher, with a button to purge the cache.")
                 }
             }
             @Step {
-                Finally, call `clearCache` to purge both the memory cache and the disk cache. Then, if we try to reload the data of the table view, we can see the images are downloaded again from the network: in this case, "Image loaded from cache: none" will be printed to the console.
+                Lastly, use the `clearCache` function to remove all images from both the memory and disk caches. After 
+                this, when you refresh the table view's data, the images will be downloaded again from the internet. 
+                You'll notice "Image loaded from cache: none" displayed in the console, indicating the images are not 
+                being loaded from the cache this time.
+                
                 @Code(name: "ViewController.swift", file: 01-ViewController-13.swift)
+                
                 The cache cleaning is only for demonstration purpose. In practice, usually you do not need to call it yourself. Kingfisher will manage and purge the data based on its default policy.
             }
         }
