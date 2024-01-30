@@ -1,6 +1,6 @@
-# CommonTasks - Cache
+# Common Tasks - Cache
 
-Common tasks related to the `ImageCache` in Kingfisher.
+Common tasks related to the ``ImageCache`` in Kingfisher.
 
 ## Overview
 
@@ -177,4 +177,50 @@ let cache = ImageCache(name: "my-own-cache")
 imageView.kf.setImage(with: url, options: [.targetCache(cache)])
 ```
 
+#### Skipping cache searching, force downloading image again 
 
+```swift
+imageView.kf.setImage(with: url, options: [.forceRefresh])
+```
+
+#### Only search cache for the image, do not download if not existing
+
+This makes your app to an "offline" mode.
+
+```swift
+imageView.kf.setImage(with: url, options: [.onlyFromCache])
+```
+
+If the image is not existing in the cache, a `.cacheError` with `.imageNotExisting` reason will be raised.
+
+#### Waiting for cache finishing
+
+Storing images to disk cache is an asynchronous operation. However, it is not required to be done before we can set the image view and call the completion handler in view extension methods. In other words, the disk cache may not exist yet in the completion handler below:
+
+```swift
+imageView.kf.setImage(with: url) { _ in
+    ImageCache.default.retrieveImageInDiskCache(forKey: url.cacheKey) { result in
+        switch result {
+        case .success(let image):
+            // `image` might be `nil` here.
+        case .failure: break
+        }
+    }
+}
+```
+
+This is not a problem for most use cases. However, if your logic depends on the existing of disk cache, pass `.waitForCache` as an option. Kingfisher will then wait until the disk cache finishes before calling the handler:
+
+```swift
+imageView.kf.setImage(with: url, options: [.waitForCache]) { _ in
+    ImageCache.default.retrieveImageInDiskCache(forKey: url.cacheKey) { result in
+        switch result {
+        case .success(let image):
+            // `image` exists.
+        case .failure: break
+        }
+    }
+}
+```
+
+This is only for disk image cache, which involves to async I/O. For the memory cache, everything goes synchronously, so the image should be always in the memory cache.

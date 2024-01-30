@@ -15,16 +15,27 @@ However, the similar code should also work for other platforms like macOS or tvO
 
 For common tasks of a specific part of Kingfisher, check the documentation below as well:
 
-- <doc:CommonTasks_>
+#### Common Tasks for Main Components
 
+- <doc:CommonTasks_Cache>
+- <doc:CommonTasks_Downloader>
+- <doc:CommonTasks_Processor>
 
+#### Other Topics
 
-## Most common tasks
+- <doc:Topic_Prefetch>
+- <doc:Topic_ImageDataProvider>
+- <doc:Topic_Indicator>
+- <doc:Topic_Retry>
+- <doc:Topic_LowDataMode> 
+- <doc:Topic_PerformanceTips>
+
+## Most Common Tasks
 
 The view extension based APIs (for `UIImageView`, `NSImageView`, `UIButton` and `NSButton`) should be your first choice
 whenever possible. It keeps your code simple and elegant.
 
-### Setting image with a `URL`
+### Setting Image with a `URL`
 
 ```swift
 let url = URL(string: "https://example.com/image.jpg")
@@ -44,7 +55,7 @@ Later, when you call the `setImage` with the same url again, only step 1 and 2 w
 purged.
 
 
-### Showing a placeholder
+### Showing a Placeholder
 
 ```swift
 let image = UIImage(named: "default_profile_icon")
@@ -65,7 +76,7 @@ The `image` will show in the `imageView` while downloading from `url`.
 >
 > The `MyView` instance will be added to / removed from the `imageView` as needed.
 
-### Showing a loading indicator while downloading
+### Showing a Loading Indicator while Downloading
 
 ```swift
 imageView.kf.indicatorType = .activity
@@ -74,13 +85,13 @@ imageView.kf.setImage(with: url)
 
 Show a `UIActivityIndicatorView` in center of image view while downloading.
 
-### Fading in downloaded image
+### Fading in Downloaded Image
 
 ```swift
 imageView.kf.setImage(with: url, options: [.transition(.fade(0.2))])
 ```
 
-### Completion handler
+### Completion Handler
 
 ```swift
 imageView.kf.setImage(with: url) { result in
@@ -105,7 +116,7 @@ imageView.kf.setImage(with: url) { result in
 }
 ```
 
-### Getting an image without setting to UI
+### Getting an Image without Setting to UI
 
 Sometimes, you just want to get the image with Kingfisher instead of setting it to an image view. Use `KingfisherManager` for it:
 
