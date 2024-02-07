@@ -4,23 +4,26 @@ Common tasks related to the ``ImageCache`` in Kingfisher.
 
 ## Overview
 
-Kingfisher is using a hybrid `ImageCache` to manage the cached images, It consists of a memory storage and a disk
-storage, and provides high-level APIs to manipulate the cache system. If not specified, the `ImageCache.default` 
-instance will be used across in Kingfisher.
+Kingfisher employs a hybrid ``ImageCache`` for managing cached images, comprising both memory and disk storage. It 
+offers high-level APIs for cache management. Unless otherwise specified, the ``ImageCache.default`` instance is 
+used throughout Kingfisher.
 
 ### Using another cache key
 
-By default, URL will be used to create a string for the cache key. For network URLs, the `absoluteString` will be used. 
-In any case, you change the key by creating an `ImageResource` with your own key.
+By default, the URL is converted into a string to generate the cache key. For network URLs, `absoluteString` is 
+utilized. You can customize the key by creating an ``ImageResource`` object with a specified key.
 
 ```swift
-let resource = ImageResource(downloadURL: url, cacheKey: "my_cache_key")
+let resource = ImageResource(
+    downloadURL: url, 
+    cacheKey: "my_cache_key"
+)
 imageView.kf.setImage(with: resource)
 ```
 
-Kingfisher will use the `cacheKey` to search images in cache later. Use a different key for a different image.
+Kingfisher uses the `cacheKey` to locate images in the cache. Ensure you use a distinct key for each different image.
 
-#### Check whether an image in the cache
+#### Checking whether an image in the cache
 
 ```swift
 let cache = ImageCache.default
@@ -31,8 +34,8 @@ let cacheType = cache.imageCachedType(forKey: cacheKey)
 // `.memory`, `.disk` or `.none`.
 ```
 
-If you used a processor when you retrieve the image, the processed image will be stored in cache. In this case, also 
-pass the processor identifier:
+If a processor is applied when retrieving an image, the processed image will be cached. In this scenario, remember to 
+also include the processor identifier when manipulating the cache:
 
 ```swift
 let processor = RoundCornerImageProcessor(cornerRadius: 20)
@@ -42,7 +45,7 @@ imageView.kf.setImage(with: url, options: [.processor(processor)])
 cache.isCached(forKey: cacheKey, processorIdentifier: processor.identifier)
 ```
 
-#### Get an image from cache
+#### Getting an image from the cache
 
 ```swift
 cache.retrieveImage(forKey: "cacheKey") { result in
@@ -59,9 +62,9 @@ cache.retrieveImage(forKey: "cacheKey") { result in
 }
 ```
 
-#### Set limit for cache
+#### Set limit for the cache
 
-For memory storage, you can set its `totalCostLimit` and `countLimit`:
+For memory storage, you can set its ``MemoryStorage/Config/totalCostLimit`` and ``MemoryStorage/Config/countLimit``:
 
 ```swift
 // Limit memory cache size to 300 MB.
@@ -71,35 +74,39 @@ cache.memoryStorage.config.totalCostLimit = 300 * 1024 * 1024
 cache.memoryStorage.config.countLimit = 150
 ```
 
-By default, the `totalCostLimit` of memory cache is 25% of your total memory in the device, and there is no limit on image count.
+The default ``MemoryStorage/Config/totalCostLimit`` for the memory cache is set to 25% of the device's total memory, 
+with no limit on the ``MemoryStorage/Config/countLimit``.
 
-For disk storage, you can set `sizeLimit` for space on the file system.
+For disk storage, you have the option to set a ``DiskStorage/Config/sizeLimit`` to manage the space used on the file 
+system.
 
 ```swift
 // Limit disk cache size to 1 GB.
 cache.diskStorage.config.sizeLimit =  = 1000 * 1024 * 1024
 ```
 
-#### Set default expiration for cache
+#### Set the default expiration for cache
 
-Both memory storage and disk storage have default expiration setting. Images in memory storage will expire after 5 minutes from last accessed, while it is a week for images in disk storage. You can change this value by:
+Both memory and disk storage in Kingfisher have default expiration settings. Images in memory storage expire 5 minutes 
+after the last access, whereas images in disk storage expire after one week. These values can be modified as follows:
 
 ```swift
-// Memory image expires after 10 minutes.
+// Set memory image expires after 10 minutes.
 cache.memoryStorage.config.expiration = .seconds(600)
 
-// Disk image never expires.
+// Set disk image never expires.
 cache.diskStorage.config.expiration = .never
 ```
 
-If you want to override this expiration for a certain image when caching it, pass in with an option:
+To override this default expiration for a specific image when caching it, include an option as follows during image 
+setting:
 
 ```swift
 // This image will never expire in memory cache.
 imageView.kf.setImage(with: url, options: [.memoryCacheExpiration(.never)])
 ```
 
-The expired memory cache will be purged with a duration of 2 minutes. If you want it happens more frequently:
+The expired memory cache is purged every 2 minutes by default. To adjust this frequency:
 
 ```swift
 // Check memory clean up every 30 seconds.
@@ -108,14 +115,16 @@ cache.memoryStorage.config.cleanInterval = 30
 
 #### Store images to cache manually
 
-By default, view extension methods and `KingfisherManager` will store the retrieved image to cache automatically. But you can also store an image to cache yourself:
+By default, view extension methods and ``KingfisherManager`` automatically store retrieved images in the cache. 
+However, you can also manually store an image to the cache:
 
 ```swift
 let image: UIImage = //...
 cache.store(image, forKey: cacheKey)
 ```
 
-If you have the original data of that image, also pass it to `ImageCache`, it helps Kingfisher to determine in which format the image should be stored:
+If you possess the original data of the image, pass it along to ``ImageCache``. This assists Kingfisher in determining 
+the appropriate format for storing the image:
 
 ```swift
 let data: Data = //...
@@ -128,7 +137,7 @@ cache.store(image, original: data, forKey: cacheKey)
 Kingfisher manages its cache automatically. But you still can manually remove a certain image from cache:
 
 ```swift
-cache.default.removeImage(forKey: cacheKey)
+cache.removeImage(forKey: cacheKey)
 ```
 
 Or, with more control:
@@ -191,11 +200,14 @@ This makes your app to an "offline" mode.
 imageView.kf.setImage(with: url, options: [.onlyFromCache])
 ```
 
-If the image is not existing in the cache, a `.cacheError` with `.imageNotExisting` reason will be raised.
+If the image does not exist in the cache, an ``KingfisherError/CacheErrorReason/imageNotExisting(key:)`` error will be
+triggered.
 
-#### Waiting for cache finishing
+#### Waiting for cache to finish
 
-Storing images to disk cache is an asynchronous operation. However, it is not required to be done before we can set the image view and call the completion handler in view extension methods. In other words, the disk cache may not exist yet in the completion handler below:
+Storing images in the disk cache is asynchronous and doesn't need to be completed before setting the image view and 
+invoking the completion handler in view extension methods. This means that the disk cache might not be fully updated at
+the time the completion handler is executed, as shown below:
 
 ```swift
 imageView.kf.setImage(with: url) { _ in
@@ -209,7 +221,9 @@ imageView.kf.setImage(with: url) { _ in
 }
 ```
 
-This is not a problem for most use cases. However, if your logic depends on the existing of disk cache, pass `.waitForCache` as an option. Kingfisher will then wait until the disk cache finishes before calling the handler:
+For most scenarios, this asynchronous behavior isn't an issue. However, if your logic relies on the existence of the 
+disk cache, use the `.waitForCache` option. With this option, Kingfisher will delay the execution of the handler until 
+the disk cache operation is complete:
 
 ```swift
 imageView.kf.setImage(with: url, options: [.waitForCache]) { _ in
@@ -223,4 +237,5 @@ imageView.kf.setImage(with: url, options: [.waitForCache]) { _ in
 }
 ```
 
-This is only for disk image cache, which involves to async I/O. For the memory cache, everything goes synchronously, so the image should be always in the memory cache.
+This consideration applies specifically to disk image caching, which involves asynchronous I/O operations. In contrast,
+memory cache operations are synchronous, ensuring that the image is always available in the memory cache.

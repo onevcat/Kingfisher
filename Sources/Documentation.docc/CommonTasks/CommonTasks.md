@@ -1,6 +1,7 @@
 # Common Tasks
 
-Code snippet that covers the most common tasks. Feel free to copy and paste them to your next great project.
+Below is a code snippet designed to address the most commonly encountered tasks. You are encouraged to freely integrate 
+this snippet into your upcoming projects.
 
 @Metadata {
     @PageImage(purpose: card, source: "common-tasks-card"))
@@ -9,31 +10,36 @@ Code snippet that covers the most common tasks. Feel free to copy and paste them
 
 ## Overview
 
-This documentation will describe some of the most common usage in general. The code snippet is based on iOS. 
-However, the similar code should also work for other platforms like macOS or tvOS, by replacing the corresponding class 
-(such as `UIImage` to `NSImage`, etc).
+This document provides a comprehensive guide to the most prevalent use cases. The included code snippet is tailored for 
+iOS development. Nevertheless, it can be adapted for other platforms, such as macOS or tvOS, with minimal modifications.
+This typically involves substituting specific classes (for instance, replacing `UIImage` with `NSImage`). 
 
-For common tasks of a specific part of Kingfisher, check the documentation below as well:
+To explore detailed instructions for specific components within the Kingfisher framework, please refer to the 
+subsequent documentation:
 
 #### Common Tasks for Main Components
 
-- <doc:CommonTasks_Cache>
-- <doc:CommonTasks_Downloader>
-- <doc:CommonTasks_Processor>
+@Links(visualStyle: list) {
+    - <doc:CommonTasks_Cache>
+    - <doc:CommonTasks_Downloader>
+    - <doc:CommonTasks_Processor>
+}
 
 #### Other Topics
 
-- <doc:Topic_Prefetch>
-- <doc:Topic_ImageDataProvider>
-- <doc:Topic_Indicator>
-- <doc:Topic_Retry>
-- <doc:Topic_LowDataMode> 
-- <doc:Topic_PerformanceTips>
+@Links(visualStyle: list) {
+    - <doc:Topic_Prefetch>
+    - <doc:Topic_ImageDataProvider>
+    - <doc:Topic_Indicator>
+    - <doc:Topic_Retry>
+    - <doc:Topic_LowDataMode> 
+    - <doc:Topic_PerformanceTips>
+}
 
 ## Most Common Tasks
 
-The view extension based APIs (for `UIImageView`, `NSImageView`, `UIButton` and `NSButton`) should be your first choice
-whenever possible. It keeps your code simple and elegant.
+The view extension-based APIs for `UIImageView`, `NSImageView`, `UIButton`, and `NSButton` are recommended as your 
+primary choice. They simplify and enhance the elegance of your code.
 
 ### Setting Image with a `URL`
 
@@ -42,18 +48,16 @@ let url = URL(string: "https://example.com/image.jpg")
 imageView.kf.setImage(with: url)
 ```
 
-This simple code does these things:
+This code performs the following actions:
 
-1. Checks whether an image is cached under the key `url.absoluteString`.
-2. If an image was found in the cache (either in memory or disk), sets it to `imageView.image`.
-3. If not, creates a request and download it from `url`.
-4. Converts the downloaded data to a `UIImage` object.
-5. Caches the image to memory and disk.
-6. Sets the `imageView.image` to display it.
+1. Verifies if an image is cached using the key `url.absoluteString`.
+2. Retrieves and assigns the image to `imageView.image` if found in cache (memory or disk).
+3. If absent, initiates a request and downloads from `url`.
+4. Transforms the downloaded data into a `UIImage`.
+5. Stores the image in both memory and disk caches.
+6. Updates `imageView.image` with the new image.
 
-Later, when you call the `setImage` with the same url again, only step 1 and 2 will be performed, unless the cache is 
-purged.
-
+Subsequent calls to `setImage` with the same URL will only execute steps 1 and 2, unless the cache has been cleared.
 
 ### Showing a Placeholder
 
@@ -62,19 +66,19 @@ let image = UIImage(named: "default_profile_icon")
 imageView.kf.setImage(with: url, placeholder: image)
 ```
 
-The `image` will show in the `imageView` while downloading from `url`.
+The `imageView` will display the `image` as the placeholder during its download from the `url`.
 
-> You could also use a customized `UIView` or `NSView` as placeholder, by conforming it to `Placeholder`:
->
+> You can also employ a custom `UIView` or `NSView` as a placeholder by making it conform to the `Placeholder` protocol:
+> 
 > ```swift
-> class MyView: UIView { /* Your implementation of view */ }
->
-> extension MyView: Placeholder { /* Just leave it empty */}
+> class MyView: UIView { /* Implementation of your view */ }
+> 
+> extension MyView: Placeholder { /* This can be left empty */ }
 > 
 > imageView.kf.setImage(with: url, placeholder: MyView())
 > ```
->
-> The `MyView` instance will be added to / removed from the `imageView` as needed.
+> 
+> The instance of `MyView` will be dynamically added to or removed from the `imageView` as required.
 
 ### Showing a Loading Indicator while Downloading
 
@@ -83,7 +87,7 @@ imageView.kf.indicatorType = .activity
 imageView.kf.setImage(with: url)
 ```
 
-Show a `UIActivityIndicatorView` in center of image view while downloading.
+This shows a `UIActivityIndicatorView` in center of image view while downloading.
 
 ### Fading in Downloaded Image
 
@@ -118,7 +122,9 @@ imageView.kf.setImage(with: url) { result in
 
 ### Getting an Image without Setting to UI
 
-Sometimes, you just want to get the image with Kingfisher instead of setting it to an image view. Use `KingfisherManager` for it:
+Occasionally, you might need to retrieve an image using Kingfisher without assigning it to an image view. In such
+cases, use ``KingfisherManager/retrieveImage(with:options:progressBlock:)-80fw1``
+
 
 ```swift
 KingfisherManager.shared.retrieveImage(with: url) { result in 
