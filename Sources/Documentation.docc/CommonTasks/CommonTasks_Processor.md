@@ -4,10 +4,11 @@ Common tasks related to the ``ImageProcessor`` in Kingfisher.
 
 ## Overview
 
-``ImageProcessor`` transforms an image (or data) to another image. You can provide a processor to ``ImageDownloader`` 
-to  apply it to the downloaded data. Then processed image will be sent to the image view and the cache.
+``ImageProcessor`` is used to transform an image (or data) into another image. By supplying a processor to 
+``KingfisherManager`` when setting the image, it can be applied to the downloaded data. The processed image will then 
+be sent to the image view and stored in the cache.
 
-### Use the Default Processor
+### Use the default processor
 
 ```swift
 // Just without anything
@@ -16,9 +17,23 @@ imageView.kf.setImage(with: url)
 imageView.kf.setImage(with: url, options: [.processor(DefaultImageProcessor.default)])
 ```
 
-> `DefaultImageProcessor` converts downloaded data to a corresponded image object. PNG, JPEG, and GIF are supported.
+> The ``DefaultImageProcessor`` converts downloaded data into a corresponding image object. 
+> It supports PNG, JPEG, and GIF formats.
 
 ### Built-in Processors
+
+@Row {
+    @Column(size: 2) {
+        ```swift
+        // Round corner
+        RoundCornerImageProcessor(cornerRadius: 20)
+        ```
+    }
+    
+    @Column {
+        ![A screenshot of the power picker user interface with four powers displayed – ice, fire, wind, and lightning](common-tasks-card)
+    }
+}
 
 ```swift
 // Round corner
