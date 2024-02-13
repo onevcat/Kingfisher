@@ -2,6 +2,14 @@
 
 -----
 
+## [7.11.0 - visionOS for CocoaPods](https://github.com/onevcat/Kingfisher/releases/tag/7.11.0) (2024-02-12)
+
+#### Add
+* Add visionOS as a supported platform when being used in CocoaPods. For other dependency managers, it was already supported from previous versions. [#2205](https://github.com/onevcat/Kingfisher/pull/2205) @onevcat @grachyov
+* A name for background task started for image cache cleanup. [#2201](https://github.com/onevcat/Kingfisher/pull/2201) @antohisorin
+
+---
+
 ## [7.10.2 - GIF crash fix](https://github.com/onevcat/Kingfisher/releases/tag/7.10.2) (2024-01-11)
 
 #### Fix
