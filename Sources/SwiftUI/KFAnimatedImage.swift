@@ -28,7 +28,7 @@
 import SwiftUI
 import Combine
 
-@available(iOS 14.0, tvOS 14.0, watchOS 7.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImage: KFImageProtocol {
     public typealias HoldingView = KFAnimatedImageViewRepresenter
     public var context: Context<HoldingView>
@@ -103,7 +103,7 @@ public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, 
 }
 
 #if DEBUG
-@available(iOS 14.0, tvOS 14.0, watchOS 7.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFAnimatedImage_Previews: PreviewProvider {
     static var previews: some View {
         Group {
