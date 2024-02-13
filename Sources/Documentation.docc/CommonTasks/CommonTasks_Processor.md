@@ -23,7 +23,7 @@ imageView.kf.setImage(with: url, options: [.processor(DefaultImageProcessor.defa
 ### Built-in Processors
 
 @Row {
-    @Column(size: 2) {
+    @Column(size: 3) {
         ```swift
         // Round corner
         RoundCornerImageProcessor(cornerRadius: 20)
@@ -78,16 +78,19 @@ let processor = BlurImageProcessor(blurRadius: 4) |> RoundCornerImageProcessor(c
 imageView.kf.setImage(with: url, options: [.processor(processor)])
 ```
 
-### Creating Your Own Processor
+### Creating your own processor
 
 Make a type conforming to `ImageProcessor` by implementing `identifier` and `process`:
+
+> important: ``ImageProcessor/identifier`` is used to determine the cache key when this processor is applied. It is your
+> responsibility to keep it the same for processors with the same properties/functionality.
 
 ```swift
 struct MyProcessor: ImageProcessor {
 
-    // `identifier` should be the same for processors with the same properties/functionality
-    // It will be used when storing and retrieving the image to/from cache.
-    let identifier = "com.yourdomain.myprocessor"
+    let someValue: Int
+
+    var identifier: String { "com.yourdomain.myprocessor-\(someValue)" }
     
     // Convert input data/image to target image and return it.
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
@@ -102,14 +105,17 @@ struct MyProcessor: ImageProcessor {
         }
     }
 }
+```
 
-// Then pass it to the `setImage` methods:
-let processor = MyProcessor()
+Then pass it to the ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-3ft7a`` methods:
+
+```swift
+let processor = MyProcessor(someValue: 10)
 let url = URL(string: "https://example.com/my_image.png")
 imageView.kf.setImage(with: url, options: [.processor(processor)])
 ```
 
-### Creating a Processor from `CIFilter`
+### Creating a processor from CIFilter
 
 If you have a prepared `CIFilter`, you can create a processor quickly from it.
 

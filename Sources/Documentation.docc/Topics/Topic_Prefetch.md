@@ -1,17 +1,20 @@
 # Prefetching images before actually loading  
 
-Loading images before actually needed. Feed them to the table view or collection view.
+Preloading images before actually required. Feeding them to the table view or collection view to improve the display speed.
 
 ## Overview
 
-You could use ``ImagePrefetcher`` to prefetch some images and cache them before you display them on the screen. This is
-useful when you know a list of image resources you know they would probably be shown later.
+Use ``ImagePrefetcher`` to prefetch and cache images that are likely to be displayed later. This improves loading times 
+and ensures smoother image display.
 
-### Prefetch some Images
+### Prefetch some images
 
 ```swift
-let urls = ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-           .map { URL(string: $0)! }
+let urls = [
+    "https://example.com/image1.jpg", 
+    "https://example.com/image2.jpg"
+].map { URL(string: $0)! }
+
 let prefetcher = ImagePrefetcher(urls: urls) {
     skippedResources, failedResources, completedResources in
     print("These resources are prefetched: \(completedResources)")
@@ -23,9 +26,10 @@ imageView.kf.setImage(with: urls[0])
 anotherImageView.kf.setImage(with: urls[1])
 ```
 
-### Prefetch Images for Table View or Collection View
+### Prefetch images for table view or collection view
 
-From iOS 10, Apple introduced a cell prefetching behavior. It could work seamlessly with Kingfisher's `ImagePrefetcher`.
+Starting with iOS 10, Apple introduced cell prefetching behavior, which can seamlessly integrate with Kingfisher's 
+``ImagePrefetcher``.
 
 ```swift
 override func viewDidLoad() {

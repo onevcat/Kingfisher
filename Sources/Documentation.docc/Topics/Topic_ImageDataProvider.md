@@ -1,13 +1,19 @@
-# Loading a local image or loading from data
+# Understanding the ImageDataProvider
+
+Loading a local image or loading from data.
 
 ## Overview
 
-Kingfisher can set images from a local data source, enabling the processing and management of local image data using 
-Kingfisher's features, without requiring network downloads.
+Kingfisher supports setting images from a local data source, allowing you to leverage its features for processing and
+managing local image data, bypassing the need for network downloads. 
 
-### Image from Local File
+This allows for uniform API calls for both remote and local images, facilitating the reuse of familiar concepts, such 
+as existing processors and cache serializers.
 
-`LocalFileImageDataProvider` is a type conforming to `ImageDataProvider`. It is used to load an image from a local file URL:
+### Image from local file
+
+``LocalFileImageDataProvider`` is a type that conforms to ``ImageDataProvider``. It is specifically designed for 
+loading images from local file URLs:
 
 ```swift
 let url = URL(fileURLWithPath: path)
@@ -22,18 +28,20 @@ let processor = RoundCornerImageProcessor(cornerRadius: 20)
 imageView.kf.setImage(with: provider, options: [.processor(processor)])
 ```
 
-### Image from Base64 String
+### Image from Base64 string
 
-Use `Base64ImageDataProvider` to provide an image from base64 encoded data. All other features you expected, such as cache or image processors, should work as they are as when getting images from an URL.
+Utilize ``Base64ImageDataProvider`` to supply an image from base64 encoded string. All standard features, including
+caching and image processing, function identically to how they operate when retrieving images via a URL.
 
 ```swift
 let provider = Base64ImageDataProvider(base64String: "\/9j\/4AAQSkZJRgABAQA...", cacheKey: "some-cache-key")
 imageView.kf.setImage(with: provider)
 ```
 
-### Generating Image from AVAsset
+### Generating image from AVAsset
 
-Use `AVAssetImageDataProvider` to generate an image from a video URL or `AVAsset` at a given time:
+Employ ``AVAssetImageDataProvider`` to create an image from a video URL or `AVAsset` at a specified time, 
+leveraging Kingfisher's capabilities for handling video-based image sources.
 
 ```swift
 let provider = AVAssetImageDataProvider(
@@ -42,9 +50,11 @@ let provider = AVAssetImageDataProvider(
 )
 ```
 
-### Creating Your Own Image Data Provider
+### Creating a customize ``ImageDataProvider``
 
-If you want to create your own image data provider type, conform to `ImageDataProvider` protocol by implementing a `cacheKey` and a `data(handler:)` method to provide image data:
+To create your own image data provider, implement the ``ImageDataProvider`` protocol. This requires implementing a
+``ImageDataProvider/cacheKey`` for unique identification and a ``ImageDataProvider/data(handler:)`` method to supply
+image data:
 
 ```swift
 struct UserNameLetterIconImageProvider: ImageDataProvider {
@@ -60,11 +70,10 @@ struct UserNameLetterIconImageProvider: ImageDataProvider {
         // You can ignore these detail below.
         // It generates some data for an image with `letter` being rendered in the center.
 
-        let letter = self.letter as NSString
         let rect = CGRect(x: 0, y: 0, width: 250, height: 250)
         let renderer = UIGraphicsImageRenderer(size: rect.size)
         let data = renderer.pngData { context in
-            UIColor.black.setFill()
+            UIColor.systemYellow.setFill()
             context.fill(rect)
             
             let attributes = [
@@ -88,7 +97,15 @@ struct UserNameLetterIconImageProvider: ImageDataProvider {
 
 // Set image for user "John"
 let provider = UserNameLetterIconImageProvider(userNameFirstLetter: "J")
-imageView.kf.setImage(with: provider)
+imageView.kf.setImage(
+    with: provider,
+    options: [.processor(RoundCornerImageProcessor(radius: .point(75)))]
+)
 ```
 
-Maybe you have already noticed, the `data(handler:)` contains a callback to you. You can provide the image data in an asynchronous way from another thread if it is too heavy in the main thread.
+This generates a result like:
+
+@Image(source: imagedataprovider-sample)
+
+You might have noticed that ``ImageDataProvider/data(handler:)`` includes a callback. This allows you to supply the
+image data asynchronously from a different thread, which is useful if processing on the main thread is too heavy.

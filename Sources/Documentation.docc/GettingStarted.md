@@ -14,17 +14,17 @@ As such, the basic usage of Kingfisher is straightforward. We offer two step-by-
 and utilize Kingfisher's fundamental features in both UIKit and SwiftUI environments. The tutorials will cover the 
 following aspects:
 
-#### 􀈅 Installing Kingfisher
+##### Installing Kingfisher
 Learn how to integrate Kingfisher into your project setup.
 
-#### 􀏆 Loading and Displaying Images
+##### Loading and Displaying Images
 Discover how to effortlessly fetch and display images from remote URLs using convenient view extensions.
 
-#### 􀙅 Processing Images with Processors
+##### Processing Images with Processors
 
 Understand how to manipulate and transform images using the ImageProcessor functionality.
 
-#### 􀤃 Inspecting and Managing Image Cache
+##### Inspecting and Managing Image Cache
 
 Gain insights into how to check the image cache status and handle image caching.
 
@@ -40,7 +40,7 @@ Choose the approach you prefer to begin the tutorial (UIKit or SwiftUI):
     - <doc:GettingStartedSwiftUI>
 }
 
->tip: In addition to UIKit and SwiftUI, Kingfisher also offers support for use in AppKit. This extends Kingfisher's 
+> tip: In addition to UIKit and SwiftUI, Kingfisher also offers support for use in AppKit. This extends Kingfisher's 
 > versatility across different Apple platforms, providing a unified API for handling remote images.
 >
 > If you are interested in utilizing Kingfisher within an AppKit context, we recommend referring to the UIKit 

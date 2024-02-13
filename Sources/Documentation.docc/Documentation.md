@@ -36,7 +36,6 @@ downloading again.
 
 - <doc:GettingStarted>
 - <doc:CommonTasks>
-- <doc:KingfisherInDepth>
 
 ### Loading Images in Simple Way
 
@@ -51,16 +50,22 @@ downloading again.
 
 ### Image Downloader
 
+- <doc:CommonTasks_Downloader>
 - ``ImageDownloader``
 - ``ImagePrefetcher``
 - ``DownloadTask``
 
 ### Image Processor
 
-- ``ImageProcessor``
+@Links(visualStyle: detailedGrid) {
+    - <doc:CommonTasks_Processor>
+    - ``ImageProcessor``
+}
 
 ### Image Cache & Serializer
 
+- <doc:CommonTasks_Cache>
+- <doc:CommonTasks_Serializer>
 - ``ImageCache``
 - ``CacheSerializer``
 
@@ -76,5 +81,5 @@ downloading again.
 ### Help & Communication
 
 - <doc:MigrationGuide>
-- [Change Log](https://onevcat.com)
+- <doc:CHANGELOG>
 

@@ -1,6 +1,15 @@
-# Setting and customizing indicator while loading
+# Loading Indicator 
 
-#### Using an Image as Indicator
+Setting and customizing indicator while loading.
+
+#### Using the standard indicator
+
+```swift
+imageView.kf.indicatorType = .activity
+imageView.kf.setImage(with: url)
+```
+
+#### Using an image as indicator
 
 ```swift
 let path = Bundle.main.path(forResource: "loader", ofType: "gif")!
@@ -10,7 +19,7 @@ imageView.kf.indicatorType = .image(imageData: data)
 imageView.kf.setImage(with: url)
 ```
 
-#### Using a Customized View
+#### Using a customized view
 
 ```swift
 struct MyIndicator: Indicator {
@@ -28,7 +37,7 @@ let i = MyIndicator()
 imageView.kf.indicatorType = .custom(indicator: i)
 ```
 
-#### Updating Indicator with Percentage
+#### Updating indicator with percentage progress
 
 ```swift
 imageView.kf.setImage(with: url, progressBlock: {
@@ -39,4 +48,4 @@ imageView.kf.setImage(with: url, progressBlock: {
 })
 ```
 
-The `progressBlock` will be only called if your server response contains the "Content-Length" in the header.
+The `progressBlock` is called only when the server's response includes a "Content-Length" in the header.

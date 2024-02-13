@@ -2,14 +2,16 @@
 
 Some useful tips for better performance when using Kingfisher.
 
-#### Cancelling unnecessary downloading tasks
+### Cancelling unnecessary downloading tasks
 
-Once a downloading task initialized, even when you set another URL to the image view, that task will continue until finishes.
+Once a download task is initiated, it will continue until completion, even if you set a different URL to the image view.
 
 ```swift
 imageView.kf.setImage(with: url1) { result in 
     // `result` is `.failure(.imageSettingError(.notCurrentSourceTask))`
-    // But the download (and cache) is done.
+    // due to another `setImage` below.
+    //
+    // But the download (and cache) is done normally.
 }
 
 // Set again immediately.
@@ -18,25 +20,29 @@ imageView.kf.setImage(with: url2) { result in
 }
 ```
 
-Although setting for `url1` results in a `.failure` since the setting task was overridden by `url2`, the download task itself is finished. The downloaded image data is also processed and cached.
+Even if the setting for `url1` ends in a `.failure` because it was overridden by `url2`, the download task itself 
+completes. The downloaded image data is processed and cached accordingly.
 
-The downloading and caching operation for the image at `url1` is not free, it costs network, CPU time, memory and also, battery. 
-
-In most cases, it worths to do that. Since there is a chance that the image is shown to the user again. But if you are sure that you do not need the image from `url1`, you can cancel the downloading before starting another one:
+The download and caching of the image at `url1` consume network resources, CPU time, memory, and battery. If there's a 
+likelihood the image from `url1` will be displayed to the user again, these resources are well spent. If you are certain 
+that the image from `url1` is no longer needed, cancelling the download before initiating another one can be a better 
+idea:
 
 ```swift
-imageView.kf.setImage(with: ImageLoader.sampleImageURLs[8]) { result in
+imageView.kf.setImage(with: url1) { result in
     // `result` is `.failure(.requestError(.taskCancelled))`
     // Now the download task is cancelled.
 }
 
 imageView.kf.cancelDownloadTask()
-imageView.kf.setImage(with: ImageLoader.sampleImageURLs[9]) { result in
+imageView.kf.setImage(with: url2) { result in
     // `result` is `.success`
 }
 ```
 
-This technology sometimes is useful in a table view or collection view. When users scrolling the list fast, maybe quite a lot of image downloading tasks would be created. You can cancel unnecessary tasks in the `didEndDisplaying` delegate method:
+This approach is particularly useful in table views or collection views. When users scroll through the list quickly, 
+many image downloading tasks may be initiated. To optimize performance, you can cancel unnecessary tasks using the 
+`didEndDisplaying` delegate method.
 
 ```swift
 func collectionView(
@@ -49,40 +55,38 @@ func collectionView(
 }
 ```
 
-#### Using processor with `ImageCache`
+### Cache original image when using a processor
 
-Kingfisher is smart enough to cache the processed images and then get it back if you specify the correct `ImageProcessor` in the option. Each `ImageProcessor` contains an `identifier`. It is used when caching the processed images.
+If your goal is to either:
 
-Without the `identifier`, Kingfisher will not be able to tell which is the correct image in cache. Think about the case you have to store two versions of an image from the same url, one should be round cornered and another should be blurred. You need two different cache keys. In all Kingfisher's built-in image processors, the identifier will be determined by the kind of processor, combined with its parameters for each instance. For example, a round corner processor with 20 as its corner radius might have an `identifier` as `round-corner-20`, while a 40 radius one's could be `round-corner-40`. (Just for demonstrating, they are not that simple value in real)
+1. Use different processors on the same image to obtain various versions.
+2. Apply a non-default processor to an image and later display the original.
 
-So, when you create your own processor, you need to make sure that you provide a different `identifier` for any different processor instance, with its parameter considered. This helps the processors work well with the cache. Furthermore, it prevents unnecessary downloading and processing.
-
-#### Cache original image when using a processor
-
-If you are trying to do one of these:
-
-1. Process the same image with different processors to get different versions of the image.
-2. Process an image with a processor other than the default one, and later need to display the original image.
-
-It worths passing `.cacheOriginalImage` as an option. This will store the original downloaded image to cache as well:
+Consider using the ``KingfisherOptionsInfoItem/cacheOriginalImage`` option. This option not only caches the processed 
+image but also stores the original downloaded image in the cache.
 
 ```swift
 let p1 = MyProcessor()
 imageView.kf.setImage(with: url, options: [.processor(p1), .cacheOriginalImage])
 ```
 
-Both the processed image by `p1` and the original downloaded image will be cached. Later, when you process with another processor:
+Both the image processed by `p1` and the original downloaded image are cached. Later, when processing with another 
+processor:
 
 ```swift
 let p2 = AnotherProcessor()
 imageView.kf.setImage(with: url, options: [.processor(p2)])
 ```
 
-The processed image for `p2` is not in cache yet, but Kingfisher now has a chance to check whether the original image for `url` being in cache or not. Instead of downloading the image again, Kingfisher will reuse the original image and then apply `p2` on it directly.
+Kingfisher is clear enough to verify that the original image for the URL is cached. Instead of downloading the image 
+again, Kingfisher will reuse the original image and apply `p2` to it directly.
 
-#### Using `DownsamplingImageProcessor` for high resolution images
+### Downsampling the excessively high resolution images
 
-Think about the case we want to show some large images in a table view or a collection view. In the ideal world, we expect to get smaller thumbnails for them, to reduce downloading time and memory use. But in the real world, maybe your server doesn't prepare such a thumbnail version for you. The newly added `DownsamplingImageProcessor` rescues. It downsamples the high-resolution images to a certain size before loading to memory:
+In scenarios where you need to display large images in a table view or collection view cell, it's optimal to use 
+smaller thumbnails to decrease download times and memory usage. However, if your server doesn't provide thumbnails, 
+the ``DownsamplingImageProcessor`` comes to the rescue. It downsamples high-resolution images to a specified size
+before they're loaded into memory, effectively optimizing performance:
 
 ```swift
 imageView.kf.setImage(
@@ -95,4 +99,7 @@ imageView.kf.setImage(
     ])
 ```
 
-Typically, `DownsamplingImageProcessor` is used with `.scaleFactor` and `.cacheOriginalImage`. It provides a reasonable image pixel scale for your UI, and prevent future downloading by caching the original high-resolution image.
+``DownsamplingImageProcessor`` is commonly used alongside ``KingfisherOptionsInfoItem/scaleFactor(_:)`` and 
+``KingfisherOptionsInfoItem/cacheOriginalImage`` options. This combination ensures images are scaled appropriately for 
+your UI's pixel density while also caching the original high-resolution image to avoid future downloads, providing an 
+efficient balance between image quality and resource utilization.
