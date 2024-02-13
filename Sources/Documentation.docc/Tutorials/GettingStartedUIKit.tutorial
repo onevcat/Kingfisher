@@ -1,0 +1,227 @@
+@Tutorial(time: 15) {
+    @Intro(title: "Getting Started with Kingfisher (UIKit)") {
+        Install Kingfisher and learn basic usage of the framework with UIKit.
+        @Image(source: "getting-started-card", alt: "Title image of the tutorial. A kingfisher bird standing on a tree.")
+    }
+    
+    @Section(title: "Overview") {
+        @ContentAndMedia {
+            This tutorial guides you through building a UITableView list that displays rounded images of kingfisher 
+            
+            birds, downloaded using the Kingfisher library. It includes:
+
+            - Setting Up `UITableView`: Quick setup for a basic list.
+            - Using Kingfisher: Download and display bird images.
+            - Image Processing: Convert images to rounded corners for display.
+            - Cache Size Button: A feature to check cache usage.
+            
+            At the final stage of this tutorial, you will have a list like this:
+            
+            @Image(source:preview-4.png, alt:"The first image is loaded into the image view in cell.")
+        }
+        
+        @Steps { }
+    }
+    
+    @Section(title: "Installing") {
+        @ContentAndMedia {
+            After creating your UIKit app, the first step is to install Kingfisher. For this, we use Swift Package Manager. 
+            
+            > There are also other way to add Kingfisher to your project, such as CocoaPods or manually. Check the related documentation for more information.
+            
+            @Image(source: create-project.png, alt: "")
+            
+        }
+        
+        @Steps {
+            @Step {
+                Choose "File" → "Add Package Dependencies…". In the pop-up window, enter the URL below to the search 
+                bar, and click the "Add Package" button. 
+                
+                `https://github.com/onevcat/Kingfisher.git` 
+                
+                @Image(source: add-dependency.png, alt: "Add Kingfisher as the dependency of your project.")
+            }
+            
+            @Step {
+                After downloading, add the `Kingfisher` library to your created project.
+                @Image(source: add-to-project.png, alt: "")
+            }
+            
+            @Step {
+                Select your app target in the "project and target list", switch to the "Build Phases" tab, expand the "Link Binary With Libraries" section, and confirm that "Kingfisher" is added. If not, click the "+" button and add it to the list.
+                @Image(source: add-library.png, alt: "")
+            }
+            
+            @Step {
+                To verify the installation. Choose "ViewController.swift" file.
+                @Code(name: "ViewController.swift", file: 01-ViewController-1.swift)
+            }
+            
+            @Step {
+                Import `Kingfisher`. And try to print the `KingfisherManager.shared`. If you see something like 
+                "Kingfisher.KingfisherManager" in the Xcode debugger console, it means Kingfisher is ready in your 
+                project.
+                @Code(name: "ViewController.swift", file: 01-ViewController-2.swift)
+            }
+        }
+    }
+    
+    @Section(title: "Creating the Table View") {
+        @ContentAndMedia {
+            Creating and setting up `UITableView` is not the focus of this tutorial, as it does not involve Kingfisher. 
+            However, we will later use Kingfisher to manage images in the `UIImageView` within the table cells. 
+            @Image(source: preview-1.png, alt: "")
+        }
+        
+        @Steps {
+            @Step {
+                Create a `SampleCell` file. We will use it as the cell type of the table view.
+                @Code(name: "SampleCell.swift", file: 01-SampleCell-1.swift)
+            }
+            @Step {
+                Add a `sampleImageView` to the class. It is the main target image view we are going to set later.
+                @Code(name: "SampleCell.swift", file: 01-SampleCell-2.swift)
+            }
+            @Step {
+                Add other necessary views and layout code. (Boring, just copy it!)
+                @Code(name: "SampleCell.swift", file: 01-SampleCell-3.swift)
+            }
+            @Step {
+                In the "ViewController.swift".
+                @Code(name: "ViewController.swift", file: 01-ViewController-3.swift)
+            }
+            @Step {
+                Add a `tableView` to the view controller.
+                @Code(name: "ViewController.swift", file: 01-ViewController-4.swift)
+            }
+            @Step {
+                Extend `ViewController` to conform the `UITableViewDataSource`. For the sake of simplicity, we will 
+                only return one cell at first.
+                @Code(name: "ViewController.swift", file: 01-ViewController-5.swift) {
+                    @Image(source:preview-1.png, alt:"An iOS app with a list which contains a single cell.")
+                }
+                Run the app, now you should see a list which contains a single cell with a light grey placeholder and a
+                text label.
+                
+            }
+        }
+    }
+        
+    @Section(title: "Loading image with Kingfisher") {
+        @ContentAndMedia {
+            Kingfisher simplifies the task of loading images from remote URLs. It also offers a range of user-friendly 
+            processors and helper methods. In this section, we will cover how to use these features to streamline common 
+            tasks.
+            @Image(source: preview-4.png, alt: "")
+        }
+        
+        @Steps {
+            @Step {
+                The simplest way to start loading a remote image into an image view in Kingfisher, is using the `kf`
+                wrapper and its method. In the code above, we already have a `sampleImageView` in the cell.
+                @Code(name: "ViewController.swift", file: 01-ViewController-6-0.swift)
+            }
+            @Step {
+                To load the first image, call `kf.setImage(with:)` on the image view, with the desired URL.
+                @Code(name: "ViewController.swift", file: 01-ViewController-6.swift) {
+                    @Image(source:preview-2.png, alt:"The first image is loaded into the image view in cell.")
+                }
+                Now, running the app again, you can see the image is already loaded and set to the image view.
+            }
+            @Step {
+                To actually load the images based on the index, we can try to add more cells. We prepared 10 kingfisher
+                images, let's change the item count to 10: 
+                @Code(name: "ViewController.swift", file: 01-ViewController-7.swift) {
+                    @Image(source:preview-3.png, alt:"The first image is loaded into the image view in cell.")
+                }
+                Kingfisher also downloads and caches these images. Now, even if you turn off the network of
+                your iOS device (or the simulator), and restart the app, these images can be loaded from cache and 
+                still displayed.
+            }
+            @Step {
+                Kingfisher also comes with a bundle of useful processors and helper methods. For example, we can add a
+                loading indicator and some partial round corner effect easily. 
+                @Code(name: "ViewController.swift", file: 01-ViewController-8.swift) {
+                    @Image(source:preview-4.png, alt:"The first image is loaded into the image view in cell.")
+                }
+                Besides of the `RoundCornerImageProcessor`, we also apply a `pngSerializer` to forcibly convert the
+                loaded JPG file to PNG format when storing in the disk cache. This is necessary since JPG format does
+                not contain an alpha channel, which is necessary when storing a round corner image.
+            }
+            @Step {
+                The `setImage(with:)` method accepts other parameters, including a completion handler too. Let us add
+                some logs before we continue to the next section.
+                @Code(name: "ViewController.swift", file: 01-ViewController-9.swift)
+                Now, running the app again, in the console you can see some text like "Image loaded from cache: disk".
+                This is because the images are already in the disk cache, and they are loaded from the disk locally. By 
+                scrolling the table view up and down and triggering the cell reuse, it should print things like "Image 
+                loaded from cache: memory", which indicates the images are already cache in memory. 
+            }
+        }
+    }
+    
+    @Section(title: "Manipulating the Cache") {
+        @ContentAndMedia {
+            In this final part, we'll look at basic tasks related to image caching, like finding out the size of the 
+            disk cache and clearing all the cache. Usually, Kingfisher handles cache management automatically, so you 
+            don't need to think about it much. But if you need more detailed control over how caching works, this 
+            section will give you helpful tips and information.
+        }
+        
+        @Steps {
+            @Step {
+                First, we need to find out how much space the image cache is using. Normally, you would check the cache 
+                size or clear the cache using a button. But to keep things simple, we won't add any extra buttons to 
+                this example.
+                @Code(name: "ViewController.swift", file: 01-ViewController-10.swift)
+            }
+            @Step {
+                In the `viewDidLoad` method, we use the `asyncAfter` method on the `DispatchQueue.main` queue. There we 
+                start a process to calculate the current size of the disk cache. The size we get tells us how much disk 
+                space Kingfisher is using for caching images.
+                
+                @Code(name: "ViewController.swift", file: 01-ViewController-11.swift)
+            }
+            @Step {
+                To make it clear, we can create an alert and display it to the user, with a button to clear the cache 
+                manually.
+                @Code(name: "ViewController.swift", file: 01-ViewController-12.swift) {
+                    @Image(source:preview-5.png, alt:"An alert which shows the disk cache size used by Kingfisher, with a button to purge the cache.")
+                }
+            }
+            @Step {
+                Lastly, use the `clearCache` function to remove all images from both the memory and disk caches. After 
+                this, when you refresh the table view's data, the images will be downloaded again from the internet. 
+                You'll notice "Image loaded from cache: none" displayed in the console, indicating the images are not 
+                being loaded from the cache this time.
+                
+                @Code(name: "ViewController.swift", file: 01-ViewController-13.swift)
+                
+                The cache cleaning is only for demonstration purpose. In practice, usually you do not need to call it yourself. Kingfisher will manage and purge the data based on its default policy.
+            }
+        }
+    }
+    
+    @Section(title: "Next Steps") {
+        @ContentAndMedia {
+            
+            Congratulations! 
+            
+            You have now mastered some basic uses of Kingfisher: including loading images from the web or cache using
+            the `UIImageView` extension, processing images before display using ``ImageProcessor``, and basic methods
+            for inspecting and clearing the cache. 
+            
+            Kingfisher also contains a considerable number of other features, and it has been designed to be simple to
+            use while considering flexibility. As you deepen your understanding of the framework, we hope you will
+            gradually grow to like it. 
+            
+            Next, we recommend that you start using Kingfisher in your projects to help you accomplish tasks. You can 
+            also read the <doc:CommonTasks> and its related articles to get a better understanding. When 
+            you encounter problems, come back to consult the documentation or ask the community. 
+            
+            Have a nice day!
+        }
+        @Steps { }
+    }
+}

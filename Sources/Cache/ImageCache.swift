@@ -37,7 +37,7 @@ extension Notification.Name {
     ///
     /// The `object` of this notification is the ``ImageCache`` object that sends the notification. You can retrieve a
     /// list of removed hashes (files) by accessing the array under the ``KingfisherDiskCacheCleanedHashKey`` key in
-    /// the ``userInfo`` of the received notification object. By checking the array, you can determine the hash codes
+    /// the `userInfo` of the received notification object. By checking the array, you can determine the hash codes
     /// of the removed files.
     /// 
     /// > Invoking the `clearDiskCache` method manually will not trigger this notification.

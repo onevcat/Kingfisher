@@ -78,8 +78,8 @@ public protocol ImageDownloaderDelegate: AnyObject {
     /// ``KingfisherError/ResponseErrorReason/dataModifyingFailed(task:)`` error will be raised. You can use this fact
     /// to stop the image processing flow if you find that the data is corrupted or malformed.
     ///
-    /// > If this method is implemented, ``ImageDownloaderDelegate/imageDownloader(_:didDownload:for:)-5btcl`` will not
-    ///  be called anymore.
+    /// > If this method is implemented, the `URL` version of 
+    /// ``ImageDownloaderDelegate/imageDownloader(_:didDownload:for:)-5btcl`` will not be called anymore.
     func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with dataTask: SessionDataTask) -> Data?
   
     /// Called when the ``ImageDownloader`` object successfully downloads image data from a specified URL.
@@ -101,7 +101,8 @@ public protocol ImageDownloaderDelegate: AnyObject {
     /// ``KingfisherError/ResponseErrorReason/dataModifyingFailed(task:)`` error will be raised. You can use this fact
     /// to stop the image processing flow if you find that the data is corrupted or malformed.
     ///
-    /// > If ``imageDownloader(_:didDownload:with:)-9w9fn`` is implemented, this method will not be called anymore.
+    /// > If the ``SessionDataTask`` version of `imageDownloader(_:didDownload:with:)` is implemented, this method will
+    /// > not be called anymore.
     func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, for url: URL) -> Data?
 
     /// Called when the ``ImageDownloader`` object successfully downloads and processes an image from a specified URL.

@@ -213,6 +213,7 @@
 		D12E0C4D1C47F23500AC98AD /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
 		D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSTextAttachment+Kingfisher.swift"; sourceTree = "<group>"; };
+		D1356CEA2B273AEC009554C8 /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		D13646732165A1A100A33652 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageDataProvider.swift; sourceTree = "<group>"; };
 		D16FE9F623078C63006E67D5 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -339,6 +340,7 @@
 		D12AB688215D2A280013BA68 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D1356CEA2B273AEC009554C8 /* Documentation.docc */,
 				D12AB6A9215D2BB50013BA68 /* Info.plist */,
 				D1C04A3E2A45D20500B3775F /* PrivacyInfo.xcprivacy */,
 				D12AB6B0215D2BB50013BA68 /* General */,
@@ -1146,8 +1148,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES_AGGRESSIVE;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CURRENT_PROJECT_VERSION = 2700;
-				DEFINES_MODULE = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2700;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

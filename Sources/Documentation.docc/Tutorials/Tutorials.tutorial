@@ -1,0 +1,17 @@
+@Tutorials(name: "Kingfisher Tutorials") {
+    @Intro(title: "Kingfisher Tutorials") {
+        Getting started with Kingfisher by following a sample app.
+    }
+    
+    @Chapter(name: "Getting Started with Kingfisher (UIKit)") {
+        @Image(source: logo)
+        Installs Kingfisher and basic usage of the framework with UIKit.
+        @TutorialReference(tutorial: "doc:GettingStartedUIKit")
+    }
+    
+    @Chapter(name: "Getting Started with Kingfisher (SwiftUI)") {
+        @Image(source: logo)
+        Installs Kingfisher and basic usage of the framework with SwiftUI.
+        @TutorialReference(tutorial: "doc:GettingStartedSwiftUI")
+    }
+}

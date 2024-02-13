@@ -1,0 +1,183 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Getting Started with Kingfisher (SwiftUI)") {
+        Install Kingfisher and learn basic usage of the framework with SwiftUI.
+        @Image(source: getting-started-card, alt: "Title image of the tutorial. A kingfisher bird standing on a tree.")    
+    }
+    
+    @Section(title: "Overview") {
+        @ContentAndMedia {
+            This tutorial guides you through building a SwiftUI `List` that displays rounded images of kingfisher birds, 
+            downloaded using the Kingfisher library. It includes:
+
+            - Setting Up `List`: Quick setup for a basic list.
+            - Using Kingfisher: Download and display bird images.
+            - Image Processing: Convert images to rounded corners for display.
+            - Cache Size Button: A feature to check cache usage.
+            
+            At the final stage of this tutorial, you will have a list like this:
+            
+            @Image(source:preview-3-swiftui.png, alt:"The first image is loaded into the image view in cell.")
+        }
+        @Steps { }
+    }
+    
+    @Section(title: "Installing") {
+        @ContentAndMedia {
+            After creating your SwiftUI app, the first step is to install Kingfisher. For this, we use Swift Package Manager. 
+            
+            > There are also other way to add Kingfisher to your project, such as CocoaPods or manually. Check the related documentation for more information.
+            
+            @Image(source: create-project-swiftui.png, alt: "")
+            
+        }
+        
+        @Steps {
+            @Step {
+                Choose "File" → "Add Package Dependencies…". In the pop-up window, enter the URL below to the search 
+                bar, and click the "Add Package" button. 
+                
+                `https://github.com/onevcat/Kingfisher.git` 
+                
+                @Image(source: add-dependency.png, alt: "Add Kingfisher as the dependency of your project.")
+            }
+            
+            @Step {
+                After downloading, add the `Kingfisher` library to your created project.
+                @Image(source: add-to-project.png, alt: "")
+            }
+            
+            @Step {
+                Select your app target in the "project and target list", switch to the "Build Phases" tab, expand the "Link Binary With Libraries" section, and confirm that "Kingfisher" is added. If not, click the "+" button and add it to the list.
+                @Image(source: add-library-swiftui.png, alt: "")
+            }
+            
+            @Step {
+                To verify the installation. Choose "ContentView.swift" file.
+                @Code(name: "ContentView.swift", file: 02-ContentView-1.swift)
+            }
+            
+            @Step {
+                Import `Kingfisher`. And try to print the `KingfisherManager.shared` in the `onAppear`. If you see 
+                something like "Kingfisher.KingfisherManager" in the Xcode debugger console, it means Kingfisher is 
+                ready in your project.
+                @Code(name: "ContentView.swift", file: 02-ContentView-2.swift)
+            }
+        }
+    }
+    
+    @Section(title: "Loading image with Kingfisher") {
+        @ContentAndMedia {
+            In this section, we will create a `List` and use Kingfisher to load some images from the network.
+        }
+        
+        @Steps {
+            @Step {
+                Setting up a `List` in SwiftUI is easy. With the `ContentView` from the SwiftUI template.
+                @Code(name: "ContentView.swift", file: 02-ContentView-2.swift)
+            }
+            @Step {
+                Replace the `body` of the `ContentView` with a `List` and the embedded `ForEach`.
+                @Code(name: "ContentView.swift", file: 02-ContentView-3.swift) {
+                    @Image(source: preview-1-swiftui.png, alt: "")
+                }
+            }
+            @Step {
+                To load an image from network, the easiest way is using the `KFImage` struct provided in Kingfisher. It
+                accepts a URL, loads and shows the image when its `onAppear` is called. `KFImage` has a set of similar
+                APIs to SwiftUI's `Image` type. Here we call `resizable()` to allow the image fit into the given frame.
+                
+                @Code(name: "ContentView.swift", file: 02-ContentView-4.swift) {
+                    @Image(source: preview-2-swiftui.png, alt: "")
+                }
+            }
+            @Step {
+                Kingfisher also comes with a bundle of useful processors and helper methods. For example, we can add 
+                some partial round corner effect in a simple way. 
+                @Code(name: "ContentView.swift", file: 02-ContentView-5.swift) {
+                    @Image(source:preview-3-swiftui.png, alt:"")
+                }
+                Besides of the `.roundCorner`, we also apply a `.serialize(as: .PNG)` to forcibly convert the
+                loaded JPG file to PNG format when storing in the disk cache. This is necessary since JPG format does
+                not contain an alpha channel, which is necessary when storing a round corner image.
+            }
+            @Step {
+                The `KFImage` has a few other modifiers too, including some life cycle handlers like 
+                `.onSuccess` or `.onFailure`.
+                @Code(name: "ContentView.swift", file: 02-ContentView-6.swift)
+                Restart the app. If the images were loaded during your previous use of the app, you should see 
+                "Image loaded from cache: disk" in the Xcode console.
+            }
+        }
+    }
+        
+    @Section(title: "Manipulating the Cache") {
+        @ContentAndMedia {
+            In this final part, we'll look at basic tasks related to image caching, like finding out the size of the 
+            disk cache and clearing all the cache. Usually, Kingfisher handles cache management automatically, so you 
+            don't need to think about it much. But if you need more detailed control over how caching works, this 
+            section will give you helpful tips and information.
+        }
+        
+        @Steps {
+            @Step {
+                First, we need to find out how much space the image cache is using. Normally, you would check the cache 
+                size or clear the cache using a button. In this example, we will add a button to the first row of the 
+                list.
+                @Code(name: "ContentView.swift", file: 02-ContentView-7.swift)
+            }
+            @Step {
+                Add a `Button` at the top of the `List`. In its event block, call `calculateDiskStorageSize(completion:)` 
+                and print the disk cache size. 
+                @Code(name: "ContentView.swift", file: 02-ContentView-8.swift) {
+                    @Image(source:preview-4-swiftui.png, alt:"Added a button to the top of the list.")
+                }
+            }
+            @Step {
+                To trigger an alert in SwiftUI, we add two `@State` to the `ContentView`. In the `calculateDiskStorageSize`
+                handler, we set both states.
+                @Code(name: "ContentView.swift", file: 02-ContentView-9.swift)
+            }
+            @Step {
+                Add an `.alert` modifier to the `Button`. When the `showAlert` state is set, an alert with the information
+                of disk cache size is presented. 
+                @Code(name: "ContentView.swift", file: 02-ContentView-10.swift)
+            }
+            @Step {
+                Lastly, use the `clearCache` function to remove all images from both the memory and disk caches. After 
+                this, when you restart the app or trigger a full reloading for the `List`, the images will be downloaded 
+                again from the internet. You'll notice "Image loaded from cache: none" displayed in the console, 
+                indicating the images are not being loaded from the cache this time.
+                
+                @Code(name: "ContentView.swift", file: 02-ContentView-11.swift) {
+                    @Image(source:preview-5-swiftui.png, alt:"An alert which shows the disk cache size used by Kingfisher, with a button to purge the cache.")
+                }
+                
+                The cache cleaning is only for demonstration purpose. In practice, usually you do not need to call it 
+                yourself. Kingfisher will manage and purge the data based on its default policy.
+            }
+        }
+    }
+    
+    @Section(title: "Next Steps") {
+        @ContentAndMedia {
+            
+            Congratulations! 
+            
+            You have now mastered some basic uses of Kingfisher: including loading images from the web or cache using
+            the `KFImage` type, processing images before display using a modifier, and basic methods
+            for inspecting and clearing the cache. 
+            
+            Kingfisher also contains a considerable number of other features, and it has been designed to be simple to
+            use while considering flexibility. As you deepen your understanding of the framework, we hope you will
+            gradually grow to like it.
+            
+            Next, we recommend that you start using Kingfisher in your projects to help you accomplish tasks. You can 
+            also read the <doc:CommonTasks> and its related articles to get a better understanding. When 
+            you encounter problems, come back to consult the documentation or ask the community. 
+            
+            Have a nice day!
+        }
+        @Steps { }
+    }
+    
+}
