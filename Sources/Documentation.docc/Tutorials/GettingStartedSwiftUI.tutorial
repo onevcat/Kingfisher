@@ -1,7 +1,7 @@
 @Tutorial(time: 10) {
     @Intro(title: "Getting Started with Kingfisher (SwiftUI)") {
-        Installs Kingfisher and basic usage of the framework with SwiftUI.
-        @Image(source: "getting-started-card", alt: "Title image of the tutorial. A kingfisher bird standing on a tree.")    
+        Install Kingfisher and learn basic usage of the framework with SwiftUI.
+        @Image(source: getting-started-card, alt: "Title image of the tutorial. A kingfisher bird standing on a tree.")    
     }
     
     @Section(title: "Overview") {
@@ -18,6 +18,7 @@
             
             @Image(source:preview-3-swiftui.png, alt:"The first image is loaded into the image view in cell.")
         }
+        @Steps { }
     }
     
     @Section(title: "Installing") {
@@ -171,11 +172,12 @@
             gradually grow to like it.
             
             Next, we recommend that you start using Kingfisher in your projects to help you accomplish tasks. You can 
-            also read the <doc:CommonTasks> or <doc:KingfisherInDepth> articles to get a better understanding. When 
+            also read the <doc:CommonTasks> and its related articles to get a better understanding. When 
             you encounter problems, come back to consult the documentation or ask the community. 
             
             Have a nice day!
         }
+        @Steps { }
     }
     
 }

@@ -5,7 +5,7 @@ Common tasks related to the ``ImageCache`` in Kingfisher.
 ## Overview
 
 Kingfisher employs a hybrid ``ImageCache`` for managing cached images, comprising both memory and disk storage. It 
-offers high-level APIs for cache management. Unless otherwise specified, the ``ImageCache.default`` instance is 
+offers high-level APIs for cache management. Unless otherwise specified, the ``ImageCache/default`` instance is 
 used throughout Kingfisher.
 
 ### Using another cache key

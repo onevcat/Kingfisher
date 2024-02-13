@@ -108,7 +108,7 @@ let task = imageView.kf.set(with: url)
 task?.cancel()
 ```
 
-Alternatively, you can invoke ``KingfisherWrapper/cancelDownloadTask()`` on the image view to cancel the 
+Alternatively, you can invoke ``KingfisherWrapper/cancelDownloadTask()-2gg15`` on the image view to cancel the 
 **current downloading task**.
 
 ```swift
@@ -164,7 +164,7 @@ The default download timeout for a request is 15 seconds. To customize this for 
 downloader.downloadTimeout = 60
 ```
 
-For setting a timeout specific to a request, utilize a ``KingfisherOptionsInfoItem/requestModifier(_:):``:
+For setting a timeout specific to a request, utilize a ``KingfisherOptionsInfoItem/requestModifier(_:)``:
 
 ```swift
 let modifier = AnyModifier { request in

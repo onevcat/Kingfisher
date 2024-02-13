@@ -4,7 +4,7 @@ Managing the retry mechanism when an error happens during loading.
 
 ## Overview
 
-Use ``KingfisherOptionsInfoItem.retryStrategy(_:)`` along with a `RetryStrategy` implementation to easily set up a 
+Use ``KingfisherOptionsInfoItem/retryStrategy(_:)`` along with a `RetryStrategy` implementation to easily set up a 
 retry mechanism for image setting operations when an error occurs. 
 
 This combination allows you to define retry logic, including the number of retries and the conditions under which a 

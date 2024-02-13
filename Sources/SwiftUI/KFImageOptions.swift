@@ -140,7 +140,7 @@ extension KFImageProtocol {
     /// Kingfisher will use the fade transition to animate the image if it is downloaded from the web. The transition 
     /// will not occur when the image is retrieved from either memory or disk cache by default. If you need the
     /// transition to occur even when the image is retrieved from the cache, also call
-    /// ``KFImageProtocol/forceRefresh(_:)`` on the returned view.
+    /// ``KFOptionSetter/forceRefresh(_:)`` on the returned view.
     public func fade(duration: TimeInterval) -> Self {
         context.options.transition = .fade(duration)
         return self

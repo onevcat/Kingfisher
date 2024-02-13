@@ -787,7 +787,7 @@ extension KFOptionSetter {
     /// Sets the expiration extending setting for the disk cache. The item expiration time will be incremented by this 
     /// value after access.
     ///
-    /// By default, the underlying ``DiskStorage.Backend`` uses the initial cache expiration as the extending
+    /// By default, the underlying ``DiskStorage/Backend`` uses the initial cache expiration as the extending
     ///  value: ``ExpirationExtending/cacheTime``.
     ///
     /// To disable the extending option entirely, set `.none` to it.

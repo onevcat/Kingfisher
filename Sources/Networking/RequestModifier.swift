@@ -29,7 +29,7 @@ import Foundation
 /// Represents and wraps a method for modifying a request before an image download request starts asynchronously.
 ///
 /// Usually, you pass an ``AsyncImageDownloadRequestModifier`` instance as the associated value of
-/// ``KingfisherOptionsInfoItem/requestModifier`` and use it as the `options` parameter in related methods.
+/// ``KingfisherOptionsInfoItem/requestModifier(_:)`` and use it as the `options` parameter in related methods.
 ///
 /// For example, the code below defines a modifier to add a header field and its value to the request.
 ///
@@ -78,7 +78,7 @@ public protocol AsyncImageDownloadRequestModifier {
 /// Represents and wraps a method for modifying a request before an image download request starts synchronously.
 ///
 /// Usually, you pass an ``ImageDownloadRequestModifier`` instance as the associated value of
-/// ``KingfisherOptionsInfoItem/requestModifier`` and use it as the `options` parameter in related methods.
+/// ``KingfisherOptionsInfoItem/requestModifier(_:)`` and use it as the `options` parameter in related methods.
 ///
 /// For example, the code below defines a modifier to add a header field and its value to the request.
 ///
