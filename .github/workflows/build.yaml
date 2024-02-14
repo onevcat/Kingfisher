@@ -4,21 +4,20 @@ on: [push, pull_request]
 
 jobs:
   run-test:
-    runs-on: macos-12
+    runs-on: macos-14
     strategy:
       matrix:
         destination: [
           'macOS', 
-          'iOS Simulator,name=iPhone 14', 
+          'iOS Simulator,name=iPhone 15', 
           'tvOS Simulator,name=Apple TV', 
           'watchOS Simulator,name=Apple Watch Series 8 (41mm)'
         ]
         swift-version: [5.0]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.4
           bundler-cache: true
       - name: Run tests
         env:
