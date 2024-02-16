@@ -13,7 +13,6 @@ platform :ios do
   end
     
   lane :test_ci do
-    xcversion(version: "~> 15.2")
     if ENV["DESTINATION"].include? "watchOS" then
         build(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
     else
