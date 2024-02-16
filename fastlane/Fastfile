@@ -132,7 +132,7 @@ platform :ios do
   end
 
   before_all do |lane|
-    xcodes(version: "15.2")
+    xcodes(version: "15.2", select_for_current_build_only: true)
   end
 
   after_all do |lane|
