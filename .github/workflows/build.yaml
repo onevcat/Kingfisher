@@ -19,10 +19,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Install xcode command line tools
-        run: |
-          brew update
-          brew install xcodesorg/made/xcodes
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
