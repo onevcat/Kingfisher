@@ -13,7 +13,6 @@ platform :ios do
   end
     
   lane :test_ci do
-    xcversion(version: "~> 15.2")
     if ENV["DESTINATION"].include? "watchOS" then
         build(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
     else
@@ -88,7 +87,6 @@ platform :ios do
   lane :xcframework do |options|
     target_version = "Kingfisher-#{options[:version]}"
     
-    xcversion(version: "~> 15.2")
     FileUtils.rm_rf '../build'
     
     frameworks = {}
@@ -131,6 +129,10 @@ platform :ios do
       output_path: "build/#{target_version}.zip",
       symlinks: true
     )
+  end
+
+  before_all do |lane|
+    xcodes(version: "15.2", select_for_current_build_only: true)
   end
 
   after_all do |lane|
