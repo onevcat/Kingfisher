@@ -60,7 +60,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                         binder.start(context: context)
                     } else {
                         if context.reducePriorityOnDisappear {
-                            binder.downloadTask?.sessionTask.task.priority = URLSessionTask.defaultPriority
+                            binder.restorePriorityOnAppear()
                         }
                     }
                 }
