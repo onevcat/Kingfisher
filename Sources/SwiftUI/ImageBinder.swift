@@ -144,6 +144,12 @@ extension KFImage {
             downloadTask = nil
             loading = false
         }
+        
+        /// Reduce the download task priority if it is in progress.
+        func reducePriorityOnDisappear() {
+            guard let downloadTask = downloadTask, loading == true else { return }
+            downloadTask.sessionTask.task.priority = URLSessionTask.lowPriority
+        }
     }
 }
 #endif
