@@ -60,8 +60,8 @@ extension KFOptionSetter {
         return self
     }
 
-    /// Sets the the done block to current builder.
-    /// - Parameter block: Called when the image task successfully completes and the the image set is done. If `block`
+    /// Sets the done block to current builder.
+    /// - Parameter block: Called when the image task successfully completes and the image set is done. If `block`
     ///                    is `nil`, the callback will be reset.
     /// - Returns: A `KF.Builder` with changes applied.
     public func onSuccess(_ block: ((RetrieveImageResult) -> Void)?) -> Self {
