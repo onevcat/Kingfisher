@@ -395,7 +395,7 @@ public enum DiskStorage {
         /// - Returns: The URLs for removed files.
         ///
         /// - Note: This method checks `config.sizeLimit` and remove cached files in an LRU (Least Recently Used) way.
-        func removeSizeExceededValues() throws -> [URL] {
+        public func removeSizeExceededValues() throws -> [URL] {
 
             if config.sizeLimit == 0 { return [] } // Back compatible. 0 means no limit.
 
