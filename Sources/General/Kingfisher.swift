@@ -64,6 +64,18 @@ public struct KingfisherWrapper<Base> {
 
 /// Represents an object type that is compatible with Kingfisher. You can use ``kf`` property to get a
 /// value in the namespace of Kingfisher.
+///
+/// In Kingfisher, most of related classes that contains an image (such as `UIImage`, `UIButton`, `NSImageView` and
+/// more) conform to this protocol, and provides the helper methods for setting an image easily. You can access the `kf`
+/// property and call its `setImage` method with a certain URL:
+///
+/// ```swift
+/// let imageView: UIImageView
+/// let url = URL(string: "https://example.com/image.jpg")
+/// imageView.kf.setImage(with: url)
+/// ```
+///
+/// For more about basic usage of Kingfisher, check the <doc:CommonTasks> documentation.
 public protocol KingfisherCompatible: AnyObject { }
 
 /// Represents a value type that is compatible with Kingfisher. You can use ``kf`` property to get a

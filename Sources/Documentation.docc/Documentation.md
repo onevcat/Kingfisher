@@ -39,9 +39,9 @@ downloading again.
 
 ### Loading Images in Simple Way
 
-- <doc:UsingViewExtensions>
-- ``KingfisherManager``
+- ``KingfisherCompatible``
 - ``KingfisherWrapper``
+- ``KingfisherManager``
 - ``Source``
 
 ### Loading Options
