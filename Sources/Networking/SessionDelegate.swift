@@ -34,15 +34,13 @@ open class SessionDelegate: NSObject {
 
     typealias SessionChallengeFunc = (
         URLSession,
-        URLAuthenticationChallenge,
-        (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+        URLAuthenticationChallenge
     )
 
     typealias SessionTaskChallengeFunc = (
         URLSession,
         URLSessionTask,
-        URLAuthenticationChallenge,
-        (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+        URLAuthenticationChallenge
     )
 
     private var tasks: [URL: SessionDataTask] = [:]
@@ -53,8 +51,8 @@ open class SessionDelegate: NSObject {
     let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
     let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
-    let onReceiveSessionChallenge = Delegate<SessionChallengeFunc, Void>()
-    let onReceiveSessionTaskChallenge = Delegate<SessionTaskChallengeFunc, Void>()
+    let onReceiveSessionChallenge = Delegate<SessionChallengeFunc, (URLSession.AuthChallengeDisposition, URLCredential?)>()
+    let onReceiveSessionTaskChallenge = Delegate<SessionTaskChallengeFunc, (URLSession.AuthChallengeDisposition, URLCredential?)>()
 
     func add(
         _ dataTask: URLSessionDataTask,
@@ -226,20 +224,21 @@ extension SessionDelegate: URLSessionDataDelegate {
 
     open func urlSession(
         _ session: URLSession,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
     {
-        onReceiveSessionChallenge.call((session, challenge, completionHandler))
+        await onReceiveSessionChallenge.callAsync((session, challenge)) ?? (.performDefaultHandling, nil)
     }
-
+    
     open func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
     {
-        onReceiveSessionTaskChallenge.call((session, task, challenge, completionHandler))
+        await onReceiveSessionTaskChallenge.callAsync((session, task, challenge)) ?? (.performDefaultHandling, nil)
     }
+    
     
     open func urlSession(
         _ session: URLSession,

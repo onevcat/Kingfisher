@@ -40,15 +40,15 @@ public protocol AuthenticationChallengeResponsible: AnyObject {
     /// - Parameters:
     ///   - downloader: The downloader that receives this challenge.
     ///   - challenge: An object that contains the request for authentication.
-    ///   - completionHandler: A handler that your delegate method must call.
+    /// - Returns: The challenge disposition on how the challenge should be handled, and the credential if the
+    /// disposition is `.useCredential`.
     ///
-    /// > This method is a forward from `URLSessionDelegate.urlSession(:didReceiveChallenge:completionHandler:)`.
+    /// > This method is a forward from `URLSessionDelegate.urlSession(_:didReceive:completionHandler:)`.
     /// > Please refer to the documentation of it in `URLSessionDelegate`.
     func downloader(
         _ downloader: ImageDownloader,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    )
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
 
     /// Called when a task level authentication challenge is received. 
     ///
@@ -59,40 +59,41 @@ public protocol AuthenticationChallengeResponsible: AnyObject {
     ///   - downloader: The downloader that receives this challenge.
     ///   - task: The task whose request requires authentication.
     ///   - challenge: An object that contains the request for authentication.
-    ///   - completionHandler: A handler that your delegate method must call.
+    /// - Returns: The challenge disposition on how the challenge should be handled, and the credential if the
+    /// disposition is `.useCredential`.
+    ///
+    /// > This method is a forward from `URLSessionDataDelegate.urlSession(_:dataTask:didReceive:completionHandler:)`.
+    /// > Please refer to the documentation of it in `URLSessionDataDelegate`.
     func downloader(
         _ downloader: ImageDownloader,
         task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    )
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
 }
 
 extension AuthenticationChallengeResponsible {
 
     public func downloader(
         _ downloader: ImageDownloader,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
     {
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             if let trustedHosts = downloader.trustedHosts, trustedHosts.contains(challenge.protectionSpace.host) {
                 let credential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
-                completionHandler(.useCredential, credential)
-                return
+                return (.useCredential, credential)
             }
         }
 
-        completionHandler(.performDefaultHandling, nil)
+        return (.performDefaultHandling, nil)
     }
-
+    
     public func downloader(
         _ downloader: ImageDownloader,
         task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
-        completionHandler(.performDefaultHandling, nil)
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+        (.performDefaultHandling, nil)
     }
 
 }
