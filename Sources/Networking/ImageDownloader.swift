@@ -237,11 +237,10 @@ open class ImageDownloader {
 
     private func setupSessionHandler() {
         sessionDelegate.onReceiveSessionChallenge.delegate(on: self) { (self, invoke) in
-            self.authenticationChallengeResponder?.downloader(self, didReceive: invoke.1, completionHandler: invoke.2)
+            await (self.authenticationChallengeResponder ?? self).downloader(self, didReceive: invoke.1)
         }
         sessionDelegate.onReceiveSessionTaskChallenge.delegate(on: self) { (self, invoke) in
-            self.authenticationChallengeResponder?.downloader(
-                self, task: invoke.1, didReceive: invoke.2, completionHandler: invoke.3)
+            await (self.authenticationChallengeResponder ?? self).downloader(self, task: invoke.1, didReceive: invoke.2)
         }
         sessionDelegate.onValidStatusCode.delegate(on: self) { (self, code) in
             (self.delegate ?? self).isValidStatusCode(code, for: self)
