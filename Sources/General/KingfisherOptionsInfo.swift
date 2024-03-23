@@ -31,7 +31,7 @@ import UIKit
 #endif
     
 
-/// `KingfisherOptionsInfo` is a typealias for `[``KingfisherOptionsInfoItem``]`.
+/// `KingfisherOptionsInfo` is a typealias for `[KingfisherOptionsInfoItem]`.
 /// You can utilize the enum of option items with values to control certain behaviors of Kingfisher.
 public typealias KingfisherOptionsInfo = [KingfisherOptionsInfoItem]
 

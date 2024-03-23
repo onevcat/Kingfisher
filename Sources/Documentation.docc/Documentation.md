@@ -40,7 +40,8 @@ downloading again.
 ### Loading Images in Simple Way
 
 - ``KingfisherCompatible``
-- ``KingfisherWrapper``
+- ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-2srsv``
+- ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-3ft7a``
 - ``KingfisherManager``
 - ``Source``
 
