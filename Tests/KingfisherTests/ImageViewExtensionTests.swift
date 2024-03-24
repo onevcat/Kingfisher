@@ -27,6 +27,7 @@
 import XCTest
 @testable import Kingfisher
 
+@MainActor
 class ImageViewExtensionTests: XCTestCase {
 
     var imageView: KFCrossPlatformImageView!

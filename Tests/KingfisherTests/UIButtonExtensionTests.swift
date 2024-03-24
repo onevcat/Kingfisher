@@ -29,6 +29,7 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
+@MainActor
 class UIButtonExtensionTests: XCTestCase {
 
     var button: UIButton!

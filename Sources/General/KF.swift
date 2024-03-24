@@ -139,6 +139,7 @@ extension KF {
     }
 }
 
+@MainActor
 extension KF.Builder {
     #if !os(watchOS)
 

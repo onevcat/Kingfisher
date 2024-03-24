@@ -32,6 +32,7 @@ import AppKit
 import UIKit
 #endif
 
+@MainActor
 extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
     // MARK: Setting Image

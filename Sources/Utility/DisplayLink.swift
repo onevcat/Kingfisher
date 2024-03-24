@@ -32,7 +32,7 @@ import AppKit
 import CoreVideo
 #endif
 
-protocol DisplayLinkCompatible: AnyObject {
+protocol DisplayLinkCompatible: AnyObject, Sendable {
     var isPaused: Bool { get set }
     
     var preferredFramesPerSecond: NSInteger { get }
