@@ -32,6 +32,7 @@ import AppKit
 import UIKit
 #endif
 
+@MainActor
 extension KingfisherWrapper where Base: NSTextAttachment {
 
     // MARK: Setting Image
@@ -244,10 +245,11 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     }
 }
 
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
+@MainActor
 extension KingfisherWrapper where Base: NSTextAttachment {
 
     public private(set) var taskIdentifier: Source.Identifier.Value? {
