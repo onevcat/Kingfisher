@@ -75,7 +75,6 @@ let KFRunLoopModeCommon = RunLoop.Mode.common
 ///
 /// Kingfisher supports setting GIF animated data to either `UIImageView` or ``AnimatedImageView`` out of the box. So
 /// it would be fairly easy to switch between them.
-@MainActor
 open class AnimatedImageView: KFCrossPlatformImageView {
     /// Proxy object for preventing a reference cycle between the `CADDisplayLink` and `AnimatedImageView`.
     class TargetProxy {
@@ -202,6 +201,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }()
     
     // MARK: - Override
+    @MainActor
     override open var image: KFCrossPlatformImage? {
         didSet {
             if image != oldValue {
@@ -248,9 +248,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     
     deinit {
         if isDisplayLinkInitialized {
-            Task { @MainActor in
-                self.displayLink.invalidate()
-            }
+            self.displayLink.invalidate()
         }
     }
     
@@ -474,6 +472,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 }
 
+@MainActor
 protocol AnimatorDelegate: AnyObject {
     func animator(_ animator: AnimatedImageView.Animator, didPlayAnimationLoops count: UInt)
 }
@@ -521,6 +520,7 @@ extension AnimatedImageView {
     // MARK: - Animator
 
     /// An animator which is used to drive the data behind ``AnimatedImageView``.
+    @MainActor
     public class Animator {
         private let size: CGSize
 
@@ -660,10 +660,6 @@ extension AnimatedImageView {
             self.maxFrameCount = count
             self.maxRepeatCount = repeatCount
             self.preloadQueue = preloadQueue
-        }
-        
-        deinit {
-            resetAnimatedFrames()
         }
 
         /// Gets the image frame of a given index.
