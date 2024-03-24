@@ -49,7 +49,7 @@ extension Notification.Name {
 public let KingfisherDiskCacheCleanedHashKey = "com.onevcat.Kingfisher.cleanedHash"
 
 /// The type of cache for a cached image.
-public enum CacheType {
+public enum CacheType: Sendable {
     /// The image is not yet cached when retrieving it.
     ///
     /// This indicates that the image was recently downloaded or generated rather than being retrieved from either

@@ -359,7 +359,7 @@ public enum KingfisherOptionsInfoItem {
 /// Each property in this type corresponds to a case member in ``KingfisherOptionsInfoItem``. When a
 ///  ``KingfisherOptionsInfo`` is sent to Kingfisher-related methods, it will be parsed and converted to a
 ///  ``KingfisherParsedOptionsInfo`` first before passing through the internal methods.
-public struct KingfisherParsedOptionsInfo {
+public struct KingfisherParsedOptionsInfo: Sendable {
 
     public var targetCache: ImageCache? = nil
     public var originalCache: ImageCache? = nil

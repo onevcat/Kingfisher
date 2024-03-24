@@ -52,7 +52,7 @@ public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: I
 ///
 /// This type encapsulates the outcome of an image retrieval operation performed by Kingfisher.
 /// It holds a successful result with the retrieved image.
-public struct RetrieveImageResult {
+public struct RetrieveImageResult: Sendable {
     /// Retrieves the image object from this result.
     public let image: KFCrossPlatformImage
 
@@ -79,7 +79,7 @@ public struct RetrieveImageResult {
     ///
     /// - Note: Retrieving this data can be a time-consuming operation, so it is advisable to store it if you need to 
     /// use it multiple times and avoid frequent calls to this method.
-    public let data: () -> Data?
+    public let data: @Sendable () -> Data?
 }
 
 /// A structure that stores related information about a ``KingfisherError``. It provides contextual information
@@ -599,7 +599,7 @@ public class KingfisherManager {
                             cacheType: $0.cacheType,
                             source: source,
                             originalSource: context.originalSource,
-                            data: { options.cacheSerializer.data(with: image, original: nil) }
+                            data: { [image] in options.cacheSerializer.data(with: image, original: nil) }
                         )
                     }
                     completionHandler(value)

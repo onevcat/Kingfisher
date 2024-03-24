@@ -34,7 +34,7 @@ import UIKit
 #endif
 
 /// Represents an item which could be processed by an `ImageProcessor`.
-public enum ImageProcessItem {
+public enum ImageProcessItem: Sendable {
     
     /// Input image. The processor should provide a method to apply
     /// processing to this `image` and return the resulting image.
@@ -46,7 +46,7 @@ public enum ImageProcessItem {
 }
 
 /// An `ImageProcessor` is used to convert downloaded data into an image.
-public protocol ImageProcessor {
+public protocol ImageProcessor: Sendable {
     
     /// Identifier for the processor.
     ///

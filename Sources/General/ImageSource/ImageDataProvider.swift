@@ -30,7 +30,7 @@ import Foundation
 /// ``Source/provider(_:)`` source. Compared to ``Source/network(_:)`` member, it gives a chance
 /// to load some image data in your own way, as long as you can provide the data
 /// representation for the image.
-public protocol ImageDataProvider {
+public protocol ImageDataProvider: Sendable {
     
     /// The key used in cache.
     var cacheKey: String { get }

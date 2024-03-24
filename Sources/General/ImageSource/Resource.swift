@@ -29,7 +29,7 @@ import Foundation
 /// Represents an image resource at a certain url and a given cache key.
 /// Kingfisher will use a ``Resource`` to download a resource from network and cache it with the cache key when
 /// using ``Source/network(_:)`` as its image setting source.
-public protocol Resource {
+public protocol Resource: Sendable {
     
     /// The key used in cache.
     var cacheKey: String { get }

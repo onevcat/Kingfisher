@@ -36,7 +36,7 @@ import Foundation
 /// - `provider`: The target image should be provided in a data format. Normally, it can be an image
 ///             from local storage or in any other encoding format (like Base64).
 ///
-public enum Source {
+public enum Source: Sendable {
 
     /// Represents the source task identifier when setting an image to a view with extension methods.
     public enum Identifier {

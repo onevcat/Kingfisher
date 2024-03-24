@@ -30,7 +30,7 @@ import Foundation
 ///
 /// Essentially, a ``SessionDataTask`` wraps a `URLSessionDataTask` and manages the download data.
 /// It uses a ``SessionDataTask/CancelToken`` to track the task and manage its cancellation.
-public class SessionDataTask {
+public class SessionDataTask: @unchecked Sendable {
 
     /// Represents the type of token used for canceling a task.
     public typealias CancelToken = Int
