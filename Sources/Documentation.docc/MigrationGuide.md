@@ -2,9 +2,9 @@
 
 How to migrate from an earlier version of Kingfisher to the latest one.
 
-## Overview 
-
-### Migrating from v7 to v8
+@Links(visualStyle: list) {
+    - <doc:Migration-To-8>
+}
 
 
 ### Archived
