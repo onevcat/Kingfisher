@@ -41,6 +41,7 @@ extension KFImage {
         var contentConfiguration: ((HoldingView) -> AnyView)? = nil
         
         var cancelOnDisappear: Bool = false
+        var reducePriorityOnDisappear: Bool = false
         var placeholder: ((Progress) -> AnyView)? = nil
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
