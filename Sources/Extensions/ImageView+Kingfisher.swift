@@ -424,12 +424,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 }
 
 // MARK: - Associated Object
-private var taskIdentifierKey: Void?
-private var indicatorKey: Void?
-private var indicatorTypeKey: Void?
-private var placeholderKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var indicatorKey: Void?
+@MainActor private var indicatorTypeKey: Void?
+@MainActor private var placeholderKey: Void?
+@MainActor private var imageTaskKey: Void?
 
+@MainActor
 extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
     // MARK: Properties

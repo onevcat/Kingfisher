@@ -33,7 +33,7 @@ import UIKit
 typealias DownloadResult = Result<ImageLoadingResult, KingfisherError>
 
 /// Represents a successful result of an image downloading process.
-public struct ImageLoadingResult {
+public struct ImageLoadingResult: Sendable {
 
     /// The downloaded image.
     public let image: KFCrossPlatformImage
@@ -62,7 +62,7 @@ public struct ImageLoadingResult {
 /// When a download starts in Kingfisher, the involved methods always return you an instance of ``DownloadTask``. If you
 /// need to cancel the task during the download process, you can keep a reference to the instance and call ``cancel()``
 /// on it.
-public class DownloadTask {
+public final class DownloadTask: Sendable {
     
     init(sessionTask: SessionDataTask, cancelToken: SessionDataTask.CancelToken) {
         self.sessionTask = sessionTask

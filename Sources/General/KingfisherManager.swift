@@ -84,7 +84,7 @@ public struct RetrieveImageResult: Sendable {
 
 /// A structure that stores related information about a ``KingfisherError``. It provides contextual information
 /// to facilitate the identification of the error.
-public struct PropagationError {
+public struct PropagationError: Sendable {
 
     /// The ``Source`` to which current `error` is bound.
     public let source: Source

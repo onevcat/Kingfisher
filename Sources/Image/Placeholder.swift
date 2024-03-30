@@ -70,6 +70,7 @@ extension KFCrossPlatformImage: Placeholder {
 ///
 /// To use your customized View type as a placeholder, simply have it conform to
 /// `Placeholder` using an extension: `extension MyView: Placeholder {}`.
+@MainActor
 extension Placeholder where Self: KFCrossPlatformView {
     
     public func add(to imageView: KFCrossPlatformImageView) {

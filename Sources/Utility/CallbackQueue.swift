@@ -29,7 +29,7 @@ import Foundation
 public typealias ExecutionQueue = CallbackQueue
 
 /// Represents the behavior of the callback queue selection when a closure is dispatched.
-public enum CallbackQueue {
+public enum CallbackQueue: Sendable {
     
     /// Dispatches the closure to `DispatchQueue.main` with an `async` behavior.
     case mainAsync

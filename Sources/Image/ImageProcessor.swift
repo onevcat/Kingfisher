@@ -103,7 +103,7 @@ func !=(left: ImageProcessor, right: ImageProcessor) -> Bool {
     return !(left == right)
 }
 
-typealias ProcessorImp = ((ImageProcessItem, KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?)
+typealias ProcessorImp = (@Sendable (ImageProcessItem, KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?)
 struct GeneralProcessor: ImageProcessor {
     let identifier: String
     let p: ProcessorImp
@@ -141,7 +141,7 @@ public struct DefaultImageProcessor: ImageProcessor {
 }
 
 /// Represents the rect corner setting when processing a round corner image.
-public struct RectCorner: OptionSet {
+public struct RectCorner: OptionSet, Sendable {
     
     /// Raw value for the corner radius.
     public let rawValue: Int
@@ -279,7 +279,7 @@ public struct CompositingImageProcessor: ImageProcessor {
 #endif
 
 /// Represents a radius specified in a ``RoundCornerImageProcessor``.
-public enum Radius {
+public enum Radius: Sendable {
     
     /// The radius should be calculated as a fraction of the image width. Typically, the associated value should be
     /// between 0 and 0.5, where 0 represents no radius, and 0.5 represents using half of the image width.
@@ -431,7 +431,7 @@ public struct RoundCornerImageProcessor: ImageProcessor {
 /// Represents a border to be added to the image.
 ///
 /// Typically used with ``BorderImageProcessor``, which adds the border to the image.
-public struct Border {
+public struct Border: Sendable {
     
     /// The color of the border to create.
     public var color: KFCrossPlatformColor
@@ -498,7 +498,7 @@ public struct BorderImageProcessor: ImageProcessor {
 }
 
 /// Represents how a size of content adjusts itself to fit a target size.
-public enum ContentMode {
+public enum ContentMode: Sendable {
     /// Does not scale the content.
     case none
     /// Scales the content to fit the size of the view while maintaining the aspect ratio.

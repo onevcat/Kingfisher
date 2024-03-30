@@ -340,10 +340,11 @@ extension KingfisherWrapper where Base: UIButton {
 }
 
 // MARK: - Associated Object
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
+@MainActor
 extension KingfisherWrapper where Base: UIButton {
 
     private typealias TaskIdentifier = Box<[UInt: Source.Identifier.Value]>
@@ -370,10 +371,11 @@ extension KingfisherWrapper where Base: UIButton {
 }
 
 
-private var backgroundTaskIdentifierKey: Void?
-private var backgroundImageTaskKey: Void?
+@MainActor private var backgroundTaskIdentifierKey: Void?
+@MainActor private var backgroundImageTaskKey: Void?
 
 // MARK: Background Properties
+@MainActor
 extension KingfisherWrapper where Base: UIButton {
     
     public func backgroundTaskIdentifier(for state: UIControl.State) -> Source.Identifier.Value? {

@@ -198,22 +198,24 @@ open class ImageCache {
         let ioQueueName = "com.onevcat.Kingfisher.ImageCache.ioQueue.\(UUID().uuidString)"
         ioQueue = DispatchQueue(label: ioQueueName)
 
-        let notifications: [(Notification.Name, Selector)]
-        #if !os(macOS) && !os(watchOS)
-        notifications = [
-            (UIApplication.didReceiveMemoryWarningNotification, #selector(clearMemoryCache)),
-            (UIApplication.willTerminateNotification, #selector(cleanExpiredDiskCache)),
-            (UIApplication.didEnterBackgroundNotification, #selector(backgroundCleanExpiredDiskCache))
-        ]
-        #elseif os(macOS)
-        notifications = [
-            (NSApplication.willResignActiveNotification, #selector(cleanExpiredDiskCache)),
-        ]
-        #else
-        notifications = []
-        #endif
-        notifications.forEach {
-            NotificationCenter.default.addObserver(self, selector: $0.1, name: $0.0, object: nil)
+        Task { @MainActor in
+            let notifications: [(Notification.Name, Selector)]
+            #if !os(macOS) && !os(watchOS)
+            notifications = [
+                (UIApplication.didReceiveMemoryWarningNotification, #selector(clearMemoryCache)),
+                (UIApplication.willTerminateNotification, #selector(cleanExpiredDiskCache)),
+                (UIApplication.didEnterBackgroundNotification, #selector(backgroundCleanExpiredDiskCache))
+            ]
+            #elseif os(macOS)
+            notifications = [
+                (NSApplication.willResignActiveNotification, #selector(cleanExpiredDiskCache)),
+            ]
+            #else
+            notifications = []
+            #endif
+            notifications.forEach {
+                NotificationCenter.default.addObserver(self, selector: $0.1, name: $0.0, object: nil)
+            }
         }
     }
     
@@ -815,6 +817,7 @@ open class ImageCache {
     ///
     /// In most cases, you should not call this method explicitly. It will be called automatically when a
     ///  `UIApplicationDidEnterBackgroundNotification` is received.
+    @MainActor
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
         guard let sharedApplication = KingfisherWrapper<UIApplication>.shared else { return }

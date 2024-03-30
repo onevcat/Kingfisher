@@ -236,10 +236,11 @@ extension KingfisherWrapper where Base: CPListItem {
     }
 }
 
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
+@MainActor
 extension KingfisherWrapper where Base: CPListItem {
 
     public private(set) var taskIdentifier: Source.Identifier.Value? {
