@@ -436,6 +436,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     private var currentFrame: KFCrossPlatformImage?
     
     /// Update the current frame with the displayLink duration.
+    @MainActor
     private func updateFrameIfNeeded() {
         guard let animator = animator else {
             return
@@ -520,7 +521,6 @@ extension AnimatedImageView {
     // MARK: - Animator
 
     /// An animator which is used to drive the data behind ``AnimatedImageView``.
-    @MainActor
     public class Animator {
         private let size: CGSize
 
@@ -684,6 +684,7 @@ extension AnimatedImageView {
             }
         }
 
+        @MainActor 
         func shouldChangeFrame(with duration: CFTimeInterval) -> Bool {
             incrementTimeSinceLastFrameChange(with: duration)
 
@@ -768,7 +769,7 @@ extension AnimatedImageView {
             }
         }
 
-        private func incrementCurrentFrameIndex() {
+        @MainActor private func incrementCurrentFrameIndex() {
             let wasLastFrame = isLastFrame
             currentFrameIndex = increment(frameIndex: currentFrameIndex)
             if isLastFrame {
