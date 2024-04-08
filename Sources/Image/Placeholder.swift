@@ -44,7 +44,7 @@ public protocol Placeholder {
     /// given `imageView`.
     ///
     /// - Parameter imageView: The image view where the placeholder should be added to.
-    func add(to imageView: KFCrossPlatformImageView)
+    @MainActor func add(to imageView: KFCrossPlatformImageView)
     
     /// Called when the placeholder needs to be removed from a given image view.
     ///
@@ -52,7 +52,7 @@ public protocol Placeholder {
     /// given `imageView`.
     ///
     /// - Parameter imageView: The image view where the placeholder is already added to and now should be removed from.
-    func remove(from imageView: KFCrossPlatformImageView)
+    @MainActor func remove(from imageView: KFCrossPlatformImageView)
 }
 
 extension KFCrossPlatformImage: Placeholder {

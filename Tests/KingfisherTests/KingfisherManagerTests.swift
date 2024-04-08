@@ -1298,7 +1298,7 @@ extension KFCrossPlatformImage {
     }
 }
 
-class SimpleProcessor: ImageProcessor {
+final class SimpleProcessor: ImageProcessor, @unchecked Sendable {
     public let identifier = "id"
     var processed = false
     /// Initialize a `DefaultImageProcessor`
@@ -1326,7 +1326,7 @@ class SimpleProcessor: ImageProcessor {
     }
 }
 
-class FailingProcessor: ImageProcessor {
+final class FailingProcessor: ImageProcessor, @unchecked Sendable {
     public let identifier = "FailingProcessor"
     var processed = false
     public init() {}
@@ -1336,7 +1336,7 @@ class FailingProcessor: ImageProcessor {
     }
 }
 
-struct SimpleImageDataProvider: ImageDataProvider {
+struct SimpleImageDataProvider: ImageDataProvider, @unchecked Sendable {
     let cacheKey: String
     let provider: () -> (Result<Data, Error>)
     
