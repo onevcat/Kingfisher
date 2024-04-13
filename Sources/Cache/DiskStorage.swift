@@ -43,12 +43,18 @@ public enum DiskStorage {
     /// ``DiskStorage/Config`` value or by modifying the ``DiskStorage/Backend/config`` property after it has been
     /// created. The ``DiskStorage/Backend`` will use the file's attributes to keep track of a file for its expiration
     /// or size limitation.
-    public class Backend<T: DataTransformable> {
+    public class Backend<T: DataTransformable>: @unchecked Sendable {
         
+        private let propertyQueue = DispatchQueue(label: "com.onevcat.kingfisher.DiskStorage.Backend.propertyQueue")
+        
+        private var _config: Config
         /// The configuration used for this disk storage.
         ///
         /// It is a value you can set and use to configure the storage as needed.
-        public var config: Config
+        public var config: Config {
+            get { propertyQueue.sync { _config } }
+            set { propertyQueue.sync { _config = newValue } }
+        }
 
         /// The final storage URL on disk of the disk storage ``DiskStorage/Backend``, considering the
         /// ``DiskStorage/Config/name`` and the  ``DiskStorage/Config/cachePathBlock``.
@@ -83,7 +89,7 @@ public enum DiskStorage {
 
             // Break any possible retain cycle set by outside.
             config.cachePathBlock = nil
-            self.config = config
+            _config = config
 
             metaChangingQueue = DispatchQueue(label: creation.cacheName)
             setupCacheChecking()
@@ -255,7 +261,7 @@ public enum DiskStorage {
                 let data = try Data(contentsOf: fileURL)
                 let obj = try T.fromData(data)
                 metaChangingQueue.async {
-                    meta.extendExpiration(with: fileManager, extendingExpiration: extendingExpiration)
+                    meta.extendExpiration(with: self.config.fileManager, extendingExpiration: extendingExpiration)
                 }
                 return obj
             } catch {
@@ -463,7 +469,7 @@ public enum DiskStorage {
 extension DiskStorage {
     
     /// Represents the configuration used in a ``DiskStorage/Backend``.
-    public struct Config {
+    public struct Config: @unchecked Sendable {
 
         /// The file size limit on disk of the storage in bytes. 
         ///
@@ -496,7 +502,7 @@ extension DiskStorage {
         /// A closure that takes in the initial directory path and generates the final disk cache path.
         ///
         /// You can use it to fully customize your cache path.
-        public var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
+        public var cachePathBlock: (@Sendable (_ directory: URL, _ cacheName: String) -> URL)! = {
             (directory, cacheName) in
             return directory.appendingPathComponent(cacheName, isDirectory: true)
         }
