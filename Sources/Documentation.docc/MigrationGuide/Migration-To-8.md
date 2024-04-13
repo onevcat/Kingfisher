@@ -22,9 +22,39 @@ First, ensure there are no existing warnings from Kingfisher. Several deprecated
 
 For the breaking changes, review the sections below for any utilized features and symbols.
 
+### MainActor Requirement
+
+As support for Swift Concurrency is introduced in Kingfisher 8, some APIs, usually the view extension ones, require the `MainActor` attribute. Ensure your codebase is updated to include this attribute where necessary. For usage in `UIViewController` and `UIView`, since they are already implicitly under `MainActor`, no additional changes are required. For other cases, if you encounter a compiler error:
+
+
+```swift
+class Foo {
+    func bar() {
+        UIImageView().kf.setImage(with: URL(string: "https://example.com/image.png"))
+    }
+}
+```
+
+> warning:
+>
+> Call to main actor-isolated instance method 'setImage(with:placeholder:options:completionHandler:)' in a synchronous nonisolated context.
+
+Try to limit the access to the `MainActor`. For example, add the `MainActor` attribute to the method:
+
+```swift
+class Foo {
+    @MainActor
+    func bar() {
+        UIImageView().kf.setImage(with: URL(string: "https://example.com/image.png"))
+    }
+}
+```
+
+The concurrence support in Kingfisher 8 is not yet fully "strictly-compatible". That means if you set `SWIFT_STRICT_CONCURRENCY` to `Complete`, you may still see some warnings. The current status of Swift Concurrency does not contain all the necessary isolation for us to make the library fully compatible. We are working on it and will provide a fully compatible version in the future.
+
 ### Disk Cache Changes
 
-Version 8 updates the disk cache hash calculation method, invalidating existing caches. Kingfisher's disk cache is resilient, automatically re-downloading and caching data if missing. Typically, no action is required unless your application's logic heavily relies on disk cache, which is generally not recommended.
+Version 8 updates the disk cache hash calculation method, invalidating existing caches. Kingfisher's disk cache is resilient, automatically re-downloading and caching data if missing. Typically, no action is required unless your application's logic heavily relies on the disk cache, which is generally not recommended.
 
 ### Swift Concurrency APIs
 
