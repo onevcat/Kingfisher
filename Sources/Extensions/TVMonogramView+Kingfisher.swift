@@ -30,6 +30,7 @@ import Foundation
 
 import TVUIKit
 
+@MainActor
 @available(tvOS 12.0, *)
 extension KingfisherWrapper where Base: TVMonogramView {
 
@@ -182,10 +183,11 @@ extension KingfisherWrapper where Base: TVMonogramView {
     }
 }
 
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
+@MainActor
 @available(tvOS 12.0, *)
 extension KingfisherWrapper where Base: TVMonogramView {
     

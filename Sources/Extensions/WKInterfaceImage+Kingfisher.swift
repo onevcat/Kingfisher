@@ -28,6 +28,7 @@
 
 import WatchKit
 
+@MainActor
 extension KingfisherWrapper where Base: WKInterfaceImage {
 
     // MARK: Setting Image
@@ -179,10 +180,11 @@ extension KingfisherWrapper where Base: WKInterfaceImage {
     }
 }
 
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
+@MainActor 
 extension KingfisherWrapper where Base: WKInterfaceImage {
     
     public private(set) var taskIdentifier: Source.Identifier.Value? {
