@@ -28,6 +28,7 @@
 
 import AppKit
 
+@MainActor
 extension KingfisherWrapper where Base: NSButton {
 
     // MARK: Setting Image
@@ -315,12 +316,13 @@ extension KingfisherWrapper where Base: NSButton {
 
 
 // MARK: - Associated Object
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
-private var alternateTaskIdentifierKey: Void?
-private var alternateImageTaskKey: Void?
+@MainActor private var alternateTaskIdentifierKey: Void?
+@MainActor private var alternateImageTaskKey: Void?
 
+@MainActor
 extension KingfisherWrapper where Base: NSButton {
 
     // MARK: Properties
