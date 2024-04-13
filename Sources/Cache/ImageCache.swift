@@ -693,7 +693,7 @@ open class ImageCache {
                 if options.backgroundDecode {
                     image = image?.kf.decoded(scale: options.scaleFactor)
                 }
-                callbackQueue.execute { completionHandler(.success(image)) }
+                callbackQueue.execute { [image] in completionHandler(.success(image)) }
             } catch let error as KingfisherError {
                 callbackQueue.execute { completionHandler(.failure(error)) }
             } catch {

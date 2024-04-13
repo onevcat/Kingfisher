@@ -31,7 +31,6 @@ import XCTest
 class ImageDownloaderTests: XCTestCase {
 
     var downloader: ImageDownloader!
-    var modifier = URLModifier()
 
     override class func setUp() {
         super.setUp()
@@ -132,7 +131,7 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
         
-        modifier.url = url
+        let modifier = URLModifier(url: url)
         
         let someURL = URL(string: "some_strange_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(modifier)]) { result in
@@ -152,12 +151,10 @@ class ImageDownloaderTests: XCTestCase {
 
         var downloadTaskCalled = false
 
-        let asyncModifier = AsyncURLModifier()
-        asyncModifier.url = url
-        asyncModifier.onDownloadTaskStarted = { task in
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
             XCTAssertNotNil(task)
             downloadTaskCalled = true
-        }
+        })
 
         let someURL = URL(string: "some_strange_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
@@ -229,7 +226,7 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadEmptyURL() {
         let exp = expectation(description: #function)
         
-        modifier.url = nil
+        let modifier = URLModifier(url: nil)
         
         let url = URL(string: "http://onevcat.com")!
         downloader.downloadImage(
@@ -432,7 +429,7 @@ class ImageDownloaderTests: XCTestCase {
     }
     
     func testDownloadTaskNil() {
-        modifier.url = nil
+        let modifier = URLModifier(url: nil)
         let downloadTask = downloader.downloadImage(with: URL(string: "url")!, options: [.requestModifier(modifier)])
         XCTAssertNil(downloadTask)
     }
@@ -692,8 +689,11 @@ class TaskResponseCompletion: ImageDownloaderDelegate {
     }
 }
 
-class URLModifier: ImageDownloadRequestModifier {
-    var url: URL? = nil
+final class URLModifier: ImageDownloadRequestModifier {
+    let url: URL?
+    init(url: URL?) {
+        self.url = url
+    }
     func modified(for request: URLRequest) -> URLRequest? {
         var r = request
         r.url = url
@@ -701,9 +701,14 @@ class URLModifier: ImageDownloadRequestModifier {
     }
 }
 
-class AsyncURLModifier: AsyncImageDownloadRequestModifier {
-    var url: URL? = nil
-    var onDownloadTaskStarted: ((DownloadTask?) -> Void)?
+final class AsyncURLModifier: AsyncImageDownloadRequestModifier {
+    let url: URL?
+    let onDownloadTaskStarted: ((DownloadTask?) -> Void)?
+    
+    init(url: URL?, onDownloadTaskStarted: ((DownloadTask?) -> Void)?) {
+        self.url = url
+        self.onDownloadTaskStarted = onDownloadTaskStarted
+    }
 
     func modified(for request: URLRequest) async -> URLRequest? {
         var r = request
