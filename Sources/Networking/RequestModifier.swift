@@ -46,7 +46,7 @@ import Foundation
 ///
 /// imageView.kf.setImage(with: url, options: [.requestModifier(HeaderFieldModifier())])
 /// ```
-public protocol AsyncImageDownloadRequestModifier {
+public protocol AsyncImageDownloadRequestModifier: Sendable {
 
     /// This method will be called just before the `request` is sent.
     /// 
