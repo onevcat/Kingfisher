@@ -133,14 +133,18 @@ extension DownloadTask {
 }
 
 /// Represents a download manager for requesting an image with a URL from the server.
-open class ImageDownloader {
+open class ImageDownloader: @unchecked Sendable {
 
     // MARK: Singleton
     
     /// The default downloader.
     public static let `default` = ImageDownloader(name: "default")
 
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloaderPropertyQueue")
+    
     // MARK: Public Properties
+    
+    private var _downloadTimeout: TimeInterval = 15.0
     
     /// The duration before the download times out.
     ///
@@ -148,7 +152,10 @@ open class ImageDownloader {
     /// Kingfisher wraps and forwards as a ``KingfisherError/ResponseErrorReason/URLSessionError(error:)``.
     ///
     /// The default timeout is set to 15 seconds.
-    open var downloadTimeout: TimeInterval = 15.0
+    open var downloadTimeout: TimeInterval {
+        get { propertyQueue.sync { _downloadTimeout } }
+        set { propertyQueue.sync { _downloadTimeout = newValue } }
+    }
     
     /// A set of trusted hosts when receiving server trust challenges.
     ///
