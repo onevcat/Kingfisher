@@ -151,7 +151,7 @@ public enum ImageCacheResult {
 /// > While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create
 /// your own cache object and configure its storages according to your needs. This class also provides an interface for
 /// configuring the memory and disk storage.
-open class ImageCache {
+open class ImageCache: @unchecked Sendable {
 
     // MARK: Singleton
     /// The default ``ImageCache`` object.
