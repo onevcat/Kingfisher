@@ -180,7 +180,7 @@ open class ImageCache {
     private let ioQueue: DispatchQueue
     
     /// A closure that specifies the disk cache path based on a given path and the cache name.
-    public typealias DiskCachePathClosure = (URL, String) -> URL
+    public typealias DiskCachePathClosure = @Sendable (URL, String) -> URL
 
     // MARK: Initializers
 
