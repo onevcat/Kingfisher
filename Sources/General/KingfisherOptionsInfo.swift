@@ -40,7 +40,7 @@ extension Array where Element == KingfisherOptionsInfoItem {
 }
 
 /// Represents the available option items that can be used in ``KingfisherOptionsInfo``.
-public enum KingfisherOptionsInfoItem {
+public enum KingfisherOptionsInfoItem: Sendable {
     
     /// Kingfisher will utilize the associated ``ImageCache`` object when performing related operations, such as
     /// attempting to retrieve cached images and storing downloaded images in it.

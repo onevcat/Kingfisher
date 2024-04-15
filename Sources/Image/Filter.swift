@@ -35,7 +35,11 @@ import UIKit
 import CoreImage
 
 // Reuses the same CI Context for all CI drawings.
-private let ciContext = CIContext(options: nil)
+struct SendableBox<T>: @unchecked Sendable {
+    let value: T
+}
+
+private let ciContext = SendableBox(value: CIContext(options: nil))
 
 /// Represents the type of transformer method, which will be used to provide a ``Filter``.
 public typealias Transformer = (CIImage) -> CIImage?
@@ -75,7 +79,7 @@ public struct Filter {
     }
     
     /// Tint filter that applies a tint color to images.
-    public static var tint: (KFCrossPlatformColor) -> Filter = {
+    public static let tint: @Sendable (KFCrossPlatformColor) -> Filter = {
         color in
         Filter {
             input in
@@ -118,7 +122,7 @@ public struct Filter {
     }
     
     /// Color control filter that applies color control changes to images.
-    public static var colorControl: (ColorElement) -> Filter = { arg -> Filter in
+    public static let colorControl: @Sendable (ColorElement) -> Filter = { arg -> Filter in
         return Filter { input in
             let paramsColor = [kCIInputBrightnessKey: arg.brightness,
                                  kCIInputContrastKey: arg.contrast,
@@ -152,7 +156,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return base
         }
 
-        guard let result = ciContext.createCGImage(outputImage, from: outputImage.extent) else {
+        guard let result = ciContext.value.createCGImage(outputImage, from: outputImage.extent) else {
             assertionFailure("[Kingfisher] Can not make an tint image within context.")
             return base
         }

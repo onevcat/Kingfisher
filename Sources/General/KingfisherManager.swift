@@ -104,26 +104,38 @@ public typealias DownloadTaskUpdatedBlock = ((_ newTask: DownloadTask?) -> Void)
 /// methods for working with Kingfisher tasks.
 ///
 /// You can utilize this class to retrieve an image via a specified URL from the web or cache.
-public class KingfisherManager {
+public class KingfisherManager: @unchecked Sendable {
 
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.KingfisherManagerPropertyQueue")
+    
     /// Represents a shared manager used across Kingfisher.
     /// Use this instance for getting or storing images with Kingfisher.
     public static let shared = KingfisherManager()
 
     // Mark: Public Properties
     
+    private var _cache: ImageCache
+    
     /// The ``ImageCache`` utilized by this manager, which defaults to ``ImageCache/default``.
     ///
     /// If a cache is specified in ``KingfisherManager/defaultOptions`` or ``KingfisherOptionsInfoItem/targetCache(_:)``,
     /// those specified values will take precedence when Kingfisher attempts to retrieve or store images in the cache.
-    public var cache: ImageCache
+    public var cache: ImageCache {
+        get { propertyQueue.sync { _cache } }
+        set { propertyQueue.sync { _cache = newValue } }
+    }
+    
+    private var _downloader: ImageDownloader
     
     /// The ``ImageDownloader`` utilized by this manager, which defaults to ``ImageDownloader/default``.
     ///
     /// If a downloader is specified in ``KingfisherManager/defaultOptions`` or ``KingfisherOptionsInfoItem/downloader(_:)``,
     /// those specified values will take precedence when Kingfisher attempts to download the image data from a remote
     /// server.
-    public var downloader: ImageDownloader
+    public var downloader: ImageDownloader {
+        get { propertyQueue.sync { _downloader } }
+        set { propertyQueue.sync { _downloader = newValue } }
+    }
     
     /// The default options used by the ``KingfisherManager`` instance.
     ///
@@ -151,8 +163,8 @@ public class KingfisherManager {
     ///   - cache: The image cache that stores images in memory and on disk.
     ///
     public init(downloader: ImageDownloader, cache: ImageCache) {
-        self.downloader = downloader
-        self.cache = cache
+        _downloader = downloader
+        _cache = cache
 
         let processQueueName = "com.onevcat.Kingfisher.KingfisherManager.processQueue.\(UUID().uuidString)"
         processingQueue = .dispatch(DispatchQueue(label: processQueueName))
