@@ -36,7 +36,7 @@ private let sharedProcessingQueue: CallbackQueue =
     .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))
 
 /// Represents a progressive loading for images which supports this feature.
-public struct ImageProgressive {
+public struct ImageProgressive: Sendable {
     
     /// The updating strategy when an intermediate progressive image is generated and about to be set to the hosting view.
     public enum UpdatingStrategy {
