@@ -544,16 +544,21 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        var modifierCalled = false
+        let modifierCalled = ActorBox(false)
         let modifier = AnyImageModifier { image in
-            modifierCalled = true
+            Task {
+                await modifierCalled.setValue(true)
+            }
             return image.withRenderingMode(.alwaysTemplate)
         }
 
         downloader.downloadImage(with: url, options: [.imageModifier(modifier)]) { result in
-            XCTAssertFalse(modifierCalled)
             XCTAssertEqual(result.value?.image.renderingMode, .automatic)
-            exp.fulfill()
+            Task {
+                let called = await modifierCalled.value
+                XCTAssertFalse(called)
+                exp.fulfill()
+            }
         }
 
         waitForExpectations(timeout: 3, handler: nil)

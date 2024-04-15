@@ -36,7 +36,7 @@ import UIKit
 /// The ``ImageModifier/modify(_:)`` method will be called after the image is retrieved from its source and before it
 /// is returned to the caller. This modified image is expected to be used only for rendering purposes; any changes
 /// applied by the ``ImageModifier`` will not be serialized or cached.
-public protocol ImageModifier {
+public protocol ImageModifier: Sendable {
     
     /// Modify an input `Image`.
     ///
@@ -56,11 +56,11 @@ public struct AnyImageModifier: ImageModifier {
 
     /// A block that modifies images, or returns the original image if modification cannot be performed, along with an 
     /// error.
-    let block: (KFCrossPlatformImage) throws -> KFCrossPlatformImage
+    let block: @Sendable (KFCrossPlatformImage) throws -> KFCrossPlatformImage
 
     /// Creates an ``AnyImageModifier`` with a given `modify` block.
     /// - Parameter modify: A block which is used to modify the input image.
-    public init(modify: @escaping (KFCrossPlatformImage) throws -> KFCrossPlatformImage) {
+    public init(modify: @escaping @Sendable (KFCrossPlatformImage) throws -> KFCrossPlatformImage) {
         block = modify
     }
 
