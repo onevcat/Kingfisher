@@ -464,9 +464,16 @@ protocol DataReceivingSideEffect: AnyObject {
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
 }
 
-class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
+class ImageLoadingProgressSideEffect: DataReceivingSideEffect, @unchecked Sendable {
 
-    var onShouldApply: () -> Bool = { return true }
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageLoadingProgressSideEffectPropertyQueue")
+    
+    private var _onShouldApply: () -> Bool = { return true }
+    
+    var onShouldApply: () -> Bool {
+        get { propertyQueue.sync { _onShouldApply } }
+        set { propertyQueue.sync { _onShouldApply = newValue } }
+    }
     
     let block: DownloadProgressBlock
 

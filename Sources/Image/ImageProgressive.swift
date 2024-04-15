@@ -109,9 +109,16 @@ public struct ImageProgressive: Sendable {
 
 // A data receiving provider to update the image. Working with an `ImageProgressive`, it helps to implement the image
 // progressive effect.
-final class ImageProgressiveProvider: DataReceivingSideEffect {
+final class ImageProgressiveProvider: DataReceivingSideEffect, @unchecked Sendable {
     
-    var onShouldApply: () -> Bool = { return true }
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageProgressiveProviderPropertyQueue")
+    
+    private var _onShouldApply: () -> Bool = { return true }
+    
+    var onShouldApply: () -> Bool {
+        get { propertyQueue.sync { _onShouldApply } }
+        set { propertyQueue.sync { _onShouldApply = newValue } }
+    }
     
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
 
@@ -310,8 +317,8 @@ private final class ImageProgressiveDecoder {
     }
 }
 
-private final class ImageProgressiveSerialQueue {
-    typealias ClosureCallback = ((@escaping () -> Void)) -> Void
+private final class ImageProgressiveSerialQueue: @unchecked Sendable {
+    typealias ClosureCallback = @Sendable ((@escaping () -> Void)) -> Void
     
     private let queue: DispatchQueue
     private var items: [DispatchWorkItem] = []
@@ -323,7 +330,7 @@ private final class ImageProgressiveSerialQueue {
     }
     
     func add(minimum interval: TimeInterval, closure: @escaping ClosureCallback) {
-        let completion = { [weak self] in
+        let completion = { @Sendable [weak self] in
             guard let self = self else { return }
             
             self.queue.async { [weak self] in
