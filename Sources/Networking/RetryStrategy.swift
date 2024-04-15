@@ -72,7 +72,7 @@ public enum RetryDecision {
 }
 
 /// Defines a retry strategy that can be applied to the ``KingfisherOptionsInfoItem/retryStrategy(_:)`` option.
-public protocol RetryStrategy {
+public protocol RetryStrategy: Sendable {
 
     /// Kingfisher calls this method if an error occurs during the image retrieving process from ``KingfisherManager``.
     ///
@@ -92,7 +92,7 @@ public protocol RetryStrategy {
 public struct DelayRetryStrategy: RetryStrategy {
 
     /// Represents the interval mechanism used in a ``DelayRetryStrategy``.
-    public enum Interval {
+    public enum Interval : Sendable{
         
         /// The next retry attempt should happen in a fixed number of seconds. 
         ///
@@ -108,7 +108,7 @@ public struct DelayRetryStrategy: RetryStrategy {
         /// Uses a block to determine the next interval.
         ///
         /// The current retry count is given as a parameter.
-        case custom(block: (_ retriedCount: Int) -> TimeInterval)
+        case custom(block: @Sendable (_ retriedCount: Int) -> TimeInterval)
 
         func timeInterval(for retriedCount: Int) -> TimeInterval {
             let retryAfter: TimeInterval

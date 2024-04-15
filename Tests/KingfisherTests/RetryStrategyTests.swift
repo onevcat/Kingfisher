@@ -199,9 +199,14 @@ class RetryStrategyTests: XCTestCase {
 
 private struct E: Error {}
 
-class StubRetryStrategy: RetryStrategy {
+final class StubRetryStrategy: RetryStrategy, @unchecked Sendable {
 
-    var count = 0
+    let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.StubRetryStrategy")
+    var _count = 0
+    var count: Int {
+        get { queue.sync { _count } }
+        set { queue.sync { _count = newValue } }
+    }
 
     func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void) {
 

@@ -72,7 +72,7 @@ public protocol AsyncImageDownloadRequestModifier: Sendable {
     /// method.
     ///
     /// User the ``DownloadTask`` value to track the task, or cancel it when you need to.
-    var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { get }
+    var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { get }
 }
 
 /// Represents and wraps a method for modifying a request before an image download request starts synchronously.
@@ -119,7 +119,7 @@ public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier 
 extension ImageDownloadRequestModifier {
     /// This is `nil` for a sync `ImageDownloadRequestModifier` by default. You can get the `DownloadTask` from the
     /// return value of downloader method.
-    public var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { return nil }
+    public var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { return nil }
 }
 
 /// A wrapper for creating an ``ImageDownloadRequestModifier`` instance more easily.

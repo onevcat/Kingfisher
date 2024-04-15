@@ -149,19 +149,24 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        var downloadTaskCalled = false
+        let downloadTaskCalled = ActorBox(false)
 
         let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
             XCTAssertNotNil(task)
-            downloadTaskCalled = true
+            Task {
+                await downloadTaskCalled.setValue(true)
+            }
         })
 
         let someURL = URL(string: "some_strange_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value?.url, url)
-            XCTAssertTrue(downloadTaskCalled)
-            exp.fulfill()
+            Task {
+                let result = await downloadTaskCalled.value
+                XCTAssertTrue(result)
+                exp.fulfill()
+            }
         }
         // The returned task is nil since the download is not starting immediately.
         XCTAssertNil(task)
@@ -708,9 +713,9 @@ final class URLModifier: ImageDownloadRequestModifier {
 
 final class AsyncURLModifier: AsyncImageDownloadRequestModifier {
     let url: URL?
-    let onDownloadTaskStarted: ((DownloadTask?) -> Void)?
+    let onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
     
-    init(url: URL?, onDownloadTaskStarted: ((DownloadTask?) -> Void)?) {
+    init(url: URL?, onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?) {
         self.url = url
         self.onDownloadTaskStarted = onDownloadTaskStarted
     }
