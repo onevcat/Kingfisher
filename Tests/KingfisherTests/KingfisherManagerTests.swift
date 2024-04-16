@@ -976,7 +976,7 @@ class KingfisherManagerTests: XCTestCase {
           options: [.alternativeSources([.network(url)])],
           downloadTaskUpdated: { newTask in
             downloadTaskUpdatedCount += 1
-            XCTAssertEqual(newTask?.sessionTask.task.currentRequest?.url, url)
+            XCTAssertEqual(newTask?.sessionTask?.task.currentRequest?.url, url)
           })
           {
             result in
@@ -984,7 +984,7 @@ class KingfisherManagerTests: XCTestCase {
             exp.fulfill()
         }
 
-        XCTAssertEqual(task?.sessionTask.task.currentRequest?.url, brokenURL)
+        XCTAssertEqual(task?.sessionTask?.task.currentRequest?.url, brokenURL)
 
         waitForExpectations(timeout: 1, handler: nil)
     }

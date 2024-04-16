@@ -545,7 +545,7 @@ public class KingfisherManager: @unchecked Sendable {
             //
             // return task.map(DownloadTask.WrappedTask.download)
 
-            if let task = task {
+            if task.isInitialized {
                 return .download(task)
             } else {
                 return nil

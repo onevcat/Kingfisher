@@ -139,7 +139,7 @@ class ImageDownloaderTests: XCTestCase {
             XCTAssertEqual(result.value?.url, url)
             exp.fulfill()
         }
-        XCTAssertNotNil(task)
+        XCTAssertTrue(task.isInitialized)
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -169,7 +169,7 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
         // The returned task is nil since the download is not starting immediately.
-        XCTAssertNil(task)
+        XCTAssertFalse(task.isInitialized)
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -309,7 +309,7 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
 
-        task1?.cancel()
+        task1.cancel()
         delay(0.1) { _ = stub.go() }
         group.notify(queue: .main) {
             delay(0.1) { exp.fulfill() }
@@ -433,10 +433,10 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testDownloadTaskNil() {
+    func testDownloadTaskNilWithNilURL() {
         let modifier = URLModifier(url: nil)
         let downloadTask = downloader.downloadImage(with: URL(string: "url")!, options: [.requestModifier(modifier)])
-        XCTAssertNil(downloadTask)
+        XCTAssertFalse(downloadTask.isInitialized)
     }
     
     func testDownloadWithProcessor() {
@@ -486,7 +486,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         XCTAssertNotNil(task1)
-        XCTAssertEqual(task1?.sessionTask.task, task2?.sessionTask.task)
+        XCTAssertEqual(task1.sessionTask?.task, task2.sessionTask?.task)
 
         _ = stub.go()
         
@@ -580,7 +580,7 @@ class ImageDownloaderTests: XCTestCase {
             _ in
             exp.fulfill()
         }
-        XCTAssertEqual(task?.sessionTask.task.priority, URLSessionTask.highPriority)
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
     
