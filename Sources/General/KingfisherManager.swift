@@ -455,7 +455,7 @@ public class KingfisherManager: @unchecked Sendable {
         options: KingfisherParsedOptionsInfo,
         context: RetrievingContext,
         result: Result<ImageLoadingResult, KingfisherError>,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?
     )
     {
         switch result {
@@ -516,10 +516,10 @@ public class KingfisherManager: @unchecked Sendable {
     func loadAndCacheImage(
         source: Source,
         context: RetrievingContext,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
     {
         let options = context.options
-        func _cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>) {
+        @Sendable func _cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>) {
             cacheImage(
                 source: source,
                 options: options,
@@ -859,24 +859,34 @@ extension KingfisherManager {
     }
 }
 
-class RetrievingContext {
+class RetrievingContext: @unchecked Sendable {
 
-    var options: KingfisherParsedOptionsInfo
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.RetrievingContextPropertyQueue")
+    
+    private var _options: KingfisherParsedOptionsInfo
+    var options: KingfisherParsedOptionsInfo {
+        get { propertyQueue.sync { _options } }
+        set { propertyQueue.sync { _options = newValue } }
+    }
 
     let originalSource: Source
     var propagationErrors: [PropagationError] = []
 
     init(options: KingfisherParsedOptionsInfo, originalSource: Source) {
         self.originalSource = originalSource
-        self.options = options
+        _options = options
     }
 
     func popAlternativeSource() -> Source? {
-        guard var alternativeSources = options.alternativeSources, !alternativeSources.isEmpty else {
+        var localOptions = options
+        guard var alternativeSources = localOptions.alternativeSources, !alternativeSources.isEmpty else {
             return nil
         }
         let nextSource = alternativeSources.removeFirst()
-        options.alternativeSources = alternativeSources
+        
+        localOptions.alternativeSources = alternativeSources
+        options = localOptions
+        
         return nextSource
     }
 
@@ -888,7 +898,7 @@ class RetrievingContext {
     }
 }
 
-class CacheCallbackCoordinator {
+class CacheCallbackCoordinator: @unchecked Sendable {
 
     enum State {
         case idle
