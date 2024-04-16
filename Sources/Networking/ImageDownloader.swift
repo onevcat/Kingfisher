@@ -522,7 +522,7 @@ open class ImageDownloader: @unchecked Sendable {
         with url: URL,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var info = KingfisherParsedOptionsInfo(options)
         if let block = progressBlock {
@@ -547,7 +547,7 @@ open class ImageDownloader: @unchecked Sendable {
     open func downloadImage(
         with url: URL,
         options: KingfisherOptionsInfo? = nil,
-        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask
     {
         downloadImage(
             with: url,

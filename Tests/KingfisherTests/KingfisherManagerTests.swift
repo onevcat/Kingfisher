@@ -1367,3 +1367,14 @@ actor ActorBox<T> {
         self.value = value
     }
 }
+
+actor ActorArray<Element> {
+    var value: [Element]
+    init(_ value: [Element]) {
+        self.value = value
+    }
+    
+    func append(_ newElement: Element) {
+        value.append(newElement)
+    }
+}

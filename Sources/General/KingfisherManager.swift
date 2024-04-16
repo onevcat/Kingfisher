@@ -356,7 +356,7 @@ public class KingfisherManager: @unchecked Sendable {
                     retryStrategy.retry(context: context) { decision in
                         switch decision {
                         case .retry(let userInfo):
-                            retryContext?.userInfo = userInfo
+                            context.userInfo = userInfo
                             startNewRetrieveTask(with: source, downloadTaskUpdated: downloadTaskUpdated)
                         case .stop:
                             failCurrentSource(currentSource, with: error)

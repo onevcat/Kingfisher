@@ -82,7 +82,7 @@ public protocol RetryStrategy: Sendable {
     /// - Parameters:
     ///   - context: The retry context containing information of the current retry attempt.
     ///   - retryHandler: A block you need to call with a decision on whether the retry should happen or not.
-    func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void)
+    func retry(context: RetryContext, retryHandler: @escaping @Sendable (RetryDecision) -> Void)
 }
 
 /// A retry strategy that guides Kingfisher to perform retry operation with some delay.
@@ -143,7 +143,7 @@ public struct DelayRetryStrategy: RetryStrategy {
         self.retryInterval = retryInterval
     }
 
-    public func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void) {
+    public func retry(context: RetryContext, retryHandler: @escaping @Sendable (RetryDecision) -> Void) {
         // Retry count exceeded.
         guard context.retriedCount < maxRetryCount else {
             retryHandler(.stop)
