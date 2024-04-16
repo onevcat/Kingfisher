@@ -341,7 +341,7 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
         toDisk: Bool = true,
-        completionHandler: ((CacheStoreResult) -> Void)? = nil
+        completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil
     )
     {
         let identifier = options.processor.identifier
@@ -413,7 +413,7 @@ open class ImageCache: @unchecked Sendable {
         cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
         toDisk: Bool = true,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: ((CacheStoreResult) -> Void)? = nil
+        completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil
     )
     {
         struct TempProcessor: ImageProcessor {
@@ -438,7 +438,7 @@ open class ImageCache: @unchecked Sendable {
         processorIdentifier identifier: String = "",
         expiration: StorageExpiration? = nil,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: ((CacheStoreResult) -> Void)? = nil)
+        completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil)
     {
         ioQueue.async {
             self.syncStoreToDisk(
@@ -504,7 +504,7 @@ open class ImageCache: @unchecked Sendable {
         fromMemory: Bool = true,
         fromDisk: Bool = true,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: (() -> Void)? = nil
+        completionHandler: (@Sendable () -> Void)? = nil
     )
     {
         removeImage(
@@ -522,7 +522,7 @@ open class ImageCache: @unchecked Sendable {
                           fromMemory: Bool = true,
                           fromDisk: Bool = true,
                           callbackQueue: CallbackQueue = .untouch,
-                          completionHandler: ((Error?) -> Void)? = nil)
+                          completionHandler: (@Sendable (Error?) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
 
@@ -530,7 +530,7 @@ open class ImageCache: @unchecked Sendable {
             memoryStorage.remove(forKey: computedKey)
         }
         
-        func callHandler(_ error: Error?) {
+        @Sendable func callHandler(_ error: Error?) {
             if let completionHandler = completionHandler {
                 callbackQueue.execute { completionHandler(error) }
             }
@@ -566,7 +566,7 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
         callbackQueue: CallbackQueue = .mainCurrentOrAsync,
-        completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?)
+        completionHandler: (@Sendable (Result<ImageCacheResult, KingfisherError>) -> Void)?)
     {
         // No completion handler. No need to start working and early return.
         guard let completionHandler = completionHandler else { return }
@@ -630,7 +630,7 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherOptionsInfo? = nil,
         callbackQueue: CallbackQueue = .mainCurrentOrAsync,
-        completionHandler: ((Result<ImageCacheResult, KingfisherError>) -> Void)?
+        completionHandler: (@Sendable (Result<ImageCacheResult, KingfisherError>) -> Void)?
     )
     {
         retrieveImage(
@@ -730,7 +730,7 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// - Parameter handler: A closure that is invoked when the cache clearing operation finishes.
     ///                      This `handler` will be called from the main queue.
-    public func clearCache(completion handler: (() -> Void)? = nil) {
+    public func clearCache(completion handler: (@Sendable () -> Void)? = nil) {
         clearMemoryCache()
         clearDiskCache(completion: handler)
     }
@@ -746,7 +746,7 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// - Parameter handler: A closure that is invoked when the cache clearing operation finishes.
     ///                      This `handler` will be called from the main queue.
-    open func clearDiskCache(completion handler: (() -> Void)? = nil) {
+    open func clearDiskCache(completion handler: (@Sendable () -> Void)? = nil) {
         ioQueue.async {
             do {
                 try self.diskStorage.removeAll()
@@ -760,7 +760,7 @@ open class ImageCache: @unchecked Sendable {
     /// Clears the expired images from the memory and disk storage.
     ///
     /// This is an asynchronous operation. When the cache clearing operation finishes, the `handler` will be invoked.
-    open func cleanExpiredCache(completion handler: (() -> Void)? = nil) {
+    open func cleanExpiredCache(completion handler: (@Sendable () -> Void)? = nil) {
         cleanExpiredMemoryCache()
         cleanExpiredDiskCache(completion: handler)
     }
@@ -783,7 +783,7 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// - Parameter handler: A closure which is invoked when the cache clearing operation finishes.
     ///                      This `handler` will be called from the main queue.
-    open func cleanExpiredDiskCache(completion handler: (() -> Void)? = nil) {
+    open func cleanExpiredDiskCache(completion handler: (@Sendable () -> Void)? = nil) {
         ioQueue.async {
             do {
                 var removed: [URL] = []
@@ -794,7 +794,7 @@ open class ImageCache: @unchecked Sendable {
                 removed.append(contentsOf: removedSizeExceeded)
 
                 if !removed.isEmpty {
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { [removed] in
                         let cleanedHashes = removed.map { $0.lastPathComponent }
                         NotificationCenter.default.post(
                             name: .KingfisherDidCleanDiskCache,
@@ -821,19 +821,27 @@ open class ImageCache: @unchecked Sendable {
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
         guard let sharedApplication = KingfisherWrapper<UIApplication>.shared else { return }
-
-        func endBackgroundTask(_ task: inout UIBackgroundTaskIdentifier) {
-            sharedApplication.endBackgroundTask(task)
-            task = UIBackgroundTaskIdentifier.invalid
-        }
         
-        var backgroundTask: UIBackgroundTaskIdentifier!
-        backgroundTask = sharedApplication.beginBackgroundTask(withName: "Kingfisher:backgroundCleanExpiredDiskCache") {
-            endBackgroundTask(&backgroundTask!)
+        let taskActor = ActorBox<UIBackgroundTaskIdentifier?>(nil)
+        
+        let createdTask = sharedApplication.beginBackgroundTask(withName: "Kingfisher:backgroundCleanExpiredDiskCache") {
+            Task {
+                guard let bgTask = await taskActor.value, bgTask != .invalid else { return }
+                sharedApplication.endBackgroundTask(bgTask)
+                await taskActor.setValue(.invalid)
+            }
         }
         
         cleanExpiredDiskCache {
-            endBackgroundTask(&backgroundTask!)
+            Task {
+                guard let bgTask = await taskActor.value, bgTask != .invalid else { return }
+                await sharedApplication.endBackgroundTask(bgTask)
+                await taskActor.setValue(.invalid)
+            }
+        }
+        
+        Task {
+            await taskActor.setValue(createdTask)
         }
     }
 #endif
@@ -903,7 +911,9 @@ open class ImageCache: @unchecked Sendable {
     /// It represents the total file size of all cached files in the ``ImageCache/diskStorage`` on disk in bytes.
     ///
     /// - Parameter handler: Called when the size calculation is complete. This closure is invoked from the main queue.
-    open func calculateDiskStorageSize(completion handler: @escaping ((Result<UInt, KingfisherError>) -> Void)) {
+    open func calculateDiskStorageSize(
+        completion handler: @escaping (@Sendable (Result<UInt, KingfisherError>) -> Void)
+    ) {
         ioQueue.async {
             do {
                 let size = try self.diskStorage.totalSize()
@@ -1072,8 +1082,8 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherParsedOptionsInfo
     ) async throws -> ImageCacheResult {
-        try await withCheckedThrowingContinuation {
-            retrieveImage(forKey: key, options: options, completionHandler: $0.resume)
+        try await withCheckedThrowingContinuation { continuation in
+            retrieveImage(forKey: key, options: options) { continuation.resume(with: $0) }
         }
     }
     
@@ -1094,8 +1104,8 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherOptionsInfo? = nil
     ) async throws -> ImageCacheResult {
-        try await withCheckedThrowingContinuation {
-            retrieveImage(forKey: key, options: options, completionHandler: $0.resume)
+        try await withCheckedThrowingContinuation { continuation in
+            retrieveImage(forKey: key, options: options) { continuation.resume(with: $0) }
         }
     }
     
@@ -1125,8 +1135,8 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func clearCache() async {
-        await withCheckedContinuation {
-            clearCache(completion: $0.resume)
+        await withCheckedContinuation { continuation in
+            clearCache { continuation.resume() }
         }
     }
     
@@ -1134,8 +1144,8 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func clearDiskCache() async {
-        await withCheckedContinuation {
-            clearDiskCache(completion: $0.resume)
+        await withCheckedContinuation { continuation in
+            clearDiskCache { continuation.resume() }
         }
     }
     
@@ -1143,8 +1153,8 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func cleanExpiredCache() async {
-        await withCheckedContinuation {
-            cleanExpiredCache(completion: $0.resume)
+        await withCheckedContinuation { continuation in
+            cleanExpiredCache { continuation.resume() }
         }
     }
     
@@ -1152,8 +1162,8 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// This is an asynchronous operation. When the cache clearing operation finishes, the whole method returns.
     open func cleanExpiredDiskCache() async {
-        await withCheckedContinuation {
-            cleanExpiredDiskCache(completion: $0.resume)
+        await withCheckedContinuation { continuation in
+            cleanExpiredDiskCache { continuation.resume() }
         }
     }
     
@@ -1162,8 +1172,8 @@ open class ImageCache: @unchecked Sendable {
     /// It represents the total file size of all cached files in the ``ImageCache/diskStorage`` on disk in bytes.
     open var diskStorageSize: UInt {
         get async throws {
-            try await withCheckedThrowingContinuation {
-                calculateDiskStorageSize(completion: $0.resume)
+            try await withCheckedThrowingContinuation { continuation in
+                calculateDiskStorageSize { continuation.resume(with: $0) }
             }
         }
     }
