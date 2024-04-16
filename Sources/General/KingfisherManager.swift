@@ -235,7 +235,7 @@ public class KingfisherManager: @unchecked Sendable {
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = currentDefaultOptions + (options ?? .empty)
         let info = KingfisherParsedOptionsInfo(options)
@@ -252,7 +252,7 @@ public class KingfisherManager: @unchecked Sendable {
         options: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         var info = options
         if let block = progressBlock {
@@ -272,9 +272,11 @@ public class KingfisherManager: @unchecked Sendable {
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
         referenceTaskIdentifierChecker: (() -> Bool)? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         var options = options
+        let retryStrategy = options.retryStrategy
+        
         if let provider = ImageProgressiveProvider(options: options, refresh: { image in
             guard let setter = progressiveImageSetter else {
                 return
@@ -300,17 +302,18 @@ public class KingfisherManager: @unchecked Sendable {
         let retrievingContext = RetrievingContext(options: options, originalSource: source)
         var retryContext: RetryContext?
 
-        func startNewRetrieveTask(
+        @Sendable func startNewRetrieveTask(
             with source: Source,
+            retryContext: RetryContext?,
             downloadTaskUpdated: DownloadTaskUpdatedBlock?
         ) {
             let newTask = self.retrieveImage(with: source, context: retrievingContext) { result in
-                handler(currentSource: source, result: result)
+                handler(currentSource: source, retryContext: retryContext, result: result)
             }
             downloadTaskUpdated?(newTask)
         }
 
-        func failCurrentSource(_ source: Source, with error: KingfisherError) {
+        @Sendable func failCurrentSource(_ source: Source, retryContext: RetryContext?, with error: KingfisherError) {
             // Skip alternative sources if the user cancelled it.
             guard !error.isTaskCancelled else {
                 completionHandler?(.failure(error))
@@ -320,7 +323,7 @@ public class KingfisherManager: @unchecked Sendable {
             guard !error.isLowDataModeConstrained else {
                 if let source = retrievingContext.options.lowDataModeSource {
                     retrievingContext.options.lowDataModeSource = nil
-                    startNewRetrieveTask(with: source, downloadTaskUpdated: downloadTaskUpdated)
+                    startNewRetrieveTask(with: source, retryContext: retryContext, downloadTaskUpdated: downloadTaskUpdated)
                 } else {
                     // This should not happen.
                     completionHandler?(.failure(error))
@@ -329,7 +332,7 @@ public class KingfisherManager: @unchecked Sendable {
             }
             if let nextSource = retrievingContext.popAlternativeSource() {
                 retrievingContext.appendError(error, to: source)
-                startNewRetrieveTask(with: nextSource, downloadTaskUpdated: downloadTaskUpdated)
+                startNewRetrieveTask(with: nextSource, retryContext: retryContext, downloadTaskUpdated: downloadTaskUpdated)
             } else {
                 // No other alternative source. Finish with error.
                 if retrievingContext.propagationErrors.isEmpty {
@@ -344,26 +347,28 @@ public class KingfisherManager: @unchecked Sendable {
             }
         }
 
-        func handler(currentSource: Source, result: (Result<RetrieveImageResult, KingfisherError>)) -> Void {
+        @Sendable func handler(
+            currentSource: Source,
+            retryContext: RetryContext?,
+            result: (Result<RetrieveImageResult, KingfisherError>)
+        ) -> Void {
             switch result {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
-                if let retryStrategy = options.retryStrategy {
+                if let retryStrategy = retryStrategy {
                     let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
-                    retryContext = context
-
                     retryStrategy.retry(context: context) { decision in
                         switch decision {
                         case .retry(let userInfo):
                             context.userInfo = userInfo
-                            startNewRetrieveTask(with: source, downloadTaskUpdated: downloadTaskUpdated)
+                            startNewRetrieveTask(with: source, retryContext: context, downloadTaskUpdated: downloadTaskUpdated)
                         case .stop:
-                            failCurrentSource(currentSource, with: error)
+                            failCurrentSource(currentSource, retryContext: context, with: error)
                         }
                     }
                 } else {
-                    failCurrentSource(currentSource, with: error)
+                    failCurrentSource(currentSource, retryContext: retryContext, with: error)
                 }
             }
         }
@@ -373,7 +378,7 @@ public class KingfisherManager: @unchecked Sendable {
             context: retrievingContext)
         {
             result in
-            handler(currentSource: source, result: result)
+            handler(currentSource: source, retryContext: nil, result: result)
         }
 
     }
@@ -381,7 +386,7 @@ public class KingfisherManager: @unchecked Sendable {
     private func retrieveImage(
         with source: Source,
         context: RetrievingContext,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = context.options
         if options.forceRefresh {
@@ -579,7 +584,7 @@ public class KingfisherManager: @unchecked Sendable {
     func retrieveImageFromCache(
         source: Source,
         context: RetrievingContext,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
     {
         let options = context.options
         // 1. Check whether the image was already in target cache. If so, just get it.
