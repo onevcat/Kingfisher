@@ -284,7 +284,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         placeholder: Placeholder? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask?
     {
         var mutatingSelf = self
@@ -320,7 +320,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in mutatingSelf.imageTask = task }
+            },
             progressiveImageSetter: { self.base.image = $0 },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in

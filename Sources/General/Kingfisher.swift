@@ -55,7 +55,7 @@ import WatchKit
 
 /// Wrapper for Kingfisher compatible types. This type provides an extension point for
 /// convenience methods in Kingfisher.
-public struct KingfisherWrapper<Base> {
+public struct KingfisherWrapper<Base>: @unchecked Sendable {
     public let base: Base
     public init(_ base: Base) {
         self.base = base

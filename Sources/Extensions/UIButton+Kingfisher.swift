@@ -137,7 +137,9 @@ extension KingfisherWrapper where Base: UIButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in mutatingSelf.imageTask = task }
+            },
             progressiveImageSetter: { self.base.setImage($0, for: state) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier(for: state) },
             completionHandler: { result in
@@ -290,7 +292,11 @@ extension KingfisherWrapper where Base: UIButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.backgroundImageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in
+                    mutatingSelf.backgroundImageTask = task
+                }
+            },
             progressiveImageSetter: { self.base.setBackgroundImage($0, for: state) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.backgroundTaskIdentifier(for: state) },
             completionHandler: { result in

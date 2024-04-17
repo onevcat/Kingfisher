@@ -98,7 +98,7 @@ public struct PropagationError: Sendable {
 /// The `newTask` parameter represents the updated task for the image loading process. It is `nil` if the image loading
 /// doesn't involve a downloading process. When an image download is initiated, this value will contain the actual
 /// ``DownloadTask`` instance, allowing you to retain it or cancel it later if necessary.
-public typealias DownloadTaskUpdatedBlock = ((_ newTask: DownloadTask?) -> Void)
+public typealias DownloadTaskUpdatedBlock = (@Sendable (_ newTask: DownloadTask?) -> Void)
 
 /// The main manager class of Kingfisher. It connects the Kingfisher downloader and cache to offer a set of convenient 
 /// methods for working with Kingfisher tasks.
@@ -198,7 +198,7 @@ public class KingfisherManager: @unchecked Sendable {
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         return retrieveImage(
             with: resource.convertToSource(),
@@ -300,7 +300,6 @@ public class KingfisherManager: @unchecked Sendable {
         }
         
         let retrievingContext = RetrievingContext(options: options, originalSource: source)
-        var retryContext: RetryContext?
 
         @Sendable func startNewRetrieveTask(
             with source: Source,

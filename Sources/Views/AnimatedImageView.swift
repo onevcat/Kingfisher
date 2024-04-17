@@ -539,8 +539,9 @@ extension AnimatedImageView {
 
     // MARK: - Animator
 
+    // TODO: Check the thread-safety of `Animator` for Sendable again.
     /// An animator which is used to drive the data behind ``AnimatedImageView``.
-    public class Animator {
+    public class Animator: @unchecked Sendable {
         private let size: CGSize
 
         private let imageSize: CGSize

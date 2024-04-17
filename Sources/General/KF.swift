@@ -103,16 +103,31 @@ public enum KF {
 extension KF {
 
     /// A builder class to configure an image retrieving task and set it to a holder view or component.
-    public class Builder {
+    public class Builder: @unchecked Sendable {
+        
+        private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.KF.Builder.propertyQueue")
+        
         private let source: Source?
 
         #if os(watchOS)
-        private var placeholder: KFCrossPlatformImage?
+        private var _placeholder: KFCrossPlatformImage?
+        private var placeholder: KFCrossPlatformImage? {
+            get { propertyQueue.sync { _placeholder } }
+            set { propertyQueue.sync { _placeholder = newValue } }
+        }
         #else
-        private var placeholder: Placeholder?
+        private var _placeholder: Placeholder?
+        private var placeholder: Placeholder? {
+            get { propertyQueue.sync { _placeholder } }
+            set { propertyQueue.sync { _placeholder = newValue } }
+        }
         #endif
 
-        public var options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
+        private var _options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions)
+        public var options: KingfisherParsedOptionsInfo {
+            get { propertyQueue.sync { _options } }
+            set { propertyQueue.sync { _options = newValue } }
+        }
 
         public let onFailureDelegate = Delegate<KingfisherError, Void>()
         public let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
@@ -122,7 +137,7 @@ extension KF {
             self.source = source
         }
 
-        private var resultHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? {
+        private var resultHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? {
             {
                 switch $0 {
                 case .success(let result):
@@ -165,7 +180,9 @@ extension KF.Builder {
     /// - Returns: A task represents the image downloading, if initialized.
     ///            This value is `nil` if the image is being loaded from cache.
     @discardableResult
-    public func set(to attachment: NSTextAttachment, attributedView: @autoclosure @escaping () -> KFCrossPlatformView) -> DownloadTask? {
+    public func set(
+        to attachment: NSTextAttachment,
+        attributedView: @autoclosure @escaping @Sendable () -> KFCrossPlatformView) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
         return attachment.kf.setImage(
             with: source,

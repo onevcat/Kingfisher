@@ -159,7 +159,9 @@ extension KingfisherWrapper where Base: CPListItem {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in mutatingSelf.imageTask = task }
+            },
             progressiveImageSetter: { image in
                 /**
                  * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5

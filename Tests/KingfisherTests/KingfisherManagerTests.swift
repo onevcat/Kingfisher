@@ -1047,17 +1047,21 @@ class KingfisherManagerTests: XCTestCase {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let dataStub = delayedStub(url, data: testImageData)
+        
+        let called = ActorBox(false)
 
         let brokenURL = URL(string: "brokenurl")!
         stub(brokenURL, data: Data())
 
-        var task: DownloadTask!
-        task = manager.retrieveImage(
+        let task = manager.retrieveImage(
             with: .network(brokenURL),
             options: [.alternativeSources([.network(url)])],
             downloadTaskUpdated: { newTask in
-                task = newTask
-                task.cancel()
+                XCTAssertNotNil(newTask)
+                newTask?.cancel()
+                Task {
+                    await called.setValue(true)
+                }
             }
         )
         {
@@ -1067,9 +1071,16 @@ class KingfisherManagerTests: XCTestCase {
 
             delay(0.1) {
                 _ = dataStub.go()
-                exp.fulfill()
+                Task {
+                    let result = await called.value
+                    XCTAssertTrue(result)
+                    exp.fulfill()
+                }
             }
         }
+        
+        XCTAssertNotNil(task)
+        XCTAssertTrue(task!.isInitialized)
 
         waitForExpectations(timeout: 1, handler: nil)
     }
@@ -1186,18 +1197,30 @@ class KingfisherManagerTests: XCTestCase {
         
         stub(url, data: testImageData)
         
-        var task: DownloadTask?
-        var called = false
-        task = manager.retrieveImage(with: url) { result in
-            XCTAssertFalse(called)
-            XCTAssertNotNil(result.value?.image)
-            if !called {
-                called = true
-                task?.cancel()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    exp.fulfill()
+        let task = ActorBox<DownloadTask?>(nil)
+        
+        let called = ActorBox(false)
+        
+        let t: DownloadTask? = manager.retrieveImage(with: url) { result in
+            Task {
+                let calledResult = await called.value
+                XCTAssertFalse(calledResult)
+                XCTAssertNotNil(result.value?.image)
+                
+                if !calledResult {
+                    Task {
+                        await task.value?.cancel()
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        exp.fulfill()
+                    }
+                } else {
+                    XCTFail("Callback should not be invoked again.")
                 }
             }
+        }
+        Task {
+            await task.setValue(t)
         }
         waitForExpectations(timeout: 1, handler: nil)
     }

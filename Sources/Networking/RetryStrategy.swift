@@ -29,7 +29,9 @@ import Foundation
 /// Represents a retry context that could be used to determine the current retry status.
 ///
 /// The instance of this type can be shared between different retry attempts.
-public class RetryContext {
+public class RetryContext: @unchecked Sendable {
+    
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.RetryContextPropertyQueue")
 
     /// The source from which the target image should be retrieved.
     public let source: Source
@@ -37,22 +39,32 @@ public class RetryContext {
     /// The source from which the target image should be retrieved.
     public let error: KingfisherError
 
+    private var _retriedCount: Int
+    
     /// The number of retries attempted before the current retry happens.
     ///
     /// This value is `0` if the current retry is for the first time.
-    public var retriedCount: Int
+    public var retriedCount: Int {
+        get { propertyQueue.sync { _retriedCount } }
+        set { propertyQueue.sync { _retriedCount = newValue } }
+    }
+    
+    private var _userInfo: Any? = nil
 
     /// A user-set value for passing any other information during the retry. 
     ///
     /// If you choose to use ``RetryDecision/retry(userInfo:)`` as the retry decision for
     /// ``RetryStrategy/retry(context:retryHandler:)``, the associated value of ``RetryDecision/retry(userInfo:)`` will
     /// be delivered to you in the next retry.
-    public internal(set) var userInfo: Any? = nil
+    public internal(set) var userInfo: Any? {
+        get { propertyQueue.sync { _userInfo } }
+        set { propertyQueue.sync { _userInfo = newValue } }
+    }
 
     init(source: Source, error: KingfisherError) {
         self.source = source
         self.error = error
-        self.retriedCount = 0
+        _retriedCount = 0
     }
 
     @discardableResult

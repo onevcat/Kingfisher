@@ -255,7 +255,9 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     
     private func downloadAndCache(_ source: Source) {
 
-        let downloadTaskCompletionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { result in
+        let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
+            result in
+            
             self.tasks.removeValue(forKey: source.cacheKey)
             do {
                 let _ = try result.get()
