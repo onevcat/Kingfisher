@@ -46,7 +46,7 @@ public protocol ImageDataProvider: Sendable {
     /// - Note: If the `handler` is called with a `.failure` with error,
     /// a ``KingfisherError/ImageSettingErrorReason/dataProviderError(provider:error:)`` will be finally thrown out to
     /// you as the ``KingfisherError`` from the framework.
-    func data(handler: @escaping (Result<Data, Error>) -> Void)
+    func data(handler: @escaping @Sendable (Result<Data, Error>) -> Void)
 
     /// The content URL represents this provider, if exists.
     var contentURL: URL? { get }
@@ -96,7 +96,7 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
     /// The key used in cache.
     public var cacheKey: String
 
-    public func data(handler:@escaping (Result<Data, Error>) -> Void) {
+    public func data(handler: @escaping @Sendable (Result<Data, Error>) -> Void) {
         loadingQueue.execute {
             handler(Result(catching: { try Data(contentsOf: fileURL) }))
         }

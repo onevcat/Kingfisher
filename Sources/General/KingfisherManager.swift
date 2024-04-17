@@ -420,7 +420,7 @@ public class KingfisherManager: @unchecked Sendable {
     func provideImage(
         provider: ImageDataProvider,
         options: KingfisherParsedOptionsInfo,
-        completionHandler: ((Result<ImageLoadingResult, KingfisherError>) -> Void)?)
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)?)
     {
         guard let  completionHandler = completionHandler else { return }
         provider.data { result in
@@ -599,7 +599,7 @@ public class KingfisherManager: @unchecked Sendable {
                 guard let completionHandler = completionHandler else { return }
                 
                 // TODO: Optimize it when we can use async across all the project.
-                func checkResultImageAndCallback(_ inputImage: KFCrossPlatformImage) {
+                @Sendable func checkResultImageAndCallback(_ inputImage: KFCrossPlatformImage) {
                     var image = inputImage
                     if image.kf.imageFrameCount != nil && image.kf.imageFrameCount != 1, let data = image.kf.animatedImageData {
                         // Always recreate animated image representation since it is possible to be loaded in different options.

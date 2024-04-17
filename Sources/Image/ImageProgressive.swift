@@ -153,7 +153,7 @@ final class ImageProgressiveProvider: DataReceivingSideEffect, @unchecked Sendab
         guard !data.isEmpty else { return }
         queue.add(minimum: progressive.scanInterval) { completion in
 
-            func decode(_ data: Data) {
+            @Sendable func decode(_ data: Data) {
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
                     guard self.onShouldApply() else { return }
@@ -162,30 +162,25 @@ final class ImageProgressiveProvider: DataReceivingSideEffect, @unchecked Sendab
                 }
             }
             
-            let semaphore = DispatchSemaphore(value: 0)
-            var onShouldApply: Bool = false
-            
-            CallbackQueue.mainAsync.execute {
-                onShouldApply = self.onShouldApply()
-                semaphore.signal()
-            }
-            semaphore.wait()
-            guard onShouldApply else {
-                self.queue.clean()
-                completion()
-                return
-            }
+            Task { @MainActor in
+                let applyFlag = self.onShouldApply()
+                guard applyFlag else {
+                    self.queue.clean()
+                    completion()
+                    return
+                }
 
-            if self.progressive.isFastestScan {
-                decode(self.decoder.scanning(data) ?? Data())
-            } else {
-                self.decoder.scanning(data).forEach { decode($0) }
+                if self.progressive.isFastestScan {
+                    decode(self.decoder.scanning(data) ?? Data())
+                } else {
+                    self.decoder.scanning(data).forEach { decode($0) }
+                }
             }
         }
     }
 }
 
-private final class ImageProgressiveDecoder {
+private final class ImageProgressiveDecoder: @unchecked Sendable {
     
     private let option: ImageProgressive
     private let processingQueue: CallbackQueue
@@ -273,13 +268,13 @@ private final class ImageProgressiveDecoder {
     
     func decode(_ data: Data,
                 with callbacks: [SessionDataTask.TaskCallback],
-                completion: @escaping (KFCrossPlatformImage?) -> Void) {
+                completion: @escaping @Sendable (KFCrossPlatformImage?) -> Void) {
         guard data.kf.contains(jpeg: .SOF2) else {
             CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
             return
         }
         
-        func processing(_ data: Data) {
+        @Sendable func processing(_ data: Data) {
             let processor = ImageDataProcessor(
                 data: data,
                 callbacks: callbacks,
@@ -318,7 +313,7 @@ private final class ImageProgressiveDecoder {
 }
 
 private final class ImageProgressiveSerialQueue: @unchecked Sendable {
-    typealias ClosureCallback = @Sendable ((@escaping () -> Void)) -> Void
+    typealias ClosureCallback = @Sendable ((@escaping @Sendable () -> Void)) -> Void
     
     private let queue: DispatchQueue
     private var items: [DispatchWorkItem] = []

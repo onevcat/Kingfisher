@@ -33,6 +33,7 @@ extension KFImage {
 
     /// Represents a binder for `KFImage`. It takes responsibility as an `ObjectBinding` and performs
     /// image downloading and progress reporting based on `KingfisherManager`.
+    @MainActor
     class ImageBinder: ObservableObject {
         
         init() {}
@@ -66,7 +67,7 @@ extension KFImage {
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
             guard let source = context.source else {
-                CallbackQueue.mainCurrentOrAsync.execute {
+                CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
                     if let image = context.options.onFailureImage {
                         self.loadedImage = image
@@ -90,16 +91,16 @@ extension KFImage {
                     },
                     completionHandler: { [weak self] result in
 
-                        guard let self = self else { return }
+                        guard let self else { return }
 
-                        CallbackQueue.mainCurrentOrAsync.execute {
+                        CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
                             self.downloadTask = nil
                             self.loading = false
                         }
                         
                         switch result {
                         case .success(let value):
-                            CallbackQueue.mainCurrentOrAsync.execute {
+                            CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
                                 if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
                                     let animation = Animation.linear(duration: fadeDuration)
@@ -114,18 +115,18 @@ extension KFImage {
                                 self.animating = false
                             }
 
-                            CallbackQueue.mainAsync.execute {
+                            CallbackQueue.mainAsync.execute {  @MainActor in
                                 context.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
-                            CallbackQueue.mainCurrentOrAsync.execute {
+                            CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
                                 if let image = context.options.onFailureImage {
                                     self.loadedImage = image
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }
                             
-                            CallbackQueue.mainAsync.execute {
+                            CallbackQueue.mainAsync.execute { @MainActor in
                                 context.onFailureDelegate.call(error)
                             }
                         }

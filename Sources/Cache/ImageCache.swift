@@ -72,7 +72,7 @@ public enum CacheType: Sendable {
 }
 
 /// Represents the result of the caching operation.
-public struct CacheStoreResult {
+public struct CacheStoreResult: Sendable {
     
     /// The caching result for memory cache.
     ///
@@ -109,7 +109,7 @@ extension Data: DataTransformable {
 
 
 /// Represents the result of the operation to retrieve an image from the cache.
-public enum ImageCacheResult {
+public enum ImageCacheResult: Sendable {
     
     /// The image can be retrieved from the disk cache.
     case disk(KFCrossPlatformImage)
@@ -458,7 +458,7 @@ open class ImageCache: @unchecked Sendable {
         callbackQueue: CallbackQueue = .untouch,
         expiration: StorageExpiration? = nil,
         writeOptions: Data.WritingOptions = [],
-        completionHandler: ((CacheStoreResult) -> Void)? = nil)
+        completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
         let result: CacheStoreResult
@@ -680,7 +680,7 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: @escaping (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
     {
         let computedKey = key.computedKey(with: options.processor.identifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
@@ -714,7 +714,7 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherOptionsInfo? = nil,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: @escaping (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
     {
         retrieveImageInDiskCache(
             forKey: key,
@@ -1126,8 +1126,10 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherOptionsInfo? = nil
     ) async throws -> KFCrossPlatformImage? {
-        try await withCheckedThrowingContinuation {
-            retrieveImageInDiskCache(forKey: key, options: options, completionHandler: $0.resume)
+        try await withCheckedThrowingContinuation { continuation in
+            retrieveImageInDiskCache(forKey: key, options: options) {
+                continuation.resume(with: $0)
+            }
         }
     }
     
