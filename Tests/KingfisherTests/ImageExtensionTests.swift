@@ -330,10 +330,13 @@ class ImageExtensionTests: XCTestCase {
     }
 
     func testDownsamplingWithEdgeCaseSize() {
-
-        // Zero size would fail downsampling.
-        let nilImage = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: .zero, scale: 1)
-        XCTAssertNil(nilImage)
+        // Zero size would fail downsampling before iOS 17,4.
+        let result = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: .zero, scale: 1)
+        if #available(iOS 17.4, macOS 14.4, tvOS 17.4, *) {
+            XCTAssertEqual(result?.size, CGSize(width: 64, height: 64))
+        } else {
+            XCTAssertNil(result)
+        }
 
         let largerSize = CGSize(width: 100, height: 100)
         let largerImage = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: largerSize, scale: 1)
