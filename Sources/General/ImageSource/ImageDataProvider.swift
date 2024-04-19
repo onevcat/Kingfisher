@@ -172,7 +172,7 @@ public struct RawImageDataProvider: ImageDataProvider {
     /// Creates an image data provider by the given raw `data` value and a `cacheKey` be used in Kingfisher cache.
     ///
     /// - Parameters:
-    ///   - data: The raw data reprensents an image.
+    ///   - data: The raw data represents an image.
     ///   - cacheKey: The key is used for caching the image data. You need a different key for any different image.
     public init(data: Data, cacheKey: String) {
         self.data = data

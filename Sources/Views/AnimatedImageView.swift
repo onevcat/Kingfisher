@@ -1,10 +1,10 @@
 //
-//  AnimatableImageView.swift
+//  AnimatedImageView.swift
 //  Kingfisher
 //
 //  Created by bl4ckra1sond3tre on 4/22/16.
 //
-//  The AnimatableImageView, AnimatedFrame and Animator is a modified version of 
+//  The AnimatedImageView, AnimatedFrame and Animator is a modified version of 
 //  some classes from kaishin's Gifu project (https://github.com/kaishin/Gifu)
 //
 //  The MIT License (MIT)

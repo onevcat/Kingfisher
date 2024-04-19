@@ -548,7 +548,7 @@ open class ImageCache {
     ///                        will be sent to this closure as result. Otherwise, a `KingfisherError` result
     ///                        with detail failing reason will be sent.
     ///
-    /// Note: This method is marked as `open` for only compatible purpose. Do not overide this method. Instead, override
+    /// Note: This method is marked as `open` for only compatible purpose. Do not override this method. Instead, override
     ///       the version receives `KingfisherParsedOptionsInfo` instead.
     open func retrieveImage(forKey key: String,
                                options: KingfisherOptionsInfo? = nil,
@@ -585,7 +585,7 @@ open class ImageCache {
     /// - Returns: The image stored in memory cache, if exists and valid. Otherwise, if the image does not exist or
     ///            has already expired, `nil` is returned.
     ///
-    /// Note: This method is marked as `open` for only compatible purpose. Do not overide this method. Instead, override
+    /// Note: This method is marked as `open` for only compatible purpose. Do not override this method. Instead, override
     ///       the version receives `KingfisherParsedOptionsInfo` instead.
     open func retrieveImageInMemoryCache(
         forKey key: String,
