@@ -326,7 +326,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             progressiveImageSetter: { self.base.image = $0 },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                CallbackQueueMain.currentOrAsync {
                     maybeIndicator?.stopAnimatingView()
                     guard issuedIdentifier == self.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason

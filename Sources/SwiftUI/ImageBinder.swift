@@ -67,7 +67,7 @@ extension KFImage {
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
             guard let source = context.source else {
-                CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                CallbackQueueMain.currentOrAsync {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
                     if let image = context.options.onFailureImage {
                         self.loadedImage = image
@@ -93,14 +93,14 @@ extension KFImage {
 
                         guard let self else { return }
 
-                        CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                        CallbackQueueMain.currentOrAsync {
                             self.downloadTask = nil
                             self.loading = false
                         }
                         
                         switch result {
                         case .success(let value):
-                            CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                            CallbackQueueMain.currentOrAsync {
                                 if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
                                     let animation = Animation.linear(duration: fadeDuration)
@@ -115,18 +115,18 @@ extension KFImage {
                                 self.animating = false
                             }
 
-                            CallbackQueue.mainAsync.execute {  @MainActor in
+                            CallbackQueueMain.async {
                                 context.onSuccessDelegate.call(value)
                             }
                         case .failure(let error):
-                            CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                            CallbackQueueMain.currentOrAsync {
                                 if let image = context.options.onFailureImage {
                                     self.loadedImage = image
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }
                             
-                            CallbackQueue.mainAsync.execute { @MainActor in
+                            CallbackQueueMain.async {
                                 context.onFailureDelegate.call(error)
                             }
                         }

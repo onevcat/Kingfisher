@@ -180,7 +180,7 @@ extension KingfisherWrapper where Base: CPListItem {
             },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {

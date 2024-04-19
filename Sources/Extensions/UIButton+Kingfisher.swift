@@ -143,7 +143,7 @@ extension KingfisherWrapper where Base: UIButton {
             progressiveImageSetter: { self.base.setImage($0, for: state) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier(for: state) },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.taskIdentifier(for: state) else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
@@ -300,7 +300,7 @@ extension KingfisherWrapper where Base: UIButton {
             progressiveImageSetter: { self.base.setBackgroundImage($0, for: state) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.backgroundTaskIdentifier(for: state) },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute { @MainActor in
+                CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.backgroundTaskIdentifier(for: state) else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
