@@ -359,7 +359,7 @@ public enum KingfisherOptionsInfoItem: Sendable {
 /// Each property in this type corresponds to a case member in ``KingfisherOptionsInfoItem``. When a
 ///  ``KingfisherOptionsInfo`` is sent to Kingfisher-related methods, it will be parsed and converted to a
 ///  ``KingfisherParsedOptionsInfo`` first before passing through the internal methods.
-public struct KingfisherParsedOptionsInfo: @unchecked Sendable {
+public struct KingfisherParsedOptionsInfo: Sendable {
 
     public var targetCache: ImageCache? = nil
     public var originalCache: ImageCache? = nil
@@ -459,7 +459,7 @@ extension KingfisherParsedOptionsInfo {
     }
 }
 
-protocol DataReceivingSideEffect: AnyObject {
+protocol DataReceivingSideEffect: AnyObject, Sendable {
     var onShouldApply: () -> Bool { get set }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
 }
