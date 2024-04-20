@@ -38,7 +38,7 @@ import Foundation
 /// If you do not make any changes to the input `request` and return it as is, the downloading process will redirect
 /// using it.
 ///
-public protocol ImageDownloadRedirectHandler {
+public protocol ImageDownloadRedirectHandler: Sendable {
 
     /// Called when a redirect is received and the downloader waiting for the request to continue the download task.
     ///
@@ -59,7 +59,7 @@ public protocol ImageDownloadRedirectHandler {
 /// This type conforms to ``ImageDownloadRedirectHandler`` and wraps an image modification block.
 public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
-    let block: (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void
+    let block: @Sendable (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void
     
     public func handleHTTPRedirection(
         for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest
@@ -74,7 +74,7 @@ public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     /// Creates a value of ``ImageDownloadRedirectHandler`` that executes the `modify` block.
     ///
     /// - Parameter modify: The block that modifies the request when a request modification task is triggered.
-    public init(handle: @escaping (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
+    public init(handle: @escaping @Sendable (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
         block = handle
     }
     

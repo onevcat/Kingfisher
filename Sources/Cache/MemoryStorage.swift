@@ -51,7 +51,7 @@ public enum MemoryStorage {
     /// The `MemoryStorage` also includes a scheduled self-cleaning task to evict expired items from memory.
     ///
     /// > This class is thready safe.
-    public class Backend<T: CacheCostCalculable> {
+    public class Backend<T: CacheCostCalculable>: @unchecked Sendable {
         
         let storage = NSCache<NSString, StorageObject<T>>()
 

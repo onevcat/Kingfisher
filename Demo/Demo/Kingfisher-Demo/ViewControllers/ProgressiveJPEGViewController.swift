@@ -84,7 +84,7 @@ class ProgressiveJPEGViewController: UIViewController {
                 processorIdentifier: self.processor.identifier,
                 callbackQueue: .mainAsync,
                 completionHandler: {
-                    self.loadImage()
+                    Task { @MainActor in self.loadImage() }
                 }
             )
         }

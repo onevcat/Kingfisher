@@ -68,11 +68,22 @@ import Foundation
 ///     }
 /// }
 ///
-public class Delegate<Input, Output> {
+public class Delegate<Input, Output>: @unchecked Sendable {
     public init() {}
 
-    private var block: ((Input) -> Output?)?
-    private var asyncBlock: ((Input) async -> Output?)?
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.DelegateQueue")
+    
+    private var _block: ((Input) -> Output?)?
+    private var block: ((Input) -> Output?)? {
+        get { propertyQueue.sync { _block } }
+        set { propertyQueue.sync { _block = newValue } }
+    }
+    
+    private var _asyncBlock: ((Input) async -> Output?)?
+    private var asyncBlock: ((Input) async -> Output?)? {
+        get { propertyQueue.sync { _asyncBlock } }
+        set { propertyQueue.sync { _asyncBlock = newValue } }
+    }
     
     public func delegate<T: AnyObject>(on target: T, block: ((T, Input) -> Output)?) {
         self.block = { [weak target] input in

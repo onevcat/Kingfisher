@@ -34,6 +34,9 @@ public typealias KFCrossPlatformView        = NSView
 public typealias KFCrossPlatformColor       = NSColor
 public typealias KFCrossPlatformImageView   = NSImageView
 public typealias KFCrossPlatformButton      = NSButton
+
+// `NSImage` is not yet Sendable. We have to assume it sendable to resolve warnings in Kingfisher.
+extension KFCrossPlatformImage: @unchecked Sendable { }
 #else // os(macOS)
 import UIKit
 public typealias KFCrossPlatformImage       = UIImage
@@ -55,7 +58,7 @@ import WatchKit
 
 /// Wrapper for Kingfisher compatible types. This type provides an extension point for
 /// convenience methods in Kingfisher.
-public struct KingfisherWrapper<Base> {
+public struct KingfisherWrapper<Base>: @unchecked Sendable {
     public let base: Base
     public init(_ base: Base) {
         self.base = base

@@ -312,11 +312,16 @@ class ImageCacheTests: XCTestCase {
   
     func testCachedImageIsFetchedSynchronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false)
-        var foundImage: KFCrossPlatformImage?
+        let foundImage = ActorBox<KFCrossPlatformImage?>(nil)
         cache.retrieveImage(forKey: testKeys[0]) { result in
-            foundImage = result.value?.image
+            Task {
+                await foundImage.setValue(result.value?.image)
+            }
         }
-        XCTAssertEqual(testImage, foundImage)
+        Task {
+            let value = await foundImage.value
+            XCTAssertEqual(testImage, value)
+        }
     }
     
     func testCachedImageIsFetchedSynchronouslyFromTheMemoryCacheAsync() async throws {
@@ -469,14 +474,14 @@ class ImageCacheTests: XCTestCase {
             cacheType = self.cache.imageCachedType(forKey: key)
             XCTAssertEqual(cacheType, .disk)
             
-            var dispatched = false
+            let dispatched = LockIsolated(false)
             self.cache.retrieveImageInDiskCache(forKey: key, options:  [.loadDiskFileSynchronously]) {
                 result in
-                XCTAssertFalse(dispatched)
+                XCTAssertFalse(dispatched.value)
                 exp.fulfill()
             }
             // This should be called after the completion handler above.
-            dispatched = true
+            dispatched.setValue(true)
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -492,14 +497,14 @@ class ImageCacheTests: XCTestCase {
             cacheType = self.cache.imageCachedType(forKey: key)
             XCTAssertEqual(cacheType, .disk)
             
-            var dispatched = false
+            let dispatched = LockIsolated(false)
             self.cache.retrieveImageInDiskCache(forKey: key, options: nil) {
                 result in
-                XCTAssertTrue(dispatched)
+                XCTAssertTrue(dispatched.value)
                 exp.fulfill()
             }
             // This should be called before the completion handler above.
-            dispatched = true
+            dispatched.setValue(true)
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -508,18 +513,24 @@ class ImageCacheTests: XCTestCase {
     func testModifierShouldOnlyApplyForFinalResultWhenMemoryLoad() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
-
-        var modifierCalled = false
+        
+        let modifierCalled = ActorBox(false)
         let modifier = AnyImageModifier { image in
-            modifierCalled = true
+            Task {
+                await modifierCalled.setValue(true)
+            }
             return image.withRenderingMode(.alwaysTemplate)
         }
-
+        
         cache.store(testImage, original: testImageData, forKey: key) { _ in
             self.cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)]) { result in
-                XCTAssertFalse(modifierCalled)
                 XCTAssertEqual(result.value?.image?.renderingMode, .automatic)
-                exp.fulfill()
+                Task {
+                    let called = await modifierCalled.value
+                    XCTAssertFalse(called)
+                    exp.fulfill()
+                    
+                }
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -528,15 +539,18 @@ class ImageCacheTests: XCTestCase {
     func testModifierShouldOnlyApplyForFinalResultWhenMemoryLoadAsync() async throws {
         let key = testKeys[0]
 
-        var modifierCalled = false
+        let modifierCalled = ActorBox(false)
         let modifier = AnyImageModifier { image in
-            modifierCalled = true
+            Task {
+                await modifierCalled.setValue(true)
+            }
             return image.withRenderingMode(.alwaysTemplate)
         }
 
         try await cache.store(testImage, original: testImageData, forKey: key)
         let result = try await cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)])
-        XCTAssertFalse(modifierCalled)
+        let called = await modifierCalled.value
+        XCTAssertFalse(called)
         XCTAssertEqual(result.image?.renderingMode, .automatic)
     }
 
@@ -544,18 +558,23 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
 
-        var modifierCalled = false
+        let modifierCalled = ActorBox(false)
         let modifier = AnyImageModifier { image in
-            modifierCalled = true
+            Task {
+                await modifierCalled.setValue(true)
+            }
             return image.withRenderingMode(.alwaysTemplate)
         }
 
         cache.store(testImage, original: testImageData, forKey: key) { _ in
             self.cache.clearMemoryCache()
             self.cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)]) { result in
-                XCTAssertFalse(modifierCalled)
                 XCTAssertEqual(result.value?.image?.renderingMode, .automatic)
-                exp.fulfill()
+                Task {
+                    let called = await modifierCalled.value
+                    XCTAssertFalse(called)
+                    exp.fulfill()
+                }
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -563,16 +582,19 @@ class ImageCacheTests: XCTestCase {
     
     func testModifierShouldOnlyApplyForFinalResultWhenDiskLoadAsync() async throws {
         let key = testKeys[0]
-        var modifierCalled = false
+        let modifierCalled = ActorBox(false)
         let modifier = AnyImageModifier { image in
-            modifierCalled = true
+            Task {
+                await modifierCalled.setValue(true)
+            }
             return image.withRenderingMode(.alwaysTemplate)
         }
         
         try await cache.store(testImage, original: testImageData, forKey: key)
         cache.clearMemoryCache()
         let result = try await cache.retrieveImage(forKey: key, options: [.imageModifier(modifier)])
-        XCTAssertFalse(modifierCalled)
+        let called = await modifierCalled.value
+        XCTAssertFalse(called)
         // The renderingMode is expected to be the default value `.automatic`. The image modifier should only apply to
         // the image manager result.
         XCTAssertEqual(result.image?.renderingMode, .automatic)
@@ -760,4 +782,102 @@ class ImageCacheTests: XCTestCase {
             storeMultipleImages($0.resume)
         }
     }
+}
+
+@dynamicMemberLookup
+public final class LockIsolated<Value>: @unchecked Sendable {
+  private var _value: Value
+  private let lock = NSRecursiveLock()
+
+  /// Initializes lock-isolated state around a value.
+  ///
+  /// - Parameter value: A value to isolate with a lock.
+  public init(_ value: @autoclosure @Sendable () throws -> Value) rethrows {
+    self._value = try value()
+  }
+
+  public subscript<Subject: Sendable>(dynamicMember keyPath: KeyPath<Value, Subject>) -> Subject {
+    self.lock.sync {
+      self._value[keyPath: keyPath]
+    }
+  }
+
+  /// Perform an operation with isolated access to the underlying value.
+  ///
+  /// Useful for modifying a value in a single transaction.
+  ///
+  /// ```swift
+  /// // Isolate an integer for concurrent read/write access:
+  /// var count = LockIsolated(0)
+  ///
+  /// func increment() {
+  ///   // Safely increment it:
+  ///   self.count.withValue { $0 += 1 }
+  /// }
+  /// ```
+  ///
+  /// - Parameter operation: An operation to be performed on the the underlying value with a lock.
+  /// - Returns: The result of the operation.
+  public func withValue<T: Sendable>(
+    _ operation: @Sendable (inout Value) throws -> T
+  ) rethrows -> T {
+    try self.lock.sync {
+      var value = self._value
+      defer { self._value = value }
+      return try operation(&value)
+    }
+  }
+
+  /// Overwrite the isolated value with a new value.
+  ///
+  /// ```swift
+  /// // Isolate an integer for concurrent read/write access:
+  /// var count = LockIsolated(0)
+  ///
+  /// func reset() {
+  ///   // Reset it:
+  ///   self.count.setValue(0)
+  /// }
+  /// ```
+  ///
+  /// > Tip: Use ``withValue(_:)`` instead of ``setValue(_:)`` if the value being set is derived
+  /// > from the current value. That is, do this:
+  /// >
+  /// > ```swift
+  /// > self.count.withValue { $0 += 1 }
+  /// > ```
+  /// >
+  /// > ...and not this:
+  /// >
+  /// > ```swift
+  /// > self.count.setValue(self.count + 1)
+  /// > ```
+  /// >
+  /// > ``withValue(_:)`` isolates the entire transaction and avoids data races between reading and
+  /// > writing the value.
+  ///
+  /// - Parameter newValue: The value to replace the current isolated value with.
+  public func setValue(_ newValue: @autoclosure @Sendable () throws -> Value) rethrows {
+    try self.lock.sync {
+      self._value = try newValue()
+    }
+  }
+}
+
+extension LockIsolated where Value: Sendable {
+  /// The lock-isolated value.
+  public var value: Value {
+    self.lock.sync {
+      self._value
+    }
+  }
+}
+
+extension NSRecursiveLock {
+  @inlinable @discardableResult
+  @_spi(Internals) public func sync<R>(work: () throws -> R) rethrows -> R {
+    self.lock()
+    defer { self.unlock() }
+    return try work()
+  }
 }

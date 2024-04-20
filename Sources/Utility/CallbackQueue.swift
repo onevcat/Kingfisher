@@ -46,12 +46,12 @@ public enum CallbackQueue: Sendable {
     
     /// Executes the `block` in a dispatch queue defined by `self`.
     /// - Parameter block: The block needs to be executed.
-    public func execute(_ block: @escaping () -> Void) {
+    public func execute(_ block: @Sendable @escaping () -> Void) {
         switch self {
         case .mainAsync:
-            DispatchQueue.main.async { block() }
+            CallbackQueueMain.async { block() }
         case .mainCurrentOrAsync:
-            DispatchQueue.main.safeAsync { block() }
+            CallbackQueueMain.currentOrAsync { block() }
         case .untouch:
             block()
         case .dispatch(let queue):
@@ -69,15 +69,16 @@ public enum CallbackQueue: Sendable {
     }
 }
 
-extension DispatchQueue {
-    // This method will dispatch the `block` to self.
-    // If `self` is the main queue, and current thread is main thread, the block
-    // will be invoked immediately instead of being dispatched.
-    func safeAsync(_ block: @escaping () -> Void) {
-        if self === DispatchQueue.main && Thread.isMainThread {
-            block()
+enum CallbackQueueMain {
+    static func currentOrAsync(_ block: @MainActor @Sendable @escaping () -> Void) {
+        if Thread.isMainThread {
+            MainActor.assumeIsolated { block() }
         } else {
-            async { block() }
+            DispatchQueue.main.async { block() }
         }
+    }
+    
+    static func async(_ block: @MainActor @Sendable @escaping () -> Void) {
+        DispatchQueue.main.async { block() }
     }
 }

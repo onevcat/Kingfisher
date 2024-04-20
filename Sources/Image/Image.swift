@@ -27,8 +27,8 @@
 
 #if os(macOS)
 import AppKit
-private var imagesKey: Void?
-private var durationKey: Void?
+private let imagesKey = malloc(1)!
+private let durationKey = malloc(1)!
 #else
 import UIKit
 import MobileCoreServices
@@ -45,20 +45,20 @@ import ImageIO
 import UniformTypeIdentifiers
 #endif
 
-private var animatedImageDataKey: Void?
-private var imageFrameCountKey: Void?
-private var imageSourceKey: Void?
+private let animatedImageDataKey = malloc(1)!
+private let imageFrameCountKey = malloc(1)!
+private let imageSourceKey = malloc(1)!
 
 // MARK: - Image Properties
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
     private(set) var animatedImageData: Data? {
-        get { return getAssociatedObject(base, &animatedImageDataKey) }
-        set { setRetainedAssociatedObject(base, &animatedImageDataKey, newValue) }
+        get { return getAssociatedObject(base, animatedImageDataKey) }
+        set { setRetainedAssociatedObject(base, animatedImageDataKey, newValue) }
     }
     
     public var imageFrameCount: Int? {
-        get { return getAssociatedObject(base, &imageFrameCountKey) }
-        set { setRetainedAssociatedObject(base, &imageFrameCountKey, newValue) }
+        get { return getAssociatedObject(base, imageFrameCountKey) }
+        set { setRetainedAssociatedObject(base, imageFrameCountKey, newValue) }
     }
     
     #if os(macOS)
@@ -71,13 +71,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
     
     private(set) var images: [KFCrossPlatformImage]? {
-        get { return getAssociatedObject(base, &imagesKey) }
-        set { setRetainedAssociatedObject(base, &imagesKey, newValue) }
+        get { return getAssociatedObject(base, imagesKey) }
+        set { setRetainedAssociatedObject(base, imagesKey, newValue) }
     }
     
     private(set) var duration: TimeInterval {
-        get { return getAssociatedObject(base, &durationKey) ?? 0.0 }
-        set { setRetainedAssociatedObject(base, &durationKey, newValue) }
+        get { return getAssociatedObject(base, durationKey) ?? 0.0 }
+        set { setRetainedAssociatedObject(base, durationKey, newValue) }
     }
     
     var size: CGSize {
@@ -105,8 +105,8 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     
     /// The custom frame source for the current image.
     public private(set) var frameSource: ImageFrameSource? {
-        get { return getAssociatedObject(base, &imageSourceKey) }
-        set { setRetainedAssociatedObject(base, &imageSourceKey, newValue) }
+        get { return getAssociatedObject(base, imageSourceKey) }
+        set { setRetainedAssociatedObject(base, imageSourceKey, newValue) }
     }
 
     // Bitmap memory cost with bytes.
