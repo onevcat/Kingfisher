@@ -27,8 +27,8 @@
 
 #if os(macOS)
 import AppKit
-private var imagesKey: Void?
-private var durationKey: Void?
+private let imagesKey = malloc(1)!
+private let durationKey = malloc(1)!
 #else
 import UIKit
 import MobileCoreServices
@@ -71,13 +71,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
     
     private(set) var images: [KFCrossPlatformImage]? {
-        get { return getAssociatedObject(base, &imagesKey) }
-        set { setRetainedAssociatedObject(base, &imagesKey, newValue) }
+        get { return getAssociatedObject(base, imagesKey) }
+        set { setRetainedAssociatedObject(base, imagesKey, newValue) }
     }
     
     private(set) var duration: TimeInterval {
-        get { return getAssociatedObject(base, &durationKey) ?? 0.0 }
-        set { setRetainedAssociatedObject(base, &durationKey, newValue) }
+        get { return getAssociatedObject(base, durationKey) ?? 0.0 }
+        set { setRetainedAssociatedObject(base, durationKey, newValue) }
     }
     
     var size: CGSize {

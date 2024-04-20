@@ -34,6 +34,9 @@ public typealias KFCrossPlatformView        = NSView
 public typealias KFCrossPlatformColor       = NSColor
 public typealias KFCrossPlatformImageView   = NSImageView
 public typealias KFCrossPlatformButton      = NSButton
+
+// `NSImage` is not yet Sendable. We have to assume it sendable to resolve warnings in Kingfisher.
+extension KFCrossPlatformImage: @unchecked Sendable { }
 #else // os(macOS)
 import UIKit
 public typealias KFCrossPlatformImage       = UIImage

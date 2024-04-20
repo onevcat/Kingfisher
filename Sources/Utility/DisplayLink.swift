@@ -76,19 +76,27 @@ extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {
 }
 #endif
 
-final class DisplayLink: DisplayLinkCompatible {
+final class DisplayLink: DisplayLinkCompatible, @unchecked Sendable {
     private var link: CVDisplayLink?
     private var target: Any?
     private var selector: Selector?
     
     private var schedulers: [RunLoop: [RunLoop.Mode]] = [:]
     
+    var preferredFramesPerSecond: NSInteger = 0
+    var timestamp: CFTimeInterval = 0
+    var duration: CFTimeInterval = 0
+    
     init(target: Any, selector: Selector) {
         self.target = target
         self.selector = selector
         CVDisplayLinkCreateWithActiveCGDisplays(&link)
         if let link = link {
-            CVDisplayLinkSetOutputHandler(link, displayLinkCallback(_:inNow:inOutputTime:flagsIn:flagsOut:))
+            CVDisplayLinkSetOutputHandler(link) { displayLink, inNow, inOutputTime, flagsIn, flagsOut in
+                self.displayLinkCallback(
+                    displayLink, inNow: inNow, inOutputTime: inOutputTime, flagsIn: flagsIn, flagsOut: flagsOut
+                )
+            }
         }
     }
     
@@ -132,10 +140,6 @@ final class DisplayLink: DisplayLinkCompatible {
             }
         }
     }
-    
-    var preferredFramesPerSecond: NSInteger = 0
-    var timestamp: CFTimeInterval = 0
-    var duration: CFTimeInterval = 0
     
     func add(to runLoop: RunLoop, forMode mode: RunLoop.Mode) {
         assert(runLoop == .main)
