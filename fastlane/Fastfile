@@ -6,17 +6,17 @@ default_platform :ios
 platform :ios do
   desc "Runs all the tests"
   lane :tests do
-    test(destination: "platform=macOS", swift_version: "5.0")
-    test(destination: "platform=iOS Simulator,name=iPhone 14", swift_version: "5.0")
-    test(destination: "platform=tvOS Simulator,name=Apple TV", swift_version: "5.0")
-    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 8 (41mm)", swift_version: "5.0")
+    test(destination: "platform=macOS")
+    test(destination: "platform=iOS Simulator,name=iPhone 14")
+    test(destination: "platform=tvOS Simulator,name=Apple TV")
+    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 8 (41mm)")
   end
     
   lane :test_ci do
     if ENV["DESTINATION"].include? "watchOS" then
-        build(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
+        build(destination: ENV["DESTINATION"])
     else
-        test(destination: ENV["DESTINATION"], swift_version: ENV["SWIFT_VERSION"])
+        test(destination: ENV["DESTINATION"])
     end
   end
 
@@ -24,7 +24,6 @@ platform :ios do
     scan(
       scheme: "Kingfisher", 
       clean: true, 
-      xcargs: "SWIFT_VERSION=#{options[:swift_version]}",
       destination: options[:destination]
     )
   end
@@ -34,7 +33,6 @@ platform :ios do
       workspace: "Kingfisher.xcworkspace",
       configuration: "Debug",
       scheme: "Kingfisher",
-      xcargs: "SWIFT_VERSION=#{options[:swift_version]}",
       destination: options[:destination]
     )
   end
