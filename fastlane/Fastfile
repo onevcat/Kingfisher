@@ -130,7 +130,8 @@ platform :ios do
   end
 
   before_all do |lane|
-    xcodes(version: "15.2", select_for_current_build_only: true)
+    xcode_version = ENV["XCODE_VERSION"] || "15.3"
+    xcodes(version: xcode_version, select_for_current_build_only: true)
   end
 
   after_all do |lane|
