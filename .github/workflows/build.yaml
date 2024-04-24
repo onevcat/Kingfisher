@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   run-test:
-    runs-on: macos-14
+    runs-on: self-hosted
     strategy:
       matrix:
         destination: [
