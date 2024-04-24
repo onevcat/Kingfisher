@@ -13,6 +13,10 @@ jobs:
           'tvOS Simulator,name=Apple TV', 
           'watchOS Simulator,name=Apple Watch Series 8 (41mm)'
         ]
+        xcode: [
+          '15.2',
+          '15.3'
+        ]
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -22,4 +26,5 @@ jobs:
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
+          XCODE_VERSION: ${{ matrix.xcode }}
         run: bundle exec fastlane test_ci
