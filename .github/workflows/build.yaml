@@ -18,6 +18,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          self-hosted: true
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
