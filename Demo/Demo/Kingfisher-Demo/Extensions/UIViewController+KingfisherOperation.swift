@@ -27,8 +27,8 @@
 import UIKit
 import Kingfisher
 
-protocol MainDataViewReloadable {
-    func reload()
+protocol MainDataViewReloadable: Sendable {
+    @MainActor func reload()
 }
 
 extension UITableViewController: MainDataViewReloadable {
@@ -44,25 +44,26 @@ extension UICollectionViewController: MainDataViewReloadable {
 }
 
 protocol KingfisherActionAlertPopup {
+    @MainActor
     func alertPopup(_ sender: Any) -> UIAlertController
 }
 
-func cleanCacheAction() -> UIAlertAction {
+@MainActor func cleanCacheAction() -> UIAlertAction {
     return UIAlertAction(title: "Clean Cache", style: .default) { _ in
         KingfisherManager.shared.cache.clearMemoryCache()
         KingfisherManager.shared.cache.clearDiskCache()
     }
 }
 
-func reloadAction(_ reloadable: MainDataViewReloadable) -> UIAlertAction {
+@MainActor func reloadAction(_ reloadable: MainDataViewReloadable) -> UIAlertAction {
     return UIAlertAction(title: "Reload", style: .default) { _ in
         reloadable.reload()
     }
 }
 
-let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+@MainActor let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 
-func createAlert(_ sender: Any, actions: [UIAlertAction]) -> UIAlertController {
+@MainActor func createAlert(_ sender: Any, actions: [UIAlertAction]) -> UIAlertController {
     let alert = UIAlertController(title: "Action", message: nil, preferredStyle: .actionSheet)
     alert.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
     alert.popoverPresentationController?.permittedArrowDirections = .any
