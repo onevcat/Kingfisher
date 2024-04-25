@@ -29,7 +29,7 @@ import WatchKit
 import Foundation
 import Kingfisher
 
-var count = 0
+@MainActor var count = 0
 
 class InterfaceController: WKInterfaceController {
     
