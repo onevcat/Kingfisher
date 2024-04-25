@@ -112,7 +112,7 @@ stubRequest(@"GET", @"http://www.google.com").andReturn(404);
 ```
 
 #### Returning a specific status code and header
-The same approch here, you can use `withHeader` or `withHeaders`
+The same approach here, you can use `withHeader` or `withHeaders`
 
 ```objc
 stubRequest(@"POST", @"https://api.example.com/dogs.json").
@@ -184,7 +184,7 @@ If some request is made but it wasn't stubbed, Nocilla won't let that request hi
 At this moment Nocilla will raise an exception with a meaningful message about the error and how to solve it, including a snippet of code on how to stub the unexpected request.
 
 ### Testing asynchronous requests
-When testing asynchrounous requests your request will be sent on a different thread from the one on which your test is executed. It is important to keep this in mind, and design your test in such a way that is has enough time to finish. For instance  ```tearDown()``` when using ```XCTest``` and ```afterEach()``` when using [Quick](https://github.com/Quick/Quick) and [Nimble](https://github.com/Quick/Nimble) will cause the request never to complete.
+When testing asynchronous requests your request will be sent on a different thread from the one on which your test is executed. It is important to keep this in mind, and design your test in such a way that is has enough time to finish. For instance  ```tearDown()``` when using ```XCTest``` and ```afterEach()``` when using [Quick](https://github.com/Quick/Quick) and [Nimble](https://github.com/Quick/Nimble) will cause the request never to complete.
 
 
 ## Who uses Nocilla.

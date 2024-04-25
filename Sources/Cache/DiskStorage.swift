@@ -467,7 +467,7 @@ extension DiskStorage {
 
         /// Default is `false`
         /// If set to `true`, image extension will be extracted from original file name and append to
-        /// the hased file name and used as the cache key on disk.
+        /// the hashed file name and used as the cache key on disk.
         public var autoExtAfterHashedFileName = false
         
         /// Closure that takes in initial directory path and generates
