@@ -72,7 +72,7 @@ public typealias PrefetcherSourceCompletionHandler =
 /// Use this class when you know a list of image resources and want to download them before showing. It also works with
 /// some Cocoa prefetching mechanisms like table view or collection view `prefetchDataSource` to start image downloading
 /// and caching before they are displayed on screen.
-public class ImagePrefetcher: CustomStringConvertible {
+public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
 
     public var description: String {
         return "\(Unmanaged.passUnretained(self).toOpaque())"
@@ -255,7 +255,9 @@ public class ImagePrefetcher: CustomStringConvertible {
     
     private func downloadAndCache(_ source: Source) {
 
-        let downloadTaskCompletionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { result in
+        let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
+            result in
+            
             self.tasks.removeValue(forKey: source.cacheKey)
             do {
                 let _ = try result.get()

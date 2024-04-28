@@ -32,3 +32,14 @@ class Box<T> {
         self.value = value
     }
 }
+
+actor ActorBox<T> {
+    var value: T
+    init(_ value: T) {
+        self.value = value
+    }
+    
+    func setValue(_ value: T) {
+        self.value = value
+    }
+}

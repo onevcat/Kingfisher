@@ -40,7 +40,7 @@ extension Array where Element == KingfisherOptionsInfoItem {
 }
 
 /// Represents the available option items that can be used in ``KingfisherOptionsInfo``.
-public enum KingfisherOptionsInfoItem {
+public enum KingfisherOptionsInfoItem: Sendable {
     
     /// Kingfisher will utilize the associated ``ImageCache`` object when performing related operations, such as
     /// attempting to retrieve cached images and storing downloaded images in it.
@@ -359,7 +359,7 @@ public enum KingfisherOptionsInfoItem {
 /// Each property in this type corresponds to a case member in ``KingfisherOptionsInfoItem``. When a
 ///  ``KingfisherOptionsInfo`` is sent to Kingfisher-related methods, it will be parsed and converted to a
 ///  ``KingfisherParsedOptionsInfo`` first before passing through the internal methods.
-public struct KingfisherParsedOptionsInfo {
+public struct KingfisherParsedOptionsInfo: Sendable {
 
     public var targetCache: ImageCache? = nil
     public var originalCache: ImageCache? = nil
@@ -459,14 +459,21 @@ extension KingfisherParsedOptionsInfo {
     }
 }
 
-protocol DataReceivingSideEffect: AnyObject {
+protocol DataReceivingSideEffect: AnyObject, Sendable {
     var onShouldApply: () -> Bool { get set }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
 }
 
-class ImageLoadingProgressSideEffect: DataReceivingSideEffect {
+class ImageLoadingProgressSideEffect: DataReceivingSideEffect, @unchecked Sendable {
 
-    var onShouldApply: () -> Bool = { return true }
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageLoadingProgressSideEffectPropertyQueue")
+    
+    private var _onShouldApply: () -> Bool = { return true }
+    
+    var onShouldApply: () -> Bool {
+        get { propertyQueue.sync { _onShouldApply } }
+        set { propertyQueue.sync { _onShouldApply = newValue } }
+    }
     
     let block: DownloadProgressBlock
 

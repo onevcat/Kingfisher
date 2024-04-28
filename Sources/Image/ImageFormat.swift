@@ -27,7 +27,7 @@
 import Foundation
 
 /// Represents the image format.
-public enum ImageFormat {
+public enum ImageFormat: Sendable {
     /// The format cannot be recognized or not supported yet.
     case unknown
     /// PNG image format.
@@ -38,10 +38,10 @@ public enum ImageFormat {
     case GIF
     
     struct HeaderData {
-        static var PNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
-        static var JPEG_SOI: [UInt8] = [0xFF, 0xD8]
-        static var JPEG_IF: [UInt8] = [0xFF]
-        static var GIF: [UInt8] = [0x47, 0x49, 0x46]
+        static let PNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+        static let JPEG_SOI: [UInt8] = [0xFF, 0xD8]
+        static let JPEG_IF: [UInt8] = [0xFF]
+        static let GIF: [UInt8] = [0x47, 0x49, 0x46]
     }
     
     /// JPEG marker of each sequence of segments.

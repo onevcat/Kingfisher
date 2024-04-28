@@ -53,7 +53,8 @@ public enum IndicatorType {
 }
 
 /// An indicator type which can be used to show that the download task is in progress.
-public protocol Indicator {
+@MainActor 
+public protocol Indicator: Sendable {
     
     /// Called when the indicator should start animating.
     func startAnimatingView()
@@ -106,6 +107,7 @@ extension Indicator {
 }
 
 // Displays a NSProgressIndicator / UIActivityIndicatorView
+@MainActor
 final class ActivityIndicator: Indicator {
 
     #if os(macOS)

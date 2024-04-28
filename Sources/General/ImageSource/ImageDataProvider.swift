@@ -30,7 +30,7 @@ import Foundation
 /// ``Source/provider(_:)`` source. Compared to ``Source/network(_:)`` member, it gives a chance
 /// to load some image data in your own way, as long as you can provide the data
 /// representation for the image.
-public protocol ImageDataProvider {
+public protocol ImageDataProvider: Sendable {
     
     /// The key used in cache.
     var cacheKey: String { get }
@@ -46,7 +46,7 @@ public protocol ImageDataProvider {
     /// - Note: If the `handler` is called with a `.failure` with error,
     /// a ``KingfisherError/ImageSettingErrorReason/dataProviderError(provider:error:)`` will be finally thrown out to
     /// you as the ``KingfisherError`` from the framework.
-    func data(handler: @escaping (Result<Data, Error>) -> Void)
+    func data(handler: @escaping @Sendable (Result<Data, Error>) -> Void)
 
     /// The content URL represents this provider, if exists.
     var contentURL: URL? { get }
@@ -96,7 +96,7 @@ public struct LocalFileImageDataProvider: ImageDataProvider {
     /// The key used in cache.
     public var cacheKey: String
 
-    public func data(handler:@escaping (Result<Data, Error>) -> Void) {
+    public func data(handler: @escaping @Sendable (Result<Data, Error>) -> Void) {
         loadingQueue.execute {
             handler(Result(catching: { try Data(contentsOf: fileURL) }))
         }

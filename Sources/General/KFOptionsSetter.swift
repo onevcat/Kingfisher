@@ -436,7 +436,7 @@ extension KFOptionSetter {
     /// This is your last opportunity to modify the image download request. You can use this for customization purposes,
     /// such as adding an authentication token to the header, implementing basic HTTP authentication, or URL mapping.
     ///
-    public func requestModifier(_ modifyBlock: @escaping (inout URLRequest) -> Void) -> Self {
+    public func requestModifier(_ modifyBlock: @escaping @Sendable (inout URLRequest) -> Void) -> Self {
         options.requestModifier = AnyModifier { r -> URLRequest? in
             var request = r
             modifyBlock(&request)
@@ -474,7 +474,7 @@ extension KFOptionSetter {
     /// authentication, or URL mapping. By default, the original redirection request will be sent without any
     /// modification.
     ///
-    public func redirectHandler(_ block: @escaping (KF.RedirectPayload) -> Void) -> Self {
+    public func redirectHandler(_ block: @escaping @Sendable (KF.RedirectPayload) -> Void) -> Self {
         let redirectHandler = AnyRedirectHandler { (task, response, request, handler) in
             let payload = KF.RedirectPayload(
                 task: task, response: response, newRequest: request, completionHandler: handler
@@ -725,7 +725,7 @@ extension KFOptionSetter {
     /// - Parameter block: The block used to modify the image object.
     /// - Returns: A `Self` value with the changes applied.
     ///
-    public func imageModifier(_ block: @escaping (inout KFCrossPlatformImage) throws -> Void) -> Self {
+    public func imageModifier(_ block: @escaping @Sendable (inout KFCrossPlatformImage) throws -> Void) -> Self {
         let modifier = AnyImageModifier { image -> KFCrossPlatformImage in
             var image = image
             try block(&image)

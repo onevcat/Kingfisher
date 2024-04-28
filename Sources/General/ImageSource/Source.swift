@@ -36,18 +36,18 @@ import Foundation
 /// - `provider`: The target image should be provided in a data format. Normally, it can be an image
 ///             from local storage or in any other encoding format (like Base64).
 ///
-public enum Source {
+public enum Source: Sendable {
 
     /// Represents the source task identifier when setting an image to a view with extension methods.
     public enum Identifier {
 
         /// The underlying value type of source identifier.
         public typealias Value = UInt
-        static private(set) var current: Value = 0
+        
+        @MainActor static private(set) var current: Value = 0
         
         // Not thread safe. Expected to be always called on the main thread.
-        static func next() -> Value {
-            assert(Thread.isMainThread, "The identifier `next()` should only be called on main thread.")
+        @MainActor static func next() -> Value {
             current += 1
             return current
         }

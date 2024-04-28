@@ -44,7 +44,7 @@ public protocol Placeholder {
     /// given `imageView`.
     ///
     /// - Parameter imageView: The image view where the placeholder should be added to.
-    func add(to imageView: KFCrossPlatformImageView)
+    @MainActor func add(to imageView: KFCrossPlatformImageView)
     
     /// Called when the placeholder needs to be removed from a given image view.
     ///
@@ -52,7 +52,7 @@ public protocol Placeholder {
     /// given `imageView`.
     ///
     /// - Parameter imageView: The image view where the placeholder is already added to and now should be removed from.
-    func remove(from imageView: KFCrossPlatformImageView)
+    @MainActor func remove(from imageView: KFCrossPlatformImageView)
 }
 
 extension KFCrossPlatformImage: Placeholder {
@@ -70,6 +70,7 @@ extension KFCrossPlatformImage: Placeholder {
 ///
 /// To use your customized View type as a placeholder, simply have it conform to
 /// `Placeholder` using an extension: `extension MyView: Placeholder {}`.
+@MainActor
 extension Placeholder where Self: KFCrossPlatformView {
     
     public func add(to imageView: KFCrossPlatformImageView) {

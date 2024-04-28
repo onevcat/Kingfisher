@@ -32,7 +32,7 @@ import AppKit
 import CoreVideo
 #endif
 
-protocol DisplayLinkCompatible: AnyObject {
+protocol DisplayLinkCompatible: AnyObject, Sendable {
     var isPaused: Bool { get set }
     
     var preferredFramesPerSecond: NSInteger { get }
@@ -52,7 +52,7 @@ extension UIView {
     }
 }
 
-extension CADisplayLink: DisplayLinkCompatible {}
+extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {}
 
 #else
 extension NSView {
@@ -71,24 +71,32 @@ extension NSView {
 
 #if swift(>=5.9)
 @available(macOS 14.0, *)
-extension CADisplayLink: DisplayLinkCompatible {
+extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {
     var preferredFramesPerSecond: NSInteger { return 0 }
 }
 #endif
 
-class DisplayLink: DisplayLinkCompatible {
+final class DisplayLink: DisplayLinkCompatible, @unchecked Sendable {
     private var link: CVDisplayLink?
     private var target: Any?
     private var selector: Selector?
     
     private var schedulers: [RunLoop: [RunLoop.Mode]] = [:]
     
+    var preferredFramesPerSecond: NSInteger = 0
+    var timestamp: CFTimeInterval = 0
+    var duration: CFTimeInterval = 0
+    
     init(target: Any, selector: Selector) {
         self.target = target
         self.selector = selector
         CVDisplayLinkCreateWithActiveCGDisplays(&link)
         if let link = link {
-            CVDisplayLinkSetOutputHandler(link, displayLinkCallback(_:inNow:inOutputTime:flagsIn:flagsOut:))
+            CVDisplayLinkSetOutputHandler(link) { displayLink, inNow, inOutputTime, flagsIn, flagsOut in
+                self.displayLinkCallback(
+                    displayLink, inNow: inNow, inOutputTime: inOutputTime, flagsIn: flagsIn, flagsOut: flagsOut
+                )
+            }
         }
     }
     
@@ -132,10 +140,6 @@ class DisplayLink: DisplayLinkCompatible {
             }
         }
     }
-    
-    var preferredFramesPerSecond: NSInteger = 0
-    var timestamp: CFTimeInterval = 0
-    var duration: CFTimeInterval = 0
     
     func add(to runLoop: RunLoop, forMode mode: RunLoop.Mode) {
         assert(runLoop == .main)

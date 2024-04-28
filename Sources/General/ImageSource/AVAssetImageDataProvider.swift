@@ -27,7 +27,7 @@
 #if !os(watchOS)
 
 import Foundation
-import AVKit
+@preconcurrency import AVKit
 
 #if canImport(MobileCoreServices)
 import MobileCoreServices

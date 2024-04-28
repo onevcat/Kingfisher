@@ -59,7 +59,7 @@ class ImageViewExtensionTests: XCTestCase {
         super.tearDown()
     }
 
-    func testImageDownloadForImageView() {
+    @MainActor func testImageDownloadForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
@@ -89,7 +89,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testImageDownloadCompletionHandlerRunningOnMainQueue() {
+    @MainActor func testImageDownloadCompletionHandlerRunningOnMainQueue() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -107,7 +107,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testImageDownloadWithResourceForImageView() {
+    @MainActor func testImageDownloadWithResourceForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
@@ -136,7 +136,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testImageDownloadCancelForImageView() {
+    @MainActor func testImageDownloadCancelForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData, length: 123)
@@ -156,7 +156,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testImageDownloadCancelPartialTaskBeforeRequest() {
+    @MainActor func testImageDownloadCancelPartialTaskBeforeRequest() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -188,7 +188,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testImageDownloadCancelAllTasksAfterRequestStarted() {
+    @MainActor func testImageDownloadCancelAllTasksAfterRequestStarted() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -224,7 +224,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testImageDownloadMultipleCaches() {
+    @MainActor func testImageDownloadMultipleCaches() {
         
         let cache1 = ImageCache(name: "cache1")
         let cache2 = ImageCache(name: "cache2")
@@ -258,7 +258,7 @@ class ImageViewExtensionTests: XCTestCase {
         }
     }
     
-    func testIndicatorViewExisting() {
+    @MainActor func testIndicatorViewExisting() {
         imageView.kf.indicatorType = .activity
         XCTAssertNotNil(imageView.kf.indicator)
         XCTAssertTrue(imageView.kf.indicator is ActivityIndicator)
@@ -267,7 +267,7 @@ class ImageViewExtensionTests: XCTestCase {
         XCTAssertNil(imageView.kf.indicator)
     }
     
-    func testCustomizeStructIndicatorExisting() {
+    @MainActor func testCustomizeStructIndicatorExisting() {
         struct StructIndicator: Indicator {
             let view = KFCrossPlatformView()
             func startAnimatingView() {}
@@ -282,7 +282,7 @@ class ImageViewExtensionTests: XCTestCase {
         XCTAssertNil(imageView.kf.indicator)
     }
     
-    func testActivityIndicatorViewAnimating() {
+    @MainActor func testActivityIndicatorViewAnimating() {
         imageView.kf.indicatorType = .activity
         
         let exp = expectation(description: #function)
@@ -304,7 +304,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCanUseImageIndicatorViewAnimating() {
+    @MainActor func testCanUseImageIndicatorViewAnimating() {
         
         imageView.kf.indicatorType = .image(imageData: testImageData)
         XCTAssertTrue(imageView.kf.indicator is ImageIndicator)
@@ -330,7 +330,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCancelImageTask() {
+    @MainActor func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -347,7 +347,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testDownloadForMultipleURLs() {
+    @MainActor func testDownloadForMultipleURLs() {
         let exp = expectation(description: #function)
 
         stub(testURLs[0], data: testImageData)
@@ -382,7 +382,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSettingNilURL() {
+    @MainActor func testSettingNilURL() {
         let exp = expectation(description: #function)
         let url: URL? = nil
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) {
@@ -398,7 +398,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSettingImageWhileKeepingCurrentOne() {
+    @MainActor func testSettingImageWhileKeepingCurrentOne() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -418,7 +418,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSettingImageKeepingRespectingPlaceholder() {
+    @MainActor func testSettingImageKeepingRespectingPlaceholder() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -441,7 +441,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSetGIFImageOnlyFirstFrameThenFullFrames() {
+    @MainActor func testSetGIFImageOnlyFirstFrameThenFullFrames() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageGIFData, length: 123)
@@ -493,7 +493,7 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     // https://github.com/onevcat/Kingfisher/issues/1923
-    func testLoadGIFImageWithDifferentOptions() {
+    @MainActor func testLoadGIFImageWithDifferentOptions() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageGIFData)
@@ -515,7 +515,7 @@ class ImageViewExtensionTests: XCTestCase {
     
     // https://github.com/onevcat/Kingfisher/issues/665
     // The completion handler should be called even when the image view loading url gets changed.
-    func testIssue665() {
+    @MainActor func testIssue665() {
         let exp = expectation(description: #function)
 
         stub(testURLs[0], data: testImageData)
@@ -537,7 +537,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testImageSettingWithPlaceholder() {
+    @MainActor func testImageSettingWithPlaceholder() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
 
@@ -563,7 +563,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testImageSettingWithCustomizePlaceholder() {
+    @MainActor func testImageSettingWithCustomizePlaceholder() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
 
@@ -591,7 +591,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testSettingNonWorkingImageWithCustomizePlaceholderAndFailureImage() {
+    @MainActor func testSettingNonWorkingImageWithCustomizePlaceholderAndFailureImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
 
@@ -613,7 +613,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSettingNonWorkingImageWithFailureImage() {
+    @MainActor func testSettingNonWorkingImageWithFailureImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, errorCode: 404)
@@ -636,7 +636,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testSettingNonWorkingImageWithEmptyFailureImage() {
+    @MainActor func testSettingNonWorkingImageWithEmptyFailureImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, errorCode: 404)
@@ -651,7 +651,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testSettingNonWorkingImageWithoutFailureImage() {
+    @MainActor func testSettingNonWorkingImageWithoutFailureImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, errorCode: 404)
@@ -667,7 +667,7 @@ class ImageViewExtensionTests: XCTestCase {
     }
     
     // https://github.com/onevcat/Kingfisher/issues/1053
-    func testSetSameURLWithDifferentProcessors() {
+    @MainActor func testSetSameURLWithDifferentProcessors() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         
@@ -699,7 +699,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testMemoryImageCacheExtendingExpirationTask() {
+    @MainActor func testMemoryImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -734,7 +734,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testMemoryImageCacheNotExtendingExpirationTask() {
+    @MainActor func testMemoryImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -767,7 +767,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testDiskImageCacheExtendingExpirationTask() {
+    @MainActor func testDiskImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -799,7 +799,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    func testDiskImageCacheNotExtendingExpirationTask() {
+    @MainActor func testDiskImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -832,7 +832,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    func testImageSettingWithAlternativeSource() {
+    @MainActor func testImageSettingWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
@@ -852,7 +852,7 @@ class ImageViewExtensionTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testImageSettingCanCancelAlternativeSource() {
+    @MainActor func testImageSettingCanCancelAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let dataStub = delayedStub(url, data: testImageData)
@@ -891,7 +891,7 @@ class ImageViewExtensionTests: XCTestCase {
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-    func testLowDataModeSource() {
+    @MainActor func testLowDataModeSource() {
         let exp = expectation(description: #function)
 
         let url = testURLs[0]

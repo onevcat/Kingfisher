@@ -29,7 +29,7 @@ import Foundation
 public typealias ExecutionQueue = CallbackQueue
 
 /// Represents the behavior of the callback queue selection when a closure is dispatched.
-public enum CallbackQueue {
+public enum CallbackQueue: Sendable {
     
     /// Dispatches the closure to `DispatchQueue.main` with an `async` behavior.
     case mainAsync
@@ -46,12 +46,12 @@ public enum CallbackQueue {
     
     /// Executes the `block` in a dispatch queue defined by `self`.
     /// - Parameter block: The block needs to be executed.
-    public func execute(_ block: @escaping () -> Void) {
+    public func execute(_ block: @Sendable @escaping () -> Void) {
         switch self {
         case .mainAsync:
-            DispatchQueue.main.async { block() }
+            CallbackQueueMain.async { block() }
         case .mainCurrentOrAsync:
-            DispatchQueue.main.safeAsync { block() }
+            CallbackQueueMain.currentOrAsync { block() }
         case .untouch:
             block()
         case .dispatch(let queue):
@@ -69,15 +69,30 @@ public enum CallbackQueue {
     }
 }
 
-extension DispatchQueue {
-    // This method will dispatch the `block` to self.
-    // If `self` is the main queue, and current thread is main thread, the block
-    // will be invoked immediately instead of being dispatched.
-    func safeAsync(_ block: @escaping () -> Void) {
-        if self === DispatchQueue.main && Thread.isMainThread {
-            block()
+enum CallbackQueueMain {
+    static func currentOrAsync(_ block: @MainActor @Sendable @escaping () -> Void) {
+        if Thread.isMainThread {
+            MainActor.runUnsafely { block() }
         } else {
-            async { block() }
+            DispatchQueue.main.async { block() }
         }
+    }
+    
+    static func async(_ block: @MainActor @Sendable @escaping () -> Void) {
+        DispatchQueue.main.async { block() }
+    }
+}
+
+extension MainActor {
+    @_unavailableFromAsync
+    static func runUnsafely<T>(_ body: @MainActor () throws -> T) rethrows -> T {
+#if swift(>=5.10)
+        return try MainActor.assumeIsolated(body)
+#else
+        dispatchPrecondition(condition: .onQueue(.main))
+        return try withoutActuallyEscaping(body) { fn in
+            try unsafeBitCast(fn, to: (() throws -> T).self)()
+        }
+#endif
     }
 }

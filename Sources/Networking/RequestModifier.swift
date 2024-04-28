@@ -46,7 +46,7 @@ import Foundation
 ///
 /// imageView.kf.setImage(with: url, options: [.requestModifier(HeaderFieldModifier())])
 /// ```
-public protocol AsyncImageDownloadRequestModifier {
+public protocol AsyncImageDownloadRequestModifier: Sendable {
 
     /// This method will be called just before the `request` is sent.
     /// 
@@ -72,7 +72,7 @@ public protocol AsyncImageDownloadRequestModifier {
     /// method.
     ///
     /// User the ``DownloadTask`` value to track the task, or cancel it when you need to.
-    var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { get }
+    var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { get }
 }
 
 /// Represents and wraps a method for modifying a request before an image download request starts synchronously.
@@ -119,7 +119,7 @@ public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier 
 extension ImageDownloadRequestModifier {
     /// This is `nil` for a sync `ImageDownloadRequestModifier` by default. You can get the `DownloadTask` from the
     /// return value of downloader method.
-    public var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { return nil }
+    public var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { return nil }
 }
 
 /// A wrapper for creating an ``ImageDownloadRequestModifier`` instance more easily.
@@ -127,7 +127,7 @@ extension ImageDownloadRequestModifier {
 /// This type conforms to ``ImageDownloadRequestModifier`` and wraps an image modification block.
 public struct AnyModifier: ImageDownloadRequestModifier {
     
-    let block: (URLRequest) -> URLRequest?
+    let block: @Sendable (URLRequest) -> URLRequest?
 
     public func modified(for request: URLRequest) -> URLRequest? {
         return block(request)
@@ -136,7 +136,7 @@ public struct AnyModifier: ImageDownloadRequestModifier {
     /// Creates a value of ``ImageDownloadRequestModifier`` that runs the `modify` block.
     ///
     /// - Parameter modify: The request modifying block runs when a request modifying task comes.
-    public init(modify: @escaping (URLRequest) -> URLRequest?) {
+    public init(modify: @escaping @Sendable (URLRequest) -> URLRequest?) {
         block = modify
     }
 }

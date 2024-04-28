@@ -29,6 +29,7 @@
 #if canImport(UIKit)
 import UIKit
 
+@MainActor
 extension KingfisherWrapper where Base: UIButton {
 
     // MARK: Setting Image
@@ -56,7 +57,7 @@ extension KingfisherWrapper where Base: UIButton {
         placeholder: UIImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(
@@ -93,7 +94,7 @@ extension KingfisherWrapper where Base: UIButton {
         placeholder: UIImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         return setImage(
             with: resource?.convertToSource(),
@@ -111,7 +112,7 @@ extension KingfisherWrapper where Base: UIButton {
         placeholder: UIImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         guard let source = source else {
             base.setImage(placeholder, for: state)
@@ -136,11 +137,13 @@ extension KingfisherWrapper where Base: UIButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in mutatingSelf.imageTask = task }
+            },
             progressiveImageSetter: { self.base.setImage($0, for: state) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier(for: state) },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute {
+                CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.taskIdentifier(for: state) else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
@@ -210,7 +213,7 @@ extension KingfisherWrapper where Base: UIButton {
         placeholder: UIImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setBackgroundImage(
@@ -247,7 +250,7 @@ extension KingfisherWrapper where Base: UIButton {
         placeholder: UIImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         return setBackgroundImage(
             with: resource?.convertToSource(),
@@ -264,7 +267,7 @@ extension KingfisherWrapper where Base: UIButton {
         placeholder: UIImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         guard let source = source else {
             base.setBackgroundImage(placeholder, for: state)
@@ -289,11 +292,15 @@ extension KingfisherWrapper where Base: UIButton {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.backgroundImageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in
+                    mutatingSelf.backgroundImageTask = task
+                }
+            },
             progressiveImageSetter: { self.base.setBackgroundImage($0, for: state) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.backgroundTaskIdentifier(for: state) },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute {
+                CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.backgroundTaskIdentifier(for: state) else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
@@ -339,10 +346,11 @@ extension KingfisherWrapper where Base: UIButton {
 }
 
 // MARK: - Associated Object
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
+@MainActor
 extension KingfisherWrapper where Base: UIButton {
 
     private typealias TaskIdentifier = Box<[UInt: Source.Identifier.Value]>
@@ -369,10 +377,11 @@ extension KingfisherWrapper where Base: UIButton {
 }
 
 
-private var backgroundTaskIdentifierKey: Void?
-private var backgroundImageTaskKey: Void?
+@MainActor private var backgroundTaskIdentifierKey: Void?
+@MainActor private var backgroundImageTaskKey: Void?
 
 // MARK: Background Properties
+@MainActor
 extension KingfisherWrapper where Base: UIButton {
     
     public func backgroundTaskIdentifier(for state: UIControl.State) -> Source.Identifier.Value? {

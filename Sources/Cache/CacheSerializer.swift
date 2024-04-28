@@ -34,7 +34,7 @@ import UIKit
 
 /// A `CacheSerializer` is used to convert some data to an image object after retrieving it from disk storage,
 /// and vice versa, to convert an image to a data object for storing it to the disk storage.
-public protocol CacheSerializer {
+public protocol CacheSerializer: Sendable {
     
     /// Retrieves the serialized data from a provided image and optional original data for caching to disk.
     ///
