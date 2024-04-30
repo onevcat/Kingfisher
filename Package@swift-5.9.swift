@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "Kingfisher",
             path: "Sources",
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: [.process("PrivacyInfo.xcprivacy")]
         )
     ]
 )
