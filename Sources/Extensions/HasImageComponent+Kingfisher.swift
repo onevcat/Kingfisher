@@ -55,13 +55,13 @@ extension NSCell: KingfisherHasImageComponent {}
 
 #endif
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
-@available(iOS 13.0, *)
+@available(iOS 13.0, tvOS 13.0, *)
 extension UIAction: KingfisherHasImageComponent {}
 
-@available(iOS 13.0, *)
+@available(iOS 13.0, tvOS 13.0, *)
 extension UICommand: KingfisherHasImageComponent {}
 
 extension UIBarItem: KingfisherHasImageComponent {}
