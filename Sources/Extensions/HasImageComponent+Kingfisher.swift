@@ -1,5 +1,5 @@
 //
-//  AppKit+Kingfisher.swift
+//  KingfisherHasImageComponent+Kingfisher.swift
 //  Kingfisher
 //
 //  Created by JH on 2023/12/5.
@@ -52,6 +52,19 @@ extension NSTabViewItem: KingfisherHasImageComponent {}
 extension NSStatusItem: KingfisherHasImageComponent {}
 
 extension NSCell: KingfisherHasImageComponent {}
+
+#endif
+
+#if canImport(UIKit)
+import UIKit
+
+@available(iOS 13.0, *)
+extension UIAction: KingfisherHasImageComponent {}
+
+@available(iOS 13.0, *)
+extension UICommand: KingfisherHasImageComponent {}
+
+extension UIBarItem: KingfisherHasImageComponent {}
 
 #endif
 
