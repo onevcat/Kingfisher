@@ -25,7 +25,7 @@
 //  THE SOFTWARE.
 
 public protocol KingfisherHasImageComponent: KingfisherCompatible {
-    var image: KFCrossPlatformImage? { set get }
+    @MainActor var image: KFCrossPlatformImage? { set get }
 }
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
@@ -36,8 +36,6 @@ extension NSComboButton: KingfisherHasImageComponent {}
 
 @available(macOS 13.0, *)
 extension NSColorWell: KingfisherHasImageComponent {}
-
-extension NSImageView: KingfisherHasImageComponent {}
 
 extension NSTableViewRowAction: KingfisherHasImageComponent {}
 
@@ -68,72 +66,250 @@ extension UIBarItem: KingfisherHasImageComponent {}
 
 #endif
 
+#if !os(watchOS)
+@MainActor
 extension KingfisherWrapper where Base: KingfisherHasImageComponent {
+
     // MARK: Setting Image
 
-    /// Sets an image to the component with a source.
+    /// Sets an image to the image view with a ``Source``.
     ///
     /// - Parameters:
-    ///   - source: The `Source` object contains information about how to get the image.
-    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
-    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
-    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///   - source: The ``Source`` object that defines data information from the network or a data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - progressBlock: Called when the image downloading progress is updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
-    ///   - completionHandler: Called when the image retrieved and set finished.
-    /// - Returns: A task represents the image downloading.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
     ///
-    /// - Note:
-    /// Internally, this method will use `KingfisherManager` to get the requested source.
-    /// Since this method will perform UI changes, you must call it from the main thread.
-    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    /// This is the easiest way to use Kingfisher to boost the image setting process from a source. Since all parameters
+    /// have a default value except the `source`, you can set an image from a certain URL to an image view like this:
     ///
+    /// ```swift
+    /// // Set image from a network source.
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: .network(url))
+    ///
+    /// // Or set image from a data provider.
+    /// let provider = LocalFileImageDataProvider(fileURL: fileURL)
+    /// imageView.kf.setImage(with: .provider(provider))
+    /// ```
+    ///
+    /// For both ``Source/network(_:)`` and ``Source/provider(_:)`` sources, there are corresponding view extension
+    /// methods. So the code above is equivalent to:
+    ///
+    /// ```swift
+    /// imageView.kf.setImage(with: url)
+    /// imageView.kf.setImage(with: provider)
+    /// ```
+    ///
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
+    ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
         with source: Source?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
-    ) -> DownloadTask? {
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
+        return setImage(with: source, placeholder: placeholder, parsedOptions: options, progressBlock: progressBlock, completionHandler: completionHandler)
+    }
+
+    /// Sets an image to the image view with a ``Source``.
+    ///
+    /// - Parameters:
+    ///   - source: The ``Source`` object that defines data information from the network or a data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
+    ///
+    /// This is the easiest way to use Kingfisher to boost the image setting process from a source. Since all parameters
+    /// have a default value except the `source`, you can set an image from a certain URL to an image view like this:
+    ///
+    /// ```swift
+    /// // Set image from a network source.
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: .network(url))
+    ///
+    /// // Or set image from a data provider.
+    /// let provider = LocalFileImageDataProvider(fileURL: fileURL)
+    /// imageView.kf.setImage(with: .provider(provider))
+    /// ```
+    ///
+    /// For both ``Source/network(_:)`` and ``Source/provider(_:)`` sources, there are corresponding view extension
+    /// methods. So the code above is equivalent to:
+    ///
+    /// ```swift
+    /// imageView.kf.setImage(with: url)
+    /// imageView.kf.setImage(with: provider)
+    /// ```
+    ///
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
+    ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
+    @discardableResult
+    public func setImage(
+        with source: Source?,
+        placeholder: KFCrossPlatformImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
         return setImage(
             with: source,
             placeholder: placeholder,
-            parsedOptions: options,
-            progressBlock: progressBlock,
+            options: options,
+            progressBlock: nil,
             completionHandler: completionHandler
         )
     }
-
-    /// Sets an image to the component with a requested resource.
+    
+    /// Sets an image to the image view with a requested ``Resource``.
     ///
     /// - Parameters:
-    ///   - resource: The `Resource` object contains information about the resource.
-    ///   - placeholder: A placeholder to show while retrieving the image from the given `resource`.
-    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
-    ///   - progressBlock: Called when the image downloading progress gets updated. If the response does not contain an
+    ///   - resource: The ``Resource`` object contains information about the resource.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - progressBlock: Called when the image downloading progress is updated. If the response does not contain an
     ///                    `expectedContentLength`, this block will not be called.
-    ///   - completionHandler: Called when the image retrieved and set finished.
-    /// - Returns: A task represents the image downloading.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
     ///
-    /// - Note:
-    /// Internally, this method will use `KingfisherManager` to get the requested resource, from either cache
-    /// or network. Since this method will perform UI changes, you must call it from the main thread.
-    /// Both `progressBlock` and `completionHandler` will be also executed in the main thread.
+    /// This is the easiest way to use Kingfisher to boost the image setting process from a source. Since all parameters
+    /// have a default value except the `source`, you can set an image from a certain URL to an image view like this:
     ///
+    /// ```swift
+    /// // Set image from a URL resource.
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: url)
+    /// ```
+    ///
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
+    ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
         with resource: Resource?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
-    ) -> DownloadTask? {
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
         return setImage(
             with: resource?.convertToSource(),
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
+            completionHandler: completionHandler)
+    }
+
+    /// Sets an image to the image view with a requested ``Resource``.
+    ///
+    /// - Parameters:
+    ///   - resource: The ``Resource`` object contains information about the resource.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
+    ///
+    /// This is the easiest way to use Kingfisher to boost the image setting process from a source. Since all parameters
+    /// have a default value except the `source`, you can set an image from a certain URL to an image view like this:
+    ///
+    /// ```swift
+    /// // Set image from a URL resource.
+    /// let url = URL(string: "https://example.com/image.png")!
+    /// imageView.kf.setImage(with: url)
+    /// ```
+    ///
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
+    ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
+    @discardableResult
+    public func setImage(
+        with resource: Resource?,
+        placeholder: KFCrossPlatformImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
+        return setImage(
+            with: resource,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: nil,
+            completionHandler: completionHandler
+        )
+    }
+
+    /// Sets an image to the image view with a ``ImageDataProvider``.
+    ///
+    /// - Parameters:
+    ///   - provider: The ``ImageDataProvider`` object that defines data information from the data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - progressBlock: Called when the image downloading progress is updated. If the response does not contain an
+    ///                    `expectedContentLength`, this block will not be called.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
+    ///
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
+    ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
+    @discardableResult
+    public func setImage(
+        with provider: ImageDataProvider?,
+        placeholder: KFCrossPlatformImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
+        return setImage(
+            with: provider.map { .provider($0) },
+            placeholder: placeholder,
+            options: options,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler)
+    }
+
+    /// Sets an image to the image view with a ``ImageDataProvider``.
+    ///
+    /// - Parameters:
+    ///   - provider: The ``ImageDataProvider`` object that defines data information from the data provider.
+    ///   - placeholder: A placeholder to show while retrieving the image from the given `source`.
+    ///   - options: A set of options to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - completionHandler: Called when the image retrieval and setting are finished.
+    /// - Returns: A task that represents the image downloading.
+    ///
+    /// Internally, this method will use ``KingfisherManager`` to get the source. Since this method will perform UI
+    ///  changes, it is your responsibility to call it from the main thread.
+    ///
+    /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
+    @discardableResult
+    public func setImage(
+        with provider: ImageDataProvider?,
+        placeholder: KFCrossPlatformImage? = nil,
+        options: KingfisherOptionsInfo? = nil,
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
+        return setImage(
+            with: provider,
+            placeholder: placeholder,
+            options: options,
+            progressBlock: nil,
             completionHandler: completionHandler
         )
     }
@@ -143,19 +319,22 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
-        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
-    ) -> DownloadTask? {
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask?
+    {
         var mutatingSelf = self
-        guard let source else {
-            base.image = placeholder
+        guard let source = source else {
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
 
         var options = parsedOptions
-        if !options.keepCurrentImageWhileLoading {
-            base.image = placeholder
+
+        let isEmptyImage = base.image == nil && self.placeholder == nil
+        if !options.keepCurrentImageWhileLoading || isEmptyImage {
+            // Always set placeholder while there is no image/placeholder yet.
+            mutatingSelf.placeholder = placeholder
         }
 
         let issuedIdentifier = Source.Identifier.next()
@@ -168,11 +347,13 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: options,
-            downloadTaskUpdated: { mutatingSelf.imageTask = $0 },
+            downloadTaskUpdated: { task in
+                Task { @MainActor in mutatingSelf.imageTask = task }
+            },
             progressiveImageSetter: { self.base.image = $0 },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
-                CallbackQueue.mainCurrentOrAsync.execute {
+                CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
@@ -190,12 +371,15 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
                     mutatingSelf.taskIdentifier = nil
 
                     switch result {
-                    case let .success(value):
-                        self.base.image = value.image
-                        completionHandler?(result)
+                    case .success(let value):
+                        
+                    mutatingSelf.placeholder = nil
+                    self.base.image = value.image
+                    completionHandler?(result)
 
                     case .failure:
                         if let image = options.onFailureImage {
+                            mutatingSelf.placeholder = nil
                             self.base.image = image
                         }
                         completionHandler?(result)
@@ -203,31 +387,31 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
                 }
             }
         )
-
         mutatingSelf.imageTask = task
         return task
     }
 
     // MARK: Cancelling Downloading Task
 
-    /// Cancels the image download task of the component if it is running.
+    /// Cancels the image download task of the image view if it is running.
+    ///
     /// Nothing will happen if the downloading has already finished.
-    public func cancelImageDownloadTask() {
+    public func cancelDownloadTask() {
         imageTask?.cancel()
     }
 }
 
 // MARK: - Associated Object
+@MainActor private var taskIdentifierKey: Void?
+@MainActor private var indicatorKey: Void?
+@MainActor private var indicatorTypeKey: Void?
+@MainActor private var placeholderKey: Void?
+@MainActor private var imageTaskKey: Void?
 
-private var taskIdentifierKey: Void?
-private var imageTaskKey: Void?
-
-private var alternateTaskIdentifierKey: Void?
-private var alternateImageTaskKey: Void?
-
+@MainActor
 extension KingfisherWrapper where Base: KingfisherHasImageComponent {
-    // MARK: Properties
 
+    // MARK: Properties
     public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
@@ -238,9 +422,30 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
     }
-
+    
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue) }
+        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+    }
+
+    /// Represents the ``Placeholder`` used for this image view.
+    ///
+    /// A ``Placeholder`` will be shown in the view while it is downloading an image.
+    public private(set) var placeholder: KFCrossPlatformImage? {
+        get { return getAssociatedObject(base, &placeholderKey) }
+        set {
+            if let previousPlaceholder = placeholder {
+                previousPlaceholder.remove(from: base)
+            }
+            
+            if let newPlaceholder = newValue {
+                newPlaceholder.add(to: base)
+            } else {
+                base.image = nil
+            }
+            setRetainedAssociatedObject(base, &placeholderKey, newValue)
+        }
     }
 }
+
+#endif

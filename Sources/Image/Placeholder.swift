@@ -55,6 +55,7 @@ public protocol Placeholder {
     @MainActor func remove(from imageView: KFCrossPlatformImageView)
 }
 
+@MainActor
 extension KFCrossPlatformImage: Placeholder {
     public func add(to imageView: KFCrossPlatformImageView) {
         imageView.image = self
@@ -62,6 +63,14 @@ extension KFCrossPlatformImage: Placeholder {
     
     public func remove(from imageView: KFCrossPlatformImageView) {
         imageView.image = nil
+    }
+    
+    public func add(to base: any KingfisherHasImageComponent) {
+        base.image = self
+    }
+    
+    public func remove(from base: any KingfisherHasImageComponent) {
+        base.image = nil
     }
 }
 
