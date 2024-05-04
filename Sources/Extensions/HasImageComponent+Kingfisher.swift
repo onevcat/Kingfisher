@@ -50,7 +50,6 @@ extension NSTabViewItem: KingfisherHasImageComponent {}
 extension NSStatusItem: KingfisherHasImageComponent {}
 
 extension NSCell: KingfisherHasImageComponent {}
-
 #endif
 
 #if canImport(UIKit) && !os(watchOS)
@@ -66,7 +65,16 @@ extension UIBarItem: KingfisherHasImageComponent {}
 
 #endif
 
-#if !os(watchOS)
+#if canImport(WatchKit)
+import WatchKit
+extension WKInterfaceImage: KingfisherHasImageComponent {
+    @MainActor public var image: KFCrossPlatformImage? {
+        get { nil }
+        set { setImage(newValue) }
+    }
+}
+#endif
+
 @MainActor
 extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
@@ -340,9 +348,14 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
         var options = parsedOptions
 
-        if !options.keepCurrentImageWhileLoading || base.image == nil {
-            // Always set placeholder while there is no image/placeholder yet.
-            mutatingSelf.base.image = placeholder
+        // Always set placeholder while there is no image/placeholder yet.
+#if os(watchOS)
+        let usePlaceholderDuringLoading = !options.keepCurrentImageWhileLoading
+#else
+        let usePlaceholderDuringLoading = !options.keepCurrentImageWhileLoading || base.image == nil
+#endif
+        if usePlaceholderDuringLoading {
+            base.image = placeholder
         }
 
         let issuedIdentifier = Source.Identifier.next()
@@ -428,5 +441,3 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 }
-
-#endif
