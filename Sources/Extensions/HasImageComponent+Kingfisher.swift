@@ -118,7 +118,13 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
     ) -> DownloadTask?
     {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
-        return setImage(with: source, placeholder: placeholder, parsedOptions: options, progressBlock: progressBlock, completionHandler: completionHandler)
+        return setImage(
+            with: source, 
+            placeholder: placeholder,
+            parsedOptions: options,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler
+        )
     }
 
     /// Sets an image to the image view with a ``Source``.
@@ -210,7 +216,8 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
-            completionHandler: completionHandler)
+            completionHandler: completionHandler
+        )
     }
 
     /// Sets an image to the image view with a requested ``Resource``.
@@ -281,7 +288,8 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
             placeholder: placeholder,
             options: options,
             progressBlock: progressBlock,
-            completionHandler: completionHandler)
+            completionHandler: completionHandler
+        )
     }
 
     /// Sets an image to the image view with a ``ImageDataProvider``.
@@ -324,6 +332,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
     {
         var mutatingSelf = self
         guard let source = source else {
+            base.image = placeholder
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
@@ -372,14 +381,12 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
                     switch result {
                     case .success(let value):
                         self.base.image = value.image
-                        completionHandler?(result)
-
                     case .failure:
                         if let image = options.onFailureImage {
                             self.base.image = image
                         }
-                        completionHandler?(result)
                     }
+                    completionHandler?(result)
                 }
             }
         )
