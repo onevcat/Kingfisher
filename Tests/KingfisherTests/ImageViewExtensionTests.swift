@@ -420,13 +420,20 @@ class ImageViewExtensionTests: XCTestCase {
     
     @MainActor func testSettingImageKeepingRespectingPlaceholder() {
         let exp = expectation(description: #function)
+        
+        // While current image is nil, set placeholder
+        let url = testURLs[0]
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in
+            exp.fulfill()
+        }
+        XCTAssertEqual(testImage, imageView.image)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    @MainActor func testMe() {
+        let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData)
-
-        // While current image is nil, set placeholder
-        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in }
-        XCTAssertNotNil(imageView.image)
-        XCTAssertEqual(testImage, imageView.image)
         
         // While current image is not nil, keep it
         let anotherImage = KFCrossPlatformImage(data: testImageJEPGData)
@@ -435,7 +442,6 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertNotEqual(self.imageView.image, anotherImage)
             exp.fulfill()
         }
-        XCTAssertNotNil(imageView.image)
         XCTAssertEqual(anotherImage, imageView.image)
 
         waitForExpectations(timeout: 3, handler: nil)
