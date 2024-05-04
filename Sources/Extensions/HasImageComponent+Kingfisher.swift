@@ -331,10 +331,9 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
         var options = parsedOptions
 
-        let isEmptyImage = base.image == nil && self.placeholder == nil
-        if !options.keepCurrentImageWhileLoading || isEmptyImage {
+        if !options.keepCurrentImageWhileLoading || base.image == nil {
             // Always set placeholder while there is no image/placeholder yet.
-            mutatingSelf.placeholder = placeholder
+            mutatingSelf.base.image = placeholder
         }
 
         let issuedIdentifier = Source.Identifier.next()
@@ -372,14 +371,11 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
                     switch result {
                     case .success(let value):
-                        
-                    mutatingSelf.placeholder = nil
-                    self.base.image = value.image
-                    completionHandler?(result)
+                        self.base.image = value.image
+                        completionHandler?(result)
 
                     case .failure:
                         if let image = options.onFailureImage {
-                            mutatingSelf.placeholder = nil
                             self.base.image = image
                         }
                         completionHandler?(result)
@@ -403,9 +399,6 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
 // MARK: - Associated Object
 @MainActor private var taskIdentifierKey: Void?
-@MainActor private var indicatorKey: Void?
-@MainActor private var indicatorTypeKey: Void?
-@MainActor private var placeholderKey: Void?
 @MainActor private var imageTaskKey: Void?
 
 @MainActor
@@ -426,25 +419,6 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
-    }
-
-    /// Represents the ``Placeholder`` used for this image view.
-    ///
-    /// A ``Placeholder`` will be shown in the view while it is downloading an image.
-    public private(set) var placeholder: KFCrossPlatformImage? {
-        get { return getAssociatedObject(base, &placeholderKey) }
-        set {
-            if let previousPlaceholder = placeholder {
-                previousPlaceholder.remove(from: base)
-            }
-            
-            if let newPlaceholder = newValue {
-                newPlaceholder.add(to: base)
-            } else {
-                base.image = nil
-            }
-            setRetainedAssociatedObject(base, &placeholderKey, newValue)
-        }
     }
 }
 
