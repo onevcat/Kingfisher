@@ -30,39 +30,26 @@ public protocol KingfisherHasImageComponent: KingfisherCompatible {
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
-
 @available(macOS 13.0, *)
 extension NSComboButton: KingfisherHasImageComponent {}
-
 @available(macOS 13.0, *)
 extension NSColorWell: KingfisherHasImageComponent {}
-
 extension NSTableViewRowAction: KingfisherHasImageComponent {}
-
 extension NSMenuItem: KingfisherHasImageComponent {}
-
 extension NSPathControlItem: KingfisherHasImageComponent {}
-
 extension NSToolbarItem: KingfisherHasImageComponent {}
-
 extension NSTabViewItem: KingfisherHasImageComponent {}
-
 extension NSStatusItem: KingfisherHasImageComponent {}
-
 extension NSCell: KingfisherHasImageComponent {}
 #endif
 
 #if canImport(UIKit) && !os(watchOS)
 import UIKit
-
 @available(iOS 13.0, tvOS 13.0, *)
 extension UIAction: KingfisherHasImageComponent {}
-
 @available(iOS 13.0, tvOS 13.0, *)
 extension UICommand: KingfisherHasImageComponent {}
-
 extension UIBarItem: KingfisherHasImageComponent {}
-
 #endif
 
 #if canImport(WatchKit)
@@ -73,6 +60,11 @@ extension WKInterfaceImage: KingfisherHasImageComponent {
         set { setImage(newValue) }
     }
 }
+#endif
+
+#if canImport(TVUIKit)
+import TVUIKit
+extension TVMonogramView: KingfisherHasImageComponent {}
 #endif
 
 @MainActor
