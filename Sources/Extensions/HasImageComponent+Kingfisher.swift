@@ -24,8 +24,28 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-public protocol KingfisherHasImageComponent: KingfisherCompatible {
+public protocol KingfisherImageSettable: KingfisherCompatible {
+    @MainActor func setImage(
+        _ image: KFCrossPlatformImage?,
+        options: KingfisherParsedOptionsInfo
+    )
+    @MainActor func getImage() -> KFCrossPlatformImage?
+}
+
+public protocol KingfisherHasImageComponent: KingfisherImageSettable {
     @MainActor var image: KFCrossPlatformImage? { set get }
+}
+
+extension KingfisherHasImageComponent {
+    @MainActor 
+    public func setImage(_ image: KFCrossPlatformImage?, options: KingfisherParsedOptionsInfo) {
+        self.image = image
+    }
+    
+    @MainActor
+    public func getImage() -> KFCrossPlatformImage? {
+        image
+    }
 }
 
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
@@ -67,8 +87,13 @@ import TVUIKit
 extension TVMonogramView: KingfisherHasImageComponent {}
 #endif
 
+struct ImagePropertyAccessor<ImageType>: Sendable {
+    let setImage: @Sendable @MainActor (ImageType?, KingfisherParsedOptionsInfo) -> Void
+    let getImage: @Sendable @MainActor () -> ImageType?
+}
+
 @MainActor
-extension KingfisherWrapper where Base: KingfisherHasImageComponent {
+extension KingfisherWrapper where Base: KingfisherImageSettable {
 
     // MARK: Setting Image
 
@@ -119,7 +144,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
     {
         let options = KingfisherParsedOptionsInfo(KingfisherManager.shared.defaultOptions + (options ?? .empty))
         return setImage(
-            with: source, 
+            with: source,
             placeholder: placeholder,
             parsedOptions: options,
             progressBlock: progressBlock,
@@ -321,9 +346,33 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
             completionHandler: completionHandler
         )
     }
-
+    
     func setImage(
         with source: Source?,
+        placeholder: KFCrossPlatformImage? = nil,
+        parsedOptions: KingfisherParsedOptionsInfo,
+        progressBlock: DownloadProgressBlock? = nil,
+        completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask? {
+        return setImage(
+            with: source, 
+            imageAccessor: .init(
+                setImage: { base.setImage($0, options: $1) },
+                getImage: { base.getImage() }
+            ),
+            placeholder: placeholder,
+            parsedOptions: parsedOptions,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler
+        )
+    }
+}
+
+@MainActor
+extension KingfisherWrapper {
+    func setImage(
+        with source: Source?,
+        imageAccessor: ImagePropertyAccessor<KFCrossPlatformImage>,
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
@@ -332,7 +381,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
     {
         var mutatingSelf = self
         guard let source = source else {
-            base.image = placeholder
+            imageAccessor.setImage(placeholder, parsedOptions)
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
@@ -344,10 +393,10 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 #if os(watchOS)
         let usePlaceholderDuringLoading = !options.keepCurrentImageWhileLoading
 #else
-        let usePlaceholderDuringLoading = !options.keepCurrentImageWhileLoading || base.image == nil
+        let usePlaceholderDuringLoading = !options.keepCurrentImageWhileLoading || imageAccessor.getImage() == nil
 #endif
         if usePlaceholderDuringLoading {
-            base.image = placeholder
+            imageAccessor.setImage(placeholder, options)
         }
 
         let issuedIdentifier = Source.Identifier.next()
@@ -363,7 +412,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
             downloadTaskUpdated: { task in
                 Task { @MainActor in mutatingSelf.imageTask = task }
             },
-            progressiveImageSetter: { self.base.image = $0 },
+            progressiveImageSetter: { imageAccessor.setImage($0, options) },
             referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
@@ -385,10 +434,10 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 
                     switch result {
                     case .success(let value):
-                        self.base.image = value.image
+                        imageAccessor.setImage(value.image, options)
                     case .failure:
                         if let image = options.onFailureImage {
-                            self.base.image = image
+                            imageAccessor.setImage(image, options)
                         }
                     }
                     completionHandler?(result)
@@ -414,7 +463,7 @@ extension KingfisherWrapper where Base: KingfisherHasImageComponent {
 @MainActor private var imageTaskKey: Void?
 
 @MainActor
-extension KingfisherWrapper where Base: KingfisherHasImageComponent {
+extension KingfisherWrapper {
 
     // MARK: Properties
     public private(set) var taskIdentifier: Source.Identifier.Value? {
