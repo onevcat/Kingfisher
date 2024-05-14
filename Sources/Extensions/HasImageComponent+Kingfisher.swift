@@ -92,6 +92,12 @@ struct ImagePropertyAccessor<ImageType>: Sendable {
     let getImage: @Sendable @MainActor () -> ImageType?
 }
 
+struct TaskPropertyAccessor<TaskIdentifierKey>: Sendable {
+    let setTaskIdentifier: @Sendable @MainActor (TaskIdentifierKey?, Source.Identifier.Value?) -> Void
+    let getTaskIdentifier: @Sendable @MainActor (TaskIdentifierKey?) -> Source.Identifier.Value?
+    let setTask: @Sendable @MainActor (DownloadTask?) -> Void
+}
+
 @MainActor
 extension KingfisherWrapper where Base: KingfisherImageSettable {
 
@@ -360,6 +366,19 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
                 setImage: { base.setImage($0, options: $1) },
                 getImage: { base.getImage() }
             ),
+            taskAccessor: TaskPropertyAccessor<Void>(
+                setTaskIdentifier: { _, value in
+                    var mutatingSelf = self
+                    mutatingSelf.taskIdentifier = value
+                },
+                getTaskIdentifier: { _ in
+                    self.taskIdentifier
+                }, 
+                setTask: { task in
+                    var mutatingSelf = self
+                    mutatingSelf.imageTask = task
+                }
+            ),
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -370,19 +389,19 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
 
 @MainActor
 extension KingfisherWrapper {
-    func setImage(
+    func setImage<TaskIdentifierKey>(
         with source: Source?,
         imageAccessor: ImagePropertyAccessor<KFCrossPlatformImage>,
+        taskAccessor: TaskPropertyAccessor<TaskIdentifierKey>,
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask?
     {
-        var mutatingSelf = self
         guard let source = source else {
             imageAccessor.setImage(placeholder, parsedOptions)
-            mutatingSelf.taskIdentifier = nil
+            taskAccessor.setTaskIdentifier(nil, nil)
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -400,7 +419,7 @@ extension KingfisherWrapper {
         }
 
         let issuedIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedIdentifier
+        taskAccessor.setTaskIdentifier(nil, issuedIdentifier)
 
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
@@ -410,13 +429,13 @@ extension KingfisherWrapper {
             with: source,
             options: options,
             downloadTaskUpdated: { task in
-                Task { @MainActor in mutatingSelf.imageTask = task }
+                Task { @MainActor in taskAccessor.setTask(task) }
             },
             progressiveImageSetter: { imageAccessor.setImage($0, options) },
-            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
+            referenceTaskIdentifierChecker: { issuedIdentifier == taskAccessor.getTaskIdentifier(nil) },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
-                    guard issuedIdentifier == self.taskIdentifier else {
+                    guard issuedIdentifier == taskAccessor.getTaskIdentifier(nil) else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -429,8 +448,8 @@ extension KingfisherWrapper {
                         return
                     }
 
-                    mutatingSelf.imageTask = nil
-                    mutatingSelf.taskIdentifier = nil
+                    taskAccessor.setTask(nil)
+                    taskAccessor.setTaskIdentifier(nil, nil)
 
                     switch result {
                     case .success(let value):
@@ -444,17 +463,8 @@ extension KingfisherWrapper {
                 }
             }
         )
-        mutatingSelf.imageTask = task
+        taskAccessor.setTask(task)
         return task
-    }
-
-    // MARK: Cancelling Downloading Task
-
-    /// Cancels the image download task of the image view if it is running.
-    ///
-    /// Nothing will happen if the downloading has already finished.
-    public func cancelDownloadTask() {
-        imageTask?.cancel()
     }
 }
 
@@ -463,7 +473,7 @@ extension KingfisherWrapper {
 @MainActor private var imageTaskKey: Void?
 
 @MainActor
-extension KingfisherWrapper {
+extension KingfisherWrapper where Base: KingfisherImageSettable {
 
     // MARK: Properties
     public private(set) var taskIdentifier: Source.Identifier.Value? {
@@ -480,5 +490,12 @@ extension KingfisherWrapper {
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+    }
+    
+    /// Cancels the image download task of the image view if it is running.
+    ///
+    /// Nothing will happen if the downloading has already finished.
+    public func cancelDownloadTask() {
+        imageTask?.cancel()
     }
 }
