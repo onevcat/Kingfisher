@@ -116,15 +116,10 @@ extension KingfisherWrapper where Base: NSButton {
                 }, getImage: {
                     base.image
                 }),
-            taskAccessor: TaskPropertyAccessor<Void>(
-                setTaskIdentifier: { _, id in
-                    mutatingSelf.taskIdentifier = id
-                },
-                getTaskIdentifier: { _ in
-                    mutatingSelf.taskIdentifier
-                }, setTask: { task in
-                    mutatingSelf.imageTask = task
-                }),
+            taskAccessor: TaskPropertyAccessor(
+                setTaskIdentifier: { mutatingSelf.taskIdentifier = $0 },
+                getTaskIdentifier: { mutatingSelf.taskIdentifier }, 
+                setTask: { mutatingSelf.imageTask = $0 }),
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -210,15 +205,11 @@ extension KingfisherWrapper where Base: NSButton {
                 }, getImage: {
                     base.alternateImage
                 }),
-            taskAccessor: TaskPropertyAccessor<Void>(
-                setTaskIdentifier: { _, id in
-                    mutatingSelf.alternateTaskIdentifier = id
-                },
-                getTaskIdentifier: { _ in
-                    mutatingSelf.alternateTaskIdentifier
-                }, setTask: { task in
-                    mutatingSelf.alternateImageTask = task
-                }),
+            taskAccessor: TaskPropertyAccessor(
+                setTaskIdentifier: { mutatingSelf.alternateTaskIdentifier = $0 },
+                getTaskIdentifier: { mutatingSelf.alternateTaskIdentifier },
+                setTask: { mutatingSelf.alternateImageTask = $0 }
+            ),
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,

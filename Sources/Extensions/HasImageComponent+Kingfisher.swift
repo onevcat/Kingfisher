@@ -92,9 +92,9 @@ struct ImagePropertyAccessor<ImageType>: Sendable {
     let getImage: @Sendable @MainActor () -> ImageType?
 }
 
-struct TaskPropertyAccessor<TaskIdentifierKey>: Sendable {
-    let setTaskIdentifier: @Sendable @MainActor (TaskIdentifierKey?, Source.Identifier.Value?) -> Void
-    let getTaskIdentifier: @Sendable @MainActor (TaskIdentifierKey?) -> Source.Identifier.Value?
+struct TaskPropertyAccessor: Sendable {
+    let setTaskIdentifier: @Sendable @MainActor (Source.Identifier.Value?) -> Void
+    let getTaskIdentifier: @Sendable @MainActor () -> Source.Identifier.Value?
     let setTask: @Sendable @MainActor (DownloadTask?) -> Void
 }
 
@@ -366,14 +366,12 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
                 setImage: { base.setImage($0, options: $1) },
                 getImage: { base.getImage() }
             ),
-            taskAccessor: TaskPropertyAccessor<Void>(
-                setTaskIdentifier: { _, value in
+            taskAccessor: TaskPropertyAccessor(
+                setTaskIdentifier: {
                     var mutatingSelf = self
-                    mutatingSelf.taskIdentifier = value
+                    mutatingSelf.taskIdentifier = $0
                 },
-                getTaskIdentifier: { _ in
-                    self.taskIdentifier
-                }, 
+                getTaskIdentifier: { self.taskIdentifier },
                 setTask: { task in
                     var mutatingSelf = self
                     mutatingSelf.imageTask = task
@@ -389,10 +387,10 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
 
 @MainActor
 extension KingfisherWrapper {
-    func setImage<TaskIdentifierKey>(
+    func setImage(
         with source: Source?,
         imageAccessor: ImagePropertyAccessor<KFCrossPlatformImage>,
-        taskAccessor: TaskPropertyAccessor<TaskIdentifierKey>,
+        taskAccessor: TaskPropertyAccessor,
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
@@ -401,7 +399,7 @@ extension KingfisherWrapper {
     {
         guard let source = source else {
             imageAccessor.setImage(placeholder, parsedOptions)
-            taskAccessor.setTaskIdentifier(nil, nil)
+            taskAccessor.setTaskIdentifier(nil)
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -419,7 +417,7 @@ extension KingfisherWrapper {
         }
 
         let issuedIdentifier = Source.Identifier.next()
-        taskAccessor.setTaskIdentifier(nil, issuedIdentifier)
+        taskAccessor.setTaskIdentifier(issuedIdentifier)
 
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
@@ -432,10 +430,10 @@ extension KingfisherWrapper {
                 Task { @MainActor in taskAccessor.setTask(task) }
             },
             progressiveImageSetter: { imageAccessor.setImage($0, options) },
-            referenceTaskIdentifierChecker: { issuedIdentifier == taskAccessor.getTaskIdentifier(nil) },
+            referenceTaskIdentifierChecker: { issuedIdentifier == taskAccessor.getTaskIdentifier() },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
-                    guard issuedIdentifier == taskAccessor.getTaskIdentifier(nil) else {
+                    guard issuedIdentifier == taskAccessor.getTaskIdentifier() else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -449,7 +447,7 @@ extension KingfisherWrapper {
                     }
 
                     taskAccessor.setTask(nil)
-                    taskAccessor.setTaskIdentifier(nil, nil)
+                    taskAccessor.setTaskIdentifier(nil)
 
                     switch result {
                     case .success(let value):
