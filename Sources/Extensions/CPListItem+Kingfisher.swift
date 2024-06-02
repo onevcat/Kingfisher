@@ -110,123 +110,39 @@ extension KingfisherWrapper where Base: CPListItem {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
-        guard let source = source else {
-            /**
-             * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
-             * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
-             * which allows >=14.5 SDK to set a `nil` image. This compile check allows
-             * newer SDK users to set the image to `nil`, while still allowing older SDK
-             * users to compile the framework.
-             */
-            #if compiler(>=5.4)
-            self.base.setImage(placeholder)
-            #else
-            if let placeholder = placeholder {
-                self.base.setImage(placeholder)
-            }
-            #endif
-
-            mutatingSelf.taskIdentifier = nil
-            completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
-            return nil
-        }
-        
-        var options = parsedOptions
-        if !options.keepCurrentImageWhileLoading {
-            /**
-             * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
-             * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
-             * which allows >=14.5 SDK to set a `nil` image. This compile check allows
-             * newer SDK users to set the image to `nil`, while still allowing older SDK
-             * users to compile the framework.
-             */
-            #if compiler(>=5.4)
-            self.base.setImage(placeholder)
-            #else // Let older SDK users deal with the older behavior.
-            if let placeholder = placeholder {
-                self.base.setImage(placeholder)
-            }
-            #endif
-        }
-        
-        let issuedIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedIdentifier
-        
-        if let block = progressBlock {
-            options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
-        }
-        
-        let task = KingfisherManager.shared.retrieveImage(
+        return setImage(
             with: source,
-            options: options,
-            downloadTaskUpdated: { task in
-                Task { @MainActor in mutatingSelf.imageTask = task }
-            },
-            progressiveImageSetter: { image in
-                /**
-                 * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
-                 * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
-                 * which allows >=14.5 SDK to set a `nil` image. This compile check allows
-                 * newer SDK users to set the image to `nil`, while still allowing older SDK
-                 * users to compile the framework.
-                 */
-                #if compiler(>=5.4)
-                self.base.setImage(image)
-                #else // Let older SDK users deal with the older behavior.
-                if let image = image {
+            imageAccessor: ImagePropertyAccessor(
+                setImage: { image, _ in
+                    /**
+                     * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
+                     * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
+                     * which allows >=14.5 SDK to set a `nil` image. This compile check allows
+                     * newer SDK users to set the image to `nil`, while still allowing older SDK
+                     * users to compile the framework.
+                     */
+                    #if compiler(>=5.4)
                     self.base.setImage(image)
-                }
-                #endif
-            },
-            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
-            completionHandler: { result in
-                CallbackQueueMain.currentOrAsync {
-                    guard issuedIdentifier == self.taskIdentifier else {
-                        let reason: KingfisherError.ImageSettingErrorReason
-                        do {
-                            let value = try result.get()
-                            reason = .notCurrentSourceTask(result: value, error: nil, source: source)
-                        } catch {
-                            reason = .notCurrentSourceTask(result: nil, error: error, source: source)
-                        }
-                        let error = KingfisherError.imageSettingError(reason: reason)
-                        completionHandler?(.failure(error))
-                        return
+                    #else
+                    if let image = image {
+                        self.base.setImage(image)
                     }
-                    
-                    mutatingSelf.imageTask = nil
-                    mutatingSelf.taskIdentifier = nil
-                    
-                    switch result {
-                        case .success(let value):
-                            self.base.setImage(value.image)
-                            completionHandler?(result)
-                            
-                        case .failure:
-                            if let image = options.onFailureImage {
-                                /**
-                                 * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
-                                 * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
-                                 * which allows >=14.5 SDK to set a `nil` image. This compile check allows
-                                 * newer SDK users to set the image to `nil`, while still allowing older SDK
-                                 * users to compile the framework.
-                                 */
-                                #if compiler(>=5.4)
-                                self.base.setImage(image)
-                                #else // Let older SDK users deal with the older behavior.
-                                if let unwrapped = image {
-                                    self.base.setImage(unwrapped)
-                                }
-                                #endif   
-                            }
-                            completionHandler?(result)
-                    }
+                    #endif
+                },
+                getImage: {
+                    self.base.image
                 }
-            }
+            ),
+            taskAccessor: TaskPropertyAccessor(
+                setTaskIdentifier: { mutatingSelf.taskIdentifier = $0 },
+                getTaskIdentifier: { mutatingSelf.taskIdentifier },
+                setTask: { mutatingSelf.imageTask = $0 }
+            ),
+            placeholder: placeholder,
+            parsedOptions: parsedOptions,
+            progressBlock: progressBlock,
+            completionHandler: completionHandler
         )
-        
-        mutatingSelf.imageTask = task
-        return task
     }
     
     // MARK: Cancelling Image

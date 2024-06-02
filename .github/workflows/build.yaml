@@ -14,15 +14,13 @@ jobs:
           'watchOS Simulator,name=Apple Watch Series 8 (41mm)'
         ]
         xcode: [
-          '15.2',
-          '15.3'
+          '15.3',
+          '15.4'
         ]
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-          self-hosted: true
+      - name: Install Gems
+        run: bundle install
       - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
