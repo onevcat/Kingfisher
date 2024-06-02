@@ -362,7 +362,7 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
     ) -> DownloadTask? {
         return setImage(
             with: source, 
-            imageAccessor: .init(
+            imageAccessor: ImagePropertyAccessor(
                 setImage: { base.setImage($0, options: $1) },
                 getImage: { base.getImage() }
             ),
