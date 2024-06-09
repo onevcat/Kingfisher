@@ -25,12 +25,13 @@
 //  THE SOFTWARE.
 
 import Foundation
+
+#if os(iOS) || os(macOS)
+
 import PhotosUI
 
 /// A data provider to provide image data from a given `PHPickerResult`.
 @available(iOS 14.0, macOS 13.0, *)
-@available(watchOS, unavailable)
-@available(tvOS, unavailable)
 public struct PHPickerResultImageDataProvider: ImageDataProvider {
 
     /// The possible error might be caused by the `PHPickerResultImageDataProvider`.
@@ -79,3 +80,5 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
         }
     }
 }
+
+#endif
