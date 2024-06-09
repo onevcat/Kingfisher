@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072922422638639D0089E810 /* AnimatedImageDemo.swift */; };
+		078DCB512BCFEFB40008114E /* PHPickerResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078DCB502BCFEFB40008114E /* PHPickerResultViewController.swift */; };
 		277EAE8D2045B39C00547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE892045B39C00547CD3 /* Assets.xcassets */; };
 		277EAE8E2045B39C00547CD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE8A2045B39C00547CD3 /* Interface.storyboard */; };
 		277EAE9D2045B4D500547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE962045B4D500547CD3 /* Assets.xcassets */; };
@@ -156,6 +157,7 @@
 
 /* Begin PBXFileReference section */
 		072922422638639D0089E810 /* AnimatedImageDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImageDemo.swift; sourceTree = "<group>"; };
+		078DCB502BCFEFB40008114E /* PHPickerResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPickerResultViewController.swift; sourceTree = "<group>"; };
 		277EAE892045B39C00547CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		277EAE8B2045B39C00547CD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		277EAE8C2045B39C00547CD3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -398,6 +400,7 @@
 				C959EEE522874DC600467A10 /* ProgressiveJPEGViewController.swift */,
 				D12EB83D24DD902300329EE1 /* TextAttachmentViewController.swift */,
 				D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */,
+				078DCB502BCFEFB40008114E /* PHPickerResultViewController.swift */,
 				D1F78A5E2589F0AA00930759 /* SwiftUIViewController.swift */,
 			);
 			path = ViewControllers;
@@ -721,6 +724,7 @@
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
 				D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */,
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
+				078DCB512BCFEFB40008114E /* PHPickerResultViewController.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
 				4BC0ED4A29A6EE78003E9CD1 /* Issue2035View.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,

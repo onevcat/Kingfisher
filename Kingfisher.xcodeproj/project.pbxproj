@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07292245263B02F00089E810 /* KFAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07292244263B02F00089E810 /* KFAnimatedImage.swift */; };
+		078DCB4F2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078DCB4E2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift */; };
 		22FDCE0E2700078B0044D11E /* CPListItem+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */; };
 		388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388F37372B4D9CDB0089705C /* DisplayLink.swift */; };
 		4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
@@ -148,6 +149,7 @@
 
 /* Begin PBXFileReference section */
 		07292244263B02F00089E810 /* KFAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFAnimatedImage.swift; sourceTree = "<group>"; };
+		078DCB4E2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPickerResultImageDataProvider.swift; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
 		22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPListItem+Kingfisher.swift"; sourceTree = "<group>"; };
 		388F37372B4D9CDB0089705C /* DisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
@@ -655,6 +657,7 @@
 				D12AB69E215D2BB50013BA68 /* Resource.swift */,
 				D1E56444219B16330057AAE3 /* ImageDataProvider.swift */,
 				D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */,
+				078DCB4E2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift */,
 			);
 			path = ImageSource;
 			sourceTree = "<group>";
@@ -850,6 +853,7 @@
 				D12AB714215D2BB50013BA68 /* ImageCache.swift in Sources */,
 				4B88CEB02646C056009EBB41 /* KFImageProtocol.swift in Sources */,
 				D12AB6D0215D2BB50013BA68 /* ImagePrefetcher.swift in Sources */,
+				078DCB4F2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift in Sources */,
 				388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */,
 				D12AB6F4215D2BB50013BA68 /* ImageView+Kingfisher.swift in Sources */,
 				D12AB6FC215D2BB50013BA68 /* UIButton+Kingfisher.swift in Sources */,
