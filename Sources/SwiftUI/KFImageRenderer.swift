@@ -58,6 +58,10 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     }
                     if !binder.loadingOrSucceeded {
                         binder.start(context: context)
+                    } else {
+                        if context.reducePriorityOnDisappear {
+                            binder.restorePriorityOnAppear()
+                        }
                     }
                 }
                 .onDisappear { [weak binder = self.binder] in
@@ -66,6 +70,8 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     }
                     if context.cancelOnDisappear {
                         binder.cancel()
+                    } else if context.reducePriorityOnDisappear {
+                        binder.reducePriorityOnDisappear()
                     }
                 }
             }
