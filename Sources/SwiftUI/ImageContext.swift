@@ -66,6 +66,12 @@ extension KFImage {
             get { propertyQueue.sync { _cancelOnDisappear } }
             set { propertyQueue.sync { _cancelOnDisappear = newValue } }
         }
+
+        var _reducePriorityOnDisappear: Bool = false
+		var reducePriorityOnDisappear: Bool {
+            get { propertyQueue.sync { _reducePriorityOnDisappear } }
+            set { propertyQueue.sync { _reducePriorityOnDisappear = newValue } }
+        }
         
         var _placeholder: ((Progress) -> AnyView)? = nil
         var placeholder: ((Progress) -> AnyView)? {

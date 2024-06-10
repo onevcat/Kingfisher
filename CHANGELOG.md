@@ -2,6 +2,20 @@
 
 -----
 
+## [7.12.0 - Lucky Seven](https://github.com/onevcat/Kingfisher/releases/tag/7.12.0) (2024-06-10)
+
+#### Add
+* Mark the `removeSizeExceededValues` method in `DiskStorage` as `public`. Now it is possible to call this method to trigger a cleanup of the disk cache manually. [#2214](https://github.com/onevcat/Kingfisher/pull/2214) @nickruddeni
+* A new `PHPickerResultImageDataProvider` for loading and caching images from `PHPickerResult`. [#2233](https://github.com/onevcat/Kingfisher/pull/2233) @nuomi1
+* An option of `reducePriorityOnDisappear` for SwiftUI. It sets a lower priority for the image download task when the view disappears, and restore it when re-appears. [#2211](https://github.com/onevcat/Kingfisher/pull/2211) @Aelx-Vaiman
+
+#### Fix
+* Some improvements for documentation grammar and typos. [#2236](https://github.com/onevcat/Kingfisher/pull/2236) @FlyingCaiChong
+* Use `.process` for the `PrivacyInfo.xcprivacy` in SPM to follow the practice suggested by Apple. [#2243](https://github.com/onevcat/Kingfisher/pull/2243) @BorysKhl @onevcat
+* An issue that the file extension was not correctly retrieved for calculating hash file name when `autoExtAfterHashedFileName` is set to `true`. [#2250](https://github.com/onevcat/Kingfisher/pull/2250) @freezy7
+
+---
+
 ## [7.11.0 - visionOS for CocoaPods](https://github.com/onevcat/Kingfisher/releases/tag/7.11.0) (2024-02-12)
 
 #### Add

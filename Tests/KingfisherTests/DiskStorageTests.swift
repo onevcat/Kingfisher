@@ -213,7 +213,7 @@ class DiskStorageTests: XCTestCase {
     
     func testConfigUsesHashedFileNameWithAutoExtAndProcessor() {
         // The key of an image with processor will be as this format.
-        let key = "test.jpeg@abc"
+        let key = "test.jpeg@com.onevcat.Kingfisher.DownsamplingImageProcessor"
         
         // hashed fileName
         storage.config.usesHashedFileName = true

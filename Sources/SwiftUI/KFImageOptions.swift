@@ -131,6 +131,15 @@ extension KFImageProtocol {
         context.cancelOnDisappear = flag
         return self
     }
+    
+    /// Sets reduce priority  of the download task to low,  bound to `self` when the view disappearing.
+    /// - Parameter flag: Whether reduce the priority task or not.
+    /// - Returns: A `KFImage` view that reduces downloading task priority when disappears.
+    public func reducePriorityOnDisappear(_ flag: Bool) -> Self {
+        context.reducePriorityOnDisappear = flag
+        return self
+    }
+
 
     /// Sets a fade transition for the image task.
     ///

@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   run-test:
     runs-on: self-hosted
+    continue-on-error: true
     strategy:
       matrix:
         destination: [

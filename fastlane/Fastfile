@@ -85,6 +85,7 @@ platform :ios do
   lane :xcframework do |options|
     target_version = "Kingfisher-#{options[:version]}"
     
+    xcversion(version: "~> 15.4")
     FileUtils.rm_rf '../build'
     
     frameworks = {}
@@ -130,7 +131,7 @@ platform :ios do
   end
 
   before_all do |lane|
-    xcode_version = ENV["XCODE_VERSION"] || "15.3"
+    xcode_version = ENV["XCODE_VERSION"] || "15.4"
     xcodes(version: xcode_version, select_for_current_build_only: true)
   end
 
