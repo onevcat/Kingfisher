@@ -149,13 +149,13 @@ extension KFImage {
         /// Restores the download task priority to default if it is in progress.
         func restorePriorityOnAppear() {
             guard let downloadTask = downloadTask, loading == true else { return }
-            downloadTask.sessionTask.task.priority = URLSessionTask.defaultPriority
+            downloadTask.sessionTask?.task.priority = URLSessionTask.defaultPriority
         }
         
         /// Reduce the download task priority if it is in progress.
         func reducePriorityOnDisappear() {
             guard let downloadTask = downloadTask, loading == true else { return }
-            downloadTask.sessionTask.task.priority = URLSessionTask.lowPriority
+            downloadTask.sessionTask?.task.priority = URLSessionTask.lowPriority
         }
     }
 }
