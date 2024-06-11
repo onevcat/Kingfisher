@@ -27,7 +27,12 @@
 import XCTest
 @testable import Kingfisher
 
-extension String: @retroactive DataTransformable {
+#if swift(>=6)
+extension String: @retroactive DataTransformable { }
+#else
+extension String: DataTransformable { }
+#endif
+extension String {
     public func toData() throws -> Data {
         return data(using: .utf8)!
     }
