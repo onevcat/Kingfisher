@@ -148,8 +148,8 @@ extension KF {
             }
         }
 
-        private var progressBlock: DownloadProgressBlock {
-            { self.onProgressDelegate(($0, $1)) }
+        private var progressBlock: DownloadProgressBlock? {
+            onProgressDelegate.isSet ? { self.onProgressDelegate(($0, $1)) } : nil
         }
     }
 }

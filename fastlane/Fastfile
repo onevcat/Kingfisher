@@ -14,9 +14,9 @@ platform :ios do
     
   lane :test_ci do
     if ENV["DESTINATION"].include? "watchOS" then
-        build(destination: ENV["DESTINATION"])
+        build(destination: ENV["DESTINATION"], swift_version: "5.0")
     else
-        test(destination: ENV["DESTINATION"])
+        test(destination: ENV["DESTINATION"], swift_version: "5.0")
     end
   end
 
@@ -24,6 +24,7 @@ platform :ios do
     scan(
       scheme: "Kingfisher", 
       clean: true, 
+      xcargs: "SWIFT_VERSION=#{options[:swift_version]}",
       destination: options[:destination]
     )
   end
@@ -33,6 +34,7 @@ platform :ios do
       workspace: "Kingfisher.xcworkspace",
       configuration: "Debug",
       scheme: "Kingfisher",
+      xcargs: "SWIFT_VERSION=#{options[:swift_version]}",
       destination: options[:destination]
     )
   end

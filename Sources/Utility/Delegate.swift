@@ -110,6 +110,10 @@ public class Delegate<Input, Output>: @unchecked Sendable {
     public func callAsync(_ input: Input) async -> Output? {
         return await asyncBlock?(input)
     }
+    
+    public var isSet: Bool {
+        block != nil || asyncBlock != nil
+    }
 }
 
 extension Delegate where Input == Void {

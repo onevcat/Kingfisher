@@ -922,4 +922,8 @@ class ImageViewExtensionTests: XCTestCase {
 
 }
 
+#if swift(>=6)
+extension KFCrossPlatformView: @retroactive Placeholder {}
+#else
 extension KFCrossPlatformView: Placeholder {}
+#endif

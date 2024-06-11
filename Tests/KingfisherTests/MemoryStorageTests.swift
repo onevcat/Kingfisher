@@ -27,11 +27,17 @@
 import XCTest
 @testable import Kingfisher
 
-extension Int: CacheCostCalculable {
+extension Int {
     public var cacheCost: Int {
         return 1
     }
 }
+
+#if swift(>=6)
+extension Int: @retroactive CacheCostCalculable { }
+#else
+extension Int: CacheCostCalculable { }
+#endif
 
 class MemoryStorageTests: XCTestCase {
 

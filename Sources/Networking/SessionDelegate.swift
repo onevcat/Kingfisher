@@ -30,7 +30,7 @@ import Foundation
 ///
 /// It also behaves like a task manager for downloading.
 @objc(KFSessionDelegate) // Fix for ObjC header name conflicting. https://github.com/onevcat/Kingfisher/issues/1530
-open class SessionDelegate: NSObject {
+open class SessionDelegate: NSObject, @unchecked Sendable {
 
     typealias SessionChallengeFunc = (
         URLSession,

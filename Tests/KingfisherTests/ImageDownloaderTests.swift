@@ -586,7 +586,7 @@ class ImageDownloaderTests: XCTestCase {
     
     
     func testSessionDelegate() {
-        class ExtensionDelegate: SessionDelegate {
+        class ExtensionDelegate: SessionDelegate, @unchecked Sendable {
             //'exp' only for test
             public let exp: XCTestExpectation
             init(_ expectation:XCTestExpectation) {

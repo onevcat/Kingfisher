@@ -45,9 +45,9 @@ import ImageIO
 import UniformTypeIdentifiers
 #endif
 
-private let animatedImageDataKey = malloc(1)!
-private let imageFrameCountKey = malloc(1)!
-private let imageSourceKey = malloc(1)!
+nonisolated(unsafe) private let animatedImageDataKey = malloc(1)!
+nonisolated(unsafe) private let imageFrameCountKey = malloc(1)!
+nonisolated(unsafe) private let imageSourceKey = malloc(1)!
 
 // MARK: - Image Properties
 extension KingfisherWrapper where Base: KFCrossPlatformImage {

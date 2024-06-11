@@ -52,7 +52,11 @@ extension UIView {
     }
 }
 
+#if swift(>=6)
+extension CADisplayLink: DisplayLinkCompatible, @retroactive @unchecked Sendable {}
+#else
 extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {}
+#endif
 
 #else
 extension NSView {
