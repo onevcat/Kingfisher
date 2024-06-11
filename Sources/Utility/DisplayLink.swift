@@ -52,7 +52,7 @@ extension UIView {
     }
 }
 
-extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {}
+extension CADisplayLink: DisplayLinkCompatible, @retroactive @unchecked Sendable {}
 
 #else
 extension NSView {

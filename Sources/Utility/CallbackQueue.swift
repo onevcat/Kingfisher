@@ -85,7 +85,7 @@ enum CallbackQueueMain {
 
 extension MainActor {
     @_unavailableFromAsync
-    static func runUnsafely<T>(_ body: @MainActor () throws -> T) rethrows -> T {
+    static func runUnsafely<T: Sendable>(_ body: @MainActor () throws -> T) rethrows -> T {
 #if swift(>=5.10)
         return try MainActor.assumeIsolated(body)
 #else

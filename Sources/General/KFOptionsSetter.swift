@@ -33,6 +33,7 @@ import UIKit
 #endif
 
 /// A protocol that Kingfisher can use to perform chained setting in builder pattern.
+@MainActor
 public protocol KFOptionSetter {
     var options: KingfisherParsedOptionsInfo { get nonmutating set }
 

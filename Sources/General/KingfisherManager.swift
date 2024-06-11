@@ -922,7 +922,7 @@ class CacheCallbackCoordinator: @unchecked Sendable {
     private let stateQueue: DispatchQueue
     private var threadSafeState: State = .idle
 
-    private (set) var state: State {
+    private(set) var state: State {
         set { stateQueue.sync { threadSafeState = newValue } }
         get { stateQueue.sync { threadSafeState } }
     }
