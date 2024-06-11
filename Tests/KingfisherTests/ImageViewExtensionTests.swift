@@ -922,4 +922,4 @@ class ImageViewExtensionTests: XCTestCase {
 
 }
 
-extension KFCrossPlatformView: Placeholder {}
+extension KFCrossPlatformView: @retroactive Placeholder {}

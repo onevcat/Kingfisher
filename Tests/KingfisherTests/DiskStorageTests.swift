@@ -27,7 +27,7 @@
 import XCTest
 @testable import Kingfisher
 
-extension String: DataTransformable {
+extension String: @retroactive DataTransformable {
     public func toData() throws -> Data {
         return data(using: .utf8)!
     }

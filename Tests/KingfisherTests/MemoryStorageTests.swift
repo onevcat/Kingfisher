@@ -27,7 +27,7 @@
 import XCTest
 @testable import Kingfisher
 
-extension Int: CacheCostCalculable {
+extension Int: @retroactive CacheCostCalculable {
     public var cacheCost: Int {
         return 1
     }
