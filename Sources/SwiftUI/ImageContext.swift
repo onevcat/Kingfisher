@@ -30,25 +30,64 @@ import Combine
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
-    public class Context<HoldingView: KFImageHoldingView> {
+    public class Context<HoldingView: KFImageHoldingView>: @unchecked Sendable {
+        
+        private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.KFImageContextPropertyQueue")
+        
         let source: Source?
-        var options = KingfisherParsedOptionsInfo(
+        var _options = KingfisherParsedOptionsInfo(
             KingfisherManager.shared.defaultOptions + [.loadDiskFileSynchronously]
         )
+        var options: KingfisherParsedOptionsInfo {
+            get { propertyQueue.sync { _options } }
+            set { propertyQueue.sync { _options = newValue } }
+        }
 
-        var configurations: [(HoldingView) -> HoldingView] = []
-        var renderConfigurations: [(HoldingView.RenderingView) -> Void] = []
-        var contentConfiguration: ((HoldingView) -> AnyView)? = nil
+        var _configurations: [(HoldingView) -> HoldingView] = []
+        var configurations: [(HoldingView) -> HoldingView] {
+            get { propertyQueue.sync { _configurations } }
+            set { propertyQueue.sync { _configurations = newValue } }
+        }
         
-        var cancelOnDisappear: Bool = false
-        var reducePriorityOnDisappear: Bool = false
-        var placeholder: ((Progress) -> AnyView)? = nil
+        var _renderConfigurations: [(HoldingView.RenderingView) -> Void] = []
+        var renderConfigurations: [(HoldingView.RenderingView) -> Void] {
+            get { propertyQueue.sync { _renderConfigurations } }
+            set { propertyQueue.sync { _renderConfigurations = newValue } }
+        }
+        
+        var _contentConfiguration: ((HoldingView) -> AnyView)? = nil
+        var contentConfiguration: ((HoldingView) -> AnyView)? {
+            get { propertyQueue.sync { _contentConfiguration } }
+            set { propertyQueue.sync { _contentConfiguration = newValue } }
+        }
+        
+        var _cancelOnDisappear: Bool = false
+        var cancelOnDisappear: Bool {
+            get { propertyQueue.sync { _cancelOnDisappear } }
+            set { propertyQueue.sync { _cancelOnDisappear = newValue } }
+        }
+
+        var _reducePriorityOnDisappear: Bool = false
+		var reducePriorityOnDisappear: Bool {
+            get { propertyQueue.sync { _reducePriorityOnDisappear } }
+            set { propertyQueue.sync { _reducePriorityOnDisappear = newValue } }
+        }
+        
+        var _placeholder: ((Progress) -> AnyView)? = nil
+        var placeholder: ((Progress) -> AnyView)? {
+            get { propertyQueue.sync { _placeholder } }
+            set { propertyQueue.sync { _placeholder = newValue } }
+        }
+        
+        var _startLoadingBeforeViewAppear: Bool = false
+        var startLoadingBeforeViewAppear: Bool {
+            get { propertyQueue.sync { _startLoadingBeforeViewAppear } }
+            set { propertyQueue.sync { _startLoadingBeforeViewAppear = newValue } }
+        }
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
         let onProgressDelegate = Delegate<(Int64, Int64), Void>()
-        
-        var startLoadingBeforeViewAppear: Bool = false
         
         init(source: Source?) {
             self.source = source

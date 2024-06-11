@@ -69,7 +69,7 @@ class DataReceivingSideEffectTests: XCTestCase {
         let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
         KingfisherManager.shared.retrieveImage(with: url, options: options) {
             result in
-            XCTAssertTrue(receiver.called)
+            XCTAssertTrue(receiver.called.value)
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
@@ -80,38 +80,38 @@ class DataReceivingSideEffectTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
 
-        let receiver = DataReceivingNotAppyStub()
+        let receiver = DataReceivingNotApplyStub()
 
         let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
         KingfisherManager.shared.retrieveImage(with: url, options: options) {
             result in
-            XCTAssertTrue(receiver.called)
-            XCTAssertFalse(receiver.appied)
+            XCTAssertTrue(receiver.called.value)
+            XCTAssertFalse(receiver.applied.value)
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
 }
 
-class DataReceivingStub: DataReceivingSideEffect {
-    var called: Bool = false
+class DataReceivingStub: DataReceivingSideEffect, @unchecked Sendable {
+    var called = LockIsolated(false)
     var onShouldApply: () -> Bool = { return true }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
-        self.called = true
+        self.called.setValue(true)
     }
 }
 
-class DataReceivingNotAppyStub: DataReceivingSideEffect {
+class DataReceivingNotApplyStub: DataReceivingSideEffect, @unchecked Sendable {
 
-    var called: Bool = false
-    var appied: Bool = false
+    var called = LockIsolated(false)
+    var applied = LockIsolated(false)
 
     var onShouldApply: () -> Bool = { return false }
 
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
-        called = true
+        called.setValue(true)
         if onShouldApply() {
-            appied = true
+            applied.setValue(true)
         }
     }
 }

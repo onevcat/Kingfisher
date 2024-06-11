@@ -26,11 +26,13 @@
 
 import Foundation
 
-/// Represents a session data task in `ImageDownloader`. It consists of an underlying `URLSessionDataTask` and
-/// an array of `TaskCallback`. Multiple `TaskCallback`s could be added for a single downloading data task.
-public class SessionDataTask {
+/// Represents a session data task in ``ImageDownloader``.
+///
+/// Essentially, a ``SessionDataTask`` wraps a `URLSessionDataTask` and manages the download data.
+/// It uses a ``SessionDataTask/CancelToken`` to track the task and manage its cancellation.
+public class SessionDataTask: @unchecked Sendable {
 
-    /// Represents the type of token which used for cancelling a task.
+    /// Represents the type of token used for canceling a task.
     public typealias CancelToken = Int
 
     struct TaskCallback {
@@ -38,16 +40,19 @@ public class SessionDataTask {
         let options: KingfisherParsedOptionsInfo
     }
 
-    /// Downloaded raw data of current task.
+    /// The downloaded raw data of the current task.
     public private(set) var mutableData: Data
 
-    // This is a copy of `task.originalRequest?.url`. It is for getting a race-safe behavior for a pitfall on iOS 13.
+    // This is a copy of `task.originalRequest?.url`. It is for obtaining race-safe behavior for a pitfall on iOS 13.
     // Ref: https://github.com/onevcat/Kingfisher/issues/1511
     public let originalURL: URL?
 
-    /// The underlying download task. It is only for debugging purpose when you encountered an error. You should not
-    /// modify the content of this task or start it yourself.
+    /// The underlying download task. 
+    ///
+    /// It is only for debugging purposes when you encounter an error. You should not modify the content of this task
+    /// or start it yourself.
     public let task: URLSessionDataTask
+    
     private var callbacksStore = [CancelToken: TaskCallback]()
 
     var callbacks: [SessionDataTask.TaskCallback] {

@@ -84,6 +84,7 @@ public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, 
     }
     #endif
     
+    @MainActor
     private func makeImageView() -> AnimatedImageView {
         let view = AnimatedImageView()
         
@@ -97,6 +98,7 @@ public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, 
         return view
     }
     
+    @MainActor
     private func updateImageView(_ imageView: AnimatedImageView) {
         imageView.image = image
     }

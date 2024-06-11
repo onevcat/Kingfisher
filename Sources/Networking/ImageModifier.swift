@@ -30,38 +30,40 @@ import AppKit
 import UIKit
 #endif
 
-/// An `ImageModifier` can be used to change properties on an image between cache serialization and the actual use of
-/// the image. The `modify(_:)` method will be called after the image retrieved from its source and before it returned
-/// to the caller. This modified image is expected to be only used for rendering purpose, any changes applied by the
-/// `ImageModifier` will not be serialized or cached.
-public protocol ImageModifier {
+/// An ``ImageModifier`` can be used to change properties on an image between cache serialization and the actual use of
+/// the image.
+///
+/// The ``ImageModifier/modify(_:)`` method will be called after the image is retrieved from its source and before it
+/// is returned to the caller. This modified image is expected to be used only for rendering purposes; any changes
+/// applied by the ``ImageModifier`` will not be serialized or cached.
+public protocol ImageModifier: Sendable {
+    
     /// Modify an input `Image`.
     ///
-    /// - parameter image:   Image which will be modified by `self`
+    /// - Parameter image: The image which will be modified by `self`.
     ///
-    /// - returns: The modified image.
+    /// - Returns: The modified image.
     ///
-    /// - Note: The return value will be unmodified if modifying is not possible on
-    ///         the current platform.
-    /// - Note: Most modifiers support UIImage or NSImage, but not CGImage.
+    /// > Important: The return value will be unmodified if modification is not possible on the current platform.
     func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage
 }
 
-/// A wrapper for creating an `ImageModifier` easier.
-/// This type conforms to `ImageModifier` and wraps an image modify block.
-/// If the `block` throws an error, the original image will be used.
+/// A wrapper that simplifies the creation of an ``ImageModifier``.
+///  
+/// This type conforms to ``ImageModifier`` and encapsulates an image modification block. If the `block` throws an
+/// error, the original image will be used.
 public struct AnyImageModifier: ImageModifier {
 
-    /// A block which modifies images, or returns the original image
-    /// if modification cannot be performed with an error.
-    let block: (KFCrossPlatformImage) throws -> KFCrossPlatformImage
+    /// A block that modifies images, or returns the original image if modification cannot be performed, along with an 
+    /// error.
+    let block: @Sendable (KFCrossPlatformImage) throws -> KFCrossPlatformImage
 
-    /// Creates an `AnyImageModifier` with a given `modify` block.
-    public init(modify: @escaping (KFCrossPlatformImage) throws -> KFCrossPlatformImage) {
+    /// Creates an ``AnyImageModifier`` with a given `modify` block.
+    /// - Parameter modify: A block which is used to modify the input image.
+    public init(modify: @escaping @Sendable (KFCrossPlatformImage) throws -> KFCrossPlatformImage) {
         block = modify
     }
 
-    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return (try? block(image)) ?? image
     }
@@ -76,14 +78,13 @@ public struct RenderingModeImageModifier: ImageModifier {
     /// The rendering mode to apply to the image.
     public let renderingMode: UIImage.RenderingMode
 
-    /// Creates a `RenderingModeImageModifier`.
+    /// Creates a ``RenderingModeImageModifier``.
     ///
-    /// - Parameter renderingMode: The rendering mode to apply to the image. Default is `.automatic`.
+    /// - Parameter renderingMode: The rendering mode to apply to the image. The default is `.automatic`.
     public init(renderingMode: UIImage.RenderingMode = .automatic) {
         self.renderingMode = renderingMode
     }
 
-    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return image.withRenderingMode(renderingMode)
     }
@@ -92,10 +93,9 @@ public struct RenderingModeImageModifier: ImageModifier {
 /// Modifier for setting the `flipsForRightToLeftLayoutDirection` property of images.
 public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
 
-    /// Creates a `FlipsForRightToLeftLayoutDirectionImageModifier`.
+    /// Creates a ``FlipsForRightToLeftLayoutDirectionImageModifier``.
     public init() {}
 
-    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return image.imageFlippedForRightToLeftLayoutDirection()
     }
@@ -104,15 +104,15 @@ public struct FlipsForRightToLeftLayoutDirectionImageModifier: ImageModifier {
 /// Modifier for setting the `alignmentRectInsets` property of images.
 public struct AlignmentRectInsetsImageModifier: ImageModifier {
 
-    /// The alignment insets to apply to the image
+    /// The alignment insets to apply to the image.
     public let alignmentInsets: UIEdgeInsets
-
-    /// Creates an `AlignmentRectInsetsImageModifier`.
+    
+    /// Creates a ``AlignmentRectInsetsImageModifier``.
+    /// - Parameter alignmentInsets: The alignment insets to apply to the image.
     public init(alignmentInsets: UIEdgeInsets) {
         self.alignmentInsets = alignmentInsets
     }
 
-    /// Modify an input `Image`. See `ImageModifier` protocol for more.
     public func modify(_ image: KFCrossPlatformImage) -> KFCrossPlatformImage {
         return image.withAlignmentRectInsets(alignmentInsets)
     }

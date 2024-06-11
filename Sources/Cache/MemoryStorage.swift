@@ -26,37 +26,51 @@
 
 import Foundation
 
-/// Represents a set of conception related to storage which stores a certain type of value in memory.
-/// This is a namespace for the memory storage types. A `Backend` with a certain `Config` will be used to describe the
-/// storage. See these composed types for more information.
+/// Represents the concepts related to storage that stores a specific type of value in memory.
+///
+/// This serves as a namespace for memory storage types. A ``MemoryStorage/Backend`` with a particular
+/// ``MemoryStorage/Config`` is used to define the storage.
+/// 
+/// Refer to these composite types for further details.
 public enum MemoryStorage {
 
-    /// Represents a storage which stores a certain type of value in memory. It provides fast access,
-    /// but limited storing size. The stored value type needs to conform to `CacheCostCalculable`,
-    /// and its `cacheCost` will be used to determine the cost of size for the cache item.
+    /// Represents a storage that stores a specific type of value in memory.
     ///
-    /// You can config a `MemoryStorage.Backend` in its initializer by passing a `MemoryStorage.Config` value.
-    /// or modifying the `config` property after it being created. The backend of `MemoryStorage` has
-    /// upper limitation on cost size in memory and item count. All items in the storage has an expiration
-    /// date. When retrieved, if the target item is already expired, it will be recognized as it does not
-    /// exist in the storage. The `MemoryStorage` also contains a scheduled self clean task, to evict expired
-    /// items from memory.
-    public class Backend<T: CacheCostCalculable> {
+    /// It provides fast access but has a limited storage size. The stored value type needs to conform to the
+    /// ``CacheCostCalculable`` protocol, and its ``CacheCostCalculable/cacheCost`` will be used to determine the cost
+    /// of the cache item's size in the memory.
+    ///
+    /// You can configure a ``MemoryStorage/Backend`` in its ``MemoryStorage/Backend/init(config:)`` method by passing
+    /// a ``MemoryStorage/Config`` value or by modifying the ``MemoryStorage/Backend/config`` property after it's
+    /// created.
+    ///
+    /// The ``MemoryStorage`` backend has an upper limit on the total cost size in memory and item count. All items in
+    /// the storage have an expiration date. When retrieved, if the target item is already expired, it will be
+    /// recognized as if it does not exist in the storage.
+    ///
+    /// The `MemoryStorage` also includes a scheduled self-cleaning task to evict expired items from memory.
+    ///
+    /// > This class is thready safe.
+    public class Backend<T: CacheCostCalculable>: @unchecked Sendable {
+        
         let storage = NSCache<NSString, StorageObject<T>>()
 
-        // Keys trackes the objects once inside the storage. For object removing triggered by user, the corresponding
-        // key would be also removed. However, for the object removing triggered by cache rule/policy of system, the
-        // key will be remained there until next `removeExpired` happens.
+        // Keys track the objects once inside the storage.
         //
-        // Breaking the strict tracking could save additional locking behaviors.
+        // For object removing triggered by user, the corresponding key would be also removed. However, for the object
+        // removing triggered by cache rule/policy of system, the key will be remained there until next `removeExpired`
+        // happens.
+        //
+        // Breaking the strict tracking could save additional locking behaviors and improve the cache performance.
         // See https://github.com/onevcat/Kingfisher/issues/1233
         var keys = Set<String>()
 
         private var cleanTimer: Timer? = nil
         private let lock = NSLock()
 
-        /// The config used in this storage. It is a value you can set and
-        /// use to config the storage in air.
+        /// The configuration used in this storage.
+        ///
+        /// It is a value you can set and use to configure the storage as needed.
         public var config: Config {
             didSet {
                 storage.totalCostLimit = config.totalCostLimit
@@ -64,10 +78,10 @@ public enum MemoryStorage {
             }
         }
 
-        /// Creates a `MemoryStorage` with a given `config`.
+        /// Creates a ``MemoryStorage/Backend`` with a given ``MemoryStorage/Config`` value.
         ///
-        /// - Parameter config: The config used to create the storage. It determines the max size limitation,
-        ///                     default expiration setting and more.
+        /// - Parameter config: The configuration used to create the storage. It determines the maximum size limitation,
+        /// default expiration settings, and more.
         public init(config: Config) {
             self.config = config
             storage.totalCostLimit = config.totalCostLimit
@@ -98,13 +112,13 @@ public enum MemoryStorage {
                 }
             }
         }
-
-        /// Stores a value to the storage under the specified key and expiration policy.
+        
+        /// Stores a value in the storage under the specified key and expiration policy.
+        ///
         /// - Parameters:
         ///   - value: The value to be stored.
         ///   - key: The key to which the `value` will be stored.
-        ///   - expiration: The expiration policy used by this store action.
-        /// - Throws: No error will
+        ///   - expiration: The expiration policy used by this storage action.
         public func store(
             value: T,
             forKey key: String,
@@ -139,8 +153,8 @@ public enum MemoryStorage {
         /// Gets a value from the storage.
         ///
         /// - Parameters:
-        ///   - key: The cache key of value.
-        ///   - extendingExpiration: The expiration policy used by this getting action.
+        ///   - key: The cache key of the value.
+        ///   - extendingExpiration: The expiration policy used by this retrieval action.
         /// - Returns: The value under `key` if it is valid and found in the storage. Otherwise, `nil`.
         public func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) -> T? {
             guard let object = storage.object(forKey: key as NSString) else {
@@ -153,9 +167,10 @@ public enum MemoryStorage {
             return object.value
         }
 
-        /// Whether there is valid cached data under a given key.
-        /// - Parameter key: The cache key of value.
-        /// - Returns: If there is valid data under the key, `true`. Otherwise, `false`.
+        /// Determines whether there is valid cached data under a given key.
+        ///
+        /// - Parameter key: The cache key of the value.
+        /// - Returns: `true` if there is valid data under the key, otherwise `false`.
         public func isCached(forKey key: String) -> Bool {
             guard let _ = value(forKey: key, extendingExpiration: .none) else {
                 return false
@@ -164,7 +179,8 @@ public enum MemoryStorage {
         }
 
         /// Removes a value from a specified key.
-        /// - Parameter key: The cache key of value.
+        ///
+        /// - Parameter key: The cache key of the value.
         public func remove(forKey key: String) {
             lock.lock()
             defer { lock.unlock() }
@@ -183,42 +199,49 @@ public enum MemoryStorage {
 }
 
 extension MemoryStorage {
-    /// Represents the config used in a `MemoryStorage`.
+    /// Represents the configuration used in a ``MemoryStorage/Backend``.
     public struct Config {
 
-        /// Total cost limit of the storage in bytes.
+        /// The total cost limit of the storage.
+        ///
+        /// This counts up the value of ``CacheCostCalculable/cacheCost``. If adding this object to the cache causes
+        /// the cache’s total cost to rise above totalCostLimit, the cache may automatically evict objects until its
+        /// total cost falls below this value.
         public var totalCostLimit: Int
 
         /// The item count limit of the memory storage.
+        ///
+        /// The default value is `Int.max`, which means no hard limitation of the item count.
         public var countLimit: Int = .max
 
-        /// The `StorageExpiration` used in this memory storage. Default is `.seconds(300)`,
-        /// means that the memory cache would expire in 5 minutes.
+        /// The ``StorageExpiration`` used in this memory storage.
+        ///
+        /// The default is `.seconds(300)`, which means that the memory cache will expire in 5 minutes if not accessed.
         public var expiration: StorageExpiration = .seconds(300)
 
-        /// The time interval between the storage do clean work for swiping expired items.
+        /// The time interval between the storage performing cleaning work for sweeping expired items.
         public var cleanInterval: TimeInterval
         
-        /// Whether the newly added items to memory cache should be purged when the app goes to background.
+        /// Determine whether newly added items to memory cache should be purged when the app goes to the background.
         ///
-        /// By default, the cached items in memory will be purged as soon as the app goes to background to ensure
-        /// least memory footprint. Enabling this would prevent this behavior and keep the items alive in cache even
-        /// when your app is not in foreground anymore.
+        /// By default, cached items in memory will be purged as soon as the app goes to the background to ensure a
+        /// minimal memory footprint. Enabling this prevents this behavior and keeps the items alive in the cache even
+        /// when your app is not in the foreground.
         ///
-        /// Default is `false`. After setting `true`, only the newly added cache objects are affected. Existing
-        /// objects which are already in the cache while this value was `false` will be still be purged when entering
-        /// background.
+        /// The default value is `false`. After setting it to `true`, only newly added cache objects are affected. 
+        /// Existing objects that were already in the cache while this value was `false` will still be purged when the
+        /// app enters the background.
         public var keepWhenEnteringBackground: Bool = false
 
-        /// Creates a config from a given `totalCostLimit` value.
+        /// Creates a configuration from a given ``MemoryStorage/Config/totalCostLimit`` value and a
+        ///  ``MemoryStorage/Config/cleanInterval``.
         ///
         /// - Parameters:
-        ///   - totalCostLimit: Total cost limit of the storage in bytes.
-        ///   - cleanInterval: The time interval between the storage do clean work for swiping expired items.
-        ///                    Default is 120, means the auto eviction happens once per two minutes.
+        ///   - totalCostLimit: The total cost limit of the storage in bytes.
+        ///   - cleanInterval: The time interval between the storage performing cleaning work for sweeping expired items.
+        ///   The default is 120, which means auto eviction happens once every two minutes.
         ///
-        /// - Note:
-        /// Other members of `MemoryStorage.Config` will use their default values when created.
+        /// > Other properties of the ``MemoryStorage/Config`` will use their default values when created.
         public init(totalCostLimit: Int, cleanInterval: TimeInterval = 120) {
             self.totalCostLimit = totalCostLimit
             self.cleanInterval = cleanInterval

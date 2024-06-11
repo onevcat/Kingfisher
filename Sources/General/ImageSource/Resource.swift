@@ -27,9 +27,9 @@
 import Foundation
 
 /// Represents an image resource at a certain url and a given cache key.
-/// Kingfisher will use a `Resource` to download a resource from network and cache it with the cache key when
-/// using `Source.network` as its image setting source.
-public protocol Resource {
+/// Kingfisher will use a ``Resource`` to download a resource from network and cache it with the cache key when
+/// using ``Source/network(_:)`` as its image setting source.
+public protocol Resource: Sendable {
     
     /// The key used in cache.
     var cacheKey: String { get }
@@ -40,9 +40,14 @@ public protocol Resource {
 
 extension Resource {
 
-    /// Converts `self` to a valid `Source` based on its `downloadURL` scheme. A `.provider` with
-    /// `LocalFileImageDataProvider` associated will be returned if the URL points to a local file. Otherwise,
-    /// `.network` is returned.
+    /// Converts `self` to a valid ``Source`` based on the ``Resource/downloadURL`` scheme. A ``Source/provider(_:)``
+    /// with ``LocalFileImageDataProvider`` associated will be returned if the URL points to a local file. Otherwise,
+    /// ``Source/network(_:)`` is returned.
+    ///
+    /// - Parameter overrideCacheKey: The key should be used to override the ``Resource/cacheKey`` when performing the
+    /// conversion. `nil` if not overridden and ``Resource/cacheKey`` of `self` is used.
+    /// - Returns: The converted source.
+    ///
     public func convertToSource(overrideCacheKey: String? = nil) -> Source {
         let key = overrideCacheKey ?? cacheKey
         return downloadURL.isFileURL ?
@@ -56,9 +61,9 @@ public typealias ImageResource = KF.ImageResource
 
 
 extension KF {
-    /// ImageResource is a simple combination of `downloadURL` and `cacheKey`.
+    /// ``ImageResource`` is a simple combination of ``downloadURL`` and ``cacheKey``.
     /// When passed to image view set methods, Kingfisher will try to download the target
-    /// image from the `downloadURL`, and then store it with the `cacheKey` as the key in cache.
+    /// image from the ``downloadURL``, and then store it with the ``cacheKey`` as the key in cache.
     public struct ImageResource: Resource {
 
         // MARK: - Initializers
@@ -67,8 +72,10 @@ extension KF {
         ///
         /// - Parameters:
         ///   - downloadURL: The target image URL from where the image can be downloaded.
-        ///   - cacheKey: The cache key. If `nil`, Kingfisher will use the `absoluteString` of `downloadURL` as the key.
-        ///               Default is `nil`.
+        ///   - cacheKey: 
+        ///   The cache key. If `nil`, Kingfisher will use the `absoluteString` of ``ImageResource/downloadURL`` as
+        ///   the key. Default is `nil`.
+        ///   
         public init(downloadURL: URL, cacheKey: String? = nil) {
             self.downloadURL = downloadURL
             self.cacheKey = cacheKey ?? downloadURL.cacheKey
@@ -84,8 +91,8 @@ extension KF {
     }
 }
 
-/// URL conforms to `Resource` in Kingfisher.
-/// The `absoluteString` of this URL is used as `cacheKey`. And the URL itself will be used as `downloadURL`.
+/// URL conforms to ``Resource`` in Kingfisher.
+/// The `absoluteString` of this URL is used as ``cacheKey``. And the URL itself will be used as `downloadURL`.
 /// If you need customize the url and/or cache key, use `ImageResource` instead.
 extension URL: Resource {
     public var cacheKey: String { return isFileURL ? localFileCacheKey : absoluteString }

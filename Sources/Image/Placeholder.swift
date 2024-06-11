@@ -34,35 +34,54 @@ import AppKit
 import UIKit
 #endif
 
-/// Represents a placeholder type which could be set while loading as well as
-/// loading finished without getting an image.
+/// Represents a placeholder type that could be set during loading as well as when loading is finished without
+/// getting an image.
 public protocol Placeholder {
     
-    /// How the placeholder should be added to a given image view.
-    func add(to imageView: KFCrossPlatformImageView)
+    /// Called when the placeholder needs to be added to a given image view.
+    /// 
+    /// To conform to ``Placeholder``, you implement this method and add your own placeholder view to the 
+    /// given `imageView`.
+    ///
+    /// - Parameter imageView: The image view where the placeholder should be added to.
+    @MainActor func add(to imageView: KFCrossPlatformImageView)
     
-    /// How the placeholder should be removed from a given image view.
-    func remove(from imageView: KFCrossPlatformImageView)
+    /// Called when the placeholder needs to be removed from a given image view.
+    ///
+    /// To conform to ``Placeholder``, you implement this method and remove your own placeholder view from the
+    /// given `imageView`.
+    ///
+    /// - Parameter imageView: The image view where the placeholder is already added to and now should be removed from.
+    @MainActor func remove(from imageView: KFCrossPlatformImageView)
 }
 
-/// Default implementation of an image placeholder. The image will be set or
-/// reset directly for `image` property of the image view.
+@MainActor
 extension KFCrossPlatformImage: Placeholder {
-    /// How the placeholder should be added to a given image view.
-    public func add(to imageView: KFCrossPlatformImageView) { imageView.image = self }
-
-    /// How the placeholder should be removed from a given image view.
-    public func remove(from imageView: KFCrossPlatformImageView) { imageView.image = nil }
+    public func add(to imageView: KFCrossPlatformImageView) {
+        imageView.image = self
+    }
+    
+    public func remove(from imageView: KFCrossPlatformImageView) {
+        imageView.image = nil
+    }
+    
+    public func add(to base: any KingfisherHasImageComponent) {
+        base.image = self
+    }
+    
+    public func remove(from base: any KingfisherHasImageComponent) {
+        base.image = nil
+    }
 }
 
-/// Default implementation of an arbitrary view as placeholder. The view will be 
-/// added as a subview when adding and be removed from its super view when removing.
+/// Default implementation of an arbitrary view as a placeholder. The view will be
+/// added as a subview when adding and removed from its superview when removing.
 ///
-/// To use your customize View type as placeholder, simply let it conforming to 
-/// `Placeholder` by `extension MyView: Placeholder {}`.
+/// To use your customized View type as a placeholder, simply have it conform to
+/// `Placeholder` using an extension: `extension MyView: Placeholder {}`.
+@MainActor
 extension Placeholder where Self: KFCrossPlatformView {
     
-    /// How the placeholder should be added to a given image view.
     public func add(to imageView: KFCrossPlatformImageView) {
         imageView.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false
@@ -73,7 +92,6 @@ extension Placeholder where Self: KFCrossPlatformView {
         widthAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
     }
 
-    /// How the placeholder should be removed from a given image view.
     public func remove(from imageView: KFCrossPlatformImageView) {
         removeFromSuperview()
     }

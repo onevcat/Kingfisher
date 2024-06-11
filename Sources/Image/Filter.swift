@@ -34,28 +34,26 @@ import UIKit
 
 import CoreImage
 
-// Reuse the same CI Context for all CI drawing.
-private let ciContext = CIContext(options: nil)
+// Reuses the same CI Context for all CI drawings.
+struct SendableBox<T>: @unchecked Sendable {
+    let value: T
+}
 
-/// Represents the type of transformer method, which will be used in to provide a `Filter`.
+private let ciContext = SendableBox(value: CIContext(options: nil))
+
+/// Represents the type of transformer method, which will be used to provide a ``Filter``.
 public typealias Transformer = (CIImage) -> CIImage?
 
-/// Represents a processor based on a `CIImage` `Filter`.
-/// It requires a filter to create an `ImageProcessor`.
+/// Represents an ``ImageProcessor`` based on a ``Filter``, for images of `CIImage`.
+///
+/// You can use any ``Filter``, or in other words, a ``Transformer`` to convert a `CIImage` to another, to create a
+/// ``ImageProcessor`` type easily.
 public protocol CIImageProcessor: ImageProcessor {
     var filter: Filter { get }
 }
 
 extension CIImageProcessor {
     
-    /// Processes the input `ImageProcessItem` with this processor.
-    ///
-    /// - Parameters:
-    ///   - item: Input item which will be processed by `self`.
-    ///   - options: Options when processing the item.
-    /// - Returns: The processed image.
-    ///
-    /// - Note: See documentation of `ImageProcessor` protocol for more.
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         switch item {
         case .image(let image):
@@ -66,18 +64,22 @@ extension CIImageProcessor {
     }
 }
 
-/// A wrapper struct for a `Transformer` of CIImage filters. A `Filter`
-/// value could be used to create a `CIImage` processor.
+/// A wrapper struct for a `Transformer` of CIImage filters. 
+///
+/// A ``Filter`` value can be used to create an ``ImageProcessor`` for `CIImage`s.
 public struct Filter {
     
     let transform: Transformer
-
+    
+    /// Creates a ``Filter`` from a given ``Transformer``.
+    ///
+    /// - Parameter transform: The value defines how a `CIImage` can be converted to another one.
     public init(transform: @escaping Transformer) {
         self.transform = transform
     }
     
-    /// Tint filter which will apply a tint color to images.
-    public static var tint: (KFCrossPlatformColor) -> Filter = {
+    /// Tint filter that applies a tint color to images.
+    public static let tint: @Sendable (KFCrossPlatformColor) -> Filter = {
         color in
         Filter {
             input in
@@ -95,19 +97,38 @@ public struct Filter {
         }
     }
     
-    /// Represents color control elements. It is a tuple of
-    /// `(brightness, contrast, saturation, inputEV)`
-    public typealias ColorElement = (CGFloat, CGFloat, CGFloat, CGFloat)
+    /// Represents color control elements.
+    ///
+    /// It contains necessary variables which can be applied as a filter to `CIImage.applyingFilter` feature as
+    /// "CIColorControls".
+    public struct ColorElement {
+        public let brightness: CGFloat
+        public let contrast: CGFloat
+        public let saturation: CGFloat
+        public let inputEV: CGFloat
+        
+        /// Creates a ``ColorElement`` value with given parameters.
+        /// - Parameters:
+        ///   - brightness: The brightness change applied to the image.
+        ///   - contrast: The contrast change applied to the image.
+        ///   - saturation: The saturation change applied to the image.
+        ///   - inputEV: The EV (F-stops brighter or darker) change applied to the image.
+        public init(brightness: CGFloat, contrast: CGFloat, saturation: CGFloat, inputEV: CGFloat) {
+            self.brightness = brightness
+            self.contrast = contrast
+            self.saturation = saturation
+            self.inputEV = inputEV
+        }
+    }
     
-    /// Color control filter which will apply color control change to images.
-    public static var colorControl: (ColorElement) -> Filter = { arg -> Filter in
-        let (brightness, contrast, saturation, inputEV) = arg
+    /// Color control filter that applies color control changes to images.
+    public static let colorControl: @Sendable (ColorElement) -> Filter = { arg -> Filter in
         return Filter { input in
-            let paramsColor = [kCIInputBrightnessKey: brightness,
-                               kCIInputContrastKey: contrast,
-                               kCIInputSaturationKey: saturation]
+            let paramsColor = [kCIInputBrightnessKey: arg.brightness,
+                                 kCIInputContrastKey: arg.contrast,
+                               kCIInputSaturationKey: arg.saturation]
             let blackAndWhite = input.applyingFilter("CIColorControls", parameters: paramsColor)
-            let paramsExposure = [kCIInputEVKey: inputEV]
+            let paramsExposure = [kCIInputEVKey: arg.inputEV]
             return blackAndWhite.applyingFilter("CIExposureAdjust", parameters: paramsExposure)
         }
     }
@@ -115,14 +136,14 @@ public struct Filter {
 
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
-    /// Applies a `Filter` containing `CIImage` transformer to `self`.
+    /// Applies a `Filter` containing a `CIImage` transformer to `self`.
     ///
-    /// - Parameter filter: The filter used to transform `self`.
-    /// - Returns: A transformed image by input `Filter`.
+    /// - Parameters:
+    ///     - filter: The filter used to transform `self`.
+    /// - Returns: A transformed image by the input `Filter`.
     ///
-    /// - Note:
-    ///    Only CG-based images are supported. If any error happens
-    ///    during transforming, `self` will be returned.
+    /// > Important: Only CG-based images are supported. If an error occurs during transformation,
+    /// ``KingfisherWrapper/base`` will be returned.
     public func apply(_ filter: Filter) -> KFCrossPlatformImage {
         
         guard let cgImage = cgImage else {
@@ -135,7 +156,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return base
         }
 
-        guard let result = ciContext.createCGImage(outputImage, from: outputImage.extent) else {
+        guard let result = ciContext.value.createCGImage(outputImage, from: outputImage.extent) else {
             assertionFailure("[Kingfisher] Can not make an tint image within context.")
             return base
         }

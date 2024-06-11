@@ -26,51 +26,56 @@
 
 import Foundation
 
-/// Represents and wraps a method for modifying request during an image download request redirection.
-public protocol ImageDownloadRedirectHandler {
+/// The ``ImageDownloadRedirectHandler`` is used to modify the request before redirection.
+///
+/// This allows you to customize the image download request during redirection. You can make modifications for
+/// purposes such as adding an authentication token to the header, performing basic HTTP authentication, or URL
+/// mapping.
+///
+/// Typically, you pass an ``ImageDownloadRedirectHandler`` as the associated value of
+/// ``KingfisherOptionsInfoItem/redirectHandler(_:)`` and use it as the `options` parameter in relevant methods.
+///
+/// If you do not make any changes to the input `request` and return it as is, the downloading process will redirect
+/// using it.
+///
+public protocol ImageDownloadRedirectHandler: Sendable {
 
-    /// The `ImageDownloadRedirectHandler` contained will be used to change the request before redirection.
-    /// This is the possibility you can modify the image download request during redirection. You can modify the
-    /// request for some customizing purpose, such as adding auth token to the header, do basic HTTP auth or
-    /// something like url mapping.
-    ///
-    /// Usually, you pass an `ImageDownloadRedirectHandler` as the associated value of
-    /// `KingfisherOptionsInfoItem.redirectHandler` and use it as the `options` parameter in related methods.
-    ///
-    /// If you do nothing with the input `request` and return it as is, a downloading process will redirect with it.
+    /// Called when a redirect is received and the downloader waiting for the request to continue the download task.
     ///
     /// - Parameters:
-    ///   - task: The current `SessionDataTask` which triggers this redirect.
+    ///   - task: The current ``SessionDataTask`` that triggers this redirect.
     ///   - response: The response received during redirection.
-    ///   - newRequest: The request for redirection which can be modified.
-    ///   - completionHandler: A closure for being called with modified request.
+    ///   - newRequest: The new request received from the URL session for redirection that can be modified.
+    /// - Returns: The modified request.
     func handleHTTPRedirection(
         for task: SessionDataTask,
         response: HTTPURLResponse,
-        newRequest: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
+        newRequest: URLRequest
+    ) async -> URLRequest?
 }
 
-/// A wrapper for creating an `ImageDownloadRedirectHandler` easier.
-/// This type conforms to `ImageDownloadRedirectHandler` and wraps a redirect request modify block.
+/// A wrapper for creating an ``ImageDownloadRedirectHandler`` instance more easily.
+///
+/// This type conforms to ``ImageDownloadRedirectHandler`` and wraps an image modification block.
 public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
-    let block: (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void
-
+    let block: @Sendable (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void
+    
     public func handleHTTPRedirection(
-        for task: SessionDataTask,
-        response: HTTPURLResponse,
-        newRequest: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
-    {
-        block(task, response, newRequest, completionHandler)
+        for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest
+    ) async -> URLRequest? {
+        return await withCheckedContinuation { continuation in
+            block(task, response, newRequest, { urlRequest in
+                continuation.resume(returning: urlRequest)
+            })
+        }
     }
     
-    /// Creates a value of `ImageDownloadRedirectHandler` which runs `modify` block.
+    /// Creates a value of ``ImageDownloadRedirectHandler`` that executes the `modify` block.
     ///
-    /// - Parameter modify: The request modifying block runs when a request modifying task comes.
-    ///
-    public init(handle: @escaping (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
+    /// - Parameter modify: The block that modifies the request when a request modification task is triggered.
+    public init(handle: @escaping @Sendable (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
         block = handle
     }
+    
 }

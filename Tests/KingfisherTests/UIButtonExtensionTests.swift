@@ -60,7 +60,7 @@ class UIButtonExtensionTests: XCTestCase {
         super.tearDown()
     }
 
-    func testDownloadAndSetImage() {
+    @MainActor func testDownloadAndSetImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
@@ -86,7 +86,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testDownloadAndSetBackgroundImage() {
+    @MainActor func testDownloadAndSetBackgroundImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
@@ -110,7 +110,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacnelImageTask() {
+    @MainActor func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -128,7 +128,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCacnelBackgroundImageTask() {
+    @MainActor func testCancelBackgroundImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -146,7 +146,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSettingNilURL() {
+    @MainActor func testSettingNilURL() {
         let exp = expectation(description: #function)
         
         let url: URL? = nil
@@ -163,7 +163,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testSettingNonWorkingImageWithFailureImage() {
+    @MainActor func testSettingNonWorkingImageWithFailureImage() {
         let expectation = self.expectation(description: "wait for downloading image")
         let url = testURLs[0]
         stub(url, errorCode: 404)
@@ -180,7 +180,7 @@ class UIButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testSettingNonWorkingBackgroundImageWithFailureImage() {
+    @MainActor func testSettingNonWorkingBackgroundImageWithFailureImage() {
         let expectation = self.expectation(description: "wait for downloading image")
         let url = testURLs[0]
         stub(url, errorCode: 404)

@@ -32,37 +32,35 @@ import AppKit
 import UIKit
 #endif
 
-/// An `CacheSerializer` is used to convert some data to an image object after
-/// retrieving it from disk storage, and vice versa, to convert an image to data object
-/// for storing to the disk storage.
-public protocol CacheSerializer {
+/// A `CacheSerializer` is used to convert some data to an image object after retrieving it from disk storage,
+/// and vice versa, to convert an image to a data object for storing it to the disk storage.
+public protocol CacheSerializer: Sendable {
     
-    /// Gets the serialized data from a provided image
-    /// and optional original data for caching to disk.
+    /// Retrieves the serialized data from a provided image and optional original data for caching to disk.
     ///
     /// - Parameters:
-    ///   - image: The image needed to be serialized.
-    ///   - original: The original data which is just downloaded.
-    ///               If the image is retrieved from cache instead of
-    ///               downloaded, it will be `nil`.
-    /// - Returns: The data object for storing to disk, or `nil` when no valid
-    ///            data could be serialized.
+    ///   - image: The image to be serialized.
+    ///   - original: The original data that was just downloaded.
+    ///   If the image is retrieved from the cache instead of being downloaded, it will be `nil`.
+    /// - Returns: The data object for storing to disk, or `nil` when no valid data can be serialized.
     func data(with image: KFCrossPlatformImage, original: Data?) -> Data?
 
-    /// Gets an image from provided serialized data.
+    /// Retrieves an image from the provided serialized data.
     ///
     /// - Parameters:
     ///   - data: The data from which an image should be deserialized.
     ///   - options: The parsed options for deserialization.
-    /// - Returns: An image deserialized or `nil` when no valid image
-    ///            could be deserialized.
+    /// - Returns: A deserialized image, or `nil` when no valid image can be deserialized.
     func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
     
-    /// Whether this serializer prefers to cache the original data in its implementation.
-    /// If `true`, after creating the image from the disk data, Kingfisher will continue to apply the processor to get
-    /// the final image.
+    /// Indicates whether this serializer prefers to cache the original data in its implementation.
     ///
-    /// By default, it is `false` and the actual processed image is assumed to be serialized to the disk.
+    /// If `true`, during storing phase, the original data is preferred to be stored to the disk if exists. When
+    /// retrieving image from the disk cache, after creating the image from the loaded data, Kingfisher will continue
+    /// to apply the processor to get the final image.
+    ///
+    /// By default, it is `false`, and the actual processed image is assumed to be serialized to and later deserialized
+    /// from the disk. That means the processed version of the image is stored and loaded.
     var originalDataUsed: Bool { get }
 }
 
@@ -70,45 +68,39 @@ public extension CacheSerializer {
     var originalDataUsed: Bool { false }
 }
 
-/// Represents a basic and default `CacheSerializer` used in Kingfisher disk cache system.
-/// It could serialize and deserialize images in PNG, JPEG and GIF format. For
-/// image other than these formats, a normalized `pngRepresentation` will be used.
+/// Represents a basic and default `CacheSerializer` used in the Kingfisher disk cache system.
+///
+/// It can serialize and deserialize images in PNG, JPEG, and GIF formats. For images other than these formats, a 
+/// normalized ``KingfisherWrapper/pngRepresentation()`` will be used.
+///
+/// When converting an `image` to the date, it will only be converted to the corresponding data type when `original`
+/// contains valid PNG, JPEG, and GIF format data. If the `original` is provided but not valid, or if `original` is
+/// `nil`, the input `image` will be encoded as PNG data.
 public struct DefaultCacheSerializer: CacheSerializer {
     
-    /// The default general cache serializer used across Kingfisher's cache.
+    /// The default general cache serializer utilized throughout Kingfisher's caching mechanism.
     public static let `default` = DefaultCacheSerializer()
 
-    /// The compression quality when converting image to a lossy format data. Default is 1.0.
+    /// The compression quality used when converting an image to lossy format data (such as JPEG).
+    ///
+    /// Default is 1.0.
     public var compressionQuality: CGFloat = 1.0
 
-    /// Whether the original data should be preferred when serializing the image.
-    /// If `true`, the input original data will be checked first and used unless the data is `nil`.
-    /// In that case, the serialization will fall back to creating data from image.
+    /// Determines whether the original data should be prioritized during image serialization.
+    ///
+    /// If set to `true`, the original input data will be initially inspected and used, unless the data is `nil`.
+    /// In the event of a `nil` data, the serialization process will revert to generating data from the image.
+    ///
+    /// > This value is used as ``CacheSerializer/originalDataUsed-d2v9``.
     public var preferCacheOriginalData: Bool = false
 
-    /// Returnes the `preferCacheOriginalData` value. When the original data is used, Kingfisher needs to re-apply the
-    /// processors to get the desired final image.
     public var originalDataUsed: Bool { preferCacheOriginalData }
     
-    /// Creates a cache serializer that serialize and deserialize images in PNG, JPEG and GIF format.
+    /// Creates a cache serializer that serializes and deserializes images in PNG, JPEG, and GIF formats.
     ///
-    /// - Note:
-    /// Use `DefaultCacheSerializer.default` unless you need to specify your own properties.
-    ///
+    /// > Prefer to use the ``DefaultCacheSerializer/default`` value unless you need to specify your own properties.
     public init() { }
 
-    /// - Parameters:
-    ///   - image: The image needed to be serialized.
-    ///   - original: The original data which is just downloaded.
-    ///               If the image is retrieved from cache instead of
-    ///               downloaded, it will be `nil`.
-    /// - Returns: The data object for storing to disk, or `nil` when no valid
-    ///            data could be serialized.
-    ///
-    /// - Note:
-    /// Only when `original` contains valid PNG, JPEG and GIF format data, the `image` will be
-    /// converted to the corresponding data type. Otherwise, if the `original` is provided but it is not
-    /// If `original` is `nil`, the input `image` will be encoded as PNG data.
     public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
         if preferCacheOriginalData {
             return original ??
@@ -124,13 +116,6 @@ public struct DefaultCacheSerializer: CacheSerializer {
         }
     }
     
-    /// Gets an image deserialized from provided data.
-    ///
-    /// - Parameters:
-    ///   - data: The data from which an image should be deserialized.
-    ///   - options: Options for deserialization.
-    /// - Returns: An image deserialized or `nil` when no valid image
-    ///            could be deserialized.
     public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return KingfisherWrapper.image(data: data, options: options.imageCreatingOptions)
     }

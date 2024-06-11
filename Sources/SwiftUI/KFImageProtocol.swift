@@ -28,6 +28,12 @@
 import SwiftUI
 import Combine
 
+
+/// Represents a view that is compatible with Kingfisher in SwiftUI.
+///
+/// As a framework user, you do not need to know the details of this protocol. As the public types, ``KFImage`` and
+/// ``KFAnimatedImage`` conform this type and should be used in your app to represent an image view with network and
+/// cache support in SwiftUI.
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public protocol KFImageProtocol: View, KFOptionSetter {
     associatedtype HoldingView: KFImageHoldingView
@@ -37,6 +43,7 @@ public protocol KFImageProtocol: View, KFOptionSetter {
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
+    @MainActor
     public var body: some View {
         ZStack {
             KFImageRenderer<HoldingView>(
@@ -45,43 +52,50 @@ extension KFImageProtocol {
         }
     }
     
-    /// Creates a Kingfisher compatible image view to load image from the given `Source`.
+    /// Creates an image view compatible with Kingfisher for loading an image from the provided `Source`.
+    ///
     /// - Parameters:
-    ///   - source: The image `Source` defining where to load the target image.
+    ///   - source: The `Source` of the image that specifies where to load the target image.
     public init(source: Source?) {
         let context = KFImage.Context<HoldingView>(source: source)
         self.init(context: context)
     }
 
-    /// Creates a Kingfisher compatible image view to load image from the given `URL`.
+    /// Creates an image view compatible with Kingfisher for loading an image from the provided `URL`.
+    ///
     /// - Parameters:
-    ///   - source: The image `Source` defining where to load the target image.
+    ///   - url: The `URL` defining the location from which to load the target image.
     public init(_ url: URL?) {
         self.init(source: url?.convertToSource())
     }
     
-    /// Configures current image with a `block` and return another `Image` to use as the final content.
+    /// Configures the current image with a `block` and returns another `Image` to use as the final content.
     ///
     /// This block will be lazily applied when creating the final `Image`.
     ///
-    /// If multiple `configure` modifiers are added to the image, they will be evaluated by order. If you want to
-    /// configure the input image (which is usually an `Image` value) to a non-`Image` value, use `contentConfigure`.
+    /// If multiple `configure` modifiers are added to the image, they will be evaluated in order.
     ///
-    /// - Parameter block: The block applies to loaded image. The block should return an `Image` that is configured.
-    /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
+    /// - Parameter block: The block that applies to the loaded image. The block should return an `Image` that is
+    ///  configured.
+    /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
+    /// `block`.
+    ///
+    /// > If you want to configure the input image (which is usually an `Image` value) and use a non-`Image` value as
+    /// > the configured result, use ``KFImageProtocol/contentConfigure(_:)`` instead.
     public func configure(_ block: @escaping (HoldingView) -> HoldingView) -> Self {
         context.configurations.append(block)
         return self
     }
 
-    /// Configures current image with a `block` and return a `View` to use as the final content.
+    /// Configures the current image with a `block` and returns a `View` to use as the final content.
     ///
     /// This block will be lazily applied when creating the final `Image`.
     ///
     /// If multiple `contentConfigure` modifiers are added to the image, only the last one will be stored and used.
     ///
     /// - Parameter block: The block applies to the loaded image. The block should return a `View` that is configured.
-    /// - Returns: A `KFImage` view that configures internal `Image` with `block`.
+    /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
+    /// `block`.
     public func contentConfigure<V: View>(_ block: @escaping (HoldingView) -> V) -> Self {
         context.contentConfiguration = { AnyView(block($0)) }
         return self

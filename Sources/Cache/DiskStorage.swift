@@ -27,37 +27,53 @@
 import Foundation
 
 
-/// Represents a set of conception related to storage which stores a certain type of value in disk.
-/// This is a namespace for the disk storage types. A `Backend` with a certain `Config` will be used to describe the
-/// storage. See these composed types for more information.
+/// Represents the concepts related to storage that stores a specific type of value in disk.
+///
+/// This serves as a namespace for memory storage types. A ``DiskStorage/Backend`` with a particular
+/// ``DiskStorage/Config`` is used to define the storage.
+///
+/// Refer to these composite types for further details.
 public enum DiskStorage {
 
-    /// Represents a storage back-end for the `DiskStorage`. The value is serialized to data
-    /// and stored as file in the file system under a specified location.
+    /// Represents a storage backend for the ``DiskStorage``.
     ///
-    /// You can config a `DiskStorage.Backend` in its initializer by passing a `DiskStorage.Config` value.
-    /// or modifying the `config` property after it being created. `DiskStorage` will use file's attributes to keep
-    /// track of a file for its expiration or size limitation.
-    public class Backend<T: DataTransformable> {
-        /// The config used for this disk storage.
-        public var config: Config
+    /// The value is serialized to binary data and stored as a file in the file system under a specified location.
+    ///
+    /// You can configure a ``DiskStorage/Backend`` in its ``DiskStorage/Backend/init(config:)`` by passing a
+    /// ``DiskStorage/Config`` value or by modifying the ``DiskStorage/Backend/config`` property after it has been
+    /// created. The ``DiskStorage/Backend`` will use the file's attributes to keep track of a file for its expiration
+    /// or size limitation.
+    public class Backend<T: DataTransformable>: @unchecked Sendable {
+        
+        private let propertyQueue = DispatchQueue(label: "com.onevcat.kingfisher.DiskStorage.Backend.propertyQueue")
+        
+        private var _config: Config
+        /// The configuration used for this disk storage.
+        ///
+        /// It is a value you can set and use to configure the storage as needed.
+        public var config: Config {
+            get { propertyQueue.sync { _config } }
+            set { propertyQueue.sync { _config = newValue } }
+        }
 
-        // The final storage URL on disk, with `name` and `cachePathBlock` considered.
+        /// The final storage URL on disk of the disk storage ``DiskStorage/Backend``, considering the
+        /// ``DiskStorage/Config/name`` and the  ``DiskStorage/Config/cachePathBlock``.
         public let directoryURL: URL
 
         let metaChangingQueue: DispatchQueue
 
+        // A shortcut (which contains false-positive) to improve matching performance.
         var maybeCached : Set<String>?
         let maybeCachedCheckingQueue = DispatchQueue(label: "com.onevcat.Kingfisher.maybeCachedCheckingQueue")
 
-        // `false` if the storage initialized with an error. This prevents unexpected forcibly crash when creating
-        // storage in the default cache.
+        // `false` if the storage initialized with an error.
+        // This prevents unexpected forcibly crash when creating storage in the default cache.
         private var storageReady: Bool = true
 
-        /// Creates a disk storage with the given `DiskStorage.Config`.
+        /// Creates a disk storage with the given ``DiskStorage/Config``.
         ///
-        /// - Parameter config: The config used for this disk storage.
-        /// - Throws: An error if the folder for storage cannot be got or created.
+        /// - Parameter config: The configuration used for this disk storage.
+        /// - Throws: An error if the folder for storage cannot be obtained or created.
         public convenience init(config: Config) throws {
             self.init(noThrowConfig: config, creatingDirectory: false)
             try prepareDirectory()
@@ -73,7 +89,7 @@ public enum DiskStorage {
 
             // Break any possible retain cycle set by outside.
             config.cachePathBlock = nil
-            self.config = config
+            _config = config
 
             metaChangingQueue = DispatchQueue(label: creation.cacheName)
             setupCacheChecking()
@@ -87,7 +103,8 @@ public enum DiskStorage {
             maybeCachedCheckingQueue.async {
                 do {
                     self.maybeCached = Set()
-                    try self.config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path).forEach { fileName in
+                    try self.config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path).forEach { 
+                        fileName in
                         self.maybeCached?.insert(fileName)
                     }
                 } catch {
@@ -116,13 +133,14 @@ public enum DiskStorage {
             }
         }
 
-        /// Stores a value to the storage under the specified key and expiration policy.
+        /// Stores a value in the storage under the specified key and expiration policy.
+        ///
         /// - Parameters:
         ///   - value: The value to be stored.
         ///   - key: The key to which the `value` will be stored. If there is already a value under the key,
-        ///          the old value will be overwritten by `value`.
-        ///   - expiration: The expiration policy used by this store action.
-        ///   - writeOptions: Data writing options used the new files.
+        ///   the old value will be overwritten by the new `value`.
+        ///   - expiration: The expiration policy used by this storage action.
+        ///   - writeOptions: Data writing options used for the new files.
         /// - Throws: An error during converting the value to a data format or during writing it to disk.
         public func store(
             value: T,
@@ -191,14 +209,14 @@ public enum DiskStorage {
             }
         }
 
-        /// Gets a value from the storage.
+        /// Retrieves a value from the storage.
         /// - Parameters:
-        ///   - key: The cache key of value.
-        ///   - extendingExpiration: The expiration policy used by this getting action.
-        /// - Throws: An error during converting the data to a value or during operation of disk files.
-        /// - Returns: The value under `key` if it is valid and found in the storage. Otherwise, `nil`.
+        ///   - key: The cache key of the value.
+        ///   - extendingExpiration: The expiration policy used by this retrieval action.
+        /// - Throws: An error during converting the data to a value or during the operation of disk files.
+        /// - Returns: The value under `key` if it is valid and found in the storage; otherwise, `nil`.
         public func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
-            return try value(forKey: key, referenceDate: Date(), actuallyLoad: true, extendingExpiration: extendingExpiration)
+            try value(forKey: key, referenceDate: Date(), actuallyLoad: true, extendingExpiration: extendingExpiration)
         }
 
         func value(
@@ -243,7 +261,7 @@ public enum DiskStorage {
                 let data = try Data(contentsOf: fileURL)
                 let obj = try T.fromData(data)
                 metaChangingQueue.async {
-                    meta.extendExpiration(with: fileManager, extendingExpiration: extendingExpiration)
+                    meta.extendExpiration(with: self.config.fileManager, extendingExpiration: extendingExpiration)
                 }
                 return obj
             } catch {
@@ -251,27 +269,28 @@ public enum DiskStorage {
             }
         }
 
-        /// Whether there is valid cached data under a given key.
-        /// - Parameter key: The cache key of value.
-        /// - Returns: If there is valid data under the key, `true`. Otherwise, `false`.
+        /// Determines whether there is valid cached data under a given key.
         ///
-        /// - Note:
-        /// This method does not actually load the data from disk, so it is faster than directly loading the cached value
-        /// by checking the nullability of `value(forKey:extendingExpiration:)` method.
+        /// - Parameter key: The cache key of the value.
+        /// - Returns: `true` if there is valid data under the key; otherwise, `false`.
         ///
+        /// > This method does not actually load the data from disk, so it is faster than directly loading the cached
+        /// value by checking the nullability of the ``DiskStorage/Backend/value(forKey:extendingExpiration:)`` method.
         public func isCached(forKey key: String) -> Bool {
             return isCached(forKey: key, referenceDate: Date())
         }
 
-        /// Whether there is valid cached data under a given key and a reference date.
-        /// - Parameters:
-        ///   - key: The cache key of value.
-        ///   - referenceDate: A reference date to check whether the cache is still valid.
-        /// - Returns: If there is valid data under the key, `true`. Otherwise, `false`.
+        /// Determines whether there is valid cached data under a given key and a reference date.
         ///
-        /// - Note:
-        /// If you pass `Date()` to `referenceDate`, this method is identical to `isCached(forKey:)`. Use the
-        /// `referenceDate` to determine whether the cache is still valid for a future date.
+        /// - Parameters:
+        ///   - key: The cache key of the value.
+        ///   - referenceDate: A reference date to check whether the cache is still valid.
+        ///
+        /// - Returns: `true` if there is valid data under the key; otherwise, `false`.
+        ///
+        /// If you pass `Date()` as the `referenceDate`, this method is identical to
+        /// ``DiskStorage/Backend/isCached(forKey:)``. Use the `referenceDate` to determine whether the cache is still
+        /// valid for a future date.
         public func isCached(forKey key: String, referenceDate: Date) -> Bool {
             do {
                 let result = try value(
@@ -287,8 +306,8 @@ public enum DiskStorage {
         }
 
         /// Removes a value from a specified key.
-        /// - Parameter key: The cache key of value.
-        /// - Throws: An error during removing the value.
+        /// - Parameter key: The cache key of the value.
+        /// - Throws: An error during the removal of the value.
         public func remove(forKey key: String) throws {
             let fileURL = cacheFileURL(forKey: key)
             try removeFile(at: fileURL)
@@ -299,7 +318,7 @@ public enum DiskStorage {
         }
 
         /// Removes all values in this storage.
-        /// - Throws: An error during removing the values.
+        /// - Throws: An error during the removal of the values.
         public func removeAll() throws {
             try removeAll(skipCreatingDirectory: false)
         }
@@ -314,12 +333,11 @@ public enum DiskStorage {
         /// The URL of the cached file with a given computed `key`.
         ///
         /// - Parameter key: The final computed key used when caching the image. Please note that usually this is not
-        /// the `cacheKey` of an image `Source`. It is the computed key with processor identifier considered.
+        /// the ``Source/cacheKey`` of an image ``Source``. It is the computed key with the processor identifier
+        /// considered.
         ///
-        /// - Note:
-        /// This method does not guarantee there is an image already cached in the returned URL. It just gives your
-        /// the URL that the image should be if it exists in disk storage, with the give key.
-        ///
+        /// This method does not guarantee that an image is already cached at the returned URL. It just provides the URL 
+        /// where the image should be if it exists in the disk storage, with the given key.
         public func cacheFileURL(forKey key: String) -> URL {
             let fileName = cacheFileName(forKey: key)
             return directoryURL.appendingPathComponent(fileName, isDirectory: false)
@@ -327,7 +345,7 @@ public enum DiskStorage {
 
         func cacheFileName(forKey key: String) -> String {
             if config.usesHashedFileName {
-                let hashedKey = key.kf.md5
+                let hashedKey = key.kf.sha256
                 if let ext = config.pathExtension {
                     return "\(hashedKey).\(ext)"
                 } else if config.autoExtAfterHashedFileName,
@@ -359,8 +377,8 @@ public enum DiskStorage {
         }
 
         /// Removes all expired values from this storage.
-        /// - Throws: A file manager error during removing the file.
-        /// - Returns: The URLs for removed files.
+        /// - Throws: A file manager error during the removal of the file.
+        /// - Returns: The URLs for the removed files.
         public func removeExpiredValues() throws -> [URL] {
             return try removeExpiredValues(referenceDate: Date())
         }
@@ -390,11 +408,12 @@ public enum DiskStorage {
             return expiredFiles
         }
 
-        /// Removes all size exceeded values from this storage.
-        /// - Throws: A file manager error during removing the file.
-        /// - Returns: The URLs for removed files.
+        /// Removes all size-exceeded values from this storage.
+        /// - Throws: A file manager error during the removal of the file.
+        /// - Returns: The URLs for the removed files.
         ///
-        /// - Note: This method checks `config.sizeLimit` and remove cached files in an LRU (Least Recently Used) way.
+        /// This method checks ``DiskStorage/Config/sizeLimit`` and removes cached files in an LRU
+        /// (Least Recently Used) way.
         public func removeSizeExceededValues() throws -> [URL] {
 
             if config.sizeLimit == 0 { return [] } // Back compatible. 0 means no limit.
@@ -429,7 +448,7 @@ public enum DiskStorage {
             return removed
         }
 
-        /// Gets the total file size of the folder in bytes.
+        /// Gets the total file size of the cache folder in bytes.
         public func totalSize() throws -> UInt {
             let propertyKeys: [URLResourceKey] = [.fileSizeKey]
             let urls = try allFileURLs(for: propertyKeys)
@@ -448,50 +467,64 @@ public enum DiskStorage {
 }
 
 extension DiskStorage {
-    /// Represents the config used in a `DiskStorage`.
-    public struct Config {
+    
+    /// Represents the configuration used in a ``DiskStorage/Backend``.
+    public struct Config: @unchecked Sendable {
 
-        /// The file size limit on disk of the storage in bytes. 0 means no limit.
+        /// The file size limit on disk of the storage in bytes. 
+        ///
+        /// `0` means no limit.
         public var sizeLimit: UInt
 
-        /// The `StorageExpiration` used in this disk storage. Default is `.days(7)`,
-        /// means that the disk cache would expire in one week.
+        /// The `StorageExpiration` used in this disk storage.
+        ///
+        /// The default is `.days(7)`, which means that the disk cache will expire in one week if not accessed anymore.
         public var expiration: StorageExpiration = .days(7)
 
-        /// The preferred extension of cache item. It will be appended to the file name as its extension.
-        /// Default is `nil`, means that the cache file does not contain a file extension.
+        /// The preferred extension of the cache item. It will be appended to the file name as its extension.
+        ///
+        /// The default is `nil`, which means that the cache file does not contain a file extension.
         public var pathExtension: String? = nil
 
-        /// Default is `true`, means that the cache file name will be hashed before storing.
+        /// Whether the cache file name will be hashed before storing.
+        ///
+        /// The default is `true`, which means that file name is hashed to protect user information (for example, the
+        /// original download URL which is used as the cache key).
         public var usesHashedFileName = true
 
-        /// Default is `false`
-        /// If set to `true`, image extension will be extracted from original file name and append to
-        /// the hashed file name and used as the cache key on disk.
+        
+        /// Whether the image extension will be extracted from the original file name and appended to the hashed file
+        /// name, which will be used as the cache key on disk.
+        ///
+        /// The default is `false`.
         public var autoExtAfterHashedFileName = false
         
-        /// Closure that takes in initial directory path and generates
-        /// the final disk cache path. You can use it to fully customize your cache path.
-        public var cachePathBlock: ((_ directory: URL, _ cacheName: String) -> URL)! = {
+        /// A closure that takes in the initial directory path and generates the final disk cache path.
+        ///
+        /// You can use it to fully customize your cache path.
+        public var cachePathBlock: (@Sendable (_ directory: URL, _ cacheName: String) -> URL)! = {
             (directory, cacheName) in
             return directory.appendingPathComponent(cacheName, isDirectory: true)
         }
 
-        let name: String
+        /// The desired name of the disk cache.
+        ///
+        /// This name will be used as a part of the cache folder name by default.
+        public let name: String
+        
         let fileManager: FileManager
         let directory: URL?
 
-        /// Creates a config value based on given parameters.
+        /// Creates a config value based on the given parameters.
         ///
         /// - Parameters:
-        ///   - name: The name of cache. It is used as a part of storage folder. It is used to identify the disk
-        ///           storage. Two storages with the same `name` would share the same folder in disk, and it should
-        ///           be prevented.
+        ///   - name: The name of the cache. It is used as part of the storage folder and to identify the disk storage.
+        ///   Two storages with the same `name` would share the same folder on the disk, and this should be prevented.
         ///   - sizeLimit: The size limit in bytes for all existing files in the disk storage.
-        ///   - fileManager: The `FileManager` used to manipulate files on disk. Default is `FileManager.default`.
-        ///   - directory: The URL where the disk storage should live. The storage will use this as the root folder,
-        ///                and append a path which is constructed by input `name`. Default is `nil`, indicates that
-        ///                the cache directory under user domain mask will be used.
+        ///   - fileManager: The `FileManager` used to manipulate files on the disk. The default is `FileManager.default`.
+        ///   - directory: The URL where the disk storage should reside. The storage will use this as the root folder,
+        ///   and append a path that is constructed by the input `name`. The default is `nil`, indicating that
+        ///   the cache directory under the user domain mask will be used.
         public init(
             name: String,
             sizeLimit: UInt,

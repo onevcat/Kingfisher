@@ -29,7 +29,7 @@ import WatchKit
 import Foundation
 import Kingfisher
 
-var count = 0
+@MainActor var count = 0
 
 class InterfaceController: WKInterfaceController {
     
@@ -48,9 +48,9 @@ class InterfaceController: WKInterfaceController {
     func refreshImage() {
         let url = URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher/master/images/kingfisher-\(currentIndex! + 1).jpg")!
         print("Start loading... \(url)")
-        interfaceImage.kf.setImage(with: url) { r in
+        interfaceImage.kf.setImage(with: url, completionHandler:  { r in
             print(r)
-        }
+        })
     }
 
     override func willActivate() {

@@ -62,6 +62,7 @@ class NSButtonExtensionTests: XCTestCase {
         super.tearDown()
     }
 
+    @MainActor
     func testDownloadAndSetImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -84,6 +85,7 @@ class NSButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    @MainActor
     func testDownloadAndSetAlternateImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -105,8 +107,9 @@ class NSButtonExtensionTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
-
-    func testCacnelImageTask() {
+    
+    @MainActor
+    func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -123,7 +126,8 @@ class NSButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testCacnelAlternateImageTask() {
+    @MainActor
+    func testCancelAlternateImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData)
@@ -140,6 +144,7 @@ class NSButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    @MainActor
     func testSettingNilURL() {
         let exp = expectation(description: #function)
         let url: URL? = nil
@@ -158,6 +163,7 @@ class NSButtonExtensionTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    @MainActor
     func testSettingNonWorkingImageWithFailureImage() {
         let expectation = self.expectation(description: "wait for downloading image")
         let url = testURLs[0]
@@ -173,6 +179,7 @@ class NSButtonExtensionTests: XCTestCase {
         XCTAssertEqual(testImage, button.image)
     }
     
+    @MainActor
     func testSettingNonWorkingAlternateImageWithFailureImage() {
         let expectation = self.expectation(description: "wait for downloading image")
         let url = testURLs[0]

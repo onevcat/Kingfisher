@@ -34,26 +34,27 @@ import UIKit
 public typealias IndicatorView = UIView
 #endif
 
-/// Represents the activity indicator type which should be added to
-/// an image view when an image is being downloaded.
-///
-/// - none: No indicator.
-/// - activity: Uses the system activity indicator.
-/// - image: Uses an image as indicator. GIF is supported.
-/// - custom: Uses a custom indicator. The type of associated value should conform to the `Indicator` protocol.
+/// Represents the activity indicator type that should be added to an image view when an image is being downloaded.
 public enum IndicatorType {
+    
     /// No indicator.
     case none
+    
     /// Uses the system activity indicator.
     case activity
-    /// Uses an image as indicator. GIF is supported.
+    
+    /// Uses an image as an indicator. GIF is supported.
     case image(imageData: Data)
-    /// Uses a custom indicator. The type of associated value should conform to the `Indicator` protocol.
+    
+    /// Uses a custom indicator.
+    ///
+    /// The type of the associated value should conform to the ``Indicator`` protocol.
     case custom(indicator: Indicator)
 }
 
-/// An indicator type which can be used to show the download task is in progress.
-public protocol Indicator {
+/// An indicator type which can be used to show that the download task is in progress.
+@MainActor 
+public protocol Indicator: Sendable {
     
     /// Called when the indicator should start animating.
     func startAnimatingView()
@@ -61,38 +62,52 @@ public protocol Indicator {
     /// Called when the indicator should stop animating.
     func stopAnimatingView()
 
-    /// Center offset of the indicator. Kingfisher will use this value to determine the position of
-    /// indicator in the super view.
+    /// Center offset of the indicator.
+    ///
+    /// Kingfisher will use this value to determine the position of the indicator in the superview.
     var centerOffset: CGPoint { get }
     
-    /// The indicator view which would be added to the super view.
+    /// The indicator view which would be added to the superview.
     var view: IndicatorView { get }
 
-    /// The size strategy used when adding the indicator to image view.
-    /// - Parameter imageView: The super view of indicator.
+    /// The size strategy used when adding the indicator to the image view.
+    /// - Parameter imageView: The superview of the indicator.
+    /// - Returns: An ``IndicatorSizeStrategy`` that determines how the indicator should be sized.
     func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy
 }
 
+/// The idicator size strategy used when sizing the indicator in the image view.
 public enum IndicatorSizeStrategy {
+    /// Uses the intrinsic size of the indicator.
     case intrinsicSize
+    /// Match the size of the super view of the indicator.
     case full
+    /// Uses the associated `CGSize` to set the indicator size.
     case size(CGSize)
 }
 
 extension Indicator {
     
-    /// Default implementation of `centerOffset` of `Indicator`. The default value is `.zero`, means that there is
-    /// no offset for the indicator view.
-    public var centerOffset: CGPoint { return .zero }
+    /// Default implementation of ``Indicator/centerOffset-7jxdw`` of the ``Indicator``.
+    ///
+    /// The default value is `.zero`, which means that there is no offset for the indicator view.
+    public var centerOffset: CGPoint {
+        .zero
+    }
 
-    /// Default implementation of `centerOffset` of `Indicator`. The default value is `.full`, means that the indicator
-    /// will pin to the same height and width as the image view.
+    /// Default implementation of ``Indicator/sizeStrategy(in:)-5x0b4`` of the ``Indicator``.
+    ///
+    /// The default value is ``IndicatorSizeStrategy/full``, means that the indicator will pin to the same height and
+    /// width as the image view.
+    /// - Parameter imageView: The image view which holds the indicator.
+    /// - Returns: The desired ``IndicatorSizeStrategy``
     public func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy {
-        return .full
+        .full
     }
 }
 
 // Displays a NSProgressIndicator / UIActivityIndicatorView
+@MainActor
 final class ActivityIndicator: Indicator {
 
     #if os(macOS)

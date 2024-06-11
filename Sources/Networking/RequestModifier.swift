@@ -26,83 +26,117 @@
 
 import Foundation
 
-/// Represents and wraps a method for modifying request before an image download request starts in an asynchronous way.
-public protocol AsyncImageDownloadRequestModifier {
+/// Represents and wraps a method for modifying a request before an image download request starts asynchronously.
+///
+/// Usually, you pass an ``AsyncImageDownloadRequestModifier`` instance as the associated value of
+/// ``KingfisherOptionsInfoItem/requestModifier(_:)`` and use it as the `options` parameter in related methods.
+///
+/// For example, the code below defines a modifier to add a header field and its value to the request.
+///
+/// ```swift
+/// class HeaderFieldModifier: AsyncImageDownloadRequestModifier {
+///   var onDownloadTaskStarted: ((DownloadTask?) -> Void)? = nil
+///   func modified(for request: URLRequest) async -> URLRequest? {
+///     var r = request
+///     let token = await service.fetchToken()
+///     r.setValue(token, forHTTPHeaderField: "token")
+///     return r
+///   }
+/// }
+///
+/// imageView.kf.setImage(with: url, options: [.requestModifier(HeaderFieldModifier())])
+/// ```
+public protocol AsyncImageDownloadRequestModifier: Sendable {
 
-    /// This method will be called just before the `request` being sent.
-    /// This is the last chance you can modify the image download request. You can modify the request for some
-    /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
-    /// When you have done with the modification, call the `reportModified` block with the modified request and the data
-    /// download will happen with this request.
+    /// This method will be called just before the `request` is sent.
+    /// 
+    /// This is the last chance to modify the image download request. You can modify the request for some customizing
+    /// purposes, such as adding an auth token to the header, performing basic HTTP auth, or something like URL mapping.
+    ///  
+    /// After making the modification, you should return the modified request, and the data will be downloaded with
+    /// this modified request.
     ///
-    /// Usually, you pass an `AsyncImageDownloadRequestModifier` as the associated value of
-    /// `KingfisherOptionsInfoItem.requestModifier` and use it as the `options` parameter in related methods.
-    ///
-    /// If you do nothing with the input `request` and return it as is, a downloading process will start with it.
-    ///
-    /// - Parameters:
-    ///   - request: The input request contains necessary information like `url`. This request is generated
-    ///              according to your resource url as a GET request.
-    ///   - reportModified: The callback block you need to call after the asynchronous modifying done.
-    ///
-    func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void)
-
-    /// A block will be called when the download task started.
-    ///
-    /// If an `AsyncImageDownloadRequestModifier` and the asynchronous modification happens before the download, the
-    /// related download method will not return a valid `DownloadTask` value. Instead, you can get one from this method.
-    var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { get }
-}
-
-/// Represents and wraps a method for modifying request before an image download request starts.
-public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier {
-
-    /// This method will be called just before the `request` being sent.
-    /// This is the last chance you can modify the image download request. You can modify the request for some
-    /// customizing purpose, such as adding auth token to the header, do basic HTTP auth or something like url mapping.
-    ///
-    /// Usually, you pass an `ImageDownloadRequestModifier` as the associated value of
-    /// `KingfisherOptionsInfoItem.requestModifier` and use it as the `options` parameter in related methods.
-    ///
-    /// If you do nothing with the input `request` and return it as is, a downloading process will start with it.
+    /// > If you do nothing with the input `request` and return it as-is, the download process will start with it as the
+    /// modifier doesn't exist. If you return `nil`, the downloading will be interrupted with an
+    ///  ``KingfisherError/RequestErrorReason/emptyRequest`` error.
     ///
     /// - Parameter request: The input request contains necessary information like `url`. This request is generated
-    ///                      according to your resource url as a GET request.
-    /// - Returns: A modified version of request, which you wish to use for downloading an image. If `nil` returned,
-    ///            a `KingfisherError.requestError` with `.emptyRequest` as its reason will occur.
+    /// according to your resource URL as a GET request.
+    /// - Returns: The modified request which should be used to trigger the download.
+    func modified(for request: URLRequest) async -> URLRequest?
+
+    /// A block that will be called when the download task starts.
     ///
+    /// If an ``AsyncImageDownloadRequestModifier`` and asynchronous modification occur before the download, the
+    /// related download method will not return a valid ``DownloadTask`` value. Instead, you can get one from this
+    /// method.
+    ///
+    /// User the ``DownloadTask`` value to track the task, or cancel it when you need to.
+    var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { get }
+}
+
+/// Represents and wraps a method for modifying a request before an image download request starts synchronously.
+///
+/// Usually, you pass an ``ImageDownloadRequestModifier`` instance as the associated value of
+/// ``KingfisherOptionsInfoItem/requestModifier(_:)`` and use it as the `options` parameter in related methods.
+///
+/// For example, the code below defines a modifier to add a header field and its value to the request.
+///
+/// ```swift
+/// class HeaderFieldModifier: AsyncImageDownloadRequestModifier {
+///   func modified(for request: URLRequest) -> URLRequest? {
+///     var r = request
+///     r.setValue("value", forHTTPHeaderField: "key")
+///     return r
+///   }
+/// }
+///
+/// imageView.kf.setImage(with: url, options: [.requestModifier(HeaderFieldModifier())])
+/// ```
+public protocol ImageDownloadRequestModifier: AsyncImageDownloadRequestModifier {
+
+    /// This method will be called just before the `request` is sent.
+    ///
+    /// This is the last chance to modify the image download request. You can modify the request for some customizing
+    /// purposes, such as adding an auth token to the header, performing basic HTTP auth, or something like URL mapping.
+    ///
+    /// After making the modification, you should return the modified request, and the data will be downloaded with
+    /// this modified request.
+    ///
+    /// > If you do nothing with the input `request` and return it as-is, the download process will start with it as the
+    /// modifier doesn't exist. If you return `nil`, the downloading will be interrupted with an
+    ///  ``KingfisherError/RequestErrorReason/emptyRequest`` error.
+    ///
+    /// > Tip: If you are trying to execute an async operation during the modify, choose to conform the
+    ///  ``AsyncImageDownloadRequestModifier`` instead.
+    ///
+    /// - Parameter request: The input request contains necessary information like `url`. This request is generated
+    /// according to your resource URL as a GET request.
+    /// - Returns: The modified request which should be used to trigger the download.
     func modified(for request: URLRequest) -> URLRequest?
 }
 
 extension ImageDownloadRequestModifier {
-    public func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        let request = modified(for: request)
-        reportModified(request)
-    }
-
     /// This is `nil` for a sync `ImageDownloadRequestModifier` by default. You can get the `DownloadTask` from the
     /// return value of downloader method.
-    public var onDownloadTaskStarted: ((DownloadTask?) -> Void)? { return nil }
+    public var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { return nil }
 }
 
-/// A wrapper for creating an `ImageDownloadRequestModifier` easier.
-/// This type conforms to `ImageDownloadRequestModifier` and wraps an image modify block.
+/// A wrapper for creating an ``ImageDownloadRequestModifier`` instance more easily.
+///
+/// This type conforms to ``ImageDownloadRequestModifier`` and wraps an image modification block.
 public struct AnyModifier: ImageDownloadRequestModifier {
     
-    let block: (URLRequest) -> URLRequest?
+    let block: @Sendable (URLRequest) -> URLRequest?
 
-    /// For `ImageDownloadRequestModifier` conformation.
     public func modified(for request: URLRequest) -> URLRequest? {
         return block(request)
     }
     
-    /// Creates a value of `ImageDownloadRequestModifier` which runs `modify` block.
+    /// Creates a value of ``ImageDownloadRequestModifier`` that runs the `modify` block.
     ///
     /// - Parameter modify: The request modifying block runs when a request modifying task comes.
-    ///                     The return `URLRequest?` value of this block will be used as the image download request.
-    ///                     If `nil` returned, a `KingfisherError.requestError` with `.emptyRequest` as its
-    ///                     reason will occur.
-    public init(modify: @escaping (URLRequest) -> URLRequest?) {
+    public init(modify: @escaping @Sendable (URLRequest) -> URLRequest?) {
         block = modify
     }
 }

@@ -26,36 +26,41 @@
 
 import Foundation
 
-/// Constants for some time intervals
+/// Constants for certain time intervals.
 struct TimeConstants {
+    // Seconds in a day, a.k.a 86,400s, roughly.
     static let secondsInOneDay = 86_400
 }
 
-/// Represents the expiration strategy used in storage.
-///
-/// - never: The item never expires.
-/// - seconds: The item expires after a time duration of given seconds from now.
-/// - days: The item expires after a time duration of given days from now.
-/// - date: The item expires after a given date.
-public enum StorageExpiration {
+/// Represents the expiration strategy utilized in storage.
+public enum StorageExpiration: Sendable {
+    
     /// The item never expires.
     case never
-    /// The item expires after a time duration of given seconds from now.
+    
+    /// The item expires after a duration of the provided number of seconds from now.
     case seconds(TimeInterval)
-    /// The item expires after a time duration of given days from now.
+    
+    /// The item expires after a duration of the provided number of days from now.
     case days(Int)
-    /// The item expires after a given date.
+    
+    /// The item expires after a specified date.
     case date(Date)
-    /// Indicates the item is already expired. Use this to skip cache.
+    
+    /// Indicates that the item has already expired.
+    ///
+    /// Use this to bypass the cache.
     case expired
 
+    
     func estimatedExpirationSince(_ date: Date) -> Date {
         switch self {
-        case .never: return .distantFuture
+        case .never: 
+            return .distantFuture
         case .seconds(let seconds):
             return date.addingTimeInterval(seconds)
         case .days(let days):
-            let duration: TimeInterval = TimeInterval(TimeConstants.secondsInOneDay) * TimeInterval(days)
+            let duration: TimeInterval = TimeInterval(TimeConstants.secondsInOneDay * days)
             return date.addingTimeInterval(duration)
         case .date(let ref):
             return ref
@@ -65,46 +70,56 @@ public enum StorageExpiration {
     }
     
     var estimatedExpirationSinceNow: Date {
-        return estimatedExpirationSince(Date())
+        estimatedExpirationSince(Date())
     }
     
     var isExpired: Bool {
-        return timeInterval <= 0
+        timeInterval <= 0
     }
 
     var timeInterval: TimeInterval {
         switch self {
         case .never: return .infinity
         case .seconds(let seconds): return seconds
-        case .days(let days): return TimeInterval(TimeConstants.secondsInOneDay) * TimeInterval(days)
+        case .days(let days): return TimeInterval(TimeConstants.secondsInOneDay * days)
         case .date(let ref): return ref.timeIntervalSinceNow
         case .expired: return -(.infinity)
         }
     }
 }
 
-/// Represents the expiration extending strategy used in storage to after access.
-///
-/// - none: The item expires after the original time, without extending after access.
-/// - cacheTime: The item expiration extends by the original cache time after each access.
-/// - expirationTime: The item expiration extends by the provided time after each access.
-public enum ExpirationExtending {
-    /// The item expires after the original time, without extending after access.
+/// Represents the expiration extension strategy used in storage after access.
+public enum ExpirationExtending: Sendable {
+    /// The item expires after the original time, without extension after access.
     case none
-    /// The item expiration extends by the original cache time after each access.
+    /// The item expiration extends to the original cache time after each access.
     case cacheTime
     /// The item expiration extends by the provided time after each access.
     case expirationTime(_ expiration: StorageExpiration)
 }
 
-/// Represents types which cost in memory can be calculated.
+/// Represents types for which the memory cost can be calculated.
 public protocol CacheCostCalculable {
     var cacheCost: Int { get }
 }
 
-/// Represents types which can be converted to and from data.
+/// Represents types that can be converted to and from data.
 public protocol DataTransformable {
+    
+    /// Converts the current value to a `Data` representation.
+    /// - Returns: The data object which can represent the value of the conforming type.
+    /// - Throws: If any error happens during the conversion.
     func toData() throws -> Data
+    
+    /// Convert some data to the value.
+    /// - Parameter data: The data object which should represent the conforming value.
+    /// - Returns: The converted value of the conforming type.
+    /// - Throws: If any error happens during the conversion.
     static func fromData(_ data: Data) throws -> Self
+    
+    /// An empty object of `Self`.
+    ///
+    /// > In the cache, when the data is not actually loaded, this value will be returned as a placeholder.
+    /// > This variable should be returned quickly without any heavy operation inside.
     static var empty: Self { get }
 }

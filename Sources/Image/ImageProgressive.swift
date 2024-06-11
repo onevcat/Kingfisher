@@ -35,55 +35,70 @@ import UIKit
 private let sharedProcessingQueue: CallbackQueue =
     .dispatch(DispatchQueue(label: "com.onevcat.Kingfisher.ImageDownloader.Process"))
 
-public struct ImageProgressive {
+/// Represents a progressive loading for images which supports this feature.
+public struct ImageProgressive: Sendable {
     
     /// The updating strategy when an intermediate progressive image is generated and about to be set to the hosting view.
-    ///
-    /// - default: Use the progressive image as it is. It is the standard behavior when handling the progressive image.
-    /// - keepCurrent: Discard this progressive image and keep the current displayed one.
-    /// - replace: Replace the image to a new one. If the progressive loading is initialized by a view extension in
-    ///            Kingfisher, the replacing image will be used to update the view.
     public enum UpdatingStrategy {
+        
+        /// Use the progressive image as it is.
+        ///
+        /// > It is the standard behavior when handling the progressive image.
         case `default`
+        
+        /// Discard this progressive image and keep the current displayed one.
         case keepCurrent
+        
+        /// Replace the image to a new one. 
+        ///
+        /// If the progressive loading is initialized by a view extension in Kingfisher, the replacing image will be
+        /// used to update the view.
         case replace(KFCrossPlatformImage?)
     }
     
     /// A default `ImageProgressive` could be used across. It blurs the progressive loading with the fastest
     /// scan enabled and scan interval as 0.
-    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax symatic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
+    @available(*, deprecated, message: "Getting a default `ImageProgressive` is deprecated due to its syntax semantic is not clear. Use `ImageProgressive.init` instead.", renamed: "init()")
     public static let `default` = ImageProgressive(
         isBlur: true,
         isFastestScan: true,
         scanInterval: 0
     )
     
-    /// Whether to enable blur effect processing
-    let isBlur: Bool
-    /// Whether to enable the fastest scan
-    let isFastestScan: Bool
-    /// Minimum time interval for each scan
-    let scanInterval: TimeInterval
+    /// Indicates whether to enable blur effect processing.
+    public var isBlur: Bool
     
-    /// Called when an intermediate image is prepared and about to be set to the image view. The return value of this
-    /// delegate will be used to update the hosting view, if any. Otherwise, if there is no hosting view (a.k.a the
-    /// image retrieving is not happening from a view extension method), the returned `UpdatingStrategy` is ignored.
+    /// Indicates whether to enable the fastest scan.
+    public var isFastestScan: Bool
+    
+    /// The minimum time interval for each scan.
+    public var scanInterval: TimeInterval
+    
+    /// Called when an intermediate image is prepared and about to be set to the image view. 
+    ///
+    /// If implemented, you should return an ``UpdatingStrategy`` value from this delegate. This value will be used to
+    /// update the hosting view, if any. Otherwise, if there is no hosting view (i.e., the image retrieval is not
+    /// happening from a view extension method), the returned ``UpdatingStrategy`` is ignored.
     public let onImageUpdated = Delegate<KFCrossPlatformImage, UpdatingStrategy>()
     
-    /// Creates an `ImageProgressive` value with default sets. It blurs the progressive loading with the fastest
-    /// scan enabled and scan interval as 0.
+    /// Creates an `ImageProgressive` value with default settings. 
+    ///
+    /// It enables progressive loading with the fastest scan enabled and a scan interval of 0, resulting in a blurred 
+    /// effect.
     public init() {
         self.init(isBlur: true, isFastestScan: true, scanInterval: 0)
     }
     
-    /// Creates an `ImageProgressive` value the given values.
+    /// Creates an `ImageProgressive` value with the given values.
+    ///
     /// - Parameters:
-    ///   - isBlur: Whether to enable blur effect processing.
-    ///   - isFastestScan: Whether to enable the fastest scan.
-    ///   - scanInterval: Minimum time interval for each scan.
-    public init(isBlur: Bool,
-                isFastestScan: Bool,
-                scanInterval: TimeInterval
+    ///     - isBlur: Indicates whether to enable blur effect processing.
+    ///     - isFastestScan: Indicates whether to enable the fastest scan.
+    ///     - scanInterval: The minimum time interval for each scan.
+    public init(
+        isBlur: Bool,
+        isFastestScan: Bool,
+        scanInterval: TimeInterval
     )
     {
         self.isBlur = isBlur
@@ -92,9 +107,18 @@ public struct ImageProgressive {
     }
 }
 
-final class ImageProgressiveProvider: DataReceivingSideEffect {
+// A data receiving provider to update the image. Working with an `ImageProgressive`, it helps to implement the image
+// progressive effect.
+final class ImageProgressiveProvider: DataReceivingSideEffect, @unchecked Sendable {
     
-    var onShouldApply: () -> Bool = { return true }
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.ImageProgressiveProviderPropertyQueue")
+    
+    private var _onShouldApply: () -> Bool = { return true }
+    
+    var onShouldApply: () -> Bool {
+        get { propertyQueue.sync { _onShouldApply } }
+        set { propertyQueue.sync { _onShouldApply = newValue } }
+    }
     
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
 
@@ -104,20 +128,22 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
         }
     }
 
-    private let option: ImageProgressive
+    private let progressive: ImageProgressive
     private let refresh: (KFCrossPlatformImage) -> Void
     
     private let decoder: ImageProgressiveDecoder
     private let queue = ImageProgressiveSerialQueue()
     
-    init?(_ options: KingfisherParsedOptionsInfo,
-          refresh: @escaping (KFCrossPlatformImage) -> Void) {
-        guard let option = options.progressiveJPEG else { return nil }
+    init?(
+        options: KingfisherParsedOptionsInfo,
+        refresh: @escaping (KFCrossPlatformImage) -> Void
+    ) {
+        guard let progressive = options.progressiveJPEG else { return nil }
         
-        self.option = option
+        self.progressive = progressive
         self.refresh = refresh
         self.decoder = ImageProgressiveDecoder(
-            option,
+            progressive,
             processingQueue: options.processingQueue ?? sharedProcessingQueue,
             creatingOptions: options.imageCreatingOptions
         )
@@ -125,10 +151,9 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
     
     func update(data: Data, with callbacks: [SessionDataTask.TaskCallback]) {
         guard !data.isEmpty else { return }
+        queue.add(minimum: progressive.scanInterval) { completion in
 
-        queue.add(minimum: option.scanInterval) { completion in
-
-            func decode(_ data: Data) {
+            @Sendable func decode(_ data: Data) {
                 self.decoder.decode(data, with: callbacks) { image in
                     defer { completion() }
                     guard self.onShouldApply() else { return }
@@ -137,30 +162,25 @@ final class ImageProgressiveProvider: DataReceivingSideEffect {
                 }
             }
             
-            let semaphore = DispatchSemaphore(value: 0)
-            var onShouldApply: Bool = false
-            
-            CallbackQueue.mainAsync.execute {
-                onShouldApply = self.onShouldApply()
-                semaphore.signal()
-            }
-            semaphore.wait()
-            guard onShouldApply else {
-                self.queue.clean()
-                completion()
-                return
-            }
+            Task { @MainActor in
+                let applyFlag = self.onShouldApply()
+                guard applyFlag else {
+                    self.queue.clean()
+                    completion()
+                    return
+                }
 
-            if self.option.isFastestScan {
-                decode(self.decoder.scanning(data) ?? Data())
-            } else {
-                self.decoder.scanning(data).forEach { decode($0) }
+                if self.progressive.isFastestScan {
+                    decode(self.decoder.scanning(data) ?? Data())
+                } else {
+                    self.decoder.scanning(data).forEach { decode($0) }
+                }
             }
         }
     }
 }
 
-private final class ImageProgressiveDecoder {
+private final class ImageProgressiveDecoder: @unchecked Sendable {
     
     private let option: ImageProgressive
     private let processingQueue: CallbackQueue
@@ -248,13 +268,13 @@ private final class ImageProgressiveDecoder {
     
     func decode(_ data: Data,
                 with callbacks: [SessionDataTask.TaskCallback],
-                completion: @escaping (KFCrossPlatformImage?) -> Void) {
+                completion: @escaping @Sendable (KFCrossPlatformImage?) -> Void) {
         guard data.kf.contains(jpeg: .SOF2) else {
             CallbackQueue.mainCurrentOrAsync.execute { completion(nil) }
             return
         }
         
-        func processing(_ data: Data) {
+        @Sendable func processing(_ data: Data) {
             let processor = ImageDataProcessor(
                 data: data,
                 callbacks: callbacks,
@@ -292,8 +312,8 @@ private final class ImageProgressiveDecoder {
     }
 }
 
-private final class ImageProgressiveSerialQueue {
-    typealias ClosureCallback = ((@escaping () -> Void)) -> Void
+private final class ImageProgressiveSerialQueue: @unchecked Sendable {
+    typealias ClosureCallback = @Sendable ((@escaping @Sendable () -> Void)) -> Void
     
     private let queue: DispatchQueue
     private var items: [DispatchWorkItem] = []
@@ -305,7 +325,7 @@ private final class ImageProgressiveSerialQueue {
     }
     
     func add(minimum interval: TimeInterval, closure: @escaping ClosureCallback) {
-        let completion = { [weak self] in
+        let completion = { @Sendable [weak self] in
             guard let self = self else { return }
             
             self.queue.async { [weak self] in
