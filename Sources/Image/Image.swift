@@ -27,8 +27,8 @@
 
 #if os(macOS)
 import AppKit
-private let imagesKey = malloc(1)!
-private let durationKey = malloc(1)!
+nonisolated(unsafe) private let imagesKey = malloc(1)!
+nonisolated(unsafe) private let durationKey = malloc(1)!
 #else
 import UIKit
 import MobileCoreServices
