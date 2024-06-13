@@ -86,8 +86,7 @@ platform :ios do
 
   lane :xcframework do |options|
     target_version = "Kingfisher-#{options[:version]}"
-    
-    xcversion(version: "~> 15.4")
+        
     FileUtils.rm_rf '../build'
     
     frameworks = {}
