@@ -27,12 +27,18 @@
 #if !os(watchOS)
 
 import Foundation
-@preconcurrency import AVKit
+import AVKit
 
 #if canImport(MobileCoreServices)
 import MobileCoreServices
 #else
 import CoreServices
+#endif
+
+#if swift(>=6)
+extension AVAssetImageGenerator: @unchecked @retroactive Sendable { }
+#else
+extension AVAssetImageGenerator: @unchecked Sendable { }
 #endif
 
 /// A data provider to provide thumbnail data from a given AVKit asset.

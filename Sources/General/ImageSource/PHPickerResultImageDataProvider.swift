@@ -28,7 +28,15 @@ import Foundation
 
 #if os(iOS) || os(macOS) || os(visionOS)
 
-@preconcurrency import PhotosUI
+import PhotosUI
+
+#if swift(>=6)
+@available(iOS 14.0, macOS 13.0, *)
+extension PHPickerResult: @unchecked @retroactive Sendable { }
+#else
+@available(iOS 14.0, macOS 13.0, *)
+extension PHPickerResult: @unchecked Sendable { }
+#endif
 
 /// A data provider to provide image data from a given `PHPickerResult`.
 @available(iOS 14.0, macOS 13.0, *)
