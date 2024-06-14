@@ -28,6 +28,7 @@ Kingfisher is a powerful, pure-Swift library for downloading and caching images 
 - [x] Extensible image processing and image format easily.
 - [x] Low Data Mode support.
 - [x] SwiftUI support.
+- [x] Swift 6 & Swift Concurrency (strict mode) prepared.
 
 ### Kingfisher 101
 
@@ -149,29 +150,19 @@ struct ContentView: View {
 }
 ```
 
-### Learn More
-
-To learn the use of Kingfisher by more examples, take a look at the well-prepared [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet).
-There we summarized the most common tasks in Kingfisher, you can get a better idea of what this framework can do. 
-There are also some performance tips, remember to check them too.
-
 ## Requirements
 
-- iOS 12.0+ / macOS 10.14+ / tvOS 12.0+ / watchOS 5.0+ (if you use only UIKit/AppKit)
-- iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ (if you use it in SwiftUI)
+### Kingfisher 8.0
+
+- (UIKit/AppKit) iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ / visionOS 1.0+
+- (SwiftUI) iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
 - Swift 5.0+
 
-> If you need support from iOS 10 (UIKit/AppKit) or iOS 13 (SwiftUI), use Kingfisher version 6.x. But it won't work 
-> with Xcode 13.0 and Xcode 13.1 [#1802](https://github.com/onevcat/Kingfisher/issues/1802).
->
-> If you need to use Xcode 13.0 and 13.1 but cannot upgrade to v7, use the `version6-xcode13` branch. However, you have to drop 
-> iOS 10 support due to another Xcode 13 bug.
->
-> | UIKit | SwiftUI | Xcode | Kingfisher |
-> |---|---|---|---|
-> | iOS 10+ | iOS 13+ | 12 | ~> 6.3.1 |
-> | iOS 11+ | iOS 13+ | 13 | `version6-xcode13` |
-> | iOS 12+ | iOS 14+ | 13 | ~> 7.0 |
+### Kingfisher 7.0
+
+- (UIKit/AppKit) iOS 12.0+ / macOS 10.14+ / tvOS 12.0+ / watchOS 5.0+ / visionOS 1.0+
+- (SwiftUI) iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
+- Swift 5.0+
 
 ### Installation
 
@@ -195,31 +186,31 @@ target 'MyApp' do
 end
 ```
 
-#### Carthage
+#### Pre-built Framework
 
-```
-github "onevcat/Kingfisher" ~> 7.0
-```
-
+1. Open the release page, download the latest version of Kingfisher from the assets section. 
+2. Drag the `Kingfisher.xcframework` into your project and add it to the target (usually the app target).
+3. Select your target, in the "General" Tab, find the "Frameworks, Libraries, and Embedded Content" section, set the `Embed Without Signing` to Kingfisher.
 
 ### Migrating
 
-[Kingfisher 7.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) - Kingfisher 7.x is NOT fully compatible with the previous version. However, changes should be trivial or not required at all. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
+[Kingfisher 8.0 Migration](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/migration-to-8)
+[Kingfisher 7.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide)
 
 If you are using an even earlier version, see the guides below to know the steps for migrating.
 
-> - [Kingfisher 6.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) - Kingfisher 6.x is NOT fully compatible with the previous version. However, migration is not difficult. Depending on your use cases, it may take no effect or several minutes to modify your existing code for the new version. Please follow the [migration guide](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-6.0-Migration-Guide) when you prepare to upgrade Kingfisher in your project.
-> - [Kingfisher 5.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-5.0-Migration-Guide) - If you are upgrading to Kingfisher 5.x from 4.x, please read this for more information.
-> - Kingfisher 4.0 Migration - Kingfisher 3.x should be source compatible to Kingfisher 4. The reason for a major update is that we need to specify the Swift version explicitly for Xcode. All deprecated methods in Kingfisher 3 were removed, so please ensure you have no warning left before you migrate from Kingfisher 3 with Kingfisher 4. If you have any trouble when migrating, please open an issue to discuss.
-> - [Kingfisher 3.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-3.0-Migration-Guide) - If you are upgrading to Kingfisher 3.x from an earlier version, please read this for more information.
-
 ## Next Steps
 
-We prepared a [wiki page](https://github.com/onevcat/Kingfisher/wiki). You can find tons of useful things there.
+Check the documentation and tutorials:
 
-* [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide) - Follow it to integrate Kingfisher into your project.
-* [Cheat Sheet](https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet)- Curious about what Kingfisher could do and how would it look like when used in your project? See this page for useful code snippets. If you are already familiar with Kingfisher, you could also learn new tricks to improve the way you use Kingfisher!
-* [API Reference](https://swiftpackageindex.com/onevcat/Kingfisher/master/documentation/kingfisher) - Lastly, please remember to read the full API reference whenever you need more detailed documentation.
+- [Documentation Home](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher)
+- [Getting Started](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/gettingstarted)
+    - [UIKit Tutorial](https://swiftpackageindex.com/onevcat/kingfisher/master/tutorials/kingfisher/gettingstarteduikit)
+    - [SwiftUI Tutorial](https://swiftpackageindex.com/onevcat/kingfisher/master/tutorials/kingfisher/gettingstartedswiftui)
+- [Common Tasks - General](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks)
+    - [Common Tasks - Cache](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks_cache)
+    - [Common Tasks - Downloader](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks_downloader)
+    - [Common tasks - Processor](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks_processor)
 
 ## Other
 
