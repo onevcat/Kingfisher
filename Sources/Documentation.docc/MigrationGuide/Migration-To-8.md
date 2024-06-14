@@ -198,4 +198,50 @@ let colorElement = Filter.ColorElement(brightness, contrast, saturation, inputEV
 
 #### `DownloadTask`
 
-`DownloadTask` has been redefined as a `class` instead of a `struct`, without further API modifications.
+`DownloadTask` has been redefined as a `class` instead of a `struct`.
+
+For `ImageDownloader.download` methods that previously returned optional `DownloadTask`` values, now return non-optional values instead. For example:
+
+```swift
+// old
+open func downloadImage(
+  with url: URL,
+  options: KingfisherParsedOptionsInfo,
+  completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil
+) -> DownloadTask?
+
+// new
+open func downloadImage(
+  with url: URL,
+  options: KingfisherParsedOptionsInfo,
+  completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil
+) -> DownloadTask
+```
+
+To check if a download task is valid, instead of checking `nil`, use `isInitialized` instead:
+
+```swift
+// old
+let downloadTask: DownloadTask? = downloader.downloadImage(with: url, options: options)
+
+func doSomethingWithTask() {
+    if let task = downloadTask {
+        // Do something with the task, for example, cancel it
+    }
+}
+
+// new
+let downloadTask: DownloadTask = downloader.downloadImage(with: url, options: options)
+
+func doSomethingWithTask() {
+    if downloadTask.isInitialized {
+        // Do something with the task, for example, cancel it
+    }
+}
+```
+
+##### Cancel Token of DownloadTask
+
+In the current implementation, the cancel token of a `DownloadTask` is an optional value, meaning it does not exist until the download task has actually started. 
+
+Typically, there is no need to interact directly with the cancel token; you can simply invoke the `cancel()` method to terminate an ongoing download task.
