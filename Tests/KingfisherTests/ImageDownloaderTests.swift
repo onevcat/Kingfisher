@@ -272,8 +272,8 @@ class ImageDownloaderTests: XCTestCase {
             delay(0.1) { exp.fulfill() }
         }
         
-        XCTAssertNotNil(task)
-        task!.cancel()
+        XCTAssertTrue(task.isInitialized)
+        task.cancel()
 
         _ = stub.go()
         
@@ -412,9 +412,8 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
         
-        XCTAssertNotNil(downloadTask)
-        
-        downloadTask!.cancel()
+        XCTAssertTrue(downloadTask.isInitialized)
+        downloadTask.cancel()
         _ = stub.go()
         
         group.enter()
