@@ -40,12 +40,12 @@ public protocol KFOptionSetter {
     var onFailureDelegate: Delegate<KingfisherError, Void> { get }
     var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { get }
     var onProgressDelegate: Delegate<(Int64, Int64), Void> { get }
-
-    var delegateObserver: AnyObject { get }
 }
 
-extension KF.Builder: KFOptionSetter {
-    public var delegateObserver: AnyObject { self }
+extension KF.Builder: KFOptionSetter { }
+
+class KFDelegateObserver: @unchecked Sendable {
+    static let `default` = KFDelegateObserver()
 }
 
 // MARK: - Life cycles
@@ -60,7 +60,7 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with changes applied.
     ///
     public func onProgress(_ block: DownloadProgressBlock?) -> Self {
-        onProgressDelegate.delegate(on: delegateObserver) { (observer, result) in
+        onProgressDelegate.delegate(on: KFDelegateObserver.default) { (_, result) in
             block?(result.0, result.1)
         }
         return self
@@ -72,7 +72,7 @@ extension KFOptionSetter {
     /// - Returns: A `Self` with changes applied.
     ///
     public func onSuccess(_ block: ((RetrieveImageResult) -> Void)?) -> Self {
-        onSuccessDelegate.delegate(on: delegateObserver) { (observer, result) in
+        onSuccessDelegate.delegate(on: KFDelegateObserver.default) { (_, result) in
             block?(result)
         }
         return self
@@ -84,7 +84,7 @@ extension KFOptionSetter {
     /// - Returns: A `Self` with changes applied.
     ///
     public func onFailure(_ block: ((KingfisherError) -> Void)?) -> Self {
-        onFailureDelegate.delegate(on: delegateObserver) { (observer, error) in
+        onFailureDelegate.delegate(on: KFDelegateObserver.default) { (_, error) in
             block?(error)
         }
         return self

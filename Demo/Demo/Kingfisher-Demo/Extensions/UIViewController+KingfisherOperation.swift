@@ -27,7 +27,7 @@
 import UIKit
 import Kingfisher
 
-protocol MainDataViewReloadable: Sendable {
+protocol MainDataViewReloadable {
     @MainActor func reload()
 }
 
