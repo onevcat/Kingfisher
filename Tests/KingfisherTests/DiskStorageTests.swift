@@ -27,7 +27,7 @@
 import XCTest
 @testable import Kingfisher
 
-#if swift(>=6)
+#if compiler(>=6)
 extension String: @retroactive DataTransformable { }
 #else
 extension String: DataTransformable { }

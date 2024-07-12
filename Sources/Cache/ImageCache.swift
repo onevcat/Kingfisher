@@ -835,7 +835,7 @@ open class ImageCache: @unchecked Sendable {
         cleanExpiredDiskCache {
             Task {
                 guard let bgTask = await taskActor.value, bgTask != .invalid else { return }
-                #if swift(>=6)
+                #if compiler(>=6)
                 sharedApplication.endBackgroundTask(bgTask)
                 #else
                 await sharedApplication.endBackgroundTask(bgTask)
