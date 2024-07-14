@@ -344,7 +344,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             // Next inBuffer should be the outButter of current iteration
             (inBuffer, outBuffer) = (outBuffer, inBuffer)
         }
-        let outContext = CGContext(
+        guard let outContext = CGContext(
             data: outBuffer.data,
             width: Int(outBuffer.width),
             height: Int(outBuffer.height),
@@ -352,10 +352,19 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             bytesPerRow: outBuffer.rowBytes,
             space: colorSpace,
             bitmapInfo: cgImage.bitmapInfo.rawValue
-        )
-        let result = outContext?.makeImage().flatMap {
+        ) else {
+            assertionFailure("[Kingfisher] Creating CG context failed.")
+            return base
+        }
+        #if os(macOS)
+        let result = outContext.makeImage().flatMap {
+            fixedForRetinaPixel(cgImage: $0, to: size)
+        }
+        #else
+        let result = outContext.makeImage().flatMap {
             KFCrossPlatformImage(cgImage: $0, scale: base.scale, orientation: base.imageOrientation)
         }
+        #endif
         guard let blurredImage = result else {
             return base
         }
