@@ -293,6 +293,75 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return KingfisherWrapper.image(cgImage: image, scale: scale, refImage: base)
     }
     
+    public func blurred(withRadius radius: CGFloat) -> KFCrossPlatformImage {
+        guard let cgImage = cgImage, let colorSpace = cgImage.colorSpace else {
+            assertionFailure("[Kingfisher] Blur only works for CG-based image.")
+            return base
+        }
+        
+        // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
+        // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
+        // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
+        let s = max(radius, 2.0)
+        
+        // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
+        // Fix the slow compiling time for Swift 3.
+        // See https://github.com/onevcat/Kingfisher/issues/611
+        let pi2 = 2 * CGFloat.pi
+        let sqrtPi2 = sqrt(pi2)
+        var targetRadius = floor(s * 3.0 * sqrtPi2 / 4.0 + 0.5)
+        
+        if targetRadius.isEven { targetRadius += 1 }
+
+        // Determine necessary iteration count by blur radius.
+        let iterations: Int
+        if radius < 0.5 {
+            iterations = 1
+        } else if radius < 1.5 {
+            iterations = 2
+        } else {
+            iterations = 3
+        }
+        
+        let inProvider = cgImage.dataProvider
+        
+        let width = vImagePixelCount(cgImage.width)
+        let height = vImagePixelCount(cgImage.height)
+        let rowBytes = cgImage.bytesPerRow
+
+        let inBitmapData = inProvider?.data
+
+        let inData = UnsafeMutableRawPointer(mutating: CFDataGetBytePtr(inBitmapData))
+        var inBuffer = vImage_Buffer(data: inData, height: height, width: width, rowBytes: rowBytes)
+
+        let outData = malloc(cgImage.bytesPerRow * cgImage.height)
+        var outBuffer = vImage_Buffer(data: outData, height: height, width: width, rowBytes: rowBytes)
+        
+        for _ in 0 ..< iterations {
+            let flag = vImage_Flags(kvImageEdgeExtend)
+            vImageBoxConvolve_ARGB8888(
+                &inBuffer, &outBuffer, nil, 0, 0, UInt32(targetRadius), UInt32(targetRadius), nil, flag)
+            // Next inBuffer should be the outButter of current iteration
+            (inBuffer, outBuffer) = (outBuffer, inBuffer)
+        }
+        let outContext = CGContext(
+            data: outBuffer.data,
+            width: Int(outBuffer.width),
+            height: Int(outBuffer.height),
+            bitsPerComponent: 8,
+            bytesPerRow: outBuffer.rowBytes,
+            space: colorSpace,
+            bitmapInfo: cgImage.bitmapInfo.rawValue
+        )
+        let result = outContext?.makeImage().flatMap {
+            KFCrossPlatformImage(cgImage: $0, scale: base.scale, orientation: base.imageOrientation)
+        }
+        guard let blurredImage = result else {
+            return base
+        }
+        return blurredImage
+    }
+    
     // MARK: Blur
     
     /// Create an image with a blur effect based on the `base` image.
@@ -302,7 +371,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///
     /// > This method is only applicable to CG-based images. The current image scale is preserved.
     /// > For any non-CG-based image, the `base` image itself is returned.
-    public func blurred(withRadius radius: CGFloat) -> KFCrossPlatformImage {
+    public func blurredOld(withRadius radius: CGFloat) -> KFCrossPlatformImage {
         
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Blur only works for CG-based image.")
