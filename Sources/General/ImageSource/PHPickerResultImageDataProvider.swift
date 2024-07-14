@@ -30,7 +30,7 @@ import Foundation
 
 import PhotosUI
 
-#if swift(>=6)
+#if compiler(>=6)
 @available(iOS 14.0, macOS 13.0, *)
 extension PHPickerResult: @unchecked @retroactive Sendable { }
 #else

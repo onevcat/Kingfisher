@@ -922,7 +922,7 @@ class ImageViewExtensionTests: XCTestCase {
 
 }
 
-#if swift(>=6)
+#if compiler(>=6)
 extension KFCrossPlatformView: @retroactive Placeholder {}
 #else
 extension KFCrossPlatformView: Placeholder {}

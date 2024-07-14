@@ -33,7 +33,7 @@ extension Int {
     }
 }
 
-#if swift(>=6)
+#if compiler(>=6)
 extension Int: @retroactive CacheCostCalculable { }
 #else
 extension Int: CacheCostCalculable { }

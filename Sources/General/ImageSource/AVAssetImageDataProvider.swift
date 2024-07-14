@@ -35,7 +35,7 @@ import MobileCoreServices
 import CoreServices
 #endif
 
-#if swift(>=6)
+#if compiler(>=6)
 extension AVAssetImageGenerator: @unchecked @retroactive Sendable { }
 #else
 extension AVAssetImageGenerator: @unchecked Sendable { }
