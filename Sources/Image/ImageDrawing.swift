@@ -344,6 +344,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         var inBuffer = vImage_Buffer(data: inData, height: height, width: width, rowBytes: rowBytes)
 
         let outData = malloc(cgImage.bytesPerRow * cgImage.height)
+        defer { free(outData) }
         var outBuffer = vImage_Buffer(data: outData, height: height, width: width, rowBytes: rowBytes)
         
         for _ in 0 ..< iterations {
