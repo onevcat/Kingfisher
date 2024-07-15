@@ -293,6 +293,15 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return KingfisherWrapper.image(cgImage: image, scale: scale, refImage: base)
     }
     
+    // MARK: Blur
+    
+    /// Create an image with a blur effect based on the `base` image.
+    ///
+    /// - Parameter radius: The blur radius to be used when creating the blur effect.
+    /// - Returns: An image with the blur effect applied.
+    ///
+    /// > This method is only applicable to CG-based images. The current image scale is preserved.
+    /// > For any non-CG-based image, the `base` image itself is returned.
     public func blurred(withRadius radius: CGFloat) -> KFCrossPlatformImage {
         guard let cgImage = cgImage, let colorSpace = cgImage.colorSpace else {
             assertionFailure("[Kingfisher] Blur only works for CG-based image.")
@@ -368,100 +377,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         guard let blurredImage = result else {
             return base
         }
-        return blurredImage
-    }
-    
-    // MARK: Blur
-    
-    /// Create an image with a blur effect based on the `base` image.
-    ///
-    /// - Parameter radius: The blur radius to be used when creating the blur effect.
-    /// - Returns: An image with the blur effect applied.
-    ///
-    /// > This method is only applicable to CG-based images. The current image scale is preserved.
-    /// > For any non-CG-based image, the `base` image itself is returned.
-    public func blurredOld(withRadius radius: CGFloat) -> KFCrossPlatformImage {
-        
-        guard let cgImage = cgImage else {
-            assertionFailure("[Kingfisher] Blur only works for CG-based image.")
-            return base
-        }
-        
-        // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
-        // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
-        // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
-        let s = max(radius, 2.0)
-        // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
-        
-        // Fix the slow compiling time for Swift 3.
-        // See https://github.com/onevcat/Kingfisher/issues/611
-        let pi2 = 2 * CGFloat.pi
-        let sqrtPi2 = sqrt(pi2)
-        var targetRadius = floor(s * 3.0 * sqrtPi2 / 4.0 + 0.5)
-        
-        if targetRadius.isEven { targetRadius += 1 }
-
-        // Determine necessary iteration count by blur radius.
-        let iterations: Int
-        if radius < 0.5 {
-            iterations = 1
-        } else if radius < 1.5 {
-            iterations = 2
-        } else {
-            iterations = 3
-        }
-        
-        let w = Int(size.width)
-        let h = Int(size.height)
-        
-        func createEffectBuffer(_ context: CGContext) -> vImage_Buffer {
-            let data = context.data
-            let width = vImagePixelCount(context.width)
-            let height = vImagePixelCount(context.height)
-            let rowBytes = context.bytesPerRow
-            
-            return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
-        }
-        GraphicsContext.begin(size: size, scale: scale)
-        guard let context = GraphicsContext.current(size: size, scale: scale, inverting: true, cgImage: cgImage) else {
-            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
-            return base
-        }
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
-        GraphicsContext.end()
-        
-        var inBuffer = createEffectBuffer(context)
-        
-        GraphicsContext.begin(size: size, scale: scale)
-        guard let outContext = GraphicsContext.current(size: size, scale: scale, inverting: true, cgImage: cgImage) else {
-            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
-            return base
-        }
-        defer { GraphicsContext.end() }
-        var outBuffer = createEffectBuffer(outContext)
-        
-        for _ in 0 ..< iterations {
-            let flag = vImage_Flags(kvImageEdgeExtend)
-            vImageBoxConvolve_ARGB8888(
-                &inBuffer, &outBuffer, nil, 0, 0, UInt32(targetRadius), UInt32(targetRadius), nil, flag)
-            // Next inBuffer should be the outButter of current iteration
-            (inBuffer, outBuffer) = (outBuffer, inBuffer)
-        }
-        
-        #if os(macOS)
-        let result = outContext.makeImage().flatMap {
-            fixedForRetinaPixel(cgImage: $0, to: size)
-        }
-        #else
-        let result = outContext.makeImage().flatMap {
-            KFCrossPlatformImage(cgImage: $0, scale: base.scale, orientation: base.imageOrientation)
-        }
-        #endif
-        guard let blurredImage = result else {
-            assertionFailure("[Kingfisher] Can not make an blurred image within this context.")
-            return base
-        }
-        
         return blurredImage
     }
     
