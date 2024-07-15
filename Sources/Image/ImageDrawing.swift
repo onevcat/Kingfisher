@@ -355,13 +355,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         guard let outContext = CGContext(
             data: outBuffer.data,
-            width: Int(outBuffer.width),
-            height: Int(outBuffer.height),
-            bitsPerComponent: 8,
-            bytesPerRow: outBuffer.rowBytes,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: cgImage.bitsPerComponent,
+            bytesPerRow: cgImage.bytesPerRow,
             space: colorSpace,
             bitmapInfo: cgImage.bitmapInfo.rawValue
-        ) else {
+        ) ?? .fallback(data: outBuffer.data, cgImage: cgImage) else {
             assertionFailure("[Kingfisher] Creating CG context failed.")
             return base
         }
@@ -692,4 +692,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
     }
     #endif
+}
+
+extension CGContext {
+    fileprivate static func fallback(data: UnsafeMutableRawPointer?, cgImage: CGImage) -> CGContext? {
+        return CGContext(
+            data: data,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: 8,
+            bytesPerRow: 4 * cgImage.width,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        )
+    }
 }
