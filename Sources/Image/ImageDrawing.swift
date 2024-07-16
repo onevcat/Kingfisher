@@ -303,7 +303,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// > This method is only applicable to CG-based images. The current image scale is preserved.
     /// > For any non-CG-based image, the `base` image itself is returned.
     public func blurred(withRadius radius: CGFloat) -> KFCrossPlatformImage {
-        guard let cgImage = cgImage, let colorSpace = cgImage.colorSpace else {
+        guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Blur only works for CG-based image.")
             return base
         }
@@ -332,21 +332,26 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             iterations = 3
         }
         
-        let inProvider = cgImage.dataProvider
+        func createEffectBuffer(_ context: CGContext) -> vImage_Buffer {
+            let data = context.data
+            let width = vImagePixelCount(context.width)
+            let height = vImagePixelCount(context.height)
+            let rowBytes = context.bytesPerRow
+            
+            return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
+        }
         
-        let width = vImagePixelCount(cgImage.width)
-        let height = vImagePixelCount(cgImage.height)
-        let rowBytes = cgImage.bytesPerRow
+        guard let inputContext = CGContext.fresh(cgImage: cgImage) else {
+            return base
+        }
+        inputContext.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        var inBuffer = createEffectBuffer(inputContext)
 
-        let inBitmapData = inProvider?.data
+        guard let outContext = CGContext.fresh(cgImage: cgImage) else {
+            return base
+        }
+        var outBuffer = createEffectBuffer(outContext)
 
-        let inData = UnsafeMutableRawPointer(mutating: CFDataGetBytePtr(inBitmapData))
-        var inBuffer = vImage_Buffer(data: inData, height: height, width: width, rowBytes: rowBytes)
-
-        let outData = malloc(cgImage.bytesPerRow * cgImage.height)
-        defer { free(outData) }
-        var outBuffer = vImage_Buffer(data: outData, height: height, width: width, rowBytes: rowBytes)
-        
         for _ in 0 ..< iterations {
             let flag = vImage_Flags(kvImageEdgeExtend)
             vImageBoxConvolve_ARGB8888(
@@ -354,18 +359,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             // Next inBuffer should be the outButter of current iteration
             (inBuffer, outBuffer) = (outBuffer, inBuffer)
         }
-        guard let outContext = CGContext(
-            data: outBuffer.data,
-            width: cgImage.width,
-            height: cgImage.height,
-            bitsPerComponent: cgImage.bitsPerComponent,
-            bytesPerRow: cgImage.bytesPerRow,
-            space: colorSpace,
-            bitmapInfo: cgImage.bitmapInfo.rawValue
-        ) ?? .fallback(data: outBuffer.data, cgImage: cgImage) else {
-            assertionFailure("[Kingfisher] Creating CG context failed.")
-            return base
-        }
+        
         #if os(macOS)
         let result = outContext.makeImage().flatMap {
             fixedForRetinaPixel(cgImage: $0, to: size)
@@ -696,9 +690,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 }
 
 extension CGContext {
-    fileprivate static func fallback(data: UnsafeMutableRawPointer?, cgImage: CGImage) -> CGContext? {
-        return CGContext(
-            data: data,
+    fileprivate static func fresh(cgImage: CGImage) -> CGContext? {
+        CGContext(
+            data: nil,
             width: cgImage.width,
             height: cgImage.height,
             bitsPerComponent: 8,
