@@ -370,6 +370,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         #endif
         guard let blurredImage = result else {
+            assertionFailure("[Kingfisher] Can not make an blurred image within this context.")
             return base
         }
         return blurredImage
