@@ -24,6 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if os(macOS) || os(watchOS)
+
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import AppKit
 #endif
@@ -35,8 +37,10 @@ enum GraphicsContext {
     static func begin(size: CGSize, scale: CGFloat) {
         #if os(macOS)
         NSGraphicsContext.saveGraphicsState()
-        #else
+        #elseif os(watchOS)
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        #else
+        assertionFailure("This method is deprecated on the current platform and should not be used.")
         #endif
     }
     
@@ -65,7 +69,7 @@ enum GraphicsContext {
         
         NSGraphicsContext.current = context
         return context.cgContext
-        #else
+        #elseif os(watchOS)
         guard let context = UIGraphicsGetCurrentContext() else {
             return nil
         }
@@ -74,15 +78,21 @@ enum GraphicsContext {
             context.translateBy(x: 0, y: -size.height)
         }
         return context
+        #else
+        assertionFailure("This method is deprecated on the current platform and should not be used.")
+        return nil
         #endif
     }
     
     static func end() {
         #if os(macOS)
         NSGraphicsContext.restoreGraphicsState()
-        #else
+        #elseif os(watchOS)
         UIGraphicsEndImageContext()
+        #else
+        assertionFailure("This method is deprecated on the current platform and should not be used.")
         #endif
     }
 }
 
+#endif

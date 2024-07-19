@@ -303,7 +303,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// > This method is only applicable to CG-based images. The current image scale is preserved.
     /// > For any non-CG-based image, the `base` image itself is returned.
     public func blurred(withRadius radius: CGFloat) -> KFCrossPlatformImage {
-        
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Blur only works for CG-based image.")
             return base
@@ -313,8 +312,8 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
         // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
         let s = max(radius, 2.0)
-        // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
         
+        // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
         // Fix the slow compiling time for Swift 3.
         // See https://github.com/onevcat/Kingfisher/issues/611
         let pi2 = 2 * CGFloat.pi
@@ -333,9 +332,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             iterations = 3
         }
         
-        let w = Int(size.width)
-        let h = Int(size.height)
-        
         func createEffectBuffer(_ context: CGContext) -> vImage_Buffer {
             let data = context.data
             let width = vImagePixelCount(context.width)
@@ -344,24 +340,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             
             return vImage_Buffer(data: data, height: height, width: width, rowBytes: rowBytes)
         }
-        GraphicsContext.begin(size: size, scale: scale)
-        guard let context = GraphicsContext.current(size: size, scale: scale, inverting: true, cgImage: cgImage) else {
-            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
+        
+        guard let inputContext = CGContext.fresh(cgImage: cgImage) else {
             return base
         }
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: w, height: h))
-        GraphicsContext.end()
-        
-        var inBuffer = createEffectBuffer(context)
-        
-        GraphicsContext.begin(size: size, scale: scale)
-        guard let outContext = GraphicsContext.current(size: size, scale: scale, inverting: true, cgImage: cgImage) else {
-            assertionFailure("[Kingfisher] Failed to create CG context for blurring image.")
+        inputContext.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        var inBuffer = createEffectBuffer(inputContext)
+
+        guard let outContext = CGContext.fresh(cgImage: cgImage) else {
             return base
         }
-        defer { GraphicsContext.end() }
         var outBuffer = createEffectBuffer(outContext)
-        
+
         for _ in 0 ..< iterations {
             let flag = vImage_Flags(kvImageEdgeExtend)
             vImageBoxConvolve_ARGB8888(
@@ -383,7 +373,6 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             assertionFailure("[Kingfisher] Can not make an blurred image within this context.")
             return base
         }
-        
         return blurredImage
     }
     
@@ -699,4 +688,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
     }
     #endif
+}
+
+extension CGContext {
+    fileprivate static func fresh(cgImage: CGImage) -> CGContext? {
+        CGContext(
+            data: nil,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: 8,
+            bytesPerRow: 4 * cgImage.width,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        )
+    }
 }
