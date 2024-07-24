@@ -231,7 +231,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 
 // Workaround for Apple xcframework creating issue on Apple TV in Swift 5.8.
-// https://github.com/apple/swift/issues/66015
+// https://github.com/swiftlang/swift/issues/66015
 #if os(tvOS)
     public override init(image: UIImage?, highlightedImage: UIImage?) {
         super.init(image: image, highlightedImage: highlightedImage)
@@ -479,9 +479,9 @@ extension AnimatedImageView {
     // An actor's deinit is nonisolated so we need to cleanup state that needs to exist past this instance's deinit. 
     // Currently there is no way to accomplish this that wouldn't be an error in Swift 6, hopefully that changes at
     // some point. This evolution proposal attempts to address this problem:
-    // https://github.com/apple/swift-evolution/blob/main/proposals/0371-isolated-synchronous-deinit.md
+    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0371-isolated-synchronous-deinit.md
     // Method influenced from
-    // https://github.com/apple/swift/blob/47803aad3b0d326e5231ad0d7936d40264f56edd/stdlib/public/Concurrency/ExecutorAssertions.swift#L351
+    // https://github.com/swiftlang/swift/blob/47803aad3b0d326e5231ad0d7936d40264f56edd/stdlib/public/Concurrency/ExecutorAssertions.swift#L351
     @_unavailableFromAsync(message: "express the closure as an explicit function declared on the specified 'actor' instead")
     private nonisolated func assumeIsolatedDuringDeinit<T>(_ operation: @MainActor (AnimatedImageView) throws -> T) rethrows -> T {
         typealias Isolated = (AnimatedImageView) throws -> T
