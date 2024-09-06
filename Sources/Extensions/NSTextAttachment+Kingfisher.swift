@@ -144,7 +144,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     /// ```
     @discardableResult
     public func setImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         attributedView: @autoclosure @escaping @Sendable () -> KFCrossPlatformView,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,

@@ -410,7 +410,7 @@ open class ImageCache: @unchecked Sendable {
         original: Data? = nil,
         forKey key: String,
         processorIdentifier identifier: String = "",
-        cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
+        cacheSerializer serializer: any CacheSerializer = DefaultCacheSerializer.default,
         toDisk: Bool = true,
         callbackQueue: CallbackQueue = .untouch,
         completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil
@@ -522,7 +522,7 @@ open class ImageCache: @unchecked Sendable {
                           fromMemory: Bool = true,
                           fromDisk: Bool = true,
                           callbackQueue: CallbackQueue = .untouch,
-                          completionHandler: (@Sendable (Error?) -> Void)? = nil)
+                          completionHandler: (@Sendable ((any Error)?) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
 
@@ -530,7 +530,7 @@ open class ImageCache: @unchecked Sendable {
             memoryStorage.remove(forKey: computedKey)
         }
         
-        @Sendable func callHandler(_ error: Error?) {
+        @Sendable func callHandler(_ error: (any Error)?) {
             if let completionHandler = completionHandler {
                 callbackQueue.execute { completionHandler(error) }
             }
@@ -1004,7 +1004,7 @@ open class ImageCache: @unchecked Sendable {
         original: Data? = nil,
         forKey key: String,
         processorIdentifier identifier: String = "",
-        cacheSerializer serializer: CacheSerializer = DefaultCacheSerializer.default,
+        cacheSerializer serializer: any CacheSerializer = DefaultCacheSerializer.default,
         toDisk: Bool = true
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in

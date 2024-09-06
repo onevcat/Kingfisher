@@ -38,7 +38,7 @@ import UIKit
 ///   - failedResources: An array of resources that fail to be downloaded. This could be because of being cancelled while downloading, encountering an error during downloading, or the download not being started at all.
 ///   - completedResources: An array of resources that are downloaded and cached successfully.
 public typealias PrefetcherProgressBlock =
-    ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
+    ((_ skippedResources: [any Resource], _ failedResources: [any Resource], _ completedResources: [any Resource]) -> Void)
 
 /// Progress update block of prefetcher when initialized with a list of resources.
 ///
@@ -56,7 +56,7 @@ public typealias PrefetcherSourceProgressBlock =
 ///   - failedResources: An array of resources that fail to be downloaded. This could be because of being cancelled while downloading, encountering an error during downloading, or the download not being started at all.
 ///   - completedResources: An array of resources that are downloaded and cached successfully.
 public typealias PrefetcherCompletionHandler =
-    ((_ skippedResources: [Resource], _ failedResources: [Resource], _ completedResources: [Resource]) -> Void)
+    ((_ skippedResources: [any Resource], _ failedResources: [any Resource], _ completedResources: [any Resource]) -> Void)
 
 /// Completion block of prefetcher when initialized with a list of sources.
 ///
@@ -134,7 +134,7 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         progressBlock: PrefetcherProgressBlock? = nil,
         completionHandler: PrefetcherCompletionHandler? = nil)
     {
-        let resources: [Resource] = urls.map { $0 }
+        let resources: [any Resource] = urls.map { $0 }
         self.init(
             resources: resources,
             options: options,
@@ -159,7 +159,7 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     /// ``KingfisherOptionsInfo``. Both the progress and completion blocks will be invoked on the main thread. The
     /// ``KingfisherOptionsInfoItem/callbackQueue(_:)`` value in `optionsInfo` will be ignored in this method.
     public convenience init(
-        resources: [Resource],
+        resources: [any Resource],
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherProgressBlock? = nil,
         completionHandler: PrefetcherCompletionHandler? = nil)

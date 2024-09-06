@@ -56,7 +56,7 @@ public protocol ImageDownloaderDelegate: AnyObject {
         _ downloader: ImageDownloader,
         didFinishDownloadingImageForURL url: URL,
         with response: URLResponse?,
-        error: Error?)
+        error: (any Error)?)
 
     /// Called when the ``ImageDownloader`` object successfully downloads image data with a specified task.
     ///
@@ -166,7 +166,7 @@ extension ImageDownloaderDelegate {
         _ downloader: ImageDownloader,
         didFinishDownloadingImageForURL url: URL,
         with response: URLResponse?,
-        error: Error?) {}
+        error: (any Error)?) {}
 
     public func imageDownloader(
         _ downloader: ImageDownloader,

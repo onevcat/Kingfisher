@@ -55,7 +55,7 @@ protocol KingfisherActionAlertPopup {
     }
 }
 
-@MainActor func reloadAction(_ reloadable: MainDataViewReloadable) -> UIAlertAction {
+@MainActor func reloadAction(_ reloadable: any MainDataViewReloadable) -> UIAlertAction {
     return UIAlertAction(title: "Reload", style: .default) { _ in
         reloadable.reload()
     }
@@ -76,7 +76,7 @@ protocol KingfisherActionAlertPopup {
 extension UIViewController: KingfisherActionAlertPopup {
     @objc func alertPopup(_ sender: Any) -> UIAlertController {
         let alert = createAlert(sender, actions: [cleanCacheAction(), cancelAction])
-        if let r = self as? MainDataViewReloadable {
+        if let r = self as? any MainDataViewReloadable {
             alert.addAction(reloadAction(r))
         }
         return alert

@@ -46,7 +46,7 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
     /// - invalidImage: The retrieved image is invalid.
     public enum PHPickerResultImageDataProviderError: Error {
         /// An error happens during picking up image through the item provider of `PHPickerResult`.
-        case pickerProviderError(Error)
+        case pickerProviderError(any Error)
         /// The retrieved image is invalid.
         case invalidImage
     }
@@ -74,7 +74,7 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
         self.contentType = contentType
     }
 
-    public func data(handler: @escaping @Sendable (Result<Data, Error>) -> Void) {
+    public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
         pickerResult.itemProvider.loadDataRepresentation(forTypeIdentifier: contentType.identifier) { data, error in
             if let error {
                 handler(.failure(PHPickerResultImageDataProviderError.pickerProviderError(error)))

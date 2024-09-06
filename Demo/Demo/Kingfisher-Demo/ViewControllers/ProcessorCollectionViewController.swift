@@ -31,7 +31,7 @@ private let reuseIdentifier = "ProcessorCell"
 
 class ProcessorCollectionViewController: UICollectionViewController {
 
-    var currentProcessor: ImageProcessor = DefaultImageProcessor.default {
+    var currentProcessor: any ImageProcessor = DefaultImageProcessor.default {
         didSet {
             collectionView.reloadData()
         }

@@ -57,11 +57,11 @@ public enum Source: Sendable {
 
     /// The target image should be fetched from the network remotely. The associated `Resource`
     /// value defines detailed information such as the image URL and cache key.
-    case network(Resource)
-    
+    case network(any Resource)
+
     /// The target image should be provided in a data format, typically as an image
     /// from local storage or in any other encoding format, such as Base64.
-    case provider(ImageDataProvider)
+    case provider(any ImageDataProvider)
 
     // MARK: Getting Properties
 
@@ -112,7 +112,7 @@ extension Source: Hashable {
 }
 
 extension Source {
-    var asResource: Resource? {
+    var asResource: (any Resource)? {
         guard case .network(let resource) = self else {
             return nil
         }

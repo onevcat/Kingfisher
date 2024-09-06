@@ -65,7 +65,7 @@ struct UserNameLetterIconImageProvider: ImageDataProvider {
         self.letter = userNameFirstLetter
     }
     
-    func data(handler: @escaping (Result<Data, Error>) -> Void) {
+    func data(handler: @escaping (Result<Data, any Error>) -> Void) {
         
         // You can ignore these detail below.
         // It generates some data for an image with `letter` being rendered in the center.

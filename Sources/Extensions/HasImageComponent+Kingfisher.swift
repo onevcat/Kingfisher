@@ -235,7 +235,7 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
     /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
@@ -275,7 +275,7 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
     /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
@@ -307,7 +307,7 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
     /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
-        with provider: ImageDataProvider?,
+        with provider: (any ImageDataProvider)?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
@@ -338,7 +338,7 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
     /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
-        with provider: ImageDataProvider?,
+        with provider: (any ImageDataProvider)?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil

@@ -61,7 +61,7 @@ public enum KF {
     /// - Parameter resource: The ``Resource`` object defines data information like key or URL.
     /// - Returns: A ``Builder`` for future configuration. After configuring the builder, call its
     /// `Builder/set(to:)` to start the image loading.
-    public static func resource(_ resource: Resource?) -> KF.Builder {
+    public static func resource(_ resource: (any Resource)?) -> KF.Builder {
         source(resource?.convertToSource())
     }
 
@@ -80,7 +80,7 @@ public enum KF {
     /// - Parameter provider: The ``ImageDataProvider`` object contains information about the data.
     /// - Returns: A ``Builder`` for future configuration. After configuring the builder, call its
     /// `Builder/set(to:)` to start the image loading.
-    public static func dataProvider(_ provider: ImageDataProvider?) -> KF.Builder {
+    public static func dataProvider(_ provider: (any ImageDataProvider)?) -> KF.Builder {
         source(provider?.convertToSource())
     }
 
@@ -116,8 +116,8 @@ extension KF {
             set { propertyQueue.sync { _placeholder = newValue } }
         }
         #else
-        private var _placeholder: Placeholder?
-        private var placeholder: Placeholder? {
+        private var _placeholder: (any Placeholder)?
+        private var placeholder: (any Placeholder)? {
             get { propertyQueue.sync { _placeholder } }
             set { propertyQueue.sync { _placeholder = newValue } }
         }
@@ -337,7 +337,7 @@ extension KF.Builder {
     /// Sets a placeholder which is used while retrieving the image.
     /// - Parameter placeholder: A placeholder to show while retrieving the image from its source.
     /// - Returns: A ``KF/Builder`` with changes applied.
-    public func placeholder(_ placeholder: Placeholder?) -> Self {
+    public func placeholder(_ placeholder: (any Placeholder)?) -> Self {
         self.placeholder = placeholder
         return self
     }

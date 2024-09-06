@@ -345,7 +345,7 @@ extension KFOptionSetter {
     /// - Parameter strategy: The provided strategy that defines how retry attempts should occur.
     /// - Returns: A `Self` value with the changes applied.
     ///
-    public func retry(_ strategy: RetryStrategy?) -> Self {
+    public func retry(_ strategy: (any RetryStrategy)?) -> Self {
         options.retryStrategy = strategy
         return self
     }
@@ -424,7 +424,7 @@ extension KFOptionSetter {
     /// This is your last opportunity to modify the image download request. You can use this for customization
     /// purposes, such as adding an authentication token to the header, implementing basic HTTP authentication,
     /// or URL mapping.
-    public func requestModifier(_ modifier: AsyncImageDownloadRequestModifier) -> Self {
+    public func requestModifier(_ modifier: any AsyncImageDownloadRequestModifier) -> Self {
         options.requestModifier = modifier
         return self
     }
@@ -460,7 +460,7 @@ extension KFOptionSetter {
     /// authentication, or URL mapping. By default, the original redirection request will be sent without any
     /// modification.
     ///
-    public func redirectHandler(_ handler: ImageDownloadRedirectHandler) -> Self {
+    public func redirectHandler(_ handler: any ImageDownloadRedirectHandler) -> Self {
         options.redirectHandler = handler
         return self
     }
@@ -497,7 +497,7 @@ extension KFOptionSetter {
     ///
     /// - Note: To append a processor to the current ones instead of replacing them all, use ``appendProcessor(_:)``.
     ///
-    public func setProcessor(_ processor: ImageProcessor) -> Self {
+    public func setProcessor(_ processor: any ImageProcessor) -> Self {
         options.processor = processor
         return self
     }
@@ -511,7 +511,7 @@ extension KFOptionSetter {
     /// - Note: To append processors to the current ones instead of replacing them all, concatenate them using the
     /// `|>` operator, and then use ``KFOptionSetter/appendProcessor(_:)``.
     ///
-    public func setProcessors(_ processors: [ImageProcessor]) -> Self {
+    public func setProcessors(_ processors: [any ImageProcessor]) -> Self {
         switch processors.count {
         case 0:
             options.processor = DefaultImageProcessor.default
@@ -528,7 +528,7 @@ extension KFOptionSetter {
     /// - Parameter processor: The processor to append to the current processor settings.
     /// - Returns: A `Self` value with the changes applied.
     ///
-    public func appendProcessor(_ processor: ImageProcessor) -> Self {
+    public func appendProcessor(_ processor: any ImageProcessor) -> Self {
         options.processor = options.processor |> processor
         return self
     }
@@ -669,7 +669,7 @@ extension KFOptionSetter {
     /// - Parameter cacheSerializer: The ``CacheSerializer`` to be used.
     /// - Returns: A `Self` value with the changes applied.
     ///
-    public func serialize(by cacheSerializer: CacheSerializer) -> Self {
+    public func serialize(by cacheSerializer: any CacheSerializer) -> Self {
         options.cacheSerializer = cacheSerializer
         return self
     }
@@ -712,7 +712,7 @@ extension KFOptionSetter {
     /// - Parameter modifier: The ``ImageModifier`` to be used for modifying the image object.
     /// - Returns: A `Self` value with the changes applied.
     ///
-    public func imageModifier(_ modifier: ImageModifier?) -> Self {
+    public func imageModifier(_ modifier: (any ImageModifier)?) -> Self {
         options.imageModifier = modifier
         return self
     }

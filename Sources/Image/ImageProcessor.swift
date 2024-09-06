@@ -82,7 +82,7 @@ extension ImageProcessor {
     ///
     /// - Parameter another: An `ImageProcessor` to be appended to `self`.
     /// - Returns: The new `ImageProcessor` that will process the image in the order of the two processors concatenated.
-    public func append(another: ImageProcessor) -> ImageProcessor {
+    public func append(another: any ImageProcessor) -> any ImageProcessor {
         let newIdentifier = identifier.appending("|>\(another.identifier)")
         return GeneralProcessor(identifier: newIdentifier) {
             item, options in
@@ -95,11 +95,11 @@ extension ImageProcessor {
     }
 }
 
-func ==(left: ImageProcessor, right: ImageProcessor) -> Bool {
+func ==(left: any ImageProcessor, right: any ImageProcessor) -> Bool {
     return left.identifier == right.identifier
 }
 
-func !=(left: ImageProcessor, right: ImageProcessor) -> Bool {
+func !=(left: any ImageProcessor, right: any ImageProcessor) -> Bool {
     return !(left == right)
 }
 
@@ -827,7 +827,7 @@ infix operator |>: AdditionPrecedence
 ///     - left: The first processor.
 ///     - right: The second processor that follows the `left`.
 /// - Returns: The new processor that processes the image or the image data in left-to-right order.
-public func |>(left: ImageProcessor, right: ImageProcessor) -> ImageProcessor {
+public func |>(left: any ImageProcessor, right: any ImageProcessor) -> any ImageProcessor {
     return left.append(another: right)
 }
 

@@ -49,7 +49,7 @@ public enum IndicatorType {
     /// Uses a custom indicator.
     ///
     /// The type of the associated value should conform to the ``Indicator`` protocol.
-    case custom(indicator: Indicator)
+    case custom(indicator: any Indicator)
 }
 
 /// An indicator type which can be used to show that the download task is in progress.
@@ -201,7 +201,7 @@ final class ImageIndicator: Indicator {
 
     init?(
         imageData data: Data,
-        processor: ImageProcessor = DefaultImageProcessor.default,
+        processor: any ImageProcessor = DefaultImageProcessor.default,
         options: KingfisherParsedOptionsInfo? = nil)
     {
         var options = options ?? KingfisherParsedOptionsInfo(nil)

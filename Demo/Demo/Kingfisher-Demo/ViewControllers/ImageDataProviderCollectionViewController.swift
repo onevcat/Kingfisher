@@ -68,7 +68,7 @@ struct UserNameLetterIconImageProvider: ImageDataProvider {
         color = backgroundColor
     }
     
-    func data(handler: @escaping (Result<Data, Error>) -> Void) {
+    func data(handler: @escaping (Result<Data, any Error>) -> Void) {
         let letter = self.letter as NSString
         let rect = CGRect(x: 0, y: 0, width: 250, height: 250)
         

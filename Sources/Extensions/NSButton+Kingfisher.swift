@@ -84,7 +84,7 @@ extension KingfisherWrapper where Base: NSButton {
     /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
@@ -173,7 +173,7 @@ extension KingfisherWrapper where Base: NSButton {
     /// > Both `progressBlock` and `completionHandler` will also be executed in the main thread.
     @discardableResult
     public func setAlternateImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
