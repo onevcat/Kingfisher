@@ -37,7 +37,7 @@ class ProcessorCollectionViewController: UICollectionViewController {
         }
     }
     
-    var processors: [(ImageProcessor, String)] = [
+    var processors: [(any ImageProcessor, String)] = [
         (DefaultImageProcessor.default, "Default"),
         (ResizingImageProcessor(referenceSize: CGSize(width: 50, height: 50)), "Resizing"),
         (RoundCornerImageProcessor(radius: .point(20)), "Round Corner"),
