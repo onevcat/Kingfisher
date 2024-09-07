@@ -84,8 +84,6 @@ public enum MemoryStorage {
         /// default expiration settings, and more.
         public init(config: Config) {
             self.config = config
-            storage.totalCostLimit = config.totalCostLimit
-            storage.countLimit = config.countLimit
 
             cleanTimer = .scheduledTimer(withTimeInterval: config.cleanInterval, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
