@@ -89,7 +89,7 @@ extension KingfisherWrapper where Base: UIButton {
     ///
     @discardableResult
     public func setImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         for state: UIControl.State,
         placeholder: UIImage? = nil,
         options: KingfisherOptionsInfo? = nil,
@@ -199,7 +199,7 @@ extension KingfisherWrapper where Base: UIButton {
     ///
     @discardableResult
     public func setBackgroundImage(
-        with resource: Resource?,
+        with resource: (any Resource)?,
         for state: UIControl.State,
         placeholder: UIImage? = nil,
         options: KingfisherOptionsInfo? = nil,

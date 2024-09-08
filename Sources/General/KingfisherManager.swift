@@ -194,7 +194,7 @@ public class KingfisherManager: @unchecked Sendable {
     ///
     @discardableResult
     public func retrieveImage(
-        with resource: Resource,
+        with resource: any Resource,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
@@ -418,7 +418,7 @@ public class KingfisherManager: @unchecked Sendable {
     }
 
     func provideImage(
-        provider: ImageDataProvider,
+        provider: any ImageDataProvider,
         options: KingfisherParsedOptionsInfo,
         completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)?)
     {
@@ -764,7 +764,7 @@ extension KingfisherManager {
     /// the `resource`, stores it in the cache, and then calls the `completionHandler`.
     ///
     public func retrieveImage(
-        with resource: Resource,
+        with resource: any Resource,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil
     ) async throws -> RetrieveImageResult

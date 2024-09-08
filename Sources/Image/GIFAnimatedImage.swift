@@ -75,7 +75,7 @@ public class GIFAnimatedImage {
     let images: [KFCrossPlatformImage]
     let duration: TimeInterval
     
-    init?(from frameSource: ImageFrameSource, options: ImageCreatingOptions) {
+    init?(from frameSource: any ImageFrameSource, options: ImageCreatingOptions) {
         let frameCount = frameSource.frameCount
         var images = [KFCrossPlatformImage]()
         var gifDuration = 0.0

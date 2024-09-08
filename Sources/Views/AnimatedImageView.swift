@@ -177,7 +177,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     /// The delegate of this `AnimatedImageView` object. 
     ///
     /// See the ``AnimatedImageViewDelegate`` protocol for more information.
-    public weak var delegate: AnimatedImageViewDelegate?
+    public weak var delegate: (any AnimatedImageViewDelegate)?
 
     /// The ``Animator`` instance that holds the frames of a specific image in memory.
     public private(set) var animator: Animator?
@@ -192,7 +192,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     private var isDisplayLinkInitialized: Bool = false
     
     // A display link that keeps calling the `updateFrame` method on every screen refresh.
-    private lazy var displayLink: DisplayLinkCompatible = {
+    private lazy var displayLink: any DisplayLinkCompatible = {
         isDisplayLinkInitialized = true
         let displayLink = self.compatibleDisplayLink(target: TargetProxy(target: self), selector: #selector(TargetProxy.onScreenUpdate))
         displayLink.add(to: .main, forMode: runLoopMode)
@@ -550,7 +550,7 @@ extension AnimatedImageView {
         /// The maximum count of image frames that need to be preloaded.
         public let maxFrameCount: Int
 
-        private let frameSource: ImageFrameSource
+        private let frameSource: any ImageFrameSource
         private let maxRepeatCount: RepeatCount
 
         private let maxTimeStep: TimeInterval = 1.0
@@ -563,7 +563,7 @@ extension AnimatedImageView {
 
         var needsPrescaling = true
 
-        weak var delegate: AnimatorDelegate?
+        weak var delegate: (any AnimatorDelegate)?
 
         // Total duration of one animation loop
         var loopDuration: TimeInterval = 0
@@ -664,7 +664,7 @@ extension AnimatedImageView {
         ///   - count: Count of frames needed to be preloaded.
         ///   - repeatCount: The repeat count should this animator uses.
         ///   - preloadQueue: Dispatch queue used for preloading images.
-        init(frameSource source: ImageFrameSource,
+        init(frameSource source: any ImageFrameSource,
              contentMode mode: KFCrossPlatformContentMode,
              size: CGSize,
              imageSize: CGSize,

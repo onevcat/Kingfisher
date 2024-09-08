@@ -97,7 +97,7 @@ public enum KingfisherError: Error {
         ///   - error: The underlying URLSession error object.
         ///
         /// Error Code: 2003
-        case URLSessionError(error: Error)
+        case URLSessionError(error: any Error)
         
         /// Data modifying fails on returning a valid data.
         ///
@@ -152,7 +152,7 @@ public enum KingfisherError: Error {
         ///   - url: The disk URL where the target cached file exists.
         ///
         /// Error Code: 3003
-        case invalidURLResource(error: Error, key: String, url: URL)
+        case invalidURLResource(error: any Error, key: String, url: URL)
         
         /// The file at the target URL exists, but the data cannot be loaded from it.
         ///
@@ -161,7 +161,7 @@ public enum KingfisherError: Error {
         ///   - error: The underlying error that describes why this error occurs.
         ///
         /// Error Code: 3004
-        case cannotLoadDataFromDisk(url: URL, error: Error)
+        case cannotLoadDataFromDisk(url: URL, error: any Error)
         
         /// Cannot create a folder at a given path.
         ///
@@ -170,7 +170,7 @@ public enum KingfisherError: Error {
         ///   - error: The underlying error that describes why this error occurs.
         ///
         /// Error Code: 3005
-        case cannotCreateDirectory(path: String, error: Error)
+        case cannotCreateDirectory(path: String, error: any Error)
         
         /// The requested image does not exist in the cache.
         ///
@@ -186,7 +186,7 @@ public enum KingfisherError: Error {
         ///   - object: The object that needs to be converted to data.
         ///
         /// Error Code: 3007
-        case cannotConvertToData(object: Any, error: Error)
+        case cannotConvertToData(object: Any, error: any Error)
         
         /// Unable to serialize an image to data for storage.
         ///
@@ -196,7 +196,7 @@ public enum KingfisherError: Error {
         ///   - serializer: The ``CacheSerializer`` used for the image serialization.
         ///
         /// Error Code: 3008
-        case cannotSerializeImage(image: KFCrossPlatformImage?, original: Data?, serializer: CacheSerializer)
+        case cannotSerializeImage(image: KFCrossPlatformImage?, original: Data?, serializer: any CacheSerializer)
 
         /// Unable to create the cache file at a specified `fileURL` under a given `key`.
         ///
@@ -210,7 +210,7 @@ public enum KingfisherError: Error {
         ///            `fileURL`.
         ///
         /// Error Code: 3009
-        case cannotCreateCacheFile(fileURL: URL, key: String, data: Data, error: Error)
+        case cannotCreateCacheFile(fileURL: URL, key: String, data: Data, error: any Error)
 
         /// Unable to set file attributes for a cached file.
         ///
@@ -221,7 +221,7 @@ public enum KingfisherError: Error {
         ///            `attributes` for the disk file at `filePath`.
         ///
         /// Error Code: 3010
-        case cannotSetCacheFileAttribute(filePath: String, attributes: [FileAttributeKey : Any], error: Error)
+        case cannotSetCacheFileAttribute(filePath: String, attributes: [FileAttributeKey : Any], error: any Error)
 
         
         /// The disk storage for caching is not ready.
@@ -246,7 +246,7 @@ public enum KingfisherError: Error {
         ///   - item: The image or its data content.
         ///
         /// Error Code: 4001
-        case processingFailed(processor: ImageProcessor, item: ImageProcessItem)
+        case processingFailed(processor: any ImageProcessor, item: ImageProcessItem)
     }
 
     /// Represents the error reason during image setting in a view related class.
@@ -268,7 +268,7 @@ public enum KingfisherError: Error {
         ///   - source: The original source value of the task.
         ///
         /// Error Code: 5002
-        case notCurrentSourceTask(result: RetrieveImageResult?, error: Error?, source: Source)
+        case notCurrentSourceTask(result: RetrieveImageResult?, error: (any Error)?, source: Source)
 
         /// An error occurs while retrieving data from an `ImageDataProvider`.
         ///
@@ -277,7 +277,7 @@ public enum KingfisherError: Error {
         ///   - error: The underlying error that describes why this error occurred.
         ///
         /// Error Code: 5003
-        case dataProviderError(provider: ImageDataProvider, error: Error)
+        case dataProviderError(provider: any ImageDataProvider, error: any Error)
 
         /// No more alternative ``Source`` can be used in current loading process. It means that the
         /// ``KingfisherOptionsInfoItem/alternativeSources(_:)`` are set and Kingfisher tried to recovery from the original error, but still

@@ -50,7 +50,7 @@ extension KFImageProtocol {
     ///   - resource: The ``Resource`` object that defines data information such as a key or URL.
     /// - Returns: A Kingfisher-compatible image view for future configuration or embedding into another `SwiftUI.View`.
     public static func resource(
-        _ resource: Resource?
+        _ resource: (any Resource)?
     ) -> Self
     {
         source(resource?.convertToSource())
@@ -77,7 +77,7 @@ extension KFImageProtocol {
     /// - Returns: A Kingfisher-compatible image view for future configuration or embedding into another `SwiftUI.View`.
 
     public static func dataProvider(
-        _ provider: ImageDataProvider?
+        _ provider: (any ImageDataProvider)?
     ) -> Self
     {
         source(provider?.convertToSource())

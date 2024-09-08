@@ -229,13 +229,13 @@ open class ImageDownloader: @unchecked Sendable {
     /// The delegate of this `ImageDownloader` object.
     ///
     /// See the ``ImageDownloaderDelegate`` protocol for more information.
-    open weak var delegate: ImageDownloaderDelegate?
-    
+    open weak var delegate: (any ImageDownloaderDelegate)?
+
     /// A responder for authentication challenges.
     ///
     /// The downloader forwards the received authentication challenge for the downloading session to this responder.
     /// See ``AuthenticationChallengeResponsible`` for more.
-    open weak var authenticationChallengeResponder: AuthenticationChallengeResponsible?
+    open weak var authenticationChallengeResponder: (any AuthenticationChallengeResponsible)?
 
     // The downloader name.
     private let name: String
@@ -348,7 +348,7 @@ open class ImageDownloader: @unchecked Sendable {
         // Modifies request before sending.
         // FIXME: A temporary solution for keep the sync `ImageDownloadRequestModifier` behavior as before.
         // We should be able to combine two cases once the full async support can be introduced to Kingfisher.
-        if let m = requestModifier as? ImageDownloadRequestModifier {
+        if let m = requestModifier as? any ImageDownloadRequestModifier {
             guard let result = m.modified(for: request) else {
                 done(.failure(KingfisherError.requestError(reason: .emptyRequest)))
                 return
@@ -388,7 +388,7 @@ open class ImageDownloader: @unchecked Sendable {
 
     private func reportDidDownloadImageData(result: Result<(Data, URLResponse?), KingfisherError>, url: URL) {
         var response: URLResponse?
-        var err: Error?
+        var err: (any Error)?
         do {
             response = try result.get().1
         } catch {

@@ -1402,9 +1402,9 @@ final class FailingProcessor: ImageProcessor, @unchecked Sendable {
 
 struct SimpleImageDataProvider: ImageDataProvider, @unchecked Sendable {
     let cacheKey: String
-    let provider: () -> (Result<Data, Error>)
+    let provider: () -> (Result<Data, any Error>)
     
-    func data(handler: @escaping (Result<Data, Error>) -> Void) {
+    func data(handler: @escaping (Result<Data, any Error>) -> Void) {
         handler(provider())
     }
     

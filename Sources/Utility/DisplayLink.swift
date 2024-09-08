@@ -47,7 +47,7 @@ protocol DisplayLinkCompatible: AnyObject, Sendable {
 
 #if !os(macOS)
 extension UIView {
-    func compatibleDisplayLink(target: Any, selector: Selector) -> DisplayLinkCompatible {
+    func compatibleDisplayLink(target: Any, selector: Selector) -> any DisplayLinkCompatible {
         return CADisplayLink(target: target, selector: selector)
     }
 }
@@ -60,7 +60,7 @@ extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {}
 
 #else
 extension NSView {
-    func compatibleDisplayLink(target: Any, selector: Selector) -> DisplayLinkCompatible {
+    func compatibleDisplayLink(target: Any, selector: Selector) -> any DisplayLinkCompatible {
 #if swift(>=5.9) // macOS 14 SDK is included in Xcode 15, which comes with swift 5.9. Add this check to make old compilers happy.
         if #available(macOS 14.0, *) {
             return displayLink(target: target, selector: selector)

@@ -31,13 +31,13 @@ private let reuseIdentifier = "ProcessorCell"
 
 class ProcessorCollectionViewController: UICollectionViewController {
 
-    var currentProcessor: ImageProcessor = DefaultImageProcessor.default {
+    var currentProcessor: any ImageProcessor = DefaultImageProcessor.default {
         didSet {
             collectionView.reloadData()
         }
     }
     
-    var processors: [(ImageProcessor, String)] = [
+    var processors: [(any ImageProcessor, String)] = [
         (DefaultImageProcessor.default, "Default"),
         (ResizingImageProcessor(referenceSize: CGSize(width: 50, height: 50)), "Resizing"),
         (RoundCornerImageProcessor(radius: .point(20)), "Round Corner"),

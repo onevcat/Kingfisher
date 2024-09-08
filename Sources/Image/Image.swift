@@ -104,7 +104,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     #endif
     
     /// The custom frame source for the current image.
-    public private(set) var frameSource: ImageFrameSource? {
+    public private(set) var frameSource: (any ImageFrameSource)? {
         get { return getAssociatedObject(base, imageSourceKey) }
         set { setRetainedAssociatedObject(base, imageSourceKey, newValue) }
     }
@@ -317,7 +317,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///                frame of the `source` will be used.
     /// - Returns: An `Image` object representing the animated image. It consists of an array of image frames, each with a
     ///            specific duration. Returns `nil` if any issues arise during animated image creation.
-    public static func animatedImage(source: ImageFrameSource, options: ImageCreatingOptions, baseImage: KFCrossPlatformImage? = nil) -> KFCrossPlatformImage? {
+    public static func animatedImage(source: any ImageFrameSource, options: ImageCreatingOptions, baseImage: KFCrossPlatformImage? = nil) -> KFCrossPlatformImage? {
         #if os(macOS)
         guard let animatedImage = GIFAnimatedImage(from: source, options: options) else {
             return nil
