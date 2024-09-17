@@ -2,6 +2,22 @@
 
 -----
 
+## [8.0.0 - 8.0.0 - Version 8](https://github.com/onevcat/Kingfisher/releases/tag/8.0.0) (2024-09-17)
+
+#### Add
+* Full Swift 6 support. Now Kingfisher compiles with both Swift 5 and Swift 6 language mode. [#2259](https://github.com/onevcat/Kingfisher/pull/2259) @onevcat
+* Swift Concurrency prepared. All necessary public APIs in Kingfisher are now `async` compatible. Kingfisher is also now built under strict concurrency mode. [#2239](https://github.com/onevcat/Kingfisher/pull/2239) @onevcat
+* Xcode 16 support. Explicitly built modules option is enabled and now Kingfisher can get better build performance under Xcode 16. [#2260](https://github.com/onevcat/Kingfisher/pull/2260) @onevcat
+* Refined documentation and beautified tutorials with DocC. [#2160](https://github.com/onevcat/Kingfisher/pull/2160) @onevcat
+
+#### Fix
+* MD5 is deprecated by the system. Now the hash method for file URL is replaced with SHA256. [#2117](https://github.com/onevcat/Kingfisher/pull/2117) @kmaschke85
+* Now the view extension methods are created in a more generic way, which provides better compatibility and extensibility. [#2244](https://github.com/onevcat/Kingfisher/pull/2244) @Mx-Iris @onevcat
+* Rewrite the blur rendering method without deprecated `UIGraphicsBeginImageContextWithOptions`. [#2274](https://github.com/onevcat/Kingfisher/pull/2274) @onevcat
+* Apply existential any to protocol for Swift 6. [#2283](https://github.com/onevcat/Kingfisher/pull/2283) @qwerty3345
+
+---
+
 ## [7.12.0 - Lucky Seven](https://github.com/onevcat/Kingfisher/releases/tag/7.12.0) (2024-06-10)
 
 #### Add
