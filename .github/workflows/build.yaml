@@ -12,7 +12,7 @@ jobs:
           'macOS', 
           'iOS Simulator,name=iPhone 15', 
           'tvOS Simulator,name=Apple TV', 
-          'watchOS Simulator,name=Apple Watch Series 8 (41mm)'
+          'watchOS Simulator,name=Apple Watch Series 9 (41mm)'
         ]
         xcode: [
           '15.4',
