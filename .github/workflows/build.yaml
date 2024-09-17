@@ -15,8 +15,8 @@ jobs:
           'watchOS Simulator,name=Apple Watch Series 8 (41mm)'
         ]
         xcode: [
-          '15.3',
-          '15.4'
+          '15.4',
+          '16.0',
         ]
     steps:
       - uses: actions/checkout@v4
