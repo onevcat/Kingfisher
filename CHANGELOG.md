@@ -2,6 +2,13 @@
 
 -----
 
+## [8.0.1 - Old Friends Matter](https://github.com/onevcat/Kingfisher/releases/tag/8.0.1) (2024-09-18)
+
+#### Fix
+* A build issue in Xcode 15.2. Now the project builds and runs again in that old Xcode version. [#2289](https://github.com/onevcat/Kingfisher/pull/2289)
+
+---
+
 ## [8.0.0 - 8.0.0 - Version 8](https://github.com/onevcat/Kingfisher/releases/tag/8.0.0) (2024-09-17)
 
 #### Add
