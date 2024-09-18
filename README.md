@@ -156,7 +156,7 @@ struct ContentView: View {
 
 - (UIKit/AppKit) iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ / visionOS 1.0+
 - (SwiftUI) iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
-- Swift 5.0+
+- Swift 5.9+
 
 ### Kingfisher 7.0
 
@@ -166,23 +166,28 @@ struct ContentView: View {
 
 ### Installation
 
-A detailed guide for installation can be found in [Installation Guide](https://github.com/onevcat/Kingfisher/wiki/Installation-Guide).
+Refer to one of the following tutorials to install and use the framework:
+
+- [UIKit Tutorial](https://swiftpackageindex.com/onevcat/kingfisher/master/tutorials/kingfisher/gettingstarteduikit)
+- [SwiftUI Tutorial](https://swiftpackageindex.com/onevcat/kingfisher/master/tutorials/kingfisher/gettingstartedswiftui)
+
+Alternatively, you can follow either of the methods below.
 
 #### Swift Package Manager
 
 - File > Swift Packages > Add Package Dependency
 - Add `https://github.com/onevcat/Kingfisher.git`
-- Select "Up to Next Major" with "7.0.0"
+- Select "Up to Next Major" with "8.0.0"
 
 #### CocoaPods
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '12.0'
+platform :ios, '13.0'
 use_frameworks!
 
 target 'MyApp' do
-  pod 'Kingfisher', '~> 7.0'
+  pod 'Kingfisher', '~> 8.0'
 end
 ```
 
@@ -192,14 +197,7 @@ end
 2. Drag the `Kingfisher.xcframework` into your project and add it to the target (usually the app target).
 3. Select your target, in the "General" Tab, find the "Frameworks, Libraries, and Embedded Content" section, set the `Embed Without Signing` to Kingfisher.
 
-### Migrating
-
-[Kingfisher 8.0 Migration](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/migration-to-8)
-[Kingfisher 7.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide)
-
-If you are using an even earlier version, see the guides below to know the steps for migrating.
-
-## Next Steps
+## Documentation
 
 Check the documentation and tutorials:
 
@@ -211,6 +209,13 @@ Check the documentation and tutorials:
     - [Common Tasks - Cache](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks_cache)
     - [Common Tasks - Downloader](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks_downloader)
     - [Common tasks - Processor](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/commontasks_processor)
+
+### Migrating
+
+- [Kingfisher 8.0 Migration](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/migration-to-8)
+- [Kingfisher 7.0 Migration](https://github.com/onevcat/Kingfisher/wiki/Kingfisher-7.0-Migration-Guide)
+
+If you are using an even earlier version, see the guides below to know the steps for migrating.
 
 ## Other
 
