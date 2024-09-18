@@ -58,7 +58,7 @@ private let imageSourceKey = malloc(1)!
 #if os(macOS)
 private let imagesKey = malloc(1)!
 private let durationKey = malloc(1)!
-#endif os(macOS)
+#endif // os(macOS)
 #endif // compiler(>=5.10)
 
 // MARK: - Image Properties
