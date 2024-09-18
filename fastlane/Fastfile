@@ -20,6 +20,10 @@ platform :ios do
     end
   end
 
+  lane :build_ci do
+    build(destination: ENV["DESTINATION"])
+  end
+
   lane :test do |options|
     scan(
       scheme: "Kingfisher", 
