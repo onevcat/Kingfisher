@@ -1,4 +1,4 @@
-name: build
+name: test
 
 on: [push, pull_request]
 
@@ -15,15 +15,15 @@ jobs:
           'watchOS Simulator,name=Apple Watch Series 9 (41mm)'
         ]
         xcode: [
-          '15.2',
-          '15.3',
+          '15.4',
+          '16.0',
         ]
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
         run: bundle install
-      - name: Build framework
+      - name: Run tests
         env:
           DESTINATION: platform=${{ matrix.destination }}
           XCODE_VERSION: ${{ matrix.xcode }}
-        run: bundle exec fastlane build_ci
+        run: bundle exec fastlane test_ci
