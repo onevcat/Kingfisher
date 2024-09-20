@@ -349,8 +349,8 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             in: CGRect(
                 x: 0,
                 y: 0,
-                width: size.width * base.scale,
-                height: size.height * base.scale
+                width: size.width * scale,
+                height: size.height * scale
             )
         )
         var inBuffer = createEffectBuffer(inputContext)
