@@ -2,6 +2,13 @@
 
 -----
 
+## [8.0.2 - Blur Scale](https://github.com/onevcat/Kingfisher/releases/tag/8.0.2) (2024-09-21)
+
+#### Fix
+* An issue the the blurred image has a wrong size if the image contains a scale value other than one. [#2293](https://github.com/onevcat/Kingfisher/pull/2293) @Semty
+
+---
+
 ## [8.0.1 - Old Friends Matter](https://github.com/onevcat/Kingfisher/releases/tag/8.0.1) (2024-09-18)
 
 #### Fix
