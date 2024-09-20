@@ -3,7 +3,7 @@ name: test
 on: [push, pull_request]
 
 jobs:
-  run-test:
+  run-tests:
     runs-on: self-hosted
     continue-on-error: true
     strategy:
