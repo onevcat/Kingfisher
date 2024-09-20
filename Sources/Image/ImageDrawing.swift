@@ -344,7 +344,15 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         guard let inputContext = CGContext.fresh(cgImage: cgImage) else {
             return base
         }
-        inputContext.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        inputContext.draw(
+            cgImage,
+            in: CGRect(
+                x: 0,
+                y: 0,
+                width: size.width * scale,
+                height: size.height * scale
+            )
+        )
         var inBuffer = createEffectBuffer(inputContext)
 
         guard let outContext = CGContext.fresh(cgImage: cgImage) else {
