@@ -2,6 +2,10 @@ name: build
 
 on: [push, pull_request]
 
+concurrency: 
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   build-framework:
     runs-on: self-hosted

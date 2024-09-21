@@ -2,6 +2,10 @@ name: test
 
 on: [push, pull_request]
 
+concurrency: 
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   run-tests:
     runs-on: self-hosted
