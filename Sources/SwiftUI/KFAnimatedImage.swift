@@ -87,6 +87,7 @@ public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, 
     @MainActor
     private func makeImageView() -> AnimatedImageView {
         let view = AnimatedImageView()
+        view.isUserInteractionEnabled = true
         
         self.context.renderConfigurations.forEach { $0(view) }
         
