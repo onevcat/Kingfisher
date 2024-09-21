@@ -2,6 +2,13 @@
 
 -----
 
+## [8.0.3 - Animated Image Hitting](https://github.com/onevcat/Kingfisher/releases/tag/8.0.3) (2024-09-21)
+
+#### Fix
+* A regression of iOS 18 that the `KFAnimatedImage` does not receive user interaction. [#2295](https://github.com/onevcat/Kingfisher/issues/2295) @onevcat @danieldaquino
+
+---
+
 ## [8.0.2 - Blur Scale](https://github.com/onevcat/Kingfisher/releases/tag/8.0.2) (2024-09-21)
 
 #### Fix
