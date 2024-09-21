@@ -66,6 +66,7 @@
 		D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BD221A1B45A00419000 /* ImageLoader.swift */; };
 		D1CE1BD421A1B45A00419000 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BD221A1B45A00419000 /* ImageLoader.swift */; };
 		D1E4CF5421BACBA6004D029D /* ImageDataProviderCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */; };
+		D1EDF7422C9F01270017FFA5 /* Issue2295View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EDF7412C9F01200017FFA5 /* Issue2295View.swift */; };
 		D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */; };
 		D1F06F3521AA5938000B1C38 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */; };
 		D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */; };
@@ -217,6 +218,7 @@
 		D1CE1BD221A1B45A00419000 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderCollectionViewController.swift; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1EDF7412C9F01200017FFA5 /* Issue2295View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue2295View.swift; sourceTree = "<group>"; };
 		D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailImageViewController.swift; sourceTree = "<group>"; };
 		D1F06F3621AAEACF000B1C38 /* GIFViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFViewController.swift; sourceTree = "<group>"; };
 		D1F06F3821AAF1EE000B1C38 /* IndicatorCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorCollectionViewController.swift; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 		4BC0ED4829A6EE4F003E9CD1 /* Regression */ = {
 			isa = PBXGroup;
 			children = (
+				D1EDF7412C9F01200017FFA5 /* Issue2295View.swift */,
 				4B6E1B6C28DB4E8C0023B54B /* Issue1998View.swift */,
 				4BC0ED4929A6EE78003E9CD1 /* Issue2035View.swift */,
 			);
@@ -726,6 +729,7 @@
 				D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */,
 				4B1C7A3D21A256E300CE9D31 /* InfinityCollectionViewController.swift in Sources */,
 				078DCB512BCFEFB40008114E /* PHPickerResultViewController.swift in Sources */,
+				D1EDF7422C9F01270017FFA5 /* Issue2295View.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
 				4BC0ED4A29A6EE78003E9CD1 /* Issue2035View.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,
