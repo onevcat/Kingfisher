@@ -84,7 +84,10 @@ extension ImageDownloader {
         completionHandler: (@Sendable (Result<LivePhotoResourceLoadingResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask {
         var checkedOptions = options
-        if options.processor != LivePhotoImageProcessor.default {
+        if options.processor == DefaultImageProcessor.default {
+            // The default processor is a default behavior so we replace it silently.
+            checkedOptions.processor = LivePhotoImageProcessor.default
+        } else if options.processor != LivePhotoImageProcessor.default {
             assertionFailure("[Kingfisher] Using of custom processors during loading of live photo resource is not supported.")
             checkedOptions.processor = LivePhotoImageProcessor.default
         }
