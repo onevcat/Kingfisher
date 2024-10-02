@@ -146,7 +146,7 @@ public class KingfisherManager: @unchecked Sendable {
     public var defaultOptions = KingfisherOptionsInfo.empty
     
     // Use `defaultOptions` to overwrite the `downloader` and `cache`.
-    private var currentDefaultOptions: KingfisherOptionsInfo {
+    var currentDefaultOptions: KingfisherOptionsInfo {
         return [.downloader(downloader), .targetCache(cache)] + defaultOptions
     }
 
@@ -384,7 +384,7 @@ public class KingfisherManager: @unchecked Sendable {
     
     private func retrieveImage(
         with source: Source,
-        context: RetrievingContext,
+        context: RetrievingContext<Source>,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = context.options
@@ -457,7 +457,7 @@ public class KingfisherManager: @unchecked Sendable {
     private func cacheImage(
         source: Source,
         options: KingfisherParsedOptionsInfo,
-        context: RetrievingContext,
+        context: RetrievingContext<Source>,
         result: Result<ImageLoadingResult, KingfisherError>,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?
     )
@@ -519,7 +519,7 @@ public class KingfisherManager: @unchecked Sendable {
     @discardableResult
     func loadAndCacheImage(
         source: Source,
-        context: RetrievingContext,
+        context: RetrievingContext<Source>,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
     {
         let options = context.options
@@ -582,7 +582,7 @@ public class KingfisherManager: @unchecked Sendable {
     ///
     func retrieveImageFromCache(
         source: Source,
-        context: RetrievingContext,
+        context: RetrievingContext<Source>,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> Bool
     {
         let options = context.options
@@ -863,7 +863,7 @@ extension KingfisherManager {
     }
 }
 
-class RetrievingContext: @unchecked Sendable {
+class RetrievingContext<SourceType>: @unchecked Sendable {
 
     private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.RetrievingContextPropertyQueue")
     
@@ -873,10 +873,10 @@ class RetrievingContext: @unchecked Sendable {
         set { propertyQueue.sync { _options = newValue } }
     }
 
-    let originalSource: Source
+    let originalSource: SourceType
     var propagationErrors: [PropagationError] = []
 
-    init(options: KingfisherParsedOptionsInfo, originalSource: Source) {
+    init(options: KingfisherParsedOptionsInfo, originalSource: SourceType) {
         self.originalSource = originalSource
         _options = options
     }

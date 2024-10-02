@@ -67,6 +67,8 @@
 		D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */; };
 		D12EB83C24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */; };
 		D12F67602CAC2DBF00AB63AB /* ImageDownloader+LivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */; };
+		D12F67622CAC32BF00AB63AB /* KingfisherManager+LivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */; };
+		D12F67642CAC330A00AB63AB /* LivePhotoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67632CAC330600AB63AB /* LivePhotoSource.swift */; };
 		D13646742165A1A100A33652 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13646732165A1A100A33652 /* Result.swift */; };
 		D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */; };
 		D16FEA3A23078C63006E67D5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F623078C63006E67D5 /* LICENSE */; };
@@ -215,6 +217,8 @@
 		D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
 		D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSTextAttachment+Kingfisher.swift"; sourceTree = "<group>"; };
 		D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageDownloader+LivePhoto.swift"; sourceTree = "<group>"; };
+		D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KingfisherManager+LivePhoto.swift"; sourceTree = "<group>"; };
+		D12F67632CAC330600AB63AB /* LivePhotoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePhotoSource.swift; sourceTree = "<group>"; };
 		D1356CEA2B273AEC009554C8 /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		D13646732165A1A100A33652 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageDataProvider.swift; sourceTree = "<group>"; };
@@ -415,6 +419,7 @@
 				D1132C9625919F69003E528D /* KFOptionsSetter.swift */,
 				D12AB6B2215D2BB50013BA68 /* KingfisherError.swift */,
 				D12AB6B3215D2BB50013BA68 /* KingfisherManager.swift */,
+				D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */,
 				D12AB6B4215D2BB50013BA68 /* KingfisherOptionsInfo.swift */,
 			);
 			path = General;
@@ -656,6 +661,7 @@
 			isa = PBXGroup;
 			children = (
 				D1A1CC99219FAB4B00263AD8 /* Source.swift */,
+				D12F67632CAC330600AB63AB /* LivePhotoSource.swift */,
 				D12AB69E215D2BB50013BA68 /* Resource.swift */,
 				D1E56444219B16330057AAE3 /* ImageDataProvider.swift */,
 				D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */,
@@ -829,11 +835,13 @@
 				D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */,
 				D1839845216E333E003927D3 /* Delegate.swift in Sources */,
 				D12AB6D8215D2BB50013BA68 /* ImageTransition.swift in Sources */,
+				D12F67642CAC330A00AB63AB /* LivePhotoSource.swift in Sources */,
 				D1A37BE8215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
 				C9286407228584EB00257182 /* ImageProgressive.swift in Sources */,
 				D12AB6DC215D2BB50013BA68 /* ImageProcessor.swift in Sources */,
 				D12AB6D4215D2BB50013BA68 /* Image.swift in Sources */,
 				D1AEB09425890DE7008556DF /* ImageBinder.swift in Sources */,
+				D12F67622CAC32BF00AB63AB /* KingfisherManager+LivePhoto.swift in Sources */,
 				4B8E2917216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift in Sources */,
 				E9E3ED8B2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift in Sources */,
 				D1132C9725919F69003E528D /* KFOptionsSetter.swift in Sources */,

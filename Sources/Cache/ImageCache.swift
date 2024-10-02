@@ -954,6 +954,14 @@ open class ImageCache: @unchecked Sendable {
         return diskStorage.cacheFileURL(forKey: computedKey).path
     }
     
+    open func cacheFileURLIfOnDisk(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> URL?
+    {
+        let computedKey = key.computedKey(with: identifier)
+        return diskStorage.isCached(forKey: computedKey) ? diskStorage.cacheFileURL(forKey: computedKey) : nil
+    }
+    
     // MARK: - Concurrency
     
     /// Stores an image to the cache.
