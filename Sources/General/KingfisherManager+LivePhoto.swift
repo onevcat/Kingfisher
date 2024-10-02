@@ -129,7 +129,7 @@ extension KingfisherManager {
         return missingResources
     }
     
-    private func downloadAndCache(
+    func downloadAndCache(
         resources: [any Resource],
         options: KingfisherParsedOptionsInfo
     ) async throws -> [LivePhotoResourceLoadingResult] {

@@ -900,7 +900,7 @@ class KingfisherManagerTests: XCTestCase {
             .network(URL(string: "2")!)
         ]
         let info = KingfisherParsedOptionsInfo([.alternativeSources(allSources)])
-        let context = RetrievingContext(
+        let context = RetrievingContext<Source>(
             options: info, originalSource: .network(URL(string: "0")!))
 
         let source1 = context.popAlternativeSource()
@@ -1350,6 +1350,56 @@ class KingfisherManagerTests: XCTestCase {
             }
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+    
+    func testMissingResourceOfLivePhotoFound() {
+        let resource = KF.ImageResource(downloadURL: testURLs[0])
+        let source = LivePhotoSource(resources: [resource])
+        
+        let missing = manager.missingResources(source, options: .init(.empty))
+        XCTAssertEqual(missing.count, 1)
+    }
+    
+    func testMissingResourceOfLivePhotoNotFound() async throws {
+        let resource = KF.ImageResource(downloadURL: testURLs[0])
+        
+        try await manager.cache.storeToDisk(testImageData, forKey: resource.cacheKey)
+        
+        let source = LivePhotoSource(resources: [resource])
+        let missing = manager.missingResources(source, options: .init(.empty))
+        XCTAssertEqual(missing.count, 0)
+    }
+    
+    func testMissingResourceOfLivePhotoFoundOne() async throws {
+        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
+        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        
+        try await manager.cache.storeToDisk(testImageData, forKey: resource1.cacheKey)
+        
+        let source = LivePhotoSource(resources: [resource1, resource2])
+        let missing = manager.missingResources(source, options: .init(.empty))
+        XCTAssertEqual(missing.count, 1)
+        XCTAssertEqual(missing[0].downloadURL, resource2.downloadURL)
+    }
+    
+    func testDownloadAndCacheLivePhotoResourcesAll() async throws {
+        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
+        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        
+        stub(resource1.downloadURL, data: testImageData)
+        stub(resource2.downloadURL, data: testImageData)
+        
+        let result = try await manager.downloadAndCache(resources: [resource1, resource2], options: .init(.empty))
+        XCTAssertEqual(result.count, 2)
+        
+        let urls = result.compactMap(\.url)
+        XCTAssertTrue(urls.contains(testURLs[0]))
+        XCTAssertTrue(urls.contains(testURLs[1]))
+        
+        let resourceCached1 = manager.cache.imageCachedType(forKey: resource1.cacheKey)
+        let resourceCached2 = manager.cache.imageCachedType(forKey: resource1.cacheKey)
+        XCTAssertEqual(resourceCached1, .disk)
+        XCTAssertEqual(resourceCached2, .disk)
     }
 }
 
