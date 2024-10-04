@@ -1401,6 +1401,146 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(resourceCached1, .disk)
         XCTAssertEqual(resourceCached2, .disk)
     }
+    
+    func testRetrieveLivePhotoFromNetwork() async throws {
+        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
+        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        
+        stub(resource1.downloadURL, data: testImageData)
+        stub(resource2.downloadURL, data: testImageData)
+        
+        let resource1Cached = manager.cache.isCached(
+            forKey: resource1.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        let resource2Cached = manager.cache.isCached(
+            forKey: resource2.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        XCTAssertFalse(resource1Cached)
+        XCTAssertFalse(resource2Cached)
+        
+        let source = LivePhotoSource(resources: [resource1, resource2])
+        let result = try await manager.retrieveLivePhoto(with: source)
+        XCTAssertEqual(result.fileURLs.count, 2)
+        result.fileURLs.forEach { url in
+            XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
+        }
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertEqual(result.data(), [testImageData, testImageData])
+        let urlsInSource = result.source.resources.map(\.downloadURL)
+        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
+        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+    }
+    
+    func testRetrieveLivePhotoFromLocal() async throws {
+        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
+        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        
+        try await manager.cache.storeToDisk(
+            testImageData,
+            forKey: resource1.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        try await manager.cache.storeToDisk(
+            testImageData,
+            forKey: resource2.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        
+        let resource1Cached = manager.cache.isCached(
+            forKey: resource1.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        let resource2Cached = manager.cache.isCached(
+            forKey: resource2.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        XCTAssertTrue(resource1Cached)
+        XCTAssertTrue(resource2Cached)
+        
+        let source = LivePhotoSource(resources: [resource1, resource2])
+        let result = try await manager.retrieveLivePhoto(with: source)
+        XCTAssertEqual(result.fileURLs.count, 2)
+        result.fileURLs.forEach { url in
+            XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
+        }
+        XCTAssertEqual(result.cacheType, .disk)
+        XCTAssertEqual(result.data(), [])
+        let urlsInSource = result.source.resources.map(\.downloadURL)
+        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
+        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+    }
+    
+    func testRetrieveLivePhotoMixed() async throws {
+        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
+        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        
+        try await manager.cache.storeToDisk(
+            testImageData,
+            forKey: resource1.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        stub(resource2.downloadURL, data: testImageData)
+        
+        let resource1Cached = manager.cache.isCached(
+            forKey: resource1.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        let resource2Cached = manager.cache.isCached(
+            forKey: resource2.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        XCTAssertTrue(resource1Cached)
+        XCTAssertFalse(resource2Cached)
+        
+        let source = LivePhotoSource(resources: [resource1, resource2])
+        let result = try await manager.retrieveLivePhoto(with: source)
+        XCTAssertEqual(result.fileURLs.count, 2)
+        result.fileURLs.forEach { url in
+            XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
+        }
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertEqual(result.data(), [testImageData])
+        let urlsInSource = result.source.resources.map(\.downloadURL)
+        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
+        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+    }
+    
+    func testRetrieveLivePhotoNetworkThenCache() async throws {
+        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
+        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        
+        stub(resource1.downloadURL, data: testImageData)
+        stub(resource2.downloadURL, data: testImageData)
+        
+        let resource1Cached = manager.cache.isCached(
+            forKey: resource1.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        let resource2Cached = manager.cache.isCached(
+            forKey: resource2.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        XCTAssertFalse(resource1Cached)
+        XCTAssertFalse(resource2Cached)
+        
+        let source = LivePhotoSource(resources: [resource1, resource2])
+        let result = try await manager.retrieveLivePhoto(with: source)
+        XCTAssertEqual(result.fileURLs.count, 2)
+        result.fileURLs.forEach { url in
+            XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
+        }
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertEqual(result.data(), [testImageData, testImageData])
+        let urlsInSource = result.source.resources.map(\.downloadURL)
+        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
+        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+        
+        let localResult = try await manager.retrieveLivePhoto(with: source)
+        XCTAssertEqual(localResult.fileURLs.count, 2)
+        XCTAssertEqual(localResult.cacheType, .disk)
+    }
 }
 
 private var imageCreatingOptionsKey: Void?
