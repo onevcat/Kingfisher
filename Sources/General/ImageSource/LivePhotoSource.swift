@@ -31,6 +31,7 @@ public struct LivePhotoResource: Sendable {
     public enum FileType: Sendable {
         case heic
         case mov
+        case other(String)
     }
     
     public let resource: any Resource
@@ -53,12 +54,10 @@ public struct LivePhotoResource: Sendable {
 extension Resource {
     var guessedFileType: LivePhotoResource.FileType {
         let pathExtension = downloadURL.pathExtension.lowercased()
-        switch pathExtension {
-        case "mov": return .mov
-        case "heic": return .heic
-        default:
-            assertionFailure("Explicit file type is necessary in the download URL as its extension. Otherwise, set the file type of the LivePhoto resource manually with `LivePhotoSource.init(resources:)`.")
-            return .heic
+        return switch pathExtension {
+        case "mov": .mov
+        case "heic": .heic
+        default: .other(pathExtension)
         }
     }
 }

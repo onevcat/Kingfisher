@@ -146,7 +146,9 @@ public enum DiskStorage {
             value: T,
             forKey key: String,
             expiration: StorageExpiration? = nil,
-            writeOptions: Data.WritingOptions = []) throws
+            writeOptions: Data.WritingOptions = [],
+            forcedExtension: String? = nil
+        ) throws
         {
             guard storageReady else {
                 throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
@@ -163,7 +165,7 @@ public enum DiskStorage {
                 throw KingfisherError.cacheError(reason: .cannotConvertToData(object: value, error: error))
             }
 
-            let fileURL = cacheFileURL(forKey: key)
+            let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
             do {
                 try data.write(to: fileURL, options: writeOptions)
             } catch {
@@ -215,22 +217,34 @@ public enum DiskStorage {
         ///   - extendingExpiration: The expiration policy used by this retrieval action.
         /// - Throws: An error during converting the data to a value or during the operation of disk files.
         /// - Returns: The value under `key` if it is valid and found in the storage; otherwise, `nil`.
-        public func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) throws -> T? {
-            try value(forKey: key, referenceDate: Date(), actuallyLoad: true, extendingExpiration: extendingExpiration)
+        public func value(
+            forKey key: String,
+            forcedExtension: String? = nil,
+            extendingExpiration: ExpirationExtending = .cacheTime
+        ) throws -> T? {
+            try value(
+                forKey: key,
+                referenceDate: Date(),
+                actuallyLoad: true,
+                extendingExpiration: extendingExpiration,
+                forcedExtension: forcedExtension
+            )
         }
 
         func value(
             forKey key: String,
             referenceDate: Date,
             actuallyLoad: Bool,
-            extendingExpiration: ExpirationExtending) throws -> T?
+            extendingExpiration: ExpirationExtending,
+            forcedExtension: String?
+        ) throws -> T?
         {
             guard storageReady else {
                 throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
             }
 
             let fileManager = config.fileManager
-            let fileURL = cacheFileURL(forKey: key)
+            let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
             let filePath = fileURL.path
 
             let fileMaybeCached = maybeCachedCheckingQueue.sync {
@@ -276,8 +290,8 @@ public enum DiskStorage {
         ///
         /// > This method does not actually load the data from disk, so it is faster than directly loading the cached
         /// value by checking the nullability of the ``DiskStorage/Backend/value(forKey:extendingExpiration:)`` method.
-        public func isCached(forKey key: String) -> Bool {
-            return isCached(forKey: key, referenceDate: Date())
+        public func isCached(forKey key: String, forcedExtension: String? = nil) -> Bool {
+            return isCached(forKey: key, referenceDate: Date(), forcedExtension: forcedExtension)
         }
 
         /// Determines whether there is valid cached data under a given key and a reference date.
@@ -291,13 +305,14 @@ public enum DiskStorage {
         /// If you pass `Date()` as the `referenceDate`, this method is identical to
         /// ``DiskStorage/Backend/isCached(forKey:)``. Use the `referenceDate` to determine whether the cache is still
         /// valid for a future date.
-        public func isCached(forKey key: String, referenceDate: Date) -> Bool {
+        public func isCached(forKey key: String, referenceDate: Date, forcedExtension: String? = nil) -> Bool {
             do {
                 let result = try value(
                     forKey: key,
                     referenceDate: referenceDate,
                     actuallyLoad: false,
-                    extendingExpiration: .none
+                    extendingExpiration: .none,
+                    forcedExtension: forcedExtension
                 )
                 return result != nil
             } catch {
@@ -308,8 +323,8 @@ public enum DiskStorage {
         /// Removes a value from a specified key.
         /// - Parameter key: The cache key of the value.
         /// - Throws: An error during the removal of the value.
-        public func remove(forKey key: String) throws {
-            let fileURL = cacheFileURL(forKey: key)
+        public func remove(forKey key: String, forcedExtension: String? = nil) throws {
+            let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
             try removeFile(at: fileURL)
         }
 
@@ -338,23 +353,24 @@ public enum DiskStorage {
         ///
         /// This method does not guarantee that an image is already cached at the returned URL. It just provides the URL 
         /// where the image should be if it exists in the disk storage, with the given key.
-        public func cacheFileURL(forKey key: String) -> URL {
-            let fileName = cacheFileName(forKey: key)
+        public func cacheFileURL(forKey key: String, forcedExtension: String? = nil) -> URL {
+            let fileName = cacheFileName(forKey: key, forcedExtension: forcedExtension)
             return directoryURL.appendingPathComponent(fileName, isDirectory: false)
         }
-
-        func cacheFileName(forKey key: String) -> String {
+        
+        func cacheFileName(forKey key: String, forcedExtension: String? = nil) -> String {
+            // TODO: Bad code... Consider refactoring.
             if config.usesHashedFileName {
                 let hashedKey = key.kf.sha256
-                if let ext = config.pathExtension {
+                if let ext = forcedExtension ?? config.pathExtension {
                     return "\(hashedKey).\(ext)"
                 } else if config.autoExtAfterHashedFileName,
-                          let ext = key.kf.ext {
+                          let ext = forcedExtension ?? key.kf.ext {
                     return "\(hashedKey).\(ext)"
                 }
                 return hashedKey
             } else {
-                if let ext = config.pathExtension {
+                if let ext = forcedExtension ?? config.pathExtension {
                     return "\(key).\(ext)"
                 }
                 return key

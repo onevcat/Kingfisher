@@ -365,6 +365,7 @@ open class ImageCache: @unchecked Sendable {
                 self.syncStoreToDisk(
                     data,
                     forKey: key,
+                    forcedExtension: options.forcedExtension,
                     processorIdentifier: identifier,
                     callbackQueue: callbackQueue,
                     expiration: options.diskCacheExpiration,
@@ -410,6 +411,7 @@ open class ImageCache: @unchecked Sendable {
         original: Data? = nil,
         forKey key: String,
         processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
         cacheSerializer serializer: any CacheSerializer = DefaultCacheSerializer.default,
         toDisk: Bool = true,
         callbackQueue: CallbackQueue = .untouch,
@@ -426,16 +428,24 @@ open class ImageCache: @unchecked Sendable {
         let options = KingfisherParsedOptionsInfo([
             .processor(TempProcessor(identifier: identifier)),
             .cacheSerializer(serializer),
-            .callbackQueue(callbackQueue)
+            .callbackQueue(callbackQueue),
+            .forcedCacheFileExtension(forcedExtension)
         ])
-        store(image, original: original, forKey: key, options: options,
-              toDisk: toDisk, completionHandler: completionHandler)
+        store(
+            image,
+            original: original,
+            forKey: key,
+            options: options,
+            toDisk: toDisk,
+            completionHandler: completionHandler
+        )
     }
     
     open func storeToDisk(
         _ data: Data,
         forKey key: String,
         processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
         expiration: StorageExpiration? = nil,
         callbackQueue: CallbackQueue = .untouch,
         completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil)
@@ -444,16 +454,19 @@ open class ImageCache: @unchecked Sendable {
             self.syncStoreToDisk(
                 data,
                 forKey: key,
+                forcedExtension: forcedExtension,
                 processorIdentifier: identifier,
                 callbackQueue: callbackQueue,
                 expiration: expiration,
-                completionHandler: completionHandler)
+                completionHandler: completionHandler
+            )
         }
     }
     
     private func syncStoreToDisk(
         _ data: Data,
         forKey key: String,
+        forcedExtension: String?,
         processorIdentifier identifier: String = "",
         callbackQueue: CallbackQueue = .untouch,
         expiration: StorageExpiration? = nil,
@@ -463,7 +476,13 @@ open class ImageCache: @unchecked Sendable {
         let computedKey = key.computedKey(with: identifier)
         let result: CacheStoreResult
         do {
-            try self.diskStorage.store(value: data, forKey: computedKey, expiration: expiration, writeOptions: writeOptions)
+            try self.diskStorage.store(
+                value: data,
+                forKey: computedKey,
+                expiration: expiration,
+                writeOptions: writeOptions,
+                forcedExtension: forcedExtension
+            )
             result = CacheStoreResult(memoryCacheResult: .success(()), diskCacheResult: .success(()))
         } catch {
             let diskError: KingfisherError
@@ -501,6 +520,7 @@ open class ImageCache: @unchecked Sendable {
     open func removeImage(
         forKey key: String,
         processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
         fromMemory: Bool = true,
         fromDisk: Bool = true,
         callbackQueue: CallbackQueue = .untouch,
@@ -510,6 +530,7 @@ open class ImageCache: @unchecked Sendable {
         removeImage(
             forKey: key,
             processorIdentifier: identifier,
+            forcedExtension: forcedExtension,
             fromMemory: fromMemory,
             fromDisk: fromDisk,
             callbackQueue: callbackQueue,
@@ -517,12 +538,14 @@ open class ImageCache: @unchecked Sendable {
         )
     }
     
-    func removeImage(forKey key: String,
-                          processorIdentifier identifier: String = "",
-                          fromMemory: Bool = true,
-                          fromDisk: Bool = true,
-                          callbackQueue: CallbackQueue = .untouch,
-                          completionHandler: (@Sendable ((any Error)?) -> Void)? = nil)
+    func removeImage(
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        forcedExtension: String?,
+        fromMemory: Bool = true,
+        fromDisk: Bool = true,
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: (@Sendable ((any Error)?) -> Void)? = nil)
     {
         let computedKey = key.computedKey(with: identifier)
 
@@ -539,7 +562,7 @@ open class ImageCache: @unchecked Sendable {
         if fromDisk {
             ioQueue.async{
                 do {
-                    try self.diskStorage.remove(forKey: computedKey)
+                    try self.diskStorage.remove(forKey: computedKey, forcedExtension: forcedExtension)
                     callHandler(nil)
                 } catch {
                     callHandler(error)
@@ -687,7 +710,11 @@ open class ImageCache: @unchecked Sendable {
         loadingQueue.execute {
             do {
                 var image: KFCrossPlatformImage? = nil
-                if let data = try self.diskStorage.value(forKey: computedKey, extendingExpiration: options.diskCacheAccessExtendingExpiration) {
+                if let data = try self.diskStorage.value(
+                    forKey: computedKey,
+                    forcedExtension: options.forcedExtension,
+                    extendingExpiration: options.diskCacheAccessExtendingExpiration
+                ) {
                     image = options.cacheSerializer.image(with: data, options: options)
                 }
                 if options.backgroundDecode {
@@ -865,11 +892,13 @@ open class ImageCache: @unchecked Sendable {
     /// image is not in the cache or that it has already expired.
     open func imageCachedType(
         forKey key: String,
-        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> CacheType
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) -> CacheType
     {
         let computedKey = key.computedKey(with: identifier)
         if memoryStorage.isCached(forKey: computedKey) { return .memory }
-        if diskStorage.isCached(forKey: computedKey) { return .disk }
+        if diskStorage.isCached(forKey: computedKey, forcedExtension: forcedExtension) { return .disk }
         return .none
     }
     
@@ -886,9 +915,11 @@ open class ImageCache: @unchecked Sendable {
     ///  ``ImageCache/imageCachedType(forKey:processorIdentifier:)`` instead.
     public func isCached(
         forKey key: String,
-        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> Bool
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) -> Bool
     {
-        return imageCachedType(forKey: key, processorIdentifier: identifier).cached
+        return imageCachedType(forKey: key, processorIdentifier: identifier, forcedExtension: forcedExtension).cached
     }
     
     /// Retrieves the hash used as the cache file name for the key.
@@ -904,10 +935,12 @@ open class ImageCache: @unchecked Sendable {
     /// needed.
     open func hash(
         forKey key: String,
-        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> String
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) -> String
     {
         let computedKey = key.computedKey(with: identifier)
-        return diskStorage.cacheFileName(forKey: computedKey)
+        return diskStorage.cacheFileName(forKey: computedKey, forcedExtension: forcedExtension)
     }
     
     /// Calculates the size taken by the disk storage.
@@ -948,18 +981,25 @@ open class ImageCache: @unchecked Sendable {
     /// cached under that key on disk if necessary.
     open func cachePath(
         forKey key: String,
-        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> String
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) -> String
     {
         let computedKey = key.computedKey(with: identifier)
-        return diskStorage.cacheFileURL(forKey: computedKey).path
+        return diskStorage.cacheFileURL(forKey: computedKey, forcedExtension: forcedExtension).path
     }
     
     open func cacheFileURLIfOnDisk(
         forKey key: String,
-        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier) -> URL?
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) -> URL?
     {
         let computedKey = key.computedKey(with: identifier)
-        return diskStorage.isCached(forKey: computedKey) ? diskStorage.cacheFileURL(forKey: computedKey) : nil
+        return diskStorage.isCached(
+            forKey: computedKey,
+            forcedExtension: forcedExtension
+        ) ? diskStorage.cacheFileURL(forKey: computedKey, forcedExtension: forcedExtension) : nil
     }
     
     // MARK: - Concurrency
@@ -1012,6 +1052,7 @@ open class ImageCache: @unchecked Sendable {
         original: Data? = nil,
         forKey key: String,
         processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
         cacheSerializer serializer: any CacheSerializer = DefaultCacheSerializer.default,
         toDisk: Bool = true
     ) async throws {
@@ -1021,6 +1062,7 @@ open class ImageCache: @unchecked Sendable {
                 original: original,
                 forKey: key,
                 processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
                 cacheSerializer: serializer,
                 toDisk: toDisk) {
                     // Only `diskCacheResult` can fail
@@ -1033,6 +1075,7 @@ open class ImageCache: @unchecked Sendable {
         _ data: Data,
         forKey key: String,
         processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
         expiration: StorageExpiration? = nil
     ) async throws
     {
@@ -1041,6 +1084,7 @@ open class ImageCache: @unchecked Sendable {
                 data,
                 forKey: key,
                 processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
                 expiration: expiration) {
                     // Only `diskCacheResult` can fail
                     continuation.resume(with: $0.diskCacheResult)
@@ -1061,6 +1105,7 @@ open class ImageCache: @unchecked Sendable {
     open func removeImage(
         forKey key: String,
         processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
         fromMemory: Bool = true,
         fromDisk: Bool = true
     ) async throws {
@@ -1068,6 +1113,7 @@ open class ImageCache: @unchecked Sendable {
             removeImage(
                 forKey: key,
                 processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
                 fromMemory: fromMemory,
                 fromDisk: fromDisk,
                 completionHandler: { error in

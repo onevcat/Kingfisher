@@ -347,6 +347,8 @@ public enum KingfisherOptionsInfoItem: Sendable {
     /// If not set or if the associated optional ``Source`` value is `nil`, the device's Low Data Mode will be ignored,
     /// and the original source will be loaded following the system default behavior.
     case lowDataMode(Source?)
+    
+    case forcedCacheFileExtension(String?)
 }
 
 // MARK: - KingfisherParsedOptionsInfo
@@ -397,6 +399,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var alternativeSources: [Source]? = nil
     public var retryStrategy: (any RetryStrategy)? = nil
     public var lowDataModeSource: Source? = nil
+    public var forcedExtension: String? = nil
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
     
@@ -440,6 +443,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .alternativeSources(let sources): alternativeSources = sources
             case .retryStrategy(let strategy): retryStrategy = strategy
             case .lowDataMode(let source): lowDataModeSource = source
+            case .forcedCacheFileExtension(let ext): forcedExtension = ext
             }
         }
 
