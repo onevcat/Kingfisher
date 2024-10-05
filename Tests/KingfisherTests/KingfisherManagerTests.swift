@@ -1363,7 +1363,11 @@ class KingfisherManagerTests: XCTestCase {
     func testMissingResourceOfLivePhotoNotFound() async throws {
         let resource = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         
-        try await manager.cache.storeToDisk(testImageData, forKey: resource.cacheKey)
+        try await manager.cache.storeToDisk(
+            testImageData,
+            forKey: resource.cacheKey,
+            forcedExtension: resource.downloadURL.pathExtension
+        )
         
         let source = LivePhotoSource(resources: [resource])
         let missing = manager.missingResources(source, options: .init(.empty))
@@ -1374,7 +1378,11 @@ class KingfisherManagerTests: XCTestCase {
         let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
         let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         
-        try await manager.cache.storeToDisk(testImageData, forKey: resource1.cacheKey)
+        try await manager.cache.storeToDisk(
+            testImageData,
+            forKey: resource1.cacheKey,
+            forcedExtension: resource1.downloadURL.pathExtension
+        )
         
         let source = LivePhotoSource(resources: [resource1, resource2])
         let missing = manager.missingResources(source, options: .init(.empty))
@@ -1399,8 +1407,14 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertTrue(urls.contains(LivePhotoURL.mov))
         XCTAssertTrue(urls.contains(LivePhotoURL.heic))
         
-        let resourceCached1 = manager.cache.imageCachedType(forKey: resource1.cacheKey)
-        let resourceCached2 = manager.cache.imageCachedType(forKey: resource1.cacheKey)
+        let resourceCached1 = manager.cache.imageCachedType(
+            forKey: resource1.cacheKey,
+            forcedExtension: resource1.downloadURL.pathExtension
+        )
+        let resourceCached2 = manager.cache.imageCachedType(
+            forKey: resource2.cacheKey,
+            forcedExtension: resource2.downloadURL.pathExtension
+        )
         XCTAssertEqual(resourceCached1, .disk)
         XCTAssertEqual(resourceCached2, .disk)
     }
@@ -1443,21 +1457,25 @@ class KingfisherManagerTests: XCTestCase {
         try await manager.cache.storeToDisk(
             testImageData,
             forKey: resource1.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource1.downloadURL.pathExtension
         )
         try await manager.cache.storeToDisk(
             testImageData,
             forKey: resource2.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource2.downloadURL.pathExtension
         )
         
         let resource1Cached = manager.cache.isCached(
             forKey: resource1.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource1.downloadURL.pathExtension
         )
         let resource2Cached = manager.cache.isCached(
             forKey: resource2.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource2.downloadURL.pathExtension
         )
         XCTAssertTrue(resource1Cached)
         XCTAssertTrue(resource2Cached)
@@ -1482,17 +1500,20 @@ class KingfisherManagerTests: XCTestCase {
         try await manager.cache.storeToDisk(
             testImageData,
             forKey: resource1.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource1.downloadURL.pathExtension
         )
         stub(resource2.downloadURL, data: testImageData)
         
         let resource1Cached = manager.cache.isCached(
             forKey: resource1.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource1.downloadURL.pathExtension
         )
         let resource2Cached = manager.cache.isCached(
             forKey: resource2.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource2.downloadURL.pathExtension
         )
         XCTAssertTrue(resource1Cached)
         XCTAssertFalse(resource2Cached)
