@@ -310,18 +310,15 @@ class ImageCacheTests: XCTestCase {
         XCTAssertTrue(cachePath.hasSuffix(".jpg"))
     }
   
-    func testCachedImageIsFetchedSynchronouslyFromTheMemoryCache() {
+    @MainActor func testCachedImageIsFetchedSynchronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false)
-        let foundImage = ActorBox<KFCrossPlatformImage?>(nil)
+        var image: KFCrossPlatformImage? = nil
         cache.retrieveImage(forKey: testKeys[0]) { result in
-            Task {
-                await foundImage.setValue(result.value?.image)
+            MainActor.assumeIsolated {
+                image = try? result.get().image
             }
         }
-        Task {
-            let value = await foundImage.value
-            XCTAssertEqual(testImage, value)
-        }
+        XCTAssertEqual(testImage, image)
     }
     
     func testCachedImageIsFetchedSynchronouslyFromTheMemoryCacheAsync() async throws {
