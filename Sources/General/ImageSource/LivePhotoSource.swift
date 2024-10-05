@@ -51,6 +51,45 @@ public struct LivePhotoResource: Sendable {
     }
 }
 
+extension LivePhotoResource.FileType {
+    func determinedFileExtension(_ data: Data) -> String? {
+        switch self {
+        case .mov: return "mov"
+        case .heic: return "heic"
+        case .other(let ext):
+            if !ext.isEmpty {
+                return ext
+            }
+            return Self.guessedFileExtension(from: data)
+        }
+    }
+    
+    static let fytpChunk: [UInt8] = [0x66, 0x74, 0x79, 0x70]
+    static let heicChunk: [UInt8] = [0x68, 0x65, 0x69, 0x63]
+    static let qtChunk: [UInt8] = [0x71, 0x74, 0x20, 0x20] // quicktime
+    
+    static func guessedFileExtension(from data: Data) -> String? {
+        
+        guard data.count > 12 else { return nil }
+        
+        var buffer = [UInt8](repeating: 0, count: 12)
+        data.copyBytes(to: &buffer, count: 12)
+        
+        guard Array(buffer[4..<8]) == fytpChunk else {
+            return nil
+        }
+        
+        let fileTypeChunk = Array(buffer[8..<12])
+        if fileTypeChunk == heicChunk {
+            return "heic"
+        }
+        if fileTypeChunk == qtChunk {
+            return "mov"
+        }
+        return nil
+    }
+}
+
 extension Resource {
     var guessedFileType: LivePhotoResource.FileType {
         let pathExtension = downloadURL.pathExtension.lowercased()

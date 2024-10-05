@@ -145,10 +145,13 @@ extension KingfisherManager {
                         with: resource.downloadURL,
                         options: options
                     )
+                    let fileExtension = resource.referenceFileType
+                        .determinedFileExtension(downloadedResource.originalData)
                     try await cache.storeToDisk(
                         downloadedResource.originalData,
                         forKey: resource.cacheKey,
                         processorIdentifier: options.processor.identifier,
+                        forcedExtension: fileExtension,
                         expiration: options.diskCacheExpiration
                     )
                     return downloadedResource
@@ -163,3 +166,4 @@ extension KingfisherManager {
         }
     }
 }
+
