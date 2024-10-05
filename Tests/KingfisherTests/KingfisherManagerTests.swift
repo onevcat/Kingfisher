@@ -1353,7 +1353,7 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testMissingResourceOfLivePhotoFound() {
-        let resource = KF.ImageResource(downloadURL: testURLs[0])
+        let resource = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         let source = LivePhotoSource(resources: [resource])
         
         let missing = manager.missingResources(source, options: .init(.empty))
@@ -1361,7 +1361,7 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testMissingResourceOfLivePhotoNotFound() async throws {
-        let resource = KF.ImageResource(downloadURL: testURLs[0])
+        let resource = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         
         try await manager.cache.storeToDisk(testImageData, forKey: resource.cacheKey)
         
@@ -1371,8 +1371,8 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testMissingResourceOfLivePhotoFoundOne() async throws {
-        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
-        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         
         try await manager.cache.storeToDisk(testImageData, forKey: resource1.cacheKey)
         
@@ -1383,18 +1383,21 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testDownloadAndCacheLivePhotoResourcesAll() async throws {
-        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
-        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
         
         stub(resource1.downloadURL, data: testImageData)
         stub(resource2.downloadURL, data: testImageData)
         
-        let result = try await manager.downloadAndCache(resources: [resource1, resource2], options: .init(.empty))
+        let result = try await manager.downloadAndCache(
+            resources: [resource1, resource2].map { LivePhotoResource.init(resource: $0)
+            },
+            options: .init(.empty))
         XCTAssertEqual(result.count, 2)
         
         let urls = result.compactMap(\.url)
-        XCTAssertTrue(urls.contains(testURLs[0]))
-        XCTAssertTrue(urls.contains(testURLs[1]))
+        XCTAssertTrue(urls.contains(LivePhotoURL.mov))
+        XCTAssertTrue(urls.contains(LivePhotoURL.heic))
         
         let resourceCached1 = manager.cache.imageCachedType(forKey: resource1.cacheKey)
         let resourceCached2 = manager.cache.imageCachedType(forKey: resource1.cacheKey)
@@ -1403,8 +1406,8 @@ class KingfisherManagerTests: XCTestCase {
     }
     
     func testRetrieveLivePhotoFromNetwork() async throws {
-        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
-        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
         
         stub(resource1.downloadURL, data: testImageData)
         stub(resource2.downloadURL, data: testImageData)
@@ -1429,13 +1432,13 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(result.cacheType, .none)
         XCTAssertEqual(result.data(), [testImageData, testImageData])
         let urlsInSource = result.source.resources.map(\.downloadURL)
-        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
-        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.mov))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.heic))
     }
     
     func testRetrieveLivePhotoFromLocal() async throws {
-        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
-        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
         
         try await manager.cache.storeToDisk(
             testImageData,
@@ -1468,13 +1471,13 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(result.cacheType, .disk)
         XCTAssertEqual(result.data(), [])
         let urlsInSource = result.source.resources.map(\.downloadURL)
-        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
-        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.mov))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.heic))
     }
     
     func testRetrieveLivePhotoMixed() async throws {
-        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
-        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
         
         try await manager.cache.storeToDisk(
             testImageData,
@@ -1503,13 +1506,13 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(result.cacheType, .none)
         XCTAssertEqual(result.data(), [testImageData])
         let urlsInSource = result.source.resources.map(\.downloadURL)
-        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
-        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.mov))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.heic))
     }
     
     func testRetrieveLivePhotoNetworkThenCache() async throws {
-        let resource1 = KF.ImageResource(downloadURL: testURLs[0])
-        let resource2 = KF.ImageResource(downloadURL: testURLs[1])
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
         
         stub(resource1.downloadURL, data: testImageData)
         stub(resource2.downloadURL, data: testImageData)
@@ -1534,8 +1537,8 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(result.cacheType, .none)
         XCTAssertEqual(result.data(), [testImageData, testImageData])
         let urlsInSource = result.source.resources.map(\.downloadURL)
-        XCTAssertTrue(urlsInSource.contains(testURLs[0]))
-        XCTAssertTrue(urlsInSource.contains(testURLs[1]))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.mov))
+        XCTAssertTrue(urlsInSource.contains(LivePhotoURL.heic))
         
         let localResult = try await manager.retrieveLivePhoto(with: source)
         XCTAssertEqual(localResult.fileURLs.count, 2)

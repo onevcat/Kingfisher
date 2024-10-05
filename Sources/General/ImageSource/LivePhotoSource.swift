@@ -26,15 +26,58 @@
 
 import Foundation
 
+public struct LivePhotoResource: Sendable {
+    
+    public enum FileType: Sendable {
+        case heic
+        case mov
+    }
+    
+    public let resource: any Resource
+    public let referenceFileType: FileType
+    
+    var cacheKey: String { resource.cacheKey }
+    var downloadURL: URL { resource.downloadURL }
+    
+    public init(downloadURL: URL, cacheKey: String? = nil, fileType: FileType? = nil) {
+        resource = KF.ImageResource(downloadURL: downloadURL, cacheKey: cacheKey)
+        referenceFileType = fileType ?? resource.guessedFileType
+    }
+    
+    public init(resource: any Resource, fileType: FileType? = nil) {
+        self.resource = resource
+        referenceFileType = fileType ?? resource.guessedFileType
+    }
+}
+
+extension Resource {
+    var guessedFileType: LivePhotoResource.FileType {
+        let pathExtension = downloadURL.pathExtension.lowercased()
+        switch pathExtension {
+        case "mov": return .mov
+        case "heic": return .heic
+        default:
+            assertionFailure("Explicit file type is necessary in the download URL as its extension. Otherwise, set the file type of the LivePhoto resource manually with `LivePhotoSource.init(resources:)`.")
+            return .heic
+        }
+    }
+}
+
 public struct LivePhotoSource: Sendable {
     
-    public let resources: [any Resource]
+    public let resources: [LivePhotoResource]
     
     public init(resources: [any Resource]) {
-        self.resources = resources
+        let livePhotoResources = resources.map { LivePhotoResource(resource: $0) }
+        self.init(livePhotoResources)
     }
     
     public init(urls: [URL]) {
-        self.resources = urls.map { KF.ImageResource(downloadURL: $0) }
+        let resources = urls.map { KF.ImageResource(downloadURL: $0) }
+        self.init(resources: resources)
+    }
+    
+    public init(_ resources: [LivePhotoResource]) {
+        self.resources = resources
     }
 }

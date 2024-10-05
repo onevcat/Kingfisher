@@ -107,8 +107,8 @@ extension KingfisherManager {
             })
     }
     
-    func missingResources(_ source: LivePhotoSource, options: KingfisherParsedOptionsInfo) -> [any Resource] {
-        let missingResources: [any Resource]
+    func missingResources(_ source: LivePhotoSource, options: KingfisherParsedOptionsInfo) -> [LivePhotoResource] {
+        let missingResources: [LivePhotoResource]
         if options.forceRefresh {
             missingResources = source.resources
         } else {
@@ -130,7 +130,7 @@ extension KingfisherManager {
     }
     
     func downloadAndCache(
-        resources: [any Resource],
+        resources: [LivePhotoResource],
         options: KingfisherParsedOptionsInfo
     ) async throws -> [LivePhotoResourceDownloadingResult] {
         if resources.isEmpty {

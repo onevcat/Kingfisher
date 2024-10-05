@@ -84,6 +84,11 @@ let testKeys = [
     "http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"
 ]
 
+enum LivePhotoURL {
+    static let mov = URL(string: "https://example.com/sample.mov")!
+    static let heic = URL(string: "https://example.com/sample.heic")!
+}
+
 let testURLs = testKeys.map { URL(string: $0)! }
 
 func cleanDefaultCache() {
