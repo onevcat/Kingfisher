@@ -32,6 +32,15 @@ public struct LivePhotoResource: Sendable {
         case heic
         case mov
         case other(String)
+        
+        var fileExtension: String {
+            switch self {
+            case .heic: return "heic"
+            case .mov: return "mov"
+            case .other(let ext): return ext
+            }
+        }
+        
     }
     
     public let resource: any Resource

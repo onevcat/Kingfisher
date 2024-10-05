@@ -89,10 +89,10 @@ extension KingfisherManager {
         
         let targetCache = checkedOptions.targetCache ?? cache
         let fileURLs = source.resources.map {
-            targetCache.cacheFileURLIfOnDisk(
+            targetCache.possibleCacheFileURLIfOnDisk(
                 forKey: $0.cacheKey,
                 processorIdentifier: checkedOptions.processor.identifier,
-                forcedExtension: $0.referenceFileType.determinedFileExtension(.init())
+                referenceFileType: $0.referenceFileType
             )
         }
         if fileURLs.contains(nil) {
@@ -116,10 +116,10 @@ extension KingfisherManager {
             let targetCache = options.targetCache ?? cache
             missingResources = source.resources.reduce([], { r, resource in
                 let cacheKey = resource.cacheKey
-                let existingCachedFileURL = targetCache.cacheFileURLIfOnDisk(
+                let existingCachedFileURL = targetCache.possibleCacheFileURLIfOnDisk(
                     forKey: cacheKey,
                     processorIdentifier: options.processor.identifier,
-                    forcedExtension: resource.referenceFileType.determinedFileExtension(.init())
+                    referenceFileType: resource.referenceFileType
                 )
                 if existingCachedFileURL == nil {
                     return r + [resource]
@@ -169,3 +169,35 @@ extension KingfisherManager {
     }
 }
 
+extension ImageCache {
+    func possibleCacheFileURLIfOnDisk(
+        forKey key: String,
+        processorIdentifier identifier: String,
+        referenceFileType: LivePhotoResource.FileType
+    ) -> URL? {
+        switch referenceFileType {
+        case .heic, .mov:
+            return cacheFileURLIfOnDisk(
+                forKey: key, processorIdentifier: identifier, forcedExtension: referenceFileType.fileExtension
+            )
+        case .other(let ext):
+            if ext.isEmpty {
+                // The extension is not specified. Guess from the default values.
+                let possibleFileTypes: [LivePhotoResource.FileType] = [.heic, .mov]
+                for fileType in possibleFileTypes {
+                    let url = cacheFileURLIfOnDisk(
+                        forKey: key, processorIdentifier: identifier, forcedExtension: fileType.fileExtension
+                    )
+                    if url != nil {
+                        return url
+                    }
+                }
+                return nil
+            } else {
+                return cacheFileURLIfOnDisk(
+                    forKey: key, processorIdentifier: identifier, forcedExtension: ext
+                )
+            }
+        }
+    }
+}
