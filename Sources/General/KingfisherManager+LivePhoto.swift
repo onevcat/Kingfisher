@@ -91,7 +91,8 @@ extension KingfisherManager {
         let fileURLs = source.resources.map {
             targetCache.cacheFileURLIfOnDisk(
                 forKey: $0.cacheKey,
-                processorIdentifier: checkedOptions.processor.identifier
+                processorIdentifier: checkedOptions.processor.identifier,
+                forcedExtension: $0.referenceFileType.determinedFileExtension(.init())
             )
         }
         if fileURLs.contains(nil) {
@@ -117,7 +118,8 @@ extension KingfisherManager {
                 let cacheKey = resource.cacheKey
                 let existingCachedFileURL = targetCache.cacheFileURLIfOnDisk(
                     forKey: cacheKey,
-                    processorIdentifier: options.processor.identifier
+                    processorIdentifier: options.processor.identifier,
+                    forcedExtension: resource.referenceFileType.determinedFileExtension(.init())
                 )
                 if existingCachedFileURL == nil {
                     return r + [resource]
