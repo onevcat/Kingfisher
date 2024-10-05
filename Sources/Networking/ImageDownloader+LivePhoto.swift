@@ -30,7 +30,7 @@ import AppKit
 import UIKit
 #endif
 
-public struct LivePhotoResourceLoadingResult: Sendable {
+public struct LivePhotoResourceDownloadingResult: Sendable {
     
     /// The original URL of the image request.
     public let url: URL?
@@ -55,7 +55,7 @@ extension ImageDownloader {
     public func downloadLivePhotoResource(
         with url: URL,
         options: KingfisherParsedOptionsInfo
-    ) async throws -> LivePhotoResourceLoadingResult {
+    ) async throws -> LivePhotoResourceDownloadingResult {
         let task = CancellationDownloadTask()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
@@ -81,7 +81,7 @@ extension ImageDownloader {
     public func downloadLivePhotoResource(
         with url: URL,
         options: KingfisherParsedOptionsInfo,
-        completionHandler: (@Sendable (Result<LivePhotoResourceLoadingResult, KingfisherError>) -> Void)? = nil
+        completionHandler: (@Sendable (Result<LivePhotoResourceDownloadingResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask {
         var checkedOptions = options
         if options.processor == DefaultImageProcessor.default {
@@ -95,7 +95,7 @@ extension ImageDownloader {
             guard let completionHandler else {
                 return
             }
-            let newResult = result.map { LivePhotoResourceLoadingResult(originalData: $0.originalData, url: $0.url) }
+            let newResult = result.map { LivePhotoResourceDownloadingResult(originalData: $0.originalData, url: $0.url) }
             completionHandler(newResult)
         }
     }

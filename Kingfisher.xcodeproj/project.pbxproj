@@ -69,6 +69,7 @@
 		D12F67602CAC2DBF00AB63AB /* ImageDownloader+LivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */; };
 		D12F67622CAC32BF00AB63AB /* KingfisherManager+LivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */; };
 		D12F67642CAC330A00AB63AB /* LivePhotoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67632CAC330600AB63AB /* LivePhotoSource.swift */; };
+		D12F67662CB022FC00AB63AB /* PHLivePhotoView+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67652CB022EB00AB63AB /* PHLivePhotoView+Kingfisher.swift */; };
 		D13646742165A1A100A33652 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13646732165A1A100A33652 /* Result.swift */; };
 		D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */; };
 		D16FEA3A23078C63006E67D5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F623078C63006E67D5 /* LICENSE */; };
@@ -219,6 +220,7 @@
 		D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageDownloader+LivePhoto.swift"; sourceTree = "<group>"; };
 		D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KingfisherManager+LivePhoto.swift"; sourceTree = "<group>"; };
 		D12F67632CAC330600AB63AB /* LivePhotoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePhotoSource.swift; sourceTree = "<group>"; };
+		D12F67652CB022EB00AB63AB /* PHLivePhotoView+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHLivePhotoView+Kingfisher.swift"; sourceTree = "<group>"; };
 		D1356CEA2B273AEC009554C8 /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		D13646732165A1A100A33652 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageDataProvider.swift; sourceTree = "<group>"; };
@@ -400,6 +402,7 @@
 		D12AB6AB215D2BB50013BA68 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D12F67652CB022EB00AB63AB /* PHLivePhotoView+Kingfisher.swift */,
 				D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */,
 				D12AB6AC215D2BB50013BA68 /* ImageView+Kingfisher.swift */,
 				D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */,
@@ -886,6 +889,7 @@
 				D12AB724215D2BB50013BA68 /* Box.swift in Sources */,
 				4B8E291C216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */,
 				3ADE9AF92A73CD69009A86CA /* String+SHA256.swift in Sources */,
+				D12F67662CB022FC00AB63AB /* PHLivePhotoView+Kingfisher.swift in Sources */,
 				D12AB710215D2BB50013BA68 /* KingfisherOptionsInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

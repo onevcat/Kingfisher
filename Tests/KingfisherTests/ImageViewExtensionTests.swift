@@ -363,6 +363,7 @@ class ImageViewExtensionTests: XCTestCase {
                 reason: .notCurrentSourceTask(let result, _, let source)) = result.error!
             {
                 XCTAssertEqual(source.url, testURLs[0])
+                XCTAssertEqual(result?.originalSource.url, testURLs[0])
                 XCTAssertNotEqual(result!.image, self.imageView.image)
             } else {
                 XCTFail()

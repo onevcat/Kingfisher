@@ -26,7 +26,7 @@
 
 @preconcurrency import Photos
 
-public struct RetrieveLivePhotoResult: Sendable {
+public struct LivePhotoLoadingInfoResult: Sendable {
     
     /// Retrieves the live photo disk URLs from this result.
     public let fileURLs: [URL]
@@ -64,7 +64,7 @@ extension KingfisherManager {
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
         referenceTaskIdentifierChecker: (() -> Bool)? = nil
-    ) async throws -> RetrieveLivePhotoResult {
+    ) async throws -> LivePhotoLoadingInfoResult {
         let fullOptions = currentDefaultOptions + (options ?? .empty)
         var checkedOptions = KingfisherParsedOptionsInfo(fullOptions)
         
@@ -97,7 +97,7 @@ extension KingfisherManager {
         if fileURLs.contains(nil) {
             // not all file done. throw error
         }
-        return RetrieveLivePhotoResult(
+        return LivePhotoLoadingInfoResult(
             fileURLs: fileURLs.compactMap { $0 },
             cacheType: missingResources.isEmpty ? .disk : .none,
             source: source,
@@ -132,13 +132,13 @@ extension KingfisherManager {
     func downloadAndCache(
         resources: [any Resource],
         options: KingfisherParsedOptionsInfo
-    ) async throws -> [LivePhotoResourceLoadingResult] {
+    ) async throws -> [LivePhotoResourceDownloadingResult] {
         if resources.isEmpty {
             return []
         }
         let downloader = options.downloader ?? downloader
         let cache = options.targetCache ?? cache
-        return try await withThrowingTaskGroup(of: LivePhotoResourceLoadingResult.self) { group in
+        return try await withThrowingTaskGroup(of: LivePhotoResourceDownloadingResult.self) { group in
             for resource in resources {
                 group.addTask {
                     let downloadedResource = try await downloader.downloadLivePhotoResource(
@@ -155,7 +155,7 @@ extension KingfisherManager {
                 }
             }
             
-            var result: [LivePhotoResourceLoadingResult] = []
+            var result: [LivePhotoResourceDownloadingResult] = []
             for try await resource in group {
                 result.append(resource)
             }
