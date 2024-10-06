@@ -114,7 +114,7 @@ extension NSTextAttachment          : KingfisherCompatible { }
 extension WKInterfaceImage          : KingfisherCompatible { }
 #endif
 
-#if canImport(PhotosUI)
+#if canImport(PhotosUI) && !os(watchOS)
 import PhotosUI
 extension PHLivePhotoView           : KingfisherCompatible { }
 #endif

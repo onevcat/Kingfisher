@@ -24,6 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if !os(watchOS)
 @preconcurrency import Photos
 
 public struct LivePhotoLoadingInfoResult: Sendable {
@@ -201,3 +202,4 @@ extension ImageCache {
         }
     }
 }
+#endif
