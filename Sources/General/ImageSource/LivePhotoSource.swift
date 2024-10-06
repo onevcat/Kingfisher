@@ -28,7 +28,7 @@ import Foundation
 
 public struct LivePhotoResource: Sendable {
     
-    public enum FileType: Sendable {
+    public enum FileType: Sendable, Equatable {
         case heic
         case mov
         case other(String)
@@ -79,7 +79,7 @@ extension LivePhotoResource.FileType {
     
     static func guessedFileExtension(from data: Data) -> String? {
         
-        guard data.count > 12 else { return nil }
+        guard data.count >= 12 else { return nil }
         
         var buffer = [UInt8](repeating: 0, count: 12)
         data.copyBytes(to: &buffer, count: 12)

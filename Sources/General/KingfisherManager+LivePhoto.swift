@@ -83,7 +83,7 @@ extension KingfisherManager {
             }
         }
         
-        // TODO. We ignore the retry of live photo now to suppress the complexity.
+        // TODO. We ignore the retry of live photo and the progress now to suppress the complexity.
         
         let missingResources = missingResources(source, options: checkedOptions)
         let resourcesResult = try await downloadAndCache(resources: missingResources, options: checkedOptions)
