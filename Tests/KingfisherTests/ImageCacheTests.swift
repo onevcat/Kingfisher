@@ -762,6 +762,24 @@ class ImageCacheTests: XCTestCase {
         XCTAssertEqual(newSize, UInt(testImagePNGData.count * testKeys.count))
     }
     
+    func testStoreFileWithForcedExtension() async throws {
+        let key = testKeys[0]
+        try await cache.store(testImage, forKey: key, forcedExtension: "jpg", toDisk: true)
+    
+        let pathWithoutExtension = cache.cachePath(forKey: key)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: pathWithoutExtension))
+        
+        let pathWithExtension = cache.cachePath(forKey: key, forcedExtension: "jpg")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: pathWithExtension))
+        
+        XCTAssertEqual(cache.imageCachedType(forKey: key), .memory)
+        XCTAssertEqual(cache.imageCachedType(forKey: key, forcedExtension: "jpg"), .memory)
+        
+        cache.clearMemoryCache()
+        XCTAssertEqual(cache.imageCachedType(forKey: key), .none)
+        XCTAssertEqual(cache.imageCachedType(forKey: key, forcedExtension: "jpg"), .disk)
+    }
+    
     // MARK: - Helper
     private func storeMultipleImages(_ completionHandler: @escaping () -> Void) {
         let group = DispatchGroup()
