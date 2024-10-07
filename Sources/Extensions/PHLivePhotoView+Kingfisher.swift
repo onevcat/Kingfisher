@@ -73,7 +73,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         with source: LivePhotoSource?,
         placeholder: KFCrossPlatformImage? = nil,
         options: KingfisherOptionsInfo? = nil,
-        progressBlock: DownloadProgressBlock? = nil,
+        // progressBlock: DownloadProgressBlock? = nil, // Not supported yet
         completionHandler: (@MainActor @Sendable (Result<RetrieveLivePhotoResult, KingfisherError>) -> Void)? = nil
     ) -> Task<(), Never>? {
         var mutatingSelf = self
@@ -96,12 +96,16 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         
         let taskIdentifierChecking = { issuedIdentifier == self.taskIdentifier }
 
+        // Copy these associated values in case of re-entry.
+        let targetSize = targetSize
+        let contentMode = contentMode
+        
         let task = Task { @MainActor in
             do {
                 let loadingInfo = try await KingfisherManager.shared.retrieveLivePhoto(
                     with: source,
                     options: options,
-                    progressBlock: progressBlock,
+                    progressBlock: nil, // progressBlock, // Not supported yet
                     referenceTaskIdentifierChecker: taskIdentifierChecking
                 )
                 if let notCurrentTaskError = self.checkNotCurrentTask(
@@ -119,9 +123,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                     placeholderImage: placeholder,
                     targetSize: targetSize,
                     contentMode: contentMode,
-                    resultHandler: {
-                        livePhoto,
-                        info in
+                    resultHandler: { livePhoto, info in
                         let result = RetrieveLivePhotoResult(
                             loadingInfo: loadingInfo,
                             livePhoto: livePhoto,
