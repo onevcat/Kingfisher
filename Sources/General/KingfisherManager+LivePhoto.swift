@@ -90,11 +90,7 @@ extension KingfisherManager {
         
         let targetCache = checkedOptions.targetCache ?? cache
         let fileURLs = source.resources.map {
-            targetCache.possibleCacheFileURLIfOnDisk(
-                forKey: $0.cacheKey,
-                processorIdentifier: checkedOptions.processor.identifier,
-                referenceFileType: $0.referenceFileType
-            )
+            targetCache.possibleCacheFileURLIfOnDisk(resource: $0, options: checkedOptions)
         }
         if fileURLs.contains(nil) {
             // not all file done. throw error
@@ -116,13 +112,8 @@ extension KingfisherManager {
         } else {
             let targetCache = options.targetCache ?? cache
             missingResources = source.resources.reduce([], { r, resource in
-                let cacheKey = resource.cacheKey
-                let existingCachedFileURL = targetCache.possibleCacheFileURLIfOnDisk(
-                    forKey: cacheKey,
-                    processorIdentifier: options.processor.identifier,
-                    referenceFileType: resource.referenceFileType
-                )
-                if existingCachedFileURL == nil {
+                let cachedFileURL = targetCache.possibleCacheFileURLIfOnDisk(resource: resource, options: options)
+                if cachedFileURL == nil {
                     return r + [resource]
                 } else {
                     return r
@@ -171,6 +162,18 @@ extension KingfisherManager {
 }
 
 extension ImageCache {
+    
+    func possibleCacheFileURLIfOnDisk(
+        resource: LivePhotoResource,
+        options: KingfisherParsedOptionsInfo
+    ) -> URL? {
+        possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: options.processor.identifier,
+            referenceFileType: resource.referenceFileType
+        )
+    }
+    
     func possibleCacheFileURLIfOnDisk(
         forKey key: String,
         processorIdentifier identifier: String,

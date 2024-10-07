@@ -72,6 +72,9 @@ let testImageString =
 var testImage = KFCrossPlatformImage(data: testImageData)!
 let testImageData = Data(base64Encoded: testImageString)!
 
+let partitalHEICData = Data(base64Encoded: "AAAALGZ0eXBoZWljAAAAAG1pZjFNaUhCTWlIRU1pUHI=")!
+let partitalMOVData = Data(base64Encoded: "AAAAFGZ0eXBxdCAgAAAAAHF0ICAAAAAId2lkZQAgJto=")!
+
 let testImagePNGData = testImage.kf.pngRepresentation()!
 let testImageJEPGData = testImage.kf.jpegRepresentation(compressionQuality: 1.0)!
 let testImageGIFData = Data(fileName: "dancing-banana.gif")

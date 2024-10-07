@@ -1390,6 +1390,23 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(missing[0].downloadURL, resource2.downloadURL)
     }
     
+    func testMissingResourceOfLivePhotoForceRefresh() async throws {
+        let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
+        let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
+        
+        try await manager.cache.storeToDisk(
+            testImageData,
+            forKey: resource1.cacheKey,
+            forcedExtension: resource1.downloadURL.pathExtension
+        )
+        
+        let source = LivePhotoSource(resources: [resource1, resource2])
+        let missing = manager.missingResources(source, options: .init([.forceRefresh]))
+        XCTAssertEqual(missing.count, 2)
+        XCTAssertEqual(missing[0].downloadURL, resource1.downloadURL)
+        XCTAssertEqual(missing[1].downloadURL, resource2.downloadURL)
+    }
+    
     func testDownloadAndCacheLivePhotoResourcesAll() async throws {
         let resource1 = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         let resource2 = KF.ImageResource(downloadURL: LivePhotoURL.heic)
@@ -1540,11 +1557,13 @@ class KingfisherManagerTests: XCTestCase {
         
         let resource1Cached = manager.cache.isCached(
             forKey: resource1.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource1.downloadURL.pathExtension
         )
         let resource2Cached = manager.cache.isCached(
             forKey: resource2.cacheKey,
-            processorIdentifier: LivePhotoImageProcessor.default.identifier
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: resource2.downloadURL.pathExtension
         )
         XCTAssertFalse(resource1Cached)
         XCTAssertFalse(resource2Cached)
@@ -1564,6 +1583,86 @@ class KingfisherManagerTests: XCTestCase {
         let localResult = try await manager.retrieveLivePhoto(with: source)
         XCTAssertEqual(localResult.fileURLs.count, 2)
         XCTAssertEqual(localResult.cacheType, .disk)
+    }
+    
+    func testDownloadAndCacheLivePhotoWithEmptyResources() async throws {
+        let result = try await manager.downloadAndCache(resources: [], options: .init([]))
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func testDownloadAndCacheLivePhotoWithSingleResource() async throws {
+        let resource = LivePhotoResource(downloadURL: LivePhotoURL.heic)
+        stub(resource.downloadURL, data: testImageData)
+        
+        let result = try await manager.downloadAndCache(resources: [resource], options: .init([]))
+        XCTAssertEqual(result.count, 1)
+        
+        let t = manager.cache.imageCachedType(forKey: resource.cacheKey, forcedExtension: "heic")
+        XCTAssertEqual(t, .disk)
+    }
+    
+    func testDownloadAndCacheLivePhotoWithSingleResourceGuessingUnsupportedExtension() async throws {
+        let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!)
+        stub(resource.downloadURL, data: testImageData)
+        
+        XCTAssertEqual(resource.referenceFileType, .other(""))
+        
+        let result = try await manager.downloadAndCache(resources: [resource], options: .init([]))
+        XCTAssertEqual(result.count, 1)
+        
+        var cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey, forcedExtension: "heic")
+        XCTAssertEqual(cacheType, .none)
+        
+        cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey)
+        XCTAssertEqual(cacheType, .disk)
+    }
+    
+    func testDownloadAndCacheLivePhotoWithSingleResourceExplicitSetExtension() async throws {
+        let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!, fileType: .heic)
+        stub(resource.downloadURL, data: testImageData)
+        
+        XCTAssertEqual(resource.referenceFileType, .heic)
+        
+        let result = try await manager.downloadAndCache(resources: [resource], options: .init([]))
+        XCTAssertEqual(result.count, 1)
+        
+        var cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey, forcedExtension: "heic")
+        XCTAssertEqual(cacheType, .disk)
+        
+        cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey)
+        XCTAssertEqual(cacheType, .none)
+    }
+    
+    func testDownloadAndCacheLivePhotoWithSingleResourceGuessingHEICExtension() async throws {
+        let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!)
+        stub(resource.downloadURL, data: partitalHEICData)
+        
+        XCTAssertEqual(resource.referenceFileType, .other(""))
+        
+        let result = try await manager.downloadAndCache(resources: [resource], options: .init([]))
+        XCTAssertEqual(result.count, 1)
+        
+        var cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey, forcedExtension: "heic")
+        XCTAssertEqual(cacheType, .disk)
+        
+        cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey)
+        XCTAssertEqual(cacheType, .none)
+    }
+    
+    func testDownloadAndCacheLivePhotoWithSingleResourceGuessingMOVExtension() async throws {
+        let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!)
+        stub(resource.downloadURL, data: partitalMOVData)
+        
+        XCTAssertEqual(resource.referenceFileType, .other(""))
+        
+        let result = try await manager.downloadAndCache(resources: [resource], options: .init([]))
+        XCTAssertEqual(result.count, 1)
+        
+        var cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey, forcedExtension: "mov")
+        XCTAssertEqual(cacheType, .disk)
+        
+        cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey)
+        XCTAssertEqual(cacheType, .none)
     }
 }
 
