@@ -243,6 +243,13 @@ public enum KingfisherError: Error {
         ///
         /// Error Code: 3011
         case diskStorageIsNotReady(cacheURL: URL)
+        
+        /// The resource is expected on the disk, but now missing for some reason.
+        ///
+        /// This happens when the expected resource is not on the disk for some reason during loading a live photo.
+        ///
+        /// Error Code: 3012
+        case missingLivePhotoResourceOnDisk(_ resource: LivePhotoResource)
     }
     
     /// Represents the error reason during image processing phase.
@@ -570,6 +577,9 @@ extension KingfisherError.CacheErrorReason {
         case .diskStorageIsNotReady(let cacheURL):
             return "The disk storage is not ready to use yet at URL: '\(cacheURL)'. " +
                 "This is usually caused by extremely lack of disk space. Ask users to free up some space and restart the app."
+        case .missingLivePhotoResourceOnDisk(let resource):
+            return "The live photo resource '\(resource.downloadURL)' is missing in the cache. Usually a re-download" +
+            " can fix this issue."
         }
     }
     
@@ -586,6 +596,7 @@ extension KingfisherError.CacheErrorReason {
         case .cannotCreateCacheFile: return 3009
         case .cannotSetCacheFileAttribute: return 3010
         case .diskStorageIsNotReady: return 3011
+        case .missingLivePhotoResourceOnDisk: return 3012
         }
     }
 }

@@ -89,14 +89,18 @@ extension KingfisherManager {
         let resourcesResult = try await downloadAndCache(resources: missingResources, options: checkedOptions)
         
         let targetCache = checkedOptions.targetCache ?? cache
-        let fileURLs = source.resources.map {
-            targetCache.possibleCacheFileURLIfOnDisk(resource: $0, options: checkedOptions)
+        var fileURLs = [URL]()
+        for resource in source.resources {
+            let url = targetCache.possibleCacheFileURLIfOnDisk(resource: resource, options: checkedOptions)
+            guard let url else {
+                // This should not happen normally if the previous `downloadAndCache` done without issue, but in case.
+                throw KingfisherError.cacheError(reason: .missingLivePhotoResourceOnDisk(resource))
+            }
+            fileURLs.append(url)
         }
-        if fileURLs.contains(nil) {
-            // not all file done. throw error
-        }
+        
         return LivePhotoLoadingInfoResult(
-            fileURLs: fileURLs.compactMap { $0 },
+            fileURLs: fileURLs,
             cacheType: missingResources.isEmpty ? .disk : .none,
             source: source,
             originalSource: source,
