@@ -71,21 +71,14 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
     @discardableResult
     public func setImage(
         with source: LivePhotoSource?,
-        placeholder: KFCrossPlatformImage? = nil,
+        // placeholder: KFCrossPlatformImage? = nil, // Not supported yet
         options: KingfisherOptionsInfo? = nil,
         // progressBlock: DownloadProgressBlock? = nil, // Not supported yet
         completionHandler: (@MainActor @Sendable (Result<RetrieveLivePhotoResult, KingfisherError>) -> Void)? = nil
     ) -> Task<(), Never>? {
         var mutatingSelf = self
         guard let source = source else {
-            PHLivePhoto.request(
-                withResourceFileURLs: [],
-                placeholderImage: placeholder,
-                targetSize: .zero,
-                contentMode: .default
-            ) { photo, _ in
-                base.livePhoto = photo
-            }
+            base.livePhoto = nil
             mutatingSelf.taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
@@ -120,7 +113,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                 
                 PHLivePhoto.request(
                     withResourceFileURLs: loadingInfo.fileURLs,
-                    placeholderImage: placeholder,
+                    placeholderImage: nil,
                     targetSize: targetSize,
                     contentMode: contentMode,
                     resultHandler: { livePhoto, info in
@@ -149,16 +142,20 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                             return
                         }
                         
-                        if info.keys.contains(PHLivePhotoInfoCancelledKey) {
-                            let cancelled = (info[PHLivePhotoInfoCancelledKey] as? NSNumber)?.boolValue ?? false
-                            if cancelled {
-                                completionHandler?(.failure(
-                                    .requestError(reason: .livePhotoTaskCancelled(source: source)))
-                                )
-                                return
-                            }
+                        if (info[PHLivePhotoInfoCancelledKey] as? NSNumber)?.boolValue ?? false {
+                            completionHandler?(.failure(
+                                .requestError(reason: .livePhotoTaskCancelled(source: source)))
+                            )
+                            return
                         }
-                            
+                        
+                        // If the PHLivePhotoInfoIsDegradedKey value in your result handler’s info dictionary is true,
+                        // Photos will call your result handler again.
+                        if (info[PHLivePhotoInfoIsDegradedKey] as? NSNumber)?.boolValue == true {
+                            // This makes `completionHandler` be only called once.
+                            return
+                        }
+                        
                         completionHandler?(.success(result))
                     }
                 )

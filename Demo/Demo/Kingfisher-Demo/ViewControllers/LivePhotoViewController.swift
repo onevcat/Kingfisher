@@ -53,7 +53,13 @@ class LivePhotoViewController: UIViewController {
             "https://github.com/onevcat/Kingfisher-TestImages/raw/refs/heads/master/LivePhotos/live_photo_sample.MOV"
         ].compactMap(URL.init))
         livePhotoView.kf.setImage(with: source, completionHandler: { result in
-            print(result)
+            switch result {
+            case .success(let r):
+                print("Live Photo done. \(r.loadingInfo.cacheType)")
+                print("Info: \(String(describing: r.info))")
+            case .failure(let error):
+                print("Live Photo error: \(error)")
+            }
         })
     }
 }
