@@ -56,7 +56,7 @@ public enum ImageTransition: Sendable {
     ///    - completion: A block called when the transition animation finishes.
     case custom(duration: TimeInterval,
                  options: UIView.AnimationOptions,
-              animations: (@Sendable (UIImageView, UIImage) -> Void)?,
+              animations: (@Sendable @MainActor (UIImageView, UIImage) -> Void)?,
               completion: (@Sendable (Bool) -> Void)?)
     
     var duration: TimeInterval {
