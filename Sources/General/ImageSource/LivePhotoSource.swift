@@ -57,19 +57,20 @@ public struct LivePhotoResource: Sendable {
         }
     }
     
-    public let resource: any Resource
+    public let dataSource: Source
     public let referenceFileType: FileType
     
-    var cacheKey: String { resource.cacheKey }
-    var downloadURL: URL { resource.downloadURL }
+    var cacheKey: String { dataSource.cacheKey }
+    var downloadURL: URL? { dataSource.url }
     
     public init(downloadURL: URL, cacheKey: String? = nil, fileType: FileType? = nil) {
-        resource = KF.ImageResource(downloadURL: downloadURL, cacheKey: cacheKey)
+        let resource = KF.ImageResource(downloadURL: downloadURL, cacheKey: cacheKey)
+        dataSource = .network(resource)
         referenceFileType = fileType ?? resource.guessedFileType
     }
     
     public init(resource: any Resource, fileType: FileType? = nil) {
-        self.resource = resource
+        self.dataSource = .network(resource)
         referenceFileType = fileType ?? resource.guessedFileType
     }
 }

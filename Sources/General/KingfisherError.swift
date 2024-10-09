@@ -578,7 +578,7 @@ extension KingfisherError.CacheErrorReason {
             return "The disk storage is not ready to use yet at URL: '\(cacheURL)'. " +
                 "This is usually caused by extremely lack of disk space. Ask users to free up some space and restart the app."
         case .missingLivePhotoResourceOnDisk(let resource):
-            return "The live photo resource '\(resource.downloadURL)' is missing in the cache. Usually a re-download" +
+            return "The live photo resource '\(resource)' is missing in the cache. Usually a re-download" +
             " can fix this issue."
         }
     }

@@ -173,11 +173,22 @@ extension KingfisherManager {
             
             for resource in resources {
                 group.addTask {
-                    let downloadedResource = try await downloader.downloadLivePhotoResource(
-                        with: resource.downloadURL,
-                        options: options
-                    )
-
+                    
+                    let downloadedResource: LivePhotoResourceDownloadingResult
+                    
+                    switch resource.dataSource {
+                    case .network(let urlResource):
+                        downloadedResource = try await downloader.downloadLivePhotoResource(
+                            with: urlResource.downloadURL,
+                            options: options
+                        )
+                    case .provider(let provider):
+                        downloadedResource = try await LivePhotoResourceDownloadingResult(
+                            originalData: provider.data(),
+                            url: provider.contentURL
+                        )
+                    }
+                     
                     // We need to specify the extension so the file is saved correctly. Live photo loading requires
                     // the file extension to be correct. Otherwise, a 3302 error will be thrown.
                     // https://developer.apple.com/documentation/photokit/phphotoserror/code/invalidresource
