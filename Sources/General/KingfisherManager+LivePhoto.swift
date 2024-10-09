@@ -27,6 +27,7 @@
 #if !os(watchOS)
 @preconcurrency import Photos
 
+/// A structure that contains information about the result of loading a live photo.
 public struct LivePhotoLoadingInfoResult: Sendable {
     
     /// Retrieves the live photo disk URLs from this result.
@@ -60,6 +61,28 @@ public struct LivePhotoLoadingInfoResult: Sendable {
 }
 
 extension KingfisherManager {
+
+    /// Retrieves a live photo from the specified source.
+    ///
+    /// This method asynchronously loads a live photo from the given source, applying the specified options and
+    /// reporting progress if a progress block is provided.
+    ///
+    /// - Parameters:
+    ///   - source: The ``LivePhotoSource`` from which to retrieve the live photo.
+    ///   - options: A dictionary of options to apply to the retrieval process. If `nil`, the default options will be
+    ///   used.
+    ///   - progressBlock: An optional closure to be called periodically during the download process.
+    ///   - referenceTaskIdentifierChecker: An optional closure that returns a Boolean value indicating whether the task
+    ///   should proceed.
+    ///
+    /// - Returns: A ``LivePhotoLoadingInfoResult`` containing information about the retrieved live photo.
+    ///
+    /// - Throws: An error if the retrieval process fails.
+    ///
+    /// - Note: This method uses `LivePhotoImageProcessor` by default. Custom processors are not supported for live photos.
+    ///
+    /// - Warning: Not all options are working for this method. And currently the `progressBlock` is not working. 
+    /// It will be implemented in the future.
     public func retrieveLivePhoto(
         with source: LivePhotoSource,
         options: KingfisherOptionsInfo? = nil,
@@ -73,6 +96,7 @@ extension KingfisherManager {
             // The default processor is a default behavior so we replace it silently.
             checkedOptions.processor = LivePhotoImageProcessor.default
         } else if checkedOptions.processor != LivePhotoImageProcessor.default {
+            // Warn the framework user that the processor is not supported.
             assertionFailure("[Kingfisher] Using of custom processors during loading of live photo resource is not supported.")
             checkedOptions.processor = LivePhotoImageProcessor.default
         }
@@ -109,6 +133,8 @@ extension KingfisherManager {
             })
     }
     
+    // Returns the missing resources for the given source and options. If the resource is not in the cache, it will be
+    // returned as a missing resource.
     func missingResources(_ source: LivePhotoSource, options: KingfisherParsedOptionsInfo) -> [LivePhotoResource] {
         let missingResources: [LivePhotoResource]
         if options.forceRefresh {
@@ -116,6 +142,7 @@ extension KingfisherManager {
         } else {
             let targetCache = options.targetCache ?? cache
             missingResources = source.resources.reduce([], { r, resource in
+                // Check if the resource is in the cache. It includes a guess of the file extension.
                 let cachedFileURL = targetCache.possibleCacheFileURLIfOnDisk(resource: resource, options: options)
                 if cachedFileURL == nil {
                     return r + [resource]
@@ -127,6 +154,9 @@ extension KingfisherManager {
         return missingResources
     }
     
+    // Download the resources and store them to the cache.
+    // If the resource does not specify a file extension (from either the URL extension or the explicit 
+    // `referenceFileType`), we infer it from the file signature.
     func downloadAndCache(
         resources: [LivePhotoResource],
         options: KingfisherParsedOptionsInfo
@@ -136,13 +166,21 @@ extension KingfisherManager {
         }
         let downloader = options.downloader ?? downloader
         let cache = options.targetCache ?? cache
-        return try await withThrowingTaskGroup(of: LivePhotoResourceDownloadingResult.self) { group in
+
+        // Download all resources concurrently.
+        return try await withThrowingTaskGroup(of: LivePhotoResourceDownloadingResult.self) { 
+            group in
+            
             for resource in resources {
                 group.addTask {
                     let downloadedResource = try await downloader.downloadLivePhotoResource(
                         with: resource.downloadURL,
                         options: options
                     )
+
+                    // We need to specify the extension so the file is saved correctly. Live photo loading requires
+                    // the file extension to be correct. Otherwise, a 3302 error will be thrown.
+                    // https://developer.apple.com/documentation/photokit/phphotoserror/code/invalidresource
                     let fileExtension = resource.referenceFileType
                         .determinedFileExtension(downloadedResource.originalData)
                     try await cache.storeToDisk(
@@ -178,6 +216,13 @@ extension ImageCache {
         )
     }
     
+    // Returns the possible cache file URL for the given key and processor identifier. If the file is on disk, it will
+    // return the URL. Otherwise, it will return `nil`.
+    //
+    // This method also tries to guess the file extension if it is not specified in the `referenceFileType`. 
+    // `PHLivePhoto`'s `request` method requires the file extension to be correct on the disk, and we also stored the 
+    // downloaded data with the correct extension (if it is not specified in the `referenceFileType`, we infer it from
+    // the file signature. See `FileType.determinedFileExtension` for more).
     func possibleCacheFileURLIfOnDisk(
         forKey key: String,
         processorIdentifier identifier: String,
@@ -185,23 +230,27 @@ extension ImageCache {
     ) -> URL? {
         switch referenceFileType {
         case .heic, .mov:
+            // The extension is specified and is what necessary to load a live photo, use it.
             return cacheFileURLIfOnDisk(
                 forKey: key, processorIdentifier: identifier, forcedExtension: referenceFileType.fileExtension
             )
         case .other(let ext):
             if ext.isEmpty {
-                // The extension is not specified. Guess from the default values.
+                // The extension is not specified. Guess from the default set of values.
                 let possibleFileTypes: [LivePhotoResource.FileType] = [.heic, .mov]
                 for fileType in possibleFileTypes {
                     let url = cacheFileURLIfOnDisk(
                         forKey: key, processorIdentifier: identifier, forcedExtension: fileType.fileExtension
                     )
                     if url != nil {
+                        // Found, early return.
                         return url
                     }
                 }
                 return nil
             } else {
+                // The extension is specified but maybe not valid for live photo. Trust the user and use it to find the
+                // file.
                 return cacheFileURLIfOnDisk(
                     forKey: key, processorIdentifier: identifier, forcedExtension: ext
                 )

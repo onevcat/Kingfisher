@@ -31,12 +31,26 @@ public struct RetrieveLivePhotoResult: @unchecked Sendable {
 #else
 @preconcurrency import PhotosUI
 
+/// A result type that contains the information of a retrieved live photo.
+///
+/// This struct is used to encapsulate the result of a live photo retrieval operation, including the loading information,
+/// the retrieved `PHLivePhoto` object, and any additional information provided by the result handler.
+///
+/// - Note: The `info` dictionary is considered sendable based on the documentation for "Result Handler Info Dictionary Keys".
+///         See: [Result Handler Info Dictionary Keys](https://developer.apple.com/documentation/photokit/phlivephoto/result_handler_info_dictionary_keys)
 public struct RetrieveLivePhotoResult: @unchecked Sendable {
+    /// The loading information of the live photo.
     public let loadingInfo: LivePhotoLoadingInfoResult
+
+    /// The retrieved live photo object which is given by the 
+    /// `PHLivePhoto.request(withResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:)` method from
+    /// the result handler.
     public let livePhoto: PHLivePhoto?
     
+
     // According to "Result Handler Info Dictionary Keys", we can trust the `info` in handler is sendable.
     // https://developer.apple.com/documentation/photokit/phlivephoto/result_handler_info_dictionary_keys
+    /// The additional information provided by the result handler when retrieving the live photo.
     public let info: [AnyHashable : Any]?
 }
 
@@ -46,7 +60,7 @@ public struct RetrieveLivePhotoResult: @unchecked Sendable {
 
 @MainActor
 extension KingfisherWrapper where Base: PHLivePhotoView {
-    
+    /// Gets the task identifier associated with the image view for the live photo task.
     public private(set) var taskIdentifier: Source.Identifier.Value? {
         get {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
@@ -58,16 +72,38 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         }
     }
     
+    /// The target size of the live photo view. It is used in the 
+    /// `PHLivePhoto.request(withResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:)` method as 
+    /// the `targetSize` argument when loading the live photo. 
+    /// 
+    /// If not set, `.zero` will be used.
     public var targetSize: CGSize {
         get { getAssociatedObject(base, &targetSizeKey) ?? .zero }
         set { setRetainedAssociatedObject(base, &targetSizeKey, newValue) }
     }
     
+    /// The content mode of the live photo view. It is used in the
+    /// `PHLivePhoto.request(withResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:)` method as
+    /// the `contentMode` argument when loading the live photo.
+    /// 
+    /// If not set, `.default` will be used.
     public var contentMode: PHImageContentMode {
         get { getAssociatedObject(base, &contentModeKey) ?? .default }
         set { setRetainedAssociatedObject(base, &contentModeKey, newValue) }
     }
     
+    /// Sets a live photo to the view with a `LivePhotoSource`.
+    ///
+    /// - Parameters:
+    ///   - source: The `LivePhotoSource` object defining the live photo resource.
+    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - completionHandler: Called when the image setting process finishes.
+    /// - Returns: A task represents the image downloading.
+    ///            The return value will be `nil` if the image is set with a empty source.
+    ///
+    /// - Note: Not all options in `KingfisherOptionsInfo` are supported in this method, for example, the live photo
+    /// does not support any custom processors. Different from the extension method for a normal image view on the 
+    /// platform, the `placeholder` and `progressBlock` are not supported yet, and will be implemented in the future.
     @discardableResult
     public func setImage(
         with source: LivePhotoSource?,
@@ -77,6 +113,8 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         completionHandler: (@MainActor @Sendable (Result<RetrieveLivePhotoResult, KingfisherError>) -> Void)? = nil
     ) -> Task<(), Never>? {
         var mutatingSelf = self
+
+        // Empty source fails the loading early and clear the current task identifier.
         guard let source = source else {
             base.livePhoto = nil
             mutatingSelf.taskIdentifier = nil
@@ -89,7 +127,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         
         let taskIdentifierChecking = { issuedIdentifier == self.taskIdentifier }
 
-        // Copy these associated values in case of re-entry.
+        // Copy these associated values to prevent issues from reentrance.
         let targetSize = targetSize
         let contentMode = contentMode
         
@@ -142,6 +180,10 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                             return
                         }
                         
+                        // Since we are not returning the request ID, seems no way for user to cancel it if the 
+                        // `request` method is called. However, we are sure the request method will always load the 
+                        // image from disk, it should not be a problem. In case we still report the error in the 
+                        // completion
                         if (info[PHLivePhotoInfoCancelledKey] as? NSNumber)?.boolValue ?? false {
                             completionHandler?(.failure(
                                 .requestError(reason: .livePhotoTaskCancelled(source: source)))
@@ -152,7 +194,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                         // If the PHLivePhotoInfoIsDegradedKey value in your result handler’s info dictionary is true,
                         // Photos will call your result handler again.
                         if (info[PHLivePhotoInfoIsDegradedKey] as? NSNumber)?.boolValue == true {
-                            // This makes `completionHandler` be only called once.
+                            // This ensures `completionHandler` be only called once.
                             return
                         }
                         

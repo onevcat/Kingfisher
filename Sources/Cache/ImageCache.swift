@@ -396,6 +396,8 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The identifier of the processor being used for caching. If you are using a processor for the 
     ///   image, pass the identifier of the processor to this parameter.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
     ///   - serializer: The ``CacheSerializer`` used to convert the `image` and `original` to the data that will be
     ///   stored to disk. By default, the ``DefaultCacheSerializer/default`` will be used.
     ///   - toDisk: Whether this image should be cached to disk or not. If `false`, the image is only cached in memory.
@@ -441,6 +443,22 @@ open class ImageCache: @unchecked Sendable {
         )
     }
     
+    /// Store some data to the disk.
+    /// 
+    /// - Parameters:
+    ///   - data: The data to be stored.
+    ///   - key: The key used for caching the data.
+    ///   - identifier: The identifier of the processor being used for caching. If you are using a processor for the
+    ///   image, pass the identifier of the processor to this parameter.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
+    ///   - expiration: The expiration policy used by this storage action.
+    ///   - callbackQueue: The callback queue on which the `completionHandler` is invoked. The default is
+    ///   ``CallbackQueue/untouch``. Under this default ``CallbackQueue/untouch`` queue, if `toDisk` is `false`, it
+    ///   means the `completionHandler` will be invoked from the caller queue of this method; if `toDisk` is `true`,
+    ///   the `completionHandler` will be called from an internal file IO queue. To change this behavior, specify
+    ///   another ``CallbackQueue`` value.
+    ///   - completionHandler: A closure that is invoked when the cache operation finishes.
     open func storeToDisk(
         _ data: Data,
         forKey key: String,
@@ -510,6 +528,8 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The identifier of the processor being used for caching. If you are using a processor for the 
     ///   image, pass the identifier of the processor to this parameter.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
     ///   - fromMemory: Whether this image should be removed from memory storage or not. If `false`, the image won't be 
     ///   removed from the memory storage. The default is `true`.
     ///   - fromDisk: Whether this image should be removed from the disk storage or not. If `false`, the image won't be
@@ -888,6 +908,9 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The processor identifier used for this image. The default value is the
     ///    ``DefaultImageProcessor/identifier`` of the ``DefaultImageProcessor/default`` image processor.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
+    /// 
     /// - Returns: A ``CacheType`` instance that indicates the cache status. ``CacheType/none`` indicates that the
     /// image is not in the cache or that it has already expired.
     open func imageCachedType(
@@ -908,6 +931,9 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The processor identifier used for this image. The default value is the
     ///    ``DefaultImageProcessor/identifier`` of the ``DefaultImageProcessor/default`` image processor.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
+    ///
     /// - Returns: A `Bool` value indicating whether a cache matches the given `key` and `identifier` combination.
     ///
     /// > The return value does not contain information about the kind of storage the cache matches from.
@@ -928,6 +954,9 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The processor identifier used for this image. The default value is the
     ///    ``DefaultImageProcessor/identifier`` of the ``DefaultImageProcessor/default`` image processor.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
+    /// 
     /// - Returns: The hash used as the cache file name.
     ///
     /// > By default, for a given combination of `key` and `identifier`, the ``ImageCache`` instance uses the value
@@ -972,6 +1001,9 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The processor identifier used for this image. The default value is the
     ///    ``DefaultImageProcessor/identifier`` of the ``DefaultImageProcessor/default`` image processor.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
+    /// 
     /// - Returns: The disk path of the cached image under the given `key` and `identifier`.
     ///
     /// > This method does not guarantee that there is an image already cached in the returned path. It simply provides
@@ -989,6 +1021,14 @@ open class ImageCache: @unchecked Sendable {
         return diskStorage.cacheFileURL(forKey: computedKey, forcedExtension: forcedExtension).path
     }
     
+    /// Returns the file URL if a disk cache file is existing for the target key, identifier and forcedExtension
+    /// combination. Otherwise, if the requested cache value is not on the disk as a file, `nil`.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the item.
+    ///   - identifier: The processor identifier used for this image. It involves into calculating the final cache key.
+    ///   - forcedExtension: The expected extension of the file.
+    /// - Returns: The file URL if a disk cache file is existing for the combination. Otherwise, `nil`.
     open func cacheFileURLIfOnDisk(
         forKey key: String,
         processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,

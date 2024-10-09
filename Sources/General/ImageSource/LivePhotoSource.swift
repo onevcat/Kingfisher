@@ -26,11 +26,26 @@
 
 import Foundation
 
+/// A resource type representing a component of a Live Photo, which consists of a still image and a video.
+///
+/// ``LivePhotoResource`` encapsulates the necessary information to download and cache a single components of a Live
+/// Photo: it is either a still image (typically in HEIC format) or a video (typically in MOV format). Multiple
+/// ``LivePhotoResource`` values (typically two, one for the image and one for the video) can form a ``LivePhotoSource``,
+/// which is expected by Kingfisher in its live photo loading high level APIs.
+///
+/// The Live Photo data can be retrieved by `PHAssetResourceManager.requestData` method and uploaded to your server.
+/// You should not modify the metadata or other information of the data, otherwise, it is possible that the
+/// `PHLivePhoto` class cannot read and recognize it anymore. For more information, please refer to Apple's
+/// documentation of Photos framework.
 public struct LivePhotoResource: Sendable {
     
+    /// The file type of a ``LivePhotoResource``.
     public enum FileType: Sendable, Equatable {
+        /// File type HEIC. Usually it represents the still image in a Live Photo.
         case heic
+        /// File type MOV. Usually it represents the video in a Live Photo.
         case mov
+        /// Other file types with the file extension.
         case other(String)
         
         var fileExtension: String {
@@ -40,7 +55,6 @@ public struct LivePhotoResource: Sendable {
             case .other(let ext): return ext
             }
         }
-        
     }
     
     public let resource: any Resource
