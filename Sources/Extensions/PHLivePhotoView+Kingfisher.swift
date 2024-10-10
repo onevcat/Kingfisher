@@ -92,18 +92,83 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         set { setRetainedAssociatedObject(base, &contentModeKey, newValue) }
     }
     
-    /// Sets a live photo to the view with a `LivePhotoSource`.
+    /// Sets a live photo to the view with an array of `URL`.
     ///
     /// - Parameters:
-    ///   - source: The `LivePhotoSource` object defining the live photo resource.
+    ///   - urls: The `URL`s defining the live photo resource. It should contains two URLs, one for the still image and
+    ///     one for the video.
+    ///   - options: An options set to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
+    ///   - completionHandler: Called when the image setting process finishes.
+    /// - Returns: A task represents the image downloading.
+    ///            The return value will be `nil` if the image is set with a empty source.
+    ///
+    /// - Note: Not all options in ``KingfisherOptionsInfo`` are supported in this method, for example, the live photo
+    /// does not support any custom processors. Different from the extension method for a normal image view on the
+    /// platform, the `placeholder` and `progressBlock` are not supported yet, and will be implemented in the future.
+    /// 
+    /// - Note: To get refined control of the resources, use the ``setImage(with:options:completionHandler:)-1n4p2``
+    /// method with a ``LivePhotoSource`` object.
+    ///
+    /// Sample:
+    /// ```swift
+    /// let urls = [
+    ///   URL(string: "https://example.com/image.heic")!, // imageURL
+    ///   URL(string: "https://example.com/video.mov")!   // videoURL
+    /// ]
+    /// let livePhotoView = PHLivePhotoView()
+    /// livePhotoView.kf.setImage(with: urls) { result in
+    ///   switch result {
+    ///   case .success(let retrieveResult):
+    ///     print("Live photo loaded: \(retrieveResult.livePhoto).")
+    ///     print("Cache type: \(retrieveResult.loadingInfo.cacheType).")
+    ///   case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
+    /// ```
+    @discardableResult
+    public func setImage(
+        with urls: [URL],
+        // placeholder: KFCrossPlatformImage? = nil, // Not supported yet
+        options: KingfisherOptionsInfo? = nil,
+        // progressBlock: DownloadProgressBlock? = nil, // Not supported yet
+        completionHandler: (@MainActor @Sendable (Result<RetrieveLivePhotoResult, KingfisherError>) -> Void)? = nil
+    ) -> Task<(), Never>? {
+        setImage(
+            with: LivePhotoSource(urls: urls),
+            options: options,
+            completionHandler: completionHandler
+        )
+    }
+    
+    /// Sets a live photo to the view with a ``LivePhotoSource``.
+    ///
+    /// - Parameters:
+    ///   - source: The ``LivePhotoSource`` object defining the live photo resource.
     ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
     ///   - completionHandler: Called when the image setting process finishes.
     /// - Returns: A task represents the image downloading.
     ///            The return value will be `nil` if the image is set with a empty source.
     ///
-    /// - Note: Not all options in `KingfisherOptionsInfo` are supported in this method, for example, the live photo
-    /// does not support any custom processors. Different from the extension method for a normal image view on the 
+    /// - Note: Not all options in ``KingfisherOptionsInfo`` are supported in this method, for example, the live photo
+    /// does not support any custom processors. Different from the extension method for a normal image view on the
     /// platform, the `placeholder` and `progressBlock` are not supported yet, and will be implemented in the future.
+    /// 
+    /// Sample:
+    /// ```swift
+    /// let source = LivePhotoSource(urls: [
+    ///   URL(string: "https://example.com/image.heic")!, // imageURL
+    ///   URL(string: "https://example.com/video.mov")!   // videoURL
+    /// ])
+    /// let livePhotoView = PHLivePhotoView()
+    /// livePhotoView.kf.setImage(with: source) { result in 
+    ///   switch result {
+    ///   case .success(let retrieveResult):
+    ///     print("Live photo loaded: \(retrieveResult.livePhoto).")
+    ///     print("Cache type: \(retrieveResult.loadingInfo.cacheType).")
+    ///   case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
+    /// ```
     @discardableResult
     public func setImage(
         with source: LivePhotoSource?,

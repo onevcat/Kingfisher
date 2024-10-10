@@ -26,6 +26,41 @@
 
 import Foundation
 
+/// A type represents a loadable resource for a Live Photo, which consists of a still image and a video.
+/// 
+/// Kingfisher expects a ``LivePhotoSource`` value to load a Live Photo with its high-level APIs. 
+/// A ``LivePhotoSource`` is typically a collection of two ``LivePhotoResource`` values, one for the still image and 
+/// one for the video.
+public struct LivePhotoSource: Sendable {
+    
+    /// The resources of a Live Photo.
+    public let resources: [LivePhotoResource]
+    
+    /// Creates a Live Photo source with given resources.
+    /// - Parameter resources: The downloadable resource for a Live Photo. It should contain two resources, one for the
+    /// still image and one for the video.
+    public init(resources: [any Resource]) {
+        let livePhotoResources = resources.map { LivePhotoResource(resource: $0) }
+        self.init(livePhotoResources)
+    }
+    
+    /// Creates a Live Photo source with given URLs.
+    /// - Parameter urls: The URLs of the downloadable resources for a Live Photo. It should contain two URLs, one for
+    /// the still image and one for the video.
+    public init(urls: [URL]) {
+        let resources = urls.map { KF.ImageResource(downloadURL: $0) }
+        self.init(resources: resources)
+    }
+    
+    /// Creates a Live Photo source with given resources.
+    /// - Parameter resources: The resources for a Live Photo. It should contain two resources, one for the still image
+    /// and one for the video.
+    public init(_ resources: [LivePhotoResource]) {
+        self.resources = resources
+    }
+}
+
+
 /// A resource type representing a component of a Live Photo, which consists of a still image and a video.
 ///
 /// ``LivePhotoResource`` encapsulates the necessary information to download and cache a single components of a Live
@@ -57,21 +92,64 @@ public struct LivePhotoResource: Sendable {
         }
     }
     
+    /// The data source of a Live Photo resource.
+    /// 
+    /// This is a general ``Source`` type, which can be either a network resource (as ``Source/network(_:)``) or a
+    /// provided resource as ``Source/provider(_:)``.
     public let dataSource: Source
+
+    /// The file type of the resource.
     public let referenceFileType: FileType
     
     var cacheKey: String { dataSource.cacheKey }
     var downloadURL: URL? { dataSource.url }
-    
+        
+    /// Creates a Live Photo resource with given download URL, cache key and file type.
+    /// - Parameters:
+    ///   - downloadURL: The URL to download the resource.
+    ///   - cacheKey: The cache key for the resource. If `nil`, Kingfisher will use the `absoluteString` of the URL as
+    ///     the cache key.
+    ///   - fileType: The file type of the resource. If `nil`, Kingfisher will try to guess the file type from the URL.
+    /// 
+    /// The file type is important for Kingfisher to determine how to handle the downloaded data and store them
+    /// in the cache. Photos framework requires the still image to be in HEIC extension and the video to be in MOV 
+    /// extension. Otherwise, the `PHLivePhoto` class might not be able to recognize the data. If you are not sure about
+    /// the file type, you can leave it as `nil` and Kingfisher will try to guess it from the URL and the downloaded 
+    /// data.
     public init(downloadURL: URL, cacheKey: String? = nil, fileType: FileType? = nil) {
         let resource = KF.ImageResource(downloadURL: downloadURL, cacheKey: cacheKey)
         dataSource = .network(resource)
         referenceFileType = fileType ?? resource.guessedFileType
     }
     
+    /// Creates a Live Photo resource with given resource and file type.
+    /// - Parameters:
+    ///   - resource: The resource to download the data.
+    ///   - fileType: The file type of the resource. If `nil`, Kingfisher will try to guess the file type from the URL.
+    /// 
+    /// The file type is important for Kingfisher to determine how to handle the downloaded data and store them
+    /// in the cache. Photos framework requires the still image to be in HEIC extension and the video to be in MOV 
+    /// extension. Otherwise, the `PHLivePhoto` class might not be able to recognize the data. If you are not sure about
+    /// the file type, you can leave it as `nil` and Kingfisher will try to guess it from the URL and the downloaded 
+    /// data.
     public init(resource: any Resource, fileType: FileType? = nil) {
         self.dataSource = .network(resource)
         referenceFileType = fileType ?? resource.guessedFileType
+    }
+    
+    /// Creates a Live Photo resource with given data source and file type.
+    /// - Parameters:
+    ///   - source: The data source of the resource. It can be either a network resource or a provided resource.
+    ///   - fileType: The file type of the resource. If `nil`, Kingfisher will try to guess the file type from the URL.
+    /// 
+    /// The file type is important for Kingfisher to determine how to handle the downloaded data and store them
+    /// in the cache. Photos framework requires the still image to be in HEIC extension and the video to be in MOV 
+    /// extension. Otherwise, the `PHLivePhoto` class might not be able to recognize the data. If you are not sure about
+    /// the file type, you can leave it as `nil` and Kingfisher will try to guess it from the URL and the downloaded 
+    /// data.
+    public init(source: Source, fileType: FileType? = nil) {
+        self.dataSource = source
+        referenceFileType = fileType ?? source.url?.guessedFileType ?? .other("")
     }
 }
 
@@ -88,9 +166,9 @@ extension LivePhotoResource.FileType {
         }
     }
     
-    static let fytpChunk: [UInt8] = [0x66, 0x74, 0x79, 0x70]
-    static let heicChunk: [UInt8] = [0x68, 0x65, 0x69, 0x63]
-    static let qtChunk: [UInt8] = [0x71, 0x74, 0x20, 0x20] // quicktime
+    static let fytpChunk: [UInt8] = [0x66, 0x74, 0x79, 0x70] // fytp (file type box)
+    static let heicChunk: [UInt8] = [0x68, 0x65, 0x69, 0x63] // .heic
+    static let qtChunk: [UInt8] = [0x71, 0x74, 0x20, 0x20] // quicktime, .mov
     
     static func guessedFileExtension(from data: Data) -> String? {
         
@@ -122,24 +200,5 @@ extension Resource {
         case "heic": .heic
         default: .other(pathExtension)
         }
-    }
-}
-
-public struct LivePhotoSource: Sendable {
-    
-    public let resources: [LivePhotoResource]
-    
-    public init(resources: [any Resource]) {
-        let livePhotoResources = resources.map { LivePhotoResource(resource: $0) }
-        self.init(livePhotoResources)
-    }
-    
-    public init(urls: [URL]) {
-        let resources = urls.map { KF.ImageResource(downloadURL: $0) }
-        self.init(resources: resources)
-    }
-    
-    public init(_ resources: [LivePhotoResource]) {
-        self.resources = resources
     }
 }
