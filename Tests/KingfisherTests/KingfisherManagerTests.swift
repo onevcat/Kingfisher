@@ -1592,7 +1592,7 @@ class KingfisherManagerTests: XCTestCase {
     
     func testDownloadAndCacheLivePhotoWithSingleResource() async throws {
         let resource = LivePhotoResource(downloadURL: LivePhotoURL.heic)
-        stub(resource.downloadURL, data: testImageData)
+        stub(resource.downloadURL!, data: testImageData)
         
         let result = try await manager.downloadAndCache(resources: [resource], options: .init([]))
         XCTAssertEqual(result.count, 1)
@@ -1603,7 +1603,7 @@ class KingfisherManagerTests: XCTestCase {
     
     func testDownloadAndCacheLivePhotoWithSingleResourceGuessingUnsupportedExtension() async throws {
         let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!)
-        stub(resource.downloadURL, data: testImageData)
+        stub(resource.downloadURL!, data: testImageData)
         
         XCTAssertEqual(resource.referenceFileType, .other(""))
         
@@ -1619,7 +1619,7 @@ class KingfisherManagerTests: XCTestCase {
     
     func testDownloadAndCacheLivePhotoWithSingleResourceExplicitSetExtension() async throws {
         let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!, fileType: .heic)
-        stub(resource.downloadURL, data: testImageData)
+        stub(resource.downloadURL!, data: testImageData)
         
         XCTAssertEqual(resource.referenceFileType, .heic)
         
@@ -1635,7 +1635,7 @@ class KingfisherManagerTests: XCTestCase {
     
     func testDownloadAndCacheLivePhotoWithSingleResourceGuessingHEICExtension() async throws {
         let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!)
-        stub(resource.downloadURL, data: partitalHEICData)
+        stub(resource.downloadURL!, data: partitalHEICData)
         
         XCTAssertEqual(resource.referenceFileType, .other(""))
         
@@ -1651,7 +1651,7 @@ class KingfisherManagerTests: XCTestCase {
     
     func testDownloadAndCacheLivePhotoWithSingleResourceGuessingMOVExtension() async throws {
         let resource = LivePhotoResource(downloadURL: URL(string: "https://example.com")!)
-        stub(resource.downloadURL, data: partitalMOVData)
+        stub(resource.downloadURL!, data: partitalMOVData)
         
         XCTAssertEqual(resource.referenceFileType, .other(""))
         
