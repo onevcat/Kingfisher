@@ -109,7 +109,8 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
     /// - Note: To get refined control of the resources, use the ``setImage(with:options:completionHandler:)-1n4p2``
     /// method with a ``LivePhotoSource`` object.
     ///
-    /// Sample:
+    /// Example:
+    /// 
     /// ```swift
     /// let urls = [
     ///   URL(string: "https://example.com/image.heic")!, // imageURL
