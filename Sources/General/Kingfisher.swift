@@ -114,6 +114,12 @@ extension NSTextAttachment          : KingfisherCompatible { }
 extension WKInterfaceImage          : KingfisherCompatible { }
 #endif
 
+#if canImport(PhotosUI) && !os(watchOS)
+import PhotosUI
+extension PHLivePhotoView           : KingfisherCompatible { }
+#endif
+
+
 #if os(tvOS) && canImport(TVUIKit)
 @available(tvOS 12.0, *)
 extension TVMonogramView            : KingfisherCompatible { }

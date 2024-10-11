@@ -52,6 +52,14 @@ public protocol ImageDataProvider: Sendable {
     var contentURL: URL? { get }
 }
 
+extension ImageDataProvider {
+    func data() async throws -> Data {
+        try await withCheckedThrowingContinuation { continuation in
+            data(handler: { continuation.resume(with: $0) })
+        }
+    }
+}
+
 public extension ImageDataProvider {
     var contentURL: URL? { return nil }
     func convertToSource() -> Source {

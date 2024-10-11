@@ -310,18 +310,15 @@ class ImageCacheTests: XCTestCase {
         XCTAssertTrue(cachePath.hasSuffix(".jpg"))
     }
   
-    func testCachedImageIsFetchedSynchronouslyFromTheMemoryCache() {
+    @MainActor func testCachedImageIsFetchedSynchronouslyFromTheMemoryCache() {
         cache.store(testImage, forKey: testKeys[0], toDisk: false)
-        let foundImage = ActorBox<KFCrossPlatformImage?>(nil)
+        var image: KFCrossPlatformImage? = nil
         cache.retrieveImage(forKey: testKeys[0]) { result in
-            Task {
-                await foundImage.setValue(result.value?.image)
+            MainActor.assumeIsolated {
+                image = try? result.get().image
             }
         }
-        Task {
-            let value = await foundImage.value
-            XCTAssertEqual(testImage, value)
-        }
+        XCTAssertEqual(testImage, image)
     }
     
     func testCachedImageIsFetchedSynchronouslyFromTheMemoryCacheAsync() async throws {
@@ -763,6 +760,138 @@ class ImageCacheTests: XCTestCase {
         await storeMultipleImages()
         let newSize = try await cache.diskStorageSize
         XCTAssertEqual(newSize, UInt(testImagePNGData.count * testKeys.count))
+    }
+    
+    func testStoreFileWithForcedExtension() async throws {
+        let key = testKeys[0]
+        try await cache.store(testImage, forKey: key, forcedExtension: "jpg", toDisk: true)
+    
+        let pathWithoutExtension = cache.cachePath(forKey: key)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: pathWithoutExtension))
+        
+        let pathWithExtension = cache.cachePath(forKey: key, forcedExtension: "jpg")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: pathWithExtension))
+        
+        XCTAssertEqual(cache.imageCachedType(forKey: key), .memory)
+        XCTAssertEqual(cache.imageCachedType(forKey: key, forcedExtension: "jpg"), .memory)
+        
+        cache.clearMemoryCache()
+        XCTAssertEqual(cache.imageCachedType(forKey: key), .none)
+        XCTAssertEqual(cache.imageCachedType(forKey: key, forcedExtension: "jpg"), .disk)
+    }
+    
+    func testPossibleCacheFileURLIfOnDiskNotCached() {
+        let url = URL(string: "https://example.com/photo")!
+        let resource = LivePhotoResource(downloadURL: url)
+        
+        let fileURL = cache.possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            referenceFileType: .heic
+        )
+            
+        // Not cached
+        XCTAssertNil(fileURL)
+    }
+    
+    func testPossibleCacheFileURLIfOnDiskCachedWithWrongFileType() async throws {
+        let url = URL(string: "https://example.com/photo")!
+        let resource = LivePhotoResource(downloadURL: url, fileType: .heic)
+        
+        // Cache without a file type extension
+        try await cache.storeToDisk(
+            testImageData,
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier
+        )
+        
+        let fileURL = cache.possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            referenceFileType: .heic
+        )
+            
+        // Not cached
+        XCTAssertNil(fileURL)
+    }
+    
+    func testPossibleCacheFileURLIfOnDiskCachedWithExplicitFileType() async throws {
+        let url = URL(string: "https://example.com/photo")!
+        let resource = LivePhotoResource(downloadURL: url, fileType: .heic)
+        
+        // Cache without a file type extension
+        try await cache.storeToDisk(
+            testImageData,
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: "heic"
+        )
+        
+        let fileURL = cache.possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            referenceFileType: .heic
+        )
+
+        let result = try XCTUnwrap(fileURL)
+        XCTAssertTrue(result.absoluteString.hasSuffix(".heic"))
+    }
+    
+    func testPossibleCacheFileURLIfOnDiskCachedGuessingFileTypeNotHit() async throws {
+        let url = URL(string: "https://example.com/photo")!
+        let resource = LivePhotoResource(downloadURL: url, fileType: .heic)
+
+        let fileURL = cache.possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            referenceFileType: .other("")
+        )
+
+        XCTAssertNil(fileURL)
+    }
+    
+    func testPossibleCacheFileURLIfOnDiskCachedGuessingFileType() async throws {
+        let url = URL(string: "https://example.com/photo")!
+        let resource = LivePhotoResource(downloadURL: url, fileType: .heic)
+        
+        // Cache without a file type extension
+        try await cache.storeToDisk(
+            testImageData,
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: "heic"
+        )
+        
+        let fileURL = cache.possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            referenceFileType: .other("")
+        )
+
+        let result = try XCTUnwrap(fileURL)
+        XCTAssertTrue(result.absoluteString.hasSuffix(".heic"))
+    }
+    
+    func testPossibleCacheFileURLIfOnDiskCachedArbitraryFileType() async throws {
+        let url = URL(string: "https://example.com/photo")!
+        let resource = LivePhotoResource(downloadURL: url, fileType: .heic)
+        
+        // Cache without a file type extension
+        try await cache.storeToDisk(
+            testImageData,
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            forcedExtension: "myExt"
+        )
+        
+        let fileURL = cache.possibleCacheFileURLIfOnDisk(
+            forKey: resource.cacheKey,
+            processorIdentifier: LivePhotoImageProcessor.default.identifier,
+            referenceFileType: .other("myExt")
+        )
+
+        let result = try XCTUnwrap(fileURL)
+        XCTAssertTrue(result.absoluteString.hasSuffix(".myExt"))
     }
     
     // MARK: - Helper

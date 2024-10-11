@@ -676,6 +676,14 @@ class ImageDownloaderTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+    
+    func testDownloadingLivePhotoResources() async throws {
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        let result = try await downloader.downloadLivePhotoResource(with: url, options: .init(.empty))
+        XCTAssertEqual(result.originalData, testImageData)
+        XCTAssertEqual(result.url, url)
+    }
 }
 
 class URLNilDataModifier: ImageDownloaderDelegate {

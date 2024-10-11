@@ -66,6 +66,14 @@ public enum KingfisherError: Error {
         ///
         /// Error Code: 1003
         case taskCancelled(task: SessionDataTask, token: SessionDataTask.CancelToken)
+
+        /// The live photo downloading task is canceled by the user.
+        ///
+        /// - Parameters:
+        ///   - source: The live phot source.
+        ///
+        /// Error Code: 1004
+        case livePhotoTaskCancelled(source: LivePhotoSource)
     }
     
     /// Represents the error reason during networking response phase.
@@ -235,6 +243,13 @@ public enum KingfisherError: Error {
         ///
         /// Error Code: 3011
         case diskStorageIsNotReady(cacheURL: URL)
+        
+        /// The resource is expected on the disk, but now missing for some reason.
+        ///
+        /// This happens when the expected resource is not on the disk for some reason during loading a live photo.
+        ///
+        /// Error Code: 3012
+        case missingLivePhotoResourceOnDisk(_ resource: LivePhotoResource)
     }
     
     /// Represents the error reason during image processing phase.
@@ -296,6 +311,44 @@ public enum KingfisherError: Error {
         ///
         /// Error Code: 5004
         case alternativeSourcesExhausted([PropagationError])
+        
+        /// The resource task is completed, but it is not the one that was expected. This typically occurs when you set
+        /// another resource on the view without canceling the current ongoing task. The previous task will fail with the
+        /// `.notCurrentLivePhotoSourceTask` error when a result is obtained, regardless of whether it was successful or
+        /// not for that task.
+        ///
+        /// This error is the live photo version of the `.notCurrentSourceTask` error (error 5002).
+        ///
+        /// - Parameters:
+        ///   - result: The `RetrieveImageResult` if the source task is completed without any issues. `nil` if an error occurred.
+        ///   - error: The `Error` if there was a problem during the image setting task. `nil` if the task completed successfully.
+        ///   - source: The original source value of the task.
+        ///
+        /// Error Code: 5005
+        case notCurrentLivePhotoSourceTask(
+            result: RetrieveLivePhotoResult?, error: (any Error)?, source: LivePhotoSource
+        )
+        
+        /// The error happens during processing the live photo.
+        ///
+        /// When creating the final `PHLivePhoto` object from the downloaded image files, the internal Photos framework
+        /// method `PHLivePhoto.request(withResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:)`
+        /// invokes its `resultHandler`. If the `info` dictionary in `resultHandler` contains `PHLivePhotoInfoErrorKey`,
+        /// Kingfisher raises this error reason to pass the information to outside.
+        ///
+        /// If the processing fails due to any error that is not a `KingfisherError` case, Kingfisher also reports it
+        /// with this reason.
+        ///
+        /// - Parameters:
+        ///   - result: The `RetrieveLivePhotoResult` if the source task is completed and a result is already existing.
+        ///   - error: The `NSError` if `PHLivePhotoInfoErrorKey` is contained in the `resultHandler` info dictionary.
+        ///   - source: The original source value of the task.
+        ///
+        /// - Note: It is possible that both `result` and `error` are non-nil value. Check the
+        /// ``RetrieveLivePhotoResult/info`` property for the raw values that are from the Photos framework.
+        ///
+        /// Error Code: 5006
+        case livePhotoResultError(result: RetrieveLivePhotoResult?, error: (any Error)?, source: LivePhotoSource)
     }
 
     // MARK: Member Cases
@@ -445,6 +498,8 @@ extension KingfisherError.RequestErrorReason {
             return "The request contains an invalid or empty URL. Request: \(request)."
         case .taskCancelled(let task, let token):
             return "The session task was cancelled. Task: \(task), cancel token: \(token)."
+        case .livePhotoTaskCancelled(let source):
+            return "The live photo download task was cancelled. Source: \(source)"
         }
     }
     
@@ -453,6 +508,7 @@ extension KingfisherError.RequestErrorReason {
         case .emptyRequest: return 1001
         case .invalidURL: return 1002
         case .taskCancelled: return 1003
+        case .livePhotoTaskCancelled: return 1004
         }
     }
 }
@@ -521,6 +577,9 @@ extension KingfisherError.CacheErrorReason {
         case .diskStorageIsNotReady(let cacheURL):
             return "The disk storage is not ready to use yet at URL: '\(cacheURL)'. " +
                 "This is usually caused by extremely lack of disk space. Ask users to free up some space and restart the app."
+        case .missingLivePhotoResourceOnDisk(let resource):
+            return "The live photo resource '\(resource)' is missing in the cache. Usually a re-download" +
+            " can fix this issue."
         }
     }
     
@@ -537,6 +596,7 @@ extension KingfisherError.CacheErrorReason {
         case .cannotCreateCacheFile: return 3009
         case .cannotSetCacheFileAttribute: return 3010
         case .diskStorageIsNotReady: return 3011
+        case .missingLivePhotoResourceOnDisk: return 3012
         }
     }
 }
@@ -575,6 +635,19 @@ extension KingfisherError.ImageSettingErrorReason {
             return "Image data provider fails to provide data. Provider: \(provider), error: \(error)"
         case .alternativeSourcesExhausted(let errors):
             return "Image setting from alternative sources failed: \(errors)"
+        case .notCurrentLivePhotoSourceTask(let result, let error, let source):
+            if let result = result {
+                return "Retrieving live photo resource succeeded, but this source is " +
+                "not the one currently expected. Result: \(result). Resource: \(source)."
+            } else if let error = error {
+                return "Retrieving live photo resource failed, and this resource is " +
+                "not the one currently expected. Error: \(error). Resource: \(source)."
+            } else {
+                return nil
+            }
+        case .livePhotoResultError(let result, let error, let source):
+            return "An error occurred while processing live photo. Source: \(source). " +
+                   "Result: \(String(describing: result)). Error: \(String(describing: error))"
         }
     }
     
@@ -584,6 +657,8 @@ extension KingfisherError.ImageSettingErrorReason {
         case .notCurrentSourceTask: return 5002
         case .dataProviderError: return 5003
         case .alternativeSourcesExhausted: return 5004
+        case .notCurrentLivePhotoSourceTask: return 5005
+        case .livePhotoResultError: return 5006
         }
     }
 }

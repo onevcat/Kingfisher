@@ -66,6 +66,10 @@
 		D12E0C571C47F23500AC98AD /* KingfisherTestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4C1C47F23500AC98AD /* KingfisherTestHelper.swift */; };
 		D12E0C581C47F23500AC98AD /* UIButtonExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */; };
 		D12EB83C24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */; };
+		D12F67602CAC2DBF00AB63AB /* ImageDownloader+LivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */; };
+		D12F67622CAC32BF00AB63AB /* KingfisherManager+LivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */; };
+		D12F67642CAC330A00AB63AB /* LivePhotoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67632CAC330600AB63AB /* LivePhotoSource.swift */; };
+		D12F67662CB022FC00AB63AB /* PHLivePhotoView+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67652CB022EB00AB63AB /* PHLivePhotoView+Kingfisher.swift */; };
 		D13646742165A1A100A33652 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13646732165A1A100A33652 /* Result.swift */; };
 		D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */; };
 		D16FEA3A23078C63006E67D5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D16FE9F623078C63006E67D5 /* LICENSE */; };
@@ -117,6 +121,7 @@
 		D1E56445219B16330057AAE3 /* ImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E56444219B16330057AAE3 /* ImageDataProvider.swift */; };
 		D1ED2D401AD2D09F00CFC3EB /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */; };
 		D1F1F6FF24625EC600910725 /* RetryStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F1F6FE24625EC600910725 /* RetryStrategyTests.swift */; };
+		D1F66CC12CB2CF2E004959F3 /* LivePhotoSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F66CC02CB2CF2D004959F3 /* LivePhotoSourceTests.swift */; };
 		D8FCF6A821C5A0E500F9ABC0 /* RedirectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FCF6A721C5A0E500F9ABC0 /* RedirectHandler.swift */; };
 		D9638BA61C7DC71F0046523D /* ImagePrefetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */; };
 		E9E3ED8B2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E3ED8A2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift */; };
@@ -213,6 +218,10 @@
 		D12E0C4D1C47F23500AC98AD /* KingfisherTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KingfisherTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		D12E0C4E1C47F23500AC98AD /* UIButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButtonExtensionTests.swift; sourceTree = "<group>"; };
 		D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSTextAttachment+Kingfisher.swift"; sourceTree = "<group>"; };
+		D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageDownloader+LivePhoto.swift"; sourceTree = "<group>"; };
+		D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KingfisherManager+LivePhoto.swift"; sourceTree = "<group>"; };
+		D12F67632CAC330600AB63AB /* LivePhotoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePhotoSource.swift; sourceTree = "<group>"; };
+		D12F67652CB022EB00AB63AB /* PHLivePhotoView+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHLivePhotoView+Kingfisher.swift"; sourceTree = "<group>"; };
 		D1356CEA2B273AEC009554C8 /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		D13646732165A1A100A33652 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageDataProvider.swift; sourceTree = "<group>"; };
@@ -293,6 +302,7 @@
 		D1ED2D351AD2D09F00CFC3EB /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1ED2D3F1AD2D09F00CFC3EB /* KingfisherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KingfisherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1F1F6FE24625EC600910725 /* RetryStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategyTests.swift; sourceTree = "<group>"; };
+		D1F66CC02CB2CF2D004959F3 /* LivePhotoSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePhotoSourceTests.swift; sourceTree = "<group>"; };
 		D1F7607523097532000C5269 /* ImageBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageBinder.swift; sourceTree = "<group>"; };
 		D1F7607623097532000C5269 /* KFImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KFImage.swift; sourceTree = "<group>"; };
 		D8FCF6A721C5A0E500F9ABC0 /* RedirectHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedirectHandler.swift; sourceTree = "<group>"; };
@@ -361,6 +371,7 @@
 				D12AB69D215D2BB50013BA68 /* RequestModifier.swift */,
 				D8FCF6A721C5A0E500F9ABC0 /* RedirectHandler.swift */,
 				D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */,
+				D12F675F2CAC2DB700AB63AB /* ImageDownloader+LivePhoto.swift */,
 				4BD821612189FC0C0084CC21 /* SessionDelegate.swift */,
 				4BD821662189FD330084CC21 /* SessionDataTask.swift */,
 				4B8E2916216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift */,
@@ -393,6 +404,7 @@
 		D12AB6AB215D2BB50013BA68 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D12F67652CB022EB00AB63AB /* PHLivePhotoView+Kingfisher.swift */,
 				D12EB83B24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift */,
 				D12AB6AC215D2BB50013BA68 /* ImageView+Kingfisher.swift */,
 				D12AB6AD215D2BB50013BA68 /* NSButton+Kingfisher.swift */,
@@ -412,6 +424,7 @@
 				D1132C9625919F69003E528D /* KFOptionsSetter.swift */,
 				D12AB6B2215D2BB50013BA68 /* KingfisherError.swift */,
 				D12AB6B3215D2BB50013BA68 /* KingfisherManager.swift */,
+				D12F67612CAC32B800AB63AB /* KingfisherManager+LivePhoto.swift */,
 				D12AB6B4215D2BB50013BA68 /* KingfisherOptionsInfo.swift */,
 			);
 			path = General;
@@ -480,6 +493,7 @@
 				4BCFF7A9219932390055AAC4 /* DiskStorageTests.swift */,
 				D1E564402199C21E0057AAE3 /* StorageExpirationTests.swift */,
 				D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */,
+				D1F66CC02CB2CF2D004959F3 /* LivePhotoSourceTests.swift */,
 				D1BFED94222ACC6B009330C8 /* ImageProcessorTests.swift */,
 				4BA3BF1D228BCDD100909201 /* DataReceivingSideEffectTests.swift */,
 				D1F1F6FE24625EC600910725 /* RetryStrategyTests.swift */,
@@ -653,6 +667,7 @@
 			isa = PBXGroup;
 			children = (
 				D1A1CC99219FAB4B00263AD8 /* Source.swift */,
+				D12F67632CAC330600AB63AB /* LivePhotoSource.swift */,
 				D12AB69E215D2BB50013BA68 /* Resource.swift */,
 				D1E56444219B16330057AAE3 /* ImageDataProvider.swift */,
 				D16CC3D524E02E9500F1A515 /* AVAssetImageDataProvider.swift */,
@@ -826,11 +841,13 @@
 				D16CC3D624E02E9500F1A515 /* AVAssetImageDataProvider.swift in Sources */,
 				D1839845216E333E003927D3 /* Delegate.swift in Sources */,
 				D12AB6D8215D2BB50013BA68 /* ImageTransition.swift in Sources */,
+				D12F67642CAC330A00AB63AB /* LivePhotoSource.swift in Sources */,
 				D1A37BE8215D365A009B39B7 /* ExtensionHelpers.swift in Sources */,
 				C9286407228584EB00257182 /* ImageProgressive.swift in Sources */,
 				D12AB6DC215D2BB50013BA68 /* ImageProcessor.swift in Sources */,
 				D12AB6D4215D2BB50013BA68 /* Image.swift in Sources */,
 				D1AEB09425890DE7008556DF /* ImageBinder.swift in Sources */,
+				D12F67622CAC32BF00AB63AB /* KingfisherManager+LivePhoto.swift in Sources */,
 				4B8E2917216F3F7F0095FAD1 /* ImageDownloaderDelegate.swift in Sources */,
 				E9E3ED8B2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift in Sources */,
 				D1132C9725919F69003E528D /* KFOptionsSetter.swift in Sources */,
@@ -857,6 +874,7 @@
 				388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */,
 				D12AB6F4215D2BB50013BA68 /* ImageView+Kingfisher.swift in Sources */,
 				D12AB6FC215D2BB50013BA68 /* UIButton+Kingfisher.swift in Sources */,
+				D12F67602CAC2DBF00AB63AB /* ImageDownloader+LivePhoto.swift in Sources */,
 				D12AB6E8215D2BB50013BA68 /* GIFAnimatedImage.swift in Sources */,
 				22FDCE0E2700078B0044D11E /* CPListItem+Kingfisher.swift in Sources */,
 				D13646742165A1A100A33652 /* Result.swift in Sources */,
@@ -874,6 +892,7 @@
 				D12AB724215D2BB50013BA68 /* Box.swift in Sources */,
 				4B8E291C216F40AA0095FAD1 /* AuthenticationChallengeResponsable.swift in Sources */,
 				3ADE9AF92A73CD69009A86CA /* String+SHA256.swift in Sources */,
+				D12F67662CB022FC00AB63AB /* PHLivePhotoView+Kingfisher.swift in Sources */,
 				D12AB710215D2BB50013BA68 /* KingfisherOptionsInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -905,6 +924,7 @@
 				D16FEA5023078C63006E67D5 /* NSString+Nocilla.m in Sources */,
 				D16FEA4E23078C63006E67D5 /* LSRegexMatcher.m in Sources */,
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
+				D1F66CC12CB2CF2E004959F3 /* LivePhotoSourceTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				D16FEA4023078C63006E67D5 /* LSHTTPClientHook.m in Sources */,
 				D16FEA3F23078C63006E67D5 /* LSHTTPRequestDiff.m in Sources */,

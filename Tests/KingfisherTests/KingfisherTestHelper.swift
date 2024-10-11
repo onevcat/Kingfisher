@@ -72,6 +72,9 @@ let testImageString =
 var testImage = KFCrossPlatformImage(data: testImageData)!
 let testImageData = Data(base64Encoded: testImageString)!
 
+let partitalHEICData = Data(base64Encoded: "AAAALGZ0eXBoZWljAAAAAG1pZjFNaUhCTWlIRU1pUHI=")!
+let partitalMOVData = Data(base64Encoded: "AAAAFGZ0eXBxdCAgAAAAAHF0ICAAAAAId2lkZQAgJto=")!
+
 let testImagePNGData = testImage.kf.pngRepresentation()!
 let testImageJEPGData = testImage.kf.jpegRepresentation(compressionQuality: 1.0)!
 let testImageGIFData = Data(fileName: "dancing-banana.gif")
@@ -83,6 +86,11 @@ let testKeys = [
     "http://onevcat.com/content/images/2014/May/200.jpg",
     "http://onevcat.com/content/images/2014/May/200.jpg?fads#kj1asf"
 ]
+
+enum LivePhotoURL {
+    static let mov = URL(string: "https://example.com/sample.mov")!
+    static let heic = URL(string: "https://example.com/sample.heic")!
+}
 
 let testURLs = testKeys.map { URL(string: $0)! }
 

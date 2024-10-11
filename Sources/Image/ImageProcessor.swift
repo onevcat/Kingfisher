@@ -818,6 +818,25 @@ public struct DownsamplingImageProcessor: ImageProcessor {
     }
 }
 
+// This is an internal processor to provide the same interface for Live Photos.
+// It is not intended to be open and used from external.
+struct LivePhotoImageProcessor: ImageProcessor {
+    
+    public static let `default` = LivePhotoImageProcessor()
+    private init() { }
+    
+    public let identifier = "com.onevcat.Kingfisher.LivePhotoImageProcessor"
+    
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        switch item {
+        case .image(let image):
+            return image
+        case .data:
+            return KFCrossPlatformImage()
+        }
+    }
+}
+
 infix operator |>: AdditionPrecedence
 
 /// Concatenates two `ImageProcessor`s to create a new one, in which the `left` and `right` are combined in order to 
