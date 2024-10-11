@@ -2,4 +2,5 @@ version: 1
 builder:
   configs:
     - documentation_targets: [Kingfisher]
+      platform: ios
       custom_documentation_parameters: [--include-extended-types]
