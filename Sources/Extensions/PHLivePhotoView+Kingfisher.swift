@@ -145,7 +145,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
     ///
     /// - Parameters:
     ///   - source: The ``LivePhotoSource`` object defining the live photo resource.
-    ///   - options: An options set to define image setting behaviors. See `KingfisherOptionsInfo` for more.
+    ///   - options: An options set to define image setting behaviors. See ``KingfisherOptionsInfo`` for more.
     ///   - completionHandler: Called when the image setting process finishes.
     /// - Returns: A task represents the image downloading.
     ///            The return value will be `nil` if the image is set with a empty source.

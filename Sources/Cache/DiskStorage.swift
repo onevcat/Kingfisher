@@ -284,9 +284,11 @@ public enum DiskStorage {
         }
 
         /// Determines whether there is valid cached data under a given key.
-        ///
-        /// - Parameter key: The cache key of the value.
-        /// - Returns: `true` if there is valid data under the key; otherwise, `false`.
+        /// 
+        /// - Parameters:
+        ///   - key: The cache key of the value.
+        ///   - forcedExtension: The file extension, if exists.
+        /// - Returns: `true` if there is valid data under the key and file extension; otherwise, `false`.
         ///
         /// > This method does not actually load the data from disk, so it is faster than directly loading the cached
         /// value by checking the nullability of the ``DiskStorage/Backend/value(forKey:extendingExpiration:)`` method.
@@ -299,6 +301,7 @@ public enum DiskStorage {
         /// - Parameters:
         ///   - key: The cache key of the value.
         ///   - referenceDate: A reference date to check whether the cache is still valid.
+        ///   - forcedExtension: The file extension, if exists.
         ///
         /// - Returns: `true` if there is valid data under the key; otherwise, `false`.
         ///
@@ -321,7 +324,9 @@ public enum DiskStorage {
         }
 
         /// Removes a value from a specified key.
-        /// - Parameter key: The cache key of the value.
+        /// - Parameters:
+        ///   - key: The cache key of the value.
+        ///   - forcedExtension: The file extension, if exists.
         /// - Throws: An error during the removal of the value.
         public func remove(forKey key: String, forcedExtension: String? = nil) throws {
             let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
@@ -344,15 +349,18 @@ public enum DiskStorage {
                 try prepareDirectory()
             }
         }
-
+        
         /// The URL of the cached file with a given computed `key`.
-        ///
-        /// - Parameter key: The final computed key used when caching the image. Please note that usually this is not
+        /// - Parameters:
+        ///   - key: The final computed key used when caching the image. Please note that usually this is not
         /// the ``Source/cacheKey`` of an image ``Source``. It is the computed key with the processor identifier
         /// considered.
+        ///   - forcedExtension: The file extension, if exists.
+        /// - Returns: The expected file URL on the disk based on the `key` and the `forcedExtension`.
         ///
-        /// This method does not guarantee that an image is already cached at the returned URL. It just provides the URL 
-        /// where the image should be if it exists in the disk storage, with the given key.
+        /// This method does not guarantee that an image is already cached at the returned URL. It just provides the URL
+        /// where the image should be if it exists in the disk storage, with the given key and file extension.
+        ///
         public func cacheFileURL(forKey key: String, forcedExtension: String? = nil) -> URL {
             let fileName = cacheFileName(forKey: key, forcedExtension: forcedExtension)
             return directoryURL.appendingPathComponent(fileName, isDirectory: false)

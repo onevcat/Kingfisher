@@ -1,4 +1,4 @@
-# Kingfisher
+# ``Kingfisher``
 
 @Metadata {
     @PageImage(
@@ -40,8 +40,7 @@ downloading again.
 ### Loading Images in Simple Way
 
 - ``KingfisherCompatible``
-- ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-2srsv``
-- ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-3ft7a``
+- ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-8qfkr``
 - ``KingfisherManager``
 - ``Source``
 
@@ -74,6 +73,11 @@ downloading again.
 
 - ``AnimatedImageView``
 - ``GIFAnimatedImage``
+
+### Live Photo
+
+- <doc:Topic_LivePhoto>
+- ``KingfisherWrapper/setImage(with:options:completionHandler:)-1to8a``
 
 ### SwiftUI
 
