@@ -1,4 +1,4 @@
-# ``Kingfisher``
+# Kingfisher
 
 @Metadata {
     @PageImage(
