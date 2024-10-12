@@ -55,7 +55,7 @@ struct MyCacheSerializer: CacheSerializer {
 }
 ```
 
-Then pass it to the ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-3ft7a`` methods:
+Then pass it to the ``KingfisherWrapper/setImage(with:placeholder:options:completionHandler:)-9h820`` methods:
 
 ```swift
 let serializer = MyCacheSerializer()

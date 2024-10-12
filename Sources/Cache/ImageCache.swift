@@ -667,7 +667,7 @@ open class ImageCache: @unchecked Sendable {
     ///   as a result. Otherwise, a ``KingfisherError`` result with detailed failure reason will be sent.
     ///
     /// > This method is marked as `open` for compatibility purposes only. Do not override this method. Instead,
-    /// override the version ``ImageCache/retrieveImage(forKey:options:callbackQueue:completionHandler:)-1m1bb`` that 
+    /// override the version ``ImageCache/retrieveImageInDiskCache(forKey:options:callbackQueue:completionHandler:)``
     /// accepts a ``KingfisherParsedOptionsInfo`` value.
     open func retrieveImage(
         forKey key: String,
@@ -938,7 +938,7 @@ open class ImageCache: @unchecked Sendable {
     ///
     /// > The return value does not contain information about the kind of storage the cache matches from.
     /// > To obtain information about the cache type according to ``CacheType``, use
-    ///  ``ImageCache/imageCachedType(forKey:processorIdentifier:)`` instead.
+    ///  ``ImageCache/imageCachedType(forKey:processorIdentifier:forcedExtension:)`` instead.
     public func isCached(
         forKey key: String,
         processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
@@ -1009,7 +1009,7 @@ open class ImageCache: @unchecked Sendable {
     /// > This method does not guarantee that there is an image already cached in the returned path. It simply provides
     /// > the path where the image should be if it exists in the disk storage.
     /// >
-    /// > You could use the ``ImageCache/isCached(forKey:processorIdentifier:)`` method to check whether the image is
+    /// > You could use the ``ImageCache/isCached(forKey:processorIdentifier:forcedExtension:)`` method to check whether the image is
     /// cached under that key on disk if necessary.
     open func cachePath(
         forKey key: String,
@@ -1083,6 +1083,7 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The identifier of the processor being used for caching. If you are using a processor for the
     ///   image, pass the identifier of the processor to this parameter.
+    ///   - forcedExtension: The file extension, if exists.
     ///   - serializer: The ``CacheSerializer`` used to convert the `image` and `original` to the data that will be
     ///   stored to disk. By default, the ``DefaultCacheSerializer/default`` will be used.
     ///   - toDisk: Whether this image should be cached to disk or not. If `false`, the image is only cached in memory.
@@ -1138,6 +1139,7 @@ open class ImageCache: @unchecked Sendable {
     ///   - key: The key used for caching the image.
     ///   - identifier: The identifier of the processor being used for caching. If you are using a processor for the
     ///   image, pass the identifier of the processor to this parameter.
+    ///   - forcedExtension: The file extension, if exists.
     ///   - fromMemory: Whether this image should be removed from memory storage or not. If `false`, the image won't be
     ///   removed from the memory storage. The default is `true`.
     ///   - fromDisk: Whether this image should be removed from the disk storage or not. If `false`, the image won't be
@@ -1196,7 +1198,7 @@ open class ImageCache: @unchecked Sendable {
     /// - Throws: An error of type ``KingfisherError``, if any error happens inside Kingfisher framework.
     ///
     /// > This method is marked as `open` for compatibility purposes only. Do not override this method. Instead,
-    /// override the version ``ImageCache/retrieveImage(forKey:options:callbackQueue:completionHandler:)-1m1bb`` that
+    /// override the version ``ImageCache/retrieveImage(forKey:options:callbackQueue:completionHandler:)-1jjo3`` that
     /// accepts a ``KingfisherParsedOptionsInfo`` value.
     open func retrieveImage(
         forKey key: String,

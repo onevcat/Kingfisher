@@ -41,7 +41,6 @@ public struct LivePhotoResourceDownloadingResult: Sendable {
     /// Creates an `ImageDownloadResult` object.
     ///
     /// - Parameters:
-    ///   - image: The image of the download result.
     ///   - url: The URL from which the image was downloaded.
     ///   - originalData: The binary data of the image.
     public init(originalData: Data, url: URL? = nil) {

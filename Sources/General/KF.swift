@@ -344,7 +344,8 @@ extension KF.Builder {
     #endif
 
     /// Sets a placeholder image which is used while retrieving the image.
-    /// - Parameter placeholder: An image to show while retrieving the image from its source.
+    /// - Parameters:
+    ///   - image: An image to show while retrieving the image from its source.
     /// - Returns: A ``KF/Builder`` with changes applied.
     public func placeholder(_ image: KFCrossPlatformImage?) -> Self {
         self.placeholder = image

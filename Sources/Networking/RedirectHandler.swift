@@ -73,7 +73,7 @@ public struct AnyRedirectHandler: ImageDownloadRedirectHandler {
     
     /// Creates a value of ``ImageDownloadRedirectHandler`` that executes the `modify` block.
     ///
-    /// - Parameter modify: The block that modifies the request when a request modification task is triggered.
+    /// - Parameter handle: The block that modifies the request when a request modification task is triggered.
     public init(handle: @escaping @Sendable (SessionDataTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void) {
         block = handle
     }

@@ -65,8 +65,8 @@ class AsyncModifier: AsyncImageDownloadRequestModifier {
 ```
 
 Similarly, use the ``KingfisherOptionsInfoItem/requestModifier(_:)`` to apply this modifier. In such scenarios, the
-``KingfisherWrapper/setImage(with:placeholder:options:progressBlock:completionHandler:)-2uid3`` or
-``ImageDownloader/downloadImage(with:options:completionHandler:)-5x6sa`` method will no longer return a ``DownloadTask``
+``KingfisherWrapper/setImage(with:placeholder:options:progressBlock:completionHandler:)-8lmr3`` or
+``ImageDownloader/downloadImage(with:options:completionHandler:)-2ztyq`` method will no longer return a ``DownloadTask``
 directly, as the download task isn't initiated instantly. To reference the task, monitor the
 ``AsyncImageDownloadRequestModifier/onDownloadTaskStarted`` callback.
 

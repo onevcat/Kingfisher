@@ -137,10 +137,11 @@ public enum DiskStorage {
         ///
         /// - Parameters:
         ///   - value: The value to be stored.
-        ///   - key: The key to which the `value` will be stored. If there is already a value under the key,
-        ///   the old value will be overwritten by the new `value`.
+        ///   - key: The key to which the `value` will be stored. If there is already a value under the key, the old
+        ///          value will be overwritten by the new `value`.
         ///   - expiration: The expiration policy used by this storage action.
         ///   - writeOptions: Data writing options used for the new files.
+        ///   - forcedExtension: The file extension, if exists.
         /// - Throws: An error during converting the value to a data format or during writing it to disk.
         public func store(
             value: T,
@@ -214,6 +215,7 @@ public enum DiskStorage {
         /// Retrieves a value from the storage.
         /// - Parameters:
         ///   - key: The cache key of the value.
+        ///   - forcedExtension: The file extension, if exists.
         ///   - extendingExpiration: The expiration policy used by this retrieval action.
         /// - Throws: An error during converting the data to a value or during the operation of disk files.
         /// - Returns: The value under `key` if it is valid and found in the storage; otherwise, `nil`.
@@ -291,7 +293,8 @@ public enum DiskStorage {
         /// - Returns: `true` if there is valid data under the key and file extension; otherwise, `false`.
         ///
         /// > This method does not actually load the data from disk, so it is faster than directly loading the cached
-        /// value by checking the nullability of the ``DiskStorage/Backend/value(forKey:extendingExpiration:)`` method.
+        /// value by checking the nullability of the
+        /// ``DiskStorage/Backend/value(forKey:forcedExtension:extendingExpiration:)`` method.
         public func isCached(forKey key: String, forcedExtension: String? = nil) -> Bool {
             return isCached(forKey: key, referenceDate: Date(), forcedExtension: forcedExtension)
         }
@@ -306,8 +309,8 @@ public enum DiskStorage {
         /// - Returns: `true` if there is valid data under the key; otherwise, `false`.
         ///
         /// If you pass `Date()` as the `referenceDate`, this method is identical to
-        /// ``DiskStorage/Backend/isCached(forKey:)``. Use the `referenceDate` to determine whether the cache is still
-        /// valid for a future date.
+        /// ``DiskStorage/Backend/isCached(forKey:forcedExtension:)``. Use the `referenceDate` to determine whether the
+        /// cache is still valid for a future date.
         public func isCached(forKey key: String, referenceDate: Date, forcedExtension: String? = nil) -> Bool {
             do {
                 let result = try value(
