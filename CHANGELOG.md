@@ -2,6 +2,17 @@
 
 -----
 
+## [8.1.0 - Live Photo](https://github.com/onevcat/Kingfisher/releases/tag/8.1.0) (2024-10-13)
+
+#### Add
+* Live Photo support. Now you can use the `kf` extension on `PHLivePhotoView` to load a live photo from network. Check [its documentation](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/kingfisherwrapper/setimage(with:options:completionhandler:)-1to8a) for more information. [#2302](https://github.com/onevcat/Kingfisher/pull/2302) @onevcat
+* A set of new APIs (new resource types, optional parameters for existing methods and error types, etc) for Live Photo support. [#2302](https://github.com/onevcat/Kingfisher/pull/2302) @onevcat
+
+#### Fix
+* Necessary `@MainActor` annotations for `ImageTransition.custom` member. [#2300](https://github.com/onevcat/Kingfisher/pull/2300) @mlight3
+
+---
+
 ## [8.0.3 - Animated Image Hitting](https://github.com/onevcat/Kingfisher/releases/tag/8.0.3) (2024-09-21)
 
 #### Fix
