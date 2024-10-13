@@ -2,4 +2,3 @@ version: 1
 builder:
   configs:
     - documentation_targets: [Kingfisher]
-      platform: ios
