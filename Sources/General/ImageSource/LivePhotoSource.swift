@@ -195,10 +195,10 @@ extension LivePhotoResource.FileType {
 extension Resource {
     var guessedFileType: LivePhotoResource.FileType {
         let pathExtension = downloadURL.pathExtension.lowercased()
-        return switch pathExtension {
-        case "mov": .mov
-        case "heic": .heic
-        default: .other(pathExtension)
+        switch pathExtension {
+        case "mov": return .mov
+        case "heic": return .heic
+        default: return .other(pathExtension)
         }
     }
 }
