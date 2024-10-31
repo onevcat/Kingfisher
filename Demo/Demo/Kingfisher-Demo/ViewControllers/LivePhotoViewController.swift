@@ -52,7 +52,19 @@ class LivePhotoViewController: UIViewController {
             "https://github.com/onevcat/Kingfisher-TestImages/raw/refs/heads/master/LivePhotos/live_photo_sample.HEIC",
             "https://github.com/onevcat/Kingfisher-TestImages/raw/refs/heads/master/LivePhotos/live_photo_sample.MOV"
         ].compactMap(URL.init)
-        livePhotoView.kf.setImage(with: urls, completionHandler: { result in
+        
+        let source = LivePhotoSource([
+            .init(
+                downloadURL: .init(string: "https://wx-love-img.afunapp.com/ff43cec0e1b1bd63f700d5065290338b")!,
+                fileType: .mov
+            ),
+            .init(
+                downloadURL: .init(string: "https://wx-love-img.afunapp.com/7a478877eb27b7531a97c2c1dc1d21fe")!,
+                fileType: .other("png")
+            )
+        ])
+        
+        livePhotoView.kf.setImage(with: source, completionHandler: { result in
             switch result {
             case .success(let r):
                 print("Live Photo done. \(r.loadingInfo.cacheType)")
