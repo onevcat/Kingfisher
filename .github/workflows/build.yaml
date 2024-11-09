@@ -21,6 +21,7 @@ jobs:
         xcode: [
           '15.2',
           '15.3',
+          '16.0',
         ]
     steps:
       - uses: actions/checkout@v4
