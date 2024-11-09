@@ -1,5 +1,9 @@
 name: build
 
+defaults:
+  run:
+    shell: bash -leo pipefail {0}
+
 on: [push, pull_request]
 
 concurrency:
@@ -26,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
-        run: rbenv init & bundle install
+        run: bundle install
       - name: Build framework
         env:
           DESTINATION: platform=${{ matrix.destination }}
