@@ -1,5 +1,9 @@
 name: test
 
+defaults:
+  run:
+    shell: bash -leo pipefail {0}
+
 on: [push, pull_request]
 
 concurrency:
@@ -20,7 +24,7 @@ jobs:
         ]
         xcode: [
           '15.4',
-          '16.0',
+          '16.1',
         ]
     steps:
       - uses: actions/checkout@v4
