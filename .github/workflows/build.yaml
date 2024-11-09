@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
-        run: bundle install
+        run: rbenv init & bundle install
       - name: Build framework
         env:
           DESTINATION: platform=${{ matrix.destination }}
