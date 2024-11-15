@@ -263,7 +263,8 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
-        sessionTask.onTaskDone.call((result, sessionTask.callbacks))
+        let callbacks = sessionTask.removeAllCallbacks()
+        sessionTask.onTaskDone.call((result, callbacks))
         remove(sessionTask)
     }
 }
