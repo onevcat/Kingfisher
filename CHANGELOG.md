@@ -2,6 +2,13 @@
 
 -----
 
+## [8.1.1 - Clean Completion](https://github.com/onevcat/Kingfisher/releases/tag/8.1.1) (2024-11-20)
+
+#### Fix
+* Resolved an issue where the completion handler could be called multiple times under certain circumstances, potentially leading to crashes if the download task is cancelled. [#2319](https://github.com/onevcat/Kingfisher/pull/2319) @onevcat
+
+---
+
 ## [8.1.0 - Live Photo](https://github.com/onevcat/Kingfisher/releases/tag/8.1.0) (2024-10-13)
 
 #### Add
