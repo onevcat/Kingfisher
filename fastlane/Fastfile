@@ -7,9 +7,9 @@ platform :ios do
   desc "Runs all the tests"
   lane :tests do
     test(destination: "platform=macOS")
-    test(destination: "platform=iOS Simulator,name=iPhone 15")
+    test(destination: "platform=iOS Simulator,name=iPhone 15,OS=17.5")
     test(destination: "platform=tvOS Simulator,name=Apple TV")
-    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 9 (41mm)")
+    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 9 (41mm),OS=10.5")
   end
     
   lane :test_ci do
