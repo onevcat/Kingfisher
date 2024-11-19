@@ -18,9 +18,9 @@ jobs:
       matrix:
         destination: [
           'macOS', 
-          'iOS Simulator,name=iPhone 15', 
-          'tvOS Simulator,name=Apple TV', 
-          'watchOS Simulator,name=Apple Watch Series 9 (41mm)'
+          'iOS Simulator,name=iPhone 15,OS=17.5', 
+          'tvOS Simulator,name=Apple TV,OS=17.5', 
+          'watchOS Simulator,name=Apple Watch Series 9 (41mm),OS=10.5'
         ]
         xcode: [
           '15.2',
