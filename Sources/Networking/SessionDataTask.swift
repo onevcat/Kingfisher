@@ -101,10 +101,13 @@ public class SessionDataTask: @unchecked Sendable {
         return nil
     }
     
-    func removeAllCallbacks() -> Void {
+    @discardableResult
+    func removeAllCallbacks() -> [TaskCallback] {
         lock.lock()
         defer { lock.unlock() }
+        let callbacks = callbacksStore.values
         callbacksStore.removeAll()
+        return Array(callbacks)
     }
 
     func resume() {
