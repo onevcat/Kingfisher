@@ -40,8 +40,13 @@ public class SessionDataTask: @unchecked Sendable {
         let options: KingfisherParsedOptionsInfo
     }
 
+    private var _mutableData: Data
     /// The downloaded raw data of the current task.
-    public private(set) var mutableData: Data
+    public var mutableData: Data {
+        lock.lock()
+        defer { lock.unlock() }
+        return _mutableData
+    }
 
     // This is a copy of `task.originalRequest?.url`. It is for obtaining race-safe behavior for a pitfall on iOS 13.
     // Ref: https://github.com/onevcat/Kingfisher/issues/1511
@@ -80,7 +85,7 @@ public class SessionDataTask: @unchecked Sendable {
     init(task: URLSessionDataTask) {
         self.task = task
         self.originalURL = task.originalRequest?.url
-        mutableData = Data()
+        _mutableData = Data()
     }
 
     func addCallback(_ callback: TaskCallback) -> CancelToken {
@@ -130,6 +135,8 @@ public class SessionDataTask: @unchecked Sendable {
     }
 
     func didReceiveData(_ data: Data) {
-        mutableData.append(data)
+        lock.lock()
+        defer { lock.unlock() }
+        _mutableData.append(data)
     }
 }
