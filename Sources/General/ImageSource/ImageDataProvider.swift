@@ -25,6 +25,7 @@
 //  THE SOFTWARE.
 
 import Foundation
+import ImageIO
 
 /// Represents a data provider to provide image data to Kingfisher when setting with
 /// ``Source/provider(_:)`` source. Compared to ``Source/network(_:)`` member, it gives a chance
@@ -188,5 +189,85 @@ public struct RawImageDataProvider: ImageDataProvider {
 
     public func data(handler: @escaping (Result<Data, any Error>) -> Void) {
         handler(.success(data))
+    }
+}
+
+/// A data provider that creates a thumbnail from a URL using Core Graphics.
+public struct ThumbnailImageDataProvider: ImageDataProvider {
+    
+    public enum ThumbnailImageDataProviderError: Error {
+        case invalidImageSource
+        case invalidThumbnail
+        case writeDataError
+        case finalizeDataError
+    }
+    
+    /// The URL from which to load the image
+    public let url: URL
+    
+    /// The maximum size of the thumbnail in pixels
+    public var maxPixelSize: CGFloat
+    
+    /// Whether to always create a thumbnail even if the image is smaller than maxPixelSize
+    public var alwaysCreateThumbnail: Bool
+    
+    /// The cache key for this provider
+    public var cacheKey: String
+    
+    /// Creates a new thumbnail data provider
+    /// - Parameters:
+    ///   - url: The URL from which to load the image
+    ///   - maxPixelSize: The maximum size of the thumbnail in pixels
+    ///   - alwaysCreateThumbnail: Whether to always create a thumbnail even if the image is smaller than maxPixelSize
+    public init(
+        url: URL,
+        maxPixelSize: CGFloat,
+        alwaysCreateThumbnail: Bool = true,
+        cacheKey: String? = nil
+    ) {
+        self.url = url
+        self.maxPixelSize = maxPixelSize
+        self.alwaysCreateThumbnail = alwaysCreateThumbnail
+        self.cacheKey = cacheKey ?? "\(url.absoluteString)_thumb_\(maxPixelSize)_\(alwaysCreateThumbnail)"
+    }
+    
+    public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                guard let url = URL(string: url.absoluteString) else {
+                    throw KingfisherError.imageSettingError(reason: .emptySource)
+                        
+                }
+                
+                guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+                    throw ThumbnailImageDataProviderError.invalidImageSource
+                }
+                
+                let options = [
+                    kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+                    kCGImageSourceCreateThumbnailFromImageAlways: alwaysCreateThumbnail
+                ]
+                
+                guard let thumbnailRef = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
+                    throw ThumbnailImageDataProviderError.invalidThumbnail
+                }
+                
+                let data = NSMutableData()
+                guard let destination = CGImageDestinationCreateWithData(
+                    data, CGImageSourceGetType(imageSource)!, 1, nil
+                ) else {
+                    throw ThumbnailImageDataProviderError.writeDataError
+                }
+                
+                CGImageDestinationAddImage(destination, thumbnailRef, nil)
+                if CGImageDestinationFinalize(destination) {
+                    handler(.success(data as Data))
+                } else {
+                    throw ThumbnailImageDataProviderError.finalizeDataError
+                }
+            } catch {
+                handler(.failure(error))
+            }
+        }
     }
 }
