@@ -43,7 +43,10 @@ class ImageCacheTests: XCTestCase {
     override func tearDown() {
         clearCaches([cache])
         cache = nil
-        observer = nil
+        if let o = observer {
+            NotificationCenter.default.removeObserver(o)
+            observer = nil
+        }
 
         super.tearDown()
     }
@@ -351,28 +354,27 @@ class ImageCacheTests: XCTestCase {
 
         cache.diskStorage.config.expiration = .seconds(0.01)
 
+        let selfCache = self.cache
         cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
             self.observer = NotificationCenter.default.addObserver(
                 forName: .KingfisherDidCleanDiskCache,
                 object: self.cache,
-                queue: .main) {
-                    noti in
-                    let receivedCache = noti.object as? ImageCache
-                    XCTAssertNotNil(receivedCache)
-                    XCTAssertTrue(receivedCache === self.cache)
-                
-                    guard let hashes = noti.userInfo?[KingfisherDiskCacheCleanedHashKey] as? [String] else {
-                        XCTFail("Notification should contains Strings in key 'KingfisherDiskCacheCleanedHashKey'")
-                        exp.fulfill()
-                        return
-                    }
-                
-                    XCTAssertEqual(hashes.count, 1)
-                    XCTAssertEqual(hashes.first!, self.cache.hash(forKey: key))
-                    guard let o = self.observer else { return }
-                    NotificationCenter.default.removeObserver(o)
+                queue: .main
+            ) { noti in
+                let receivedCache = noti.object as? ImageCache
+                XCTAssertNotNil(receivedCache)
+                XCTAssertTrue(receivedCache === selfCache)
+            
+                guard let hashes = noti.userInfo?[KingfisherDiskCacheCleanedHashKey] as? [String] else {
+                    XCTFail("Notification should contains Strings in key 'KingfisherDiskCacheCleanedHashKey'")
                     exp.fulfill()
+                    return
                 }
+            
+                XCTAssertEqual(hashes.count, 1)
+                XCTAssertEqual(hashes.first!, selfCache!.hash(forKey: key))
+                exp.fulfill()
+            }
 
             delay(1) {
                 self.cache.cleanExpiredDiskCache()
