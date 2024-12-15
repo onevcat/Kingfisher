@@ -93,12 +93,14 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
     
     var size: CGSize {
+        // Prefer to use pixel size of the image
         let pixelSize = base.representations.reduce(.zero) { size, rep in
             CGSize(
                 width: max(size.width, CGFloat(rep.pixelsWide)),
                 height: max(size.height, CGFloat(rep.pixelsHigh))
             )
         }
+        // If the pixel size is zero (SVG or PDF, for example), use the size of the image.
         return pixelSize == .zero ? base.representations.reduce(.zero) { size, rep in
             CGSize(
                 width: max(size.width, CGFloat(rep.size.width)),
