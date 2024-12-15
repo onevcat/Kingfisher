@@ -93,11 +93,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
     
     var size: CGSize {
-        return base.representations.reduce(.zero) { size, rep in
-            let width = max(size.width, CGFloat(rep.pixelsWide))
-            let height = max(size.height, CGFloat(rep.pixelsHigh))
-            return CGSize(width: width, height: height)
+        let pixelSize = base.representations.reduce(.zero) { size, rep in
+            CGSize(
+                width: max(size.width, CGFloat(rep.pixelsWide)),
+                height: max(size.height, CGFloat(rep.pixelsHigh))
+            )
         }
+        return pixelSize == .zero ? base.representations.reduce(.zero) { size, rep in
+            CGSize(
+                width: max(size.width, CGFloat(rep.size.width)),
+                height: max(size.height, CGFloat(rep.size.height))
+            )
+        } : pixelSize
     }
     #else
     var cgImage: CGImage? { return base.cgImage }
