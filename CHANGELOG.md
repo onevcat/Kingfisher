@@ -2,6 +2,13 @@
 
 -----
 
+## [8.1.3 - Failing Size](https://github.com/onevcat/Kingfisher/releases/tag/8.1.3) (2024-12-17)
+
+#### Fix
+* An issue where redrawing a vector image on macOS without specifying the image size could cause an assertion failure. @onevcat @maoxiaoke [#2334](https://github.com/onevcat/Kingfisher/issues/2334)
+
+---
+
 ## [8.1.2 - Data Racing](https://github.com/onevcat/Kingfisher/releases/tag/8.1.2) (2024-12-07)
 
 #### Fix
