@@ -82,7 +82,7 @@ public final class DownloadTask: @unchecked Sendable {
     /// When you call ``DownloadTask/cancel()``, this ``SessionDataTask`` and its cancellation token will be passed
     /// along. You can use them to identify the cancelled task.
     public private(set) var sessionTask: SessionDataTask? {
-        get { propertyQueue.sync { _sessionTask! } }
+        get { propertyQueue.sync { _sessionTask } }
         set { propertyQueue.sync { _sessionTask = newValue } }
     }
 
