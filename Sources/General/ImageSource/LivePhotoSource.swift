@@ -63,10 +63,11 @@ public struct LivePhotoSource: Sendable {
 
 /// A resource type representing a component of a Live Photo, which consists of a still image and a video.
 ///
-/// ``LivePhotoResource`` encapsulates the necessary information to download and cache a single components of a Live
-/// Photo: it is either a still image (typically in HEIC format) or a video (typically in MOV format). Multiple
-/// ``LivePhotoResource`` values (typically two, one for the image and one for the video) can form a ``LivePhotoSource``,
-/// which is expected by Kingfisher in its live photo loading high level APIs.
+/// ``LivePhotoResource`` encapsulates the necessary information to download and cache a single component of a Live
+/// Photo: it is either a still image (typically in HEIF format with "heic" filename extension) or a video (typically in
+/// QuickTime format with "mov" filename extension). Multiple ``LivePhotoResource`` values (typically two, one for the
+/// image and one for the video) can form a ``LivePhotoSource``, which is expected by Kingfisher in its live photo
+/// loading high level APIs.
 ///
 /// The Live Photo data can be retrieved by `PHAssetResourceManager.requestData` method and uploaded to your server.
 /// You should not modify the metadata or other information of the data, otherwise, it is possible that the
@@ -167,8 +168,8 @@ extension LivePhotoResource.FileType {
     }
     
     static let fytpChunk: [UInt8] = [0x66, 0x74, 0x79, 0x70] // fytp (file type box)
-    static let heicChunk: [UInt8] = [0x68, 0x65, 0x69, 0x63] // .heic
-    static let qtChunk: [UInt8] = [0x71, 0x74, 0x20, 0x20] // quicktime, .mov
+    static let heicChunk: [UInt8] = [0x68, 0x65, 0x69, 0x63] // heic (HEIF)
+    static let qtChunk: [UInt8] = [0x71, 0x74, 0x20, 0x20] // qt (QuickTime), .mov
     
     static func guessedFileExtension(from data: Data) -> String? {
         
