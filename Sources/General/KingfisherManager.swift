@@ -602,7 +602,7 @@ public class KingfisherManager: @unchecked Sendable {
                 @Sendable func checkResultImageAndCallback(_ inputImage: KFCrossPlatformImage) {
                     var image = inputImage
                     if image.kf.imageFrameCount != nil && image.kf.imageFrameCount != 1, options.imageCreatingOptions != image.kf.imageCreatingOptions, let data = image.kf.animatedImageData {
-                        // Always recreate animated image representation since it is possible to be loaded in different options.
+                        // Recreate animated image representation when loaded in different options.
                         // https://github.com/onevcat/Kingfisher/issues/1923
                         image = options.processor.process(item: .data(data), options: options) ?? .init()
                     }
