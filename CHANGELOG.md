@@ -2,6 +2,13 @@
 
 -----
 
+## [8.1.4 - Avoid Recreation](https://github.com/onevcat/Kingfisher/releases/tag/8.1.4) (2025-01-29)
+
+#### Fix
+* Avoid recreating the animated image if the options are the same. This improves the reloading performance. @yeatse [#2347](https://github.com/onevcat/Kingfisher/pull/2347)
+
+---
+
 ## [8.1.3 - Failing Size](https://github.com/onevcat/Kingfisher/releases/tag/8.1.3) (2024-12-17)
 
 #### Fix
