@@ -81,7 +81,10 @@ platform :ios do
       name: release_log[:title],
       tag_name: target_version,
       description: release_log[:text],
-      upload_assets: ["build/Kingfisher-#{target_version}.zip"]
+      upload_assets: [
+        "build/Kingfisher-#{target_version}.zip",
+        "build/Kingfisher-iOS-#{target_version}.zip"
+      ]
     )
     
     pod_push
