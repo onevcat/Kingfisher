@@ -1,4 +1,3 @@
-
 fastlane_version "1.37.0"
 
 default_platform :ios
@@ -137,6 +136,29 @@ platform :ios do
     zip(
       path: "build/#{target_version}",
       output_path: "build/#{target_version}.zip",
+      symlinks: true
+    )
+
+    # Create iOS only xcframework
+    ios_frameworks = {}
+    ["iphoneos", "iphonesimulator"].each do |sdk|
+      archive_path = "build/Kingfisher-#{sdk}.xcarchive"
+      ios_frameworks["#{archive_path}/Products/Library/Frameworks/Kingfisher.framework"] = { 
+        dsyms: "#{Dir.pwd}/../#{archive_path}/dSYMs/Kingfisher.framework.dSYM" 
+      }
+    end
+
+    ios_target_version = "Kingfisher-iOS-#{options[:version]}"
+    create_xcframework(
+      frameworks_with_dsyms: ios_frameworks,
+      output: "build/#{ios_target_version}/Kingfisher.xcframework"
+    )
+
+    Actions.sh("codesign --timestamp -v --sign 'Apple Distribution: Wei Wang (A4YJ9MRZ66)' ../build/#{ios_target_version}/Kingfisher.xcframework")
+
+    zip(
+      path: "build/#{ios_target_version}",
+      output_path: "build/#{ios_target_version}.zip",
       symlinks: true
     )
   end
