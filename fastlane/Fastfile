@@ -1,4 +1,3 @@
-
 fastlane_version "1.37.0"
 
 default_platform :ios
@@ -82,63 +81,86 @@ platform :ios do
       name: release_log[:title],
       tag_name: target_version,
       description: release_log[:text],
-      upload_assets: ["build/Kingfisher-#{target_version}.zip"]
+      upload_assets: [
+        "build/Kingfisher-#{target_version}.zip",
+        "build/Kingfisher-iOS-#{target_version}.zip"
+      ]
     )
     
     pod_push
   end
 
   lane :xcframework do |options|
-    target_version = "Kingfisher-#{options[:version]}"
-    
+    version = options[:version]
     swift_version = options[:swift_version] || "5.0"
     xcode_version = options[:xcode_version] || "16.2"
 
     xcodes(version: xcode_version, select_for_current_build_only: true)
-
     FileUtils.rm_rf '../build'
-    
-    frameworks = {}
-    
-    ["macosx",
-     "iphoneos", 
-     "iphonesimulator", 
-     "appletvos", 
-     "appletvsimulator", 
-     "watchos", 
-     "watchsimulator",
-     "xros",
-     "xrsimulator"
-    ].each do |sdk|
-      archive_path = "build/Kingfisher-#{sdk}.xcarchive"
-      xcodebuild(
-        archive: true,
-        archive_path: archive_path,
-        scheme: "Kingfisher",
-        sdk: sdk,
-        build_settings: {
-          "BUILD_LIBRARY_FOR_DISTRIBUTION" => "YES",
-          "SKIP_INSTALL" => "NO",
-          "SWIFT_VERSION" => swift_version
-        }
-      )
 
-      dSYM_path = "#{Dir.pwd}/../#{archive_path}/dSYMs/Kingfisher.framework.dSYM"
-      frameworks["#{archive_path}/Products/Library/Frameworks/Kingfisher.framework"] = { dsyms: dSYM_path }
+    # Define platform to SDKs mapping
+    PLATFORM_SDKS = {
+      all: [
+        "macosx",
+        "iphoneos", "iphonesimulator",
+        "appletvos", "appletvsimulator",
+        "watchos", "watchsimulator",
+        "xros", "xrsimulator"
+      ],
+      ios: ["iphoneos", "iphonesimulator"]
+    }
+
+    def create_archives(sdks, swift_version)
+      frameworks = {}
+      sdks.each do |sdk|
+        archive_path = "build/Kingfisher-#{sdk}.xcarchive"
+        xcodebuild(
+          archive: true,
+          archive_path: archive_path,
+          scheme: "Kingfisher",
+          sdk: sdk,
+          build_settings: {
+            "BUILD_LIBRARY_FOR_DISTRIBUTION" => "YES",
+            "SKIP_INSTALL" => "NO",
+            "SWIFT_VERSION" => swift_version
+          }
+        )
+
+        framework_path = "#{archive_path}/Products/Library/Frameworks/Kingfisher.framework"
+        dsym_path = "#{Dir.pwd}/../#{archive_path}/dSYMs/Kingfisher.framework.dSYM"
+        frameworks[framework_path] = { dsyms: dsym_path }
+      end
+      frameworks
     end
 
-    create_xcframework(
-      frameworks_with_dsyms: frameworks, 
-      output: "build/#{target_version}/Kingfisher.xcframework"
-    )
+    def create_and_package_xcframework(frameworks, output_name, version)
+      output_base_name = if output_name.empty?
+        "Kingfisher-#{version}"
+      else
+        "Kingfisher-#{output_name}-#{version}"
+      end
+      
+      create_xcframework(
+        frameworks_with_dsyms: frameworks,
+        output: "build/#{output_base_name}/Kingfisher.xcframework"
+      )
 
-    Actions.sh("codesign --timestamp -v --sign 'Apple Distribution: Wei Wang (A4YJ9MRZ66)' ../build/#{target_version}/Kingfisher.xcframework")
+      Actions.sh("codesign --timestamp -v --sign 'Apple Distribution: Wei Wang (A4YJ9MRZ66)' ../build/#{output_base_name}/Kingfisher.xcframework")
 
-    zip(
-      path: "build/#{target_version}",
-      output_path: "build/#{target_version}.zip",
-      symlinks: true
-    )
+      zip(
+        path: "build/#{output_base_name}",
+        output_path: "build/#{output_base_name}.zip",
+        symlinks: true
+      )
+    end
+
+    # Create full platform xcframework
+    all_frameworks = create_archives(PLATFORM_SDKS[:all], swift_version)
+    create_and_package_xcframework(all_frameworks, "", version)
+
+    # Create iOS only xcframework
+    ios_frameworks = create_archives(PLATFORM_SDKS[:ios], swift_version)
+    create_and_package_xcframework(ios_frameworks, "iOS", version)
   end
 
   before_all do |lane|
