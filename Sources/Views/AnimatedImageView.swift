@@ -249,7 +249,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     deinit {
         if isDisplayLinkInitialized {
             // We have to assume this UIView deinit is called on main thread.
-            MainActor.assumeIsolated { displayLink.invalidate() }
+            MainActor.runUnsafely { displayLink.invalidate() }
         }
     }
     
