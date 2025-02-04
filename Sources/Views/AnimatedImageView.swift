@@ -672,7 +672,7 @@ extension AnimatedImageView {
              framePreloadCount count: Int,
              repeatCount: RepeatCount,
              preloadQueue: DispatchQueue) {
-            self.frameSource = source
+            self.frameSource = source.copy()
             self.contentMode = mode
             self.size = size
             self.imageSize = imageSize

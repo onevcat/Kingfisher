@@ -148,6 +148,13 @@ public protocol ImageFrameSource {
     
     /// Retrieves the duration at a specific index. If the index is invalid, implementors should return `0.0`.
     func duration(at index: Int) -> TimeInterval
+    
+    /// Creates a copy of the current `ImageFrameSource` instance.
+    ///
+    /// - Returns: A new instance of the same type as `self` with identical properties.
+    ///            If not overridden by conforming types, this default implementation
+    ///            simply returns `self`, which may not create an actual copy if the type is a reference type.
+    func copy() -> Self
 }
 
 public extension ImageFrameSource {
@@ -155,6 +162,10 @@ public extension ImageFrameSource {
     /// Retrieves the frame at a specific index. If the index is invalid, implementors should return `nil`.
     func frame(at index: Int) -> CGImage? {
         return frame(at: index, maxSize: nil)
+    }
+    
+    func copy() -> Self {
+        return self
     }
 }
 
@@ -182,6 +193,13 @@ struct CGImageFrameSource: ImageFrameSource {
 
     func duration(at index: Int) -> TimeInterval {
         return GIFAnimatedImage.getFrameDuration(from: imageSource, at: index)
+    }
+    
+    func copy() -> Self {
+        guard let data = data, let source = CGImageSourceCreateWithData(data as CFData, options as CFDictionary?) else {
+            return self
+        }
+        return CGImageFrameSource(data: data, imageSource: source, options: options)
     }
 }
 
