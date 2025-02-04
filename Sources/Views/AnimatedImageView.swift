@@ -759,7 +759,7 @@ extension AnimatedImageView {
                     return KFCrossPlatformImage(cgImage: cgImage)
                 }
                 
-                return KFCrossPlatformImage(cgImage: unretainedImage)
+                return KFCrossPlatformImage(cgImage: unretainedImage).preparingForDisplay()
             } else {
                 return KFCrossPlatformImage(cgImage: cgImage)
             }
