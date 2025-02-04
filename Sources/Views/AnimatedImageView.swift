@@ -654,7 +654,7 @@ extension AnimatedImageView {
              framePreloadCount count: Int,
              repeatCount: RepeatCount,
              preloadQueue: DispatchQueue) {
-            self.frameSource = source
+            self.frameSource = source.copy()
             self.contentMode = mode
             self.size = size
             self.imageSize = imageSize
@@ -741,7 +741,7 @@ extension AnimatedImageView {
                     return KFCrossPlatformImage(cgImage: cgImage)
                 }
                 
-                return KFCrossPlatformImage(cgImage: unretainedImage)
+                return KFCrossPlatformImage(cgImage: unretainedImage).preparingForDisplay()
             } else {
                 return KFCrossPlatformImage(cgImage: cgImage)
             }
