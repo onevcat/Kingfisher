@@ -1352,25 +1352,6 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testAnimatedImageShouldNotRecreateWithSameOptions() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        let data = testImageGIFData
-        stub(url, data: data)
-        let p = SimpleProcessor()
-        manager.retrieveImage(with: url, options: [.processor(p), .onlyLoadFirstFrame]) { result in
-            XCTAssertTrue(p.processed)
-            XCTAssertTrue(result.value!.image.creatingOptions!.onlyFirstFrame)
-            p.processed = false
-            self.manager.retrieveImage(with: url, options: [.processor(p), .onlyLoadFirstFrame]) { result in
-                XCTAssertFalse(p.processed)
-                XCTAssertTrue(result.value!.image.creatingOptions!.onlyFirstFrame)
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-    
     func testMissingResourceOfLivePhotoFound() {
         let resource = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         let source = LivePhotoSource(resources: [resource])

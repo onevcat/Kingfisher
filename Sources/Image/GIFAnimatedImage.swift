@@ -28,7 +28,7 @@ import Foundation
 import ImageIO
 
 /// Represents a set of image creation options used in Kingfisher.
-public struct ImageCreatingOptions: Equatable {
+public struct ImageCreatingOptions {
 
     /// The target scale of the image that needs to be created.
     public var scale: CGFloat
