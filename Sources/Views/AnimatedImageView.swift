@@ -248,9 +248,8 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     
     deinit {
         if isDisplayLinkInitialized {
-            assumeIsolatedDuringDeinit { view in
-                view.displayLink.invalidate()
-            }
+            // We have to assume this UIView deinit is called on main thread.
+            MainActor.runUnsafely { displayLink.invalidate() }
         }
     }
     
@@ -471,23 +470,6 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             #else
             layer.setNeedsDisplay()
             #endif
-        }
-    }
-}
-
-extension AnimatedImageView {
-    // An actor's deinit is nonisolated so we need to cleanup state that needs to exist past this instance's deinit. 
-    // Currently there is no way to accomplish this that wouldn't be an error in Swift 6, hopefully that changes at
-    // some point. This evolution proposal attempts to address this problem:
-    // https://github.com/swiftlang/swift-evolution/blob/main/proposals/0371-isolated-synchronous-deinit.md
-    // Method influenced from
-    // https://github.com/swiftlang/swift/blob/47803aad3b0d326e5231ad0d7936d40264f56edd/stdlib/public/Concurrency/ExecutorAssertions.swift#L351
-    @_unavailableFromAsync(message: "express the closure as an explicit function declared on the specified 'actor' instead")
-    private nonisolated func assumeIsolatedDuringDeinit<T>(_ operation: @MainActor (AnimatedImageView) throws -> T) rethrows -> T {
-        typealias Isolated = (AnimatedImageView) throws -> T
-        // To do the unsafe cast, we have to pretend it's @escaping.
-        return try withoutActuallyEscaping(operation) { (_ fn: @escaping Isolated) throws -> T in
-            return try fn(self)
         }
     }
 }
