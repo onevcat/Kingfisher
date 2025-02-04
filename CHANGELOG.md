@@ -2,6 +2,18 @@
 
 -----
 
+## [8.2.0 - Snake Year](https://github.com/onevcat/Kingfisher/releases/tag/8.2.0) (2025-02-05)
+
+#### Add
+* Add a `ThumbnailImageDataProvider` to get a thumbnail image from a URL directly with `CGImageSourceCreateThumbnailAtIndex`. @onevcat [#2349](https://github.com/onevcat/Kingfisher/pull/2349)
+* Add iOS-only XCFramework distribution for smaller package size when only iOS platform is needed. You can download it from the Release page. @onevcat [#2350](https://github.com/onevcat/Kingfisher/pull/2350)
+
+#### Fix
+* Fix a performance issue when referring the same animated image source, which was introduced in 8.1.4. Special thanks to @pNre for the report and @yeatse for the quick fix. [#2357](https://github.com/onevcat/Kingfisher/pull/2357)
+* Fix a compiling issue when building under certain CI environments that triggers a Swift compiler error. @onevcat [#2353](https://github.com/onevcat/Kingfisher/pull/2353)
+
+---
+
 ## [8.1.4 - Avoid Recreation](https://github.com/onevcat/Kingfisher/releases/tag/8.1.4) (2025-01-29)
 
 #### Fix
