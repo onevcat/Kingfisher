@@ -58,6 +58,7 @@ struct MainView: View {
                 NavigationLink(destination: Issue1998View()) { Text("#1998") }
                 NavigationLink(destination: Issue2035View()) { Text("#2035") }
                 NavigationLink(destination: Issue2295View()) { Text("#2295") }
+                NavigationLink(destination: Issue2352View()) { Text("#2352") }
             }
         }.navigationBarTitle(Text("SwiftUI Sample"))
     }
