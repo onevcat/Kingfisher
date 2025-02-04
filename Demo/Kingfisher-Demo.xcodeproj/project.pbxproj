@@ -56,6 +56,7 @@
 		D12EB84024DDB9E100329EE1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D12EB83F24DDB9E000329EE1 /* LaunchScreen.storyboard */; };
 		D12F67682CB10AE000AB63AB /* LivePhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12F67672CB10AD900AB63AB /* LivePhotoViewController.swift */; };
 		D1679A461C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D16AAF282D5247CF00E7F764 /* Issue2352View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16AAF272D5247CA00E7F764 /* Issue2352View.swift */; };
 		D16CC3D824E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */; };
 		D198F41E25EDC11500C53E0D /* LazyVStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */; };
 		D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */; };
@@ -210,6 +211,7 @@
 		D16218A4238EAA67004A1C6C /* Kingfisher-Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Kingfisher-Demo.entitlements"; sourceTree = "<group>"; };
 		D1679A391C4E78B20020FD12 /* Kingfisher-watchOS-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-watchOS-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1679A451C4E78B20020FD12 /* Kingfisher-watchOS-Demo Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Kingfisher-watchOS-Demo Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D16AAF272D5247CA00E7F764 /* Issue2352View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue2352View.swift; sourceTree = "<group>"; };
 		D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetImageGeneratorViewController.swift; sourceTree = "<group>"; };
 		D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyVStackDemo.swift; sourceTree = "<group>"; };
 		D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizingAnimationDemo.swift; sourceTree = "<group>"; };
@@ -316,6 +318,7 @@
 				D1EDF7412C9F01200017FFA5 /* Issue2295View.swift */,
 				4B6E1B6C28DB4E8C0023B54B /* Issue1998View.swift */,
 				4BC0ED4929A6EE78003E9CD1 /* Issue2035View.swift */,
+				D16AAF272D5247CA00E7F764 /* Issue2352View.swift */,
 			);
 			path = Regression;
 			sourceTree = "<group>";
@@ -734,6 +737,7 @@
 				078DCB512BCFEFB40008114E /* PHPickerResultViewController.swift in Sources */,
 				D1EDF7422C9F01270017FFA5 /* Issue2295View.swift in Sources */,
 				D1A1CCA321A1879600263AD8 /* MainViewController.swift in Sources */,
+				D16AAF282D5247CF00E7F764 /* Issue2352View.swift in Sources */,
 				D12F67682CB10AE000AB63AB /* LivePhotoViewController.swift in Sources */,
 				4BC0ED4A29A6EE78003E9CD1 /* Issue2035View.swift in Sources */,
 				D1F06F3721AAEACF000B1C38 /* GIFViewController.swift in Sources */,
