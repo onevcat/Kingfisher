@@ -82,8 +82,8 @@ platform :ios do
       tag_name: target_version,
       description: release_log[:text],
       upload_assets: [
-        "build/Kingfisher-#{target_version}.zip",
-        "build/Kingfisher-iOS-#{target_version}.zip"
+        "build/Kingfisher-#{target_version}.xcframework.zip",
+        "build/Kingfisher-iOS-#{target_version}.xcframework.zip"
       ]
     )
     
@@ -149,7 +149,7 @@ platform :ios do
 
       zip(
         path: "build/#{output_base_name}",
-        output_path: "build/#{output_base_name}.zip",
+        output_path: "build/#{output_base_name}.xcframework.zip",
         symlinks: true
       )
     end
