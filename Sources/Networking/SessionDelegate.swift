@@ -31,7 +31,6 @@ import Foundation
 /// It also behaves like a task manager for downloading.
 @objc(KFSessionDelegate) // Fix for ObjC header name conflicting. https://github.com/onevcat/Kingfisher/issues/1530
 open class SessionDelegate: NSObject, @unchecked Sendable {
-
     typealias SessionChallengeFunc = (
         URLSession,
         URLAuthenticationChallenge
@@ -43,7 +42,12 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
         URLAuthenticationChallenge
     )
 
-    private var tasks: [URL: SessionDataTask] = [:]
+    struct TaskIndex: Hashable {
+        let url: URL
+        let taskIdentifier: Int
+    }
+
+    private var tasks: [TaskIndex: SessionDataTask] = [:]
     private let lock = NSLock()
 
     let onValidStatusCode = Delegate<Int, Bool>()
@@ -79,8 +83,14 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
                 self.remove(task)
             }
         }
+
         let token = task.addCallback(callback)
-        tasks[url] = task
+
+        guard let taskUrl = task.originalURL else {
+            fatalError("this should not happen as all tasks should have a URL right?")
+        }
+
+        tasks[.init(url: taskUrl, taskIdentifier: task.task.taskIdentifier)] = task
         return DownloadTask(sessionTask: task, cancelToken: token)
     }
 
@@ -106,7 +116,12 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
             return
         }
         task.removeAllCallbacks()
-        tasks[url] = nil
+
+        guard let taskUrl = task.originalURL else {
+            fatalError("this should not happen as all tasks should have a URL right?")
+        }
+
+        tasks[.init(url: taskUrl, taskIdentifier: task.task.taskIdentifier)] = nil
     }
 
     private func task(for task: URLSessionTask) -> SessionDataTask? {
@@ -116,19 +131,27 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
         guard let url = task.originalRequest?.url else {
             return nil
         }
-        guard let sessionTask = tasks[url] else {
+
+        guard let sessionTask = tasks[.init(url: task.originalRequest!.url!, taskIdentifier: task.taskIdentifier)] else {
             return nil
         }
+
         guard sessionTask.task.taskIdentifier == task.taskIdentifier else {
             return nil
         }
+
         return sessionTask
     }
 
     func task(for url: URL) -> SessionDataTask? {
         lock.lock()
         defer { lock.unlock() }
-        return tasks[url]
+
+        if let key = tasks.keys.first(where: { $0.url == url }) {
+            return tasks[key]
+        } else {
+            return nil
+        }
     }
 
     func cancelAll() {
@@ -141,15 +164,11 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
     }
 
     func cancel(url: URL) {
-        lock.lock()
-        let task = tasks[url]
-        lock.unlock()
-        task?.forceCancel()
+        task(for: url)?.forceCancel()
     }
 }
 
 extension SessionDelegate: URLSessionDataDelegate {
-
     open func urlSession(
         _ session: URLSession,
         dataTask: URLSessionDataTask,
@@ -195,7 +214,10 @@ extension SessionDelegate: URLSessionDataDelegate {
     }
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
-        guard let sessionTask = self.task(for: task) else { return }
+        guard let sessionTask = self.task(for: task) else {
+            // this will leak the continuation
+            return
+        }
 
         if let url = sessionTask.originalURL {
             let result: Result<URLResponse, KingfisherError>
@@ -219,6 +241,7 @@ extension SessionDelegate: URLSessionDataDelegate {
                 result = .failure(KingfisherError.responseError(reason: .dataModifyingFailed(task: sessionTask)))
             }
         }
+
         onCompleted(task: task, result: result)
     }
 
@@ -263,6 +286,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         guard let sessionTask = self.task(for: task) else {
             return
         }
+
         let callbacks = sessionTask.removeAllCallbacks()
         sessionTask.onTaskDone.call((result, callbacks))
         remove(sessionTask)
