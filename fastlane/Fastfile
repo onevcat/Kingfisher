@@ -82,8 +82,8 @@ platform :ios do
       tag_name: target_version,
       description: release_log[:text],
       upload_assets: [
-        "build/Kingfisher-#{target_version}.zip",
-        "build/Kingfisher-iOS-#{target_version}.zip"
+        "build/Kingfisher-#{target_version}.xcframework.zip",
+        "build/Kingfisher-iOS-#{target_version}.xcframework.zip"
       ]
     )
     
@@ -140,16 +140,18 @@ platform :ios do
         "Kingfisher-#{output_name}-#{version}"
       end
       
+      output_xcframework_path = "build/#{output_base_name}/Kingfisher.xcframework"
+
       create_xcframework(
         frameworks_with_dsyms: frameworks,
-        output: "build/#{output_base_name}/Kingfisher.xcframework"
+        output: output_xcframework_path
       )
 
       Actions.sh("codesign --timestamp -v --sign 'Apple Distribution: Wei Wang (A4YJ9MRZ66)' ../build/#{output_base_name}/Kingfisher.xcframework")
 
       zip(
-        path: "build/#{output_base_name}",
-        output_path: "build/#{output_base_name}.zip",
+        path: output_xcframework_path,
+        output_path: "build/#{output_base_name}.xcframework.zip",
         symlinks: true
       )
     end
