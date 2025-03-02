@@ -409,15 +409,6 @@ extension KF.Builder {
         options.onlyLoadFirstFrame = enabled
         return self
     }
-
-    /// Enables progressive image loading with a specified `ImageProgressive` setting to process the
-    /// progressive JPEG data and display it in a progressive way.
-    /// - Parameter progressive: The progressive settings which is used while loading.
-    /// - Returns: A ``KF/Builder`` with changes applied.
-    public func progressiveJPEG(_ progressive: ImageProgressive? = .init()) -> Self {
-        options.progressiveJPEG = progressive
-        return self
-    }
 }
 
 // MARK: - Deprecated
