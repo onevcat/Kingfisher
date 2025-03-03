@@ -68,6 +68,7 @@
 		D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BD221A1B45A00419000 /* ImageLoader.swift */; };
 		D1CE1BD421A1B45A00419000 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CE1BD221A1B45A00419000 /* ImageLoader.swift */; };
 		D1E4CF5421BACBA6004D029D /* ImageDataProviderCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */; };
+		D1E612E22D75F9AC00DACD51 /* ProgressiveJPEGDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E612E12D75F99C00DACD51 /* ProgressiveJPEGDemo.swift */; };
 		D1EDF7422C9F01270017FFA5 /* Issue2295View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1EDF7412C9F01200017FFA5 /* Issue2295View.swift */; };
 		D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */; };
 		D1F06F3521AA5938000B1C38 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12E0C911C47F91800AC98AD /* ImageCollectionViewCell.swift */; };
@@ -221,6 +222,7 @@
 		D1CE1BCF21A1AFA300419000 /* TransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionViewController.swift; sourceTree = "<group>"; };
 		D1CE1BD221A1B45A00419000 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		D1E4CF5321BACBA6004D029D /* ImageDataProviderCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderCollectionViewController.swift; sourceTree = "<group>"; };
+		D1E612E12D75F99C00DACD51 /* ProgressiveJPEGDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressiveJPEGDemo.swift; sourceTree = "<group>"; };
 		D1ED2D0B1AD2CFA600CFC3EB /* Kingfisher-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kingfisher-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1EDF7412C9F01200017FFA5 /* Issue2295View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue2295View.swift; sourceTree = "<group>"; };
 		D1F06F3221AA4292000B1C38 /* DetailImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailImageViewController.swift; sourceTree = "<group>"; };
@@ -455,6 +457,7 @@
 				D198F42125EDC4B900C53E0D /* GridDemo.swift */,
 				4B779C8426743C2800FF9C1E /* GeometryReaderDemo.swift */,
 				D1F78A632589F17200930759 /* SingleViewDemo.swift */,
+				D1E612E12D75F99C00DACD51 /* ProgressiveJPEGDemo.swift */,
 				4B120CA626B91BB70060B092 /* TransitionViewDemo.swift */,
 				D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */,
 				D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */,
@@ -721,6 +724,7 @@
 				072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */,
 				4B6E1B6D28DB4E8C0023B54B /* Issue1998View.swift in Sources */,
 				D1A1CCA721A18A3200263AD8 /* UIViewController+KingfisherOperation.swift in Sources */,
+				D1E612E22D75F9AC00DACD51 /* ProgressiveJPEGDemo.swift in Sources */,
 				4B92FE5625FF906B00473088 /* AutoSizingTableViewController.swift in Sources */,
 				D1F78A642589F17200930759 /* ListDemo.swift in Sources */,
 				D198F41E25EDC11500C53E0D /* LazyVStackDemo.swift in Sources */,
