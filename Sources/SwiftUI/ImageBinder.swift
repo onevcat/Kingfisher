@@ -89,6 +89,12 @@ extension KFImage {
                         self.updateProgress(downloaded: size, total: total)
                         context.onProgressDelegate.call((size, total))
                     },
+                    progressiveImageSetter: { image in
+                        CallbackQueueMain.currentOrAsync {
+                            self.markLoaded(sendChangeEvent: true)
+                            self.loadedImage = image
+                        }
+                    },
                     completionHandler: { [weak self] result in
 
                         guard let self else { return }

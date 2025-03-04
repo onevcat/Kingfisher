@@ -250,8 +250,9 @@ public class KingfisherManager: @unchecked Sendable {
     func retrieveImage(
         with source: Source,
         options: KingfisherParsedOptionsInfo,
-        progressBlock: DownloadProgressBlock? = nil,
+        progressBlock: DownloadProgressBlock?,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
+        progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         var info = options
@@ -262,7 +263,7 @@ public class KingfisherManager: @unchecked Sendable {
             with: source,
             options: info,
             downloadTaskUpdated: downloadTaskUpdated,
-            progressiveImageSetter: nil,
+            progressiveImageSetter: progressiveImageSetter,
             completionHandler: completionHandler)
     }
 
