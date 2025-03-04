@@ -44,7 +44,7 @@ public protocol KFOptionSetter {
 
 extension KF.Builder: KFOptionSetter { }
 
-final class KFDelegateObserver: Sendable {
+final actor KFDelegateObserver {
     static let `default` = KFDelegateObserver()
 }
 
