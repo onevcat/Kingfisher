@@ -2,6 +2,18 @@
 
 -----
 
+## [8.3.0 - Progressive Loading Improvement](https://github.com/onevcat/Kingfisher/releases/tag/8.3.0) (2025-03-04)
+
+#### Add
+* The progressive JPEG loading option is now available for SwiftUI too. You can load a progressive JPEG image with the `progressiveJPEG` modifier in `KFImage`. @onevcat @nikolaydubina @mantoljak [#2366](https://github.com/onevcat/Kingfisher/pull/2366)
+
+#### Fix
+* Solves a memory leak when using progressive JPEG loading. @onevcat @james-app @Adobels [#2368](https://github.com/onevcat/Kingfisher/pull/2368)
+* The filename and the content structure of the prebuilt xcframework zip in the Assets section of the release page have been updated. If your script depends on this file, you may need to adjust it accordingly. See more in [#2361](https://github.com/onevcat/Kingfisher/pull/2361) @olejnjak
+* A wrong `imageNotExisting` was used in KingfisherManager. Now the correct low level error is propagated to caller side. @onevcat @iAllenC @kuzomenskyi [#2336](https://github.com/onevcat/Kingfisher/pull/2336)]
+
+---
+
 ## [8.2.0 - Snake Year](https://github.com/onevcat/Kingfisher/releases/tag/8.2.0) (2025-02-05)
 
 #### Add
