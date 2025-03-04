@@ -277,12 +277,13 @@ public class KingfisherManager: @unchecked Sendable {
     {
         var options = options
         let retryStrategy = options.retryStrategy
-        
+
+        let progressiveJPEG = options.progressiveJPEG
         if let provider = ImageProgressiveProvider(options: options, refresh: { image in
             guard let setter = progressiveImageSetter else {
                 return
             }
-            guard let strategy = options.progressiveJPEG?.onImageUpdated(image) else {
+            guard let strategy = progressiveJPEG?.onImageUpdated(image) else {
                 setter(image)
                 return
             }
