@@ -649,7 +649,7 @@ public class KingfisherManager: @unchecked Sendable {
                     }
                 } onFailure: { error in
                     options.callbackQueue.execute {
-                        completionHandler(.failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key))))
+                        completionHandler(.failure(error))
                     }
                 }
             }
@@ -728,13 +728,11 @@ public class KingfisherManager: @unchecked Sendable {
                             }
                         }
                     },
-                    onFailure: { _ in
+                    onFailure: { error in
                         // This should not happen actually, since we already confirmed `originalImageCached` is `true`.
                         // Just in case...
-                        options.callbackQueue.execute {
-                            completionHandler?(
-                                .failure(KingfisherError.cacheError(reason: .imageNotExisting(key: key)))
-                            )
+                        if let completionHandler = completionHandler {
+                            options.callbackQueue.execute { completionHandler(.failure(error)) }
                         }
                     }
                 )
