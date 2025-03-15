@@ -2,6 +2,13 @@
 
 -----
 
+## [8.3.1 - Potential Cache Deadlock](https://github.com/onevcat/Kingfisher/releases/tag/8.3.1) (2025-03-15)
+
+#### Fix
+* Fix a potential deadlock in disk cache. It might happen on older devices & systems when preparing the cache file list. @onevcat @xbk713 [#2371](https://github.com/onevcat/Kingfisher/pull/2371)
+
+---
+
 ## [8.3.0 - Progressive Loading Improvement](https://github.com/onevcat/Kingfisher/releases/tag/8.3.0) (2025-03-04)
 
 #### Add
