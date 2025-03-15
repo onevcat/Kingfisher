@@ -100,17 +100,19 @@ public enum DiskStorage {
         }
 
         private func setupCacheChecking() {
-            maybeCachedCheckingQueue.async {
+            DispatchQueue.global(qos: .default).async {
                 do {
-                    self.maybeCached = Set()
-                    try self.config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path).forEach { 
-                        fileName in
-                        self.maybeCached?.insert(fileName)
+                    let allFiles = try self.config.fileManager.contentsOfDirectory(atPath: self.directoryURL.path)
+                    let maybeCached = Set(allFiles)
+                    self.maybeCachedCheckingQueue.async {
+                        self.maybeCached = maybeCached
                     }
                 } catch {
-                    // Just disable the functionality if we fail to initialize it properly. This will just revert to
-                    // the behavior which is to check file existence on disk directly.
-                    self.maybeCached = nil
+                    self.maybeCachedCheckingQueue.async {
+                        // Just disable the functionality if we fail to initialize it properly. This will just revert to
+                        // the behavior which is to check file existence on disk directly.
+                        self.maybeCached = nil
+                    }
                 }
             }
         }
