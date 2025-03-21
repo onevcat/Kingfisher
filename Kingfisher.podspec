@@ -36,6 +36,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }
   s.source_files  = ["Sources/**/*.swift"]
   s.resource_bundles = {"Kingfisher" => ["Sources/PrivacyInfo.xcprivacy"]}
+  s.pod_target_xcconfig = { 'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES' }
 
   s.requires_arc = true
   s.frameworks = "CFNetwork", "Accelerate"
