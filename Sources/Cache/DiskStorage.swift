@@ -372,22 +372,26 @@ public enum DiskStorage {
         }
         
         func cacheFileName(forKey key: String, forcedExtension: String? = nil) -> String {
-            // TODO: Bad code... Consider refactoring.
-            if config.usesHashedFileName {
-                let hashedKey = key.kf.sha256
-                if let ext = forcedExtension ?? config.pathExtension {
-                    return "\(hashedKey).\(ext)"
-                } else if config.autoExtAfterHashedFileName,
-                          let ext = forcedExtension ?? key.kf.ext {
-                    return "\(hashedKey).\(ext)"
-                }
-                return hashedKey
-            } else {
-                if let ext = forcedExtension ?? config.pathExtension {
-                    return "\(key).\(ext)"
-                }
-                return key
+            let baseName = config.usesHashedFileName ? key.kf.sha256 : key
+            let fileExtension = setFileExtension(key: key, forcedExtension: forcedExtension)
+            
+            if let fileExtension = fileExtension {
+                return "\(baseName).\(fileExtension)"
             }
+            
+            return baseName
+        }
+        
+        func setFileExtension(key: String, forcedExtension: String?) -> String? {
+            if let ext = forcedExtension ?? config.pathExtension {
+                return ext
+            }
+        
+            if config.usesHashedFileName && config.autoExtAfterHashedFileName {
+                return key.kf.ext
+            }
+        
+            return nil
         }
 
         func allFileURLs(for propertyKeys: [URLResourceKey]) throws -> [URL] {
