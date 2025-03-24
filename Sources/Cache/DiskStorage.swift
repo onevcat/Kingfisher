@@ -373,16 +373,15 @@ public enum DiskStorage {
         
         func cacheFileName(forKey key: String, forcedExtension: String? = nil) -> String {
             let baseName = config.usesHashedFileName ? key.kf.sha256 : key
-            let fileExtension = setFileExtension(key: key, forcedExtension: forcedExtension)
             
-            if let fileExtension = fileExtension {
-                return "\(baseName).\(fileExtension)"
+            if let ext = fileExtension(key: key, forcedExtension: forcedExtension) {
+                return "\(baseName).\(ext)"
             }
             
             return baseName
         }
         
-        func setFileExtension(key: String, forcedExtension: String?) -> String? {
+        func fileExtension(key: String, forcedExtension: String?) -> String? {
             if let ext = forcedExtension ?? config.pathExtension {
                 return ext
             }
