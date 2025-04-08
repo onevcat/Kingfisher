@@ -75,6 +75,11 @@ public enum MemoryStorage {
             didSet {
                 storage.totalCostLimit = config.totalCostLimit
                 storage.countLimit = config.countLimit
+                cleanTimer?.invalidate()
+                cleanTimer = .scheduledTimer(withTimeInterval: config.cleanInterval, repeats: true) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.removeExpired()
+                }
             }
         }
 
