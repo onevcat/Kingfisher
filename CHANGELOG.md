@@ -2,6 +2,15 @@
 
 -----
 
+## [8.3.2 - Tariffisher](https://github.com/onevcat/Kingfisher/releases/tag/8.3.2) (2025-04-10)
+
+#### Fix
+* Memory cache cleanning timer will now be correctly set when the cache configuration is set. [#2376](https://github.com/onevcat/Kingfisher/issues/2376) @erincolkan
+* Add `BUILD_LIBRARY_FOR_DISTRIBUTION` flag to podspec file. Now CocoaPods build can produce stabible module. [#2372](https://github.com/onevcat/Kingfisher/issues/2372) @gquattromani
+* Refactoring on cache file name method in `DiskStorage`. [#2374](https://github.com/onevcat/Kingfisher/issues/2374) @NeoSelf1
+
+---
+
 ## [8.3.1 - Potential Cache Deadlock](https://github.com/onevcat/Kingfisher/releases/tag/8.3.1) (2025-03-15)
 
 #### Fix
