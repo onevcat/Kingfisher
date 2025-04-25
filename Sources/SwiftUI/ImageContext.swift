@@ -132,7 +132,7 @@ extension KFImage.Context: Hashable {
 }
 
 #if !os(watchOS)
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, *)
 extension KFAnimatedImage {
     public typealias Context = KFImage.Context
     typealias ImageBinder = KFImage.ImageBinder
