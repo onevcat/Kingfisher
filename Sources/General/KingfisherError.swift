@@ -363,6 +363,7 @@ public enum KingfisherError: Error {
     case processorError(reason: ProcessorErrorReason)
     /// Represents the error reason that can occur during image setting in a view related class.
     case imageSettingError(reason: ImageSettingErrorReason)
+    case swiftTaskCancelled
 
     // MARK: Helper Properties & Methods
 
@@ -452,6 +453,7 @@ extension KingfisherError: LocalizedError {
         case .cacheError(let reason): return reason.errorDescription
         case .processorError(let reason): return reason.errorDescription
         case .imageSettingError(let reason): return reason.errorDescription
+        case .swiftTaskCancelled: return "The task was cancelled."
         }
     }
 }
@@ -485,6 +487,7 @@ extension KingfisherError: CustomNSError {
         case .cacheError(let reason): return reason.errorCode
         case .processorError(let reason): return reason.errorCode
         case .imageSettingError(let reason): return reason.errorCode
+        case .swiftTaskCancelled: return 3333
         }
     }
 }

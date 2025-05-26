@@ -822,17 +822,49 @@ extension KingfisherManager {
             progressiveImageSetter: nil
         )
     }
-    
+
     func retrieveImage(
         with source: Source,
         options: KingfisherParsedOptionsInfo,
         progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
         referenceTaskIdentifierChecker: (() -> Bool)? = nil
-    ) async throws -> RetrieveImageResult
-    {
+    ) async throws -> RetrieveImageResult {
+        // Check for cancellation before even starting
+        if Task.isCancelled {
+            throw KingfisherError.swiftTaskCancelled
+        }
+
+        // Create a task-local actor to safely manage the continuation state
+        actor ContinuationManager {
+            private var continuation: CheckedContinuation<RetrieveImageResult, Error>?
+
+            func setContinuation(_ cont: CheckedContinuation<RetrieveImageResult, Error>) {
+                continuation = cont
+            }
+
+            func resumeWithSuccess(_ result: RetrieveImageResult) {
+                guard let cont = continuation else { return }
+                continuation = nil
+                cont.resume(returning: result)
+            }
+
+            func resumeWithError(_ error: Error) {
+                guard let cont = continuation else { return }
+                continuation = nil
+                cont.resume(throwing: error)
+            }
+        }
+
+        let continuationManager = ContinuationManager()
         let task = CancellationDownloadTask()
+
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
+                // Store continuation in the thread-safe actor
+                Task {
+                    await continuationManager.setContinuation(continuation)
+                }
+
                 let downloadTask = retrieveImage(
                     with: source,
                     options: options,
@@ -844,11 +876,23 @@ extension KingfisherManager {
                     progressiveImageSetter: progressiveImageSetter,
                     referenceTaskIdentifierChecker: referenceTaskIdentifierChecker,
                     completionHandler: { result in
-                        continuation.resume(with: result)
+                        Task {
+                            switch result {
+                            case .success(let imageResult):
+                                await continuationManager.resumeWithSuccess(imageResult)
+                            case .failure(let error):
+                                await continuationManager.resumeWithError(error)
+                            }
+                        }
                     }
                 )
+
+                // Handle cancellation that might have occurred during setup
                 if Task.isCancelled {
                     downloadTask?.cancel()
+                    Task {
+                        await continuationManager.resumeWithError(KingfisherError.swiftTaskCancelled)
+                    }
                 } else {
                     Task {
                         await task.setTask(downloadTask)
@@ -858,6 +902,8 @@ extension KingfisherManager {
         } onCancel: {
             Task {
                 await task.task?.cancel()
+                // Ensure continuation is resumed on cancellation
+                await continuationManager.resumeWithError(KingfisherError.swiftTaskCancelled)
             }
         }
     }
