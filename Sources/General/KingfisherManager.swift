@@ -831,7 +831,7 @@ extension KingfisherManager {
     ) async throws -> RetrieveImageResult {
         // Check for cancellation before even starting
         if Task.isCancelled {
-            throw KingfisherError.swiftTaskCancelled
+            throw CancellationError()
         }
 
         // Create a task-local actor to safely manage the continuation state
@@ -891,7 +891,7 @@ extension KingfisherManager {
                 if Task.isCancelled {
                     downloadTask?.cancel()
                     Task {
-                        await continuationManager.resumeWithError(KingfisherError.swiftTaskCancelled)
+                        await continuationManager.resumeWithError(CancellationError())
                     }
                 } else {
                     Task {
@@ -903,7 +903,7 @@ extension KingfisherManager {
             Task {
                 await task.task?.cancel()
                 // Ensure continuation is resumed on cancellation
-                await continuationManager.resumeWithError(KingfisherError.swiftTaskCancelled)
+                await continuationManager.resumeWithError(CancellationError())
             }
         }
     }
