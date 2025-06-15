@@ -87,3 +87,8 @@ fastlane/README.md
 .bundle/
 vendor/
 .vscode/settings.json
+
+# Claude local settings
+.claude/settings.local.json
+.claude/CLAUDE.local.md
+.claude/*.local.*
