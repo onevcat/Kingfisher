@@ -245,7 +245,8 @@ public struct ThumbnailImageDataProvider: ImageDataProvider {
                 
                 let options = [
                     kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
-                    kCGImageSourceCreateThumbnailFromImageAlways: alwaysCreateThumbnail
+                    kCGImageSourceCreateThumbnailFromImageAlways: alwaysCreateThumbnail,
+                    kCGImageSourceCreateThumbnailWithTransform: true
                 ]
                 
                 guard let thumbnailRef = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
