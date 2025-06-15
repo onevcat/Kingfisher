@@ -830,9 +830,27 @@ extension KingfisherManager {
         referenceTaskIdentifierChecker: (() -> Bool)? = nil
     ) async throws -> RetrieveImageResult
     {
+        // Early cancellation check
+        if Task.isCancelled {
+            throw CancellationError()
+        }
+        
         let task = CancellationDownloadTask()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
+                // Use a lock to ensure continuation is only resumed once
+                let lock = NSLock()
+                var isResumed = false
+                
+                @Sendable func safeResume(with result: Result<RetrieveImageResult, KingfisherError>) {
+                    lock.lock()
+                    defer { lock.unlock() }
+                    if !isResumed {
+                        isResumed = true
+                        continuation.resume(with: result)
+                    }
+                }
+                
                 let downloadTask = retrieveImage(
                     with: source,
                     options: options,
@@ -844,11 +862,20 @@ extension KingfisherManager {
                     progressiveImageSetter: progressiveImageSetter,
                     referenceTaskIdentifierChecker: referenceTaskIdentifierChecker,
                     completionHandler: { result in
-                        continuation.resume(with: result)
+                        safeResume(with: result)
                     }
                 )
+                
+                // Check for cancellation that may have occurred during setup
                 if Task.isCancelled {
                     downloadTask?.cancel()
+                    let error: KingfisherError
+                    if let sessionTask = downloadTask?.sessionTask, let cancelToken = downloadTask?.cancelToken {
+                        error = .requestError(reason: .taskCancelled(task: sessionTask, token: cancelToken))
+                    } else {
+                        error = .requestError(reason: .asyncTaskContextCancelled)
+                    }
+                    safeResume(with: .failure(error))
                 } else {
                     Task {
                         await task.setTask(downloadTask)
