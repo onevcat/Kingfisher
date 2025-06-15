@@ -838,16 +838,26 @@ extension KingfisherManager {
         let task = CancellationDownloadTask()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
-                // Use a lock to ensure continuation is only resumed once
-                let lock = NSLock()
-                var isResumed = false
+                // Use an actor to ensure continuation is only resumed once in a Swift 6 compatible way
+                actor ContinuationState {
+                    var isResumed = false
+                    
+                    func tryResume() -> Bool {
+                        if !isResumed {
+                            isResumed = true
+                            return true
+                        }
+                        return false
+                    }
+                }
+                
+                let state = ContinuationState()
                 
                 @Sendable func safeResume(with result: Result<RetrieveImageResult, KingfisherError>) {
-                    lock.lock()
-                    defer { lock.unlock() }
-                    if !isResumed {
-                        isResumed = true
-                        continuation.resume(with: result)
+                    Task {
+                        if await state.tryResume() {
+                            continuation.resume(with: result)
+                        }
                     }
                 }
                 

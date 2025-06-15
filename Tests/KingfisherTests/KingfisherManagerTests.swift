@@ -255,6 +255,8 @@ class KingfisherManagerTests: XCTestCase {
                     // This should be a cancellation error
                     if let kfError = error as? KingfisherError, kfError.isTaskCancelled {
                         // Expected cancellation
+                    } else if error is CancellationError {
+                        // Expected cancellation
                     } else {
                         print("Task \(i) failed with unexpected error: \(error)")
                     }

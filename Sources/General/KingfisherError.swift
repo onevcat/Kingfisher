@@ -74,6 +74,8 @@ public enum KingfisherError: Error {
         ///
         /// Error Code: 1004
         case livePhotoTaskCancelled(source: LivePhotoSource)
+        
+        case asyncTaskContextCancelled
     }
     
     /// Represents the error reason during networking response phase.
@@ -500,6 +502,8 @@ extension KingfisherError.RequestErrorReason {
             return "The session task was cancelled. Task: \(task), cancel token: \(token)."
         case .livePhotoTaskCancelled(let source):
             return "The live photo download task was cancelled. Source: \(source)"
+        case .asyncTaskContextCancelled:
+            return "The async task context was cancelled. This usually happens when the task is cancelled before it starts."
         }
     }
     
@@ -509,6 +513,7 @@ extension KingfisherError.RequestErrorReason {
         case .invalidURL: return 1002
         case .taskCancelled: return 1003
         case .livePhotoTaskCancelled: return 1004
+        case .asyncTaskContextCancelled: return 1005
         }
     }
 }
