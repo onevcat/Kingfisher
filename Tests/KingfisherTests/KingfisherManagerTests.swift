@@ -230,6 +230,97 @@ class KingfisherManagerTests: XCTestCase {
         }
     }
     
+    /// Test to reproduce the Swift Task Continuation Misuse issue
+    /// This test verifies that continuations are properly resumed even under rapid cancellation scenarios
+    /// 
+    /// NOTE: Single test run may not reproduce the issue, but running this test repeatedly 
+    /// (e.g., 100 times in Xcode) will almost certainly trigger the SWIFT TASK CONTINUATION MISUSE warning.
+    /// This confirms the existence of a race condition in the async retrieveImage implementation.
+    func testRetrieveImageContinuationMisuseReproduction() async throws {
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+        
+        // Create multiple concurrent tasks that are cancelled quickly
+        // This should reproduce the continuation leak scenario
+        let taskCount = 50 // Increased to make race condition more likely
+        var tasks: [Task<Void, Never>] = []
+        
+        for i in 0..<taskCount {
+            let task = Task {
+                do {
+                    _ = try await self.manager.retrieveImage(with: url)
+                    // If we reach here without cancellation, something is wrong
+                    print("Task \(i) completed without cancellation - unexpected")
+                } catch {
+                    // This should be a cancellation error
+                    if let kfError = error as? KingfisherError, kfError.isTaskCancelled {
+                        // Expected cancellation
+                    } else {
+                        print("Task \(i) failed with unexpected error: \(error)")
+                    }
+                }
+            }
+            tasks.append(task)
+            
+            // Cancel immediately after creation to create race conditions
+            task.cancel()
+            
+            // Add a tiny delay to create more variation in timing
+            if i % 5 == 0 {
+                try await Task.sleep(nanoseconds: NSEC_PER_SEC / 1000) // 1ms
+            }
+        }
+        
+        // Wait a bit to ensure all tasks have had a chance to start and be cancelled
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10) // 100ms
+        
+        // Complete the stub to allow any pending operations to finish
+        _ = stub.go()
+        
+        // Wait for all tasks to complete
+        for task in tasks {
+            await task.value
+        }
+        
+        // If we get here without hanging, the continuation handling is working correctly
+        // The test passes if no SWIFT TASK CONTINUATION MISUSE warning is printed to console
+    }
+    
+    /// Another test that creates a more specific race condition scenario
+    /// This test checks the exact timing described in the issue
+    /// 
+    /// NOTE: Like the previous test, run this repeatedly to increase chances of reproducing the issue.
+    func testRetrieveImageRaceConditionSpecific() async throws {
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 5000) // Longer delay
+        
+        // This creates the specific race condition:
+        // 1. Task starts
+        // 2. Gets to the withCheckedThrowingContinuation
+        // 3. Cancel happens before the inner retrieveImage call completes setup
+        let task = Task {
+            do {
+                _ = try await self.manager.retrieveImage(with: url)
+                XCTFail("Task should have been cancelled")
+            } catch {
+                // Should be cancelled
+                XCTAssertTrue((error as? KingfisherError)?.isTaskCancelled == true)
+            }
+        }
+        
+        // Very short delay to let the task start but not complete
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 1000) // 1ms
+        
+        // Cancel before the network stub is triggered
+        task.cancel()
+        
+        // Now trigger the network response
+        _ = stub.go()
+        
+        // Wait for the task to complete
+        await task.value
+    }
+    
     func testSuccessCompletionHandlerRunningOnMainQueueByDefault() {
         let progressExpectation = expectation(description: "progressBlock running on main queue")
         let completionExpectation = expectation(description: "completionHandler running on main queue")
