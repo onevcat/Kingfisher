@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Documentation
+
+You can find the complete documentation for this project in the `docs/` directory. It describes the architecture, build system, development practices and more in detail the the project.
+
+There is also a minimal, LLM-friendly version of the documentation in `README-LLM.md`. You can refer to the file if you need a quick overview of the project without going through the entire documentation.
+
 ## Build and Development Commands
 
 ### Primary Build System
@@ -35,6 +41,8 @@ bundle exec fastlane release version:X.X.X
 ```
 
 ## Architecture Overview
+
+@docs/architecture.md
 
 Kingfisher is a modular image loading and caching library with clear separation of concerns:
 
@@ -86,29 +94,14 @@ Sources/
 # All platforms (preferred)
 bundle exec fastlane tests
 
-# Swift Package Manager only
-swift test
-
 # Single platform via destination
 bundle exec fastlane test destination:"platform=iOS Simulator,name=iPhone 15"
 ```
 
-## Key Files for Development
-
-### Essential Files to Understand
-1. `Sources/General/Kingfisher.swift` - Base types, protocols, and KingfisherCompatible
-2. `Sources/General/KingfisherManager.swift` - Central coordinator managing all operations
-3. `Sources/General/KingfisherOptionsInfo.swift` - Options system and configuration
-4. `Sources/Extensions/ImageView+Kingfisher.swift` - Primary UIKit integration
-5. `Sources/SwiftUI/KFImage.swift` - Primary SwiftUI integration
-
-### Configuration Files
-- `Package.swift` / `Package@swift-5.9.swift` - Swift Package Manager configuration
-- `Kingfisher.podspec` - CocoaPods specification
-- `fastlane/Fastfile` - Build automation and release process
-- `Sources/PrivacyInfo.xcprivacy` - App Store privacy compliance
-
 ## Documentation System
+
+Provides a DocC-based documentation for framework users:
+
 - **DocC integration** with comprehensive tutorials and API docs
 - **Location**: `Sources/Documentation.docc/`
 - **Online**: Swift Package Index hosted documentation
