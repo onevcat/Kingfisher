@@ -93,7 +93,7 @@ platform :ios do
   lane :xcframework do |options|
     version = options[:version]
     swift_version = options[:swift_version] || "5.0"
-    xcode_version = options[:xcode_version] || "16.2"
+    xcode_version = options[:xcode_version] || "16.4"
 
     xcodes(version: xcode_version, select_for_current_build_only: true)
     FileUtils.rm_rf '../build'
@@ -166,7 +166,7 @@ platform :ios do
   end
 
   before_all do |lane|
-    xcode_version = ENV["XCODE_VERSION"] || "16.2"
+    xcode_version = ENV["XCODE_VERSION"] || "16.4"
     xcodes(version: xcode_version, select_for_current_build_only: true)
   end
 
