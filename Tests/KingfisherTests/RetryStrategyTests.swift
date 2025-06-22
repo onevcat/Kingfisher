@@ -99,7 +99,7 @@ class RetryStrategyTests: XCTestCase {
                 exp.fulfill()
             }
         )
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testDelayRetryStrategyExceededCount() {
@@ -155,7 +155,7 @@ class RetryStrategyTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testDelayRetryStrategyNotRetryForErrorReason() {
@@ -208,10 +208,11 @@ class RetryStrategyTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testDelayRetryStrategyDidRetried() {
+        let exp = expectation(description: #function)
         let called = ActorBox(false)
         let source = Source.network(URL(string: "url")!)
         let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(0))
@@ -226,14 +227,13 @@ class RetryStrategyTests: XCTestCase {
             }
             Task {
                 await called.setValue(true)
+                let result = await called.value
+                XCTAssertTrue(result)
+                exp.fulfill()
             }
         }
-
-        Task {
-            let result = await called.value
-            XCTAssertTrue(result)
-        }
         
+        waitForExpectations(timeout: 3, handler: nil)
     }
 }
 

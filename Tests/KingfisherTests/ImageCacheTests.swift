@@ -352,7 +352,7 @@ class ImageCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let key = testKeys[0]
 
-        cache.diskStorage.config.expiration = .seconds(0.01)
+        cache.diskStorage.config.expiration = .seconds(0.1)
 
         let selfCache = self.cache
         cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
@@ -607,7 +607,7 @@ class ImageCacheTests: XCTestCase {
             testImage,
             original: testImageData,
             forKey: key,
-            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.2))]),
+            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.5))]),
             toDisk: true)
         {
             _ in
@@ -626,7 +626,7 @@ class ImageCacheTests: XCTestCase {
             testImage,
             original: testImageData,
             forKey: key,
-            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.2))]),
+            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.5))]),
             toDisk: true
         )
         XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)

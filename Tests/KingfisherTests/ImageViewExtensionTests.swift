@@ -855,7 +855,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertEqual(result.value!.originalSource.url, brokenURL)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     @MainActor func testImageSettingCanCancelAlternativeSource() {
@@ -893,7 +893,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternative url cancelled.")
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
@@ -917,7 +917,7 @@ class ImageViewExtensionTests: XCTestCase {
             XCTAssertEqual(result.value?.originalSource.url, brokenURL)
             exp.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
 }

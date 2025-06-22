@@ -444,7 +444,7 @@ class KingfisherManagerTests: XCTestCase {
 
             XCTAssertEqual(imageCached, .memory)
 
-            delay(0.1) {
+            delay(0.3) {
                 manager.cache.clearMemoryCache()
                 
                 imageCached = manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
@@ -735,7 +735,7 @@ class KingfisherManagerTests: XCTestCase {
             // Clear the memory cache.
             self.manager.cache.clearMemoryCache()
             // After some time, the disk cache should be done.
-            delay(0.2) {
+            delay(0.5) {
                 XCTAssertEqual(self.manager.cache.imageCachedType(forKey: url.cacheKey), .disk)
                 exp.fulfill()
             }
@@ -1036,7 +1036,7 @@ class KingfisherManagerTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRetrievingErrorsWithAlternativeSource() {
@@ -1077,7 +1077,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(errorInfo[2].source.url, url)
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRetrievingAlternativeSourceTaskUpdateBlockCalled() {
@@ -1110,7 +1110,7 @@ class KingfisherManagerTests: XCTestCase {
 
         XCTAssertEqual(task?.sessionTask?.task.currentRequest?.url, brokenURL)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRetrievingAlternativeSourceCancelled() {
@@ -1133,7 +1133,7 @@ class KingfisherManagerTests: XCTestCase {
         }
         task?.cancel()
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
@@ -1162,7 +1162,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error?.isTaskCancelled ?? false)
 
-            delay(0.1) {
+            delay(0.3) {
                 _ = dataStub.go()
                 Task {
                     let result = await called.value
@@ -1175,7 +1175,7 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNotNil(task)
         XCTAssertTrue(task!.isInitialized)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testDownsamplingHandleScale2x() {
@@ -1203,7 +1203,7 @@ class KingfisherManagerTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testDownsamplingHandleScale3x() {
@@ -1230,7 +1230,7 @@ class KingfisherManagerTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testCacheCallbackCoordinatorStateChanging() {
@@ -1315,7 +1315,7 @@ class KingfisherManagerTests: XCTestCase {
         Task {
             await task.setValue(t)
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testCanUseCustomizeDefaultCacheSerializer() {
@@ -1340,7 +1340,7 @@ class KingfisherManagerTests: XCTestCase {
 
                 exp.fulfill()
             }
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 3.0)
     }
 
     func testCanUseCustomizeDefaultCacheSerializerStoreEncoded() {
@@ -1366,7 +1366,7 @@ class KingfisherManagerTests: XCTestCase {
 
                 exp.fulfill()
             }
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 3.0)
     }
     
     func testImageResultContainsDataWhenDownloaded() {

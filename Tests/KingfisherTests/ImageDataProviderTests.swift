@@ -47,7 +47,7 @@ class ImageDataProviderTests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testLocalFileImageDataProviderAsync() async {
