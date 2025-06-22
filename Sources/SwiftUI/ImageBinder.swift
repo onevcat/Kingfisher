@@ -65,7 +65,7 @@ extension KFImage {
             }
         }
 
-        func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) {
+        func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) where HoldingView: Sendable {
             guard let source = context.source else {
                 CallbackQueueMain.currentOrAsync {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))

@@ -37,7 +37,7 @@ import Combine
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 @MainActor
 public protocol KFImageProtocol: View, KFOptionSetter {
-    associatedtype HoldingView: KFImageHoldingView
+    associatedtype HoldingView: KFImageHoldingView & Sendable
     var context: KFImage.Context<HoldingView> { get set }
     init(context: KFImage.Context<HoldingView>)
 }
