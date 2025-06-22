@@ -57,7 +57,7 @@ typealias KFCrossPlatformViewRepresentable = UIViewRepresentable
 
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
-public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, KFImageHoldingView {
+public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, KFImageHoldingView, Sendable {
     public typealias RenderingView = AnimatedImageView
     public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
         KFAnimatedImageViewRepresenter(image: image, context: context)

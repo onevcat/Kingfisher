@@ -43,7 +43,7 @@ public enum DiskStorage {
     /// ``DiskStorage/Config`` value or by modifying the ``DiskStorage/Backend/config`` property after it has been
     /// created. The ``DiskStorage/Backend`` will use the file's attributes to keep track of a file for its expiration
     /// or size limitation.
-    public class Backend<T: DataTransformable>: @unchecked Sendable {
+    public final class Backend<T: DataTransformable>: @unchecked Sendable where T: Sendable {
         
         private let propertyQueue = DispatchQueue(label: "com.onevcat.kingfisher.DiskStorage.Backend.propertyQueue")
         

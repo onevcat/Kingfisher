@@ -30,7 +30,7 @@ import Combine
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImage {
-    public class Context<HoldingView: KFImageHoldingView>: @unchecked Sendable {
+    public class Context<HoldingView: KFImageHoldingView>: @unchecked Sendable where HoldingView: Sendable {
         
         private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.KFImageContextPropertyQueue")
         
