@@ -823,15 +823,14 @@ class ImageViewExtensionTests: XCTestCase {
                 self.imageView.kf.setImage(with: url, options: options) { result in
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertTrue(result.value!.cacheType == .disk)
+                    delay(2, block: {
+                        self.imageView.kf.setImage(with: url, options: options) { result in
+                            XCTAssertNotNil(result.value?.image)
+                            XCTAssertTrue(result.value!.cacheType == .none)
 
-                        delay(2, block: {
-                            self.imageView.kf.setImage(with: url, options: options) { result in
-                                XCTAssertNotNil(result.value?.image)
-                                XCTAssertTrue(result.value!.cacheType == .none)
-
-                                exp.fulfill()
-                            }
-                        })
+                            exp.fulfill()
+                        }
+                    })
                 }
             })
         }

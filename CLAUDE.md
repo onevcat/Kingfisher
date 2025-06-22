@@ -20,18 +20,14 @@ bundle install
 # Run all tests across platforms (iOS, macOS, tvOS, watchOS)
 bundle exec fastlane tests
 
-# Run specific platform tests (used in CI)
-bundle exec fastlane test_ci
+# Run specific platform tests
+bundle exec fastlane test destination:"platform=iOS Simulator,name=iPhone 16"
 
 # Build for specific platform
-bundle exec fastlane build_ci
+bundle exec fastlane build destination:"platform=iOS Simulator,name=iPhone 16"
 
 # Lint CocoaPods spec and Swift Package Manager
 bundle exec fastlane lint
-
-# Swift Package Manager (alternative)
-swift build
-swift test
 ```
 
 ### Release Process
