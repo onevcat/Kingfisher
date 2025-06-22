@@ -376,7 +376,7 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
 
-            delay(1) {
+            delay(2) { // File writing in disk cache has an approximate (round) creating time. 1 second is not enough.
                 self.cache.cleanExpiredDiskCache()
             }
         }
