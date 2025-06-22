@@ -4,7 +4,12 @@ defaults:
   run:
     shell: bash -leo pipefail {0}
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
