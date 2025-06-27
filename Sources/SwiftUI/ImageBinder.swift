@@ -52,6 +52,7 @@ extension KFImage {
         private(set) var animating = false
 
         var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        var failureView: (() -> AnyView)? = nil { willSet { objectWillChange.send() } }
         var progress: Progress = .init()
 
         func markLoading() {
@@ -71,6 +72,9 @@ extension KFImage {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
                     if let image = context.options.onFailureImage {
                         self.loadedImage = image
+                    }
+                    if let view = context.failureView {
+                        self.failureView = view
                     }
                     self.loading = false
                     self.markLoaded(sendChangeEvent: false)
@@ -128,6 +132,9 @@ extension KFImage {
                             CallbackQueueMain.currentOrAsync {
                                 if let image = context.options.onFailureImage {
                                     self.loadedImage = image
+                                }
+                                if let view = context.failureView {
+                                    self.failureView = view
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }
