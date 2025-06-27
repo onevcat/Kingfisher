@@ -123,6 +123,15 @@ extension KFImageProtocol {
         placeholder { _ in content() }
     }
 
+    /// Sets a failure `View` that is displayed when the image fails to load.
+    ///
+    /// - Parameter content: A view that represents failure.
+    /// - Returns: A Kingfisher-compatible image view that includes the provided `content` as its failure.
+    public func onFailureView<F: View>(@ViewBuilder _ content: @escaping () -> F) -> Self {
+        context.failureView = { AnyView(content()) }
+        return self
+    }
+
     /// Enables canceling the download task associated with `self` when the view disappears.
     ///
     /// - Parameter flag: A boolean value indicating whether to cancel the task.
