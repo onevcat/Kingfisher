@@ -46,14 +46,14 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
             renderedImage().opacity(binder.loaded ? 1.0 : 0.0)
             if binder.loadedImage == nil {
                 ZStack {
+                    // Priority: failureView > placeholder > Color.clear
+                    // failureView is only set when image loading fails
                     if let failureView = binder.failureView {
                         failureView()
+                    } else if let placeholder = context.placeholder {
+                        placeholder(binder.progress)
                     } else {
-                        if let placeholder = context.placeholder {
-                            placeholder(binder.progress)
-                        } else {
-                            Color.clear
-                        }
+                        Color.clear
                     }
                 }
                 .onAppear { [weak binder = self.binder] in

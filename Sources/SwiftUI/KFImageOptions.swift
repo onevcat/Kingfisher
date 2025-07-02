@@ -125,8 +125,29 @@ extension KFImageProtocol {
 
     /// Sets a failure `View` that is displayed when the image fails to load.
     ///
-    /// - Parameter content: A view that represents failure.
-    /// - Returns: A Kingfisher-compatible image view that includes the provided `content` as its failure.
+    /// Use this modifier to provide a custom view when image loading fails. This offers more flexibility than
+    /// `onFailureImage` by allowing any SwiftUI view as the failure placeholder.
+    ///
+    /// Example:
+    /// ```swift
+    /// KFImage(url)
+    ///     .onFailureView {
+    ///         VStack {
+    ///             Image(systemName: "exclamationmark.triangle")
+    ///                 .foregroundColor(.red)
+    ///             Text("Failed to load image")
+    ///                 .font(.caption)
+    ///             Button("Retry") {
+    ///                 // Retry logic
+    ///             }
+    ///         }
+    ///     }
+    /// ```
+    ///
+    /// - Note: If both `onFailureImage` and `onFailureView` are set, `onFailureView` takes precedence.
+    /// 
+    /// - Parameter content: A view builder that creates the failure view.
+    /// - Returns: A Kingfisher-compatible image view that displays the provided `content` when image loading fails.
     public func onFailureView<F: View>(@ViewBuilder _ content: @escaping () -> F) -> Self {
         context.failureView = { AnyView(content()) }
         return self
