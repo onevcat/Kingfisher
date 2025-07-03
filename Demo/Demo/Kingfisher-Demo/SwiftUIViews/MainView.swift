@@ -53,6 +53,7 @@ struct MainView: View {
                 NavigationLink(destination: GeometryReaderDemo()) { Text("Geometry Reader") }
                 NavigationLink(destination: TransitionViewDemo()) { Text("Transition") }
                 NavigationLink(destination: ProgressiveJPEGDemo()) { Text("Progressive JPEG") }
+                NavigationLink(destination: LoadingFailureDemo()) { Text("Loading Failure") }
             }
             
             Section(header: Text("Regression Cases")) {

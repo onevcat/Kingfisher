@@ -78,7 +78,13 @@ extension KFImage {
             get { propertyQueue.sync { _placeholder } }
             set { propertyQueue.sync { _placeholder = newValue } }
         }
-        
+
+        var _failureView: (() -> AnyView)? = nil
+        var failureView: (() -> AnyView)? {
+            get { propertyQueue.sync { _failureView } }
+            set { propertyQueue.sync { _failureView = newValue } }
+        }
+
         var _startLoadingBeforeViewAppear: Bool = false
         var startLoadingBeforeViewAppear: Bool {
             get { propertyQueue.sync { _startLoadingBeforeViewAppear } }
