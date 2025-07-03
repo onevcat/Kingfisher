@@ -53,7 +53,11 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     } else if let placeholder = context.placeholder {
                         placeholder(binder.progress)
                     } else {
-                        Color.clear
+                        if let placeholder = context.placeholder {
+                            placeholder(binder.progress)
+                        } else {
+                            Color.clear
+                        }
                     }
                 }
                 .onAppear { [weak binder = self.binder] in

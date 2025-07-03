@@ -75,7 +75,6 @@ extension KFImage {
                     } else if let image = context.options.onFailureImage {
                         self.loadedImage = image
                     }
-                    
                     self.loading = false
                     self.markLoaded(sendChangeEvent: false)
                 }
@@ -134,6 +133,9 @@ extension KFImage {
                                     self.failureView = view
                                 } else if let image = context.options.onFailureImage {
                                     self.loadedImage = image
+                                }
+                                if let view = context.failureView {
+                                    self.failureView = view
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }
