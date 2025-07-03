@@ -2,6 +2,18 @@
 
 -----
 
+## [8.4.0 - Failure Fisher](https://github.com/onevcat/Kingfisher/releases/tag/8.4.0) (2025-07-03)
+
+#### Add
+* Add `onFailureView` modifier for custom failure views in SwiftUI. [#2406](https://github.com/onevcat/Kingfisher/pull/2406) @onevcat [#2404](https://github.com/onevcat/Kingfisher/pull/2404) @alobaili [#2082](https://github.com/onevcat/Kingfisher/issues/2082) @brzzdev
+
+#### Fix
+* Fix Sendable warnings in Xcode 26 with stricter concurrency checking. [#2400](https://github.com/onevcat/Kingfisher/pull/2400) @onevcat
+* Fix test timing issue in ImageCacheTests for CI stability. [#2401](https://github.com/onevcat/Kingfisher/pull/2401) @onevcat
+* Optimize CI workflow to avoid duplicate runs on pull requests. [#2402](https://github.com/onevcat/Kingfisher/pull/2402) @onevcat
+
+---
+
 ## [8.3.3 - Swift Harmony](https://github.com/onevcat/Kingfisher/releases/tag/8.3.3) (2025-06-22)
 
 #### Add
