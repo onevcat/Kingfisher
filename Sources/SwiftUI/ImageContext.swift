@@ -90,6 +90,19 @@ extension KFImage {
             get { propertyQueue.sync { _startLoadingBeforeViewAppear } }
             set { propertyQueue.sync { _startLoadingBeforeViewAppear = newValue } }
         }
+        
+        // SwiftUI transition support
+        var _swiftUITransition: AnyTransition? = nil
+        var swiftUITransition: AnyTransition? {
+            get { propertyQueue.sync { _swiftUITransition } }
+            set { propertyQueue.sync { _swiftUITransition = newValue } }
+        }
+        
+        var _swiftUIAnimation: Animation? = nil
+        var swiftUIAnimation: Animation? {
+            get { propertyQueue.sync { _swiftUIAnimation } }
+            set { propertyQueue.sync { _swiftUIAnimation = newValue } }
+        }
 
         let onFailureDelegate = Delegate<KingfisherError, Void>()
         let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()

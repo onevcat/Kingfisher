@@ -43,7 +43,16 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         }
         
         return ZStack {
-            renderedImage().opacity(binder.loaded ? 1.0 : 0.0)
+            if context.swiftUITransition != nil {
+                // SwiftUI loadTransition: insert/remove view for proper transition behavior
+                if binder.loaded {
+                    renderedImage()
+                }
+            } else {
+                // Fade transition or no transition: use opacity control
+                renderedImage()
+                    .opacity(binder.loaded ? 1.0 : 0.0)
+            }
             if binder.loadedImage == nil {
                 ZStack {
                     // Priority: failureView > placeholder > Color.clear
@@ -98,10 +107,24 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
             .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
                 current, config in config(current)
             }
+        
+        // Apply contentConfiguration first, then loadTransition as the final step
         if let contentConfiguration = context.contentConfiguration {
-            contentConfiguration(configuredImage)
+            let contentView = AnyView(contentConfiguration(configuredImage))
+            // Apply SwiftUI loadTransition as the last step for correct rendering order
+            if let swiftUITransition = context.swiftUITransition {
+                contentView.transition(swiftUITransition)
+            } else {
+                contentView
+            }
         } else {
-            configuredImage
+            let imageView = AnyView(configuredImage)
+            // Apply SwiftUI loadTransition as the last step for correct rendering order
+            if let swiftUITransition = context.swiftUITransition {
+                imageView.transition(swiftUITransition)
+            } else {
+                imageView
+            }
         }
     }
 }

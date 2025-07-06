@@ -110,7 +110,15 @@ extension KFImage {
                         switch result {
                         case .success(let value):
                             CallbackQueueMain.currentOrAsync {
-                                if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
+                                if context.swiftUITransition != nil,
+                                   context.shouldApplyFade(cacheType: value.cacheType) {
+                                    // Apply SwiftUI loadTransition with custom animation (higher priority than fade)
+                                    self.animating = true
+                                    let animation = context.swiftUIAnimation ?? .default
+                                    withAnimation(animation) {
+                                        self.markLoaded(sendChangeEvent: true)
+                                    }
+                                } else if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
                                     let animation = Animation.linear(duration: fadeDuration)
                                     withAnimation(animation) {
