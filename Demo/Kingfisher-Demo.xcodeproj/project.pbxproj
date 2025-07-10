@@ -1129,7 +1129,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Kingfisher-Demo.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DEVELOPMENT_TEAM = ZW38677EE9;
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
 				INFOPLIST_FILE = "Demo/Kingfisher-Demo/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1152,7 +1152,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Kingfisher-Demo.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DEVELOPMENT_TEAM = ZW38677EE9;
+				DEVELOPMENT_TEAM = A4YJ9MRZ66;
 				INFOPLIST_FILE = "Demo/Kingfisher-Demo/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
