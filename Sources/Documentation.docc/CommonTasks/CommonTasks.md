@@ -91,9 +91,20 @@ This shows a `UIActivityIndicatorView` in center of image view while downloading
 
 ### Fading in Downloaded Image
 
+For UIKit/AppKit:
 ```swift
 imageView.kf.setImage(with: url, options: [.transition(.fade(0.2))])
 ```
+
+For SwiftUI (recommended):
+```swift
+KFImage(url)
+    .fade(duration: 0.2)
+    // Or use native SwiftUI transitions:
+    .loadTransition(.opacity, animation: .easeInOut(duration: 0.2))
+```
+
+> Note: In SwiftUI applications, use `loadTransition` for native SwiftUI transitions instead of the options-based `transition`. This provides better integration with the SwiftUI animation system.
 
 ### Completion Handler
 

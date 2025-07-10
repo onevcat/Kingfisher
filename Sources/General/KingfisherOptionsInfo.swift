@@ -72,6 +72,9 @@ public enum KingfisherOptionsInfoItem: Sendable {
     /// By default, the transition does not occur when the image is retrieved from either memory or disk cache. To
     /// force the transition even when the image is retrieved from the cache, also set
     /// ``KingfisherOptionsInfoItem/forceTransition``.
+    ///
+    /// - Important: This option is designed for UIKit/AppKit transitions. For SwiftUI applications, use the
+    /// ``KFImageProtocol/loadTransition(_:animation:)`` method instead, which provides native SwiftUI transition support.
     case transition(ImageTransition)
     
     /// The associated `Float` value to be set as the priority of the image download task.
