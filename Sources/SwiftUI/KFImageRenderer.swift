@@ -103,6 +103,16 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     
     @ViewBuilder
     private func renderedImage() -> some View {
+        if let swiftUITransition = context.swiftUITransition {
+            // Apply SwiftUI loadTransition as the last step for correct rendering order
+            configuredImage.transition(swiftUITransition)
+        } else {
+            configuredImage
+        }
+    }
+    
+    @ViewBuilder
+    private var configuredImage: some View {
         let configuredImage = context.configurations
             .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
                 current, config in config(current)
@@ -110,21 +120,9 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         
         // Apply contentConfiguration first, then loadTransition as the final step
         if let contentConfiguration = context.contentConfiguration {
-            let contentView = AnyView(contentConfiguration(configuredImage))
-            // Apply SwiftUI loadTransition as the last step for correct rendering order
-            if let swiftUITransition = context.swiftUITransition {
-                contentView.transition(swiftUITransition)
-            } else {
-                contentView
-            }
+            contentConfiguration(configuredImage)
         } else {
-            let imageView = AnyView(configuredImage)
-            // Apply SwiftUI loadTransition as the last step for correct rendering order
-            if let swiftUITransition = context.swiftUITransition {
-                imageView.transition(swiftUITransition)
-            } else {
-                imageView
-            }
+            configuredImage
         }
     }
 }
