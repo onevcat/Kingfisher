@@ -475,7 +475,7 @@ public struct Border: Sendable {
 /// Processor for creating bordered images.
 public struct BorderImageProcessor: ImageProcessor {
     
-    public var identifier: String { "com.onevcat.Kingfisher.RoundCornerImageProcessor(\(border)" }
+    public var identifier: String { "com.onevcat.Kingfisher.BorderImageProcessor(\(border)" }
     
     /// The border to be added to the image.
     public let border: Border
