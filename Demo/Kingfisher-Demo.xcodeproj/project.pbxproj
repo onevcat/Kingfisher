@@ -80,6 +80,7 @@
 		D1F78A652589F17200930759 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A622589F17200930759 /* MainView.swift */; };
 		D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A632589F17200930759 /* SingleViewDemo.swift */; };
 		D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */; };
+		F344AEF22E1AD74F00BFE702 /* LoadTransitionDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -235,6 +236,7 @@
 		D1F78A622589F17200930759 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D1F78A632589F17200930759 /* SingleViewDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleViewDemo.swift; sourceTree = "<group>"; };
 		D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighResolutionCollectionViewController.swift; sourceTree = "<group>"; };
+		F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadTransitionDemo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -465,6 +467,7 @@
 				D198F41D25EDC11500C53E0D /* LazyVStackDemo.swift */,
 				D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */,
 				072922422638639D0089E810 /* AnimatedImageDemo.swift */,
+				F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */,
 			);
 			path = SwiftUIViews;
 			sourceTree = "<group>";
@@ -596,7 +599,6 @@
 					};
 					D1ED2D0A1AD2CFA600CFC3EB = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = A4YJ9MRZ66;
 						LastSwiftMigration = 1200;
 					};
 				};
@@ -719,6 +721,7 @@
 				D12EB83E24DD902300329EE1 /* TextAttachmentViewController.swift in Sources */,
 				D12E0C9B1C47F91800AC98AD /* NormalLoadingViewController.swift in Sources */,
 				D1CE1BD021A1AFA300419000 /* TransitionViewController.swift in Sources */,
+				F344AEF22E1AD74F00BFE702 /* LoadTransitionDemo.swift in Sources */,
 				D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */,
 				D1F06F3921AAF1EE000B1C38 /* IndicatorCollectionViewController.swift in Sources */,
 				D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */,

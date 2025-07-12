@@ -207,5 +207,62 @@ extension KFImageProtocol {
         context.startLoadingBeforeViewAppear = flag
         return self
     }
+    
+    /// Sets a SwiftUI transition for the image loading.
+    ///
+    /// - Parameters:
+    ///   - transition: The SwiftUI transition to apply when the image appears.
+    ///   - animation: The animation to use with the transition. Defaults to `.default`.
+    /// - Returns: A Kingfisher-compatible image view with the applied transition.
+    ///
+    /// This is the recommended way to apply transitions in SwiftUI applications. Unlike the UIKit-based
+    /// ``KingfisherOptionsInfoItem/transition(_:)`` option, this method uses native SwiftUI transitions,
+    /// providing better integration with the SwiftUI animation system and access to all SwiftUI transition types.
+    ///
+    /// Available transitions include `.slide`, `.scale`, `.opacity`, `.move`, `.offset`, and custom transitions.
+    /// The transition will be applied when the image is loaded from the network, following the same
+    /// rules as the fade transition regarding cache behavior and `forceTransition`.
+    /// 
+    /// When both `loadTransition` and `fade` are set, `loadTransition` takes precedence.
+    ///
+    /// Example:
+    /// ```swift
+    /// KFImage(url)
+    ///     .loadTransition(.slide, animation: .easeInOut(duration: 0.5))
+    /// ```
+    ///
+    /// - Note: For UIKit/AppKit applications, use ``KingfisherOptionsInfoItem/transition(_:)`` instead.
+    public func loadTransition(_ transition: AnyTransition, animation: Animation? = .default) -> Self {
+        context.swiftUITransition = transition
+        context.swiftUIAnimation = animation
+        return self
+    }
+    
+    /// Sets a SwiftUI transition for the image loading (iOS 17.0+).
+    ///
+    /// - Parameters:
+    ///   - transition: The SwiftUI transition conforming to the Transition protocol.
+    ///   - animation: The animation to use with the transition. Defaults to `.default`.
+    /// - Returns: A Kingfisher-compatible image view with the applied transition.
+    ///
+    /// This method provides access to newer SwiftUI transitions available in iOS 17.0+,
+    /// such as `BlurReplaceTransition`, `PushTransition`, and other transitions conforming to the `Transition` protocol.
+    /// This is the recommended approach for SwiftUI applications on iOS 17.0+.
+    /// 
+    /// When both `loadTransition` and `fade` are set, `loadTransition` takes precedence.
+    ///
+    /// Example:
+    /// ```swift
+    /// KFImage(url)
+    ///     .loadTransition(.blurReplace(.downUp), animation: .bouncy)
+    /// ```
+    ///
+    /// - Note: For UIKit/AppKit applications, use ``KingfisherOptionsInfoItem/transition(_:)`` instead.
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    public func loadTransition<T: Transition>(_ transition: T, animation: Animation? = .default) -> Self {
+        context.swiftUITransition = AnyTransition(transition)
+        context.swiftUIAnimation = animation
+        return self
+    }
 }
 #endif
