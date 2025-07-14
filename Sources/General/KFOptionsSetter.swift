@@ -294,11 +294,15 @@ extension KFOptionSetter {
     ///
     /// By default, disk storage file loading operates in its own queue with asynchronous dispatch behavior. While this 
     /// provides better non-blocking disk loading performance, it can result in flickering when reloading an image
-    ///  from disk if the image view already has an image set.
+    /// from disk if the image view already has an image set.
     ///
     /// Enabling this option prevents flickering by performing all loading in the same queue (typically the UI queue if 
     /// you are using Kingfisher's extension methods to set an image). However, this may come at the cost of loading
     /// performance.
+    ///
+    /// - Note: When using SwiftUI components (e.g., `KFImage`), this option is enabled by default to prevent 
+    /// flickering during view updates. This is essential for maintaining visual consistency in SwiftUI's declarative
+    /// environment. For UIKit/AppKit usage, the default remains `false` for optimal performance.
     ///
     public func loadDiskFileSynchronously(_ enabled: Bool = true) -> Self {
         options.loadDiskFileSynchronously = enabled

@@ -61,6 +61,11 @@ import Combine
 /// Here only very few are listed as demonstration. To check other available modifiers, see ``KFOptionSetter`` and its
 /// extension methods.
 ///
+/// - Important: `KFImage` loads disk cached images synchronously by default (`.loadDiskFileSynchronously()` is enabled).
+/// This prevents image flickering during SwiftUI view updates but may impact performance when loading large images from disk.
+/// You can disable this behavior by calling `.loadDiskFileSynchronously(false)` if you prefer better loading performance
+/// over visual consistency.
+///
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFImage: KFImageProtocol {
     
