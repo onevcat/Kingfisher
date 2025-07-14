@@ -28,6 +28,15 @@
 import SwiftUI
 import Combine
 
+/// Represents an animated image view in SwiftUI that manages its content using Kingfisher.
+///
+/// Similar to ``KFImage``, this view provides support for animated image formats like GIF.
+///
+/// - Important: Like ``KFImage``, `KFAnimatedImage` loads disk cached images synchronously by default 
+/// (`.loadDiskFileSynchronously()` is enabled). This prevents image flickering during SwiftUI view updates 
+/// but may impact performance when loading large animated images from disk. You can disable this behavior 
+/// by calling `.loadDiskFileSynchronously(false)` if you prefer better loading performance over visual consistency.
+///
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, *)
 public struct KFAnimatedImage: KFImageProtocol {
     public typealias HoldingView = KFAnimatedImageViewRepresenter
