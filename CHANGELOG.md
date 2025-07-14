@@ -2,6 +2,17 @@
 
 -----
 
+## [8.5.0 - Transition Dancer](https://github.com/onevcat/Kingfisher/releases/tag/8.5.0) (2025-07-15)
+
+#### Add
+* Add SwiftUI native transition support for KFImage with `loadTransition(_:animation:)` method. [#2410](https://github.com/onevcat/Kingfisher/pull/2410) @darkbrewx @onevcat
+
+#### Fix
+* Fix documentation for `loadDiskFileSynchronously` in SwiftUI components to clarify default synchronous behavior. [#2411](https://github.com/onevcat/Kingfisher/pull/2411) @pinkjuice66 @onevcat
+* Fix BorderImageProcessor.identifier implementation. [#2409](https://github.com/onevcat/Kingfisher/pull/2409) @teameh
+
+---
+
 ## [8.4.0 - Failure Fisher](https://github.com/onevcat/Kingfisher/releases/tag/8.4.0) (2025-07-03)
 
 #### Add
