@@ -258,6 +258,15 @@ extension SessionDelegate: URLSessionDataDelegate {
             newRequest: request
         )
     }
+    
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        guard let sessionTask = self.task(for: task) else { return }
+        
+        // Collect network metrics for the completed task
+        if let networkMetrics = NetworkMetrics(from: metrics) {
+            sessionTask.didCollectMetrics(networkMetrics)
+        }
+    }
 
     private func onCompleted(task: URLSessionTask, result: Result<(Data, URLResponse?), KingfisherError>) {
         guard let sessionTask = self.task(for: task) else {
