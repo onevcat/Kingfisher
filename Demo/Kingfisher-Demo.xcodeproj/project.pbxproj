@@ -81,6 +81,8 @@
 		D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F78A632589F17200930759 /* SingleViewDemo.swift */; };
 		D1FAB06F21A853E600908910 /* HighResolutionCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */; };
 		F344AEF22E1AD74F00BFE702 /* LoadTransitionDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */; };
+		F39B68D22E33D36500404B02 /* NetworkMetricsDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39B68D12E33D36500404B02 /* NetworkMetricsDemo.swift */; };
+		F39B68D42E33E0D600404B02 /* NetworkMetricsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39B68D32E33E0D600404B02 /* NetworkMetricsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -237,6 +239,8 @@
 		D1F78A632589F17200930759 /* SingleViewDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleViewDemo.swift; sourceTree = "<group>"; };
 		D1FAB06E21A853E600908910 /* HighResolutionCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighResolutionCollectionViewController.swift; sourceTree = "<group>"; };
 		F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadTransitionDemo.swift; sourceTree = "<group>"; };
+		F39B68D12E33D36500404B02 /* NetworkMetricsDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMetricsDemo.swift; sourceTree = "<group>"; };
+		F39B68D32E33E0D600404B02 /* NetworkMetricsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMetricsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -417,6 +421,7 @@
 				D16CC3D724E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift */,
 				078DCB502BCFEFB40008114E /* PHPickerResultViewController.swift */,
 				D1F78A5E2589F0AA00930759 /* SwiftUIViewController.swift */,
+				F39B68D32E33E0D600404B02 /* NetworkMetricsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -468,6 +473,7 @@
 				D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */,
 				072922422638639D0089E810 /* AnimatedImageDemo.swift */,
 				F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */,
+				F39B68D12E33D36500404B02 /* NetworkMetricsDemo.swift */,
 			);
 			path = SwiftUIViews;
 			sourceTree = "<group>";
@@ -716,6 +722,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D16CC3D824E03FEA00F1A515 /* AVAssetImageGeneratorViewController.swift in Sources */,
+				F39B68D22E33D36500404B02 /* NetworkMetricsDemo.swift in Sources */,
 				C959EEE622874DC600467A10 /* ProgressiveJPEGViewController.swift in Sources */,
 				D1CE1BD321A1B45A00419000 /* ImageLoader.swift in Sources */,
 				D12EB83E24DD902300329EE1 /* TextAttachmentViewController.swift in Sources */,
@@ -725,6 +732,7 @@
 				D10AC99821A300C9005F057C /* ProcessorCollectionViewController.swift in Sources */,
 				D1F06F3921AAF1EE000B1C38 /* IndicatorCollectionViewController.swift in Sources */,
 				D1F78A662589F17200930759 /* SingleViewDemo.swift in Sources */,
+				F39B68D42E33E0D600404B02 /* NetworkMetricsViewController.swift in Sources */,
 				D12E0C981C47F91800AC98AD /* ImageCollectionViewCell.swift in Sources */,
 				D198F42025EDC34000C53E0D /* SizingAnimationDemo.swift in Sources */,
 				072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */,

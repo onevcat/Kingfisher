@@ -591,7 +591,7 @@ class ImageDownloaderTests: XCTestCase {
             init(_ expectation:XCTestExpectation) {
                 exp = expectation
             }
-            func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+            override func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
                 exp.fulfill()
             }
         }

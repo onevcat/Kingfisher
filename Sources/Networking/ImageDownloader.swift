@@ -43,6 +43,9 @@ public struct ImageLoadingResult: Sendable {
 
     /// The raw data received from the downloader.
     public let originalData: Data
+    
+    /// The network metrics collected during the download process.
+    public let metrics: NetworkMetrics?
 
     /// Creates an `ImageDownloadResult` object.
     ///
@@ -50,10 +53,12 @@ public struct ImageLoadingResult: Sendable {
     ///   - image: The image of the download result.
     ///   - url: The URL from which the image was downloaded.
     ///   - originalData: The binary data of the image.
-    public init(image: KFCrossPlatformImage, url: URL? = nil, originalData: Data) {
+    ///   - metrics: The network metrics collected during the download.
+    public init(image: KFCrossPlatformImage, url: URL? = nil, originalData: Data, metrics: NetworkMetrics? = nil) {
         self.image = image
         self.url = url
         self.originalData = originalData
+        self.metrics = metrics
     }
 }
 
@@ -444,7 +449,7 @@ open class ImageDownloader: @unchecked Sendable {
 
                     self.reportDidProcessImage(result: result, url: context.url, response: response)
 
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data) }
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data, metrics: sessionTask.metrics) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }

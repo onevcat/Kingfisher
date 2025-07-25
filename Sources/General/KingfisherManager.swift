@@ -80,6 +80,37 @@ public struct RetrieveImageResult: Sendable {
     /// - Note: Retrieving this data can be a time-consuming operation, so it is advisable to store it if you need to 
     /// use it multiple times and avoid frequent calls to this method.
     public let data: @Sendable () -> Data?
+    
+    /// The network metrics collected during the download process.
+    ///
+    /// This property contains network performance metrics when the image was downloaded from the network
+    /// (`cacheType == .none`). For cached images (`cacheType == .memory` or `.disk`), this will be `nil`.
+    public let metrics: NetworkMetrics?
+    
+    /// Creates a RetrieveImageResult.
+    ///
+    /// - Parameters:
+    ///   - image: The retrieved image.
+    ///   - cacheType: The cache source type.
+    ///   - source: The source of the image.
+    ///   - originalSource: The original source that initiated the retrieval.
+    ///   - data: A closure that provides the image data.
+    ///   - metrics: The network metrics collected during download. Defaults to nil for cached images.
+    public init(
+        image: KFCrossPlatformImage,
+        cacheType: CacheType,
+        source: Source,
+        originalSource: Source,
+        data: @escaping @Sendable () -> Data?,
+        metrics: NetworkMetrics? = nil
+    ) {
+        self.image = image
+        self.cacheType = cacheType
+        self.source = source
+        self.originalSource = originalSource
+        self.data = data
+        self.metrics = metrics
+    }
 }
 
 /// A structure that stores related information about a ``KingfisherError``. It provides contextual information
@@ -475,7 +506,8 @@ public class KingfisherManager: @unchecked Sendable {
                 cacheType: .none,
                 source: source,
                 originalSource: context.originalSource,
-                data: {  value.originalData }
+                data: { value.originalData },
+                metrics: value.metrics
             )
             // Add image to cache.
             let targetCache = options.targetCache ?? self.cache
