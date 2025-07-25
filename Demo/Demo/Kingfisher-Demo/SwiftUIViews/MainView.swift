@@ -55,6 +55,7 @@ struct MainView: View {
                 NavigationLink(destination: LoadTransitionDemo()) { Text("Load Transition") }
                 NavigationLink(destination: ProgressiveJPEGDemo()) { Text("Progressive JPEG") }
                 NavigationLink(destination: LoadingFailureDemo()) { Text("Loading Failure") }
+                NavigationLink(destination: NetworkMetricsDemo()) { Text("Network Metrics") }
             }
             
             Section(header: Text("Regression Cases")) {
