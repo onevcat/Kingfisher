@@ -68,6 +68,14 @@ public class SessionDataTask: @unchecked Sendable {
 
     private var currentToken = 0
     private let lock = NSLock()
+    
+    private var _metrics: NetworkMetrics?
+    /// The network metrics collected during the download task.
+    public var metrics: NetworkMetrics? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _metrics
+    }
 
     let onTaskDone = Delegate<(Result<(Data, URLResponse?), KingfisherError>, [TaskCallback]), Void>()
     let onCallbackCancelled = Delegate<(CancelToken, TaskCallback), Void>()
@@ -138,5 +146,11 @@ public class SessionDataTask: @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         _mutableData.append(data)
+    }
+    
+    func didCollectMetrics(_ metrics: NetworkMetrics) {
+        lock.lock()
+        defer { lock.unlock() }
+        _metrics = metrics
     }
 }
