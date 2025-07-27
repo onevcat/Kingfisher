@@ -149,3 +149,34 @@ public struct NetworkMetrics: Sendable {
         return (transaction.response as? HTTPURLResponse)?.statusCode
     }
 }
+
+// MARK: - Convenience Properties
+
+extension NetworkMetrics {
+    
+    /// The download speed in bytes per second.
+    ///
+    /// Calculated as `responseBodyBytesReceived / retrieveImageDuration`. 
+    /// Returns `nil` if the duration is unavailable or zero, or if no data was received.
+    ///
+    /// - Note: This uses the actual image retrieval duration, excluding redirects and other overhead,
+    ///   to provide the most accurate representation of the data transfer rate.
+    public var downloadSpeed: Double? {
+        guard responseBodyBytesReceived > 0,
+              let duration = retrieveImageDuration,
+              duration > 0 else { return nil }
+        
+        return Double(responseBodyBytesReceived) / duration
+    }
+    
+    /// The download speed in megabytes per second (MB/s).
+    ///
+    /// This is a convenience property that converts `downloadSpeed` from bytes per second 
+    /// to megabytes per second for easier readability.
+    ///
+    /// - Returns: Download speed in MB/s, or `nil` if `downloadSpeed` is unavailable.
+    public var downloadSpeedMBps: Double? {
+        guard let speed = downloadSpeed else { return nil }
+        return speed / (1024 * 1024)
+    }
+}

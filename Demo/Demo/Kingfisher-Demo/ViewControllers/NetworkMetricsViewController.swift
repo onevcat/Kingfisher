@@ -309,9 +309,9 @@ class NetworkMetricsViewController: UIViewController {
             info += "Request Body: \(formatBytes(metrics.requestBodyBytesSent))\n"
             info += "Response Body: \(formatBytes(metrics.responseBodyBytesReceived))\n"
             
-            if metrics.responseBodyBytesReceived > 0 {
-                let speed = Double(metrics.responseBodyBytesReceived) / metrics.totalRequestDuration
-                info += "Download Speed: \(formatBytes(Int64(speed)))/s\n"
+            if let speed = metrics.downloadSpeed {
+                info += "Download Speed: \(formatBytes(Int64(speed)))/s"
+                info += "\n"
             }
             
             // HTTP details
