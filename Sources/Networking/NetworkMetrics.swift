@@ -33,7 +33,7 @@ public struct NetworkMetrics: Sendable {
     public let rawMetrics: URLSessionTaskMetrics
 
     /// The duration of the actual image retrieval (excluding redirects).
-    public let retrieveImageDuration: TimeInterval
+    public let retrieveImageDuration: TimeInterval?
 
     /// The total time from request start to completion (including redirects).
     public let totalRequestDuration: TimeInterval
@@ -135,10 +135,10 @@ public struct NetworkMetrics: Sendable {
     /// Calculates the image retrieval duration for a single transaction 
     /// Formula: responseEndDate - requestStartDate
     /// Represents: Time from sending HTTP request to receiving complete image response
-    private static func calculateRetrieveImageDuration(from transaction: URLSessionTaskTransactionMetrics) -> TimeInterval {
+    private static func calculateRetrieveImageDuration(from transaction: URLSessionTaskTransactionMetrics) -> TimeInterval? {
         guard let start = transaction.requestStartDate,
               let end = transaction.responseEndDate else { 
-            return 0 
+            return nil 
         }
         return end.timeIntervalSince(start)
     }
