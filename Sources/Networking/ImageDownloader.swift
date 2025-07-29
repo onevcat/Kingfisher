@@ -427,7 +427,7 @@ open class ImageDownloader: @unchecked Sendable {
             return downloadTask
         }
 
-        sessionTask.onTaskDone.delegate(on: self) { (self, done) in
+        sessionTask.onTaskDone.delegate(on: self) { [weak sessionTask] (self, done) in
             // Underlying downloading finishes.
             // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
             let (result, callbacks) = done
@@ -449,7 +449,7 @@ open class ImageDownloader: @unchecked Sendable {
 
                     self.reportDidProcessImage(result: result, url: context.url, response: response)
 
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data, metrics: sessionTask.metrics) }
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data, metrics: sessionTask?.metrics) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }
