@@ -594,6 +594,48 @@ open class ImageCache: @unchecked Sendable {
     }
 
     // MARK: Getting Images
+    
+    /// Checks if an image exists in the cache for the given key.
+    /// This method performs the check asynchronously to avoid blocking the main thread.
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - processorIdentifier: The identifier of the image processor. Default is `DefaultImageProcessor.default.identifier`.
+    ///   - forcedExtension: A forced extension to be appended to the file name.
+    ///   - callbackQueue: The callback queue on which the `completionHandler` is invoked. Default is `.mainCurrentOrAsync`.
+    ///   - completionHandler: A closure that is invoked with the existence check result.
+    public func cachedType(
+        forKey key: String,
+        processorIdentifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil,
+        callbackQueue: CallbackQueue = .mainCurrentOrAsync,
+        completionHandler: @escaping @Sendable (CacheType) -> Void)
+    {
+        let computedKey = key.computedKey(with: processorIdentifier)
+        
+        // Check memory cache first (fast, no I/O)
+        if memoryStorage.isCached(forKey: computedKey) {
+            callbackQueue.execute {
+                completionHandler(.memory)
+            }
+            return
+        }
+        
+        // Check disk cache asynchronously
+        ioQueue.async { [weak self] in
+            guard let self = self else {
+                callbackQueue.execute {
+                    completionHandler(.none)
+                }
+                return
+            }
+            
+            let exists = self.diskStorage.itemExists(forKey: computedKey, forcedExtension: forcedExtension)
+            let result: CacheType = exists ? .disk : .none
+            callbackQueue.execute {
+                completionHandler(result)
+            }
+        }
+    }
 
     /// Retrieves an image for a given key from the cache, either from memory storage or disk storage.
     ///
