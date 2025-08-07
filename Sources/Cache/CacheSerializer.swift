@@ -73,7 +73,7 @@ public extension CacheSerializer {
 /// It can serialize and deserialize images in PNG, JPEG, and GIF formats. For images other than these formats, a 
 /// normalized ``KingfisherWrapper/pngRepresentation()`` will be used.
 ///
-/// When converting an `image` to the date, it will only be converted to the corresponding data type when `original`
+/// When converting an `image` to the data, it will only be converted to the corresponding data type when `original`
 /// contains valid PNG, JPEG, and GIF format data. If the `original` is provided but not valid, or if `original` is
 /// `nil`, the input `image` will be encoded as PNG data.
 public struct DefaultCacheSerializer: CacheSerializer {
