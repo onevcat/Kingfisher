@@ -235,6 +235,45 @@ public enum DiskStorage {
             )
         }
 
+        /// Check whether an item exists for the given key without actually loading it.
+        /// This method is optimized for quick existence checks.
+        /// - Parameters:
+        ///   - key: The key of the item.
+        ///   - referenceDate: A reference date to check whether the cached item is expired or not.
+        ///   - forcedExtension: A forced extension to be appended to the file name.
+        /// - Returns: `true` if the item exists and is not expired, `false` otherwise.
+        func itemExists(
+            forKey key: String,
+            referenceDate: Date = Date(),
+            forcedExtension: String? = nil
+        ) -> Bool {
+            let fileManager = config.fileManager
+            let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
+            let filePath = fileURL.path
+            
+            // Quick check using maybeCached set
+            let fileMaybeCached = maybeCachedCheckingQueue.sync {
+                return maybeCached?.contains(fileURL.lastPathComponent) ?? true
+            }
+            guard fileMaybeCached else {
+                return false
+            }
+            
+            // Check file existence
+            guard fileManager.fileExists(atPath: filePath) else {
+                return false
+            }
+            
+            // Check expiration
+            do {
+                let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey, .creationDateKey]
+                let meta = try FileMeta(fileURL: fileURL, resourceKeys: resourceKeys)
+                return !meta.expired(referenceDate: referenceDate)
+            } catch {
+                return false
+            }
+        }
+        
         func value(
             forKey key: String,
             referenceDate: Date,
