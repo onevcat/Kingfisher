@@ -28,7 +28,7 @@ import Network
 import Foundation
 
 /// A protocol for network connectivity monitoring that allows for dependency injection and testing.
-public protocol NetworkMonitoring: Sendable {
+internal protocol NetworkMonitoring: Sendable {
     /// Whether the network is currently connected.
     var isConnected: Bool { get }
 
@@ -41,7 +41,7 @@ public protocol NetworkMonitoring: Sendable {
 }
 
 /// A protocol for network observers that can be cancelled.
-public protocol NetworkObserver: Sendable {
+internal protocol NetworkObserver: Sendable {
     /// Cancels the network observation.
     func cancel()
 }
@@ -49,11 +49,11 @@ public protocol NetworkObserver: Sendable {
 /// A shared singleton that manages network connectivity monitoring.
 /// This prevents creating multiple NWPathMonitor instances when many NetworkRetryStrategy instances are used.
 /// The monitor is created lazily only when first accessed.
-public final class NetworkMonitor: @unchecked Sendable, NetworkMonitoring {
-    public static let `default` = NetworkMonitor()
+internal final class NetworkMonitor: @unchecked Sendable, NetworkMonitoring {
+    static let `default` = NetworkMonitor()
 
     /// Whether the network is currently connected.
-    public var isConnected: Bool {
+    var isConnected: Bool {
         return monitor.currentPath.status == .satisfied
     }
 
@@ -173,7 +173,7 @@ internal final class NetworkObserverImpl: @unchecked Sendable, NetworkObserver {
         }
     }
 
-    public func cancel() {
+    func cancel() {
         queue.async { [weak self] in
             guard let self else { return }
 

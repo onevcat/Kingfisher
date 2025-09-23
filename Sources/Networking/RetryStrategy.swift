@@ -204,10 +204,16 @@ public struct NetworkRetryStrategy: RetryStrategy {
     ///
     /// - Parameters:
     ///   - timeoutInterval: The timeout for waiting for network reconnection. If nil, no timeout is applied. Defaults to 30 seconds.
-    ///   - networkMonitor: The network monitoring service. Defaults to the shared NetworkMonitor instance.
-    public init(
-        timeoutInterval: TimeInterval? = 30,
-        networkMonitor: NetworkMonitoring = NetworkMonitor.default
+    public init(timeoutInterval: TimeInterval? = 30) {
+        self.init(
+            timeoutInterval: timeoutInterval,
+            networkMonitor: NetworkMonitor.default
+        )
+    }
+
+    internal init(
+        timeoutInterval: TimeInterval?,
+        networkMonitor: NetworkMonitoring
     ) {
         self.timeoutInterval = timeoutInterval
         self.networkMonitor = networkMonitor
