@@ -22,13 +22,13 @@ jobs:
       matrix:
         destination: [
           'macOS', 
-          'iOS Simulator,name=iPhone 15,OS=17.5', 
-          'tvOS Simulator,name=Apple TV,OS=17.5', 
-          'watchOS Simulator,name=Apple Watch Series 9 (41mm),OS=10.5'
+          'iOS Simulator,name=iPhone 16,OS=18.5', 
+          'tvOS Simulator,name=Apple TV,OS=18.5', 
+          'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.5'
         ]
         xcode: [
-          '15.4',
-          '16.2',
+          '16.4',
+          '26.0.1',
         ]
     steps:
       - uses: actions/checkout@v4
