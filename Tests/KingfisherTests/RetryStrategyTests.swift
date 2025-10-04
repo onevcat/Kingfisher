@@ -244,7 +244,10 @@ class RetryStrategyTests: XCTestCase {
         let exp = expectation(description: #function)
         let source = Source.network(URL(string: "url")!)
         let networkMonitor = TestNetworkMonitor(isConnected: true)
-        let retry = NetworkRetryStrategy(networkMonitor: networkMonitor)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
 
         let context = RetryContext(
             source: source,
@@ -267,7 +270,10 @@ class RetryStrategyTests: XCTestCase {
         let exp = expectation(description: #function)
         let source = Source.network(URL(string: "url")!)
         let networkMonitor = TestNetworkMonitor(isConnected: true)
-        let retry = NetworkRetryStrategy(networkMonitor: networkMonitor)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
 
         let task = URLSession.shared.dataTask(with: URL(string: "url")!)
         let context = RetryContext(
@@ -290,7 +296,10 @@ class RetryStrategyTests: XCTestCase {
         let exp = expectation(description: #function)
         let source = Source.network(URL(string: "url")!)
         let networkMonitor = TestNetworkMonitor(isConnected: true)
-        let retry = NetworkRetryStrategy(networkMonitor: networkMonitor)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
 
         let context = RetryContext(
             source: source,
@@ -335,7 +344,10 @@ class RetryStrategyTests: XCTestCase {
         let exp = expectation(description: #function)
         let source = Source.network(URL(string: "url")!)
         let networkMonitor = TestNetworkMonitor(isConnected: false)
-        let retry = NetworkRetryStrategy(networkMonitor: networkMonitor)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
 
         let context = RetryContext(
             source: source,
@@ -364,7 +376,10 @@ class RetryStrategyTests: XCTestCase {
         let exp = expectation(description: #function)
         let source = Source.network(URL(string: "url")!)
         let networkMonitor = TestNetworkMonitor(isConnected: false)
-        let retry = NetworkRetryStrategy(networkMonitor: networkMonitor)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
 
         let context = RetryContext(
             source: source,
