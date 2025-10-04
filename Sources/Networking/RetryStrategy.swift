@@ -253,10 +253,10 @@ public struct NetworkRetryStrategy: RetryStrategy {
         context: RetryContext,
         retryHandler: @escaping @Sendable (RetryDecision) -> Void
     ) {
-        let observer = networkMonitor.observeConnectivity(timeoutInterval: timeoutInterval) { isConnected in
+        let observer = networkMonitor.observeConnectivity(timeoutInterval: timeoutInterval) { [weak context] isConnected in
             if isConnected {
                 // Connection is restored, retry immediately
-                retryHandler(.retry(userInfo: context.userInfo))
+                retryHandler(.retry(userInfo: context?.userInfo))
             } else {
                 // Timeout reached or cancelled
                 retryHandler(.stop)
