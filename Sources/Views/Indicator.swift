@@ -152,7 +152,7 @@ final class ActivityIndicator: Indicator {
     init() {
         #if os(macOS)
             activityIndicatorView = NSProgressIndicator(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
-            activityIndicatorView.controlSize = .small
+            activityIndicatorView.controlSize = .regular
             activityIndicatorView.style = .spinning
         #else
             let indicatorStyle: UIActivityIndicatorView.Style
