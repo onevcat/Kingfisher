@@ -2,6 +2,20 @@
 
 -----
 
+## [8.6.0 - Retryfisher](https://github.com/onevcat/Kingfisher/releases/tag/8.6.0) (2025-10-05)
+
+#### Add
+* Add network retry strategy with configurable retry logic for failed downloads. [#2439](https://github.com/onevcat/Kingfisher/pull/2439) @komkovla
+* Add network metrics collection for download tasks with download speed measurement and timestamp handling. [#2416](https://github.com/onevcat/Kingfisher/pull/2416) @darkbrewx
+
+#### Fix
+* Fix crash on setting indicator on macOS 26 by changing default indicator style. [#2442](https://github.com/onevcat/Kingfisher/pull/2442) @onevcat
+* Fix retain cycle in ImageDownloader when transferring network metrics. [#2419](https://github.com/onevcat/Kingfisher/pull/2419) @darkbrewx
+* Upgrade to the latest Xcode recommended settings for improved build configuration. [#2417](https://github.com/onevcat/Kingfisher/pull/2417) @onevcat
+* Update CI script to make it work with Xcode 26. [#2442](https://github.com/onevcat/Kingfisher/pull/2442) @onevcat
+
+---
+
 ## [8.5.0 - Transition Dancer](https://github.com/onevcat/Kingfisher/releases/tag/8.5.0) (2025-07-15)
 
 #### Add
