@@ -102,6 +102,8 @@ class RetryStrategyTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    // MARK: - DelayRetryStrategy Tests
+
     func testDelayRetryStrategyExceededCount() {
         let exp = expectation(description: #function)
         let blockCalled: ActorArray<Bool> = ActorArray([])
@@ -110,7 +112,7 @@ class RetryStrategyTests: XCTestCase {
         let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(0))
 
         let group = DispatchGroup()
-        
+
         group.enter()
         let context1 = RetryContext(
             source: source,
@@ -146,7 +148,7 @@ class RetryStrategyTests: XCTestCase {
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             Task {
                 let result = await blockCalled.value
@@ -199,7 +201,7 @@ class RetryStrategyTests: XCTestCase {
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             Task {
                 let result = await blockCalled.value
@@ -232,8 +234,180 @@ class RetryStrategyTests: XCTestCase {
                 exp.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    // MARK: - NetworkRetryStrategy Tests
+
+    func testNetworkRetryStrategyRetriesImmediatelyWhenConnected() {
+        let exp = expectation(description: #function)
+        let source = Source.network(URL(string: "url")!)
+        let networkMonitor = TestNetworkMonitor(isConnected: true)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
+
+        let context = RetryContext(
+            source: source,
+            error: .responseError(reason: .URLSessionError(error: E()))
+        )
+
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.retry(let userInfo) = decision else {
+                XCTFail("The decision should be `retry` when network is connected")
+                return
+            }
+            XCTAssertNil(userInfo)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testNetworkRetryStrategyStopsForTaskCancelled() {
+        let exp = expectation(description: #function)
+        let source = Source.network(URL(string: "url")!)
+        let networkMonitor = TestNetworkMonitor(isConnected: true)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
+
+        let task = URLSession.shared.dataTask(with: URL(string: "url")!)
+        let context = RetryContext(
+            source: source,
+            error: .requestError(reason: .taskCancelled(task: .init(task: task), token: .init()))
+        )
+
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.stop = decision else {
+                XCTFail("The decision should be `stop` if user cancelled the task")
+                return
+            }
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testNetworkRetryStrategyStopsForNonResponseError() {
+        let exp = expectation(description: #function)
+        let source = Source.network(URL(string: "url")!)
+        let networkMonitor = TestNetworkMonitor(isConnected: true)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
+
+        let context = RetryContext(
+            source: source,
+            error: .cacheError(reason: .imageNotExisting(key: "any_key"))
+        )
+
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.stop = decision else {
+                XCTFail("The decision should be `stop` if the error type is not response error")
+                return
+            }
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testNetworkRetryStrategyWithTimeout() {
+        let exp = expectation(description: #function)
+        let source = Source.network(URL(string: "url")!)
+        let networkMonitor = TestNetworkMonitor(isConnected: false)
+        let retry = NetworkRetryStrategy(timeoutInterval: 0.1, networkMonitor: networkMonitor)
+
+        let context = RetryContext(
+            source: source,
+            error: .responseError(reason: .URLSessionError(error: E()))
+        )
+
+        // Test timeout behavior when network is disconnected
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.stop = decision else {
+                XCTFail("The decision should be `stop` after timeout")
+                return
+            }
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testNetworkRetryStrategyWaitsForReconnection() {
+        let exp = expectation(description: #function)
+        let source = Source.network(URL(string: "url")!)
+        let networkMonitor = TestNetworkMonitor(isConnected: false)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
+
+        let context = RetryContext(
+            source: source,
+            error: .responseError(reason: .URLSessionError(error: E()))
+        )
+
+        // Start retry when network is disconnected - should wait for reconnection
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.retry(let userInfo) = decision else {
+                XCTFail("The decision should be `retry` when network reconnects")
+                return
+            }
+            XCTAssertNotNil(userInfo) // Should contain the observer
+            exp.fulfill()
+        }
+
+        // Simulate network reconnection after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            networkMonitor.simulateNetworkChange(isConnected: true)
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testNetworkRetryStrategyCancelsPreviousObserver() {
+        let exp = expectation(description: #function)
+        let source = Source.network(URL(string: "url")!)
+        let networkMonitor = TestNetworkMonitor(isConnected: false)
+        let retry = NetworkRetryStrategy(
+            timeoutInterval: 30,
+            networkMonitor: networkMonitor
+        )
+
+        let context = RetryContext(
+            source: source,
+            error: .responseError(reason: .URLSessionError(error: E()))
+        )
+
+        // First retry attempt - should create an observer
+        retry.retry(context: context) { decision in
+            // This should not be called since network is disconnected initially
+            XCTFail("First callback should not be called immediately when network is disconnected")
+        }
+
+        // Second retry attempt - should cancel previous observer
+        retry.retry(context: context) { decision in
+            guard case RetryDecision.retry(let userInfo) = decision else {
+                XCTFail("The second decision should be `retry`")
+                return
+            }
+            XCTAssertNotNil(userInfo)
+            exp.fulfill()
+        }
+
+        // Simulate network reconnection
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            networkMonitor.simulateNetworkChange(isConnected: true)
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
     }
 }
 
@@ -263,6 +437,113 @@ final class StubRetryStrategy: RetryStrategy, @unchecked Sendable {
             retryHandler(.stop)
         } else {
             retryHandler(.retry(userInfo: count))
+        }
+    }
+}
+
+// MARK: - Test Network Monitoring Implementations
+
+/// A test implementation of NetworkMonitoring that allows controlling network state for testing.
+final class TestNetworkMonitor: @unchecked Sendable, NetworkMonitoring {
+    private let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.TestNetworkMonitor", attributes: .concurrent)
+    private var _isConnected: Bool
+    private var observers: [TestNetworkObserver] = []
+
+    var isConnected: Bool {
+        get { queue.sync { _isConnected } }
+        set { queue.sync(flags: .barrier) { _isConnected = newValue } }
+    }
+
+    init(isConnected: Bool = true) {
+        self._isConnected = isConnected
+    }
+
+    func observeConnectivity(timeoutInterval: TimeInterval?, callback: @escaping @Sendable (Bool) -> Void) -> NetworkObserver {
+        let observer = TestNetworkObserver(
+            timeoutInterval: timeoutInterval,
+            callback: callback,
+            monitor: self
+        )
+
+        queue.sync(flags: .barrier) {
+            observers.append(observer)
+        }
+
+        return observer
+    }
+
+    /// Simulates network state change and notifies all observers.
+    func simulateNetworkChange(isConnected: Bool) {
+        queue.sync(flags: .barrier) {
+            _isConnected = isConnected
+            let activeObservers = observers
+            observers.removeAll()
+
+            DispatchQueue.main.async {
+                activeObservers.forEach { $0.notify(isConnected: isConnected) }
+            }
+        }
+    }
+
+    /// Removes an observer from the list.
+    func removeObserver(_ observer: TestNetworkObserver) {
+        queue.sync(flags: .barrier) {
+            observers.removeAll { $0 === observer }
+        }
+    }
+}
+
+/// Test implementation of NetworkObserver for testing purposes.
+final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
+    let timeoutInterval: TimeInterval?
+    let callback: @Sendable (Bool) -> Void
+    private weak var monitor: TestNetworkMonitor?
+    private var timeoutWorkItem: DispatchWorkItem?
+    private let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.TestNetworkObserver", qos: .utility)
+
+    init(timeoutInterval: TimeInterval?, callback: @escaping @Sendable (Bool) -> Void, monitor: TestNetworkMonitor) {
+        self.timeoutInterval = timeoutInterval
+        self.callback = callback
+        self.monitor = monitor
+
+        // Set up timeout if specified
+        if let timeoutInterval = timeoutInterval {
+            let workItem = DispatchWorkItem { [weak self] in
+                self?.notify(isConnected: false)
+            }
+            timeoutWorkItem = workItem
+            queue.asyncAfter(deadline: .now() + timeoutInterval, execute: workItem)
+        }
+    }
+
+    func notify(isConnected: Bool) {
+        queue.async { [weak self] in
+            guard let self else { return }
+
+            // Cancel timeout if we're notifying
+            timeoutWorkItem?.cancel()
+            timeoutWorkItem = nil
+
+            // Remove from monitor
+            monitor?.removeObserver(self)
+
+            // Call the callback
+            DispatchQueue.main.async {
+                self.callback(isConnected)
+            }
+        }
+    }
+
+    func cancel() {
+        queue.async { [weak self] in
+            guard let self else { return }
+
+            // Cancel timeout
+            timeoutWorkItem?.cancel()
+            timeoutWorkItem = nil
+
+            // Remove from monitor
+            monitor?.removeObserver(self)
         }
     }
 }

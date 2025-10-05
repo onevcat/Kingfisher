@@ -30,7 +30,7 @@ import Foundation
 ///
 /// The instance of this type can be shared between different retry attempts.
 public class RetryContext: @unchecked Sendable {
-    
+
     private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.RetryContextPropertyQueue")
 
     /// The source from which the target image should be retrieved.
@@ -40,7 +40,7 @@ public class RetryContext: @unchecked Sendable {
     public let error: KingfisherError
 
     private var _retriedCount: Int
-    
+
     /// The number of retries attempted before the current retry happens.
     ///
     /// This value is `0` if the current retry is for the first time.
@@ -48,10 +48,10 @@ public class RetryContext: @unchecked Sendable {
         get { propertyQueue.sync { _retriedCount } }
         set { propertyQueue.sync { _retriedCount = newValue } }
     }
-    
+
     private var _userInfo: Any? = nil
 
-    /// A user-set value for passing any other information during the retry. 
+    /// A user-set value for passing any other information during the retry.
     ///
     /// If you choose to use ``RetryDecision/retry(userInfo:)`` as the retry decision for
     /// ``RetryStrategy/retry(context:retryHandler:)``, the associated value of ``RetryDecision/retry(userInfo:)`` will
@@ -105,18 +105,18 @@ public struct DelayRetryStrategy: RetryStrategy {
 
     /// Represents the interval mechanism used in a ``DelayRetryStrategy``.
     public enum Interval : Sendable{
-        
-        /// The next retry attempt should happen in a fixed number of seconds. 
+
+        /// The next retry attempt should happen in a fixed number of seconds.
         ///
         /// For example, if the associated value is 3, the attempt happens 3 seconds after the previous decision is
         /// made.
         case seconds(TimeInterval)
-        
-        /// The next retry attempt should happen in an accumulated duration. 
+
+        /// The next retry attempt should happen in an accumulated duration.
         ///
         /// For example, if the associated value is 3, the attempts happen with intervals of 3, 6, 9, 12, ... seconds.
         case accumulated(TimeInterval)
-        
+
         /// Uses a block to determine the next interval.
         ///
         /// The current retry count is given as a parameter.
@@ -182,5 +182,88 @@ public struct DelayRetryStrategy: RetryStrategy {
                 retryHandler(.retry(userInfo: nil))
             }
         }
+    }
+}
+
+/// A retry strategy that observes network state and retries on reconnect.
+///
+/// This strategy only retries when network becomes available after a disconnection.
+/// It does not use any delay mechanisms - it retries immediately when network is restored.
+///
+/// The network monitor is created lazily only when this strategy is first used,
+/// ensuring no unnecessary resource usage when the strategy is not in use.
+public struct NetworkRetryStrategy: RetryStrategy {
+
+    /// The timeout for waiting for network reconnection (in seconds).
+    private let timeoutInterval: TimeInterval?
+
+    /// The network monitoring service used to observe connectivity changes.
+    private let networkMonitor: NetworkMonitoring
+
+    /// Creates a network-aware retry strategy.
+    ///
+    /// - Parameters:
+    ///   - timeoutInterval: The timeout for waiting for network reconnection. If nil, no timeout is applied. Defaults to 30 seconds.
+    public init(timeoutInterval: TimeInterval? = 30) {
+        self.init(
+            timeoutInterval: timeoutInterval,
+            networkMonitor: NetworkMonitor.default
+        )
+    }
+
+    internal init(
+        timeoutInterval: TimeInterval?,
+        networkMonitor: NetworkMonitoring
+    ) {
+        self.timeoutInterval = timeoutInterval
+        self.networkMonitor = networkMonitor
+    }
+
+    public func retry(context: RetryContext, retryHandler: @escaping @Sendable (RetryDecision) -> Void) {
+        // Dispose of any previous disposable from userInfo
+        if let previousObserver = context.userInfo as? NetworkObserver {
+            previousObserver.cancel()
+        }
+
+        // User cancel the task. No retry.
+        guard !context.error.isTaskCancelled else {
+            retryHandler(.stop)
+            return
+        }
+
+        // Only retry for a response error.
+        guard case KingfisherError.responseError = context.error else {
+            retryHandler(.stop)
+            return
+        }
+
+        // Check if we have network connectivity
+        if networkMonitor.isConnected {
+            // Network is available, retry immediately
+            retryHandler(.retry(userInfo: nil))
+        } else {
+            // Network is not available, wait for reconnection
+            waitForReconnection(context: context, retryHandler: retryHandler)
+        }
+    }
+
+    // MARK: - Private helpers
+
+    private func waitForReconnection(
+        context: RetryContext,
+        retryHandler: @escaping @Sendable (RetryDecision) -> Void
+    ) {
+        let observer = networkMonitor.observeConnectivity(timeoutInterval: timeoutInterval) { [weak context] isConnected in
+            if isConnected {
+                // Connection is restored, retry immediately
+                retryHandler(.retry(userInfo: context?.userInfo))
+            } else {
+                // Timeout reached or cancelled
+                retryHandler(.stop)
+            }
+        }
+
+        // Store the observer in userInfo so it can be cancelled if needed
+        context.userInfo = observer
     }
 }

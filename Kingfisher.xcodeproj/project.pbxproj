@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00A8E26E2E81B89600ABB84F /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A8E26D2E81B89600ABB84F /* NetworkMonitor.swift */; };
 		07292245263B02F00089E810 /* KFAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07292244263B02F00089E810 /* KFAnimatedImage.swift */; };
 		078DCB4F2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078DCB4E2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift */; };
 		22FDCE0E2700078B0044D11E /* CPListItem+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */; };
@@ -153,6 +154,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00A8E26D2E81B89600ABB84F /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		07292244263B02F00089E810 /* KFAnimatedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFAnimatedImage.swift; sourceTree = "<group>"; };
 		078DCB4E2BCFEB7D0008114E /* PHPickerResultImageDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPickerResultImageDataProvider.swift; sourceTree = "<group>"; };
 		185218B51CC07F8300BD58DE /* NSButtonExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSButtonExtensionTests.swift; sourceTree = "<group>"; };
@@ -370,6 +372,7 @@
 		D12AB69C215D2BB50013BA68 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				00A8E26D2E81B89600ABB84F /* NetworkMonitor.swift */,
 				D12AB69D215D2BB50013BA68 /* RequestModifier.swift */,
 				D8FCF6A721C5A0E500F9ABC0 /* RedirectHandler.swift */,
 				D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */,
@@ -856,6 +859,7 @@
 				D1132C9725919F69003E528D /* KFOptionsSetter.swift in Sources */,
 				D18B3222251852E100662F63 /* KF.swift in Sources */,
 				D12AB704215D2BB50013BA68 /* Kingfisher.swift in Sources */,
+				00A8E26E2E81B89600ABB84F /* NetworkMonitor.swift in Sources */,
 				D1AEB09725890DEA008556DF /* KFImage.swift in Sources */,
 				F39B68C82E33AC2A00404B02 /* NetworkMetrics.swift in Sources */,
 				D1BA781D2174D07800C69D7B /* CallbackQueue.swift in Sources */,
