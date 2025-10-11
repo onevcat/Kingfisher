@@ -684,6 +684,49 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertEqual(result.originalData, testImageData)
         XCTAssertEqual(result.url, url)
     }
+
+    func testConcurrentDownloadSameURL() {
+        let exp = expectation(description: #function)
+
+        // Given
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let callbackLock = NSLock()
+        var callbackCount = 0
+        let expectedCount = 10
+        exp.expectedFulfillmentCount = expectedCount
+
+        // When
+        DispatchQueue.concurrentPerform(iterations: expectedCount) { index in
+            downloader.downloadImage(with: url) { result in
+                switch result {
+                case .success(let imageResult):
+                    XCTAssertNotNil(imageResult.image)
+                    XCTAssertEqual(imageResult.url, url)
+                    XCTAssertEqual(imageResult.originalData, testImageData)
+
+                    callbackLock.lock()
+                    callbackCount += 1
+                    callbackLock.unlock()
+
+                    exp.fulfill()
+
+                case .failure(let error):
+                    XCTFail("Download should succeed: \(error)")
+                    exp.fulfill()
+                }
+            }
+        }
+
+        // Then
+        waitForExpectations(timeout: 3) { _ in
+            callbackLock.lock()
+            let finalCount = callbackCount
+            callbackLock.unlock()
+            XCTAssertEqual(finalCount, expectedCount, "All \(expectedCount) concurrent requests should receive callbacks")
+        }
+    }
 }
 
 class URLNilDataModifier: ImageDownloaderDelegate {
