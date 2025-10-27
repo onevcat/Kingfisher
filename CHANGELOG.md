@@ -2,6 +2,13 @@
 
 -----
 
+## [8.6.1 - Atomic](https://github.com/onevcat/Kingfisher/releases/tag/8.6.1) (2025-10-27)
+
+#### Fix
+* Fix non-atomic task creation for concurrent same-URL requests to prevent callback loss. [#2444](https://github.com/onevcat/Kingfisher/pull/2444) @darkbrewx
+
+---
+
 ## [8.6.0 - Retryfisher](https://github.com/onevcat/Kingfisher/releases/tag/8.6.0) (2025-10-05)
 
 #### Add
