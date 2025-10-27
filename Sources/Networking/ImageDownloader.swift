@@ -248,6 +248,8 @@ open class ImageDownloader: @unchecked Sendable {
     // The session bound to the downloader.
     private var session: URLSession
 
+    private let lock = NSLock()
+
     // MARK: Initializers
 
     /// Creates a downloader with a given name.
@@ -375,6 +377,9 @@ open class ImageDownloader: @unchecked Sendable {
         callback: SessionDataTask.TaskCallback
     ) -> DownloadTask
     {
+        lock.lock()
+        defer { lock.unlock() }
+
         // Ready to start download. Add it to session task manager (`sessionHandler`)
         let downloadTask: DownloadTask
         if let existingTask = sessionDelegate.task(for: context.url) {
