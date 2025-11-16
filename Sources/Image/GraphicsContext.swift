@@ -97,10 +97,11 @@ private struct BitmapContextDescriptor {
         height = max(Int(size.height.rounded(.down)), 1)
         colorSpace = BitmapContextDescriptor.resolveColorSpace(from: cgImage)
         bitsPerComponent = BitmapContextDescriptor.supportedBitsPerComponent(from: cgImage)
+        let componentCount = colorSpace.numberOfComponents
         let hasAlpha = BitmapContextDescriptor.containsAlpha(from: cgImage)
-        bitmapInfo = BitmapContextDescriptor.bitmapInfo(hasAlpha: hasAlpha)
-        let componentsPerPixel = colorSpace.numberOfComponents + 1 // Reserve an alpha (or skip) slot.
-        let bitsPerPixel = componentsPerPixel * bitsPerComponent
+        bitmapInfo = BitmapContextDescriptor.bitmapInfo(componentCount: componentCount, hasAlpha: hasAlpha)
+        let channelsPerPixel = BitmapContextDescriptor.channelsPerPixel(componentCount: componentCount, hasAlpha: hasAlpha)
+        let bitsPerPixel = channelsPerPixel * bitsPerComponent
         bytesPerRow = BitmapContextDescriptor.alignedBytesPerRow(bitsPerPixel: bitsPerPixel, width: width)
     }
     
@@ -143,9 +144,21 @@ private struct BitmapContextDescriptor {
         }
     }
     
-    private static func bitmapInfo(hasAlpha: Bool) -> CGBitmapInfo {
-        let alphaInfo: CGImageAlphaInfo = hasAlpha ? .premultipliedLast : .noneSkipLast
+    private static func bitmapInfo(componentCount: Int, hasAlpha: Bool) -> CGBitmapInfo {
+        let alphaInfo: CGImageAlphaInfo
+        if componentCount == 1 {
+            alphaInfo = hasAlpha ? .premultipliedLast : .none
+        } else {
+            alphaInfo = hasAlpha ? .premultipliedLast : .noneSkipLast
+        }
         return CGBitmapInfo(rawValue: alphaInfo.rawValue)
+    }
+    
+    private static func channelsPerPixel(componentCount: Int, hasAlpha: Bool) -> Int {
+        if componentCount == 1 {
+            return hasAlpha ? 2 : 1
+        }
+        return hasAlpha ? componentCount + 1 : componentCount + 1
     }
     
     private static func alignedBytesPerRow(bitsPerPixel: Int, width: Int) -> Int {
