@@ -5,73 +5,21 @@ import XCTest
 final class PixelFormatDecodingTests: XCTestCase {
     private struct Sample {
         let fileName: String
-        let expectedBitsOnMac: Int
-        #if os(macOS)
-        let expectedColorSpaceName: String
-        #endif
+        let expectedBitsAfterDecoding: Int
+        let expectedColorSpaceName: String?
     }
     
-    #if os(macOS)
-    private lazy var samples: [Sample] = [
-        Sample(
-            fileName: "gradient-8b-srgb-opaque.png",
-            expectedBitsOnMac: 8,
-            expectedColorSpaceName: CGColorSpace.sRGB as String
-        ),
-        Sample(
-            fileName: "gradient-8b-srgb-alpha.png",
-            expectedBitsOnMac: 8,
-            expectedColorSpaceName: CGColorSpace.sRGB as String
-        ),
-        Sample(
-            fileName: "gradient-8b-displayp3-alpha.png",
-            expectedBitsOnMac: 8,
-            expectedColorSpaceName: CGColorSpace.displayP3 as String
-        ),
-        Sample(
-            fileName: "gradient-8b-gray.png",
-            expectedBitsOnMac: 8,
-            expectedColorSpaceName: CGColorSpace.genericGrayGamma2_2 as String
-        ),
-        Sample(
-            fileName: "gradient-10b-srgb-opaque.heic",
-            expectedBitsOnMac: 16,
-            expectedColorSpaceName: CGColorSpace.sRGB as String
-        ),
-        Sample(
-            fileName: "gradient-10b-srgb-alpha.heic",
-            expectedBitsOnMac: 16,
-            expectedColorSpaceName: CGColorSpace.sRGB as String
-        ),
-        Sample(
-            fileName: "gradient-10b-displayp3-alpha.heic",
-            expectedBitsOnMac: 16,
-            expectedColorSpaceName: CGColorSpace.displayP3 as String
-        ),
-        Sample(
-            fileName: "gradient-16b-srgb-alpha.png",
-            expectedBitsOnMac: 16,
-            expectedColorSpaceName: CGColorSpace.sRGB as String
-        ),
-        Sample(
-            fileName: "gradient-16b-gray.png",
-            expectedBitsOnMac: 16,
-            expectedColorSpaceName: CGColorSpace.genericGrayGamma2_2 as String
-        )
+    private let samples: [Sample] = [
+        Sample(fileName: "gradient-8b-srgb-opaque.png", expectedBitsAfterDecoding: 8, expectedColorSpaceName: CGColorSpace.sRGB as String),
+        Sample(fileName: "gradient-8b-srgb-alpha.png", expectedBitsAfterDecoding: 8, expectedColorSpaceName: CGColorSpace.sRGB as String),
+        Sample(fileName: "gradient-8b-displayp3-alpha.png", expectedBitsAfterDecoding: 8, expectedColorSpaceName: CGColorSpace.displayP3 as String),
+        Sample(fileName: "gradient-8b-gray.png", expectedBitsAfterDecoding: 8, expectedColorSpaceName: CGColorSpace.genericGrayGamma2_2 as String),
+        Sample(fileName: "gradient-10b-srgb-opaque.heic", expectedBitsAfterDecoding: 16, expectedColorSpaceName: CGColorSpace.sRGB as String),
+        Sample(fileName: "gradient-10b-srgb-alpha.heic", expectedBitsAfterDecoding: 16, expectedColorSpaceName: CGColorSpace.sRGB as String),
+        Sample(fileName: "gradient-10b-displayp3-alpha.heic", expectedBitsAfterDecoding: 16, expectedColorSpaceName: CGColorSpace.displayP3 as String),
+        Sample(fileName: "gradient-16b-srgb-alpha.png", expectedBitsAfterDecoding: 16, expectedColorSpaceName: CGColorSpace.sRGB as String),
+        Sample(fileName: "gradient-16b-gray.png", expectedBitsAfterDecoding: 16, expectedColorSpaceName: CGColorSpace.genericGrayGamma2_2 as String)
     ]
-    #else
-    private lazy var samples: [Sample] = [
-        Sample(fileName: "gradient-8b-srgb-opaque.png", expectedBitsOnMac: 8),
-        Sample(fileName: "gradient-8b-srgb-alpha.png", expectedBitsOnMac: 8),
-        Sample(fileName: "gradient-8b-displayp3-alpha.png", expectedBitsOnMac: 8),
-        Sample(fileName: "gradient-8b-gray.png", expectedBitsOnMac: 8),
-        Sample(fileName: "gradient-10b-srgb-opaque.heic", expectedBitsOnMac: 16),
-        Sample(fileName: "gradient-10b-srgb-alpha.heic", expectedBitsOnMac: 16),
-        Sample(fileName: "gradient-10b-displayp3-alpha.heic", expectedBitsOnMac: 16),
-        Sample(fileName: "gradient-16b-srgb-alpha.png", expectedBitsOnMac: 16),
-        Sample(fileName: "gradient-16b-gray.png", expectedBitsOnMac: 16)
-    ]
-    #endif
     
     func testDecodingSupportsVariousPixelFormats() {
         for sample in samples {
@@ -87,13 +35,21 @@ final class PixelFormatDecodingTests: XCTestCase {
                 continue
             }
             #if os(macOS)
-            if sample.expectedBitsOnMac > 8 {
+            if sample.expectedBitsAfterDecoding > 8 {
                 XCTAssertNotIdentical(decoded, image, "Decoding should redraw \(sample.fileName)")
             }
-            XCTAssertEqual(cgImage.bitsPerComponent, sample.expectedBitsOnMac, "Unexpected bitsPerComponent for \(sample.fileName)")
-            XCTAssertEqual(cgImage.colorSpace?.name as String?, sample.expectedColorSpaceName, "Unexpected color space for \(sample.fileName)")
+            XCTAssertEqual(cgImage.bitsPerComponent, sample.expectedBitsAfterDecoding, "Unexpected bitsPerComponent for \(sample.fileName)")
+            if let expectedColorSpaceName = sample.expectedColorSpaceName {
+                XCTAssertEqual(cgImage.colorSpace?.name as String?, expectedColorSpaceName, "Unexpected color space for \(sample.fileName)")
+            } else {
+                XCTFail("expectedColorSpaceName not existing, but needed for \(sample.fileName)")
+            }
             #else
-            XCTAssertGreaterThanOrEqual(cgImage.bitsPerComponent, 8, "bitsPerComponent lower than expected for \(sample.fileName)")
+            XCTAssertEqual(
+                cgImage.bitsPerComponent,
+                sample.expectedBitsAfterDecoding,
+                "Unexpected bitsPerComponent for \(sample.fileName)"
+            )
             #endif
         }
     }
