@@ -2,6 +2,13 @@
 
 -----
 
+## [8.6.2 - High Fidelity](https://github.com/onevcat/Kingfisher/releases/tag/8.6.2) (2025-11-17)
+
+#### Fix
+* Improve macOS graphics context for high bit depth to support rendering 10-bit images. [#2448](https://github.com/onevcat/Kingfisher/pull/2448) [#2447](https://github.com/onevcat/Kingfisher/issues/2447) @onevcat @BobbyRohweder
+
+---
+
 ## [8.6.1 - Atomic](https://github.com/onevcat/Kingfisher/releases/tag/8.6.1) (2025-10-27)
 
 #### Fix
