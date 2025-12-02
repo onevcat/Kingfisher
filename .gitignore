@@ -92,3 +92,7 @@ vendor/
 .claude/settings.local.json
 .claude/CLAUDE.local.md
 .claude/*.local.*
+
+# xcode-build-server files
+buildServer.json
+.compile
