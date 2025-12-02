@@ -895,7 +895,15 @@ class ImageCacheTests: XCTestCase {
         let result = try XCTUnwrap(fileURL)
         XCTAssertTrue(result.absoluteString.hasSuffix(".myExt"))
     }
-    
+
+#if !os(macOS) && !os(watchOS)
+    func testKingfisherWrapperUIApplicationSharedReturnsNilInUnitTest() {
+        // UIApplication.shared is not available in some Unit Tests contexts.
+        // This tests that accessing it via KingfisherWrapper does not cause a crash.
+        XCTAssertNil(KingfisherWrapper<UIApplication>.shared)
+    }
+#endif
+
     // MARK: - Helper
     private func storeMultipleImages(_ completionHandler: @escaping () -> Void) {
         let group = DispatchGroup()

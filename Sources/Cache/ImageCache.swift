@@ -1292,7 +1292,8 @@ extension KingfisherWrapper where Base: UIApplication {
     public static var shared: UIApplication? {
         let selector = NSSelectorFromString("sharedApplication")
         guard Base.responds(to: selector) else { return nil }
-        return Base.perform(selector).takeUnretainedValue() as? UIApplication
+        guard let unmanaged = Base.perform(selector) else { return nil }
+        return unmanaged.takeUnretainedValue() as? UIApplication
     }
 }
 #endif
