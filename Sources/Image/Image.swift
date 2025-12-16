@@ -137,6 +137,27 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         set { setRetainedAssociatedObject(base, imageSourceKey, newValue) }
     }
 
+    /// Copies Kingfisher internal image states from `base` to a `target` image.
+    ///
+    /// This includes the embedded animated image data and related metadata that are used by Kingfisher for caching and
+    /// animated image rendering. It is useful when a custom processor creates and returns a new image instance from
+    /// an animated image in `.image` branch.
+    ///
+    /// - Important: This method does not make the `target` image animated by itself. It only propagates Kingfisher's
+    ///   internal metadata so the cache can preserve the original animated bytes when possible.
+    ///
+    /// - Parameter target: The target image to which the internal states will be copied.
+    public func copyKingfisherState(to target: KFCrossPlatformImage) {
+        target.kf.animatedImageData = animatedImageData
+        target.kf.imageFrameCount = imageFrameCount
+        target.kf.frameSource = frameSource
+        target.kf.imageCreatingOptions = imageCreatingOptions
+        #if os(macOS)
+        target.kf.images = images
+        target.kf.duration = duration
+        #endif
+    }
+
     // Bitmap memory cost with bytes.
     var cost: Int {
         let pixel = Int(size.width * size.height * scale * scale)

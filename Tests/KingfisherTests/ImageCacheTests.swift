@@ -232,6 +232,49 @@ class ImageCacheTests: XCTestCase {
 
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testCopyKingfisherStateShouldKeepEmbeddedGIFDataForDiskCache() {
+        struct TestProcessor: ImageProcessor {
+            let identifier: String = "com.onevcat.KingfisherTests.TestProcessor.CopyState"
+            func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+                switch item {
+                case .image(let image):
+                    #if os(macOS)
+                    guard let cgImage = image.kf.cgImage else { return image }
+                    let newImage = KFCrossPlatformImage(cgImage: cgImage, size: image.kf.size)
+                    image.kf.copyKingfisherState(to: newImage)
+                    return newImage
+                    #else
+                    guard let cgImage = image.cgImage else { return image }
+                    let newImage = KFCrossPlatformImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
+                    image.kf.copyKingfisherState(to: newImage)
+                    return newImage
+                    #endif
+                case .data(let data):
+                    return DefaultImageProcessor.default.process(item: .data(data), options: options)
+                }
+            }
+        }
+
+        let exp = expectation(description: #function)
+        let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: .init())!
+        XCTAssertEqual(image.kf.gifRepresentation()?.kf.imageFormat, .GIF)
+
+        let options = KingfisherParsedOptionsInfo([.processor(TestProcessor())])
+        let key = "test-gif-copy-state"
+        cache.store(image, original: nil, forKey: key, options: options, toDisk: true) { _ in
+            do {
+                let storedKey = key.computedKey(with: TestProcessor().identifier)
+                let storedData = try self.cache.diskStorage.value(forKey: storedKey)
+                XCTAssertEqual(storedData?.kf.imageFormat, .GIF)
+            } catch {
+                XCTFail("Unexpected error: \(error)")
+            }
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testStoreMultipleImages() {
         let exp = expectation(description: #function)
