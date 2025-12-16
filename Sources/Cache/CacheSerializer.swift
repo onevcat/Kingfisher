@@ -80,6 +80,9 @@ public extension CacheSerializer {
 /// If `original` is `nil` but the input `image` contains embedded GIF data (for example, a cached animated image
 /// created from GIF data), the serializer will prefer the embedded GIF data and store it as GIF instead of falling
 /// back to PNG.
+///
+/// > Tip: If you create a new image instance from an animated image in a custom processor, use
+/// > ``KingfisherWrapper/copyKingfisherState(to:)`` to propagate the embedded animated data to the new image.
 public struct DefaultCacheSerializer: CacheSerializer {
     
     /// The default general cache serializer utilized throughout Kingfisher's caching mechanism.

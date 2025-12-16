@@ -15,6 +15,26 @@ imageView.kf.setImage(with: url, options: [.cacheSerializer(DefaultCacheSerializ
 ``DefaultCacheSerializer`` is responsible for converting cached data into a corresponding image object and vice versa. 
 It supports PNG, JPEG, and GIF formats by default.
 
+When storing an image to disk, if the `original` data is available (for example, when the image is just downloaded),
+``DefaultCacheSerializer`` uses it to determine the format.
+If `original` is `nil` (for example, when the image is retrieved from cache), Kingfisher will try to infer the format:
+if the image still carries embedded GIF data, it will be stored as GIF; otherwise it falls back to encoding as PNG.
+
+### Notes for animated images and custom processors
+
+For animated images, Kingfisher keeps the original GIF bytes as an internal associated object on the image instance.
+If a custom ``ImageProcessor`` creates and returns a new `UIImage`/`NSImage` instance from an animated image, this
+internal animated data is not automatically carried over, and the disk cache may fall back to encoding as PNG (first
+frame only).
+
+To avoid this:
+
+- For animated inputs, return the input image directly when possible.
+- If you need to create a new image instance in the `.image` branch, copy Kingfisher internal states to the new image
+  by calling ``KingfisherWrapper/copyKingfisherState(to:)``.
+- If your goal is to avoid re-encoding, consider caching original data by using a serializer with
+  ``CacheSerializer/originalDataUsed`` enabled (e.g. configure ``DefaultCacheSerializer/preferCacheOriginalData``).
+
 ### Enforce a format
 
 To enforce a specific image format, use ``FormatIndicatedCacheSerializer``, which offers serializers for all supported
