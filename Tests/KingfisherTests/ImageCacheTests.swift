@@ -201,6 +201,37 @@ class ImageCacheTests: XCTestCase {
         XCTAssertNotNil(result.image)
         XCTAssertEqual(result.cacheType, .memory)
     }
+
+    func testStoreGIFToDiskWithNilOriginalShouldPreserveGIFFormat() {
+        struct TestProcessor: ImageProcessor {
+            let identifier: String = "com.onevcat.KingfisherTests.TestProcessor"
+            func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+                switch item {
+                case .image(let image): return image
+                case .data(let data): return DefaultImageProcessor.default.process(item: .data(data), options: options)
+                }
+            }
+        }
+
+        let exp = expectation(description: #function)
+        let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: .init())!
+        XCTAssertEqual(image.kf.gifRepresentation()?.kf.imageFormat, .GIF)
+
+        let options = KingfisherParsedOptionsInfo([.processor(TestProcessor())])
+        let key = "test-gif"
+        cache.store(image, original: nil, forKey: key, options: options, toDisk: true) { _ in
+            do {
+                let storedKey = key.computedKey(with: TestProcessor().identifier)
+                let storedData = try self.cache.diskStorage.value(forKey: storedKey)
+                XCTAssertEqual(storedData?.kf.imageFormat, .GIF)
+            } catch {
+                XCTFail("Unexpected error: \(error)")
+            }
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testStoreMultipleImages() {
         let exp = expectation(description: #function)
