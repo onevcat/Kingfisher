@@ -17,19 +17,36 @@ concurrency:
 
 jobs:
   run-tests:
+    name: test (Xcode ${{ matrix.xcode }}, ${{ matrix.label }})
     runs-on: self-hosted
     strategy:
       matrix:
-        destination: [
-          'macOS', 
-          'iOS Simulator,name=iPhone 16,OS=18.5', 
-          'tvOS Simulator,name=Apple TV,OS=18.5', 
-          'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.5'
-        ]
-        xcode: [
-          '16.4',
-          '26.0.1',
-        ]
+        include:
+          - xcode: '16.4'
+            destination: 'macOS'
+            label: 'macOS'
+          - xcode: '16.4'
+            destination: 'iOS Simulator,name=iPhone 16,OS=18.5'
+            label: 'iOS 18.5'
+          - xcode: '16.4'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.5'
+            label: 'tvOS 18.5'
+          - xcode: '16.4'
+            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.5'
+            label: 'watchOS 11.5'
+
+          - xcode: '26.2'
+            destination: 'macOS'
+            label: 'macOS'
+          - xcode: '26.2'
+            destination: 'iOS Simulator,name=iPhone 17,OS=26.2'
+            label: 'iOS 26.2'
+          - xcode: '26.2'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.2'
+            label: 'tvOS 26.2'
+          - xcode: '26.2'
+            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.2'
+            label: 'watchOS 26.2'
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
@@ -38,4 +55,6 @@ jobs:
         env:
           DESTINATION: platform=${{ matrix.destination }}
           XCODE_VERSION: ${{ matrix.xcode }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: '60'
+          FASTLANE_XCODEBUILD_SETTINGS_RETRIES: '4'
         run: bundle exec fastlane test_ci

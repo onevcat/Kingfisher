@@ -17,21 +17,62 @@ concurrency:
 
 jobs:
   build-framework:
+    name: build (Xcode ${{ matrix.xcode }}, ${{ matrix.label }})
     runs-on: self-hosted
     strategy:
       matrix:
-        destination: [
-          'macOS', 
-          'iOS Simulator,name=iPhone 15,OS=17.5', 
-          'tvOS Simulator,name=Apple TV,OS=17.5', 
-          'watchOS Simulator,name=Apple Watch Series 9 (41mm),OS=10.5'
-        ]
-        xcode: [
-          '16.0',
-          '16.1',
-          '16.2',
-          '16.3',
-        ]
+        include:
+          - xcode: '16.2'
+            destination: 'macOS'
+            label: 'macOS'
+          - xcode: '16.2'
+            destination: 'iOS Simulator,name=iPhone 16,OS=18.2'
+            label: 'iOS 18.2'
+          - xcode: '16.2'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.2'
+            label: 'tvOS 18.2'
+          - xcode: '16.2'
+            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.2'
+            label: 'watchOS 11.2'
+
+          - xcode: '16.3'
+            destination: 'macOS'
+            label: 'macOS'
+          - xcode: '16.3'
+            destination: 'iOS Simulator,name=iPhone 16,OS=18.4'
+            label: 'iOS 18.4'
+          - xcode: '16.3'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.4'
+            label: 'tvOS 18.4'
+          - xcode: '16.3'
+            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.4'
+            label: 'watchOS 11.4'
+
+          - xcode: '26.0.1'
+            destination: 'macOS'
+            label: 'macOS'
+          - xcode: '26.0.1'
+            destination: 'iOS Simulator,name=iPhone 17,OS=26.0.1'
+            label: 'iOS 26.0.1'
+          - xcode: '26.0.1'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.0'
+            label: 'tvOS 26.0'
+          - xcode: '26.0.1'
+            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.0'
+            label: 'watchOS 26.0'
+
+          - xcode: '26.1.1'
+            destination: 'macOS'
+            label: 'macOS'
+          - xcode: '26.1.1'
+            destination: 'iOS Simulator,name=iPhone 17,OS=26.1'
+            label: 'iOS 26.1'
+          - xcode: '26.1.1'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.1'
+            label: 'tvOS 26.1'
+          - xcode: '26.1.1'
+            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.1'
+            label: 'watchOS 26.1'
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
@@ -40,4 +81,6 @@ jobs:
         env:
           DESTINATION: platform=${{ matrix.destination }}
           XCODE_VERSION: ${{ matrix.xcode }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: '60'
+          FASTLANE_XCODEBUILD_SETTINGS_RETRIES: '4'
         run: bundle exec fastlane build_ci
