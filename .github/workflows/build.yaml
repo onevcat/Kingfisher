@@ -39,13 +39,13 @@ jobs:
           - xcode: '16.3'
             destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.4'
 
-          - xcode: '26.0'
+          - xcode: '26.0.1'
             destination: 'macOS'
-          - xcode: '26.0'
+          - xcode: '26.0.1'
             destination: 'iOS Simulator,name=iPhone 17,OS=26.0'
-          - xcode: '26.0'
+          - xcode: '26.0.1'
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.0'
-          - xcode: '26.0'
+          - xcode: '26.0.1'
             destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.0'
 
           - xcode: '26.1.1'
