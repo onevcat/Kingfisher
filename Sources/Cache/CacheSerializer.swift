@@ -76,6 +76,13 @@ public extension CacheSerializer {
 /// When converting an `image` to the data, it will only be converted to the corresponding data type when `original`
 /// contains valid PNG, JPEG, and GIF format data. If the `original` is provided but not valid, or if `original` is
 /// `nil`, the input `image` will be encoded as PNG data.
+///
+/// If `original` is `nil` but the input `image` contains embedded GIF data (for example, a cached animated image
+/// created from GIF data), the serializer will prefer the embedded GIF data and store it as GIF instead of falling
+/// back to PNG.
+///
+/// > Tip: If you create a new image instance from an animated image in a custom processor, use
+/// > ``KingfisherWrapper/copyKingfisherState(to:)`` to propagate the embedded animated data to the new image.
 public struct DefaultCacheSerializer: CacheSerializer {
     
     /// The default general cache serializer utilized throughout Kingfisher's caching mechanism.
@@ -102,18 +109,21 @@ public struct DefaultCacheSerializer: CacheSerializer {
     public init() { }
 
     public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
+        let format: ImageFormat = {
+            if let original = original { return original.kf.imageFormat }
+
+            if let animatedData = image.kf.gifRepresentation(), animatedData.kf.imageFormat == .GIF {
+                return .GIF
+            }
+            return .unknown
+        }()
+
         if preferCacheOriginalData {
-            return original ??
-                image.kf.data(
-                    format: original?.kf.imageFormat ?? .unknown,
-                    compressionQuality: compressionQuality
-                )
-        } else {
-            return image.kf.data(
-                format: original?.kf.imageFormat ?? .unknown,
-                compressionQuality: compressionQuality
-            )
+            if let original = original { return original }
+            if format == .GIF { return image.kf.gifRepresentation() }
         }
+
+        return image.kf.data(format: format, compressionQuality: compressionQuality)
     }
     
     public func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
