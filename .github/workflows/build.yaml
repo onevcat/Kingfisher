@@ -20,18 +20,42 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        destination: [
-          'macOS', 
-          'iOS Simulator,name=iPhone 17,OS=26.0', 
-          'tvOS Simulator,name=Apple TV,OS=26.0', 
-          'watchOS Simulator,name=Apple Watch Series 9 (41mm),OS=26.0'
-        ]
-        xcode: [
-          '16.2',
-          '16.3',
-          '26.0',
-          '26.1.1',
-        ]
+        include:
+          - xcode: '16.2'
+            destination: 'macOS'
+          - xcode: '16.2'
+            destination: 'iOS Simulator,name=iPhone 16,OS=18.2'
+          - xcode: '16.2'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.2'
+          - xcode: '16.2'
+            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.2'
+
+          - xcode: '16.3'
+            destination: 'macOS'
+          - xcode: '16.3'
+            destination: 'iOS Simulator,name=iPhone 16,OS=18.4'
+          - xcode: '16.3'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.4'
+          - xcode: '16.3'
+            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.4'
+
+          - xcode: '26.0'
+            destination: 'macOS'
+          - xcode: '26.0'
+            destination: 'iOS Simulator,name=iPhone 17,OS=26.0'
+          - xcode: '26.0'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.0'
+          - xcode: '26.0'
+            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.0'
+
+          - xcode: '26.1.1'
+            destination: 'macOS'
+          - xcode: '26.1.1'
+            destination: 'iOS Simulator,name=iPhone 17,OS=26.1'
+          - xcode: '26.1.1'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.1'
+          - xcode: '26.1.1'
+            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.1'
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
@@ -40,4 +64,6 @@ jobs:
         env:
           DESTINATION: platform=${{ matrix.destination }}
           XCODE_VERSION: ${{ matrix.xcode }}
+          FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: '60'
+          FASTLANE_XCODEBUILD_SETTINGS_RETRIES: '4'
         run: bundle exec fastlane build_ci
