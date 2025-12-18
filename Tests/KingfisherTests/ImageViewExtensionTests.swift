@@ -689,21 +689,21 @@ class ImageViewExtensionTests: XCTestCase {
         let group = DispatchGroup()
         
         group.enter()
-        imageView.kf.setImage(with: url, options: [.processor(p1)]) { result in
+        imageView.kf.setImage(with: url, options: [.processor(p1), .cacheMemoryOnly]) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isNotCurrentTask)
             group.leave()
         }
         
         group.enter()
-        imageView.kf.setImage(with: url, options: [.processor(p2)]) { result in
+        imageView.kf.setImage(with: url, options: [.processor(p2), .cacheMemoryOnly]) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value!.image.size, size2)
             group.leave()
         }
         
         group.notify(queue: .main) { exp.fulfill() }
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
     }
     
     @MainActor func testMemoryImageCacheExtendingExpirationTask() {

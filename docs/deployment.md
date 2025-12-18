@@ -277,6 +277,6 @@ add:
 **Ruby Environment**:
 - **Fastlane**: Latest version
 - **CocoaPods**: Latest version  
-- **xcode-install**: For Xcode version management
+- **xcodes**: For Xcode version management
 
 This deployment system ensures reliable, automated distribution across all supported Apple platforms with comprehensive testing and validation at each step.

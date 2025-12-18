@@ -33,12 +33,15 @@ platform :ios do
   end
 
   lane :build do |options|
-    gym(
+    xcodebuild(
       workspace: "Kingfisher.xcworkspace",
       configuration: "Debug",
       scheme: "Kingfisher",
-      xcargs: "SWIFT_VERSION=5.0",
-      destination: options[:destination]
+      destination: options[:destination],
+      build: true,
+      build_settings: {
+        "SWIFT_VERSION" => "5.0"
+      }
     )
   end
 
