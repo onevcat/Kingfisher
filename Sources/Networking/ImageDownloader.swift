@@ -423,12 +423,14 @@ open class ImageDownloader: @unchecked Sendable {
 
     private func startDownloadTask(
         context: DownloadingContext,
-        callback: SessionDataTask.TaskCallback
+        callback: SessionDataTask.TaskCallback,
+        beforeTaskResume: ((DownloadTask) -> Void)? = nil
     ) -> DownloadTask
     {
         let downloadTask = addDownloadTask(context: context, callback: callback)
 
         guard let sessionTask = downloadTask.sessionTask, !sessionTask.started else {
+            beforeTaskResume?(downloadTask)
             return downloadTask
         }
 
@@ -468,6 +470,10 @@ open class ImageDownloader: @unchecked Sendable {
             }
         }
 
+        // Ensure `beforeTaskResume` runs before `resume()`. Some stubbing layers may complete the request
+        // synchronously during `resume()`, so any "task started" callback should be invoked before that.
+        beforeTaskResume?(downloadTask)
+
         reportWillDownloadImage(url: context.url, request: context.request)
         sessionTask.resume()
         return downloadTask
@@ -493,18 +499,15 @@ open class ImageDownloader: @unchecked Sendable {
         createDownloadContext(with: url, options: options) { result in
             switch result {
             case .success(let context):
-                // `downloadTask` will be set if the downloading started immediately. This is the case when no request
-                // modifier or a sync modifier (`ImageDownloadRequestModifier`) is used. Otherwise, when an
-                // `AsyncImageDownloadRequestModifier` is used the returned `downloadTask` of this method will be `nil`
-                // and the actual "delayed" task is given in `AsyncImageDownloadRequestModifier.onDownloadTaskStarted`
-                // callback.
-                let actualDownloadTask = self.startDownloadTask(
-                    context: context,
-                    callback: self.createTaskCallback(completionHandler, options: options)
-                )
-                downloadTask.linkToTask(actualDownloadTask)
+                let taskCallback = self.createTaskCallback(completionHandler, options: options)
                 if let modifier = options.requestModifier {
-                    modifier.onDownloadTaskStarted?(downloadTask)
+                    _ = self.startDownloadTask(context: context, callback: taskCallback, beforeTaskResume: { actualDownloadTask in
+                        downloadTask.linkToTask(actualDownloadTask)
+                        modifier.onDownloadTaskStarted?(downloadTask)
+                    })
+                } else {
+                    let actualDownloadTask = self.startDownloadTask(context: context, callback: taskCallback)
+                    downloadTask.linkToTask(actualDownloadTask)
                 }
             case .failure(let error):
                 options.callbackQueue.execute {
