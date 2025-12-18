@@ -1243,31 +1243,25 @@ class KingfisherManagerTests: XCTestCase {
         
         stub(url, data: testImageData)
         
-        let task = ActorBox<DownloadTask?>(nil)
-        
-        let called = ActorBox(false)
+        let task = LockIsolated<DownloadTask?>(nil)
+        let callbackCount = LockIsolated(0)
         
         let t: DownloadTask? = manager.retrieveImage(with: url) { result in
-            Task {
-                let calledResult = await called.value
-                XCTAssertFalse(calledResult)
-                XCTAssertNotNil(result.value?.image)
-                
-                if !calledResult {
-                    Task {
-                        await task.value?.cancel()
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        exp.fulfill()
-                    }
-                } else {
-                    XCTFail("Callback should not be invoked again.")
-                }
+            let count = callbackCount.withValue { value in
+                value += 1
+                return value
+            }
+
+            XCTAssertEqual(count, 1, "Callback should not be invoked again.")
+            XCTAssertNotNil(result.value?.image)
+
+            task.value?.cancel()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                exp.fulfill()
             }
         }
-        Task {
-            await task.setValue(t)
-        }
+
+        task.setValue(t)
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -1787,17 +1781,6 @@ struct SimpleImageDataProvider: ImageDataProvider, @unchecked Sendable {
     }
     
     struct E: Error {}
-}
-
-actor ActorBox<T> {
-    var value: T
-    init(_ value: T) {
-        self.value = value
-    }
-    
-    func setValue(_ value: T) {
-        self.value = value
-    }
 }
 
 actor ActorArray<Element> {
