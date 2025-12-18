@@ -868,31 +868,43 @@ open class ImageCache: @unchecked Sendable {
     @objc public func backgroundCleanExpiredDiskCache() {
         // if 'sharedApplication()' is unavailable, then return
         guard let sharedApplication = KingfisherWrapper<UIApplication>.shared else { return }
-        
-        let taskActor = ActorBox<UIBackgroundTaskIdentifier?>(nil)
-        
-        let createdTask = sharedApplication.beginBackgroundTask(withName: "Kingfisher:backgroundCleanExpiredDiskCache") {
-            Task {
-                guard let bgTask = await taskActor.value, bgTask != .invalid else { return }
-                sharedApplication.endBackgroundTask(bgTask)
-                await taskActor.setValue(.invalid)
+
+        actor BackgroundTaskState {
+            private var value: UIBackgroundTaskIdentifier? = nil
+
+            func setValue(_ newValue: UIBackgroundTaskIdentifier) {
+                value = newValue
+            }
+
+            func takeValidValueAndInvalidate() -> UIBackgroundTaskIdentifier? {
+                guard let task = value, task != .invalid else { return nil }
+                value = .invalid
+                return task
             }
         }
-        
-        cleanExpiredDiskCache {
-            Task {
-                guard let bgTask = await taskActor.value, bgTask != .invalid else { return }
+
+        let taskState = BackgroundTaskState()
+
+        func endBackgroundTaskIfNeeded() {
+            Task { @MainActor in
+                guard let bgTask = await taskState.takeValidValueAndInvalidate() else { return }
                 #if compiler(>=6)
                 sharedApplication.endBackgroundTask(bgTask)
                 #else
                 await sharedApplication.endBackgroundTask(bgTask)
                 #endif
-                await taskActor.setValue(.invalid)
             }
         }
-        
-        Task {
-            await taskActor.setValue(createdTask)
+
+        let createdTask = sharedApplication.beginBackgroundTask(
+            withName: "Kingfisher:backgroundCleanExpiredDiskCache",
+            expirationHandler: endBackgroundTaskIfNeeded
+        )
+
+        Task { await taskState.setValue(createdTask) }
+
+        cleanExpiredDiskCache {
+            endBackgroundTaskIfNeeded()
         }
     }
 #endif

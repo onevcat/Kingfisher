@@ -215,7 +215,6 @@ class RetryStrategyTests: XCTestCase {
 
     func testDelayRetryStrategyDidRetried() {
         let exp = expectation(description: #function)
-        let called = ActorBox(false)
         let source = Source.network(URL(string: "url")!)
         let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(0))
         let context = RetryContext(
@@ -227,12 +226,7 @@ class RetryStrategyTests: XCTestCase {
                 XCTFail("The decision should be `retry`.")
                 return
             }
-            Task {
-                await called.setValue(true)
-                let result = await called.value
-                XCTAssertTrue(result)
-                exp.fulfill()
-            }
+            exp.fulfill()
         }
 
         waitForExpectations(timeout: 3, handler: nil)
