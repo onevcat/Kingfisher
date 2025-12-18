@@ -885,9 +885,10 @@ open class ImageCache: @unchecked Sendable {
 
         let taskState = BackgroundTaskState()
 
-        func endBackgroundTaskIfNeeded() {
+        @MainActor @Sendable func endBackgroundTaskIfNeeded() {
             Task { @MainActor in
                 guard let bgTask = await taskState.takeValidValueAndInvalidate() else { return }
+                guard let sharedApplication = KingfisherWrapper<UIApplication>.shared else { return }
                 #if compiler(>=6)
                 sharedApplication.endBackgroundTask(bgTask)
                 #else
@@ -904,7 +905,9 @@ open class ImageCache: @unchecked Sendable {
         Task { await taskState.setValue(createdTask) }
 
         cleanExpiredDiskCache {
-            endBackgroundTaskIfNeeded()
+            Task { @MainActor in
+                endBackgroundTaskIfNeeded()
+            }
         }
     }
 #endif
