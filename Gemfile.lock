@@ -288,9 +288,6 @@ GEM
     uber (0.1.0)
     unicode-display_width (2.6.0)
     word_wrap (1.0.0)
-    xcode-install (2.8.1)
-      claide (>= 0.9.1)
-      fastlane (>= 2.1.0, < 3.0.0)
     xcodeproj (1.27.0)
       CFPropertyList (>= 2.3.3, < 4.0)
       atomos (~> 0.1.3)
@@ -310,7 +307,6 @@ DEPENDENCIES
   base64 (~> 0.2.0)
   cocoapods
   fastlane
-  xcode-install
 
 BUNDLED WITH
    2.5.22
