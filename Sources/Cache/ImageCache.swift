@@ -885,7 +885,7 @@ open class ImageCache: @unchecked Sendable {
 
         let taskState = BackgroundTaskState()
 
-        let endBackgroundTaskIfNeeded: @MainActor @Sendable () -> Void = {
+        let endBackgroundTaskIfNeeded: @Sendable () -> Void = {
             Task { @MainActor in
                 guard let bgTask = await taskState.takeValidValueAndInvalidate() else { return }
                 guard let sharedApplication = KingfisherWrapper<UIApplication>.shared else { return }

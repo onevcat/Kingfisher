@@ -681,8 +681,25 @@ class ImageDownloaderTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        let callbackLock = NSLock()
-        var callbackCount = 0
+        final class CallbackCounter: @unchecked Sendable {
+            private let lock = NSLock()
+            private var value = 0
+
+            func increment() {
+                lock.lock()
+                value += 1
+                lock.unlock()
+            }
+
+            func read() -> Int {
+                lock.lock()
+                let current = value
+                lock.unlock()
+                return current
+            }
+        }
+
+        let callbackCounter = CallbackCounter()
         let expectedCount = 10
         exp.expectedFulfillmentCount = expectedCount
 
@@ -695,9 +712,7 @@ class ImageDownloaderTests: XCTestCase {
                     XCTAssertEqual(imageResult.url, url)
                     XCTAssertEqual(imageResult.originalData, testImageData)
 
-                    callbackLock.lock()
-                    callbackCount += 1
-                    callbackLock.unlock()
+                    callbackCounter.increment()
 
                     exp.fulfill()
 
@@ -710,9 +725,7 @@ class ImageDownloaderTests: XCTestCase {
 
         // Then
         waitForExpectations(timeout: 3) { _ in
-            callbackLock.lock()
-            let finalCount = callbackCount
-            callbackLock.unlock()
+            let finalCount = callbackCounter.read()
             XCTAssertEqual(finalCount, expectedCount, "All \(expectedCount) concurrent requests should receive callbacks")
         }
     }
