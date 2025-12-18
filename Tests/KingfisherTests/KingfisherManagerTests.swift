@@ -950,26 +950,21 @@ class KingfisherManagerTests: XCTestCase {
 #endif
     
     func testRetrieveWithImageProvider() {
+        let exp = expectation(description: #function)
         let provider = SimpleImageDataProvider(cacheKey: "key") { .success(testImageData) }
-        let called = ActorBox(false)
         manager.defaultOptions = .empty
         _ = manager.retrieveImage(with: .provider(provider), options: [.processingQueue(.mainCurrentOrAsync)]) {
             result in
             XCTAssertNotNil(result.value)
             XCTAssertTrue(result.value!.image.renderEqual(to: testImage))
-            Task {
-                await called.setValue(true)
-            }
+            exp.fulfill()
         }
-        Task {
-            let result = await called.value
-            XCTAssertTrue(result)
-        }
+        waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testRetrieveWithImageProviderFail() {
+        let exp = expectation(description: #function)
         let provider = SimpleImageDataProvider(cacheKey: "key") { .failure(SimpleImageDataProvider.E()) }
-        let called = ActorBox(false)
         _ = manager.retrieveImage(with: .provider(provider)) { result in
             XCTAssertNotNil(result.error)
             if case .imageSettingError(reason: .dataProviderError(_, let error)) = result.error! {
@@ -977,14 +972,9 @@ class KingfisherManagerTests: XCTestCase {
             } else {
                 XCTFail()
             }
-            Task {
-                await called.setValue(true)
-            }
+            exp.fulfill()
         }
-        Task {
-            let result = await called.value
-            XCTAssertTrue(result)
-        }
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testContextRemovingAlternativeSource() {
