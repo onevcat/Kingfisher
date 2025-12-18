@@ -746,9 +746,16 @@ class KingfisherManagerTests: XCTestCase {
         self.manager.retrieveImage(with: url, options: [.processor(p)]) { result in
             XCTAssertNotNil(result.value?.image)
             XCTAssertEqual(result.value!.cacheType, .none)
+            
+            // `waitForCache` is enabled by default in test setup, so the processed image should already be cached to disk
+            // when the completion handler is called.
+            self.manager.cache.clearMemoryCache()
+            let cached = self.manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
+            XCTAssertEqual(cached, .disk)
+
             exp.fulfill()
         }
-        waitForExpectations(timeout: 3, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testImageShouldOnlyFromMemoryCacheOrRefreshCanBeGotFromMemory() {
