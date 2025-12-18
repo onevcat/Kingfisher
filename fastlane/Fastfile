@@ -3,6 +3,17 @@ fastlane_version "1.37.0"
 default_platform :ios
 
 platform :ios do
+  def normalize_destination(destination)
+    return destination if destination.to_s.empty?
+    return destination if destination.include?("arch=")
+    return destination unless destination.include?("Simulator")
+
+    host_arch = Actions.sh("uname -m", log: false).strip
+    return destination unless host_arch == "arm64"
+
+    "#{destination},arch=arm64"
+  end
+
   desc "Runs all the tests"
   lane :tests do
     test(destination: "platform=macOS")
@@ -24,21 +35,26 @@ platform :ios do
   end
 
   lane :test do |options|
+    destination = normalize_destination(options[:destination])
     scan(
       scheme: "Kingfisher", 
       clean: true, 
       xcargs: "SWIFT_VERSION=5.0",
-      destination: options[:destination]
+      destination: destination
     )
   end
 
   lane :build do |options|
-    gym(
+    destination = normalize_destination(options[:destination])
+    xcodebuild(
       workspace: "Kingfisher.xcworkspace",
       configuration: "Debug",
       scheme: "Kingfisher",
-      xcargs: "SWIFT_VERSION=5.0",
-      destination: options[:destination]
+      destination: destination,
+      build: true,
+      build_settings: {
+        "SWIFT_VERSION" => "5.0"
+      }
     )
   end
 
