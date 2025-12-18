@@ -144,33 +144,31 @@ class ImageDownloaderTests: XCTestCase {
     }
 
     func testDownloadWithAsyncModifyingRequest() {
-        let exp = expectation(description: #function)
+        let downloadCompleted = expectation(description: #function)
+        let downloadTaskStarted = expectation(description: "downloadTaskStarted")
 
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        let downloadTaskCalled = ActorBox(false)
-
         let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
             XCTAssertNotNil(task)
-            Task {
-                await downloadTaskCalled.setValue(true)
-            }
+            downloadTaskStarted.fulfill()
         })
 
         let someURL = URL(string: "some_strange_url")!
         let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
             XCTAssertNotNil(result.value)
             XCTAssertEqual(result.value?.url, url)
-            Task {
-                let result = await downloadTaskCalled.value
-                XCTAssertTrue(result)
-                exp.fulfill()
-            }
+            downloadCompleted.fulfill()
         }
         // The returned task is nil since the download is not starting immediately.
         XCTAssertFalse(task.isInitialized)
-        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertEqual(
+            // `enforceOrder: true` requires the expectations to be fulfilled in order:
+            // `downloadTaskStarted` must happen before `downloadCompleted`.
+            XCTWaiter.wait(for: [downloadTaskStarted, downloadCompleted], timeout: 3, enforceOrder: true),
+            .completed
+        )
     }
 
     func testDownloadWithModifyingRequestToNil() {
