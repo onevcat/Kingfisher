@@ -539,33 +539,28 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-#if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
-    func testModifierShouldOnlyApplyForFinalResultWhenDownload() {
-        let exp = expectation(description: #function)
+	#if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
+	    func testModifierShouldOnlyApplyForFinalResultWhenDownload() {
+	        let exp = expectation(description: #function)
 
-        let url = testURLs[0]
-        stub(url, data: testImageData)
+	        let url = testURLs[0]
+	        stub(url, data: testImageData)
 
-        let modifierCalled = ActorBox(false)
-        let modifier = AnyImageModifier { image in
-            Task {
-                await modifierCalled.setValue(true)
-            }
-            return image.withRenderingMode(.alwaysTemplate)
-        }
+	        let modifierCalled = LockIsolated(false)
+	        let modifier = AnyImageModifier { image in
+	            modifierCalled.setValue(true)
+	            return image.withRenderingMode(.alwaysTemplate)
+	        }
 
-        downloader.downloadImage(with: url, options: [.imageModifier(modifier)]) { result in
-            XCTAssertEqual(result.value?.image.renderingMode, .automatic)
-            Task {
-                let called = await modifierCalled.value
-                XCTAssertFalse(called)
-                exp.fulfill()
-            }
-        }
+	        downloader.downloadImage(with: url, options: [.imageModifier(modifier)]) { result in
+	            XCTAssertEqual(result.value?.image.renderingMode, .automatic)
+	            XCTAssertFalse(modifierCalled.value)
+	            exp.fulfill()
+	        }
 
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-#endif
+	        waitForExpectations(timeout: 3, handler: nil)
+	    }
+	#endif
     
     func testDownloadTaskTakePriorityOption() {
         let exp = expectation(description: #function)
