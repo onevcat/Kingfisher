@@ -45,7 +45,6 @@ struct LoadingFailureDemo: View {
     var body: some View {
         VStack {
             KFImage(url)
-                .onFailureImage(warningImage) // onFailureImage should not work
                 .onFailureView {
                     ZStack {
                         RoundedRectangle(cornerRadius: 20)
@@ -59,15 +58,6 @@ struct LoadingFailureDemo: View {
                 .frame(width: 200, height: 200)
             Text("onFailureView")
             Spacer().frame(height: 20)
-            
-            KFImage(url)
-                .onFailureImage(warningImage)
-                .frame(width: 200, height: 200)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.red.opacity(0.5))
-                )
-            Text("onFailureImage")
         }
     }
 }

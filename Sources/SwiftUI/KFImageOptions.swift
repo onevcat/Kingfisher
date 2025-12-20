@@ -125,8 +125,8 @@ extension KFImageProtocol {
 
     /// Sets a failure `View` that is displayed when the image fails to load.
     ///
-    /// Use this modifier to provide a custom view when image loading fails. This offers more flexibility than
-    /// `onFailureImage` by allowing any SwiftUI view as the failure placeholder.
+    /// Use this modifier to provide a custom view when image loading fails. This offers more flexibility than the
+    /// deprecated `onFailureImage` API by allowing any SwiftUI view as the failure placeholder.
     ///
     /// Example:
     /// ```swift
@@ -144,12 +144,23 @@ extension KFImageProtocol {
     ///     }
     /// ```
     ///
-    /// - Note: If both `onFailureImage` and `onFailureView` are set, `onFailureView` takes precedence.
+    /// - Note: If both deprecated `onFailureImage` and `onFailureView` are set, `onFailureView` takes precedence.
     /// 
     /// - Parameter content: A view builder that creates the failure view.
     /// - Returns: A Kingfisher-compatible image view that displays the provided `content` when image loading fails.
     public func onFailureView<F: View>(@ViewBuilder _ content: @escaping () -> F) -> Self {
         context.failureView = { AnyView(content()) }
+        return self
+    }
+
+    /// Sets an image to display when the loading fails.
+    ///
+    /// - Deprecated: Use ``onFailureView(_:)`` instead, which lets you return any SwiftUI `View` and guarantees
+    ///   consistent behavior across SwiftUI platforms. The image-based fallback modifier is maintained purely for
+    ///   backward compatibility and will be removed in a future major release.
+    @available(*, deprecated, message: "Use `onFailureView(_:)` to customize SwiftUI failure placeholders instead.")
+    public func onFailureImage(_ image: KFCrossPlatformImage?) -> Self {
+        options.onFailureImage = .some(image)
         return self
     }
 
