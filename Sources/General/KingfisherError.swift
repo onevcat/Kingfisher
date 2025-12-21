@@ -368,9 +368,12 @@ public enum KingfisherError: Error {
 
     // MARK: Helper Properties & Methods
 
-    /// A helper property to determine if this error is of type `RequestErrorReason.taskCancelled`.
+    /// A helper property to determine if this error is a cancellation error.
     public var isTaskCancelled: Bool {
         if case .requestError(reason: .taskCancelled) = self {
+            return true
+        }
+        if case .requestError(reason: .asyncTaskContextCancelled) = self {
             return true
         }
         return false
