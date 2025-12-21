@@ -113,11 +113,13 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     
     @ViewBuilder
     private var configuredImage: some View {
-        let configuredImage = context.configurations
-            .reduce(HoldingView.created(from: binder.loadedImage, context: context)) {
-                current, config in config(current)
-            }
-        
+        let image = binder.loadedImage ?? binder.failureImage
+        let baseImage = HoldingView.created(from: image, context: context)
+
+        let configuredImage = binder.isFailureImage ?
+            baseImage :
+            context.configurations.reduce(baseImage) { current, config in config(current) }
+
         // Apply contentConfiguration first, then loadTransition as the final step
         if let contentConfiguration = context.contentConfiguration {
             contentConfiguration(configuredImage)

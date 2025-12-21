@@ -42,7 +42,7 @@ extension KFImage {
         private var loading = false
 
         var loadingOrSucceeded: Bool {
-            return loading || loadedImage != nil
+            return loading || loadedImage != nil || failureImage != nil
         }
 
         // Do not use @Published due to https://github.com/onevcat/Kingfisher/issues/1717. Revert to @Published once
@@ -52,6 +52,8 @@ extension KFImage {
         private(set) var animating = false
 
         var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        var failureImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        var isFailureImage = false { willSet { objectWillChange.send() } }
         var failureView: (() -> AnyView)? = nil { willSet { objectWillChange.send() } }
         var progress: Progress = .init()
 
@@ -73,7 +75,8 @@ extension KFImage {
                     if let view = context.failureView {
                         self.failureView = view
                     } else if let image = context.options.onFailureImage {
-                        self.loadedImage = image
+                        self.failureImage = image
+                        self.isFailureImage = true
                     }
                     self.loading = false
                     self.markLoaded(sendChangeEvent: false)
@@ -140,7 +143,8 @@ extension KFImage {
                                 if let view = context.failureView {
                                     self.failureView = view
                                 } else if let image = context.options.onFailureImage {
-                                    self.loadedImage = image
+                                    self.failureImage = image
+                                    self.isFailureImage = true
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }
