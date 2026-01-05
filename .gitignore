@@ -89,9 +89,11 @@ vendor/
 .vscode/settings.json
 
 # Claude local settings
+.claude/
 .claude/settings.local.json
 .claude/CLAUDE.local.md
 .claude/*.local.*
+.codex/
 
 # xcode-build-server files
 buildServer.json
