@@ -48,7 +48,11 @@ public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
     public let pickerItem: PhotosPickerItem
 
     private var internalKey: String {
-        pickerItem.itemIdentifier ?? UUID().uuidString
+        guard let id = pickerItem.itemIdentifier else {
+            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
+            return UUID().uuidString
+        }
+        return id
     }
 
     public var cacheKey: String {

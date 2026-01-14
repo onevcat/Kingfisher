@@ -58,7 +58,11 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
     public let contentType: UTType
 
     private var internalKey: String {
-        pickerResult.assetIdentifier ?? UUID().uuidString
+        guard let id = pickerResult.assetIdentifier else {
+            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
+            return UUID().uuidString
+        }
+        return id
     }
 
     public var cacheKey: String {
