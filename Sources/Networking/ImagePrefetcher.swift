@@ -38,7 +38,7 @@ import UIKit
 ///   - failedResources: An array of resources that fail to be downloaded. This could be because of being cancelled while downloading, encountering an error during downloading, or the download not being started at all.
 ///   - completedResources: An array of resources that are downloaded and cached successfully.
 public typealias PrefetcherProgressBlock =
-    ((_ skippedResources: [any Resource], _ failedResources: [any Resource], _ completedResources: [any Resource]) -> Void)
+    @Sendable (_ skippedResources: [any Resource], _ failedResources: [any Resource], _ completedResources: [any Resource]) -> Void
 
 /// Progress update block of prefetcher when initialized with a list of resources.
 ///
@@ -47,7 +47,7 @@ public typealias PrefetcherProgressBlock =
 ///   - failedSources: An array of sources that fail to be fetched.
 ///   - completedResources: An array of sources that are fetched and cached successfully.
 public typealias PrefetcherSourceProgressBlock =
-    ((_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void)
+    @Sendable (_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void
 
 /// Completion block of prefetcher when initialized with a list of sources.
 ///
@@ -56,7 +56,7 @@ public typealias PrefetcherSourceProgressBlock =
 ///   - failedResources: An array of resources that fail to be downloaded. This could be because of being cancelled while downloading, encountering an error during downloading, or the download not being started at all.
 ///   - completedResources: An array of resources that are downloaded and cached successfully.
 public typealias PrefetcherCompletionHandler =
-    ((_ skippedResources: [any Resource], _ failedResources: [any Resource], _ completedResources: [any Resource]) -> Void)
+    @Sendable (_ skippedResources: [any Resource], _ failedResources: [any Resource], _ completedResources: [any Resource]) -> Void
 
 /// Completion block of prefetcher when initialized with a list of sources.
 ///
@@ -65,7 +65,7 @@ public typealias PrefetcherCompletionHandler =
 ///   - failedSources: An array of sources that fail to be fetched.
 ///   - completedSources: An array of sources that are fetched and cached successfully.
 public typealias PrefetcherSourceCompletionHandler =
-    ((_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void)
+    @Sendable (_ skippedSources: [Source], _ failedSources: [Source], _ completedSources: [Source]) -> Void
 
 /// ``ImagePrefetcher`` represents a downloading manager for requesting many images via URLs and then caching them.
 ///
