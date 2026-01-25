@@ -370,14 +370,21 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         if completionHandler == nil && completionSourceHandler == nil {
             return
         }
-        
+
+        // Snapshot arrays/handlers before switching threads to avoid concurrent mutation crashes.
+        let skipped = self.skippedSources
+        let failed = self.failedSources
+        let completed = self.completedSources
+        let completionSourceHandler = self.completionSourceHandler
+        let completionHandler = self.completionHandler
+
         // The completion handler should be called on the main thread
         CallbackQueue.mainCurrentOrAsync.execute {
-            self.completionSourceHandler?(self.skippedSources, self.failedSources, self.completedSources)
-            self.completionHandler?(
-                self.skippedSources.compactMap { $0.asResource },
-                self.failedSources.compactMap { $0.asResource },
-                self.completedSources.compactMap { $0.asResource }
+            completionSourceHandler?(skipped, failed, completed)
+            completionHandler?(
+                skipped.compactMap { $0.asResource },
+                failed.compactMap { $0.asResource },
+                completed.compactMap { $0.asResource }
             )
             self.completionHandler = nil
             self.progressBlock = nil
