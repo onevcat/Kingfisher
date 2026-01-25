@@ -57,19 +57,19 @@ class ImagePrefetcherTests: XCTestCase {
 
     func testPrefetchingImages() {
         let exp = expectation(description: #function)
-        
+
         testURLs.forEach { stub($0, data: testImageData) }
-        var progressCalledCount = 0
+        let progressCalledCount = LockIsolated(0)
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
             options: [.waitForCache],
-            progressBlock: { _, _, _ in progressCalledCount += 1 }) {
+            progressBlock: { _, _, _ in progressCalledCount.withValue { $0 += 1 } }) {
                 skippedResources, failedResources, completedResources in
 
                 XCTAssertEqual(skippedResources.count, 0)
                 XCTAssertEqual(failedResources.count, 0)
                 XCTAssertEqual(completedResources.count, testURLs.count)
-                XCTAssertEqual(progressCalledCount, testURLs.count)
+                XCTAssertEqual(progressCalledCount.value, testURLs.count)
                 for url in testURLs {
                     XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.absoluteString).cached)
                 }
@@ -163,22 +163,22 @@ class ImagePrefetcherTests: XCTestCase {
     func testFetchWithProcessor() {
         let exp = expectation(description: #function)
         testURLs.forEach { stub($0, data: testImageData, length: 123) }
-        
+
         let p = RoundCornerImageProcessor(cornerRadius: 20)
-        
-        func prefetchAgain() {
-            var progressCalledCount = 0
+
+        @Sendable func prefetchAgain() {
+            let progressCalledCount = LockIsolated(0)
             let prefetcher = ImagePrefetcher(
                 urls: testURLs,
                 options: [.processor(p), .waitForCache],
-                progressBlock: { _, _, _ in progressCalledCount += 1 })
+                progressBlock: { _, _, _ in progressCalledCount.withValue { $0 += 1 } })
             {
                 skippedResources, failedResources, completedResources in
-                                                
+
                 XCTAssertEqual(skippedResources.count, testURLs.count)
                 XCTAssertEqual(failedResources.count, 0)
                 XCTAssertEqual(completedResources.count, 0)
-                XCTAssertEqual(progressCalledCount, testURLs.count)
+                XCTAssertEqual(progressCalledCount.value, testURLs.count)
                 for url in testURLs {
                     let cached = KingfisherManager.shared.cache.imageCachedType(
                         forKey: url.absoluteString, processorIdentifier: p.identifier).cached
@@ -189,25 +189,25 @@ class ImagePrefetcherTests: XCTestCase {
             }
             prefetcher.start()
         }
-        
-        var progressCalledCount = 0
+
+        let progressCalledCount = LockIsolated(0)
         let prefetcher = ImagePrefetcher(
             urls: testURLs,
             options: [.processor(p), .waitForCache],
-            progressBlock: { _, _, _ in progressCalledCount += 1 })
+            progressBlock: { _, _, _ in progressCalledCount.withValue { $0 += 1 } })
         {
             skippedResources, failedResources, completedResources in
-                                            
+
             XCTAssertEqual(skippedResources.count, 0)
             XCTAssertEqual(failedResources.count, 0)
             XCTAssertEqual(completedResources.count, testURLs.count)
-            XCTAssertEqual(progressCalledCount, testURLs.count)
+            XCTAssertEqual(progressCalledCount.value, testURLs.count)
             for url in testURLs {
                 let cached = KingfisherManager.shared.cache.imageCachedType(
                     forKey: url.absoluteString, processorIdentifier: p.identifier).cached
                 XCTAssertTrue(cached)
             }
-            
+
             prefetchAgain()
         }
         prefetcher.start()
@@ -327,23 +327,23 @@ class ImagePrefetcherTests: XCTestCase {
             .provider(SimpleImageDataProvider(cacheKey: "2") { .success(testImageData) }),
             .network(url)
         ]
-        var counter = 0
+        let counter = LockIsolated(0)
         let prefetcher = ImagePrefetcher(
             sources: sources,
             options: [.waitForCache],
             progressBlock: {
                 skipped, failed, completed in
-                counter += 1
+                counter.withValue { $0 += 1 }
                 XCTAssertEqual(skipped.count, 0)
                 XCTAssertEqual(failed.count, 0)
-                XCTAssertEqual(completed.count, counter)
+                XCTAssertEqual(completed.count, counter.value)
             },
             completionHandler: {
                 skipped, failed, completed in
                 XCTAssertEqual(skipped.count, 0)
                 XCTAssertEqual(failed.count, 0)
                 XCTAssertEqual(completed.count, sources.count)
-                XCTAssertEqual(counter, sources.count)
+                XCTAssertEqual(counter.value, sources.count)
 
                 let allCached = [ImageCache.default.isCached(forKey: "1"),
                                  ImageCache.default.isCached(forKey: "2"),
