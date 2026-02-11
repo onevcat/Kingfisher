@@ -43,7 +43,10 @@ public enum CallbackQueue: Sendable {
     
     /// Dispatches the closure to a specified `DispatchQueue`.
     case dispatch(DispatchQueue)
-    
+
+    /// Dispatches the closure to an operation queue protocol type
+    case operationQueue(CallbackOperationQueue)
+
     /// Executes the `block` in a dispatch queue defined by `self`.
     /// - Parameter block: The block needs to be executed.
     public func execute(_ block: @Sendable @escaping () -> Void) {
@@ -56,6 +59,8 @@ public enum CallbackQueue: Sendable {
             block()
         case .dispatch(let queue):
             queue.async { block() }
+        case .operationQueue(let queue):
+            queue.addOperation(block)
         }
     }
 
@@ -65,6 +70,7 @@ public enum CallbackQueue: Sendable {
         case .mainCurrentOrAsync: return .main
         case .untouch: return OperationQueue.current?.underlyingQueue ?? .main
         case .dispatch(let queue): return queue
+        case .operationQueue(let queue): return queue.underlyingQueue ?? .main
         }
     }
 }
@@ -96,3 +102,10 @@ extension MainActor {
 #endif
     }
 }
+
+public protocol CallbackOperationQueue: AnyObject, Sendable {
+    var underlyingQueue: DispatchQueue? { get }
+    func addOperation(_ block: @Sendable @escaping () -> Void)
+}
+
+extension OperationQueue: CallbackOperationQueue {}
