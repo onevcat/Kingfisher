@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		072922432638639D0089E810 /* AnimatedImageDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072922422638639D0089E810 /* AnimatedImageDemo.swift */; };
+		0784D0992F17E41700EB2A07 /* PhotosPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0784D0982F17E41700EB2A07 /* PhotosPickerDemo.swift */; };
 		078DCB512BCFEFB40008114E /* PHPickerResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078DCB502BCFEFB40008114E /* PHPickerResultViewController.swift */; };
 		277EAE8D2045B39C00547CD3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE892045B39C00547CD3 /* Assets.xcassets */; };
 		277EAE8E2045B39C00547CD3 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 277EAE8A2045B39C00547CD3 /* Interface.storyboard */; };
@@ -164,6 +165,7 @@
 
 /* Begin PBXFileReference section */
 		072922422638639D0089E810 /* AnimatedImageDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedImageDemo.swift; sourceTree = "<group>"; };
+		0784D0982F17E41700EB2A07 /* PhotosPickerDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosPickerDemo.swift; sourceTree = "<group>"; };
 		078DCB502BCFEFB40008114E /* PHPickerResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPickerResultViewController.swift; sourceTree = "<group>"; };
 		277EAE892045B39C00547CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		277EAE8B2045B39C00547CD3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -471,6 +473,7 @@
 				D198F41F25EDC34000C53E0D /* SizingAnimationDemo.swift */,
 				072922422638639D0089E810 /* AnimatedImageDemo.swift */,
 				F344AEF12E1AD74F00BFE702 /* LoadTransitionDemo.swift */,
+				0784D0982F17E41700EB2A07 /* PhotosPickerDemo.swift */,
 			);
 			path = SwiftUIViews;
 			sourceTree = "<group>";
@@ -745,6 +748,7 @@
 				D1F78A652589F17200930759 /* MainView.swift in Sources */,
 				4B779C8526743C2800FF9C1E /* GeometryReaderDemo.swift in Sources */,
 				D1F78A5F2589F0AA00930759 /* SwiftUIViewController.swift in Sources */,
+				0784D0992F17E41700EB2A07 /* PhotosPickerDemo.swift in Sources */,
 				D12E0C951C47F91800AC98AD /* AppDelegate.swift in Sources */,
 				D1F06F3321AA4292000B1C38 /* DetailImageViewController.swift in Sources */,
 				D198F42225EDC4B900C53E0D /* GridDemo.swift in Sources */,

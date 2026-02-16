@@ -57,13 +57,11 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
     /// The content type of the image.
     public let contentType: UTType
 
-    private var internalKey: String {
-        pickerResult.assetIdentifier ?? UUID().uuidString
-    }
-
-    public var cacheKey: String {
-        "\(internalKey)_\(contentType.identifier)"
-    }
+    /// The key used in cache.
+    ///
+    /// If the picker result contains a stable asset identifier, it will be used as the key.
+    /// Otherwise, a random UUID will be generated and used for this provider instance.
+    public let cacheKey: String
 
     /// Creates an image data provider from a given `PHPickerResult`.
     /// - Parameters:
@@ -72,6 +70,15 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
     public init(pickerResult: PHPickerResult, contentType: UTType = UTType.image) {
         self.pickerResult = pickerResult
         self.contentType = contentType
+
+        let id: String
+        if let assetIdentifier = pickerResult.assetIdentifier {
+            id = assetIdentifier
+        } else {
+            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
+            id = UUID().uuidString
+        }
+        self.cacheKey = "\(id)_\(contentType.identifier)"
     }
 
     public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
