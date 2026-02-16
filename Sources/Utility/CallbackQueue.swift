@@ -44,7 +44,13 @@ public enum CallbackQueue: Sendable {
     /// Dispatches the closure to a specified `DispatchQueue`.
     case dispatch(DispatchQueue)
 
-    /// Dispatches the closure to an operation queue protocol type
+    /// Dispatches the closure to an operation-queue–like type.
+    ///
+    /// Use this case when you want to integrate Kingfisher's work into your own scheduling policy.
+    /// For example, you can control concurrency, priority, or implement a LIFO execution order.
+    ///
+    /// - Note: Execution order and whether the block runs serially or concurrently depend on the
+    ///   provided queue. Kingfisher does not enforce ordering guarantees for this case.
     case operationQueue(CallbackOperationQueue)
 
     /// Executes the `block` in a dispatch queue defined by `self`.
@@ -103,8 +109,17 @@ extension MainActor {
     }
 }
 
+/// A minimal abstraction used by ``CallbackQueue/operationQueue(_:)``.
+///
+/// Conform your own type to control how Kingfisher schedules work. `OperationQueue` already
+/// conforms to this protocol.
 public protocol CallbackOperationQueue: AnyObject, Sendable {
+    /// The underlying `DispatchQueue` if available.
+    ///
+    /// Kingfisher uses this value only when it needs a best-effort `DispatchQueue` representation.
     var underlyingQueue: DispatchQueue? { get }
+
+    /// Schedules a block for execution on this queue.
     func addOperation(_ block: @Sendable @escaping () -> Void)
 }
 
