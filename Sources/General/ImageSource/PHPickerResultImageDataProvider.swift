@@ -59,17 +59,24 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
 
     /// The key used in cache.
     ///
-    /// If the picker result contains a stable asset identifier, it will be used as the key.
-    /// Otherwise, a random UUID will be generated and used for this provider instance.
+    /// If you pass a custom key when creating the provider, it will be used.
+    /// Otherwise, if the picker result contains a stable asset identifier, it will be used as the key.
+    /// If no stable identifier is available, a random UUID will be generated and used for this provider instance.
     public let cacheKey: String
 
     /// Creates an image data provider from a given `PHPickerResult`.
     /// - Parameters:
     ///  - pickerResult: The picker result to provide image data.
     ///  - contentType: The content type of the image. Default is `UTType.image`.
-    public init(pickerResult: PHPickerResult, contentType: UTType = UTType.image) {
+    ///  - cacheKey: Optional cache key to use. If set, it will be used as `self.cacheKey` directly.
+    public init(pickerResult: PHPickerResult, contentType: UTType = UTType.image, cacheKey: String? = nil) {
         self.pickerResult = pickerResult
         self.contentType = contentType
+
+        if let cacheKey {
+            self.cacheKey = cacheKey
+            return
+        }
 
         let id: String
         if let assetIdentifier = pickerResult.assetIdentifier {

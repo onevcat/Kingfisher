@@ -49,15 +49,22 @@ public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
 
     /// The key used in cache.
     ///
-    /// If the picker item provides a stable identifier, it will be used as the key.
-    /// Otherwise, a random UUID will be generated and used for this provider instance.
+    /// If you pass a custom key when creating the provider, it will be used.
+    /// Otherwise, if the picker item provides a stable identifier, it will be used.
+    /// If no stable identifier is available, a random UUID will be generated and used for this provider instance.
     public let cacheKey: String
 
     /// Creates an image data provider from a given `PhotosPickerItem`.
     /// - Parameters:
     ///  - pickerItem: The picker item to provide image data.
-    public init(pickerItem: PhotosPickerItem) {
+    ///  - cacheKey: Optional cache key to use. If set, it will be used as `self.cacheKey` directly.
+    public init(pickerItem: PhotosPickerItem, cacheKey: String? = nil) {
         self.pickerItem = pickerItem
+
+        if let cacheKey {
+            self.cacheKey = cacheKey
+            return
+        }
 
         if let id = pickerItem.itemIdentifier {
             self.cacheKey = id
