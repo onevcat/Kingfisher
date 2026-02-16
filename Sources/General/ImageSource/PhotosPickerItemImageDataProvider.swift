@@ -35,6 +35,20 @@ import SwiftUI
 @available(iOS 16.0, macOS 13.0, *)
 public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
 
+    internal static func _cacheKey(
+        providedCacheKey: String?,
+        itemIdentifier: String?,
+        uuidString: () -> String
+    ) -> String {
+        if let providedCacheKey {
+            return providedCacheKey
+        }
+        if let itemIdentifier {
+            return itemIdentifier
+        }
+        return uuidString()
+    }
+
     /// The possible error might be caused by the `PhotosPickerItemImageDataProvider`.
     /// - invalidImage: The retrieved image is invalid.
     public enum PhotosPickerItemImageDataProviderError: Error {
@@ -49,22 +63,27 @@ public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
 
     /// The key used in cache.
     ///
-    /// If the picker item provides a stable identifier, it will be used as the key.
-    /// Otherwise, a random UUID will be generated and used for this provider instance.
+    /// If you pass a custom key when creating the provider, it will be used.
+    /// Otherwise, if the picker item provides a stable identifier, it will be used.
+    /// If no stable identifier is available, a random UUID will be generated and used for this provider instance.
     public let cacheKey: String
 
     /// Creates an image data provider from a given `PhotosPickerItem`.
     /// - Parameters:
     ///  - pickerItem: The picker item to provide image data.
-    public init(pickerItem: PhotosPickerItem) {
+    ///  - cacheKey: Optional cache key to use. If set, it will be used as `self.cacheKey` directly.
+    public init(pickerItem: PhotosPickerItem, cacheKey: String? = nil) {
         self.pickerItem = pickerItem
 
-        if let id = pickerItem.itemIdentifier {
-            self.cacheKey = id
-        } else {
+        if cacheKey == nil && pickerItem.itemIdentifier == nil {
             assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
-            self.cacheKey = UUID().uuidString
         }
+
+        self.cacheKey = Self._cacheKey(
+            providedCacheKey: cacheKey,
+            itemIdentifier: pickerItem.itemIdentifier,
+            uuidString: { UUID().uuidString }
+        )
     }
 
     public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {

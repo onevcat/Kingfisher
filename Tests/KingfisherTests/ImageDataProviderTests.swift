@@ -28,6 +28,57 @@ import XCTest
 @testable import Kingfisher
 
 class ImageDataProviderTests: XCTestCase {
+
+    func testCacheKeySelectionForPickerProviders() {
+        #if os(iOS) || os(macOS) || os(visionOS)
+        let uuid: () -> String = { "uuid" }
+
+        if #available(iOS 16.0, macOS 13.0, *) {
+            XCTAssertEqual(
+                PhotosPickerItemImageDataProvider._cacheKey(providedCacheKey: "custom", itemIdentifier: nil, uuidString: uuid),
+                "custom"
+            )
+            XCTAssertEqual(
+                PhotosPickerItemImageDataProvider._cacheKey(providedCacheKey: nil, itemIdentifier: "item", uuidString: uuid),
+                "item"
+            )
+            XCTAssertEqual(
+                PhotosPickerItemImageDataProvider._cacheKey(providedCacheKey: nil, itemIdentifier: nil, uuidString: uuid),
+                "uuid"
+            )
+        }
+
+        if #available(iOS 14.0, macOS 13.0, *) {
+            XCTAssertEqual(
+                PHPickerResultImageDataProvider._cacheKey(
+                    providedCacheKey: "custom",
+                    assetIdentifier: nil,
+                    contentTypeIdentifier: "public.image",
+                    uuidString: uuid
+                ),
+                "custom"
+            )
+            XCTAssertEqual(
+                PHPickerResultImageDataProvider._cacheKey(
+                    providedCacheKey: nil,
+                    assetIdentifier: "asset",
+                    contentTypeIdentifier: "public.image",
+                    uuidString: uuid
+                ),
+                "asset_public.image"
+            )
+            XCTAssertEqual(
+                PHPickerResultImageDataProvider._cacheKey(
+                    providedCacheKey: nil,
+                    assetIdentifier: nil,
+                    contentTypeIdentifier: "public.image",
+                    uuidString: uuid
+                ),
+                "uuid_public.image"
+            )
+        }
+        #endif
+    }
     
     func testLocalFileImageDataProvider() {
         let document = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

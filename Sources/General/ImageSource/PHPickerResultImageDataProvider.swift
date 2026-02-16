@@ -42,6 +42,19 @@ extension PHPickerResult: @unchecked Sendable { }
 @available(iOS 14.0, macOS 13.0, *)
 public struct PHPickerResultImageDataProvider: ImageDataProvider {
 
+    internal static func _cacheKey(
+        providedCacheKey: String?,
+        assetIdentifier: String?,
+        contentTypeIdentifier: String,
+        uuidString: () -> String
+    ) -> String {
+        if let providedCacheKey {
+            return providedCacheKey
+        }
+        let id = assetIdentifier ?? uuidString()
+        return "\(id)_\(contentTypeIdentifier)"
+    }
+
     /// The possible error might be caused by the `PHPickerResultImageDataProvider`.
     /// - invalidImage: The retrieved image is invalid.
     public enum PHPickerResultImageDataProviderError: Error {
@@ -59,26 +72,30 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
 
     /// The key used in cache.
     ///
-    /// If the picker result contains a stable asset identifier, it will be used as the key.
-    /// Otherwise, a random UUID will be generated and used for this provider instance.
+    /// If you pass a custom key when creating the provider, it will be used.
+    /// Otherwise, if the picker result contains a stable asset identifier, it will be used as the key.
+    /// If no stable identifier is available, a random UUID will be generated and used for this provider instance.
     public let cacheKey: String
 
     /// Creates an image data provider from a given `PHPickerResult`.
     /// - Parameters:
     ///  - pickerResult: The picker result to provide image data.
     ///  - contentType: The content type of the image. Default is `UTType.image`.
-    public init(pickerResult: PHPickerResult, contentType: UTType = UTType.image) {
+    ///  - cacheKey: Optional cache key to use. If set, it will be used as `self.cacheKey` directly.
+    public init(pickerResult: PHPickerResult, contentType: UTType = UTType.image, cacheKey: String? = nil) {
         self.pickerResult = pickerResult
         self.contentType = contentType
 
-        let id: String
-        if let assetIdentifier = pickerResult.assetIdentifier {
-            id = assetIdentifier
-        } else {
+        if cacheKey == nil && pickerResult.assetIdentifier == nil {
             assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
-            id = UUID().uuidString
         }
-        self.cacheKey = "\(id)_\(contentType.identifier)"
+
+        self.cacheKey = Self._cacheKey(
+            providedCacheKey: cacheKey,
+            assetIdentifier: pickerResult.assetIdentifier,
+            contentTypeIdentifier: contentType.identifier,
+            uuidString: { UUID().uuidString }
+        )
     }
 
     public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
