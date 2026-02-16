@@ -47,23 +47,24 @@ public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
     /// The picker item bound to `self`.
     public let pickerItem: PhotosPickerItem
 
-    private var internalKey: String {
-        guard let id = pickerItem.itemIdentifier else {
-            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
-            return UUID().uuidString
-        }
-        return id
-    }
-
-    public var cacheKey: String {
-        "\(internalKey)"
-    }
+    /// The key used in cache.
+    ///
+    /// If the picker item provides a stable identifier, it will be used as the key.
+    /// Otherwise, a random UUID will be generated and used for this provider instance.
+    public let cacheKey: String
 
     /// Creates an image data provider from a given `PhotosPickerItem`.
     /// - Parameters:
     ///  - pickerItem: The picker item to provide image data.
     public init(pickerItem: PhotosPickerItem) {
         self.pickerItem = pickerItem
+
+        if let id = pickerItem.itemIdentifier {
+            self.cacheKey = id
+        } else {
+            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
+            self.cacheKey = UUID().uuidString
+        }
     }
 
     public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
