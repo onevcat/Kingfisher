@@ -35,6 +35,20 @@ import SwiftUI
 @available(iOS 16.0, macOS 13.0, *)
 public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
 
+    internal static func _cacheKey(
+        providedCacheKey: String?,
+        itemIdentifier: String?,
+        uuidString: () -> String
+    ) -> String {
+        if let providedCacheKey {
+            return providedCacheKey
+        }
+        if let itemIdentifier {
+            return itemIdentifier
+        }
+        return uuidString()
+    }
+
     /// The possible error might be caused by the `PhotosPickerItemImageDataProvider`.
     /// - invalidImage: The retrieved image is invalid.
     public enum PhotosPickerItemImageDataProviderError: Error {
@@ -61,17 +75,15 @@ public struct PhotosPickerItemImageDataProvider: ImageDataProvider {
     public init(pickerItem: PhotosPickerItem, cacheKey: String? = nil) {
         self.pickerItem = pickerItem
 
-        if let cacheKey {
-            self.cacheKey = cacheKey
-            return
+        if cacheKey == nil && pickerItem.itemIdentifier == nil {
+            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
         }
 
-        if let id = pickerItem.itemIdentifier {
-            self.cacheKey = id
-        } else {
-            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
-            self.cacheKey = UUID().uuidString
-        }
+        self.cacheKey = Self._cacheKey(
+            providedCacheKey: cacheKey,
+            itemIdentifier: pickerItem.itemIdentifier,
+            uuidString: { UUID().uuidString }
+        )
     }
 
     public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {

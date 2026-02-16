@@ -42,6 +42,19 @@ extension PHPickerResult: @unchecked Sendable { }
 @available(iOS 14.0, macOS 13.0, *)
 public struct PHPickerResultImageDataProvider: ImageDataProvider {
 
+    internal static func _cacheKey(
+        providedCacheKey: String?,
+        assetIdentifier: String?,
+        contentTypeIdentifier: String,
+        uuidString: () -> String
+    ) -> String {
+        if let providedCacheKey {
+            return providedCacheKey
+        }
+        let id = assetIdentifier ?? uuidString()
+        return "\(id)_\(contentTypeIdentifier)"
+    }
+
     /// The possible error might be caused by the `PHPickerResultImageDataProvider`.
     /// - invalidImage: The retrieved image is invalid.
     public enum PHPickerResultImageDataProviderError: Error {
@@ -73,19 +86,16 @@ public struct PHPickerResultImageDataProvider: ImageDataProvider {
         self.pickerResult = pickerResult
         self.contentType = contentType
 
-        if let cacheKey {
-            self.cacheKey = cacheKey
-            return
+        if cacheKey == nil && pickerResult.assetIdentifier == nil {
+            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
         }
 
-        let id: String
-        if let assetIdentifier = pickerResult.assetIdentifier {
-            id = assetIdentifier
-        } else {
-            assertionFailure("[Kingfisher] Should use `PHPhotoLibrary.shared()` to pick image.")
-            id = UUID().uuidString
-        }
-        self.cacheKey = "\(id)_\(contentType.identifier)"
+        self.cacheKey = Self._cacheKey(
+            providedCacheKey: cacheKey,
+            assetIdentifier: pickerResult.assetIdentifier,
+            contentTypeIdentifier: contentType.identifier,
+            uuidString: { UUID().uuidString }
+        )
     }
 
     public func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
