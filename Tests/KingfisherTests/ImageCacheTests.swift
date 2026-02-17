@@ -1060,6 +1060,96 @@ public final class LockIsolated<Value>: @unchecked Sendable {
   }
 }
 
+final class ImageCacheAsyncCachedTypeTests: XCTestCase {
+
+    var cache: ImageCache!
+
+    override func setUp() {
+        super.setUp()
+
+        let uuid = UUID().uuidString
+        cache = ImageCache(name: "test-\(uuid)")
+    }
+
+    override func tearDown() {
+        clearCaches([cache])
+        cache = nil
+
+        super.tearDown()
+    }
+
+    func testImageCachedTypeAsyncMemoryHit() {
+        let expectation = expectation(description: "memory hit")
+        let key = "memory-hit"
+        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+
+        cache.memoryStorage.store(value: testImage, forKey: computedKey)
+
+        cache.imageCachedTypeAsync(forKey: key, callbackQueue: .untouch) { type in
+            XCTAssertEqual(type, .memory)
+            XCTAssertTrue(Thread.isMainThread)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 2)
+    }
+
+    func testImageCachedTypeAsyncDiskHitRunsOffMainThreadWhenCallbackUntouch() {
+        let expectation = expectation(description: "disk hit")
+        let key = "disk-hit"
+        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+
+        try? cache.diskStorage.store(value: testImageData, forKey: computedKey, expiration: .never)
+
+        cache.imageCachedTypeAsync(forKey: key, callbackQueue: .untouch) { type in
+            XCTAssertEqual(type, .disk)
+            XCTAssertFalse(Thread.isMainThread)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 2)
+    }
+
+    func testImageCachedTypeAsyncNone() {
+        let expectation = expectation(description: "none")
+        let key = "missing"
+
+        cache.imageCachedTypeAsync(forKey: key, callbackQueue: .untouch) { type in
+            XCTAssertEqual(type, .none)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 2)
+    }
+
+    func testImageCachedTypeAsyncDeliversOnMainQueueWhenRequested() {
+        let expectation = expectation(description: "main callback")
+        let key = "main-callback"
+        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+
+        try? cache.diskStorage.store(value: testImageData, forKey: computedKey, expiration: .never)
+
+        DispatchQueue.global().async {
+            self.cache.imageCachedTypeAsync(forKey: key, callbackQueue: .mainAsync) { type in
+                XCTAssertEqual(type, .disk)
+                XCTAssertTrue(Thread.isMainThread)
+                expectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 2)
+    }
+
+    func testImageCachedTypeAsyncAwaitReturns() async {
+        let key = "async-await"
+        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+        try? cache.diskStorage.store(value: testImageData, forKey: computedKey, expiration: .never)
+
+        let type = await cache.imageCachedTypeAsync(forKey: key)
+        XCTAssertEqual(type, .disk)
+    }
+}
+
 extension LockIsolated where Value: Sendable {
   /// The lock-isolated value.
   public var value: Value {
