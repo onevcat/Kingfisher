@@ -939,6 +939,53 @@ open class ImageCache: @unchecked Sendable {
         if diskStorage.isCached(forKey: computedKey, forcedExtension: forcedExtension) { return .disk }
         return .none
     }
+
+    /// Checks cache type for a given key and processor identifier combination asynchronously.
+    ///
+    /// This method is an opt-in alternative to ``imageCachedType(forKey:processorIdentifier:forcedExtension:)``.
+    /// It performs any disk existence/meta check on the cache's I/O queue to avoid blocking the calling thread.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: The processor identifier used for this image. The default value is the
+    ///     ``DefaultImageProcessor/identifier`` of the ``DefaultImageProcessor/default`` image processor.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///     disk storage configuration instead.
+    ///   - callbackQueue: The callback queue on which the `completionHandler` is invoked. Default is `.mainCurrentOrAsync`.
+    ///   - completionHandler: Called with the resolved ``CacheType``.
+    public func imageCachedTypeAsync(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil,
+        callbackQueue: CallbackQueue = .mainCurrentOrAsync,
+        completionHandler: @escaping @Sendable (CacheType) -> Void
+    ) {
+        let computedKey = key.computedKey(with: identifier)
+
+        // Memory cache check remains synchronous (no I/O).
+        if memoryStorage.isCached(forKey: computedKey) {
+            callbackQueue.execute {
+                completionHandler(.memory)
+            }
+            return
+        }
+
+        // Disk cache check on the I/O queue.
+        ioQueue.async { [weak self] in
+            guard let self else {
+                callbackQueue.execute {
+                    completionHandler(.none)
+                }
+                return
+            }
+
+            let cached = self.diskStorage.isCached(forKey: computedKey, forcedExtension: forcedExtension)
+            let result: CacheType = cached ? .disk : .none
+            callbackQueue.execute {
+                completionHandler(result)
+            }
+        }
+    }
     
     /// Returns whether the file exists in the cache for a given `key` and `identifier` combination.
     ///
