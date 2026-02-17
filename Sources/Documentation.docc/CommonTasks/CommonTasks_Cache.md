@@ -42,6 +42,9 @@ let cacheType = cache.imageCachedType(forKey: cacheKey)
 > cache.imageCachedTypeAsync(forKey: cacheKey) { cacheType in
 >     // `.memory`, `.disk` or `.none`.
 > }
+>
+> // Or with async/await:
+> let cacheType = await cache.imageCachedTypeAsync(forKey: cacheKey)
 > ```
 
 If a processor is applied when retrieving an image, the processed image will be cached. In this scenario, remember to 
