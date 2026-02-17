@@ -34,6 +34,19 @@ let cacheType = cache.imageCachedType(forKey: cacheKey)
 // `.memory`, `.disk` or `.none`.
 ```
 
+> Note: ``ImageCache/imageCachedType(forKey:processorIdentifier:forcedExtension:)`` may touch the disk cache
+> synchronously when checking `.disk`. If you want to avoid blocking the calling thread (for example, in a scrolling
+> UI on the main thread), use the opt-in async API instead:
+>
+> ```swift
+> cache.imageCachedTypeAsync(forKey: cacheKey) { cacheType in
+>     // `.memory`, `.disk` or `.none`.
+> }
+>
+> // Or with async/await:
+> let cacheType = await cache.imageCachedTypeAsync(forKey: cacheKey)
+> ```
+
 If a processor is applied when retrieving an image, the processed image will be cached. In this scenario, remember to 
 also include the processor identifier when manipulating the cache:
 
@@ -82,7 +95,7 @@ system.
 
 ```swift
 // Limit disk cache size to 1 GB.
-cache.diskStorage.config.sizeLimit =  = 1000 * 1024 * 1024
+cache.diskStorage.config.sizeLimit = 1000 * 1024 * 1024
 ```
 
 #### Set the default expiration for cache

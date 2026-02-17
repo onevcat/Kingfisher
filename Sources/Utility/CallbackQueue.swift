@@ -43,7 +43,16 @@ public enum CallbackQueue: Sendable {
     
     /// Dispatches the closure to a specified `DispatchQueue`.
     case dispatch(DispatchQueue)
-    
+
+    /// Dispatches the closure to an operation-queue–like type.
+    ///
+    /// Use this case when you want to integrate Kingfisher's work into your own scheduling policy.
+    /// For example, you can control concurrency, priority, or implement a LIFO execution order.
+    ///
+    /// - Note: Execution order and whether the block runs serially or concurrently depend on the
+    ///   provided queue. Kingfisher does not enforce ordering guarantees for this case.
+    case operationQueue(CallbackOperationQueue)
+
     /// Executes the `block` in a dispatch queue defined by `self`.
     /// - Parameter block: The block needs to be executed.
     public func execute(_ block: @Sendable @escaping () -> Void) {
@@ -56,6 +65,8 @@ public enum CallbackQueue: Sendable {
             block()
         case .dispatch(let queue):
             queue.async { block() }
+        case .operationQueue(let queue):
+            queue.addOperation(block)
         }
     }
 
@@ -65,6 +76,7 @@ public enum CallbackQueue: Sendable {
         case .mainCurrentOrAsync: return .main
         case .untouch: return OperationQueue.current?.underlyingQueue ?? .main
         case .dispatch(let queue): return queue
+        case .operationQueue(let queue): return queue.underlyingQueue ?? .main
         }
     }
 }
@@ -96,3 +108,19 @@ extension MainActor {
 #endif
     }
 }
+
+/// A minimal abstraction used by ``CallbackQueue/operationQueue(_:)``.
+///
+/// Conform your own type to control how Kingfisher schedules work. `OperationQueue` already
+/// conforms to this protocol.
+public protocol CallbackOperationQueue: AnyObject, Sendable {
+    /// The underlying `DispatchQueue` if available.
+    ///
+    /// Kingfisher uses this value only when it needs a best-effort `DispatchQueue` representation.
+    var underlyingQueue: DispatchQueue? { get }
+
+    /// Schedules a block for execution on this queue.
+    func addOperation(_ block: @Sendable @escaping () -> Void)
+}
+
+extension OperationQueue: CallbackOperationQueue {}
