@@ -1139,6 +1139,15 @@ final class ImageCacheAsyncCachedTypeTests: XCTestCase {
 
         waitForExpectations(timeout: 2)
     }
+
+    func testImageCachedTypeAsyncAwaitReturns() async {
+        let key = "async-await"
+        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+        try? cache.diskStorage.store(value: testImageData, forKey: computedKey, expiration: .never)
+
+        let type = await cache.imageCachedTypeAsync(forKey: key)
+        XCTAssertEqual(type, .disk)
+    }
 }
 
 extension LockIsolated where Value: Sendable {

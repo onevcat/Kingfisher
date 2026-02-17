@@ -986,6 +986,34 @@ open class ImageCache: @unchecked Sendable {
             }
         }
     }
+
+    /// Checks cache type for a given key and processor identifier combination asynchronously.
+    ///
+    /// This is an `async`/`await` convenience wrapper of
+    /// ``imageCachedTypeAsync(forKey:processorIdentifier:forcedExtension:callbackQueue:completionHandler:)``.
+    ///
+    /// - Parameters:
+    ///   - key: The key used for caching the image.
+    ///   - identifier: The processor identifier used for this image.
+    ///   - forcedExtension: The expected extension of the file.
+    ///
+    /// - Returns: A ``CacheType`` instance that indicates the cache status.
+    public func imageCachedTypeAsync(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) async -> CacheType {
+        await withCheckedContinuation { continuation in
+            imageCachedTypeAsync(
+                forKey: key,
+                processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
+                callbackQueue: .untouch
+            ) { cacheType in
+                continuation.resume(returning: cacheType)
+            }
+        }
+    }
     
     /// Returns whether the file exists in the cache for a given `key` and `identifier` combination.
     ///
