@@ -2,6 +2,25 @@
 
 -----
 
+## [8.7.0 - Async Expedition](https://github.com/onevcat/Kingfisher/releases/tag/8.7.0) (2026-02-18)
+
+#### Add
+* Add opt-in async cache type check API `imageCachedTypeAsync` to avoid synchronous disk access on the calling thread. [#2480](https://github.com/onevcat/Kingfisher/pull/2480) [#2323](https://github.com/onevcat/Kingfisher/issues/2323) @onevcat @jotai-coder
+* Add optional `cacheKey` parameter for `PhotosPickerItemImageDataProvider` and `PHPickerResultImageDataProvider` for better cache control. [#2479](https://github.com/onevcat/Kingfisher/pull/2479) @onevcat
+* Support using an `OperationQueue` or equivalent interface in `CallbackQueue` for custom processing queue control. [#2474](https://github.com/onevcat/Kingfisher/pull/2474) @onevcat
+
+#### Fix
+* {"Fix"=>"stabilize cacheKey for PhotosPicker/PHPicker data providers. Now uses stored property with picker-provided identifier or falls back to a per-instance UUID. [#2478](https://github.com/onevcat/Kingfisher/pull/2478) @onevcat"}
+* Fix a race condition crash in `ImagePrefetcher.handleComplete` when iterating sources during concurrent mutation. [#2465](https://github.com/onevcat/Kingfisher/pull/2465) @erichoracek
+* Fix GIF disk cache losing animation when original data is missing. Now `DefaultCacheSerializer` prefers embedded GIF bytes over re-encoding to PNG. [#2454](https://github.com/onevcat/Kingfisher/pull/2454) [#2453](https://github.com/onevcat/Kingfisher/issues/2453) @onevcat @rztime
+* Fix a crash when accessing `KingfisherWrapper<UIApplication>.shared` in unit tests. [#2450](https://github.com/onevcat/Kingfisher/pull/2450) @maxchuquimia
+* Call async modifier start callback before resume to ensure proper callback timing. [#2462](https://github.com/onevcat/Kingfisher/pull/2462) @onevcat
+* Remove ActorBox and harden background task cleanup to fix Sendable/main actor issues. [#2459](https://github.com/onevcat/Kingfisher/pull/2459) @onevcat
+* Mark `ImagePrefetcher` callback types as `@Sendable` to fix Swift 6 concurrency warnings.
+* Deprecate SwiftUI `.onFailureImage` modifier in favor of `.onFailureView`. [#2451](https://github.com/onevcat/Kingfisher/pull/2451) [#2449](https://github.com/onevcat/Kingfisher/issues/2449) @onevcat @sagarrai21802
+
+---
+
 ## [8.6.2 - High Fidelity](https://github.com/onevcat/Kingfisher/releases/tag/8.6.2) (2025-11-17)
 
 #### Fix
