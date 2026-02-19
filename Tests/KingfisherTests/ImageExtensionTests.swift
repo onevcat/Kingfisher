@@ -367,3 +367,76 @@ class ImageExtensionTests: XCTestCase {
     }
     #endif
 }
+
+#if !os(watchOS)
+
+final class AnimatedImageViewAnimatorTests: XCTestCase {
+
+    func testAnimatorPurgeFramesKeepsCurrentFrameByDefault() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+
+        #if os(macOS)
+        let contentMode: KFCrossPlatformContentMode = .scaleAxesIndependently
+        #else
+        let contentMode: KFCrossPlatformContentMode = .scaleToFill
+        #endif
+
+        let animator = AnimatedImageView.Animator(
+            imageSource: source,
+            contentMode: contentMode,
+            size: CGSize(width: 40, height: 40),
+            imageSize: CGSize(width: 40, height: 40),
+            imageScale: 1,
+            framePreloadCount: 2,
+            repeatCount: .infinite,
+            preloadQueue: queue
+        )
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertNotNil(animator.frame(at: 0))
+        XCTAssertNotNil(animator.frame(at: 1))
+
+        animator.purgeFrames()
+        queue.sync { }
+
+        XCTAssertNotNil(animator.frame(at: 0))
+        XCTAssertNil(animator.frame(at: 1))
+    }
+
+    func testAnimatorPurgeFramesCanPurgeCurrentFrame() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+
+        #if os(macOS)
+        let contentMode: KFCrossPlatformContentMode = .scaleAxesIndependently
+        #else
+        let contentMode: KFCrossPlatformContentMode = .scaleToFill
+        #endif
+
+        let animator = AnimatedImageView.Animator(
+            imageSource: source,
+            contentMode: contentMode,
+            size: CGSize(width: 40, height: 40),
+            imageSize: CGSize(width: 40, height: 40),
+            imageScale: 1,
+            framePreloadCount: 2,
+            repeatCount: .infinite,
+            preloadQueue: queue
+        )
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertNotNil(animator.frame(at: 0))
+
+        animator.purgeFrames(keepCurrentFrame: false)
+        queue.sync { }
+
+        XCTAssertNil(animator.frame(at: 0))
+    }
+}
+
+#endif

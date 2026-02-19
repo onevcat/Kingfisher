@@ -182,6 +182,31 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     /// The ``Animator`` instance that holds the frames of a specific image in memory.
     public private(set) var animator: Animator?
 
+    /// Purges decoded frame images from the internal buffer.
+    ///
+    /// By default, this keeps the current frame (to avoid a potential blink) while removing other preloaded frames.
+    /// You can call this manually on any platform.
+    public func purgeFrames(keepCurrentFrame: Bool = true) {
+        animator?.purgeFrames(keepCurrentFrame: keepCurrentFrame)
+    }
+
+#if canImport(UIKit)
+    /// Whether the animated frame buffer should be purged when the app enters background.
+    ///
+    /// This is an opt-in behavior to reduce memory footprint when your app is in background. When enabled,
+    /// `AnimatedImageView` stops animating and purges preloaded frames on
+    /// `UIApplication.didEnterBackgroundNotification`. If the view was animating before entering background, it will
+    /// prepare frames and resume animation on `UIApplication.willEnterForegroundNotification`.
+    ///
+    /// Default is `false`.
+    public var purgeFramesOnBackground: Bool = false {
+        didSet { updateBackgroundFramePurgeObserversIfNeeded() }
+    }
+
+    private var backgroundFramePurgeObservers: [NSObjectProtocol] = []
+    private var shouldResumeAnimationAfterForeground: Bool = false
+#endif
+
     // MARK: - Private property
     // Dispatch queue used for preloading images.
     private lazy var preloadQueue: DispatchQueue = {
@@ -683,6 +708,28 @@ extension AnimatedImageView {
             animatedFrames.reserveCapacity(frameCount)
             preloadQueue.async { [weak self] in
                 self?.setupAnimatedFrames()
+            }
+        }
+
+        func purgeFrames(keepCurrentFrame: Bool = true) {
+            preloadQueue.async { [weak self] in
+                guard let self else { return }
+                guard self.frameCount > 0, self.animatedFrames.count > 0 else { return }
+
+                let keepIndex = keepCurrentFrame ? self.currentFrameIndex : nil
+                var imagesToRelease: [KFCrossPlatformImage] = []
+
+                for index in 0..<self.frameCount {
+                    if let keepIndex, index == keepIndex { continue }
+                    guard let frame = self.animatedFrames[index], let image = frame.image else { continue }
+                    imagesToRelease.append(image)
+                    self.animatedFrames[index] = frame.placeholderFrame
+                }
+
+                if !imagesToRelease.isEmpty {
+                    // Ensure the image dealloc in main thread.
+                    DispatchQueue.main.async { _ = imagesToRelease }
+                }
             }
         }
 
