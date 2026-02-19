@@ -177,6 +177,53 @@ class KingfisherManagerTests: XCTestCase {
         }}}}}}
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testRetrieveImageOriginalCacheClaimsCachedButReturnsNoneShouldStillCallback() {
+        let exp = expectation(description: #function)
+
+        let uuid = UUID()
+        let originalCache = ImageCache(name: "test.original.\(uuid.uuidString)")
+        let targetCache = ImageCache(name: "test.target.\(uuid.uuidString)")
+
+        addTeardownBlock {
+            clearCaches([originalCache, targetCache])
+        }
+
+        let url = testURLs[0]
+        let key = url.cacheKey
+
+        stub(url, data: testImageData)
+
+        // Store invalid data as the "original" image. This makes `imageCachedType` report `.disk`,
+        // while `retrieveImage` returns `.none` due to deserialization failure.
+        do {
+            try originalCache.diskStorage.store(value: Data([0x01, 0x02, 0x03]), forKey: key)
+        } catch {
+            XCTFail("Failed to prepare original cache: \(error)")
+            return
+        }
+
+        XCTAssertTrue(
+            originalCache.imageCachedType(forKey: key, processorIdentifier: DefaultImageProcessor.default.identifier).cached
+        )
+
+        let p = RoundCornerImageProcessor(cornerRadius: 20)
+        manager.retrieveImage(
+            with: url,
+            options: [
+                .processor(p),
+                .originalCache(originalCache),
+                .targetCache(targetCache)
+            ]
+        ) { result in
+            // It should never hang without calling the completion handler.
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value?.cacheType, CacheType.none)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testRetrieveImageForceRefresh() {
         let exp = expectation(description: #function)
