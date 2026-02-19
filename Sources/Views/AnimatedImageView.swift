@@ -272,6 +272,10 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 #endif
     
     deinit {
+        #if canImport(UIKit)
+        removeBackgroundFramePurgeObservers()
+        #endif
+
         if isDisplayLinkInitialized {
             // We have to assume this UIView deinit is called on main thread.
             MainActor.runUnsafely { displayLink.invalidate() }
@@ -455,6 +459,57 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             }
         }
     }
+
+#if canImport(UIKit)
+    private func updateBackgroundFramePurgeObserversIfNeeded() {
+        if purgeFramesOnBackground {
+            guard backgroundFramePurgeObservers.isEmpty else { return }
+            let center = NotificationCenter.default
+            backgroundFramePurgeObservers.append(
+                center.addObserver(
+                    forName: UIApplication.didEnterBackgroundNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] _ in
+                    self?.handleDidEnterBackground()
+                }
+            )
+            backgroundFramePurgeObservers.append(
+                center.addObserver(
+                    forName: UIApplication.willEnterForegroundNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] _ in
+                    self?.handleWillEnterForeground()
+                }
+            )
+        } else {
+            removeBackgroundFramePurgeObservers()
+        }
+    }
+
+    private func removeBackgroundFramePurgeObservers() {
+        let center = NotificationCenter.default
+        backgroundFramePurgeObservers.forEach { center.removeObserver($0) }
+        backgroundFramePurgeObservers.removeAll()
+    }
+
+    private func handleDidEnterBackground() {
+        guard purgeFramesOnBackground else { return }
+        shouldResumeAnimationAfterForeground = isAnimating
+        stopAnimating()
+        purgeFrames(keepCurrentFrame: true)
+    }
+
+    private func handleWillEnterForeground() {
+        guard purgeFramesOnBackground else { return }
+        guard shouldResumeAnimationAfterForeground else { return }
+        shouldResumeAnimationAfterForeground = false
+        guard animator != nil, superview != nil, window != nil else { return }
+        animator?.prepareFramesAsynchronously()
+        startAnimating()
+    }
+#endif
     
     /// If the Animator cannot prepare the next frame in time, `animator.currentFrameImage` will return nil.
     /// To prevent unexpected blinking in the ImageView, we maintain a cache of the currently displayed frame
