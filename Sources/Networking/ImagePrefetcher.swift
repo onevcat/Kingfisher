@@ -319,7 +319,8 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
                 let context = RetrievingContext(options: optionsInfo, originalSource: source)
                 _ = manager.retrieveImageFromCache(
                     source: source,
-                    context: context)
+                    context: context,
+                    downloadTaskUpdated: nil)
                 {
                     _ in
                     self.append(cached: source)
