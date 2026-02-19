@@ -443,7 +443,7 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
     }
 }
 
-#if canImport(UIKit)
+#if os(iOS)
 
 final class AnimatedImageViewBackgroundPurgeTests: XCTestCase {
 

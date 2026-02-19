@@ -190,7 +190,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         animator?.purgeFrames(keepCurrentFrame: keepCurrentFrame)
     }
 
-#if canImport(UIKit)
+#if os(iOS)
     /// Whether the animated frame buffer should be purged when the app enters background.
     ///
     /// This is an opt-in behavior to reduce memory footprint when your app is in background. When enabled,
@@ -272,7 +272,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 #endif
     
     deinit {
-        #if canImport(UIKit)
+        #if os(iOS)
         removeBackgroundFramePurgeObservers()
         #endif
 
@@ -460,7 +460,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         }
     }
 
-#if canImport(UIKit)
+#if os(iOS)
     private func updateBackgroundFramePurgeObserversIfNeeded() {
         if purgeFramesOnBackground {
             guard backgroundFramePurgeObservers.isEmpty else { return }
