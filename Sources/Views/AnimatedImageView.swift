@@ -203,7 +203,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         didSet { updateBackgroundFramePurgeObserversIfNeeded() }
     }
 
-    private var backgroundFramePurgeObservers: [NSObjectProtocol] = []
+    private var isBackgroundFramePurgeObserversAdded: Bool = false
     private var shouldResumeAnimationAfterForeground: Bool = false
 #endif
 
@@ -271,14 +271,14 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 #endif
     
+    @MainActor
     deinit {
         #if os(iOS)
         removeBackgroundFramePurgeObservers()
         #endif
 
         if isDisplayLinkInitialized {
-            // We have to assume this UIView deinit is called on main thread.
-            MainActor.runUnsafely { displayLink.invalidate() }
+            displayLink.invalidate()
         }
     }
     
@@ -463,25 +463,21 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 #if os(iOS)
     private func updateBackgroundFramePurgeObserversIfNeeded() {
         if purgeFramesOnBackground {
-            guard backgroundFramePurgeObservers.isEmpty else { return }
+            guard !isBackgroundFramePurgeObserversAdded else { return }
+            isBackgroundFramePurgeObserversAdded = true
+
             let center = NotificationCenter.default
-            backgroundFramePurgeObservers.append(
-                center.addObserver(
-                    forName: UIApplication.didEnterBackgroundNotification,
-                    object: nil,
-                    queue: .main
-                ) { [weak self] _ in
-                    self?.handleDidEnterBackground()
-                }
+            center.addObserver(
+                self,
+                selector: #selector(didEnterBackgroundNotification(_:)),
+                name: UIApplication.didEnterBackgroundNotification,
+                object: nil
             )
-            backgroundFramePurgeObservers.append(
-                center.addObserver(
-                    forName: UIApplication.willEnterForegroundNotification,
-                    object: nil,
-                    queue: .main
-                ) { [weak self] _ in
-                    self?.handleWillEnterForeground()
-                }
+            center.addObserver(
+                self,
+                selector: #selector(willEnterForegroundNotification(_:)),
+                name: UIApplication.willEnterForegroundNotification,
+                object: nil
             )
         } else {
             removeBackgroundFramePurgeObservers()
@@ -489,9 +485,19 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 
     private func removeBackgroundFramePurgeObservers() {
+        guard isBackgroundFramePurgeObserversAdded else { return }
         let center = NotificationCenter.default
-        backgroundFramePurgeObservers.forEach { center.removeObserver($0) }
-        backgroundFramePurgeObservers.removeAll()
+        center.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        center.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        isBackgroundFramePurgeObserversAdded = false
+    }
+
+    @objc private func didEnterBackgroundNotification(_ notification: Notification) {
+        handleDidEnterBackground()
+    }
+
+    @objc private func willEnterForegroundNotification(_ notification: Notification) {
+        handleWillEnterForeground()
     }
 
     private func handleDidEnterBackground() {
@@ -783,7 +789,8 @@ extension AnimatedImageView {
 
                 if !imagesToRelease.isEmpty {
                     // Ensure the image dealloc in main thread.
-                    DispatchQueue.main.async { _ = imagesToRelease }
+                    let imagesToReleaseCopy = imagesToRelease
+                    DispatchQueue.main.async { _ = imagesToReleaseCopy }
                 }
             }
         }
