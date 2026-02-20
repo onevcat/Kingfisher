@@ -271,14 +271,14 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 #endif
     
+    @MainActor
     deinit {
         #if os(iOS)
         removeBackgroundFramePurgeObservers()
         #endif
 
         if isDisplayLinkInitialized {
-            // We have to assume this UIView deinit is called on main thread.
-            MainActor.runUnsafely { displayLink.invalidate() }
+            displayLink.invalidate()
         }
     }
     
@@ -471,7 +471,9 @@ open class AnimatedImageView: KFCrossPlatformImageView {
                     object: nil,
                     queue: .main
                 ) { [weak self] _ in
-                    self?.handleDidEnterBackground()
+                    Task { @MainActor [weak self] in
+                        self?.handleDidEnterBackground()
+                    }
                 }
             )
             backgroundFramePurgeObservers.append(
@@ -480,7 +482,9 @@ open class AnimatedImageView: KFCrossPlatformImageView {
                     object: nil,
                     queue: .main
                 ) { [weak self] _ in
-                    self?.handleWillEnterForeground()
+                    Task { @MainActor [weak self] in
+                        self?.handleWillEnterForeground()
+                    }
                 }
             )
         } else {
@@ -783,7 +787,8 @@ extension AnimatedImageView {
 
                 if !imagesToRelease.isEmpty {
                     // Ensure the image dealloc in main thread.
-                    DispatchQueue.main.async { _ = imagesToRelease }
+                    let imagesToReleaseCopy = imagesToRelease
+                    DispatchQueue.main.async { _ = imagesToReleaseCopy }
                 }
             }
         }
