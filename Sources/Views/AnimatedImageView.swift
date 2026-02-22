@@ -271,6 +271,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 #endif
     
+    #if swift(>=6)
     @MainActor
     deinit {
         #if os(iOS)
@@ -281,6 +282,18 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             displayLink.invalidate()
         }
     }
+    #else
+    deinit {
+        #if os(iOS)
+        removeBackgroundFramePurgeObservers()
+        #endif
+
+        if isDisplayLinkInitialized {
+            // We have to assume this UIView deinit is called on main thread.
+            MainActor.runUnsafely { displayLink.invalidate() }
+        }
+    }
+    #endif
     
 #if os(macOS)
     public override init(frame frameRect: NSRect) {
