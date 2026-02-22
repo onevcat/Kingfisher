@@ -367,3 +367,132 @@ class ImageExtensionTests: XCTestCase {
     }
     #endif
 }
+
+#if !os(watchOS)
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
+final class AnimatedImageViewAnimatorTests: XCTestCase {
+
+    func testAnimatorPurgeFramesKeepsCurrentFrameByDefault() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+
+        #if os(macOS)
+        let contentMode: KFCrossPlatformContentMode = .scaleAxesIndependently
+        #else
+        let contentMode: KFCrossPlatformContentMode = .scaleToFill
+        #endif
+
+        let animator = AnimatedImageView.Animator(
+            imageSource: source,
+            contentMode: contentMode,
+            size: CGSize(width: 40, height: 40),
+            imageSize: CGSize(width: 40, height: 40),
+            imageScale: 1,
+            framePreloadCount: 2,
+            repeatCount: .infinite,
+            preloadQueue: queue
+        )
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertNotNil(animator.frame(at: 0))
+        XCTAssertNotNil(animator.frame(at: 1))
+
+        animator.purgeFrames()
+        queue.sync { }
+
+        XCTAssertNotNil(animator.frame(at: 0))
+        XCTAssertNil(animator.frame(at: 1))
+    }
+
+    func testAnimatorPurgeFramesCanPurgeCurrentFrame() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+
+        #if os(macOS)
+        let contentMode: KFCrossPlatformContentMode = .scaleAxesIndependently
+        #else
+        let contentMode: KFCrossPlatformContentMode = .scaleToFill
+        #endif
+
+        let animator = AnimatedImageView.Animator(
+            imageSource: source,
+            contentMode: contentMode,
+            size: CGSize(width: 40, height: 40),
+            imageSize: CGSize(width: 40, height: 40),
+            imageScale: 1,
+            framePreloadCount: 2,
+            repeatCount: .infinite,
+            preloadQueue: queue
+        )
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertNotNil(animator.frame(at: 0))
+
+        animator.purgeFrames(keepCurrentFrame: false)
+        queue.sync { }
+
+        XCTAssertNil(animator.frame(at: 0))
+    }
+}
+
+#if os(iOS)
+
+final class AnimatedImageViewBackgroundPurgeTests: XCTestCase {
+
+    @MainActor
+    func testPurgeFramesOnBackgroundStopsAnimation() {
+        let imageView = AnimatedImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        imageView.purgeFramesOnBackground = true
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+
+        imageView.startAnimating()
+        XCTAssertTrue(imageView.isAnimating)
+
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+
+        XCTAssertFalse(imageView.isAnimating)
+    }
+
+    @MainActor
+    func testPurgeFramesOnBackgroundCanResumeOnForegroundWhenViewAttached() {
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let host = UIViewController()
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+
+        let imageView = AnimatedImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        imageView.purgeFramesOnBackground = true
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+        host.view.addSubview(imageView)
+
+        imageView.startAnimating()
+        XCTAssertTrue(imageView.isAnimating)
+
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        XCTAssertFalse(imageView.isAnimating)
+
+        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        XCTAssertTrue(imageView.isAnimating)
+    }
+}
+
+#endif
+
+#endif

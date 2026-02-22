@@ -182,6 +182,31 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     /// The ``Animator`` instance that holds the frames of a specific image in memory.
     public private(set) var animator: Animator?
 
+    /// Purges decoded frame images from the internal buffer.
+    ///
+    /// By default, this keeps the current frame (to avoid a potential blink) while removing other preloaded frames.
+    /// You can call this manually on any platform.
+    public func purgeFrames(keepCurrentFrame: Bool = true) {
+        animator?.purgeFrames(keepCurrentFrame: keepCurrentFrame)
+    }
+
+#if os(iOS)
+    /// Whether the animated frame buffer should be purged when the app enters background.
+    ///
+    /// This is an opt-in behavior to reduce memory footprint when your app is in background. When enabled,
+    /// `AnimatedImageView` stops animating and purges preloaded frames on
+    /// `UIApplication.didEnterBackgroundNotification`. If the view was animating before entering background, it will
+    /// prepare frames and resume animation on `UIApplication.willEnterForegroundNotification`.
+    ///
+    /// Default is `false`.
+    public var purgeFramesOnBackground: Bool = false {
+        didSet { updateBackgroundFramePurgeObserversIfNeeded() }
+    }
+
+    private var isBackgroundFramePurgeObserversAdded: Bool = false
+    private var shouldResumeAnimationAfterForeground: Bool = false
+#endif
+
     // MARK: - Private property
     // Dispatch queue used for preloading images.
     private lazy var preloadQueue: DispatchQueue = {
@@ -246,12 +271,29 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     }
 #endif
     
+    #if swift(>=6)
+    @MainActor
     deinit {
+        #if os(iOS)
+        removeBackgroundFramePurgeObservers()
+        #endif
+
+        if isDisplayLinkInitialized {
+            displayLink.invalidate()
+        }
+    }
+    #else
+    deinit {
+        #if os(iOS)
+        removeBackgroundFramePurgeObservers()
+        #endif
+
         if isDisplayLinkInitialized {
             // We have to assume this UIView deinit is called on main thread.
             MainActor.runUnsafely { displayLink.invalidate() }
         }
     }
+    #endif
     
 #if os(macOS)
     public override init(frame frameRect: NSRect) {
@@ -430,6 +472,63 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             }
         }
     }
+
+#if os(iOS)
+    private func updateBackgroundFramePurgeObserversIfNeeded() {
+        if purgeFramesOnBackground {
+            guard !isBackgroundFramePurgeObserversAdded else { return }
+            isBackgroundFramePurgeObserversAdded = true
+
+            let center = NotificationCenter.default
+            center.addObserver(
+                self,
+                selector: #selector(didEnterBackgroundNotification(_:)),
+                name: UIApplication.didEnterBackgroundNotification,
+                object: nil
+            )
+            center.addObserver(
+                self,
+                selector: #selector(willEnterForegroundNotification(_:)),
+                name: UIApplication.willEnterForegroundNotification,
+                object: nil
+            )
+        } else {
+            removeBackgroundFramePurgeObservers()
+        }
+    }
+
+    private func removeBackgroundFramePurgeObservers() {
+        guard isBackgroundFramePurgeObserversAdded else { return }
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        center.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        isBackgroundFramePurgeObserversAdded = false
+    }
+
+    @objc private func didEnterBackgroundNotification(_ notification: Notification) {
+        handleDidEnterBackground()
+    }
+
+    @objc private func willEnterForegroundNotification(_ notification: Notification) {
+        handleWillEnterForeground()
+    }
+
+    private func handleDidEnterBackground() {
+        guard purgeFramesOnBackground else { return }
+        shouldResumeAnimationAfterForeground = isAnimating
+        stopAnimating()
+        purgeFrames(keepCurrentFrame: true)
+    }
+
+    private func handleWillEnterForeground() {
+        guard purgeFramesOnBackground else { return }
+        guard shouldResumeAnimationAfterForeground else { return }
+        shouldResumeAnimationAfterForeground = false
+        guard animator != nil, superview != nil, window != nil else { return }
+        animator?.prepareFramesAsynchronously()
+        startAnimating()
+    }
+#endif
     
     /// If the Animator cannot prepare the next frame in time, `animator.currentFrameImage` will return nil.
     /// To prevent unexpected blinking in the ImageView, we maintain a cache of the currently displayed frame
@@ -683,6 +782,29 @@ extension AnimatedImageView {
             animatedFrames.reserveCapacity(frameCount)
             preloadQueue.async { [weak self] in
                 self?.setupAnimatedFrames()
+            }
+        }
+
+        func purgeFrames(keepCurrentFrame: Bool = true) {
+            preloadQueue.async { [weak self] in
+                guard let self else { return }
+                guard self.frameCount > 0, self.animatedFrames.count > 0 else { return }
+
+                let keepIndex = keepCurrentFrame ? self.currentFrameIndex : nil
+                var imagesToRelease: [KFCrossPlatformImage] = []
+
+                for index in 0..<self.frameCount {
+                    if let keepIndex, index == keepIndex { continue }
+                    guard let frame = self.animatedFrames[index], let image = frame.image else { continue }
+                    imagesToRelease.append(image)
+                    self.animatedFrames[index] = frame.placeholderFrame
+                }
+
+                if !imagesToRelease.isEmpty {
+                    // Ensure the image dealloc in main thread.
+                    let imagesToReleaseCopy = imagesToRelease
+                    DispatchQueue.main.async { _ = imagesToReleaseCopy }
+                }
             }
         }
 
