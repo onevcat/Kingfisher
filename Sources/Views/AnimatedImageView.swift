@@ -524,7 +524,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         guard purgeFramesOnBackground else { return }
         guard shouldResumeAnimationAfterForeground else { return }
         shouldResumeAnimationAfterForeground = false
-        guard animator != nil, superview != nil, window != nil, !isHidden else { return }
+        guard animator != nil, superview != nil, window != nil else { return }
         animator?.prepareFramesAsynchronously()
         startAnimating()
     }
