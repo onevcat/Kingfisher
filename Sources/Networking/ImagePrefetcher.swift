@@ -298,17 +298,22 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
 
                 let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
                 retryStrategy.retry(context: context) { decision in
-                    self.prefetchQueue.async {
-                        guard !self.stopped else {
-                            completeWithFailure()
-                            return
-                        }
-
-                        switch decision {
-                        case .retry(let userInfo):
-                            context.userInfo = userInfo
+                    switch decision {
+                    case .retry(let userInfo):
+                        context.userInfo = userInfo
+                        self.prefetchQueue.async {
+                            guard !self.stopped else {
+                                completeWithFailure()
+                                return
+                            }
                             self.downloadAndCache(source, retryContext: context)
-                        case .stop:
+                        }
+                    case .stop:
+                        self.prefetchQueue.async {
+                            guard !self.stopped else {
+                                completeWithFailure()
+                                return
+                            }
                             completeWithFailure()
                         }
                     }
