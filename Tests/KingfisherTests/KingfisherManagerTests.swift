@@ -638,6 +638,56 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testRetrieveImageFromCacheCallsCompletionWhenOriginalCacheDataCannotBeDecoded() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        let originalCache = ImageCache(name: "test-originalCache-invalid-data")
+
+        originalCache.clearMemoryCache()
+        originalCache.clearDiskCache {
+            do {
+                try originalCache.diskStorage.store(value: Data([0x00, 0x01, 0x02]), forKey: url.cacheKey)
+            } catch {
+                XCTFail("Failed to set up original cache data: \(error)")
+                exp.fulfill()
+                return
+            }
+
+            XCTAssertEqual(originalCache.imageCachedType(forKey: url.cacheKey), .disk)
+
+            let processor = SimpleProcessor()
+            let source = Source.network(url)
+            let options = KingfisherParsedOptionsInfo([.processor(processor), .originalCache(originalCache)])
+            let context = RetrievingContext(options: options, originalSource: source)
+
+            let loaded = self.manager.retrieveImageFromCache(source: source, context: context) { result in
+                switch result {
+                case .success:
+                    XCTFail("Expected a cache error when cached original data cannot be decoded.")
+                case .failure(let error):
+                    guard case .cacheError(let reason) = error else {
+                        XCTFail("Unexpected error: \(error)")
+                        exp.fulfill()
+                        return
+                    }
+                    guard case .imageNotExisting(let key) = reason else {
+                        XCTFail("Unexpected cache error reason: \(reason)")
+                        exp.fulfill()
+                        return
+                    }
+                    XCTAssertEqual(key, url.cacheKey)
+                    XCTAssertFalse(processor.processed)
+                }
+                exp.fulfill()
+            }
+
+            XCTAssertTrue(loaded)
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testCouldProcessDoNotHappenWhenSerializerCachesTheProcessedData() {
         let exp = expectation(description: #function)

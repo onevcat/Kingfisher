@@ -715,7 +715,8 @@ public class KingfisherManager: @unchecked Sendable {
                 result.match(
                     onSuccess: { cacheResult in
                         guard let image = cacheResult.image else {
-                            assertionFailure("The image (under key: \(key) should be existing in the original cache.")
+                            let error = KingfisherError.cacheError(reason: .imageNotExisting(key: key))
+                            options.callbackQueue.execute { completionHandler?(.failure(error)) }
                             return
                         }
 
