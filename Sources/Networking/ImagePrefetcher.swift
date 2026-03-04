@@ -253,19 +253,12 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         }
     }
     
-    private func downloadAndCache(_ source: Source) {
+    private func downloadAndCache(_ source: Source, retryContext: RetryContext? = nil) {
 
-        let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
-            result in
-            
-            self.tasks.removeValue(forKey: source.cacheKey)
-            do {
-                let _ = try result.get()
-                self.completedSources.append(source)
-            } catch {
-                self.failedSources.append(source)
-            }
-            
+        let retryStrategy = optionsInfo.retryStrategy
+
+        @Sendable func completeWithSuccess() {
+            self.completedSources.append(source)
             self.reportProgress()
             if self.stopped {
                 if self.tasks.isEmpty {
@@ -274,6 +267,57 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
                 }
             } else {
                 self.reportCompletionOrStartNext()
+            }
+        }
+
+        @Sendable func completeWithFailure() {
+            self.failedSources.append(source)
+            self.reportProgress()
+            if self.stopped {
+                if self.tasks.isEmpty {
+                    self.failedSources.append(contentsOf: self.pendingSources)
+                    self.handleComplete()
+                }
+            } else {
+                self.reportCompletionOrStartNext()
+            }
+        }
+
+        let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
+            result in
+
+            self.tasks.removeValue(forKey: source.cacheKey)
+            switch result {
+            case .success:
+                completeWithSuccess()
+            case .failure(let error):
+                guard let retryStrategy else {
+                    completeWithFailure()
+                    return
+                }
+
+                let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
+                retryStrategy.retry(context: context) { decision in
+                    switch decision {
+                    case .retry(let userInfo):
+                        context.userInfo = userInfo
+                        self.prefetchQueue.async {
+                            guard !self.stopped else {
+                                completeWithFailure()
+                                return
+                            }
+                            self.downloadAndCache(source, retryContext: context)
+                        }
+                    case .stop:
+                        self.prefetchQueue.async {
+                            guard !self.stopped else {
+                                completeWithFailure()
+                                return
+                            }
+                            completeWithFailure()
+                        }
+                    }
+                }
             }
         }
 

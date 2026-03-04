@@ -102,6 +102,56 @@ class RetryStrategyTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testImagePrefetcherCanRetry() {
+        let exp = expectation(description: #function)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        let retry = StubRetryStrategy()
+        let progressCount = LockIsolated(0)
+        let prefetcher = ImagePrefetcher(
+            urls: [brokenURL],
+            options: [.retryStrategy(retry)],
+            progressBlock: { _, _, _ in
+                progressCount.withValue { $0 += 1 }
+            },
+            completionHandler: { skippedResources, failedResources, completedResources in
+                XCTAssertEqual(retry.count, 3)
+                XCTAssertEqual(progressCount.value, 1, "Progress should be reported once per source, not per retry attempt.")
+                XCTAssertEqual(skippedResources.count, 0)
+                XCTAssertEqual(failedResources.count, 1)
+                XCTAssertEqual(completedResources.count, 0)
+                exp.fulfill()
+            }
+        )
+        prefetcher.start()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testImagePrefetcherRetryStrategyStopDoesNotRetry() {
+        let exp = expectation(description: #function)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        let retry = ImmediateStopRetryStrategy()
+        let prefetcher = ImagePrefetcher(
+            urls: [brokenURL],
+            options: [.retryStrategy(retry)],
+            completionHandler: { skippedResources, failedResources, completedResources in
+                XCTAssertEqual(retry.count, 1)
+                XCTAssertEqual(skippedResources.count, 0)
+                XCTAssertEqual(failedResources.count, 1)
+                XCTAssertEqual(completedResources.count, 0)
+                exp.fulfill()
+            }
+        )
+
+        prefetcher.start()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     // MARK: - DelayRetryStrategy Tests
 
     func testDelayRetryStrategyExceededCount() {
@@ -406,6 +456,21 @@ class RetryStrategyTests: XCTestCase {
 }
 
 private struct E: Error {}
+
+final class ImmediateStopRetryStrategy: RetryStrategy, @unchecked Sendable {
+
+    let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.ImmediateStopRetryStrategy")
+    var _count = 0
+    var count: Int {
+        get { queue.sync { _count } }
+        set { queue.sync { _count = newValue } }
+    }
+
+    func retry(context: RetryContext, retryHandler: @escaping (RetryDecision) -> Void) {
+        count += 1
+        retryHandler(.stop)
+    }
+}
 
 final class StubRetryStrategy: RetryStrategy, @unchecked Sendable {
 
