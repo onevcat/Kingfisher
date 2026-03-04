@@ -272,14 +272,16 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 #endif
     
     deinit {
-        #if os(iOS)
-        removeBackgroundFramePurgeObservers()
-        #endif
+        // `@MainActor deinit` requires isolated deinit support and broke older Swift 6 toolchains.
+        // Keep a single code path that assumes UIKit/AppKit deallocation on the main thread.
+        MainActor.runUnsafely {
+            #if os(iOS)
+            removeBackgroundFramePurgeObservers()
+            #endif
 
-        if isDisplayLinkInitialized {
-            // `@MainActor deinit` requires isolated deinit support and broke older Swift 6 toolchains.
-            // Keep a single code path that assumes UIKit/AppKit deallocation on the main thread.
-            MainActor.runUnsafely { displayLink.invalidate() }
+            if isDisplayLinkInitialized {
+                displayLink.invalidate()
+            }
         }
     }
     
