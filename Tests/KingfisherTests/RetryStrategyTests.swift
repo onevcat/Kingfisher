@@ -102,6 +102,28 @@ class RetryStrategyTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testImagePrefetcherCanRetry() {
+        let exp = expectation(description: #function)
+
+        let brokenURL = URL(string: "brokenurl")!
+        stub(brokenURL, data: Data())
+
+        let retry = StubRetryStrategy()
+        let prefetcher = ImagePrefetcher(
+            urls: [brokenURL],
+            options: [.retryStrategy(retry)],
+            completionHandler: { skippedResources, failedResources, completedResources in
+                XCTAssertEqual(retry.count, 3)
+                XCTAssertEqual(skippedResources.count, 0)
+                XCTAssertEqual(failedResources.count, 1)
+                XCTAssertEqual(completedResources.count, 0)
+                exp.fulfill()
+            }
+        )
+        prefetcher.start()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     // MARK: - DelayRetryStrategy Tests
 
     func testDelayRetryStrategyExceededCount() {
