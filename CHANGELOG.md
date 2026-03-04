@@ -2,6 +2,20 @@
 
 -----
 
+## [8.8.0 - Background Relief](https://github.com/onevcat/Kingfisher/releases/tag/8.8.0) (2026-03-04)
+
+#### Add
+* Add `AnimatedImageView.purgeFrames(keepCurrentFrame:)` and opt-in `purgeFramesOnBackground` to reduce animated frame memory while app is backgrounded. [#2482](https://github.com/onevcat/Kingfisher/pull/2482) [#2445](https://github.com/onevcat/Kingfisher/issues/2445) @onevcat @Ceylo
+* Add `KFAnimatedImage.purgeFramesOnBackground(_:)` to expose background frame purging in SwiftUI. [#2484](https://github.com/onevcat/Kingfisher/pull/2484) @WZBbiao
+
+#### Fix
+* Fix missing completion callback when original cache reports cached but returns no image. [#2481](https://github.com/onevcat/Kingfisher/pull/2481) [#2472](https://github.com/onevcat/Kingfisher/issues/2472) @onevcat @hotngui
+* Fix `AnimatedImageView` deinit compatibility for older Swift 6 toolchains without isolated deinit support. [#2485](https://github.com/onevcat/Kingfisher/pull/2485) @onevcat
+* Apply `retryStrategy` in `ImagePrefetcher` load path so retry options also work during prefetching. [#2487](https://github.com/onevcat/Kingfisher/pull/2487) @TastyHeadphones
+* Fix non-Sendable `RetryDecision` capture warning in ImagePrefetcher retry flow under Swift 6 concurrency checks. [#2488](https://github.com/onevcat/Kingfisher/pull/2488) @onevcat
+
+---
+
 ## [8.7.0 - Async Expedition](https://github.com/onevcat/Kingfisher/releases/tag/8.7.0) (2026-02-18)
 
 #### Add
