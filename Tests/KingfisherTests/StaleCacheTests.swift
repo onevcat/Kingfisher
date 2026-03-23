@@ -347,8 +347,9 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
         let exp = expectation(description: #function)
         let primaryURL = testURLs[0]
         let alternativeURL = testURLs[1]
+        let recorder = RequestRecorder()
 
-        // Stub both URLs. If the alternative is hit, the test can detect it.
+        // Stub both URLs.
         stub(primaryURL, data: testImageData)
         stub(alternativeURL, data: testImageData)
 
@@ -357,7 +358,8 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
             self.manager.cache.clearMemoryCache()
 
             var options = KingfisherParsedOptionsInfo([
-                .alternativeSources([.network(alternativeURL)])
+                .alternativeSources([.network(alternativeURL)]),
+                .requestModifier(recorder)
             ])
             options.sourceTaskIdentifierChecker = { false }
 
@@ -368,13 +370,20 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
                 progressiveImageSetter: nil,
                 referenceTaskIdentifierChecker: { false },
                 completionHandler: { result in
-                    // The result should not be a success from the alternative source.
                     if case .success(let value) = result {
                         XCTFail("Stale task should not succeed via alternative source. Got image from: \(value.source)")
                     }
 
-                    // Give time for any background alternative-source request to fire.
+                    // Verify at the request level that the alternative URL was never hit.
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        XCTAssertFalse(
+                            recorder.requestedURLs.contains(alternativeURL),
+                            "Alternative source URL must not be requested for stale tasks"
+                        )
+                        XCTAssertTrue(
+                            recorder.requestedURLs.isEmpty,
+                            "No network requests should be made for stale disk-cached tasks"
+                        )
                         exp.fulfill()
                     }
                 }
@@ -392,6 +401,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
         let url = testURLs[0]
         let key = url.cacheKey
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let recorder = RequestRecorder()
 
         // Stub the URL. If download is triggered, the network will be hit.
         stub(url, data: testImageData)
@@ -414,7 +424,10 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
 
             let downloadTaskUpdated = LockIsolated(false)
 
-            var options = KingfisherParsedOptionsInfo([.processor(processor)])
+            var options = KingfisherParsedOptionsInfo([
+                .processor(processor),
+                .requestModifier(recorder)
+            ])
             options.sourceTaskIdentifierChecker = { false }
 
             _ = self.manager.retrieveImage(
@@ -430,6 +443,9 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
                 completionHandler: { result in
                     // Download should not have been triggered.
                     XCTAssertFalse(downloadTaskUpdated.value, "Stale task must not trigger download in path 2")
+
+                    // Verify at the network request level.
+                    XCTAssertTrue(recorder.requestedURLs.isEmpty, "No network request should be made for stale path-2 tasks")
 
                     // Result should not be a success with a processed image.
                     if case .success = result {
@@ -540,13 +556,16 @@ class ImageViewExtensionStaleCacheTests: XCTestCase {
 
     // MARK: - Test 11: Dual setImage on same view only decodes current task
 
-    /// Prepare two disk-cached URLs. Call `setImage(url1)` then immediately
-    /// `setImage(url2)` on the same view. Only url2 should be decoded.
-    @MainActor func testSettingTwoDiskCachedImagesOnSameViewOnlyDecodesCurrentTask() {
+    /// Verify that a superseded disk cache retrieval does not promote its decoded
+    /// image to memory cache. Uses `CoordinatingCacheSerializer` to deterministically
+    /// hold url1's ioQueue block in the serializer, then supersede with url2. After
+    /// the serializer proceeds, CHECK 3 detects the stale token and discards url1's
+    /// result. Only url2 ends up in memory cache.
+    @MainActor func testStaleDiskCacheRetrievalDoesNotPromoteToMemoryWhenSuperseded() {
         let exp = expectation(description: #function)
         let url1 = testURLs[0]
         let url2 = testURLs[1]
-        let spy = SpyCacheSerializer()
+        let coordinator = CoordinatingCacheSerializer()
 
         // Pre-cache both images to disk via the shared cache.
         let cache = KingfisherManager.shared.cache
@@ -567,12 +586,13 @@ class ImageViewExtensionStaleCacheTests: XCTestCase {
 
             let completionGroup = DispatchGroup()
 
+            // Step 1: Start url1's retrieval. Its ioQueue block will enter the
+            //         coordinator serializer and block there.
             completionGroup.enter()
             self.imageView.kf.setImage(
                 with: url1,
-                options: [.cacheSerializer(spy)]
+                options: [.cacheSerializer(coordinator)]
             ) { result in
-                // First call should be superseded.
                 XCTAssertNotNil(result.error)
                 if case .imageSettingError(reason: .notCurrentSourceTask) = result.error! {
                     // Expected
@@ -582,19 +602,40 @@ class ImageViewExtensionStaleCacheTests: XCTestCase {
                 completionGroup.leave()
             }
 
-            completionGroup.enter()
-            self.imageView.kf.setImage(
-                with: url2,
-                options: [.cacheSerializer(spy)]
-            ) { result in
-                XCTAssertNotNil(result.value?.image, "Second setImage should succeed")
-                completionGroup.leave()
+            // Step 2: Wait (on background) for url1's serializer to start,
+            //         then supersede on main thread.
+            DispatchQueue.global().async {
+                coordinator.waitUntilFirstCallEntered()
+
+                DispatchQueue.main.async {
+                    // Step 3: url1's token is now cancelled by the second setImage.
+                    completionGroup.enter()
+                    self.imageView.kf.setImage(
+                        with: url2,
+                        options: [.cacheSerializer(coordinator)]
+                    ) { result in
+                        XCTAssertNotNil(result.value?.image, "Second setImage should succeed")
+                        completionGroup.leave()
+                    }
+
+                    // Step 4: Let url1's serializer proceed. CHECK 3 will detect
+                    //         stale (token1 is cancelled) and discard the result.
+                    coordinator.allowFirstCallToProceed()
+                }
             }
 
             completionGroup.notify(queue: .main) {
-                // Only one decode should have happened (for url2).
-                // Without the fix, both would be decoded (spy.imageCallCount == 2).
-                XCTAssertEqual(spy.imageCallCount, 1, "Only the current task's image should be decoded")
+                // url1's serializer ran (call 1) but CHECK 3 discarded the result.
+                // url2's serializer ran (call 2) and succeeded.
+                // The key assertion: url1 was NOT promoted to memory cache.
+                XCTAssertNil(
+                    cache.retrieveImageInMemoryCache(forKey: url1.cacheKey),
+                    "Stale task's image must not be promoted to memory cache"
+                )
+                XCTAssertNotNil(
+                    cache.retrieveImageInMemoryCache(forKey: url2.cacheKey),
+                    "Current task's image must be in memory cache"
+                )
                 exp.fulfill()
             }
         }

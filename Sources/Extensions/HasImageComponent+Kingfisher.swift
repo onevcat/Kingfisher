@@ -360,23 +360,25 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask? {
+        var mutatingSelf = self
+        let previousToken = mutatingSelf.cancellationToken
         return setImage(
-            with: source, 
+            with: source,
             imageAccessor: ImagePropertyAccessor(
                 setImage: { base.setImage($0, options: $1) },
                 getImage: { base.getImage() }
             ),
             taskAccessor: TaskPropertyAccessor(
                 setTaskIdentifier: {
-                    var mutatingSelf = self
                     mutatingSelf.taskIdentifier = $0
                 },
                 getTaskIdentifier: { self.taskIdentifier },
                 setTask: { task in
-                    var mutatingSelf = self
                     mutatingSelf.imageTask = task
                 }
             ),
+            previousCancellationToken: previousToken,
+            setCancellationToken: { mutatingSelf.cancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -391,6 +393,8 @@ extension KingfisherWrapper {
         with source: Source?,
         imageAccessor: ImagePropertyAccessor<KFCrossPlatformImage>,
         taskAccessor: TaskPropertyAccessor,
+        previousCancellationToken: CancellationToken? = nil,
+        setCancellationToken: (@MainActor (CancellationToken) -> Void)? = nil,
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
@@ -419,6 +423,10 @@ extension KingfisherWrapper {
         let issuedIdentifier = Source.Identifier.next()
         taskAccessor.setTaskIdentifier(issuedIdentifier)
 
+        let token = CancellationToken()
+        previousCancellationToken?.cancel()
+        setCancellationToken?(token)
+
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
@@ -430,7 +438,7 @@ extension KingfisherWrapper {
                 Task { @MainActor in taskAccessor.setTask(task) }
             },
             progressiveImageSetter: { imageAccessor.setImage($0, options) },
-            referenceTaskIdentifierChecker: { issuedIdentifier == taskAccessor.getTaskIdentifier() },
+            referenceTaskIdentifierChecker: { !token.isCancelled },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == taskAccessor.getTaskIdentifier() else {
@@ -468,6 +476,7 @@ extension KingfisherWrapper {
 
 // MARK: - Associated Object
 @MainActor private var taskIdentifierKey: Void?
+@MainActor private var cancellationTokenKey: Void?
 @MainActor private var imageTaskKey: Void?
 
 @MainActor
@@ -485,6 +494,11 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
         }
     }
     
+    var cancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &cancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+    }
+
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}

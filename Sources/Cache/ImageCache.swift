@@ -623,29 +623,34 @@ open class ImageCache: @unchecked Sendable {
 
             // Begin to disk search.
             self.retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
-                result in
-                switch result {
-                case .success(let image):
-
-                    guard let image = image else {
-                        // No image found in disk storage.
+                (outcome: Result<DiskRetrievalOutcome, KingfisherError>) in
+                switch outcome {
+                case .success(let diskOutcome):
+                    switch diskOutcome {
+                    case .stale:
+                        // Task became stale during disk retrieval. Do not promote
+                        // to memory cache. Report as .none so the caller can
+                        // short-circuit without entering retry or download paths.
                         callbackQueue.execute { completionHandler(.success(.none)) }
-                        return
-                    }
 
-                    // Cache the disk image to memory.
-                    // We are passing `false` to `toDisk`, the memory cache does not change
-                    // callback queue, we can call `completionHandler` without another dispatch.
-                    var cacheOptions = options
-                    cacheOptions.callbackQueue = .untouch
-                    self.store(
-                        image,
-                        forKey: key,
-                        options: cacheOptions,
-                        toDisk: false)
-                    {
-                        _ in
-                        callbackQueue.execute { completionHandler(.success(.disk(image))) }
+                    case .notFound:
+                        callbackQueue.execute { completionHandler(.success(.none)) }
+
+                    case .image(let image):
+                        // Cache the disk image to memory.
+                        // We are passing `false` to `toDisk`, the memory cache does not change
+                        // callback queue, we can call `completionHandler` without another dispatch.
+                        var cacheOptions = options
+                        cacheOptions.callbackQueue = .untouch
+                        self.store(
+                            image,
+                            forKey: key,
+                            options: cacheOptions,
+                            toDisk: false)
+                        {
+                            _ in
+                            callbackQueue.execute { completionHandler(.success(.disk(image))) }
+                        }
                     }
                 case .failure(let error):
                     callbackQueue.execute { completionHandler(.failure(error)) }
@@ -719,11 +724,19 @@ open class ImageCache: @unchecked Sendable {
         return retrieveImageInMemoryCache(forKey: key, options: KingfisherParsedOptionsInfo(options))
     }
 
+    /// Represents the outcome of a disk cache retrieval, distinguishing between
+    /// a genuine cache miss and a stale task that was intentionally skipped.
+    enum DiskRetrievalOutcome: Sendable {
+        case image(KFCrossPlatformImage)
+        case notFound
+        case stale
+    }
+
     func retrieveImageInDiskCache(
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+        outcomeHandler: @escaping @Sendable (Result<DiskRetrievalOutcome, KingfisherError>) -> Void)
     {
         let computedKey = key.computedKey(with: options.processor.identifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
@@ -731,7 +744,7 @@ open class ImageCache: @unchecked Sendable {
             // CHECK 1: For blocks queued on the serial ioQueue, the task is likely
             // already stale by the time execution begins during fast scrolling.
             if let checker = options.sourceTaskIdentifierChecker, !checker() {
-                callbackQueue.execute { completionHandler(.success(nil)) }
+                callbackQueue.execute { outcomeHandler(.success(.stale)) }
                 return
             }
 
@@ -745,24 +758,50 @@ open class ImageCache: @unchecked Sendable {
                     // CHECK 2: Disk read completed but deserialization has not started.
                     // Catches staleness that occurred during a slow disk read.
                     if let checker = options.sourceTaskIdentifierChecker, !checker() {
-                        callbackQueue.execute { completionHandler(.success(nil)) }
+                        callbackQueue.execute { outcomeHandler(.success(.stale)) }
                         return
                     }
                     image = options.cacheSerializer.image(with: data, options: options)
                 }
                 // CHECK 3: After deserialization but before background decode.
                 if image != nil, let checker = options.sourceTaskIdentifierChecker, !checker() {
-                    callbackQueue.execute { completionHandler(.success(nil)) }
+                    callbackQueue.execute { outcomeHandler(.success(.stale)) }
                     return
                 }
                 if options.backgroundDecode {
                     image = image?.kf.decoded(scale: options.scaleFactor)
                 }
-                callbackQueue.execute { [image] in completionHandler(.success(image)) }
+                if let image = image {
+                    callbackQueue.execute { outcomeHandler(.success(.image(image))) }
+                } else {
+                    callbackQueue.execute { outcomeHandler(.success(.notFound)) }
+                }
             } catch let error as KingfisherError {
-                callbackQueue.execute { completionHandler(.failure(error)) }
+                callbackQueue.execute { outcomeHandler(.failure(error)) }
             } catch {
                 assertionFailure("The internal thrown error should be a `KingfisherError`.")
+            }
+        }
+    }
+
+    /// Legacy completion-handler wrapper for the public API and callers that
+    /// don't need to distinguish stale from not-found.
+    func retrieveImageInDiskCache(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo,
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+    {
+        retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
+            outcome in
+            switch outcome {
+            case .success(let diskOutcome):
+                switch diskOutcome {
+                case .image(let img): completionHandler(.success(img))
+                case .notFound, .stale: completionHandler(.success(nil))
+                }
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
         }
     }

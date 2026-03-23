@@ -101,3 +101,80 @@ final class CountingRetryStrategy: RetryStrategy, @unchecked Sendable {
         retryHandler(.stop)
     }
 }
+
+// MARK: - CoordinatingCacheSerializer
+
+/// A serializer that blocks on its first invocation, allowing tests to
+/// synchronize between the ioQueue and the main thread deterministically.
+///
+/// Usage:
+///   1. Call `setImage(url1)` with this serializer.
+///   2. On a background thread, call `waitUntilFirstCallEntered()` —
+///      this blocks until the ioQueue block for url1 reaches the serializer.
+///   3. On the main thread, call `setImage(url2)` to cancel url1's token.
+///   4. Call `allowFirstCallToProceed()` — the serializer returns for url1,
+///      then CHECK 3 detects the stale token and discards the result.
+final class CoordinatingCacheSerializer: CacheSerializer, @unchecked Sendable {
+
+    private let lock = NSLock()
+    private var _callCount = 0
+    private let enteredSemaphore = DispatchSemaphore(value: 0)
+    private let proceedSemaphore = DispatchSemaphore(value: 0)
+
+    var callCount: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return _callCount
+    }
+
+    /// Blocks the caller until the first serializer invocation begins on the ioQueue.
+    func waitUntilFirstCallEntered() { enteredSemaphore.wait() }
+
+    /// Allows the blocked first serializer invocation to proceed.
+    func allowFirstCallToProceed() { proceedSemaphore.signal() }
+
+    func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
+        DefaultCacheSerializer.default.data(with: image, original: original)
+    }
+
+    func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        lock.lock()
+        _callCount += 1
+        let isFirstCall = _callCount == 1
+        lock.unlock()
+
+        if isFirstCall {
+            enteredSemaphore.signal()   // Tell the test "I'm in the serializer"
+            proceedSemaphore.wait()     // Wait for the test to say "proceed"
+        }
+
+        return DefaultCacheSerializer.default.image(with: data, options: options)
+    }
+}
+
+// MARK: - RequestRecorder
+
+/// A request modifier that records all URLs that pass through the downloader.
+/// Use this to assert that certain URLs were NOT requested at the network level.
+final class RequestRecorder: AsyncImageDownloadRequestModifier, @unchecked Sendable {
+
+    private let lock = NSLock()
+    private var _requestedURLs: [URL] = []
+
+    var requestedURLs: [URL] {
+        lock.lock()
+        defer { lock.unlock() }
+        return _requestedURLs
+    }
+
+    var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { nil }
+
+    func modified(for request: URLRequest) async -> URLRequest? {
+        if let url = request.url {
+            lock.lock()
+            _requestedURLs.append(url)
+            lock.unlock()
+        }
+        return request
+    }
+}

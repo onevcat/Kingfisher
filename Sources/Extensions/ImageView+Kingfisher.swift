@@ -309,6 +309,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         let issuedIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
 
+        // Create a thread-safe cancellation token for background checks.
+        // This avoids reading the view's taskIdentifier associated object
+        // from non-main threads (e.g., the disk cache ioQueue).
+        let token = CancellationToken()
+        mutatingSelf.cancellationToken?.cancel()
+        mutatingSelf.cancellationToken = token
+
         if base.shouldPreloadAllAnimation() {
             options.preloadAllAnimationData = true
         }
@@ -324,7 +331,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                 Task { @MainActor in mutatingSelf.imageTask = task }
             },
             progressiveImageSetter: { self.base.image = $0 },
-            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
+            referenceTaskIdentifierChecker: { !token.isCancelled },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
                     maybeIndicator?.stopAnimatingView()
@@ -427,6 +434,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
 // MARK: - Associated Object
 @MainActor private var taskIdentifierKey: Void?
+@MainActor private var cancellationTokenKey: Void?
 @MainActor private var indicatorKey: Void?
 @MainActor private var indicatorTypeKey: Void?
 @MainActor private var placeholderKey: Void?
@@ -445,6 +453,11 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
+    }
+
+    var cancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &cancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     /// Specifies which indicator type is going to be used.
