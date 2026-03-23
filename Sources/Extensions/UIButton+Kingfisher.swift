@@ -115,6 +115,7 @@ extension KingfisherWrapper where Base: UIButton {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
+        let previousToken = mutatingSelf.imageCancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -126,6 +127,8 @@ extension KingfisherWrapper where Base: UIButton {
                 getTaskIdentifier: { taskIdentifier(for: state) },
                 setTask: { mutatingSelf.imageTask = $0 }
             ),
+            previousCancellationToken: previousToken,
+            setCancellationToken: { mutatingSelf.imageCancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -139,6 +142,7 @@ extension KingfisherWrapper where Base: UIButton {
     /// Nothing will happen if the downloading has already finished.
     public func cancelImageDownloadTask() {
         imageTask?.cancel()
+        imageCancellationToken?.cancel()
     }
 
     // MARK: Setting Background Image
@@ -224,6 +228,7 @@ extension KingfisherWrapper where Base: UIButton {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
+        let previousToken = mutatingSelf.backgroundImageCancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -239,6 +244,8 @@ extension KingfisherWrapper where Base: UIButton {
                 getTaskIdentifier: { backgroundTaskIdentifier(for: state) },
                 setTask: { mutatingSelf.backgroundImageTask = $0 }
             ),
+            previousCancellationToken: previousToken,
+            setCancellationToken: { mutatingSelf.backgroundImageCancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -252,12 +259,14 @@ extension KingfisherWrapper where Base: UIButton {
     /// Nothing will happen if the downloading has already finished.
     public func cancelBackgroundImageDownloadTask() {
         backgroundImageTask?.cancel()
+        backgroundImageCancellationToken?.cancel()
     }
 }
 
 // MARK: - Associated Object
 @MainActor private var taskIdentifierKey: Void?
 @MainActor private var imageTaskKey: Void?
+@MainActor private var imageCancellationTokenKey: Void?
 
 // MARK: Properties
 @MainActor
@@ -284,11 +293,17 @@ extension KingfisherWrapper where Base: UIButton {
         get { return getAssociatedObject(base, &imageTaskKey) }
         set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
+
+    private var imageCancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &imageCancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &imageCancellationTokenKey, newValue) }
+    }
 }
 
 
 @MainActor private var backgroundTaskIdentifierKey: Void?
 @MainActor private var backgroundImageTaskKey: Void?
+@MainActor private var backgroundImageCancellationTokenKey: Void?
 
 // MARK: Background Properties
 @MainActor
@@ -312,6 +327,11 @@ extension KingfisherWrapper where Base: UIButton {
     private var backgroundImageTask: DownloadTask? {
         get { return getAssociatedObject(base, &backgroundImageTaskKey) }
         mutating set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
+    }
+
+    private var backgroundImageCancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &backgroundImageCancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &backgroundImageCancellationTokenKey, newValue) }
     }
 }
 #endif

@@ -195,5 +195,111 @@ class NSButtonExtensionTests: XCTestCase {
         XCTAssertEqual(testImage, button.alternateImage)
     }
 
+    @MainActor
+    func testCancelImageTaskCancelsDiskCacheRetrieval() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let coordinator = CoordinatingCacheSerializer()
+        let cache = KingfisherManager.shared.cache
+
+        let storeExp = expectation(description: "store")
+        cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
+            storeExp.fulfill()
+        }
+        wait(for: [storeExp], timeout: 3)
+        cache.clearMemoryCache()
+
+        button.kf.setImage(
+            with: url,
+            options: [.cacheSerializer(coordinator)]
+        ) { _ in
+            exp.fulfill()
+        }
+
+        DispatchQueue.global().async {
+            coordinator.waitUntilFirstCallEntered()
+
+            DispatchQueue.main.async {
+                self.button.kf.cancelImageDownloadTask()
+                coordinator.allowFirstCallToProceed()
+            }
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertNil(
+            cache.retrieveImageInMemoryCache(forKey: url.cacheKey),
+            "cancelImageDownloadTask() must prevent disk cache result from being promoted to memory"
+        )
+    }
+
+    @MainActor
+    func testSupersededDiskCachedAlternateImageDoesNotPromoteToMemory() {
+        let exp = expectation(description: #function)
+        let url1 = testURLs[0]
+        let url2 = testURLs[1]
+        let coordinator = CoordinatingCacheSerializer()
+        let cache = KingfisherManager.shared.cache
+        let group = DispatchGroup()
+
+        group.enter()
+        cache.store(testImage, original: testImageData, forKey: url1.cacheKey, toDisk: true) { _ in
+            group.leave()
+        }
+        group.enter()
+        cache.store(testImage, original: testImageData, forKey: url2.cacheKey, toDisk: true) { _ in
+            group.leave()
+        }
+
+        group.notify(queue: .main) {
+            cache.clearMemoryCache()
+
+            let completionGroup = DispatchGroup()
+
+            completionGroup.enter()
+            self.button.kf.setAlternateImage(
+                with: url1,
+                options: [.cacheSerializer(coordinator)]
+            ) { result in
+                XCTAssertNotNil(result.error)
+                if case .imageSettingError(reason: .notCurrentSourceTask) = result.error! {
+                } else {
+                    XCTFail("First setAlternateImage should receive .notCurrentSourceTask, got: \(result.error!)")
+                }
+                completionGroup.leave()
+            }
+
+            DispatchQueue.global().async {
+                coordinator.waitUntilFirstCallEntered()
+
+                DispatchQueue.main.async {
+                    completionGroup.enter()
+                    self.button.kf.setAlternateImage(
+                        with: url2,
+                        options: [.cacheSerializer(coordinator)]
+                    ) { result in
+                        XCTAssertNotNil(result.value?.image)
+                        completionGroup.leave()
+                    }
+
+                    coordinator.allowFirstCallToProceed()
+                }
+            }
+
+            completionGroup.notify(queue: .main) {
+                XCTAssertNil(
+                    cache.retrieveImageInMemoryCache(forKey: url1.cacheKey),
+                    "Superseded alternate image task must not promote to memory cache"
+                )
+                XCTAssertNotNil(
+                    cache.retrieveImageInMemoryCache(forKey: url2.cacheKey),
+                    "Current alternate image task should promote to memory cache"
+                )
+                exp.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
 }
 #endif
