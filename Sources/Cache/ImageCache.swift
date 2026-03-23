@@ -628,9 +628,13 @@ open class ImageCache: @unchecked Sendable {
                 case .success(let diskOutcome):
                     switch diskOutcome {
                     case .stale:
-                        // Task became stale during disk retrieval. Do not promote
-                        // to memory cache. Report as .none so the caller can
-                        // short-circuit without entering retry or download paths.
+                        // `stale` is an internal distinction used to avoid memory promotion.
+                        // It is mapped back to `.none` at the public ImageCache API boundary
+                        // because `ImageCacheResult` is public and not extended for this
+                        // internal optimization.
+                        // Manager-mediated view loading paths rely on
+                        // `sourceTaskIdentifierChecker` to short-circuit stale `.none`
+                        // results before retry / fallback logic.
                         callbackQueue.execute { completionHandler(.success(.none)) }
 
                     case .notFound:

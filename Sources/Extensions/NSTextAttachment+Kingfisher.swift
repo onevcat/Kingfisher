@@ -249,6 +249,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
+        cancellationToken?.cancel()
     }
 }
 

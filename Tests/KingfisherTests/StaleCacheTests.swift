@@ -554,7 +554,7 @@ class ImageViewExtensionStaleCacheTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Test 11: Dual setImage on same view only decodes current task
+    // MARK: - Test 11: Stale disk retrieval does not promote to memory
 
     /// Verify that a superseded disk cache retrieval does not promote its decoded
     /// image to memory cache. Uses `CoordinatingCacheSerializer` to deterministically
@@ -704,6 +704,55 @@ class ImageViewExtensionStaleCacheTests: XCTestCase {
             }
         }
         waitForExpectations(timeout: 5, handler: nil)
+    }
+    // MARK: - Test 13: cancelDownloadTask cancels disk cache retrieval
+
+    /// When `cancelDownloadTask()` is called on a view whose current request is
+    /// a disk cache hit (no DownloadTask), the CancellationToken must still be
+    /// cancelled so the ioQueue skips deserialization. This is the exact scenario
+    /// described in issue #2495.
+    @MainActor func testCancelDownloadTaskCancelsDiskCacheRetrieval() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let coordinator = CoordinatingCacheSerializer()
+        let cache = KingfisherManager.shared.cache
+
+        let storeExp = expectation(description: "store")
+        cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
+            storeExp.fulfill()
+        }
+        wait(for: [storeExp], timeout: 3)
+        cache.clearMemoryCache()
+
+        // Start a disk cache retrieval. The ioQueue block will block in
+        // the coordinator serializer.
+        imageView.kf.setImage(
+            with: url,
+            options: [.cacheSerializer(coordinator)]
+        ) { result in
+            exp.fulfill()
+        }
+
+        // Wait for the ioQueue block to reach the serializer.
+        DispatchQueue.global().async {
+            coordinator.waitUntilFirstCallEntered()
+
+            DispatchQueue.main.async {
+                // Cancel via the public API — this is the #2495 scenario.
+                self.imageView.kf.cancelDownloadTask()
+
+                // Let the serializer proceed. CHECK 3 should detect stale.
+                coordinator.allowFirstCallToProceed()
+            }
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+
+        // The image must NOT be promoted to memory — the cancel was effective.
+        XCTAssertNil(
+            cache.retrieveImageInMemoryCache(forKey: url.cacheKey),
+            "cancelDownloadTask() must prevent disk cache result from being promoted to memory"
+        )
     }
 }
 #endif

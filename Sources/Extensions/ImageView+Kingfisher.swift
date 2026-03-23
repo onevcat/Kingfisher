@@ -385,6 +385,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
+        cancellationToken?.cancel()
     }
 
     private func needsTransition(options: KingfisherParsedOptionsInfo, cacheType: CacheType) -> Bool {

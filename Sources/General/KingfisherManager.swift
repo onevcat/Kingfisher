@@ -393,9 +393,10 @@ public class KingfisherManager: @unchecked Sendable {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
-                // Skip retry and alternative sources for stale task results.
-                // A stale result means the requesting view has moved on to a different
-                // image; retrying or trying alternatives would be wasted work.
+                // `ImageCache` reports stale disk retrieval as `.none` at its public
+                // boundary. For manager-mediated loading paths, this checker preserves
+                // the stale semantics and prevents retry / alternative-source / fallback
+                // work for superseded requests.
                 if let checker = retrievingContext.options.sourceTaskIdentifierChecker, !checker() {
                     completionHandler?(result)
                     return

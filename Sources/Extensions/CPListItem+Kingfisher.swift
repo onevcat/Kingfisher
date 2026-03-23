@@ -110,6 +110,7 @@ extension KingfisherWrapper where Base: CPListItem {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
+        let previousToken = mutatingSelf.cancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -138,6 +139,8 @@ extension KingfisherWrapper where Base: CPListItem {
                 getTaskIdentifier: { mutatingSelf.taskIdentifier },
                 setTask: { mutatingSelf.imageTask = $0 }
             ),
+            previousCancellationToken: previousToken,
+            setCancellationToken: { mutatingSelf.cancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -151,10 +154,12 @@ extension KingfisherWrapper where Base: CPListItem {
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
+        cancellationToken?.cancel()
     }
 }
 
 @MainActor private var taskIdentifierKey: Void?
+@MainActor private var cancellationTokenKey: Void?
 @MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
@@ -170,6 +175,11 @@ extension KingfisherWrapper where Base: CPListItem {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
+    }
+
+    var cancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &cancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     private var imageTask: DownloadTask? {
