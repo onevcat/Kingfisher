@@ -116,6 +116,8 @@ final class CountingRetryStrategy: RetryStrategy, @unchecked Sendable {
 ///      then CHECK 3 detects the stale token and discards the result.
 final class CoordinatingCacheSerializer: CacheSerializer, @unchecked Sendable {
 
+    private static let proceedTimeout: DispatchTimeInterval = .seconds(5)
+
     private let lock = NSLock()
     private var _callCount = 0
     private let enteredSemaphore = DispatchSemaphore(value: 0)
@@ -145,7 +147,10 @@ final class CoordinatingCacheSerializer: CacheSerializer, @unchecked Sendable {
 
         if isFirstCall {
             enteredSemaphore.signal()   // Tell the test "I'm in the serializer"
-            proceedSemaphore.wait()     // Wait for the test to say "proceed"
+            let waitResult = proceedSemaphore.wait(timeout: .now() + Self.proceedTimeout)
+            if waitResult == .timedOut {
+                XCTFail("Timed out waiting for CoordinatingCacheSerializer to proceed")
+            }
         }
 
         return DefaultCacheSerializer.default.image(with: data, options: options)

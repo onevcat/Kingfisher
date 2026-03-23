@@ -397,7 +397,7 @@ public class KingfisherManager: @unchecked Sendable {
                 // boundary. For manager-mediated loading paths, this checker preserves
                 // the stale semantics and prevents retry / alternative-source / fallback
                 // work for superseded requests.
-                if let checker = retrievingContext.options.sourceTaskIdentifierChecker, !checker() {
+                if retrievingContext.options.isSourceTaskStale {
                     completionHandler?(result)
                     return
                 }
@@ -733,7 +733,7 @@ public class KingfisherManager: @unchecked Sendable {
                     onSuccess: { cacheResult in
                         guard let image = cacheResult.image else {
                             // If the task is stale, report error instead of downloading.
-                            if let checker = options.sourceTaskIdentifierChecker, !checker() {
+                            if options.isSourceTaskStale {
                                 let error = KingfisherError.cacheError(reason: .imageNotExisting(key: key))
                                 options.callbackQueue.execute { completionHandler?(.failure(error)) }
                                 return

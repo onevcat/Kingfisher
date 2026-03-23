@@ -730,7 +730,7 @@ open class ImageCache: @unchecked Sendable {
 
     /// Represents the outcome of a disk cache retrieval, distinguishing between
     /// a genuine cache miss and a stale task that was intentionally skipped.
-    enum DiskRetrievalOutcome: Sendable {
+    internal enum DiskRetrievalOutcome: Sendable {
         case image(KFCrossPlatformImage)
         case notFound
         case stale
@@ -747,7 +747,7 @@ open class ImageCache: @unchecked Sendable {
         loadingQueue.execute {
             // CHECK 1: For blocks queued on the serial ioQueue, the task is likely
             // already stale by the time execution begins during fast scrolling.
-            if let checker = options.sourceTaskIdentifierChecker, !checker() {
+            if options.isSourceTaskStale {
                 callbackQueue.execute { outcomeHandler(.success(.stale)) }
                 return
             }
@@ -761,14 +761,14 @@ open class ImageCache: @unchecked Sendable {
                 ) {
                     // CHECK 2: Disk read completed but deserialization has not started.
                     // Catches staleness that occurred during a slow disk read.
-                    if let checker = options.sourceTaskIdentifierChecker, !checker() {
+                    if options.isSourceTaskStale {
                         callbackQueue.execute { outcomeHandler(.success(.stale)) }
                         return
                     }
                     image = options.cacheSerializer.image(with: data, options: options)
                 }
                 // CHECK 3: After deserialization but before background decode.
-                if image != nil, let checker = options.sourceTaskIdentifierChecker, !checker() {
+                if image != nil, options.isSourceTaskStale {
                     callbackQueue.execute { outcomeHandler(.success(.stale)) }
                     return
                 }
@@ -788,7 +788,7 @@ open class ImageCache: @unchecked Sendable {
         }
     }
 
-    /// Legacy completion-handler wrapper for the public API and callers that
+    /// Convenience overload for the public API and callers that
     /// don't need to distinguish stale from not-found.
     func retrieveImageInDiskCache(
         forKey key: String,

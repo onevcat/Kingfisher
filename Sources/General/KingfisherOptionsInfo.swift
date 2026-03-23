@@ -419,6 +419,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
     var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
+    var isSourceTaskStale: Bool { sourceTaskIdentifierChecker.map { !$0() } ?? false }
 
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
