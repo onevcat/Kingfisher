@@ -728,6 +728,13 @@ open class ImageCache: @unchecked Sendable {
         let computedKey = key.computedKey(with: options.processor.identifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
         loadingQueue.execute {
+            // CHECK 1: For blocks queued on the serial ioQueue, the task is likely
+            // already stale by the time execution begins during fast scrolling.
+            if let checker = options.sourceTaskIdentifierChecker, !checker() {
+                callbackQueue.execute { completionHandler(.success(nil)) }
+                return
+            }
+
             do {
                 var image: KFCrossPlatformImage? = nil
                 if let data = try self.diskStorage.value(
@@ -735,7 +742,18 @@ open class ImageCache: @unchecked Sendable {
                     forcedExtension: options.forcedExtension,
                     extendingExpiration: options.diskCacheAccessExtendingExpiration
                 ) {
+                    // CHECK 2: Disk read completed but deserialization has not started.
+                    // Catches staleness that occurred during a slow disk read.
+                    if let checker = options.sourceTaskIdentifierChecker, !checker() {
+                        callbackQueue.execute { completionHandler(.success(nil)) }
+                        return
+                    }
                     image = options.cacheSerializer.image(with: data, options: options)
+                }
+                // CHECK 3: After deserialization but before background decode.
+                if image != nil, let checker = options.sourceTaskIdentifierChecker, !checker() {
+                    callbackQueue.execute { completionHandler(.success(nil)) }
+                    return
                 }
                 if options.backgroundDecode {
                     image = image?.kf.decoded(scale: options.scaleFactor)

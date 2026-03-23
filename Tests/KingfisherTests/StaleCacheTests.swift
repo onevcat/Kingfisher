@@ -122,50 +122,40 @@ class ImageCacheStaleDiskRetrievalTests: XCTestCase {
 
     // MARK: - Test 3: Checker flips after disk read, before deserialize
 
-    /// Use a `BlockingCacheSerializer` to simulate a timing window: checker is `true`
-    /// when the ioQueue block starts (passes CHECK 1), disk read succeeds, but before
-    /// deserialize starts the checker flips to `false` (caught by CHECK 2).
+    /// Use a count-based checker to deterministically test CHECK 2: the checker
+    /// returns `true` on its first invocation (passes CHECK 1), then `false` on
+    /// its second invocation (caught by CHECK 2, before deserialize).
     func testRetrieveImageInDiskCacheReturnsStaleWhenCheckerTurnsFalseAfterDiskReadBeforeDeserialize() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
-        let blocker = BlockingCacheSerializer()
+        let spy = SpyCacheSerializer()
 
         storeToDiskOnly(forKey: key) {
-            let isStale = LockIsolated(false)
             var options = KingfisherParsedOptionsInfo(nil)
-            options.cacheSerializer = blocker
-            options.sourceTaskIdentifierChecker = { !isStale.value }
+            options.cacheSerializer = spy
+
+            // First call (CHECK 1) returns true, second call (CHECK 2) returns false.
+            let callCount = LockIsolated(0)
+            options.sourceTaskIdentifierChecker = {
+                callCount.withValue { count -> Bool in
+                    count += 1
+                    return count <= 1
+                }
+            }
 
             self.cache.retrieveImage(forKey: key, options: options) { result in
                 // The request became stale after disk read but before deserialize.
                 XCTAssertNil(result.value?.image, "Should not return image when checker flips before deserialize")
 
-                // The blocking serializer should NOT have been called because the
-                // staleness check (CHECK 2) fires before the serializer is invoked.
-                XCTAssertEqual(blocker.imageCallCount, 0, "Serializer should not run for stale tasks")
+                // Serializer should NOT have been called — CHECK 2 fires first.
+                XCTAssertEqual(spy.imageCallCount, 0, "Serializer should not run for stale tasks")
 
                 // Memory should not be populated.
                 XCTAssertNil(self.cache.retrieveImageInMemoryCache(forKey: key))
                 exp.fulfill()
             }
-
-            // After a short delay (to let disk read complete but before deserialize),
-            // flip the checker to stale.
-            // The blocker.unblock() is intentionally NOT called — if CHECK 2 works,
-            // the serializer is never reached. But we need to flip the checker so
-            // CHECK 2 fires. We do this immediately since disk read is fast and the
-            // blocker would halt at serializer.image() anyway.
-            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
-                isStale.setValue(true)
-                // In case the implementation does NOT have CHECK 2 yet and falls
-                // through to the blocking serializer, unblock it after another delay
-                // so the test doesn't hang forever.
-                DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-                    blocker.unblock()
-                }
-            }
         }
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     // MARK: - Test 4: Skip backgroundDecode when checker turns false after deserialize
@@ -261,10 +251,10 @@ class RetryStrategyStaleCacheTests: XCTestCase {
         manager.cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
             self.manager.cache.clearMemoryCache()
 
-            // Use the internal API with a stale checker.
-            self.manager.retrieveImage(
+            // Use the internal API with a stale checker and retry strategy.
+            _ = self.manager.retrieveImage(
                 with: .network(url),
-                options: KingfisherParsedOptionsInfo(nil),
+                options: KingfisherParsedOptionsInfo([.retryStrategy(counter)]),
                 downloadTaskUpdated: nil,
                 progressiveImageSetter: nil,
                 referenceTaskIdentifierChecker: { false },
@@ -275,10 +265,6 @@ class RetryStrategyStaleCacheTests: XCTestCase {
                 }
             )
         }
-
-        // Set retry strategy on the manager's default options after initiating retrieval
-        // doesn't work — we need to pass it via options. Let me fix:
-        // Actually, retryStrategy needs to be in the options. Redo:
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -298,7 +284,7 @@ class RetryStrategyStaleCacheTests: XCTestCase {
             var options = KingfisherParsedOptionsInfo([.retryStrategy(counter)])
             options.sourceTaskIdentifierChecker = { false }
 
-            self.manager.retrieveImage(
+            _ = self.manager.retrieveImage(
                 with: .network(url),
                 options: options,
                 downloadTaskUpdated: nil,
@@ -364,7 +350,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
 
         // Stub both URLs. If the alternative is hit, the test can detect it.
         stub(primaryURL, data: testImageData)
-        let altStub = stub(alternativeURL, data: testImageData)
+        stub(alternativeURL, data: testImageData)
 
         // Pre-populate primary in disk cache.
         manager.cache.store(testImage, original: testImageData, forKey: primaryURL.cacheKey, toDisk: true) { _ in
@@ -375,7 +361,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
             ])
             options.sourceTaskIdentifierChecker = { false }
 
-            self.manager.retrieveImage(
+            _ = self.manager.retrieveImage(
                 with: .network(primaryURL),
                 options: options,
                 downloadTaskUpdated: nil,
@@ -431,7 +417,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
             var options = KingfisherParsedOptionsInfo([.processor(processor)])
             options.sourceTaskIdentifierChecker = { false }
 
-            self.manager.retrieveImage(
+            _ = self.manager.retrieveImage(
                 with: .network(url),
                 options: options,
                 downloadTaskUpdated: { task in
@@ -474,7 +460,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
         ) { _ in
             self.manager.cache.clearMemoryCache()
 
-            self.manager.retrieveImage(
+            _ = self.manager.retrieveImage(
                 with: .network(url),
                 options: KingfisherParsedOptionsInfo([.processor(processor), .waitForCache]),
                 downloadTaskUpdated: nil,
@@ -507,7 +493,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
         // No pre-cached image. Should fall through to download.
         manager.retrieveImage(with: url, options: [.waitForCache]) { result in
             XCTAssertNotNil(result.value?.image, "Should download and return image")
-            XCTAssertEqual(result.value?.cacheType, .none, "Should be a fresh download")
+            XCTAssertEqual(result.value!.cacheType, .none, "Should be a fresh download")
 
             // Second call should hit memory cache.
             self.manager.retrieveImage(with: url) { result in

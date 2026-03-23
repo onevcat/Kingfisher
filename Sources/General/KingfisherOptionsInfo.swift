@@ -418,7 +418,8 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var forcedExtension: String? = nil
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
-    
+    var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
+
     public init(_ info: KingfisherOptionsInfo?) {
         guard let info = info else { return }
         for option in info {

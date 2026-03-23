@@ -330,6 +330,7 @@ public class KingfisherManager: @unchecked Sendable {
             options.onDataReceived?.forEach {
                 $0.onShouldApply = checker
             }
+            options.sourceTaskIdentifierChecker = checker
         }
         
         let retrievingContext = RetrievingContext(options: options, originalSource: source)
@@ -392,6 +393,13 @@ public class KingfisherManager: @unchecked Sendable {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
+                // Skip retry and alternative sources for stale task results.
+                // A stale result means the requesting view has moved on to a different
+                // image; retrying or trying alternatives would be wasted work.
+                if let checker = retrievingContext.options.sourceTaskIdentifierChecker, !checker() {
+                    completionHandler?(result)
+                    return
+                }
                 if let retryStrategy = retryStrategy {
                     let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
                     retryStrategy.retry(context: context) { decision in
@@ -723,6 +731,13 @@ public class KingfisherManager: @unchecked Sendable {
                 result.match(
                     onSuccess: { cacheResult in
                         guard let image = cacheResult.image else {
+                            // If the task is stale, report error instead of downloading.
+                            if let checker = options.sourceTaskIdentifierChecker, !checker() {
+                                let error = KingfisherError.cacheError(reason: .imageNotExisting(key: key))
+                                options.callbackQueue.execute { completionHandler?(.failure(error)) }
+                                return
+                            }
+
                             // The original cache type check is not a strong guarantee. When it happens, treat it as a cache miss.
                             // In this case, fall back to download or provider loading.
                             if options.onlyFromCache {
