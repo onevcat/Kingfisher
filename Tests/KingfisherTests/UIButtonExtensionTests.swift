@@ -29,7 +29,7 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
-class UIButtonExtensionTests: XCTestCase {
+class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
     var button: UIButton!
     
@@ -222,24 +222,32 @@ class UIButtonExtensionTests: XCTestCase {
             let completionGroup = DispatchGroup()
 
             completionGroup.enter()
-            self.button.kf.setImage(with: url1, for: .normal, options: [.cacheSerializer(coordinator)]) { result in
+            self.button.kf.setImage(
+                with: url1,
+                for: .normal,
+                options: [.cacheSerializer(coordinator)],
+                completionHandler: { result in
                 XCTAssertNotNil(result.error)
                 if case .imageSettingError(reason: .notCurrentSourceTask) = result.error! {
                 } else {
                     XCTFail("First setImage should receive .notCurrentSourceTask, got: \(result.error!)")
                 }
                 completionGroup.leave()
-            }
+            })
 
             DispatchQueue.global().async {
                 coordinator.waitUntilFirstCallEntered()
 
                 DispatchQueue.main.async {
                     completionGroup.enter()
-                    self.button.kf.setImage(with: url2, for: .normal, options: [.cacheSerializer(coordinator)]) { result in
+                    self.button.kf.setImage(
+                        with: url2,
+                        for: .normal,
+                        options: [.cacheSerializer(coordinator)],
+                        completionHandler: { result in
                         XCTAssertNotNil(result.value?.image)
                         completionGroup.leave()
-                    }
+                    })
 
                     coordinator.allowFirstCallToProceed()
                 }
@@ -277,10 +285,10 @@ class UIButtonExtensionTests: XCTestCase {
         button.kf.setBackgroundImage(
             with: url,
             for: .normal,
-            options: [.cacheSerializer(coordinator)]
-        ) { _ in
+            options: [.cacheSerializer(coordinator)],
+            completionHandler: { _ in
             exp.fulfill()
-        }
+        })
 
         DispatchQueue.global().async {
             coordinator.waitUntilFirstCallEntered()

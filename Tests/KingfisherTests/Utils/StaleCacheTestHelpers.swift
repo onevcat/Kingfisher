@@ -162,23 +162,17 @@ final class CoordinatingCacheSerializer: CacheSerializer, @unchecked Sendable {
 /// A request modifier that records all URLs that pass through the downloader.
 /// Use this to assert that certain URLs were NOT requested at the network level.
 final class RequestRecorder: AsyncImageDownloadRequestModifier, @unchecked Sendable {
-
-    private let lock = NSLock()
-    private var _requestedURLs: [URL] = []
+    private let requestedURLsStorage = LockIsolated([URL]())
 
     var requestedURLs: [URL] {
-        lock.lock()
-        defer { lock.unlock() }
-        return _requestedURLs
+        requestedURLsStorage.value
     }
 
     var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { nil }
 
     func modified(for request: URLRequest) async -> URLRequest? {
         if let url = request.url {
-            lock.lock()
-            _requestedURLs.append(url)
-            lock.unlock()
+            requestedURLsStorage.withValue { $0.append(url) }
         }
         return request
     }

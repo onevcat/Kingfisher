@@ -201,7 +201,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         mutatingSelf.cancellationToken?.cancel()
         mutatingSelf.cancellationToken = token
 
-        let taskIdentifierChecking = { !token.isCancelled }
+        let taskIdentifierChecking: @Sendable () -> Bool = { !token.isCancelled }
 
         // Copy these associated values to prevent issues from reentrance.
         let targetSize = targetSize

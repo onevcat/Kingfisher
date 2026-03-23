@@ -524,7 +524,7 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
 // MARK: - ImageView Extension Stale Tests
 
 #if os(iOS) || os(tvOS) || os(visionOS)
-class ImageViewExtensionStaleCacheTests: XCTestCase {
+class ImageViewExtensionStaleCacheTests: XCTestCase, @unchecked Sendable {
 
     var imageView: KFCrossPlatformImageView!
 

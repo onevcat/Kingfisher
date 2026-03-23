@@ -29,7 +29,7 @@ import AppKit
 import XCTest
 @testable import Kingfisher
 
-class NSButtonExtensionTests: XCTestCase {
+class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
     var button: NSButton!
 
@@ -211,10 +211,10 @@ class NSButtonExtensionTests: XCTestCase {
 
         button.kf.setImage(
             with: url,
-            options: [.cacheSerializer(coordinator)]
-        ) { _ in
+            options: [.cacheSerializer(coordinator)],
+            completionHandler: { _ in
             exp.fulfill()
-        }
+        })
 
         DispatchQueue.global().async {
             coordinator.waitUntilFirstCallEntered()
@@ -258,15 +258,15 @@ class NSButtonExtensionTests: XCTestCase {
             completionGroup.enter()
             self.button.kf.setAlternateImage(
                 with: url1,
-                options: [.cacheSerializer(coordinator)]
-            ) { result in
+                options: [.cacheSerializer(coordinator)],
+                completionHandler: { result in
                 XCTAssertNotNil(result.error)
                 if case .imageSettingError(reason: .notCurrentSourceTask) = result.error! {
                 } else {
                     XCTFail("First setAlternateImage should receive .notCurrentSourceTask, got: \(result.error!)")
                 }
                 completionGroup.leave()
-            }
+            })
 
             DispatchQueue.global().async {
                 coordinator.waitUntilFirstCallEntered()
@@ -275,11 +275,11 @@ class NSButtonExtensionTests: XCTestCase {
                     completionGroup.enter()
                     self.button.kf.setAlternateImage(
                         with: url2,
-                        options: [.cacheSerializer(coordinator)]
-                    ) { result in
+                        options: [.cacheSerializer(coordinator)],
+                        completionHandler: { result in
                         XCTAssertNotNil(result.value?.image)
                         completionGroup.leave()
-                    }
+                    })
 
                     coordinator.allowFirstCallToProceed()
                 }
