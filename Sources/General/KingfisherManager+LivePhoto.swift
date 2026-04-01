@@ -87,7 +87,7 @@ extension KingfisherManager {
         with source: LivePhotoSource,
         options: KingfisherOptionsInfo? = nil,
         progressBlock: DownloadProgressBlock? = nil,
-        referenceTaskIdentifierChecker: (() -> Bool)? = nil
+        referenceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
     ) async throws -> LivePhotoLoadingInfoResult {
         let fullOptions = currentDefaultOptions + (options ?? .empty)
         var checkedOptions = KingfisherParsedOptionsInfo(fullOptions)

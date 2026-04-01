@@ -303,7 +303,7 @@ public class KingfisherManager: @unchecked Sendable {
         options: KingfisherParsedOptionsInfo,
         downloadTaskUpdated: DownloadTaskUpdatedBlock? = nil,
         progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
-        referenceTaskIdentifierChecker: (() -> Bool)? = nil,
+        referenceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         var options = options
@@ -330,6 +330,7 @@ public class KingfisherManager: @unchecked Sendable {
             options.onDataReceived?.forEach {
                 $0.onShouldApply = checker
             }
+            options.sourceTaskIdentifierChecker = checker
         }
         
         let retrievingContext = RetrievingContext(options: options, originalSource: source)
@@ -392,6 +393,14 @@ public class KingfisherManager: @unchecked Sendable {
             case .success:
                 completionHandler?(result)
             case .failure(let error):
+                // `ImageCache` reports stale disk retrieval as `.none` at its public
+                // boundary. For manager-mediated loading paths, this checker preserves
+                // the stale semantics and prevents retry / alternative-source / fallback
+                // work for superseded requests.
+                if retrievingContext.options.isSourceTaskStale {
+                    completionHandler?(result)
+                    return
+                }
                 if let retryStrategy = retryStrategy {
                     let context = retryContext?.increaseRetryCount() ?? RetryContext(source: source, error: error)
                     retryStrategy.retry(context: context) { decision in
@@ -723,6 +732,13 @@ public class KingfisherManager: @unchecked Sendable {
                 result.match(
                     onSuccess: { cacheResult in
                         guard let image = cacheResult.image else {
+                            // If the task is stale, report error instead of downloading.
+                            if options.isSourceTaskStale {
+                                let error = KingfisherError.cacheError(reason: .imageNotExisting(key: key))
+                                options.callbackQueue.execute { completionHandler?(.failure(error)) }
+                                return
+                            }
+
                             // The original cache type check is not a strong guarantee. When it happens, treat it as a cache miss.
                             // In this case, fall back to download or provider loading.
                             if options.onlyFromCache {
@@ -879,7 +895,7 @@ extension KingfisherManager {
         with source: Source,
         options: KingfisherParsedOptionsInfo,
         progressiveImageSetter: ((KFCrossPlatformImage?) -> Void)? = nil,
-        referenceTaskIdentifierChecker: (() -> Bool)? = nil
+        referenceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
     ) async throws -> RetrieveImageResult
     {
         // Early cancellation check

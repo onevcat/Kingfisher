@@ -55,6 +55,7 @@ public struct RetrieveLivePhotoResult: @unchecked Sendable {
 }
 
 @MainActor private var taskIdentifierKey: Void?
+@MainActor private var cancellationTokenKey: Void?
 @MainActor private var targetSizeKey: Void?
 @MainActor private var contentModeKey: Void?
 
@@ -71,7 +72,12 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
     }
-    
+
+    var cancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &cancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+    }
+
     /// The target size of the live photo view. It is used in the 
     /// `PHLivePhoto.request(withResourceFileURLs:placeholderImage:targetSize:contentMode:resultHandler:)` method as 
     /// the `targetSize` argument when loading the live photo. 
@@ -190,8 +196,12 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         
         let issuedIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
-        
-        let taskIdentifierChecking = { issuedIdentifier == self.taskIdentifier }
+
+        let token = CancellationToken()
+        mutatingSelf.cancellationToken?.cancel()
+        mutatingSelf.cancellationToken = token
+
+        let taskIdentifierChecking: @Sendable () -> Bool = { !token.isCancelled }
 
         // Copy these associated values to prevent issues from reentrance.
         let targetSize = targetSize

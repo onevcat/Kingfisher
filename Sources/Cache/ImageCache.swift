@@ -623,29 +623,38 @@ open class ImageCache: @unchecked Sendable {
 
             // Begin to disk search.
             self.retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
-                result in
-                switch result {
-                case .success(let image):
-
-                    guard let image = image else {
-                        // No image found in disk storage.
+                (outcome: Result<DiskRetrievalOutcome, KingfisherError>) in
+                switch outcome {
+                case .success(let diskOutcome):
+                    switch diskOutcome {
+                    case .stale:
+                        // `stale` is an internal distinction used to avoid memory promotion.
+                        // It is mapped back to `.none` at the public ImageCache API boundary
+                        // because `ImageCacheResult` is public and not extended for this
+                        // internal optimization.
+                        // Manager-mediated view loading paths rely on
+                        // `sourceTaskIdentifierChecker` to short-circuit stale `.none`
+                        // results before retry / fallback logic.
                         callbackQueue.execute { completionHandler(.success(.none)) }
-                        return
-                    }
 
-                    // Cache the disk image to memory.
-                    // We are passing `false` to `toDisk`, the memory cache does not change
-                    // callback queue, we can call `completionHandler` without another dispatch.
-                    var cacheOptions = options
-                    cacheOptions.callbackQueue = .untouch
-                    self.store(
-                        image,
-                        forKey: key,
-                        options: cacheOptions,
-                        toDisk: false)
-                    {
-                        _ in
-                        callbackQueue.execute { completionHandler(.success(.disk(image))) }
+                    case .notFound:
+                        callbackQueue.execute { completionHandler(.success(.none)) }
+
+                    case .image(let image):
+                        // Cache the disk image to memory.
+                        // We are passing `false` to `toDisk`, the memory cache does not change
+                        // callback queue, we can call `completionHandler` without another dispatch.
+                        var cacheOptions = options
+                        cacheOptions.callbackQueue = .untouch
+                        self.store(
+                            image,
+                            forKey: key,
+                            options: cacheOptions,
+                            toDisk: false)
+                        {
+                            _ in
+                            callbackQueue.execute { completionHandler(.success(.disk(image))) }
+                        }
                     }
                 case .failure(let error):
                     callbackQueue.execute { completionHandler(.failure(error)) }
@@ -719,15 +728,30 @@ open class ImageCache: @unchecked Sendable {
         return retrieveImageInMemoryCache(forKey: key, options: KingfisherParsedOptionsInfo(options))
     }
 
+    /// Represents the outcome of a disk cache retrieval, distinguishing between
+    /// a genuine cache miss and a stale task that was intentionally skipped.
+    internal enum DiskRetrievalOutcome: Sendable {
+        case image(KFCrossPlatformImage)
+        case notFound
+        case stale
+    }
+
     func retrieveImageInDiskCache(
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
         callbackQueue: CallbackQueue = .untouch,
-        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+        outcomeHandler: @escaping @Sendable (Result<DiskRetrievalOutcome, KingfisherError>) -> Void)
     {
         let computedKey = key.computedKey(with: options.processor.identifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
         loadingQueue.execute {
+            // CHECK 1: For blocks queued on the serial ioQueue, the task is likely
+            // already stale by the time execution begins during fast scrolling.
+            if options.isSourceTaskStale {
+                callbackQueue.execute { outcomeHandler(.success(.stale)) }
+                return
+            }
+
             do {
                 var image: KFCrossPlatformImage? = nil
                 if let data = try self.diskStorage.value(
@@ -735,16 +759,53 @@ open class ImageCache: @unchecked Sendable {
                     forcedExtension: options.forcedExtension,
                     extendingExpiration: options.diskCacheAccessExtendingExpiration
                 ) {
+                    // CHECK 2: Disk read completed but deserialization has not started.
+                    // Catches staleness that occurred during a slow disk read.
+                    if options.isSourceTaskStale {
+                        callbackQueue.execute { outcomeHandler(.success(.stale)) }
+                        return
+                    }
                     image = options.cacheSerializer.image(with: data, options: options)
+                }
+                // CHECK 3: After deserialization but before background decode.
+                if image != nil, options.isSourceTaskStale {
+                    callbackQueue.execute { outcomeHandler(.success(.stale)) }
+                    return
                 }
                 if options.backgroundDecode {
                     image = image?.kf.decoded(scale: options.scaleFactor)
                 }
-                callbackQueue.execute { [image] in completionHandler(.success(image)) }
+                if let image = image {
+                    callbackQueue.execute { outcomeHandler(.success(.image(image))) }
+                } else {
+                    callbackQueue.execute { outcomeHandler(.success(.notFound)) }
+                }
             } catch let error as KingfisherError {
-                callbackQueue.execute { completionHandler(.failure(error)) }
+                callbackQueue.execute { outcomeHandler(.failure(error)) }
             } catch {
                 assertionFailure("The internal thrown error should be a `KingfisherError`.")
+            }
+        }
+    }
+
+    /// Convenience overload for the public API and callers that
+    /// don't need to distinguish stale from not-found.
+    func retrieveImageInDiskCache(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo,
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+    {
+        retrieveImageInDiskCache(forKey: key, options: options, callbackQueue: callbackQueue) {
+            outcome in
+            switch outcome {
+            case .success(let diskOutcome):
+                switch diskOutcome {
+                case .image(let img): completionHandler(.success(img))
+                case .notFound, .stale: completionHandler(.success(nil))
+                }
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
         }
     }

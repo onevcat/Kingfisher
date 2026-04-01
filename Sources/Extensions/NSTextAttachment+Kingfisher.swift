@@ -188,6 +188,10 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         let issuedIdentifier = Source.Identifier.next()
         mutatingSelf.taskIdentifier = issuedIdentifier
 
+        let token = CancellationToken()
+        mutatingSelf.cancellationToken?.cancel()
+        mutatingSelf.cancellationToken = token
+
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
@@ -196,7 +200,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             with: source,
             options: options,
             progressiveImageSetter: { self.base.image = $0 },
-            referenceTaskIdentifierChecker: { issuedIdentifier == self.taskIdentifier },
+            referenceTaskIdentifierChecker: { !token.isCancelled },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
                     guard issuedIdentifier == self.taskIdentifier else {
@@ -245,10 +249,12 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     /// Nothing will happen if the downloading has already finished.
     public func cancelDownloadTask() {
         imageTask?.cancel()
+        cancellationToken?.cancel()
     }
 }
 
 @MainActor private var taskIdentifierKey: Void?
+@MainActor private var cancellationTokenKey: Void?
 @MainActor private var imageTaskKey: Void?
 
 // MARK: Properties
@@ -264,6 +270,11 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
+    }
+
+    var cancellationToken: CancellationToken? {
+        get { getAssociatedObject(base, &cancellationTokenKey) }
+        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     private var imageTask: DownloadTask? {
