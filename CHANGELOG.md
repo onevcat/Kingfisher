@@ -2,6 +2,13 @@
 
 -----
 
+## [8.8.1 - Fresh Cache](https://github.com/onevcat/Kingfisher/releases/tag/8.8.1) (2026-04-01)
+
+#### Fix
+* Fix stale disk cache retrieval for cancelled or superseded tasks. When rapidly scrolling through large collections, cancelled requests still performed expensive disk cache deserialization and memory promotion, causing excessive memory usage. A `CancellationToken` is now used to properly short-circuit stale disk cache work at multiple checkpoints. [#2497](https://github.com/onevcat/Kingfisher/pull/2497) [#2495](https://github.com/onevcat/Kingfisher/issues/2495) @onevcat @FaizanDurrani
+
+---
+
 ## [8.8.0 - Background Relief](https://github.com/onevcat/Kingfisher/releases/tag/8.8.0) (2026-03-04)
 
 #### Add
