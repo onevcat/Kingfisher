@@ -345,6 +345,84 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(largerImage?.size, CGSize(width: 64, height: 64))
     }
 
+    // MARK: - Image Cost Tests
+
+    func testCostForStaticImage() {
+        let image = testImage
+        let cost = image.kf.cost
+
+        let expectedPixels = Int(image.kf.size.width * image.kf.size.height * image.kf.scale * image.kf.scale)
+        let bytesPerPixel = image.kf.cgImage!.bitsPerPixel / 8
+        XCTAssertEqual(cost, expectedPixels * bytesPerPixel)
+        XCTAssertGreaterThan(cost, 0)
+    }
+
+    func testCostForAnimatedImageWithUniqueFrames() {
+        let options = ImageCreatingOptions(preloadAll: true)
+        let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)!
+
+        let frameCount = image.kf.images!.count
+        XCTAssertGreaterThan(frameCount, 1, "Test requires a multi-frame GIF")
+
+        let expectedPixels = Int(image.kf.size.width * image.kf.size.height * image.kf.scale * image.kf.scale)
+        let bytesPerPixel = image.kf.cgImage!.bitsPerPixel / 8
+        let expectedCost = expectedPixels * bytesPerPixel * frameCount
+
+        XCTAssertEqual(image.kf.cost, expectedCost)
+    }
+
+    #if os(iOS) || os(tvOS) || os(visionOS)
+    func testCostForAnimatedImageWithDuplicateFrames() {
+        let frame1 = UIImage.from(color: .red, size: CGSize(width: 10, height: 10))
+        let frame2 = UIImage.from(color: .blue, size: CGSize(width: 10, height: 10))
+
+        // 5 entries but only 2 unique objects
+        let animatedImage = UIImage.animatedImage(with: [frame1, frame1, frame2, frame1, frame2], duration: 1.0)!
+
+        let expectedPixels = Int(animatedImage.kf.size.width * animatedImage.kf.size.height * animatedImage.kf.scale * animatedImage.kf.scale)
+        let bytesPerPixel = animatedImage.kf.cgImage!.bitsPerPixel / 8
+        let expectedCost = expectedPixels * bytesPerPixel * 2 // only 2 unique frames
+
+        XCTAssertEqual(animatedImage.kf.images!.count, 5)
+        XCTAssertEqual(animatedImage.kf.cost, expectedCost)
+    }
+
+    func testCostForAnimatedImageWithAllIdenticalFrames() {
+        let frame = UIImage.from(color: .green, size: CGSize(width: 20, height: 20))
+
+        // 10 entries all referencing the same object
+        let frames = Array(repeating: frame, count: 10)
+        let animatedImage = UIImage.animatedImage(with: frames, duration: 1.0)!
+
+        let expectedPixels = Int(animatedImage.kf.size.width * animatedImage.kf.size.height * animatedImage.kf.scale * animatedImage.kf.scale)
+        let bytesPerPixel = animatedImage.kf.cgImage!.bitsPerPixel / 8
+        let singleFrameCost = expectedPixels * bytesPerPixel
+
+        XCTAssertEqual(animatedImage.kf.images!.count, 10)
+        XCTAssertEqual(animatedImage.kf.cost, singleFrameCost, "Cost should equal a single frame when all frames are identical")
+    }
+    #endif
+
+    func testCostMatchesCacheCost() {
+        let image = testImage
+        XCTAssertEqual(image.cacheCost, image.kf.cost)
+
+        let options = ImageCreatingOptions(preloadAll: true)
+        let gifImage = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)!
+        XCTAssertEqual(gifImage.cacheCost, gifImage.kf.cost)
+    }
+
+    func testCostForSingleFrameGIF() {
+        let options = ImageCreatingOptions(preloadAll: true)
+        let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageSingleFrameGIFData, options: options)!
+
+        let expectedPixels = Int(image.kf.size.width * image.kf.size.height * image.kf.scale * image.kf.scale)
+        let bytesPerPixel = image.kf.cgImage!.bitsPerPixel / 8
+        let singleFrameCost = expectedPixels * bytesPerPixel
+
+        XCTAssertEqual(image.kf.cost, singleFrameCost)
+    }
+
     #if os(macOS)
     func testSVGImageSize() {
         let svgString = """
