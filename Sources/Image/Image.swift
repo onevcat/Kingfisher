@@ -160,15 +160,19 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
     // Bitmap memory cost with bytes.
     var cost: Int {
-        let pixel = Int(size.width * size.height * scale * scale)
+        let pixels = Int(size.width * size.height * scale * scale)
         guard let cgImage = cgImage else {
-            return pixel * 4
+            return pixels * 4
         }
         let bytesPerPixel = cgImage.bitsPerPixel / 8
-        guard let imageCount = images?.count else {
-            return pixel * bytesPerPixel
+        let bytesPerFrame = pixels * bytesPerPixel
+
+        if let images {
+            let uniqueFrameCount = Set(images.map { ObjectIdentifier($0) }).count
+            return bytesPerFrame * uniqueFrameCount
+        } else {
+            return bytesPerFrame
         }
-        return pixel * bytesPerPixel * imageCount
     }
 }
 
