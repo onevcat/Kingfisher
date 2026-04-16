@@ -32,8 +32,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.2'
             label: 'tvOS 18.2'
           - xcode: '16.2'
-            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.2'
-            label: 'watchOS 11.2'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 11.2'
 
           - xcode: '16.3'
             destination: 'macOS'
@@ -45,8 +45,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.4'
             label: 'tvOS 18.4'
           - xcode: '16.3'
-            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.4'
-            label: 'watchOS 11.4'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 11.4'
 
           - xcode: '26.0.1'
             destination: 'macOS'
@@ -58,8 +58,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.0'
             label: 'tvOS 26.0'
           - xcode: '26.0.1'
-            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.0'
-            label: 'watchOS 26.0'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 26.0'
 
           - xcode: '26.1.1'
             destination: 'macOS'
@@ -71,8 +71,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.1'
             label: 'tvOS 26.1'
           - xcode: '26.1.1'
-            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.1'
-            label: 'watchOS 26.1'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 26.1'
 
           - xcode: '26.2'
             destination: 'macOS'
@@ -84,8 +84,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.2'
             label: 'tvOS 26.2'
           - xcode: '26.2'
-            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.2'
-            label: 'watchOS 26.2'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 26.2'
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems

@@ -8,7 +8,7 @@ platform :ios do
     test(destination: "platform=macOS")
     test(destination: "platform=iOS Simulator,name=iPhone 16,OS=18.5")
     test(destination: "platform=tvOS Simulator,name=Apple TV,OS=18.5")
-    build(destination: "platform=watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.5")
+    build(destination: "platform=watchOS Simulator,name=Any watchOS Simulator Device")
   end
     
   lane :test_ci do

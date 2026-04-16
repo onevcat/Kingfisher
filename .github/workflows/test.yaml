@@ -32,8 +32,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.5'
             label: 'tvOS 18.5'
           - xcode: '16.4'
-            destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.5'
-            label: 'watchOS 11.5'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 11.5'
 
           - xcode: '26.3'
             destination: 'macOS'
@@ -45,8 +45,8 @@ jobs:
             destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.2'
             label: 'tvOS 26.2'
           - xcode: '26.3'
-            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.2'
-            label: 'watchOS 26.2'
+            destination: 'watchOS Simulator,name=Any watchOS Simulator Device'
+            label: 'watchOS SDK 26.2'
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
