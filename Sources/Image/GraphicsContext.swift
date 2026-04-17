@@ -127,6 +127,17 @@ private struct BitmapContextDescriptor {
         guard let cgColorSpace = cgImage?.colorSpace else {
             return CGColorSpaceCreateDeviceRGB()
         }
+        // `CGBitmapContext` does not accept `indexed` or `pattern` color spaces as
+        // destination color spaces. Images using them (e.g. 8-bit palette PNGs) would
+        // cause `CGBitmapContextCreate` to fail with
+        // "CGColorSpace doesn't support output" and trip the assertion below.
+        // Fall back to `deviceRGB` in those cases. See issue #2467.
+        switch cgColorSpace.model {
+        case .indexed, .pattern, .unknown:
+            return CGColorSpaceCreateDeviceRGB()
+        default:
+            break
+        }
         let components = cgColorSpace.numberOfComponents
         if components == 1 || components == 3 {
             return cgColorSpace

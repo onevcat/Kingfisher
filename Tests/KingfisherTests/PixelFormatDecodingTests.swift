@@ -21,6 +21,35 @@ final class PixelFormatDecodingTests: XCTestCase {
         Sample(fileName: "gradient-16b-gray.png", expectedBitsAfterDecoding: 16, expectedColorSpaceName: CGColorSpace.genericGrayGamma2_2 as String)
     ]
     
+    #if os(macOS)
+    func testDecodingRedrawsIndexedColorSpaceImageToDeviceRGB() {
+        // Issue #2467: On macOS, images with an indexed color space
+        // (CGColorSpaceModel.indexed) could crash or fail when `.backgroundDecode(true)`
+        // (or equivalently, `image.kf.decoded`) tried to create a destination
+        // CGBitmapContext using the source's indexed color space, which is not
+        // supported as a bitmap context color space.
+        let data = Data(fileName: "gradient-8b-indexed.png")
+        let options = ImageCreatingOptions()
+        guard let image = KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options) else {
+            XCTFail("Failed to construct indexed-color image")
+            return
+        }
+        // Sanity check the fixture really is indexed on load.
+        XCTAssertEqual(image.kf.cgImage?.colorSpace?.model, .indexed, "Fixture should load as an indexed-color CGImage")
+
+        // Must not crash. Must produce a usable CGImage.
+        let decoded = image.kf.decoded
+        guard let cgImage = decoded.kf.cgImage else {
+            XCTFail("Decoded image lost its CGImage for indexed-color source")
+            return
+        }
+        // The destination bitmap context must not retain the indexed color space.
+        XCTAssertNotEqual(cgImage.colorSpace?.model, .indexed, "Decoded image must not keep an indexed color space")
+        XCTAssertEqual(cgImage.width, image.kf.cgImage?.width)
+        XCTAssertEqual(cgImage.height, image.kf.cgImage?.height)
+    }
+    #endif
+
     func testDecodingSupportsVariousPixelFormats() {
         for sample in samples {
             let data = Data(fileName: sample.fileName)

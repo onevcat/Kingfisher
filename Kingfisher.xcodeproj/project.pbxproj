@@ -21,6 +21,7 @@
 		38D5D3C22C5C7A1800BF1D01 /* gradient-8b-srgb-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */; };
 		38D5D3C32C5C7A1800BF1D01 /* gradient-8b-displayp3-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */; };
 		38D5D3C42C5C7A1800BF1D01 /* gradient-8b-gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AF2C5C784700BF1D01 /* gradient-8b-gray.png */; };
+		6F62C780F5433101ADA3A9E4 /* gradient-8b-indexed.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B961EF75D5B87CED8EF5951 /* gradient-8b-indexed.png */; };
 		38D5D3C52C5C7A1800BF1D01 /* gradient-10b-srgb-opaque.heic in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B02C5C784700BF1D01 /* gradient-10b-srgb-opaque.heic */; };
 		38D5D3C62C5C7A1800BF1D01 /* gradient-10b-srgb-alpha.heic in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B12C5C784700BF1D01 /* gradient-10b-srgb-alpha.heic */; };
 		38D5D3C72C5C7A1800BF1D01 /* gradient-10b-displayp3-alpha.heic in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B22C5C784700BF1D01 /* gradient-10b-displayp3-alpha.heic */; };
@@ -181,6 +182,7 @@
 		38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-srgb-alpha.png"; sourceTree = "<group>"; };
 		38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-displayp3-alpha.png"; sourceTree = "<group>"; };
 		38D5D3AF2C5C784700BF1D01 /* gradient-8b-gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-gray.png"; sourceTree = "<group>"; };
+		5B961EF75D5B87CED8EF5951 /* gradient-8b-indexed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-indexed.png"; sourceTree = "<group>"; };
 		38D5D3B02C5C784700BF1D01 /* gradient-10b-srgb-opaque.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gradient-10b-srgb-opaque.heic"; sourceTree = "<group>"; };
 		38D5D3B12C5C784700BF1D01 /* gradient-10b-srgb-alpha.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gradient-10b-srgb-alpha.heic"; sourceTree = "<group>"; };
 		38D5D3B22C5C784700BF1D01 /* gradient-10b-displayp3-alpha.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gradient-10b-displayp3-alpha.heic"; sourceTree = "<group>"; };
@@ -369,6 +371,7 @@
 				38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */,
 				38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */,
 				38D5D3AF2C5C784700BF1D01 /* gradient-8b-gray.png */,
+				5B961EF75D5B87CED8EF5951 /* gradient-8b-indexed.png */,
 				38D5D3B02C5C784700BF1D01 /* gradient-10b-srgb-opaque.heic */,
 				38D5D3B12C5C784700BF1D01 /* gradient-10b-srgb-alpha.heic */,
 				38D5D3B22C5C784700BF1D01 /* gradient-10b-displayp3-alpha.heic */,
@@ -878,6 +881,7 @@
 				38D5D3C22C5C7A1800BF1D01 /* gradient-8b-srgb-alpha.png in Resources */,
 				38D5D3C32C5C7A1800BF1D01 /* gradient-8b-displayp3-alpha.png in Resources */,
 				38D5D3C42C5C7A1800BF1D01 /* gradient-8b-gray.png in Resources */,
+				6F62C780F5433101ADA3A9E4 /* gradient-8b-indexed.png in Resources */,
 				38D5D3C52C5C7A1800BF1D01 /* gradient-10b-srgb-opaque.heic in Resources */,
 				38D5D3C62C5C7A1800BF1D01 /* gradient-10b-srgb-alpha.heic in Resources */,
 				38D5D3C72C5C7A1800BF1D01 /* gradient-10b-displayp3-alpha.heic in Resources */,
