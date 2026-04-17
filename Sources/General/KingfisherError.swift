@@ -75,6 +75,13 @@ public enum KingfisherError: Error {
         /// Error Code: 1004
         case livePhotoTaskCancelled(source: LivePhotoSource)
         
+        /// The loading task of an ``ImageDataProvider`` is canceled by the user.
+        ///
+        /// - Parameter provider: The image data provider whose load was canceled.
+        ///
+        /// Error Code: 1006
+        case dataProviderCancelled(provider: any ImageDataProvider)
+        
         case asyncTaskContextCancelled
     }
     
@@ -502,6 +509,8 @@ extension KingfisherError.RequestErrorReason {
             return "The session task was cancelled. Task: \(task), cancel token: \(token)."
         case .livePhotoTaskCancelled(let source):
             return "The live photo download task was cancelled. Source: \(source)"
+        case .dataProviderCancelled(let provider):
+            return "The image data provider task was cancelled. Provider cache key: \(provider.cacheKey)"
         case .asyncTaskContextCancelled:
             return "The async task context was cancelled. This usually happens when the task is cancelled before it starts."
         }
@@ -514,6 +523,7 @@ extension KingfisherError.RequestErrorReason {
         case .taskCancelled: return 1003
         case .livePhotoTaskCancelled: return 1004
         case .asyncTaskContextCancelled: return 1005
+        case .dataProviderCancelled: return 1006
         }
     }
 }

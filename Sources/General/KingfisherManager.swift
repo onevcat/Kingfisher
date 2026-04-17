@@ -469,13 +469,30 @@ public class KingfisherManager: @unchecked Sendable {
     func provideImage(
         provider: any ImageDataProvider,
         options: KingfisherParsedOptionsInfo,
+        cancelToken: DataProvidingCancelToken? = nil,
         completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)?)
     {
         guard let  completionHandler = completionHandler else { return }
         provider.data { result in
+            if let cancelToken, cancelToken.isCancelled {
+                options.callbackQueue.execute {
+                    completionHandler(.failure(
+                        KingfisherError.requestError(reason: .dataProviderCancelled(provider: provider))
+                    ))
+                }
+                return
+            }
             switch result {
             case .success(let data):
                 (options.processingQueue ?? self.processingQueue).execute {
+                    if let cancelToken, cancelToken.isCancelled {
+                        options.callbackQueue.execute {
+                            completionHandler(.failure(
+                                KingfisherError.requestError(reason: .dataProviderCancelled(provider: provider))
+                            ))
+                        }
+                        return
+                    }
                     let processor = options.processor
                     let processingItem = ImageProcessItem.data(data)
                     guard let image = processor.process(item: processingItem, options: options) else {
@@ -606,8 +623,9 @@ public class KingfisherManager: @unchecked Sendable {
             }
 
         case .provider(let provider):
-            provideImage(provider: provider, options: options, completionHandler: _cacheImage)
-            return .dataProviding
+            let token = DataProvidingCancelToken()
+            provideImage(provider: provider, options: options, cancelToken: token, completionHandler: _cacheImage)
+            return .dataProviding(token)
         }
     }
     

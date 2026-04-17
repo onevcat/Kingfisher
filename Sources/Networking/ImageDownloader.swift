@@ -78,6 +78,19 @@ public final class DownloadTask: @unchecked Sendable {
     
     init() { }
 
+    /// Internal initializer used for non-network sources (e.g. ``ImageDataProvider``).
+    /// The returned task carries only a ``DataProvidingCancelToken`` and cancels the provider
+    /// load when ``cancel()`` is called.
+    init(providerCancelToken: DataProvidingCancelToken) {
+        _providerCancelToken = providerCancelToken
+    }
+
+    private var _providerCancelToken: DataProvidingCancelToken? = nil
+    var providerCancelToken: DataProvidingCancelToken? {
+        get { propertyQueue.sync { _providerCancelToken } }
+        set { propertyQueue.sync { _providerCancelToken = newValue } }
+    }
+
     private var _sessionTask: SessionDataTask? = nil
     
     /// The ``SessionDataTask`` object associated with this download task. Multiple `DownloadTask`s could refer to the
@@ -119,6 +132,10 @@ public final class DownloadTask: @unchecked Sendable {
     /// ``ImageDownloader/cancel(url:)``. If you need to cancel all downloading tasks of an ``ImageDownloader``, 
     /// use ``ImageDownloader/cancelAll()``.
     public func cancel() {
+        if let providerCancelToken {
+            providerCancelToken.cancel()
+            return
+        }
         guard let sessionTask, let cancelToken else { return }
         sessionTask.cancel(token: cancelToken)
     }
@@ -142,22 +159,45 @@ actor CancellationDownloadTask {
     }
 }
 
+/// A cancellation handle for an in-flight ``ImageDataProvider`` loading task.
+///
+/// `ImageDataProvider` itself does not require providers to be interruptible — a provider's
+/// `data(handler:)` call may still complete in the background after a cancel. This token simply
+/// flags the Kingfisher side to stop propagating the result up the completion chain and to fire
+/// a `.dataProviderCancelled` error instead, matching the behavior of cancelled network sources.
+final class DataProvidingCancelToken: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _isCancelled = false
+
+    var isCancelled: Bool {
+        lock.lock(); defer { lock.unlock() }
+        return _isCancelled
+    }
+
+    func cancel() {
+        lock.lock(); defer { lock.unlock() }
+        _isCancelled = true
+    }
+}
+
 extension DownloadTask {
     enum WrappedTask {
         case download(DownloadTask)
-        case dataProviding
+        case dataProviding(DataProvidingCancelToken?)
 
         func cancel() {
             switch self {
             case .download(let task): task.cancel()
-            case .dataProviding: break
+            case .dataProviding(let token): token?.cancel()
             }
         }
 
         var value: DownloadTask? {
             switch self {
             case .download(let task): return task
-            case .dataProviding: return nil
+            case .dataProviding(let token):
+                guard let token else { return nil }
+                return DownloadTask(providerCancelToken: token)
             }
         }
     }
