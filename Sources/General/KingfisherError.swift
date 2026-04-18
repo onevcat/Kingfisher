@@ -75,6 +75,20 @@ public enum KingfisherError: Error {
         /// Error Code: 1004
         case livePhotoTaskCancelled(source: LivePhotoSource)
 
+        /// The async `retrieveImage` call was cancelled before its underlying download task was attached.
+        ///
+        /// Emitted from the `async` overloads of ``KingfisherManager/retrieveImage(with:options:progressBlock:)``
+        /// (and their internal variants) when the enclosing Swift `Task` is cancelled during the bridge
+        /// between the continuation-based and async/await execution paths, and no concrete
+        /// ``SessionDataTask`` is yet available to attach the cancellation to. This typically happens when
+        /// the request is satisfied without ever starting a `URLSessionTask` — for example, when it is
+        /// served from the cache or by an ``ImageDataProvider``, or when the cancellation arrives before
+        /// the network task has been created.
+        ///
+        /// When a `URLSessionTask` is already in flight at the moment of cancellation,
+        /// ``RequestErrorReason/taskCancelled(task:token:)`` is reported instead.
+        ///
+        /// Error Code: 1005
         case asyncTaskContextCancelled
 
         /// The loading task of an ``ImageDataProvider`` was cancelled.
