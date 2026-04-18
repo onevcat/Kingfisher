@@ -1777,6 +1777,114 @@ class KingfisherManagerTests: XCTestCase {
         cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey)
         XCTAssertEqual(cacheType, .none)
     }
+
+    // MARK: - Async cache-type check (issue #2512)
+
+    func testRetrieveImageWithAsyncCacheTypeCheckAcrossCacheStates() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .memory)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .disk)
+
+        manager.cache.clearMemoryCache()
+        manager.cache.clearDiskCache {
+            manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(result.value!.cacheType, .none)
+                exp.fulfill()
+        }}}}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckReturnsCancellableShellOnMiss() {
+        let completionExp = expectation(description: "\(#function) completion")
+        let teardownExp = expectation(description: "\(#function) teardown")
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        let task = manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(result.error!.isTaskCancelled)
+            completionExp.fulfill()
+        }
+        XCTAssertNotNil(task, "asyncCacheTypeCheck path should return a task shell synchronously.")
+
+        // Give the async cache probe time to resolve and link the real download task onto the shell,
+        // then cancel through the shell before flushing the delayed stub.
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.3) {
+            task?.cancel()
+            _ = stub.go()
+            teardownExp.fulfill()
+        }
+        wait(for: [completionExp, teardownExp], timeout: 5)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckHonoursOnlyFromCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck, .onlyFromCache]) { result in
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+            if case .cacheError(reason: .imageNotExisting) = result.error! {
+                // expected
+            } else {
+                XCTFail("Expected imageNotExisting error but got \(String(describing: result.error))")
+            }
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckUsesOriginalCacheFallback() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let manager = self.manager!
+
+        // Warm the default cache (which acts as `originalCache`) with the unprocessed image.
+        manager.retrieveImage(with: url) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+            // Drop the memory layer so the async probe must hit the disk path.
+            manager.cache.clearMemoryCache()
+
+            manager.retrieveImage(
+                with: url,
+                options: [.processor(processor), .asyncCacheTypeCheck, .cacheOriginalImage]
+            ) { result in
+                // Original was cached, processed image built from it; first time returns .none.
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(result.value!.cacheType, .none)
+
+                manager.retrieveImage(
+                    with: url,
+                    options: [.processor(processor), .asyncCacheTypeCheck]
+                ) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertEqual(result.value!.cacheType, .memory)
+                    exp.fulfill()
+                }
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 private var imageCreatingOptionsKey: Void?

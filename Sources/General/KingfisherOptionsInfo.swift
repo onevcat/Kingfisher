@@ -231,14 +231,32 @@ public enum KingfisherOptionsInfoItem: Sendable {
     
     /// When set, disk storage loading will occur in the same calling queue.
     ///
-    /// By default, disk storage file loading operates on its own queue with asynchronous dispatch behavior. While this 
+    /// By default, disk storage file loading operates on its own queue with asynchronous dispatch behavior. While this
     /// provides improved non-blocking disk loading performance, it can lead to flickering when you reload an image from
     /// disk if the image view already has an image set.
     ///
-    /// Setting this option will eliminate that flickering by keeping all loading in the same queue (typically the UI 
+    /// Setting this option will eliminate that flickering by keeping all loading in the same queue (typically the UI
     /// queue if you are using Kingfisher's extension methods to set an image). However, this comes with a tradeoff in
     /// loading performance.
     case loadDiskFileSynchronously
+
+    /// When set, the cache existence probe that decides whether an image is already cached is dispatched onto the cache's
+    /// I/O queue instead of running synchronously on the caller thread.
+    ///
+    /// By default, ``KingfisherManager`` calls ``ImageCache/imageCachedType(forKey:processorIdentifier:forcedExtension:)``
+    /// before deciding between a cache read and a network download. That call performs file-system `stat` syscalls on
+    /// whatever thread invoked `setImage`. When `setImage` is called from UIKit layout callbacks such as
+    /// `tableView(_:cellForRowAt:)` or `collectionView(_:cellForItemAt:)` on a device under disk pressure, those syscalls
+    /// can hang the main thread.
+    ///
+    /// Opt in to this flag to move the probe onto the cache's I/O queue via
+    /// ``ImageCache/imageCachedTypeAsync(forKey:processorIdentifier:forcedExtension:callbackQueue:completionHandler:)``.
+    /// The ``DownloadTask`` returned from `setImage` is still delivered synchronously; if the probe discovers a cache
+    /// miss, the resulting network task is linked to the returned shell via ``DownloadTask/linkToTask(_:)``.
+    ///
+    /// - Note: If ``KingfisherOptionsInfoItem/loadDiskFileSynchronously`` is set, that option continues to govern the
+    ///   actual disk read. This flag only affects the existence probe that precedes the read.
+    case asyncCacheTypeCheck
 
     /// Options for controlling the data writing process to disk storage.
     ///
@@ -405,6 +423,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var onFailureImage: Optional<KFCrossPlatformImage?> = .none
     public var alsoPrefetchToMemory = false
     public var loadDiskFileSynchronously = false
+    public var asyncCacheTypeCheck = false
     public var diskStoreWriteOptions: Data.WritingOptions = []
     public var memoryCacheExpiration: StorageExpiration? = nil
     public var memoryCacheAccessExtendingExpiration: ExpirationExtending = .cacheTime
@@ -451,6 +470,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .onFailureImage(let value): onFailureImage = .some(value)
             case .alsoPrefetchToMemory: alsoPrefetchToMemory = true
             case .loadDiskFileSynchronously: loadDiskFileSynchronously = true
+            case .asyncCacheTypeCheck: asyncCacheTypeCheck = true
             case .diskStoreWriteOptions(let options): diskStoreWriteOptions = options
             case .memoryCacheExpiration(let expiration): memoryCacheExpiration = expiration
             case .memoryCacheAccessExtendingExpiration(let expirationExtending): memoryCacheAccessExtendingExpiration = expirationExtending
