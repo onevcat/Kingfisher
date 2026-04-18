@@ -75,8 +75,24 @@ public final class DownloadTask: @unchecked Sendable {
         _sessionTask = sessionTask
         _cancelToken = cancelToken
     }
-    
+
     init() { }
+
+    /// Internal initializer used for non-network sources backed by an
+    /// ``ImageDataProvider``. The returned task carries the `Task` that drives the
+    /// provider load; calling ``cancel()`` cancels that `Task`.
+    init(providerTask: Task<Void, Never>) {
+        _providerTask = providerTask
+    }
+
+    private var _providerTask: Task<Void, Never>? = nil
+
+    /// The Swift concurrency `Task` driving an ``ImageDataProvider`` load, if this
+    /// `DownloadTask` represents a provider-backed load.
+    var providerTask: Task<Void, Never>? {
+        get { propertyQueue.sync { _providerTask } }
+        set { propertyQueue.sync { _providerTask = newValue } }
+    }
 
     private var _sessionTask: SessionDataTask? = nil
     
@@ -119,6 +135,10 @@ public final class DownloadTask: @unchecked Sendable {
     /// ``ImageDownloader/cancel(url:)``. If you need to cancel all downloading tasks of an ``ImageDownloader``, 
     /// use ``ImageDownloader/cancelAll()``.
     public func cancel() {
+        if let providerTask {
+            providerTask.cancel()
+            return
+        }
         guard let sessionTask, let cancelToken else { return }
         sessionTask.cancel(token: cancelToken)
     }
@@ -145,19 +165,21 @@ actor CancellationDownloadTask {
 extension DownloadTask {
     enum WrappedTask {
         case download(DownloadTask)
-        case dataProviding
+        case dataProviding(Task<Void, Never>?)
 
         func cancel() {
             switch self {
             case .download(let task): task.cancel()
-            case .dataProviding: break
+            case .dataProviding(let task): task?.cancel()
             }
         }
 
         var value: DownloadTask? {
             switch self {
             case .download(let task): return task
-            case .dataProviding: return nil
+            case .dataProviding(let task):
+                guard let task else { return nil }
+                return DownloadTask(providerTask: task)
             }
         }
     }
