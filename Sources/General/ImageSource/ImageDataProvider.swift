@@ -102,6 +102,15 @@ public extension ImageDataProvider {
     }
 
     /// Default callback-based entry point. Bridges to ``data()`` by spawning a `Task`.
+    ///
+    /// > Note: The `Task` opened here is unstructured and does **not** inherit
+    /// > cancellation from any surrounding `Task` on the caller side. If a caller
+    /// > outside Kingfisher invokes this default bridge from within a cancelled
+    /// > parent task, the parent's cancellation will not automatically propagate
+    /// > into the provider's `data()` call. For Kingfisher's own provider loads
+    /// > this is not a concern because the framework drives providers through
+    /// > ``ImageDataProvider/data()`` directly, with the owning `Task` cancelled
+    /// > by ``DownloadTask/cancel()``.
     func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
         Task {
             do {

@@ -165,7 +165,7 @@ actor CancellationDownloadTask {
 extension DownloadTask {
     enum WrappedTask {
         case download(DownloadTask)
-        case dataProviding(Task<Void, Never>?)
+        case dataProviding(DownloadTask?)
 
         func cancel() {
             switch self {
@@ -177,9 +177,7 @@ extension DownloadTask {
         var value: DownloadTask? {
             switch self {
             case .download(let task): return task
-            case .dataProviding(let task):
-                guard let task else { return nil }
-                return DownloadTask(providerTask: task)
+            case .dataProviding(let task): return task
             }
         }
     }

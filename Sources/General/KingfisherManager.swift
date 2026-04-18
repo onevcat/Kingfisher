@@ -647,8 +647,10 @@ public class KingfisherManager: @unchecked Sendable {
             }
 
         case .provider(let provider):
-            let task = provideImage(provider: provider, options: options, completionHandler: _cacheImage)
-            return .dataProviding(task)
+            guard let task = provideImage(provider: provider, options: options, completionHandler: _cacheImage) else {
+                return .dataProviding(nil)
+            }
+            return .dataProviding(DownloadTask(providerTask: task))
         }
     }
     
