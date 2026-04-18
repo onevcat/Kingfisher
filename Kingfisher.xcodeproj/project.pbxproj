@@ -17,6 +17,7 @@
 		2F6023D252BE169414B01D8B /* CancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAE088D96F2BF3FACCBD355 /* CancellationToken.swift */; };
 		388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388F37372B4D9CDB0089705C /* DisplayLink.swift */; };
 		38D5D3A32C5C757E00BF1D01 /* PixelFormatDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D5D3A42C5C757E00BF1D01 /* PixelFormatDecodingTests.swift */; };
+		38D5D4A12C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */; };
 		38D5D3C12C5C7A1800BF1D01 /* gradient-8b-srgb-opaque.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AC2C5C784700BF1D01 /* gradient-8b-srgb-opaque.png */; };
 		38D5D3C22C5C7A1800BF1D01 /* gradient-8b-srgb-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */; };
 		38D5D3C32C5C7A1800BF1D01 /* gradient-8b-displayp3-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */; };
@@ -178,6 +179,7 @@
 		22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPListItem+Kingfisher.swift"; sourceTree = "<group>"; };
 		388F37372B4D9CDB0089705C /* DisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
 		38D5D3A42C5C757E00BF1D01 /* PixelFormatDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelFormatDecodingTests.swift; sourceTree = "<group>"; };
+		38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderCancellationTests.swift; sourceTree = "<group>"; };
 		38D5D3AC2C5C784700BF1D01 /* gradient-8b-srgb-opaque.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-srgb-opaque.png"; sourceTree = "<group>"; };
 		38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-srgb-alpha.png"; sourceTree = "<group>"; };
 		38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-displayp3-alpha.png"; sourceTree = "<group>"; };
@@ -536,6 +538,7 @@
 				D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */,
 				D12E0C471C47F23500AC98AD /* ImageExtensionTests.swift */,
 				38D5D3A42C5C757E00BF1D01 /* PixelFormatDecodingTests.swift */,
+				38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */,
 				D186696C21834261002B502E /* ImageDrawingTests.swift */,
 				D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */,
 				D12E0C481C47F23500AC98AD /* ImageViewExtensionTests.swift */,
@@ -1003,6 +1006,7 @@
 				D16FEA3F23078C63006E67D5 /* LSHTTPRequestDiff.m in Sources */,
 				D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */,
 				38D5D3A32C5C757E00BF1D01 /* PixelFormatDecodingTests.swift in Sources */,
+				38D5D4A12C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift in Sources */,
 				D16FEA4323078C63006E67D5 /* NSURLRequest+DSL.m in Sources */,
 				D16FEA5323078C63006E67D5 /* LSStubResponseDSL.m in Sources */,
 				D16FEA4C23078C63006E67D5 /* LSDataMatcher.m in Sources */,

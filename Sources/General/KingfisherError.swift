@@ -74,8 +74,29 @@ public enum KingfisherError: Error {
         ///
         /// Error Code: 1004
         case livePhotoTaskCancelled(source: LivePhotoSource)
-        
+
         case asyncTaskContextCancelled
+
+        /// The loading task of an ``ImageDataProvider`` was cancelled.
+        ///
+        /// Emitted when a provider-backed load is cancelled via
+        /// ``DownloadTask/cancel()`` (including through
+        /// `imageView.kf.cancelDownloadTask()`). Kingfisher cancels the `Task` in which
+        /// the provider's ``ImageDataProvider/data()`` runs; this error is delivered to
+        /// the completion handler instead of ``ImageLoadingResult``, matching the
+        /// behavior of a cancelled network source.
+        ///
+        /// Whether the provider's underlying work is actually interrupted depends on
+        /// its implementation. Providers that override ``ImageDataProvider/data()`` to
+        /// use cancellation-aware async APIs (for example `URLSession.data(for:)`) or
+        /// to call `try Task.checkCancellation()` will stop eagerly. Providers that
+        /// rely on the default bridge to the callback-based ``ImageDataProvider/data(handler:)``
+        /// may still complete in the background, but their result is discarded.
+        ///
+        /// - Parameter provider: The image data provider whose load was cancelled.
+        ///
+        /// Error Code: 1006
+        case dataProviderCancelled(provider: any ImageDataProvider)
     }
     
     /// Represents the error reason during networking response phase.
@@ -504,9 +525,11 @@ extension KingfisherError.RequestErrorReason {
             return "The live photo download task was cancelled. Source: \(source)"
         case .asyncTaskContextCancelled:
             return "The async task context was cancelled. This usually happens when the task is cancelled before it starts."
+        case .dataProviderCancelled(let provider):
+            return "The image data provider task was cancelled. Provider cache key: \(provider.cacheKey)"
         }
     }
-    
+
     var errorCode: Int {
         switch self {
         case .emptyRequest: return 1001
@@ -514,6 +537,7 @@ extension KingfisherError.RequestErrorReason {
         case .taskCancelled: return 1003
         case .livePhotoTaskCancelled: return 1004
         case .asyncTaskContextCancelled: return 1005
+        case .dataProviderCancelled: return 1006
         }
     }
 }

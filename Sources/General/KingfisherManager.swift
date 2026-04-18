@@ -466,39 +466,80 @@ public class KingfisherManager: @unchecked Sendable {
         }
     }
 
+    /// Drives an ``ImageDataProvider`` load inside a `Task` so that cancelling the
+    /// returned task cooperatively cancels both the provider's `data()` call and the
+    /// subsequent processing step.
+    ///
+    /// - Returns: The `Task` driving the load, or `nil` when no completion handler is
+    ///   supplied (in which case no work is started).
+    @discardableResult
     func provideImage(
         provider: any ImageDataProvider,
         options: KingfisherParsedOptionsInfo,
-        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)?)
-    {
-        guard let  completionHandler = completionHandler else { return }
-        provider.data { result in
-            switch result {
-            case .success(let data):
-                (options.processingQueue ?? self.processingQueue).execute {
-                    let processor = options.processor
-                    let processingItem = ImageProcessItem.data(data)
-                    guard let image = processor.process(item: processingItem, options: options) else {
-                        options.callbackQueue.execute {
-                            let error = KingfisherError.processorError(
-                                reason: .processingFailed(processor: processor, item: processingItem))
-                            completionHandler(.failure(error))
-                        }
-                        return
-                    }
-
-                    options.callbackQueue.execute {
-                        let result = ImageLoadingResult(image: image, url: nil, originalData: data)
-                        completionHandler(.success(result))
-                    }
-                }
-            case .failure(let error):
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)?
+    ) -> Task<Void, Never>? {
+        guard let completionHandler else { return nil }
+        let defaultProcessingQueue = processingQueue
+        return Task {
+            @Sendable func deliverCancelled() {
                 options.callbackQueue.execute {
-                    let error = KingfisherError.imageSettingError(
-                        reason: .dataProviderError(provider: provider, error: error))
-                    completionHandler(.failure(error))
+                    completionHandler(.failure(
+                        KingfisherError.requestError(reason: .dataProviderCancelled(provider: provider))
+                    ))
                 }
+            }
 
+            let data: Data
+            do {
+                data = try await provider.data()
+            } catch is CancellationError {
+                deliverCancelled()
+                return
+            } catch {
+                if Task.isCancelled {
+                    deliverCancelled()
+                } else {
+                    options.callbackQueue.execute {
+                        completionHandler(.failure(
+                            KingfisherError.imageSettingError(
+                                reason: .dataProviderError(provider: provider, error: error))
+                        ))
+                    }
+                }
+                return
+            }
+
+            if Task.isCancelled {
+                deliverCancelled()
+                return
+            }
+
+            let processor = options.processor
+            let processingItem = ImageProcessItem.data(data)
+            let processingQueue = options.processingQueue ?? defaultProcessingQueue
+            let image: KFCrossPlatformImage? = await withCheckedContinuation { continuation in
+                processingQueue.execute {
+                    continuation.resume(returning: processor.process(item: processingItem, options: options))
+                }
+            }
+
+            if Task.isCancelled {
+                deliverCancelled()
+                return
+            }
+
+            guard let image else {
+                options.callbackQueue.execute {
+                    completionHandler(.failure(
+                        KingfisherError.processorError(
+                            reason: .processingFailed(processor: processor, item: processingItem))
+                    ))
+                }
+                return
+            }
+
+            options.callbackQueue.execute {
+                completionHandler(.success(ImageLoadingResult(image: image, url: nil, originalData: data)))
             }
         }
     }
@@ -606,8 +647,10 @@ public class KingfisherManager: @unchecked Sendable {
             }
 
         case .provider(let provider):
-            provideImage(provider: provider, options: options, completionHandler: _cacheImage)
-            return .dataProviding
+            guard let task = provideImage(provider: provider, options: options, completionHandler: _cacheImage) else {
+                return .dataProviding(nil)
+            }
+            return .dataProviding(DownloadTask(providerTask: task))
         }
     }
     
