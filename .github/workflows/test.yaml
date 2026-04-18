@@ -35,18 +35,18 @@ jobs:
             destination: 'watchOS Simulator,name=Apple Watch Series 10 (42mm),OS=11.5'
             label: 'watchOS 11.5'
 
-          - xcode: '26.3'
+          - xcode: '26.4'
             destination: 'macOS'
             label: 'macOS'
-          - xcode: '26.3'
-            destination: 'iOS Simulator,name=iPhone 17,OS=26.2'
-            label: 'iOS 26.2'
-          - xcode: '26.3'
-            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.2'
-            label: 'tvOS 26.2'
-          - xcode: '26.3'
-            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.2'
-            label: 'watchOS 26.2'
+          - xcode: '26.4'
+            destination: 'iOS Simulator,name=iPhone 17,OS=26.4'
+            label: 'iOS 26.4'
+          - xcode: '26.4'
+            destination: 'tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.4'
+            label: 'tvOS 26.4'
+          - xcode: '26.4'
+            destination: 'watchOS Simulator,name=Apple Watch Series 11 (42mm),OS=26.4'
+            label: 'watchOS 26.4'
     steps:
       - uses: actions/checkout@v4
       - name: Install Gems
