@@ -1863,7 +1863,7 @@ class KingfisherManagerTests: XCTestCase {
         let manager = self.manager!
         let expectedCacheTypes: [CacheType] = [.none, .memory, .disk, .none]
 
-        func runStep(_ index: Int) {
+        @Sendable func runStep(_ index: Int) {
             manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
                 guard let value = result.value else {
                     XCTFail("Expected cached image result at step \(index), got \(String(describing: result.error))")
