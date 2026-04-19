@@ -1885,6 +1885,68 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckCancelsProviderBackedShell() {
+        let providerStarted = expectation(description: "\(#function) provider started")
+        let completionExp = expectation(description: "\(#function) completion")
+
+        let provider = AsyncCacheTypeCheckProvider(
+            cacheKey: "provider-\(UUID().uuidString)",
+            payload: testImageData,
+            onStart: { providerStarted.fulfill() }
+        )
+
+        let task = manager.retrieveImage(with: .provider(provider), options: [.asyncCacheTypeCheck]) { result in
+            switch result {
+            case .success:
+                XCTFail("provider-backed asyncCacheTypeCheck shell should cancel the underlying load")
+            case .failure(let error):
+                guard case .requestError(reason: .dataProviderCancelled) = error else {
+                    XCTFail("expected .dataProviderCancelled, got: \(error)")
+                    completionExp.fulfill()
+                    return
+                }
+            }
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task, "asyncCacheTypeCheck should still return a cancellable shell for provider sources.")
+        wait(for: [providerStarted], timeout: 2)
+        task?.cancel()
+        wait(for: [completionExp], timeout: 2)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckCancelsAsyncRequestModifierShell() {
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData, length: 123)
+
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
+            XCTAssertNotNil(task)
+            downloadStarted.fulfill()
+        })
+
+        let rewrittenURL = URL(string: "https://example.com/async-modifier-shell")!
+        let task = manager.retrieveImage(
+            with: rewrittenURL,
+            options: [.asyncCacheTypeCheck, .requestModifier(asyncModifier)]
+        ) { result in
+            guard let error = result.error else {
+                XCTFail("async request modifier shell should cancel the underlying download")
+                completionExp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled)
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task, "asyncCacheTypeCheck should always return a shell synchronously.")
+        wait(for: [downloadStarted], timeout: 2)
+        task?.cancel()
+        _ = delayedResponse.go()
+        wait(for: [completionExp], timeout: 2)
+    }
 }
 
 private var imageCreatingOptionsKey: Void?
@@ -1921,6 +1983,24 @@ final class SimpleProcessor: ImageProcessor, @unchecked Sendable {
             image?.creatingOptions = creatingOptions
             return image
         }
+    }
+}
+
+private final class AsyncCacheTypeCheckProvider: ImageDataProvider, @unchecked Sendable {
+    let cacheKey: String
+    private let payload: Data
+    private let onStart: @Sendable () -> Void
+
+    init(cacheKey: String, payload: Data, onStart: @escaping @Sendable () -> Void) {
+        self.cacheKey = cacheKey
+        self.payload = payload
+        self.onStart = onStart
+    }
+
+    func data() async throws -> Data {
+        onStart()
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        return payload
     }
 }
 

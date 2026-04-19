@@ -500,30 +500,24 @@ public class KingfisherManager: @unchecked Sendable {
                 options.callbackQueue.execute { completionHandler?(.failure(error)) }
                 return
             }
-            let wrapped = self.loadAndCacheImage(
+            _ = self.loadAndCacheImage(
                 source: source,
                 context: context,
-                completionHandler: completionHandler)
-            if let realTask = wrapped?.value {
-                shell.linkToTask(realTask)
-            }
+                completionHandler: completionHandler,
+                downloadTaskCreated: { task in shell.linkToTask(task) })
         }
 
         retrieveImageFromCacheAsync(
             source: source,
             context: context,
-            downloadTaskUpdated: { task in
+            fallbackDownloadTaskCreated: { task in
+                shell.linkToTask(task)
                 // For non-shell fallback downloads started from original-cache fallback paths,
                 // surface the real task to the caller. The shell is still the primary handle.
                 downloadTaskUpdated?(task)
             },
             completionHandler: completionHandler,
-            onCacheMiss: proceedToDownload,
-            onOriginalCacheFallbackDownload: { wrapped in
-                if let realTask = wrapped?.value {
-                    shell.linkToTask(realTask)
-                }
-            })
+            onCacheMiss: proceedToDownload)
 
         return shell
     }
@@ -673,7 +667,9 @@ public class KingfisherManager: @unchecked Sendable {
     func loadAndCacheImage(
         source: Source,
         context: RetrievingContext<Source>,
-        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask.WrappedTask?
+        completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?,
+        downloadTaskCreated: (@Sendable (DownloadTask) -> Void)? = nil
+    ) -> DownloadTask.WrappedTask?
     {
         let options = context.options
         @Sendable func _cacheImage(_ result: Result<ImageLoadingResult, KingfisherError>) {
@@ -692,6 +688,7 @@ public class KingfisherManager: @unchecked Sendable {
             let task = downloader.downloadImage(
                 with: resource.downloadURL, options: options, completionHandler: _cacheImage
             )
+            downloadTaskCreated?(task)
 
 
             // The code below is neat, but it fails the Swift 5.2 compiler with a runtime crash when 
@@ -712,7 +709,9 @@ public class KingfisherManager: @unchecked Sendable {
             guard let task = provideImage(provider: provider, options: options, completionHandler: _cacheImage) else {
                 return .dataProviding(nil)
             }
-            return .dataProviding(DownloadTask(providerTask: task))
+            let downloadTask = DownloadTask(providerTask: task)
+            downloadTaskCreated?(downloadTask)
+            return .dataProviding(downloadTask)
         }
     }
     
@@ -811,10 +810,9 @@ public class KingfisherManager: @unchecked Sendable {
     private func retrieveImageFromCacheAsync(
         source: Source,
         context: RetrievingContext<Source>,
-        downloadTaskUpdated: DownloadTaskUpdatedBlock?,
+        fallbackDownloadTaskCreated: @escaping @Sendable (DownloadTask) -> Void,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?,
-        onCacheMiss: @escaping @Sendable () -> Void,
-        onOriginalCacheFallbackDownload: @escaping @Sendable (DownloadTask.WrappedTask?) -> Void)
+        onCacheMiss: @escaping @Sendable () -> Void)
     {
         let options = context.options
         let targetCache = options.targetCache ?? cache
@@ -868,12 +866,11 @@ public class KingfisherManager: @unchecked Sendable {
                         options: options,
                         fallbackToDownload: { [weak self] in
                             guard let self else { return }
-                            let wrapped = self.loadAndCacheImage(
+                            _ = self.loadAndCacheImage(
                                 source: source,
                                 context: context,
-                                completionHandler: completionHandler)
-                            onOriginalCacheFallbackDownload(wrapped)
-                            downloadTaskUpdated?(wrapped?.value)
+                                completionHandler: completionHandler,
+                                downloadTaskCreated: fallbackDownloadTaskCreated)
                         },
                         completionHandler: completionHandler)
                 } else {
