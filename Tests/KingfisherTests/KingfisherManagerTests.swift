@@ -1778,6 +1778,61 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(cacheType, .none)
     }
 
+    func testRetrieveImageFromDiskCacheWithForcedExtension() async throws {
+        let url = URL(string: "https://example.com/forced-extension-target")!
+        stub(url, data: testImageData)
+
+        let options: KingfisherOptionsInfo = [.forcedCacheFileExtension("heic")]
+
+        var result = try await manager.retrieveImage(with: url, options: options)
+        XCTAssertEqual(result.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        LSNocilla.sharedInstance().clearStubs()
+
+        result = try await manager.retrieveImage(with: url, options: options)
+        XCTAssertEqual(result.cacheType, .disk)
+    }
+
+    func testRetrieveImageFromOriginalCacheWithForcedExtension() async throws {
+        let url = URL(string: "https://example.com/forced-extension-original")!
+        let originalCache = ImageCache(name: "test-original-forced-\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([originalCache])
+        }
+
+        try await originalCache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            forcedExtension: "heic",
+            toDisk: true
+        )
+        originalCache.clearMemoryCache()
+        manager.cache.clearMemoryCache()
+        LSNocilla.sharedInstance().clearStubs()
+
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let result = try await manager.retrieveImage(
+            with: url,
+            options: [
+                .processor(processor),
+                .originalCache(originalCache),
+                .forcedCacheFileExtension("heic")
+            ]
+        )
+
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertTrue(
+            manager.cache.imageCachedType(
+                forKey: url.cacheKey,
+                processorIdentifier: processor.identifier,
+                forcedExtension: "heic"
+            ).cached
+        )
+    }
+    
     // MARK: - Async cache-type check (issue #2512)
 
     func testRetrieveImageWithAsyncCacheTypeCheckAcrossCacheStates() {

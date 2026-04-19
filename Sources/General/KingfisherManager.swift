@@ -745,7 +745,10 @@ public class KingfisherManager: @unchecked Sendable {
         let targetCache = options.targetCache ?? cache
         let key = source.cacheKey
         let targetImageCached = targetCache.imageCachedType(
-            forKey: key, processorIdentifier: options.processor.identifier)
+            forKey: key,
+            processorIdentifier: options.processor.identifier,
+            forcedExtension: options.forcedExtension
+        )
 
         let validCache = targetImageCached.cached &&
             (options.fromMemoryCacheOrRefresh == false || targetImageCached == .memory)
@@ -769,7 +772,10 @@ public class KingfisherManager: @unchecked Sendable {
 
         // Check whether the unprocessed image existing or not.
         let originalImageCacheType = originalCache.imageCachedType(
-            forKey: key, processorIdentifier: DefaultImageProcessor.default.identifier)
+            forKey: key,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            forcedExtension: options.forcedExtension
+        )
         let canAcceptDiskCache = !options.fromMemoryCacheOrRefresh
 
         let canUseOriginalImageCache =
