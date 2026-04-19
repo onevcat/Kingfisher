@@ -706,61 +706,49 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCouldProcessDoNotHappenWhenSerializerCachesTheProcessedData() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        
-        stub(url, data: testImageData)
-        
+    func testCouldProcessDoNotHappenWhenSerializerCachesTheProcessedData() async throws {
+        let provider = SimpleImageDataProvider(cacheKey: #function) { .success(testImageData) }
         let s = DefaultCacheSerializer()
 
         let p1 = SimpleProcessor()
         let options1: KingfisherOptionsInfo = [.processor(p1), .cacheSerializer(s), .waitForCache]
-        let source = Source.network(url)
-        
-        manager.retrieveImage(with: source, options: options1) { result in
-            XCTAssertTrue(p1.processed)
-            
-            let p2 = SimpleProcessor()
-            let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
-            self.manager.cache.clearMemoryCache()
-            
-            self.manager.retrieveImage(with: source, options: options2) { result in
-                XCTAssertEqual(result.value?.cacheType, .disk)
-                XCTAssertFalse(p2.processed)
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        let source = Source.provider(provider)
+
+        let first = try await manager.retrieveImage(with: source, options: options1)
+        XCTAssertEqual(first.cacheType, .none)
+        XCTAssertTrue(p1.processed)
+
+        let p2 = SimpleProcessor()
+        let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
+        manager.cache.clearMemoryCache()
+
+        let second = try await manager.retrieveImage(with: source, options: options2)
+        XCTAssertNotNil(second.image)
+        XCTAssertEqual(second.cacheType, .disk)
+        XCTAssertFalse(p2.processed)
     }
     
-    func testCouldProcessAgainWhenSerializerCachesOriginalData() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        
-        stub(url, data: testImageData)
-        
+    func testCouldProcessAgainWhenSerializerCachesOriginalData() async throws {
+        let provider = SimpleImageDataProvider(cacheKey: #function) { .success(testImageData) }
         var s = DefaultCacheSerializer()
         s.preferCacheOriginalData = true
 
         let p1 = SimpleProcessor()
         let options1: KingfisherOptionsInfo = [.processor(p1), .cacheSerializer(s), .waitForCache]
-        let source = Source.network(url)
-        
-        manager.retrieveImage(with: source, options: options1) { [s] result in
-            XCTAssertTrue(p1.processed)
-            
-            let p2 = SimpleProcessor()
-            let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
-            self.manager.cache.clearMemoryCache()
-            
-            self.manager.retrieveImage(with: source, options: options2) { result in
-                XCTAssertEqual(result.value?.cacheType, .disk)
-                XCTAssertTrue(p2.processed)
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        let source = Source.provider(provider)
+
+        let first = try await manager.retrieveImage(with: source, options: options1)
+        XCTAssertEqual(first.cacheType, .none)
+        XCTAssertTrue(p1.processed)
+
+        let p2 = SimpleProcessor()
+        let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
+        manager.cache.clearMemoryCache()
+
+        let second = try await manager.retrieveImage(with: source, options: options2)
+        XCTAssertNotNil(second.image)
+        XCTAssertEqual(second.cacheType, .disk)
+        XCTAssertTrue(p2.processed)
     }
     
     func testWaitForCacheOnRetrieveImage() {
@@ -874,34 +862,26 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    func testShouldDownloadAndCacheProcessedImage() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        stub(url, data: testImageData)
-
+    func testShouldDownloadAndCacheProcessedImage() async throws {
+        let provider = SimpleImageDataProvider(cacheKey: #function) { .success(testImageData) }
         let size = CGSize(width: 1, height: 1)
         let processor = ResizingImageProcessor(referenceSize: size)
+        let source = Source.provider(provider)
 
-        manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
-            // Can download and cache normally
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.image.size, size)
-            XCTAssertEqual(result.value!.cacheType, .none)
+        let first = try await manager.retrieveImage(with: source, options: [.processor(processor)])
+        XCTAssertNotNil(first.image)
+        XCTAssertEqual(first.image.size, size)
+        XCTAssertEqual(first.cacheType, .none)
 
-            self.manager.cache.clearMemoryCache()
-            let cached = self.manager.cache.imageCachedType(
-                forKey: url.cacheKey, processorIdentifier: processor.identifier)
-            XCTAssertEqual(cached, .disk)
+        manager.cache.clearMemoryCache()
+        let cached = manager.cache.imageCachedType(
+            forKey: provider.cacheKey, processorIdentifier: processor.identifier)
+        XCTAssertEqual(cached, .disk)
 
-            self.manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertEqual(result.value!.image.size, size)
-                XCTAssertEqual(result.value!.cacheType, .disk)
-
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        let second = try await manager.retrieveImage(with: source, options: [.processor(processor)])
+        XCTAssertNotNil(second.image)
+        XCTAssertEqual(second.image.size, size)
+        XCTAssertEqual(second.cacheType, .disk)
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)

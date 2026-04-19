@@ -27,7 +27,7 @@
 import XCTest
 @testable import Kingfisher
 
-class ImageViewExtensionTests: XCTestCase {
+class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     var imageView: KFCrossPlatformImageView!
     
@@ -677,32 +677,55 @@ class ImageViewExtensionTests: XCTestCase {
     @MainActor func testSetSameURLWithDifferentProcessors() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        
-        stub(url, data: testImageData)
-        
         let size1 = CGSize(width: 10, height: 10)
         let p1 = ResizingImageProcessor(referenceSize: size1)
-        
         let size2 = CGSize(width: 20, height: 20)
         let p2 = ResizingImageProcessor(referenceSize: size2)
-        
-        let group = DispatchGroup()
-        
-        group.enter()
-        imageView.kf.setImage(with: url, options: [.processor(p1), .cacheMemoryOnly]) { result in
-            XCTAssertNotNil(result.error)
-            XCTAssertTrue(result.error!.isNotCurrentTask)
-            group.leave()
+        let coordinator = CoordinatingCacheSerializer()
+        let cache = KingfisherManager.shared.cache
+
+        cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
+            Task { @MainActor in
+                cache.clearMemoryCache()
+
+                let completionGroup = DispatchGroup()
+
+                completionGroup.enter()
+                self.imageView.kf.setImage(
+                    with: url,
+                    options: [.processor(p1), .cacheSerializer(coordinator)]
+                ) { result in
+                    XCTAssertNotNil(result.error)
+                    XCTAssertTrue(result.error!.isNotCurrentTask)
+                    completionGroup.leave()
+                }
+
+                DispatchQueue.global().async {
+                    coordinator.waitUntilFirstCallEntered()
+
+                    DispatchQueue.main.async {
+                        MainActor.assumeIsolated {
+                            completionGroup.enter()
+                            self.imageView.kf.setImage(
+                                with: url,
+                                options: [.processor(p2), .cacheSerializer(coordinator)]
+                            ) { result in
+                                XCTAssertNotNil(result.value)
+                                XCTAssertEqual(result.value!.image.size, size2)
+                                completionGroup.leave()
+                            }
+
+                            coordinator.allowFirstCallToProceed()
+                        }
+                    }
+                }
+
+                completionGroup.notify(queue: .main) {
+                    exp.fulfill()
+                }
+            }
         }
-        
-        group.enter()
-        imageView.kf.setImage(with: url, options: [.processor(p2), .cacheMemoryOnly]) { result in
-            XCTAssertNotNil(result.value)
-            XCTAssertEqual(result.value!.image.size, size2)
-            group.leave()
-        }
-        
-        group.notify(queue: .main) { exp.fulfill() }
+
         waitForExpectations(timeout: 5, handler: nil)
     }
     
