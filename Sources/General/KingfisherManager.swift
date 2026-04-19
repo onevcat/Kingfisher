@@ -464,7 +464,9 @@ public class KingfisherManager: @unchecked Sendable {
 
         if options.onlyFromCache {
             let error = KingfisherError.cacheError(reason: .imageNotExisting(key: source.cacheKey))
-            completionHandler?(.failure(error))
+            options.callbackQueue.execute {
+                completionHandler?(.failure(error))
+            }
             return nil
         }
 

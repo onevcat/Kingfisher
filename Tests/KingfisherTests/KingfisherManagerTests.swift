@@ -458,6 +458,26 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testOnlyFromCacheMissCompletionHandlerRunningOnCustomQueue() {
+        let completionExpectation = expectation(description: "completionHandler running on custom queue")
+        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue.onlyFromCache")
+        let queueKey = DispatchSpecificKey<String>()
+        customQueue.setSpecific(key: queueKey, value: customQueue.label)
+
+        let url = URL(string: "https://example.com/only-from-cache-miss")!
+        manager.retrieveImage(
+            with: url,
+            options: [.onlyFromCache, .callbackQueue(.dispatch(customQueue))]
+        ) { result in
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+            XCTAssertEqual(DispatchQueue.getSpecific(key: queueKey), customQueue.label)
+            completionExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testDefaultOptionCouldApply() {
         let exp = expectation(description: #function)
