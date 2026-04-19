@@ -1861,26 +1861,37 @@ class KingfisherManagerTests: XCTestCase {
         stub(url, data: testImageData)
 
         let manager = self.manager!
-        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.cacheType, .none)
+        let expectedCacheTypes: [CacheType] = [.none, .memory, .disk, .none]
 
-        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.cacheType, .memory)
-
-        manager.cache.clearMemoryCache()
-        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.cacheType, .disk)
-
-        manager.cache.clearMemoryCache()
-        manager.cache.clearDiskCache {
+        func runStep(_ index: Int) {
             manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertEqual(result.value!.cacheType, .none)
-                exp.fulfill()
-        }}}}}
+                guard let value = result.value else {
+                    XCTFail("Expected cached image result at step \(index), got \(String(describing: result.error))")
+                    exp.fulfill()
+                    return
+                }
+
+                XCTAssertNotNil(value.image)
+                XCTAssertEqual(value.cacheType, expectedCacheTypes[index])
+
+                switch index {
+                case 0:
+                    runStep(1)
+                case 1:
+                    manager.cache.clearMemoryCache()
+                    runStep(2)
+                case 2:
+                    manager.cache.clearMemoryCache()
+                    manager.cache.clearDiskCache {
+                        runStep(3)
+                    }
+                default:
+                    exp.fulfill()
+                }
+            }
+        }
+
+        runStep(0)
         waitForExpectations(timeout: 3, handler: nil)
     }
 
