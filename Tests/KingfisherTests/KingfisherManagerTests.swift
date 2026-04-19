@@ -1886,25 +1886,29 @@ class KingfisherManagerTests: XCTestCase {
 
     func testRetrieveImageWithAsyncCacheTypeCheckReturnsCancellableShellOnMiss() {
         let completionExp = expectation(description: "\(#function) completion")
-        let teardownExp = expectation(description: "\(#function) teardown")
+        let downloadStartedExp = expectation(description: "\(#function) download started")
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData, length: 123)
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
+            XCTAssertNotNil(task)
+            downloadStartedExp.fulfill()
+        })
+        let rewrittenURL = URL(string: "https://example.com/async-cache-type-check-shell")!
 
-        let task = manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+        let task = manager.retrieveImage(
+            with: rewrittenURL,
+            options: [.asyncCacheTypeCheck, .requestModifier(asyncModifier)]
+        ) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
             completionExp.fulfill()
         }
         XCTAssertNotNil(task, "asyncCacheTypeCheck path should return a task shell synchronously.")
 
-        // Give the async cache probe time to resolve and link the real download task onto the shell,
-        // then cancel through the shell before flushing the delayed stub.
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.3) {
-            task?.cancel()
-            _ = stub.go()
-            teardownExp.fulfill()
-        }
-        wait(for: [completionExp, teardownExp], timeout: 5)
+        wait(for: [downloadStartedExp], timeout: 2)
+        task?.cancel()
+        _ = stub.go()
+        wait(for: [completionExp], timeout: 5)
     }
 
     func testRetrieveImageWithAsyncCacheTypeCheckHonoursOnlyFromCache() {
