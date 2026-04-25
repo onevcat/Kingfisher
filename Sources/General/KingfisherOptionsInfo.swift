@@ -381,7 +381,14 @@ public enum KingfisherOptionsInfoItem: Sendable {
     /// If not set or if the associated optional ``Source`` value is `nil`, the device's Low Data Mode will be ignored,
     /// and the original source will be loaded following the system default behavior.
     case lowDataMode(Source?)
-    
+
+    /// Forces the disk cache to use a specific file extension when persisting the image.
+    ///
+    /// By default, Kingfisher determines the file extension based on the disk storage configuration. When this option
+    /// is set, the associated `String` value is used verbatim as the extension for the cached file instead.
+    ///
+    /// If the associated value is `nil`, the behavior is the same as not setting this option: the file extension is
+    /// determined by the disk storage configuration.
     case forcedCacheFileExtension(String?)
 }
 
