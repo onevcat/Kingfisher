@@ -85,12 +85,14 @@ public final class DownloadTask: @unchecked Sendable {
         _providerTask = providerTask
     }
 
+    private var _linkedTask: DownloadTask? = nil
+
     private var _providerTask: Task<Void, Never>? = nil
 
     /// The Swift concurrency `Task` driving an ``ImageDataProvider`` load, if this
     /// `DownloadTask` represents a provider-backed load.
     var providerTask: Task<Void, Never>? {
-        get { propertyQueue.sync { _providerTask } }
+        get { propertyQueue.sync { _providerTask ?? _linkedTask?.providerTask } }
         set { propertyQueue.sync { _providerTask = newValue } }
     }
 
@@ -103,7 +105,7 @@ public final class DownloadTask: @unchecked Sendable {
     /// When you call ``DownloadTask/cancel()``, this ``SessionDataTask`` and its cancellation token will be passed
     /// along. You can use them to identify the cancelled task.
     public private(set) var sessionTask: SessionDataTask? {
-        get { propertyQueue.sync { _sessionTask } }
+        get { propertyQueue.sync { _sessionTask ?? _linkedTask?.sessionTask } }
         set { propertyQueue.sync { _sessionTask = newValue } }
     }
 
@@ -114,7 +116,7 @@ public final class DownloadTask: @unchecked Sendable {
     /// This is solely for identifying the task when it is cancelled. To cancel a ``DownloadTask``, call
     ///  ``DownloadTask/cancelToken``.
     public private(set) var cancelToken: SessionDataTask.CancelToken? {
-        get { propertyQueue.sync { _cancelToken } }
+        get { propertyQueue.sync { _cancelToken ?? _linkedTask?.cancelToken } }
         set { propertyQueue.sync { _cancelToken = newValue } }
     }
 
@@ -145,13 +147,16 @@ public final class DownloadTask: @unchecked Sendable {
     
     public var isInitialized: Bool {
         propertyQueue.sync {
-            _sessionTask != nil && _cancelToken != nil
+            (_sessionTask != nil && _cancelToken != nil) ||
+            _providerTask != nil ||
+            (_linkedTask?.isInitialized ?? false)
         }
     }
     
     func linkToTask(_ task: DownloadTask) {
-        self.sessionTask = task.sessionTask
-        self.cancelToken = task.cancelToken
+        propertyQueue.sync {
+            _linkedTask = task
+        }
     }
 }
 

@@ -2,6 +2,13 @@
 
 -----
 
+## [Next]
+
+#### Add
+* Add opt-in `asyncCacheTypeCheck` for `KingfisherManager` retrieval to move cache-type probing off the caller thread while preserving cache-only behavior, callback queue delivery, forced cache extensions, and task cancellation for provider-backed or async request-modified loads. [#2521](https://github.com/onevcat/Kingfisher/pull/2521) @onevcat
+
+---
+
 ## [8.8.1 - Fresh Cache](https://github.com/onevcat/Kingfisher/releases/tag/8.8.1) (2026-04-01)
 
 #### Fix
@@ -2027,5 +2034,4 @@
 ## [1.0.0 - Kingfisher, take off](https://github.com/onevcat/Kingfisher/releases/tag/1.0.0) (2015-04-13)
 
 First public release.
-
 

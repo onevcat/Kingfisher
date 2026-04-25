@@ -458,6 +458,26 @@ class KingfisherManagerTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testOnlyFromCacheMissCompletionHandlerRunningOnCustomQueue() {
+        let completionExpectation = expectation(description: "completionHandler running on custom queue")
+        let customQueue = DispatchQueue(label: "com.kingfisher.testQueue.onlyFromCache")
+        let queueKey = DispatchSpecificKey<String>()
+        customQueue.setSpecific(key: queueKey, value: customQueue.label)
+
+        let url = URL(string: "https://example.com/only-from-cache-miss")!
+        manager.retrieveImage(
+            with: url,
+            options: [.onlyFromCache, .callbackQueue(.dispatch(customQueue))]
+        ) { result in
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+            XCTAssertEqual(DispatchQueue.getSpecific(key: queueKey), customQueue.label)
+            completionExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     func testDefaultOptionCouldApply() {
         let exp = expectation(description: #function)
@@ -686,61 +706,49 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testCouldProcessDoNotHappenWhenSerializerCachesTheProcessedData() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        
-        stub(url, data: testImageData)
-        
+    func testCouldProcessDoNotHappenWhenSerializerCachesTheProcessedData() async throws {
+        let provider = SimpleImageDataProvider(cacheKey: #function) { .success(testImageData) }
         let s = DefaultCacheSerializer()
 
         let p1 = SimpleProcessor()
         let options1: KingfisherOptionsInfo = [.processor(p1), .cacheSerializer(s), .waitForCache]
-        let source = Source.network(url)
-        
-        manager.retrieveImage(with: source, options: options1) { result in
-            XCTAssertTrue(p1.processed)
-            
-            let p2 = SimpleProcessor()
-            let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
-            self.manager.cache.clearMemoryCache()
-            
-            self.manager.retrieveImage(with: source, options: options2) { result in
-                XCTAssertEqual(result.value?.cacheType, .disk)
-                XCTAssertFalse(p2.processed)
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        let source = Source.provider(provider)
+
+        let first = try await manager.retrieveImage(with: source, options: options1)
+        XCTAssertEqual(first.cacheType, .none)
+        XCTAssertTrue(p1.processed)
+
+        let p2 = SimpleProcessor()
+        let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
+        manager.cache.clearMemoryCache()
+
+        let second = try await manager.retrieveImage(with: source, options: options2)
+        XCTAssertNotNil(second.image)
+        XCTAssertEqual(second.cacheType, .disk)
+        XCTAssertFalse(p2.processed)
     }
     
-    func testCouldProcessAgainWhenSerializerCachesOriginalData() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        
-        stub(url, data: testImageData)
-        
+    func testCouldProcessAgainWhenSerializerCachesOriginalData() async throws {
+        let provider = SimpleImageDataProvider(cacheKey: #function) { .success(testImageData) }
         var s = DefaultCacheSerializer()
         s.preferCacheOriginalData = true
 
         let p1 = SimpleProcessor()
         let options1: KingfisherOptionsInfo = [.processor(p1), .cacheSerializer(s), .waitForCache]
-        let source = Source.network(url)
-        
-        manager.retrieveImage(with: source, options: options1) { [s] result in
-            XCTAssertTrue(p1.processed)
-            
-            let p2 = SimpleProcessor()
-            let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
-            self.manager.cache.clearMemoryCache()
-            
-            self.manager.retrieveImage(with: source, options: options2) { result in
-                XCTAssertEqual(result.value?.cacheType, .disk)
-                XCTAssertTrue(p2.processed)
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        let source = Source.provider(provider)
+
+        let first = try await manager.retrieveImage(with: source, options: options1)
+        XCTAssertEqual(first.cacheType, .none)
+        XCTAssertTrue(p1.processed)
+
+        let p2 = SimpleProcessor()
+        let options2: KingfisherOptionsInfo = [.processor(p2), .cacheSerializer(s), .waitForCache]
+        manager.cache.clearMemoryCache()
+
+        let second = try await manager.retrieveImage(with: source, options: options2)
+        XCTAssertNotNil(second.image)
+        XCTAssertEqual(second.cacheType, .disk)
+        XCTAssertTrue(p2.processed)
     }
     
     func testWaitForCacheOnRetrieveImage() {
@@ -854,34 +862,26 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    func testShouldDownloadAndCacheProcessedImage() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        stub(url, data: testImageData)
-
+    func testShouldDownloadAndCacheProcessedImage() async throws {
+        let provider = SimpleImageDataProvider(cacheKey: #function) { .success(testImageData) }
         let size = CGSize(width: 1, height: 1)
         let processor = ResizingImageProcessor(referenceSize: size)
+        let source = Source.provider(provider)
 
-        manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
-            // Can download and cache normally
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.image.size, size)
-            XCTAssertEqual(result.value!.cacheType, .none)
+        let first = try await manager.retrieveImage(with: source, options: [.processor(processor)])
+        XCTAssertNotNil(first.image)
+        XCTAssertEqual(first.image.size, size)
+        XCTAssertEqual(first.cacheType, .none)
 
-            self.manager.cache.clearMemoryCache()
-            let cached = self.manager.cache.imageCachedType(
-                forKey: url.cacheKey, processorIdentifier: processor.identifier)
-            XCTAssertEqual(cached, .disk)
+        manager.cache.clearMemoryCache()
+        let cached = manager.cache.imageCachedType(
+            forKey: provider.cacheKey, processorIdentifier: processor.identifier)
+        XCTAssertEqual(cached, .disk)
 
-            self.manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertEqual(result.value!.image.size, size)
-                XCTAssertEqual(result.value!.cacheType, .disk)
-
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        let second = try await manager.retrieveImage(with: source, options: [.processor(processor)])
+        XCTAssertNotNil(second.image)
+        XCTAssertEqual(second.image.size, size)
+        XCTAssertEqual(second.cacheType, .disk)
     }
 
 #if os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
@@ -1777,6 +1777,246 @@ class KingfisherManagerTests: XCTestCase {
         cacheType = manager.cache.imageCachedType(forKey: resource.cacheKey)
         XCTAssertEqual(cacheType, .none)
     }
+
+    func testRetrieveImageFromDiskCacheWithForcedExtension() async throws {
+        let url = URL(string: "https://example.com/forced-extension-target")!
+        stub(url, data: testImageData)
+
+        let options: KingfisherOptionsInfo = [.forcedCacheFileExtension("heic")]
+
+        var result = try await manager.retrieveImage(with: url, options: options)
+        XCTAssertEqual(result.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        LSNocilla.sharedInstance().clearStubs()
+
+        result = try await manager.retrieveImage(with: url, options: options)
+        XCTAssertEqual(result.cacheType, .disk)
+    }
+
+    func testRetrieveImageFromOriginalCacheWithForcedExtension() async throws {
+        let url = URL(string: "https://example.com/forced-extension-original")!
+        let originalCache = ImageCache(name: "test-original-forced-\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([originalCache])
+        }
+
+        try await originalCache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier,
+            forcedExtension: "heic",
+            toDisk: true
+        )
+        originalCache.clearMemoryCache()
+        manager.cache.clearMemoryCache()
+        LSNocilla.sharedInstance().clearStubs()
+
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let result = try await manager.retrieveImage(
+            with: url,
+            options: [
+                .processor(processor),
+                .originalCache(originalCache),
+                .forcedCacheFileExtension("heic")
+            ]
+        )
+
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertTrue(
+            manager.cache.imageCachedType(
+                forKey: url.cacheKey,
+                processorIdentifier: processor.identifier,
+                forcedExtension: "heic"
+            ).cached
+        )
+    }
+    
+    // MARK: - Async cache-type check (issue #2512)
+
+    func testRetrieveImageWithAsyncCacheTypeCheckAcrossCacheStates() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+        let expectedCacheTypes: [CacheType] = [.none, .memory, .disk, .none]
+
+        @Sendable func runStep(_ index: Int) {
+            manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+                guard let value = result.value else {
+                    XCTFail("Expected cached image result at step \(index), got \(String(describing: result.error))")
+                    exp.fulfill()
+                    return
+                }
+
+                XCTAssertNotNil(value.image)
+                XCTAssertEqual(value.cacheType, expectedCacheTypes[index])
+
+                switch index {
+                case 0:
+                    runStep(1)
+                case 1:
+                    manager.cache.clearMemoryCache()
+                    runStep(2)
+                case 2:
+                    manager.cache.clearMemoryCache()
+                    manager.cache.clearDiskCache {
+                        runStep(3)
+                    }
+                default:
+                    exp.fulfill()
+                }
+            }
+        }
+
+        runStep(0)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckReturnsCancellableShellOnMiss() {
+        let completionExp = expectation(description: "\(#function) completion")
+        let downloadStartedExp = expectation(description: "\(#function) download started")
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
+            XCTAssertNotNil(task)
+            downloadStartedExp.fulfill()
+        })
+        let rewrittenURL = URL(string: "https://example.com/async-cache-type-check-shell")!
+
+        let task = manager.retrieveImage(
+            with: rewrittenURL,
+            options: [.asyncCacheTypeCheck, .requestModifier(asyncModifier)]
+        ) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(result.error!.isTaskCancelled)
+            completionExp.fulfill()
+        }
+        XCTAssertNotNil(task, "asyncCacheTypeCheck path should return a task shell synchronously.")
+
+        wait(for: [downloadStartedExp], timeout: 2)
+        task?.cancel()
+        _ = stub.go()
+        wait(for: [completionExp], timeout: 5)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckHonoursOnlyFromCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck, .onlyFromCache]) { result in
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+            if case .cacheError(reason: .imageNotExisting) = result.error! {
+                // expected
+            } else {
+                XCTFail("Expected imageNotExisting error but got \(String(describing: result.error))")
+            }
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckUsesOriginalCacheFallback() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let manager = self.manager!
+
+        // Warm the default cache (which acts as `originalCache`) with the unprocessed image.
+        manager.retrieveImage(with: url) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+            // Drop the memory layer so the async probe must hit the disk path.
+            manager.cache.clearMemoryCache()
+
+            manager.retrieveImage(
+                with: url,
+                options: [.processor(processor), .asyncCacheTypeCheck, .cacheOriginalImage]
+            ) { result in
+                // Original was cached, processed image built from it; first time returns .none.
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(result.value!.cacheType, .none)
+
+                manager.retrieveImage(
+                    with: url,
+                    options: [.processor(processor), .asyncCacheTypeCheck]
+                ) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertEqual(result.value!.cacheType, .memory)
+                    exp.fulfill()
+                }
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckCancelsProviderBackedShell() {
+        let providerStarted = expectation(description: "\(#function) provider started")
+        let completionExp = expectation(description: "\(#function) completion")
+
+        let provider = AsyncCacheTypeCheckProvider(
+            cacheKey: "provider-\(UUID().uuidString)",
+            payload: testImageData,
+            onStart: { providerStarted.fulfill() }
+        )
+
+        let task = manager.retrieveImage(with: .provider(provider), options: [.asyncCacheTypeCheck]) { result in
+            switch result {
+            case .success:
+                XCTFail("provider-backed asyncCacheTypeCheck shell should cancel the underlying load")
+            case .failure(let error):
+                guard case .requestError(reason: .dataProviderCancelled) = error else {
+                    XCTFail("expected .dataProviderCancelled, got: \(error)")
+                    completionExp.fulfill()
+                    return
+                }
+            }
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task, "asyncCacheTypeCheck should still return a cancellable shell for provider sources.")
+        wait(for: [providerStarted], timeout: 2)
+        task?.cancel()
+        wait(for: [completionExp], timeout: 2)
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckCancelsAsyncRequestModifierShell() {
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData, length: 123)
+
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
+            XCTAssertNotNil(task)
+            downloadStarted.fulfill()
+        })
+
+        let rewrittenURL = URL(string: "https://example.com/async-modifier-shell")!
+        let task = manager.retrieveImage(
+            with: rewrittenURL,
+            options: [.asyncCacheTypeCheck, .requestModifier(asyncModifier)]
+        ) { result in
+            guard let error = result.error else {
+                XCTFail("async request modifier shell should cancel the underlying download")
+                completionExp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled)
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task, "asyncCacheTypeCheck should always return a shell synchronously.")
+        wait(for: [downloadStarted], timeout: 2)
+        task?.cancel()
+        _ = delayedResponse.go()
+        wait(for: [completionExp], timeout: 2)
+    }
 }
 
 private var imageCreatingOptionsKey: Void?
@@ -1813,6 +2053,24 @@ final class SimpleProcessor: ImageProcessor, @unchecked Sendable {
             image?.creatingOptions = creatingOptions
             return image
         }
+    }
+}
+
+private final class AsyncCacheTypeCheckProvider: ImageDataProvider, @unchecked Sendable {
+    let cacheKey: String
+    private let payload: Data
+    private let onStart: @Sendable () -> Void
+
+    init(cacheKey: String, payload: Data, onStart: @escaping @Sendable () -> Void) {
+        self.cacheKey = cacheKey
+        self.payload = payload
+        self.onStart = onStart
+    }
+
+    func data() async throws -> Data {
+        onStart()
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        return payload
     }
 }
 
