@@ -96,6 +96,8 @@ struct TaskPropertyAccessor: Sendable {
     let setTaskIdentifier: @Sendable @MainActor (Source.Identifier.Value?) -> Void
     let getTaskIdentifier: @Sendable @MainActor () -> Source.Identifier.Value?
     let setTask: @Sendable @MainActor (DownloadTask?) -> Void
+    let getCancellationToken: @Sendable @MainActor () -> CancellationToken?
+    let setCancellationToken: @Sendable @MainActor (CancellationToken) -> Void
 }
 
 @MainActor
@@ -361,7 +363,6 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask? {
         var mutatingSelf = self
-        let previousToken = mutatingSelf.cancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -375,10 +376,10 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
                 getTaskIdentifier: { self.taskIdentifier },
                 setTask: { task in
                     mutatingSelf.imageTask = task
-                }
+                },
+                getCancellationToken: { self.cancellationToken },
+                setCancellationToken: { mutatingSelf.cancellationToken = $0 }
             ),
-            previousCancellationToken: previousToken,
-            setCancellationToken: { mutatingSelf.cancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -393,8 +394,6 @@ extension KingfisherWrapper {
         with source: Source?,
         imageAccessor: ImagePropertyAccessor<KFCrossPlatformImage>,
         taskAccessor: TaskPropertyAccessor,
-        previousCancellationToken: CancellationToken? = nil,
-        setCancellationToken: (@MainActor (CancellationToken) -> Void)? = nil,
         placeholder: KFCrossPlatformImage? = nil,
         parsedOptions: KingfisherParsedOptionsInfo,
         progressBlock: DownloadProgressBlock? = nil,
@@ -424,8 +423,8 @@ extension KingfisherWrapper {
         taskAccessor.setTaskIdentifier(issuedIdentifier)
 
         let token = CancellationToken()
-        previousCancellationToken?.cancel()
-        setCancellationToken?(token)
+        taskAccessor.getCancellationToken()?.cancel()
+        taskAccessor.setCancellationToken(token)
 
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]

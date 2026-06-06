@@ -110,7 +110,6 @@ extension KingfisherWrapper where Base: CPListItem {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
-        let previousToken = mutatingSelf.cancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -137,10 +136,10 @@ extension KingfisherWrapper where Base: CPListItem {
             taskAccessor: TaskPropertyAccessor(
                 setTaskIdentifier: { mutatingSelf.taskIdentifier = $0 },
                 getTaskIdentifier: { mutatingSelf.taskIdentifier },
-                setTask: { mutatingSelf.imageTask = $0 }
+                setTask: { mutatingSelf.imageTask = $0 },
+                getCancellationToken: { mutatingSelf.cancellationToken },
+                setCancellationToken: { mutatingSelf.cancellationToken = $0 }
             ),
-            previousCancellationToken: previousToken,
-            setCancellationToken: { mutatingSelf.cancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
