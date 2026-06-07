@@ -108,7 +108,6 @@ extension KingfisherWrapper where Base: NSButton {
     ) -> DownloadTask?
     {
         var mutatingSelf = self
-        let previousToken = mutatingSelf.imageCancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -119,10 +118,10 @@ extension KingfisherWrapper where Base: NSButton {
                 }),
             taskAccessor: TaskPropertyAccessor(
                 setTaskIdentifier: { mutatingSelf.taskIdentifier = $0 },
-                getTaskIdentifier: { mutatingSelf.taskIdentifier }, 
-                setTask: { mutatingSelf.imageTask = $0 }),
-            previousCancellationToken: previousToken,
-            setCancellationToken: { mutatingSelf.imageCancellationToken = $0 },
+                getTaskIdentifier: { mutatingSelf.taskIdentifier },
+                setTask: { mutatingSelf.imageTask = $0 },
+                getCancellationToken: { mutatingSelf.imageCancellationToken },
+                setCancellationToken: { mutatingSelf.imageCancellationToken = $0 }),
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -201,7 +200,6 @@ extension KingfisherWrapper where Base: NSButton {
     ) -> DownloadTask?
     {
         var mutatingSelf = self
-        let previousToken = mutatingSelf.alternateImageCancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -213,10 +211,10 @@ extension KingfisherWrapper where Base: NSButton {
             taskAccessor: TaskPropertyAccessor(
                 setTaskIdentifier: { mutatingSelf.alternateTaskIdentifier = $0 },
                 getTaskIdentifier: { mutatingSelf.alternateTaskIdentifier },
-                setTask: { mutatingSelf.alternateImageTask = $0 }
+                setTask: { mutatingSelf.alternateImageTask = $0 },
+                getCancellationToken: { mutatingSelf.alternateImageCancellationToken },
+                setCancellationToken: { mutatingSelf.alternateImageCancellationToken = $0 }
             ),
-            previousCancellationToken: previousToken,
-            setCancellationToken: { mutatingSelf.alternateImageCancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,

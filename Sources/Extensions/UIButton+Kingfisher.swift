@@ -115,7 +115,6 @@ extension KingfisherWrapper where Base: UIButton {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
-        let previousToken = mutatingSelf.imageCancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -125,10 +124,10 @@ extension KingfisherWrapper where Base: UIButton {
             taskAccessor: TaskPropertyAccessor(
                 setTaskIdentifier: { setTaskIdentifier($0, for: state) },
                 getTaskIdentifier: { taskIdentifier(for: state) },
-                setTask: { mutatingSelf.imageTask = $0 }
+                setTask: { mutatingSelf.imageTask = $0 },
+                getCancellationToken: { imageCancellationToken },
+                setCancellationToken: { mutatingSelf.imageCancellationToken = $0 }
             ),
-            previousCancellationToken: previousToken,
-            setCancellationToken: { mutatingSelf.imageCancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -228,7 +227,6 @@ extension KingfisherWrapper where Base: UIButton {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
         var mutatingSelf = self
-        let previousToken = mutatingSelf.backgroundImageCancellationToken
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
@@ -242,10 +240,10 @@ extension KingfisherWrapper where Base: UIButton {
             taskAccessor: TaskPropertyAccessor(
                 setTaskIdentifier: { setBackgroundTaskIdentifier($0, for: state) },
                 getTaskIdentifier: { backgroundTaskIdentifier(for: state) },
-                setTask: { mutatingSelf.backgroundImageTask = $0 }
+                setTask: { mutatingSelf.backgroundImageTask = $0 },
+                getCancellationToken: { backgroundImageCancellationToken },
+                setCancellationToken: { mutatingSelf.backgroundImageCancellationToken = $0 }
             ),
-            previousCancellationToken: previousToken,
-            setCancellationToken: { mutatingSelf.backgroundImageCancellationToken = $0 },
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
