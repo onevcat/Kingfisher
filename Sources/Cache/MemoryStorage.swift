@@ -159,14 +159,26 @@ public enum MemoryStorage {
         ///
         /// - Parameters:
         ///   - key: The cache key of the value.
+        ///   - filter: The expiration filter used by this retrieval action. The default value is `.valid`, which gets only non-expired values.
         ///   - extendingExpiration: The expiration policy used by this retrieval action.
         /// - Returns: The value under `key` if it is valid and found in the storage. Otherwise, `nil`.
-        public func value(forKey key: String, extendingExpiration: ExpirationExtending = .cacheTime) -> T? {
+        public func value(forKey key: String,
+                          filter: ExpirationFilter = .valid,
+                          extendingExpiration: ExpirationExtending = .cacheTime) -> T? {
             guard let object = storage.object(forKey: key as NSString) else {
                 return nil
             }
-            if object.isExpired {
-                return nil
+            switch filter {
+            case .valid:
+                if object.isExpired {
+                    return nil
+                }
+            case .expired:
+                if object.isExpired == false {
+                    return nil
+                }
+            case .all:
+                break
             }
             object.extendExpiration(extendingExpiration)
             return object.value
@@ -201,10 +213,10 @@ public enum MemoryStorage {
             keys.removeAll()
         }
 
-        /// Calculates the total `cacheCost` for all currently cached values.
+        /// Calculates the total `cacheCost` for all currently cached values, including any expired items.
         ///
         /// This method can be expensive so should be used sparingly.
-        /// - Returns: The total cost in bytes for valid cached values.
+        /// - Returns: The total cost in bytes for all cached values.
         public func totalCacheCost() -> Int {
             let allKeys: [String] = {
                 lock.lock()
@@ -212,7 +224,7 @@ public enum MemoryStorage {
                 return Array(keys)
             }()
             let totalCost: Int = allKeys.reduce(0) { cost, key in
-                if let value = self.value(forKey: key, extendingExpiration: .none) {
+                if let value = self.value(forKey: key, filter: .all, extendingExpiration: .none) {
                     return cost + value.cacheCost
                 }
                 return cost

@@ -98,6 +98,15 @@ public enum ExpirationExtending: Sendable {
     case expirationTime(_ expiration: StorageExpiration)
 }
 
+public enum ExpirationFilter {
+    /// The item is valid / not expired.
+    case valid
+    /// The item is no longer valid / has expired.
+    case expired
+    /// The item may be valid or invalid.
+    case all
+}
+
 /// Represents types for which the memory cost can be calculated.
 public protocol CacheCostCalculable {
     var cacheCost: Int { get }

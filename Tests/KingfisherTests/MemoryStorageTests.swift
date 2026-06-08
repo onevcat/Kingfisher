@@ -232,14 +232,14 @@ class MemoryStorageTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testTotalCacheCostIgnoresExpiredValues() {
+    func testTotalCacheCostIncludesExpiredValues() {
         let exp = expectation(description: #function)
 
         storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
         storage.store(value: 2, forKey: "2")
 
         delay(0.2) {
-            XCTAssertEqual(self.storage.totalCacheCost(), 1)
+            XCTAssertEqual(self.storage.totalCacheCost(), 2)
             XCTAssertNotNil(self.storage.storage.object(forKey: "1"))
             exp.fulfill()
         }
@@ -266,6 +266,51 @@ class MemoryStorageTests: XCTestCase {
         
         delay(1) {
             XCTAssertFalse(self.storage.isCached(forKey: "1"))
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testValueFilterValid() {
+        let exp = expectation(description: #function)
+
+        storage.store(value: 1, forKey: "valid", expiration: .never)
+        storage.store(value: 2, forKey: "expired", expiration: .seconds(0.1))
+
+        delay(0.2) {
+            // .valid (default) returns non-expired items only.
+            XCTAssertEqual(self.storage.value(forKey: "valid", filter: .valid, extendingExpiration: .none), 1)
+            XCTAssertNil(self.storage.value(forKey: "expired", filter: .valid, extendingExpiration: .none))
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testValueFilterExpired() {
+        let exp = expectation(description: #function)
+
+        storage.store(value: 1, forKey: "valid", expiration: .never)
+        storage.store(value: 2, forKey: "expired", expiration: .seconds(0.1))
+
+        delay(0.2) {
+            // .expired returns only items that have passed their expiration date.
+            XCTAssertNil(self.storage.value(forKey: "valid", filter: .expired, extendingExpiration: .none))
+            XCTAssertEqual(self.storage.value(forKey: "expired", filter: .expired, extendingExpiration: .none), 2)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testValueFilterAll() {
+        let exp = expectation(description: #function)
+
+        storage.store(value: 1, forKey: "valid", expiration: .never)
+        storage.store(value: 2, forKey: "expired", expiration: .seconds(0.1))
+
+        delay(0.2) {
+            // .all returns items regardless of their expiration state.
+            XCTAssertEqual(self.storage.value(forKey: "valid", filter: .all, extendingExpiration: .none), 1)
+            XCTAssertEqual(self.storage.value(forKey: "expired", filter: .all, extendingExpiration: .none), 2)
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
