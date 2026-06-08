@@ -103,6 +103,21 @@ class MemoryStorageTests: XCTestCase {
         XCTAssertFalse(storage.isCached(forKey: "2"))
     }
 
+    func testTotalCacheCost() {
+        XCTAssertEqual(storage.totalCacheCost(), 0)
+
+        storage.store(value: 1, forKey: "1")
+        storage.store(value: 2, forKey: "2")
+        storage.store(value: 3, forKey: "3")
+        XCTAssertEqual(storage.totalCacheCost(), 3)
+
+        storage.remove(forKey: "2")
+        XCTAssertEqual(storage.totalCacheCost(), 2)
+
+        storage.removeAll()
+        XCTAssertEqual(storage.totalCacheCost(), 0)
+    }
+
     func testStoreWithExpiration() {
         let exp = expectation(description: #function)
 
@@ -214,6 +229,21 @@ class MemoryStorageTests: XCTestCase {
             XCTAssertNil(self.storage.storage.object(forKey: "1"))
             exp.fulfill()
         }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testTotalCacheCostIgnoresExpiredValues() {
+        let exp = expectation(description: #function)
+
+        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 2, forKey: "2")
+
+        delay(0.2) {
+            XCTAssertEqual(self.storage.totalCacheCost(), 1)
+            XCTAssertNotNil(self.storage.storage.object(forKey: "1"))
+            exp.fulfill()
+        }
+
         waitForExpectations(timeout: 3, handler: nil)
     }
 

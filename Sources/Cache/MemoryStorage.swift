@@ -200,6 +200,25 @@ public enum MemoryStorage {
             storage.removeAllObjects()
             keys.removeAll()
         }
+
+        /// Calculates the total `cacheCost` for all currently cached values.
+        ///
+        /// This method can be expensive so should be used sparingly.
+        /// - Returns: The total cost in bytes for valid cached values.
+        public func totalCacheCost() -> Int {
+            let allKeys: [String] = {
+                lock.lock()
+                defer { lock.unlock() }
+                return Array(keys)
+            }()
+            let totalCost: Int = allKeys.reduce(0) { cost, key in
+                if let value = self.value(forKey: key, extendingExpiration: .none) {
+                    return cost + value.cacheCost
+                }
+                return cost
+            }
+            return totalCost
+        }
     }
 }
 
