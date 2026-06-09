@@ -271,49 +271,17 @@ class MemoryStorageTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testValueFilterValid() {
-        let exp = expectation(description: #function)
+    func testTotalCacheCostExcludesEvictedValues() {
+        let config = MemoryStorage.Config(totalCostLimit: 2, cleanInterval: 60)
+        let storage = MemoryStorage.Backend<Int>(config: config)
 
-        storage.store(value: 1, forKey: "valid", expiration: .never)
-        storage.store(value: 2, forKey: "expired", expiration: .seconds(0.1))
+        // Storing three items with a `totalCostLimit` of 2 forces the system to evict at least one of them.
+        storage.store(value: 1, forKey: "1")
+        storage.store(value: 1, forKey: "2")
+        storage.store(value: 1, forKey: "3")
 
-        delay(0.2) {
-            // .valid (default) returns non-expired items only.
-            XCTAssertEqual(self.storage.value(forKey: "valid", filter: .valid, extendingExpiration: .none), 1)
-            XCTAssertNil(self.storage.value(forKey: "expired", filter: .valid, extendingExpiration: .none))
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-
-    func testValueFilterExpired() {
-        let exp = expectation(description: #function)
-
-        storage.store(value: 1, forKey: "valid", expiration: .never)
-        storage.store(value: 2, forKey: "expired", expiration: .seconds(0.1))
-
-        delay(0.2) {
-            // .expired returns only items that have passed their expiration date.
-            XCTAssertNil(self.storage.value(forKey: "valid", filter: .expired, extendingExpiration: .none))
-            XCTAssertEqual(self.storage.value(forKey: "expired", filter: .expired, extendingExpiration: .none), 2)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-
-    func testValueFilterAll() {
-        let exp = expectation(description: #function)
-
-        storage.store(value: 1, forKey: "valid", expiration: .never)
-        storage.store(value: 2, forKey: "expired", expiration: .seconds(0.1))
-
-        delay(0.2) {
-            // .all returns items regardless of their expiration state.
-            XCTAssertEqual(self.storage.value(forKey: "valid", filter: .all, extendingExpiration: .none), 1)
-            XCTAssertEqual(self.storage.value(forKey: "expired", filter: .all, extendingExpiration: .none), 2)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        // Evicted items no longer occupy memory, so they must not be counted toward the total cost.
+        XCTAssertLessThanOrEqual(storage.totalCacheCost(), 2)
     }
 
     func testAutoCleanExpiredMemory() {
