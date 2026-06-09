@@ -272,16 +272,15 @@ class MemoryStorageTests: XCTestCase {
     }
 
     func testTotalCacheCostExcludesEvictedValues() {
-        let config = MemoryStorage.Config(totalCostLimit: 2, cleanInterval: 60)
-        let storage = MemoryStorage.Backend<Int>(config: config)
-
-        // Storing three items with a `totalCostLimit` of 2 forces the system to evict at least one of them.
         storage.store(value: 1, forKey: "1")
-        storage.store(value: 1, forKey: "2")
-        storage.store(value: 1, forKey: "3")
+        storage.store(value: 2, forKey: "2")
+        XCTAssertEqual(storage.totalCacheCost(), 2)
 
-        // Evicted items no longer occupy memory, so they must not be counted toward the total cost.
-        XCTAssertLessThanOrEqual(storage.totalCacheCost(), 2)
+        // Simulate a system eviction: `NSCache` may drop an object on its own (its cost/count limits are
+        // advisory), and the tracking `keys` set is not updated until the next `removeExpired()` runs. An evicted
+        // object no longer occupies memory, so its still-present key must contribute nothing to the total.
+        storage.storage.removeObject(forKey: "1")
+        XCTAssertEqual(storage.totalCacheCost(), 1)
     }
 
     func testAutoCleanExpiredMemory() {
