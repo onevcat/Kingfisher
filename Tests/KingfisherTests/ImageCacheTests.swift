@@ -202,6 +202,19 @@ class ImageCacheTests: XCTestCase {
         XCTAssertEqual(result.cacheType, .memory)
     }
 
+    func testMemoryStorageCacheCost() async throws {
+        XCTAssertEqual(cache.memoryStorageCacheCost, 0)
+
+        try await cache.store(testImage, forKey: testKeys[0], toDisk: false)
+        XCTAssertEqual(cache.memoryStorageCacheCost, testImage.kf.cost)
+
+        try await cache.store(testImage, forKey: testKeys[1], toDisk: false)
+        XCTAssertEqual(cache.memoryStorageCacheCost, testImage.kf.cost * 2)
+
+        cache.clearMemoryCache()
+        XCTAssertEqual(cache.memoryStorageCacheCost, 0)
+    }
+
     func testStoreGIFToDiskWithNilOriginalShouldPreserveGIFFormat() {
         struct TestProcessor: ImageProcessor {
             let identifier: String = "com.onevcat.KingfisherTests.TestProcessor"
