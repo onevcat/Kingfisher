@@ -103,6 +103,21 @@ class MemoryStorageTests: XCTestCase {
         XCTAssertFalse(storage.isCached(forKey: "2"))
     }
 
+    func testTotalCacheCost() {
+        XCTAssertEqual(storage.totalCacheCost(), 0)
+
+        storage.store(value: 1, forKey: "1")
+        storage.store(value: 2, forKey: "2")
+        storage.store(value: 3, forKey: "3")
+        XCTAssertEqual(storage.totalCacheCost(), 3)
+
+        storage.remove(forKey: "2")
+        XCTAssertEqual(storage.totalCacheCost(), 2)
+
+        storage.removeAll()
+        XCTAssertEqual(storage.totalCacheCost(), 0)
+    }
+
     func testStoreWithExpiration() {
         let exp = expectation(description: #function)
 
@@ -217,6 +232,21 @@ class MemoryStorageTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testTotalCacheCostIncludesExpiredValues() {
+        let exp = expectation(description: #function)
+
+        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 2, forKey: "2")
+
+        delay(0.2) {
+            XCTAssertEqual(self.storage.totalCacheCost(), 2)
+            XCTAssertNotNil(self.storage.storage.object(forKey: "1"))
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     func testExtendExpirationByAccessing() {
         let exp = expectation(description: #function)
 
@@ -239,6 +269,18 @@ class MemoryStorageTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testTotalCacheCostExcludesEvictedValues() {
+        storage.store(value: 1, forKey: "1")
+        storage.store(value: 2, forKey: "2")
+        XCTAssertEqual(storage.totalCacheCost(), 2)
+
+        // Simulate a system eviction: `NSCache` may drop an object on its own (its cost/count limits are
+        // advisory), and the tracking `keys` set is not updated until the next `removeExpired()` runs. An evicted
+        // object no longer occupies memory, so its still-present key must contribute nothing to the total.
+        storage.storage.removeObject(forKey: "1")
+        XCTAssertEqual(storage.totalCacheCost(), 1)
     }
 
     func testAutoCleanExpiredMemory() {

@@ -1142,7 +1142,20 @@ open class ImageCache: @unchecked Sendable {
             }
         }
     }
-    
+
+    /// The total estimated memory cost currently held by the memory storage, in bytes.
+    ///
+    /// It sums the ``CacheCostCalculable/cacheCost`` of all values resident in ``ImageCache/memoryStorage``,
+    /// including expired-but-not-yet-evicted ones, which approximates the cost managed against
+    /// ``MemoryStorage/Config/totalCostLimit``. This is the in-memory counterpart of ``ImageCache/diskStorageSize``.
+    ///
+    /// Unlike the disk size, this value is computed synchronously. It iterates over every cached item, so it can be
+    /// expensive and should be used sparingly. Since `cacheCost` is an estimated memory size rather than an exact byte
+    /// count, this value is not directly comparable to ``ImageCache/diskStorageSize``.
+    open var memoryStorageCacheCost: Int {
+        memoryStorage.totalCacheCost()
+    }
+
     /// Retrieves the cache path for the key.
     ///
     /// It is useful for projects with a web view or for anyone who needs access to the local file path.

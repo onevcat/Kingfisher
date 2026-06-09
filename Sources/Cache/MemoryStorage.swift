@@ -200,6 +200,29 @@ public enum MemoryStorage {
             storage.removeAllObjects()
             keys.removeAll()
         }
+
+        /// Calculates the total ``CacheCostCalculable/cacheCost`` of all resident values, including
+        /// expired-but-not-yet-evicted ones.
+        ///
+        /// The result approximates the cost currently managed by the underlying cache against
+        /// ``MemoryStorage/Config/totalCostLimit``. Values already evicted by the system are not counted, since
+        /// they no longer occupy memory. Reading a value here does not extend its expiration.
+        ///
+        /// This method iterates over every cached item, so it can be expensive and should be used sparingly.
+        /// - Returns: The total cost in bytes for all resident cached values.
+        public func totalCacheCost() -> Int {
+            let allKeys: [String] = {
+                lock.lock()
+                defer { lock.unlock() }
+                return Array(keys)
+            }()
+            return allKeys.reduce(0) { cost, key in
+                guard let value = storage.object(forKey: key as NSString)?.value else {
+                    return cost
+                }
+                return cost + value.cacheCost
+            }
+        }
     }
 }
 
