@@ -2,6 +2,17 @@
 
 -----
 
+## [8.10.0 - Bean Counter](https://github.com/onevcat/Kingfisher/releases/tag/8.10.0) (2026-06-12)
+
+#### Add
+* Add `ImageCache.memoryStorageCacheCost` and `MemoryStorage.Backend.totalCacheCost()` to report the total estimated in-memory cost of the memory cache, including expired-but-not-yet-evicted values. This is the in-memory counterpart of `diskStorageSize` and gives tangible data for tuning `totalCostLimit`. [#2532](https://github.com/onevcat/Kingfisher/pull/2532) [#2530](https://github.com/onevcat/Kingfisher/pull/2530) @onevcat @aronspringfield
+
+#### Fix
+* Latch async download cancellation synchronously so cancelling before the underlying `DownloadTask` is attached is no longer lost, and avoid appending callbacks to already-completed downloads. [#2526](https://github.com/onevcat/Kingfisher/pull/2526) @onevcat
+* Absorb the cancellation token lifecycle into `TaskPropertyAccessor`, unifying how the shared `setImage` helper handles task identifiers and cancellation tokens across `UIButton`, `NSButton`, `CPListItem` and other call sites. No public API or behavior change. [#2531](https://github.com/onevcat/Kingfisher/pull/2531) [#2496](https://github.com/onevcat/Kingfisher/issues/2496) @nenadvulic @onevcat
+
+---
+
 ## [8.9.0 - Free Flight](https://github.com/onevcat/Kingfisher/releases/tag/8.9.0) (2026-05-05)
 
 #### Add
