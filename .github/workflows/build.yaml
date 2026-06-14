@@ -23,65 +23,65 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: '26.2'
-            runner: macos-26-arm64
+          - xcode: '26.0.1'
+            runner: macos-26
             destination: 'platform=macOS'
             label: 'macOS'
-            cache-key: xcode-26.2-macos
-          - xcode: '26.2'
-            runner: macos-26-arm64
+            cache-key: xcode-26.0.1-macos
+          - xcode: '26.0.1'
+            runner: macos-26
             sdk: iphonesimulator
             label: 'iOS Simulator'
-            cache-key: xcode-26.2-ios
-          - xcode: '26.2'
-            runner: macos-26-arm64
+            cache-key: xcode-26.0.1-ios
+          - xcode: '26.0.1'
+            runner: macos-26
             sdk: appletvsimulator
             label: 'tvOS Simulator'
-            cache-key: xcode-26.2-tvos
-          - xcode: '26.2'
-            runner: macos-26-arm64
+            cache-key: xcode-26.0.1-tvos
+          - xcode: '26.0.1'
+            runner: macos-26
             sdk: watchsimulator
             label: 'watchOS Simulator'
-            cache-key: xcode-26.2-watchos
+            cache-key: xcode-26.0.1-watchos
 
           - xcode: '26.3'
-            runner: macos-26-arm64
+            runner: macos-26
             destination: 'platform=macOS'
             label: 'macOS'
             cache-key: xcode-26.3-macos
           - xcode: '26.3'
-            runner: macos-26-arm64
+            runner: macos-26
             sdk: iphonesimulator
             label: 'iOS Simulator'
             cache-key: xcode-26.3-ios
           - xcode: '26.3'
-            runner: macos-26-arm64
+            runner: macos-26
             sdk: appletvsimulator
             label: 'tvOS Simulator'
             cache-key: xcode-26.3-tvos
           - xcode: '26.3'
-            runner: macos-26-arm64
+            runner: macos-26
             sdk: watchsimulator
             label: 'watchOS Simulator'
             cache-key: xcode-26.3-watchos
 
           - xcode: '26.4.1'
-            runner: macos-26-arm64
+            runner: macos-26
             destination: 'platform=macOS'
             label: 'macOS'
             cache-key: xcode-26.4.1-macos
           - xcode: '26.4.1'
-            runner: macos-26-arm64
+            runner: macos-26
             sdk: iphonesimulator
             label: 'iOS Simulator'
             cache-key: xcode-26.4.1-ios
           - xcode: '26.4.1'
-            runner: macos-26-arm64
+            runner: macos-26
             sdk: appletvsimulator
             label: 'tvOS Simulator'
             cache-key: xcode-26.4.1-tvos
           - xcode: '26.4.1'
-            runner: macos-26-arm64
+            runner: macos-26
             sdk: watchsimulator
             label: 'watchOS Simulator'
             cache-key: xcode-26.4.1-watchos
