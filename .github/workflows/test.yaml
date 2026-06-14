@@ -23,47 +23,47 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: '16.4'
-            runner: macos-15
+          - xcode: '26.0.1'
+            runner: macos-26
             destination: 'platform=macOS'
             label: 'macOS'
-            cache-key: xcode-16.4-macos
-          - xcode: '16.4'
-            runner: macos-15
-            destination: 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
-            label: 'iOS 18.5'
-            cache-key: xcode-16.4-ios
-          - xcode: '16.4'
-            runner: macos-15
-            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.5'
-            label: 'tvOS 18.5'
-            cache-key: xcode-16.4-tvos
-          - xcode: '16.4'
-            runner: macos-15
+            cache-key: xcode-26.0.1-macos
+          - xcode: '26.0.1'
+            runner: macos-26
+            destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.0'
+            label: 'iOS 26.0'
+            cache-key: xcode-26.0.1-ios
+          - xcode: '26.0.1'
+            runner: macos-26
+            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.0'
+            label: 'tvOS 26.0'
+            cache-key: xcode-26.0.1-tvos
+          - xcode: '26.0.1'
+            runner: macos-26
             sdk: watchsimulator
-            label: 'watchOS 11.5'
-            cache-key: xcode-16.4-watchos
+            label: 'watchOS 26.0'
+            cache-key: xcode-26.0.1-watchos
 
-          - xcode: '26.4.1'
+          - xcode: '26.5'
             runner: macos-26
             destination: 'platform=macOS'
             label: 'macOS'
-            cache-key: xcode-26.4.1-macos
-          - xcode: '26.4.1'
+            cache-key: xcode-26.5-macos
+          - xcode: '26.5'
             runner: macos-26
-            destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.4.1'
-            label: 'iOS 26.4.1'
-            cache-key: xcode-26.4.1-ios
-          - xcode: '26.4.1'
+            destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
+            label: 'iOS 26.5'
+            cache-key: xcode-26.5-ios
+          - xcode: '26.5'
             runner: macos-26
-            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.4'
-            label: 'tvOS 26.4'
-            cache-key: xcode-26.4.1-tvos
-          - xcode: '26.4.1'
+            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.5'
+            label: 'tvOS 26.5'
+            cache-key: xcode-26.5-tvos
+          - xcode: '26.5'
             runner: macos-26
             sdk: watchsimulator
-            label: 'watchOS 26.4'
-            cache-key: xcode-26.4.1-watchos
+            label: 'watchOS 26.5'
+            cache-key: xcode-26.5-watchos
     steps:
       - uses: actions/checkout@v6
       - name: Setup Ruby
