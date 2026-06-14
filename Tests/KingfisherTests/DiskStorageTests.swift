@@ -42,6 +42,47 @@ extension String {
     public static var empty: String { return "" }
 }
 
+private final class DelayedDirectoryScanFileManager: FileManager, @unchecked Sendable {
+    private let scanStarted = DispatchSemaphore(value: 0)
+    private let releaseScan = DispatchSemaphore(value: 0)
+    private let lock = NSLock()
+
+    private var shouldDelayNextScan = true
+    private var delayedResult: [String] = []
+
+    override func contentsOfDirectory(atPath path: String) throws -> [String] {
+        lock.lock()
+        let shouldDelay = shouldDelayNextScan
+        if shouldDelay {
+            shouldDelayNextScan = false
+        }
+        lock.unlock()
+
+        guard shouldDelay else {
+            return try super.contentsOfDirectory(atPath: path)
+        }
+
+        scanStarted.signal()
+        releaseScan.wait()
+
+        lock.lock()
+        let result = delayedResult
+        lock.unlock()
+        return result
+    }
+
+    func waitUntilScanStarts(timeout: TimeInterval = 2) -> Bool {
+        scanStarted.wait(timeout: .now() + timeout) == .success
+    }
+
+    func finishDelayedScan(returning result: [String]) {
+        lock.lock()
+        delayedResult = result
+        lock.unlock()
+        releaseScan.signal()
+    }
+}
+
 class DiskStorageTests: XCTestCase {
 
     var storage: DiskStorage.Backend<String>!
@@ -65,6 +106,33 @@ class DiskStorageTests: XCTestCase {
         XCTAssertTrue(storage.isCached(forKey: "1"))
         let value = try! storage.value(forKey: "1")
         XCTAssertEqual(value, "1")
+    }
+
+    func testStoreAndGetWhenInitialCacheScanFinishesAfterStore() {
+        let fileManager = DelayedDirectoryScanFileManager()
+        let config = DiskStorage.Config(name: "test-\(UUID().uuidString)", sizeLimit: 5, fileManager: fileManager)
+        let storage = try! DiskStorage.Backend<String>(config: config)
+        defer { try? storage.removeAll(skipCreatingDirectory: true) }
+
+        XCTAssertTrue(fileManager.waitUntilScanStarts())
+
+        try! storage.store(value: "1", forKey: "1")
+        fileManager.finishDelayedScan(returning: [])
+
+        let deadline = Date().addingTimeInterval(2)
+        var initialScanApplied = false
+        repeat {
+            initialScanApplied = storage.maybeCachedCheckingQueue.sync {
+                storage.maybeCached != nil
+            }
+            if !initialScanApplied {
+                Thread.sleep(forTimeInterval: 0.001)
+            }
+        } while !initialScanApplied && Date() < deadline
+
+        XCTAssertTrue(initialScanApplied)
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+        XCTAssertEqual(try! storage.value(forKey: "1"), "1")
     }
 
     func testRemove() {
