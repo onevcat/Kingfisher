@@ -138,6 +138,7 @@ internal final class NetworkObserverImpl: @unchecked Sendable, NetworkObserver {
     let callback: @Sendable (Bool) -> Void
     private weak var monitor: NetworkMonitor?
     private var timeoutWorkItem: DispatchWorkItem?
+    private var isCancelled = false
     private let queue = DispatchQueue(label: "com.onevcat.Kingfisher.NetworkObserver", qos: .utility)
 
     init(timeoutInterval: TimeInterval?, callback: @escaping @Sendable (Bool) -> Void, monitor: NetworkMonitor) {
@@ -157,7 +158,7 @@ internal final class NetworkObserverImpl: @unchecked Sendable, NetworkObserver {
 
     func notify(isConnected: Bool) {
         queue.async { [weak self] in
-            guard let self else { return }
+            guard let self, !isCancelled else { return }
 
             // Cancel timeout if we're notifying
             timeoutWorkItem?.cancel()
@@ -176,6 +177,8 @@ internal final class NetworkObserverImpl: @unchecked Sendable, NetworkObserver {
     func cancel() {
         queue.async { [weak self] in
             guard let self else { return }
+
+            isCancelled = true
 
             // Cancel timeout
             timeoutWorkItem?.cancel()
