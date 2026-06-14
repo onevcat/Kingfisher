@@ -24,43 +24,45 @@ jobs:
       matrix:
         include:
           - xcode: '26.0.1'
-            runner: macos-26
+            runner: macos-26-arm64
             destination: 'platform=macOS'
             label: 'macOS'
             cache-key: xcode-26.0.1-macos
           - xcode: '26.0.1'
-            runner: macos-26
+            runner: macos-26-arm64
             destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.2'
             label: 'iOS 26.2'
             cache-key: xcode-26.0.1-ios
+            download-platform: iOS
           - xcode: '26.0.1'
-            runner: macos-26
+            runner: macos-26-arm64
             destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.2'
             label: 'tvOS 26.2'
+            download-platform: tvOS
             cache-key: xcode-26.0.1-tvos
           - xcode: '26.0.1'
-            runner: macos-26
+            runner: macos-26-arm64
             sdk: watchsimulator
             label: 'watchOS 26.0'
             cache-key: xcode-26.0.1-watchos
 
           - xcode: '26.5'
-            runner: macos-26
+            runner: macos-26-arm64
             destination: 'platform=macOS'
             label: 'macOS'
             cache-key: xcode-26.5-macos
           - xcode: '26.5'
-            runner: macos-26
+            runner: macos-26-arm64
             destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
             label: 'iOS 26.5'
             cache-key: xcode-26.5-ios
           - xcode: '26.5'
-            runner: macos-26
+            runner: macos-26-arm64
             destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.5'
             label: 'tvOS 26.5'
             cache-key: xcode-26.5-tvos
           - xcode: '26.5'
-            runner: macos-26
+            runner: macos-26-arm64
             sdk: watchsimulator
             label: 'watchOS 26.5'
             cache-key: xcode-26.5-watchos
@@ -71,6 +73,9 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - name: Install platform support
+        if: matrix.download-platform != ''
+        run: xcodebuild -downloadPlatform ${{ matrix.download-platform }}
       - name: Run tests
         env:
           DESTINATION: ${{ matrix.destination }}
