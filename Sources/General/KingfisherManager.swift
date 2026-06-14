@@ -340,14 +340,20 @@ public class KingfisherManager: @unchecked Sendable {
             retryContext: RetryContext?,
             downloadTaskUpdated: DownloadTaskUpdatedBlock?
         ) {
+            let reporter = DownloadTaskUpdatedReporter(downloadTaskUpdated)
+            let updateGate = DownloadTaskUpdatedCallbackGate()
             let newTask = self.retrieveImage(
                 with: source,
                 context: retrievingContext,
-                downloadTaskUpdated: downloadTaskUpdated
+                downloadTaskUpdated: reporter.report,
+                notifyStartedDownloadTask: true
             ) { result in
-                handler(currentSource: source, retryContext: retryContext, result: result)
+                updateGate.execute {
+                    handler(currentSource: source, retryContext: retryContext, result: result)
+                }
             }
-            downloadTaskUpdated?(newTask)
+            reporter.report(newTask)
+            updateGate.open()
         }
 
         @Sendable func failCurrentSource(_ source: Source, retryContext: RetryContext?, with error: KingfisherError) {
@@ -433,6 +439,7 @@ public class KingfisherManager: @unchecked Sendable {
         with source: Source,
         context: RetrievingContext<Source>,
         downloadTaskUpdated: DownloadTaskUpdatedBlock?,
+        notifyStartedDownloadTask: Bool = false,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?) -> DownloadTask?
     {
         let options = context.options
@@ -440,7 +447,8 @@ public class KingfisherManager: @unchecked Sendable {
             return loadAndCacheImage(
                 source: source,
                 context: context,
-                completionHandler: completionHandler)?.value
+                completionHandler: completionHandler,
+                downloadTaskCreated: notifyStartedDownloadTask ? downloadTaskUpdated : nil)?.value
 
         }
 
@@ -473,7 +481,8 @@ public class KingfisherManager: @unchecked Sendable {
         return loadAndCacheImage(
             source: source,
             context: context,
-            completionHandler: completionHandler)?.value
+            completionHandler: completionHandler,
+            downloadTaskCreated: notifyStartedDownloadTask ? downloadTaskUpdated : nil)?.value
     }
 
     /// Opt-in async cache-type probe path.
@@ -687,10 +696,12 @@ public class KingfisherManager: @unchecked Sendable {
         switch source {
         case .network(let resource):
             let downloader = options.downloader ?? self.downloader
+            let taskCreatedReporter = DownloadTaskCreatedReporter(downloadTaskCreated)
+            let downloadOptions = options.appendingDownloadTaskStartedHandler(taskCreatedReporter.report)
             let task = downloader.downloadImage(
-                with: resource.downloadURL, options: options, completionHandler: _cacheImage
+                with: resource.downloadURL, options: downloadOptions, completionHandler: _cacheImage
             )
-            downloadTaskCreated?(task)
+            taskCreatedReporter.report(task)
 
 
             // The code below is neat, but it fails the Swift 5.2 compiler with a runtime crash when 
@@ -1301,5 +1312,146 @@ class CacheCallbackCoordinator: @unchecked Sendable {
         default:
             assertionFailure("This case should not happen in CacheCallbackCoordinator: \(state) - \(action)")
         }
+    }
+}
+
+private final class DownloadTaskUpdatedReporter: @unchecked Sendable {
+    private let lock = NSLock()
+    private let block: DownloadTaskUpdatedBlock?
+    private var reportedTaskIdentifiers = Set<ObjectIdentifier>()
+    private var reportedNil = false
+
+    init(_ block: DownloadTaskUpdatedBlock?) {
+        self.block = block
+    }
+
+    func report(_ task: DownloadTask?) {
+        guard let block else { return }
+
+        lock.lock()
+        let shouldReport: Bool
+        if let task {
+            shouldReport = reportedTaskIdentifiers.insert(ObjectIdentifier(task)).inserted
+        } else {
+            shouldReport = !reportedNil
+            reportedNil = true
+        }
+        lock.unlock()
+
+        if shouldReport {
+            block(task)
+        }
+    }
+}
+
+private final class DownloadTaskCreatedReporter: @unchecked Sendable {
+    private let lock = NSLock()
+    private let block: (@Sendable (DownloadTask) -> Void)?
+    private var reportedTaskIdentifiers = Set<ObjectIdentifier>()
+
+    init(_ block: (@Sendable (DownloadTask) -> Void)?) {
+        self.block = block
+    }
+
+    func report(_ task: DownloadTask) {
+        guard let block else { return }
+
+        lock.lock()
+        let shouldReport = reportedTaskIdentifiers.insert(ObjectIdentifier(task)).inserted
+        lock.unlock()
+
+        if shouldReport {
+            block(task)
+        }
+    }
+}
+
+private final class DownloadTaskUpdatedCallbackGate: @unchecked Sendable {
+    private let lock = NSLock()
+    private var isOpen = false
+    private var pendingBlocks: [@Sendable () -> Void] = []
+
+    func execute(_ block: @escaping @Sendable () -> Void) {
+        lock.lock()
+        if isOpen {
+            lock.unlock()
+            block()
+        } else {
+            pendingBlocks.append(block)
+            lock.unlock()
+        }
+    }
+
+    func open() {
+        lock.lock()
+        guard !isOpen else {
+            lock.unlock()
+            return
+        }
+
+        isOpen = true
+        let blocks = pendingBlocks
+        pendingBlocks.removeAll()
+        lock.unlock()
+
+        blocks.forEach { $0() }
+    }
+}
+
+private extension KingfisherParsedOptionsInfo {
+    func appendingDownloadTaskStartedHandler(
+        _ handler: (@Sendable (DownloadTask) -> Void)?
+    ) -> KingfisherParsedOptionsInfo {
+        guard let handler else { return self }
+
+        var options = self
+        if let modifier = requestModifier {
+            if let syncModifier = modifier as? any ImageDownloadRequestModifier {
+                options.requestModifier = DownloadTaskReportingModifier(base: syncModifier, handler: handler)
+            } else {
+                options.requestModifier = AsyncDownloadTaskReportingModifier(base: modifier, handler: handler)
+            }
+        } else {
+            options.requestModifier = DownloadTaskReportingModifier(base: nil, handler: handler)
+        }
+        return options
+    }
+}
+
+private struct DownloadTaskReportingModifier: ImageDownloadRequestModifier {
+    let base: (any ImageDownloadRequestModifier)?
+    let onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
+
+    init(base: (any ImageDownloadRequestModifier)?, handler: @escaping @Sendable (DownloadTask) -> Void) {
+        self.base = base
+        self.onDownloadTaskStarted = { task in
+            if let task {
+                handler(task)
+            }
+            base?.onDownloadTaskStarted?(task)
+        }
+    }
+
+    func modified(for request: URLRequest) -> URLRequest? {
+        base?.modified(for: request) ?? request
+    }
+}
+
+private struct AsyncDownloadTaskReportingModifier: AsyncImageDownloadRequestModifier {
+    let base: any AsyncImageDownloadRequestModifier
+    let onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
+
+    init(base: any AsyncImageDownloadRequestModifier, handler: @escaping @Sendable (DownloadTask) -> Void) {
+        self.base = base
+        self.onDownloadTaskStarted = { task in
+            if let task {
+                handler(task)
+            }
+            base.onDownloadTaskStarted?(task)
+        }
+    }
+
+    func modified(for request: URLRequest) async -> URLRequest? {
+        await base.modified(for: request)
     }
 }

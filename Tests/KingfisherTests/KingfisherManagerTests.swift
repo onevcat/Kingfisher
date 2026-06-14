@@ -1151,6 +1151,31 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testRetrievingAlternativeSourceTaskUpdateBlockCalledBeforeCompletion() {
+        let exp = expectation(description: #function)
+        let brokenURL = URL(string: "https://kingfisher.test/manager-alternative-sync-primary")!
+        let alternativeURL = URL(string: "https://kingfisher.test/manager-alternative-sync-fallback")!
+        let downloader = ImmediateFailureImageDownloader(name: "test.manager.immediate")
+        let manager = KingfisherManager(downloader: downloader, cache: manager.cache)
+        let downloadTaskUpdated = LockIsolated(false)
+
+        _ = manager.retrieveImage(
+            with: .network(brokenURL),
+            options: [.alternativeSources([.network(alternativeURL)])],
+            downloadTaskUpdated: { newTask in
+                XCTAssertEqual(newTask?.sessionTask?.task.originalRequest?.url, alternativeURL)
+                downloadTaskUpdated.setValue(true)
+            })
+        {
+            result in
+            XCTAssertNotNil(result.error)
+            XCTAssertTrue(downloadTaskUpdated.value)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     func testRetrievingAlternativeSourceCancelled() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -1176,11 +1201,17 @@ class KingfisherManagerTests: XCTestCase {
     }
 
     func testRetrievingAlternativeSourceCanCancelUpdatedTask() {
-        let exp = expectation(description: #function)
+        let updatedExp = expectation(description: "\(#function) updated")
+        let completionExp = expectation(description: "\(#function) completion")
+        let extraCompletionExp = expectation(description: "\(#function) extra completion")
+        extraCompletionExp.isInverted = true
         let url = testURLs[0]
         let dataStub = delayedStub(url, data: testImageData)
         
         let called = LockIsolated(false)
+        let completionCount = LockIsolated(0)
+        let isActive = LockIsolated(true)
+        defer { isActive.setValue(false) }
 
         let brokenURL = URL(string: "https://kingfisher.test/manager-alternative-cancel-updated-task")!
         stub(brokenURL, data: Data())
@@ -1192,24 +1223,34 @@ class KingfisherManagerTests: XCTestCase {
                 XCTAssertNotNil(newTask)
                 newTask?.cancel()
                 called.setValue(true)
+                updatedExp.fulfill()
             }
         )
         {
             result in
+            guard isActive.value else { return }
+            let callCount = completionCount.withValue {
+                $0 += 1
+                return $0
+            }
+            guard callCount == 1 else {
+                extraCompletionExp.fulfill()
+                return
+            }
+
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error?.isTaskCancelled ?? false)
-
-            delay(0.3) {
-                _ = dataStub.go()
-                XCTAssertTrue(called.value)
-                exp.fulfill()
-            }
+            completionExp.fulfill()
         }
         
         XCTAssertNotNil(task)
         XCTAssertTrue(task!.isInitialized)
 
-        waitForExpectations(timeout: 3, handler: nil)
+        wait(for: [updatedExp], timeout: 3)
+        XCTAssertTrue(called.value)
+        _ = dataStub.go()
+        wait(for: [completionExp], timeout: 3)
+        wait(for: [extraCompletionExp], timeout: 0.3)
     }
     
     func testDownsamplingHandleScale2x() {
@@ -2098,6 +2139,25 @@ private final class AsyncCacheTypeCheckProvider: ImageDataProvider, @unchecked S
         onStart()
         try await Task.sleep(nanoseconds: 1_000_000_000)
         return payload
+    }
+}
+
+private final class ImmediateFailureImageDownloader: ImageDownloader, @unchecked Sendable {
+    private var sessions = [URLSession]()
+
+    override func downloadImage(
+        with url: URL,
+        options: KingfisherParsedOptionsInfo,
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask {
+        let session = URLSession(configuration: .ephemeral)
+        sessions.append(session)
+        let sessionTask = SessionDataTask(task: session.dataTask(with: url))
+        let task = DownloadTask(sessionTask: sessionTask, cancelToken: 0)
+        completionHandler?(.failure(.processorError(
+            reason: .processingFailed(processor: DefaultImageProcessor.default, item: .data(Data()))
+        )))
+        return task
     }
 }
 
