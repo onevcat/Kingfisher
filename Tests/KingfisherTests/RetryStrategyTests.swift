@@ -453,6 +453,38 @@ class RetryStrategyTests: XCTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
+
+    func testNetworkObserverDoesNotNotifyAfterCancel() {
+        let exp = expectation(description: #function)
+        exp.isInverted = true
+
+        let observer = NetworkObserverImpl(
+            timeoutInterval: nil,
+            callback: { _ in exp.fulfill() },
+            monitor: .default
+        )
+
+        observer.cancel()
+        observer.notify(isConnected: true)
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testNetworkObserverNotifiesOnlyOnce() {
+        let exp = expectation(description: #function)
+        exp.assertForOverFulfill = true
+
+        let observer = NetworkObserverImpl(
+            timeoutInterval: nil,
+            callback: { _ in exp.fulfill() },
+            monitor: .default
+        )
+
+        observer.notify(isConnected: true)
+        observer.notify(isConnected: false)
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
 
 private struct E: Error {}
@@ -558,6 +590,7 @@ final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
     let callback: @Sendable (Bool) -> Void
     private weak var monitor: TestNetworkMonitor?
     private var timeoutWorkItem: DispatchWorkItem?
+    private var isFinished = false
     private let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.TestNetworkObserver", qos: .utility)
 
     init(timeoutInterval: TimeInterval?, callback: @escaping @Sendable (Bool) -> Void, monitor: TestNetworkMonitor) {
@@ -577,7 +610,8 @@ final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
 
     func notify(isConnected: Bool) {
         queue.async { [weak self] in
-            guard let self else { return }
+            guard let self, !isFinished else { return }
+            isFinished = true
 
             // Cancel timeout if we're notifying
             timeoutWorkItem?.cancel()
@@ -595,7 +629,8 @@ final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
 
     func cancel() {
         queue.async { [weak self] in
-            guard let self else { return }
+            guard let self, !isFinished else { return }
+            isFinished = true
 
             // Cancel timeout
             timeoutWorkItem?.cancel()
