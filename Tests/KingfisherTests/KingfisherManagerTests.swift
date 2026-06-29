@@ -1059,6 +1059,35 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNil(context.popAlternativeSource())
     }
 
+    // Regression test for a data race on `RetrievingContext`. The type is `@unchecked Sendable`
+    // and protects `_options` with `propertyQueue`, but `propagationErrors` used to be an
+    // unsynchronized `var` that is appended from `@Sendable` download completion handlers across
+    // alternative-source failovers. Hammering `appendError` concurrently must record every append
+    // (and stay clean under Thread Sanitizer); the unsynchronized version loses updates and races.
+    func testContextAppendErrorIsThreadSafe() {
+        let info = KingfisherParsedOptionsInfo(nil)
+        let source = Source.network(URL(string: "https://example.com/a.png")!)
+        let context = RetrievingContext<Source>(options: info, originalSource: source)
+        let error = KingfisherError.requestError(reason: .emptyRequest)
+
+        let workers = 8
+        let perWorker = 250
+        let queue = DispatchQueue(label: "test.context.append", attributes: .concurrent)
+        let group = DispatchGroup()
+        for _ in 0..<workers {
+            group.enter()
+            queue.async {
+                for _ in 0..<perWorker {
+                    context.appendError(error, to: source)
+                    _ = context.propagationErrors
+                }
+                group.leave()
+            }
+        }
+        group.wait()
+        XCTAssertEqual(context.propagationErrors.count, workers * perWorker)
+    }
+
     func testRetrievingWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

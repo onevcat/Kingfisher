@@ -1218,7 +1218,11 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
     }
 
     let originalSource: SourceType
-    var propagationErrors: [PropagationError] = []
+
+    private var _propagationErrors: [PropagationError] = []
+    var propagationErrors: [PropagationError] {
+        propertyQueue.sync { _propagationErrors }
+    }
 
     init(options: KingfisherParsedOptionsInfo, originalSource: SourceType) {
         self.originalSource = originalSource
@@ -1226,23 +1230,29 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
     }
 
     func popAlternativeSource() -> Source? {
-        var localOptions = options
-        guard var alternativeSources = localOptions.alternativeSources, !alternativeSources.isEmpty else {
-            return nil
+        // Perform the read-modify-write atomically. Accessing `_options` directly (instead of the
+        // `options` accessor) keeps it within a single `propertyQueue.sync`, which both avoids a
+        // re-entrant deadlock and prevents two concurrent failovers from popping the same source.
+        propertyQueue.sync {
+            guard var alternativeSources = _options.alternativeSources, !alternativeSources.isEmpty else {
+                return nil
+            }
+            let nextSource = alternativeSources.removeFirst()
+            _options.alternativeSources = alternativeSources
+            return nextSource
         }
-        let nextSource = alternativeSources.removeFirst()
-        
-        localOptions.alternativeSources = alternativeSources
-        options = localOptions
-        
-        return nextSource
     }
 
     @discardableResult
     func appendError(_ error: KingfisherError, to source: Source) -> [PropagationError] {
+        // `appendError` is called from `@Sendable` download completion handlers, which may run on
+        // different threads across alternative-source failovers. Mutate the backing store under
+        // `propertyQueue`, matching how `_options` is protected on this `@unchecked Sendable` type.
         let item = PropagationError(source: source, error: error)
-        propagationErrors.append(item)
-        return propagationErrors
+        return propertyQueue.sync {
+            _propagationErrors.append(item)
+            return _propagationErrors
+        }
     }
 }
 
