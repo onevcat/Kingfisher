@@ -156,7 +156,20 @@ public class SessionDataTask: @unchecked Sendable {
     }
 
     func forceCancel() {
-        for token in callbacksStore.keys {
+        // `callbacksStore` is protected by `lock` for every other access. Snapshot the
+        // tokens under the lock before cancelling, for two reasons:
+        // 1. `forceCancel()` is reachable from the public `ImageDownloader.cancelAll()` and
+        //    `cancel(url:)` on arbitrary caller threads, while the session delegate queue may
+        //    concurrently mutate the store via `addCallback`/`completeAndRemoveAllCallbacks`.
+        //    Reading the live `keys` view here would be a data race on the dictionary.
+        // 2. `cancel(token:)` removes the token via `removeCallback`, so iterating the live
+        //    `keys` view would mutate the dictionary mid-iteration.
+        // Iterating an immutable snapshot avoids both. The lock is released before calling
+        // `cancel(token:)`, which re-acquires it (the non-recursive `lock` would otherwise deadlock).
+        lock.lock()
+        let tokens = Array(callbacksStore.keys)
+        lock.unlock()
+        for token in tokens {
             cancel(token: token)
         }
     }
