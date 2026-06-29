@@ -173,6 +173,21 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             }
         }
     }
+    
+    public var autoReverse: Bool = false {
+        didSet {
+            if oldValue != autoReverse {
+                reset()
+                #if os(macOS)
+                needsDisplay = true
+                layer?.setNeedsDisplay()
+                #else
+                setNeedsDisplay()
+                layer.setNeedsDisplay()
+                #endif
+            }
+        }
+    }
 
     /// The delegate of this `AnimatedImageView` object. 
     ///
@@ -444,6 +459,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
                 imageScale: image.kf.scale,
                 framePreloadCount: framePreloadCount,
                 repeatCount: repeatCount,
+                autoReverse: autoReverse,
                 preloadQueue: preloadQueue)
             animator.delegate = self
             animator.needsPrescaling = needsPrescaling
@@ -629,10 +645,15 @@ extension AnimatedImageView {
         private var frameCount = 0
         private var timeSinceLastFrameChange: TimeInterval = 0.0
         private var currentRepeatCount: UInt = 0
+        
+        private let autoReverse: Bool
+        private var isForwardDirection = true
 
         var isFinished: Bool = false
 
         var needsPrescaling = true
+        
+        var needsNotifyLoopIsCompleted = false
 
         weak var delegate: (any AnimatorDelegate)?
 
@@ -677,7 +698,7 @@ extension AnimatedImageView {
 
         /// Whether the current frame is the last frame or not in the animation sequence.
         public var isLastFrame: Bool {
-            return currentFrameIndex == frameCount - 1
+            return isForwardDirection ? currentFrameIndex == frameCount - 1 : currentFrameIndex == 0
         }
 
         var preloadingIsNeeded: Bool {
@@ -712,6 +733,7 @@ extension AnimatedImageView {
                          imageScale: CGFloat,
                          framePreloadCount count: Int,
                          repeatCount: RepeatCount,
+                         autoReverse: Bool,
                          preloadQueue: DispatchQueue) {
             let frameSource = CGImageFrameSource(data: nil, imageSource: source, options: nil)
             self.init(frameSource: frameSource,
@@ -721,6 +743,7 @@ extension AnimatedImageView {
                       imageScale: imageScale,
                       framePreloadCount: count,
                       repeatCount: repeatCount,
+                      autoReverse: autoReverse,
                       preloadQueue: preloadQueue)
         }
         
@@ -742,6 +765,7 @@ extension AnimatedImageView {
              imageScale: CGFloat,
              framePreloadCount count: Int,
              repeatCount: RepeatCount,
+             autoReverse: Bool,
              preloadQueue: DispatchQueue) {
             self.frameSource = source.copy()
             self.contentMode = mode
@@ -750,6 +774,7 @@ extension AnimatedImageView {
             self.imageScale = imageScale
             self.maxFrameCount = count
             self.maxRepeatCount = repeatCount
+            self.autoReverse = autoReverse
             self.preloadQueue = preloadQueue
         }
 
@@ -865,39 +890,53 @@ extension AnimatedImageView {
                 return
             }
 
-            let previousFrame = animatedFrames[previousFrameIndex]
-            animatedFrames[previousFrameIndex] = previousFrame?.placeholderFrame
-            // ensure the image dealloc in main thread
-            defer {
-                if let image = previousFrame?.image {
-                    DispatchQueue.main.async {
-                        _ = image
+            let preloadIndexes = preloadIndexes(start: currentFrameIndex)
+            
+            if !preloadIndexes.contains(previousFrameIndex) {
+                let previousFrame = animatedFrames[previousFrameIndex]
+                animatedFrames[previousFrameIndex] = previousFrame?.placeholderFrame
+
+                // ensure the image dealloc in main thread
+                defer {
+                    if let image = previousFrame?.image {
+                        DispatchQueue.main.async {
+                            _ = image
+                        }
                     }
                 }
             }
 
-            preloadIndexes(start: currentFrameIndex).forEach { index in
+            preloadIndexes.forEach { index in
                 guard let currentAnimatedFrame = animatedFrames[index] else { return }
                 if !currentAnimatedFrame.isPlaceholder { return }
                 animatedFrames[index] = currentAnimatedFrame.makeAnimatedFrame(image: loadFrame(at: index))
             }
         }
-
+        
         @MainActor private func incrementCurrentFrameIndex() {
-            let wasLastFrame = isLastFrame
-            currentFrameIndex = increment(frameIndex: currentFrameIndex)
+            currentFrameIndex = increment(frameIndex: currentFrameIndex, by: isForwardDirection ? 1 : -1)
+            
             if isLastFrame {
-                currentRepeatCount += 1
-                if isReachMaxRepeatCount {
-                    isFinished = true
-
-                    // Notify the delegate here because the animation is stopping.
-                    delegate?.animator(self, didPlayAnimationLoops: currentRepeatCount)
+                if !autoReverse || !isForwardDirection {
+                    currentRepeatCount += 1
+                    if isReachMaxRepeatCount {
+                        isFinished = true
+                        
+                        // Notify the delegate here because the animation is stopping.
+                        delegate?.animator(self, didPlayAnimationLoops: currentRepeatCount)
+                    } else {
+                        needsNotifyLoopIsCompleted = true
+                    }
                 }
-            } else if wasLastFrame {
-
+                
+                if autoReverse {
+                    isForwardDirection.toggle()
+                }
+                
+            } else if needsNotifyLoopIsCompleted {
                 // Notify the delegate that the loop completed
                 delegate?.animator(self, didPlayAnimationLoops: currentRepeatCount)
+                needsNotifyLoopIsCompleted = false
             }
         }
 
@@ -910,17 +949,29 @@ extension AnimatedImageView {
         }
 
         private func increment(frameIndex: Int, by value: Int = 1) -> Int {
-            return (frameIndex + value) % frameCount
+            return max((frameIndex + value) % frameCount, 0)
         }
 
         private func preloadIndexes(start index: Int) -> [Int] {
-            let nextIndex = increment(frameIndex: index)
-            let lastIndex = increment(frameIndex: index, by: maxFrameCount)
+            if isForwardDirection {
+                let nextIndex = increment(frameIndex: index)
+                let lastIndex = increment(frameIndex: index, by: maxFrameCount)
+                
+                if lastIndex >= nextIndex {
+                    return [Int](nextIndex...lastIndex)
+                } else {
+                    if autoReverse {
+                        return [Int]((frameCount - maxFrameCount)..<frameCount)
+                    } else {
+                        return [Int](nextIndex..<frameCount) + [Int](0...lastIndex)
+                    }
+                }
+            }
+            else {
+                let prevIndex = increment(frameIndex: index, by: -1)
+                let lastIndex = increment(frameIndex: index, by: -maxFrameCount)
 
-            if lastIndex >= nextIndex {
-                return [Int](nextIndex...lastIndex)
-            } else {
-                return [Int](nextIndex..<frameCount) + [Int](0...lastIndex)
+                return [Int](lastIndex...max(prevIndex, maxFrameCount))
             }
         }
     }
