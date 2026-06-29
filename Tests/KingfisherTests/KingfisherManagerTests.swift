@@ -1059,6 +1059,71 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNil(context.popAlternativeSource())
     }
 
+    // MARK: - CacheCallbackCoordinator
+
+    // A cache write can complete before the synchronous `.cacheInitiated` action is applied (the
+    // store callbacks run on a different queue). The coordinator must tolerate `.cacheInitiated`
+    // arriving after `.cachingImage` / `.cachingOriginalImage` instead of trapping with the
+    // assertion "This case should not happen in CacheCallbackCoordinator: originalImageCached -
+    // cacheInitiated" that intermittently failed CI.
+    func testCacheCoordinatorToleratesLateCacheInitiated() {
+        for waitForCache in [true, false] {
+            let afterOriginal = CacheCallbackCoordinator(shouldWaitForCache: waitForCache, shouldCacheOriginal: true)
+            afterOriginal.apply(.cachingOriginalImage) {}
+            afterOriginal.apply(.cacheInitiated) {}   // must not trap
+
+            let afterImage = CacheCallbackCoordinator(shouldWaitForCache: waitForCache, shouldCacheOriginal: true)
+            afterImage.apply(.cachingImage) {}
+            afterImage.apply(.cacheInitiated) {}      // must not trap
+        }
+    }
+
+    // The completion (`trigger`) must fire exactly once, regardless of the order in which the three
+    // cache actions arrive.
+    func testCacheCoordinatorTriggersExactlyOnceForEveryOrdering() {
+        let orderings: [[CacheCallbackCoordinator.Action]] = [
+            [.cacheInitiated, .cachingImage, .cachingOriginalImage],
+            [.cacheInitiated, .cachingOriginalImage, .cachingImage],
+            [.cachingImage, .cacheInitiated, .cachingOriginalImage],
+            [.cachingImage, .cachingOriginalImage, .cacheInitiated],
+            [.cachingOriginalImage, .cacheInitiated, .cachingImage],
+            [.cachingOriginalImage, .cachingImage, .cacheInitiated],
+        ]
+        for waitForCache in [true, false] {
+            for order in orderings {
+                let coordinator = CacheCallbackCoordinator(shouldWaitForCache: waitForCache, shouldCacheOriginal: true)
+                var triggers = 0
+                for action in order {
+                    coordinator.apply(action) { triggers += 1 }
+                }
+                XCTAssertEqual(triggers, 1, "waitForCache=\(waitForCache), order=\(order)")
+            }
+        }
+    }
+
+    // Applying the actions concurrently must stay race-free and still fire the completion exactly
+    // once (the previous non-atomic read-then-write could double-fire or drop it).
+    func testCacheCoordinatorConcurrentActionsTriggerOnce() {
+        let lock = NSLock()
+        for _ in 0..<1000 {
+            let coordinator = CacheCallbackCoordinator(shouldWaitForCache: true, shouldCacheOriginal: true)
+            var triggers = 0
+            let group = DispatchGroup()
+            let actions: [CacheCallbackCoordinator.Action] = [.cacheInitiated, .cachingImage, .cachingOriginalImage]
+            for action in actions {
+                group.enter()
+                DispatchQueue.global().async {
+                    coordinator.apply(action) {
+                        lock.lock(); triggers += 1; lock.unlock()
+                    }
+                    group.leave()
+                }
+            }
+            group.wait()
+            XCTAssertEqual(triggers, 1)
+        }
+    }
+
     func testRetrievingWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

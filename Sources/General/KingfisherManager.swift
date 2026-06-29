@@ -1279,38 +1279,54 @@ class CacheCallbackCoordinator: @unchecked Sendable {
     }
 
     func apply(_ action: Action, trigger: () -> Void) {
-        switch (state, action) {
-        case (.done, _):
-            break
+        // Resolve the whole transition atomically. The previous version read `state` (in the
+        // `switch`) and wrote it back through separate `stateQueue.sync` calls, so two concurrent
+        // `apply` calls could interleave between the read and the write — corrupting the state
+        // machine and either firing `trigger` twice or dropping it (a stuck `waitForCache`
+        // completion). `trigger()` is invoked after the queue is released so user code never runs
+        // while the queue is held.
+        let shouldTrigger = stateQueue.sync { () -> Bool in
+            switch (threadSafeState, action) {
+            case (.done, _):
+                return false
 
-        // From .idle
-        case (.idle, .cacheInitiated):
-            if !shouldWaitForCache {
-                state = .done
-                trigger()
+            // From .idle
+            case (.idle, .cacheInitiated):
+                guard !shouldWaitForCache else { return false }
+                threadSafeState = .done
+                return true
+            case (.idle, .cachingImage):
+                if shouldCacheOriginal {
+                    threadSafeState = .imageCached
+                    return false
+                } else {
+                    threadSafeState = .done
+                    return true
+                }
+            case (.idle, .cachingOriginalImage):
+                threadSafeState = .originalImageCached
+                return false
+
+            // One half is cached; the matching half completes the work.
+            case (.imageCached, .cachingOriginalImage), (.originalImageCached, .cachingImage):
+                threadSafeState = .done
+                return true
+
+            // A cache write can finish before the synchronous `.cacheInitiated` signal is applied,
+            // so `.cacheInitiated` may arrive in `.imageCached` / `.originalImageCached` rather than
+            // `.idle`. Treat it exactly like `(.idle, .cacheInitiated)` instead of trapping.
+            case (.imageCached, .cacheInitiated), (.originalImageCached, .cacheInitiated):
+                guard !shouldWaitForCache else { return false }
+                threadSafeState = .done
+                return true
+
+            default:
+                assertionFailure("This case should not happen in CacheCallbackCoordinator: \(threadSafeState) - \(action)")
+                return false
             }
-        case (.idle, .cachingImage):
-            if shouldCacheOriginal {
-                state = .imageCached
-            } else {
-                state = .done
-                trigger()
-            }
-        case (.idle, .cachingOriginalImage):
-            state = .originalImageCached
-
-        // From .imageCached
-        case (.imageCached, .cachingOriginalImage):
-            state = .done
+        }
+        if shouldTrigger {
             trigger()
-
-        // From .originalImageCached
-        case (.originalImageCached, .cachingImage):
-            state = .done
-            trigger()
-
-        default:
-            assertionFailure("This case should not happen in CacheCallbackCoordinator: \(state) - \(action)")
         }
     }
 }
