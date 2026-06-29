@@ -125,6 +125,30 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
+    // Verifies the `mutableData` getter (issue #2543): it returns the accumulated bytes correctly and
+    // as an independent copy — appending more data afterward must not mutate a previously returned
+    // value (the copy-on-write isolation introduced by #2524) — without using the generic `Data(_:)`
+    // sequence initializer that traps on iOS 26.x.
+    func testSessionDataTaskMutableDataIsCorrectIndependentCopy() {
+        let url = URL(string: "https://example.com/mutable-data")!
+        let task = SessionDataTask(task: URLSession.shared.dataTask(with: url))
+
+        XCTAssertEqual(task.mutableData, Data())
+        XCTAssertEqual(task.mutableDataCount, 0)
+
+        task.didReceiveData(Data([1, 2, 3]))
+        task.didReceiveData(Data([4, 5, 6, 7]))
+
+        let snapshot = task.mutableData
+        XCTAssertEqual(snapshot, Data([1, 2, 3, 4, 5, 6, 7]))
+        XCTAssertEqual(task.mutableDataCount, 7)
+
+        // Appending after reading must not mutate the previously returned copy.
+        task.didReceiveData(Data([8, 9]))
+        XCTAssertEqual(snapshot, Data([1, 2, 3, 4, 5, 6, 7]), "previously returned data must be an independent copy")
+        XCTAssertEqual(task.mutableData, Data([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+    }
+
     func testDownloadWithModifyingRequest() {
         let exp = expectation(description: #function)
 

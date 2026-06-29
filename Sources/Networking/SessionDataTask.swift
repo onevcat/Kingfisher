@@ -45,7 +45,19 @@ public class SessionDataTask: @unchecked Sendable {
     public var mutableData: Data {
         lock.lock()
         defer { lock.unlock() }
-        return Data(_mutableData)
+        // Return a standalone copy that does not share copy-on-write storage with `_mutableData`
+        // (the intent of #2524) — but build it WITHOUT `Data(_mutableData)`. Because `Data` is a
+        // `Sequence<UInt8>`, `Data(_mutableData)` resolves to the generic `Data.init<S: Sequence>(_:)`,
+        // which on iOS 26.x can trap inside `__DataStorage.init(bytes:length:)` while copying data that
+        // was accumulated through many `append`s (issue #2543). Allocating the destination up front and
+        // copying the bytes in goes through a different, stable path.
+        let count = _mutableData.count
+        guard count > 0 else { return Data() }
+        var copy = Data(count: count)
+        copy.withUnsafeMutableBytes { destination in
+            _ = _mutableData.copyBytes(to: destination)
+        }
+        return copy
     }
 
     var mutableDataCount: Int {
