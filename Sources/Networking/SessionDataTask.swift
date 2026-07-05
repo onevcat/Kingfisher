@@ -87,7 +87,13 @@ public class SessionDataTask: @unchecked Sendable {
     let onTaskDone = Delegate<(Result<(Data, URLResponse?), KingfisherError>, [TaskCallback]), Void>()
     let onCallbackCancelled = Delegate<(CancelToken, TaskCallback), Void>()
 
-    var started = false
+    private var _started = false
+    var started: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return _started
+    }
+
     var containsCallbacks: Bool {
         // We should be able to use `task.state != .running` to check it.
         // However, in some rare cases, cancelling the task does not change
@@ -143,8 +149,14 @@ public class SessionDataTask: @unchecked Sendable {
     }
 
     func resume() {
-        guard !started else { return }
-        started = true
+        // Atomic check-and-set; `task.resume()` is called outside the lock.
+        lock.lock()
+        guard !_started else {
+            lock.unlock()
+            return
+        }
+        _started = true
+        lock.unlock()
         task.resume()
     }
 
@@ -156,16 +168,9 @@ public class SessionDataTask: @unchecked Sendable {
     }
 
     func forceCancel() {
-        // `callbacksStore` is protected by `lock` for every other access. Snapshot the
-        // tokens under the lock before cancelling, for two reasons:
-        // 1. `forceCancel()` is reachable from the public `ImageDownloader.cancelAll()` and
-        //    `cancel(url:)` on arbitrary caller threads, while the session delegate queue may
-        //    concurrently mutate the store via `addCallback`/`completeAndRemoveAllCallbacks`.
-        //    Reading the live `keys` view here would be a data race on the dictionary.
-        // 2. `cancel(token:)` removes the token via `removeCallback`, so iterating the live
-        //    `keys` view would mutate the dictionary mid-iteration.
-        // Iterating an immutable snapshot avoids both. The lock is released before calling
-        // `cancel(token:)`, which re-acquires it (the non-recursive `lock` would otherwise deadlock).
+        // Snapshot the tokens under the lock, then cancel outside of it: `forceCancel` can run on
+        // any thread while `callbacksStore` is being mutated, and `cancel(token:)` re-acquires the
+        // non-recurrent lock.
         lock.lock()
         let tokens = Array(callbacksStore.keys)
         lock.unlock()

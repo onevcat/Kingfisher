@@ -426,6 +426,38 @@ class ImageDownloaderTests: XCTestCase {
         }
     }
 
+    // Hammers all mutating and reading surfaces of `SessionDataTask` concurrently, including the
+    // `started` flag which `resume()` writes while `ImageDownloader.startDownloadTask` reads it
+    // from other threads. Meaningful mainly under Thread Sanitizer.
+    func testSessionDataTaskConcurrentAccessIsThreadSafe() {
+        let url = URL(string: "https://example.com/concurrent-access")!
+        // `resume()` resumes the underlying URLSessionDataTask; stub the URL so no real request leaves.
+        stub(url, data: Data())
+        let options = KingfisherParsedOptionsInfo(nil)
+
+        for _ in 0..<50 {
+            let task = SessionDataTask(task: URLSession.shared.dataTask(with: url))
+            let group = DispatchGroup()
+
+            func hammer(_ body: @escaping () -> Void) {
+                group.enter()
+                DispatchQueue.global().async {
+                    body()
+                    group.leave()
+                }
+            }
+
+            hammer { for _ in 0..<20 { _ = task.addCallback(.init(onCompleted: nil, options: options)) } }
+            hammer { for _ in 0..<5 { task.forceCancel() } }
+            hammer { for _ in 0..<20 { task.resume() } }
+            hammer { for _ in 0..<20 { _ = task.started; _ = task.containsCallbacks } }
+            hammer { for _ in 0..<20 { task.didReceiveData(Data([0x01])); _ = task.mutableDataCount } }
+            hammer { _ = task.completeAndRemoveAllCallbacks() }
+
+            group.wait()
+        }
+    }
+
     // Issue 532 https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305644311
     func testCancelThenRestartSameDownload() {
         let exp = expectation(description: #function)
