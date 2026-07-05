@@ -386,6 +386,46 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    // Regression test for a data race in `SessionDataTask.forceCancel()`.
+    //
+    // `forceCancel()` — reachable from the public `ImageDownloader.cancelAll()` / `cancel(url:)`
+    // on arbitrary caller threads — used to iterate `callbacksStore.keys` without holding `lock`,
+    // while the session delegate queue mutates the store through `addCallback`. That is a
+    // read/write data race on a Swift `Dictionary` (reported by Thread Sanitizer and able to
+    // crash on rehash). This test hammers both paths concurrently; with the snapshot-under-lock
+    // fix it completes without crashing and stays clean under TSan.
+    func testForceCancelConcurrentWithAddCallbackIsThreadSafe() {
+        let url = URL(string: "https://example.com/forceCancelRace.png")!
+        let options = KingfisherParsedOptionsInfo(nil)
+        let urlTask = URLSession.shared.dataTask(with: url)
+        let queue = DispatchQueue(label: "test.forceCancel.race", attributes: .concurrent)
+
+        for _ in 0..<500 {
+            let sessionTask = SessionDataTask(task: urlTask)
+            // Pre-load callbacks so `forceCancel` always has tokens to iterate.
+            for _ in 0..<8 {
+                _ = sessionTask.addCallback(.init(onCompleted: nil, options: options))
+            }
+
+            let group = DispatchGroup()
+            // Writer: keep inserting into `callbacksStore`.
+            group.enter()
+            queue.async {
+                for _ in 0..<16 {
+                    _ = sessionTask.addCallback(.init(onCompleted: nil, options: options))
+                }
+                group.leave()
+            }
+            // Reader under test: iterate + cancel concurrently with the writer.
+            group.enter()
+            queue.async {
+                sessionTask.forceCancel()
+                group.leave()
+            }
+            group.wait()
+        }
+    }
+
     // Issue 532 https://github.com/onevcat/Kingfisher/issues/532#issuecomment-305644311
     func testCancelThenRestartSameDownload() {
         let exp = expectation(description: #function)
