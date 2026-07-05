@@ -332,15 +332,6 @@ open class ImageDownloader: @unchecked Sendable {
         sessionDelegate.onResponseReceived.delegate(on: self) { (self, response) in
             await (self.delegate ?? self).imageDownloader(self, didReceive: response)
         }
-        sessionDelegate.onDownloadingFinished.delegate(on: self) { (self, value) in
-            let (url, result) = value
-            do {
-                let value = try result.get()
-                self.delegate?.imageDownloader(self, didFinishDownloadingImageForURL: url, with: value, error: nil)
-            } catch {
-                self.delegate?.imageDownloader(self, didFinishDownloadingImageForURL: url, with: nil, error: error)
-            }
-        }
         sessionDelegate.onDidDownloadData.delegate(on: self) { (self, task) in
             (self.delegate ?? self).imageDownloader(self, didDownload: task.mutableData, with: task)
         }
