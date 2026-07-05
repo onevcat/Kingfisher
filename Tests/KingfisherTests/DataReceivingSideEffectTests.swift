@@ -50,6 +50,29 @@ class DataReceivingSideEffectTests: XCTestCase {
         )
     }
 
+    func testSessionDataTaskSharedDataIsZeroCopyAndUnaffectedByLaterAppends() {
+        let url = URL(string: "https://example.com/image.png")!
+        let urlTask = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let task = SessionDataTask(task: urlTask)
+
+        let received = Data(repeating: 0x22, count: 1024 * 1024)
+        task.didReceiveData(received)
+
+        // Zero-copy: repeated reads share the internal COW storage instead of allocating copies.
+        let first = task.sharedData
+        let second = task.sharedData
+        XCTAssertEqual(
+            storageAddress(of: first),
+            storageAddress(of: second),
+            "sharedData should share the internal COW storage without allocating a copy."
+        )
+
+        // COW safety: a later append must not mutate a previously returned value.
+        task.didReceiveData(Data([0x33]))
+        XCTAssertEqual(first, received)
+        XCTAssertEqual(task.sharedData.count, received.count + 1)
+    }
+
     private func storageAddress(of data: Data) -> UInt {
         data.withUnsafeBytes { buffer in
             UInt(bitPattern: buffer.baseAddress!)

@@ -124,7 +124,7 @@ final class ImageProgressiveProvider: DataReceivingSideEffect, @unchecked Sendab
 
         DispatchQueue.main.async {
             guard self.onShouldApply() else { return }
-            self.update(data: task.mutableData, with: task.callbacks)
+            self.update(data: task.sharedData, with: task.callbacks)
         }
     }
 

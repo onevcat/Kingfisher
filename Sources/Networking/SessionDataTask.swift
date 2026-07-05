@@ -54,6 +54,17 @@ public class SessionDataTask: @unchecked Sendable {
         return _mutableData.count
     }
 
+    // Zero-copy access to the accumulated data for internal use. Unlike `mutableData`, this shares
+    // the storage of `_mutableData` through copy-on-write instead of allocating a full-size copy.
+    // That allocation can trap (`EXC_BREAKPOINT` in `__DataStorage`) on memory-constrained devices
+    // when the downloaded data is large (#2543). Sharing is safe: a later `didReceiveData` append
+    // copies on write and never mutates the storage a previously returned value sees.
+    var sharedData: Data {
+        lock.lock()
+        defer { lock.unlock() }
+        return _mutableData
+    }
+
     // This is a copy of `task.originalRequest?.url`. It is for obtaining race-safe behavior for a pitfall on iOS 13.
     // Ref: https://github.com/onevcat/Kingfisher/issues/1511
     public let originalURL: URL?

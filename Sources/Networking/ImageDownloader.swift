@@ -342,7 +342,7 @@ open class ImageDownloader: @unchecked Sendable {
             }
         }
         sessionDelegate.onDidDownloadData.delegate(on: self) { (self, task) in
-            (self.delegate ?? self).imageDownloader(self, didDownload: task.mutableData, with: task)
+            (self.delegate ?? self).imageDownloader(self, didDownload: task.sharedData, with: task)
         }
     }
 
