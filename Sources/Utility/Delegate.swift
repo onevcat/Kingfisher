@@ -114,6 +114,13 @@ public class Delegate<Input, Output>: @unchecked Sendable {
     public var isSet: Bool {
         block != nil || asyncBlock != nil
     }
+    
+    func copy() -> Delegate<Input, Output> {
+        let result = Delegate<Input, Output>()
+        result.block = block
+        result.asyncBlock = asyncBlock
+        return result
+    }
 }
 
 extension Delegate where Input == Void {

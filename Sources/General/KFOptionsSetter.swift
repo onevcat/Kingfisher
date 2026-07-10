@@ -40,9 +40,17 @@ public protocol KFOptionSetter {
     var onFailureDelegate: Delegate<KingfisherError, Void> { get }
     var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { get }
     var onProgressDelegate: Delegate<(Int64, Int64), Void> { get }
+    
+    func copyForMutation() -> Self
 }
 
 extension KF.Builder: KFOptionSetter { }
+
+extension KFOptionSetter {
+    public func copyForMutation() -> Self {
+        self
+    }
+}
 
 final actor KFDelegateObserver {
     static let `default` = KFDelegateObserver()
@@ -60,10 +68,11 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with changes applied.
     ///
     public func onProgress(_ block: DownloadProgressBlock?) -> Self {
-        onProgressDelegate.delegate(on: KFDelegateObserver.default) { (_, result) in
+        let result = copyForMutation()
+        result.onProgressDelegate.delegate(on: KFDelegateObserver.default) { (_, result) in
             block?(result.0, result.1)
         }
-        return self
+        return result
     }
 
     /// Sets the done block to current builder.
@@ -72,10 +81,11 @@ extension KFOptionSetter {
     /// - Returns: A `Self` with changes applied.
     ///
     public func onSuccess(_ block: ((RetrieveImageResult) -> Void)?) -> Self {
-        onSuccessDelegate.delegate(on: KFDelegateObserver.default) { (_, result) in
+        let result = copyForMutation()
+        result.onSuccessDelegate.delegate(on: KFDelegateObserver.default) { (_, result) in
             block?(result)
         }
-        return self
+        return result
     }
 
     /// Sets the catch block to current builder.
@@ -84,10 +94,11 @@ extension KFOptionSetter {
     /// - Returns: A `Self` with changes applied.
     ///
     public func onFailure(_ block: ((KingfisherError) -> Void)?) -> Self {
-        onFailureDelegate.delegate(on: KFDelegateObserver.default) { (_, error) in
+        let result = copyForMutation()
+        result.onFailureDelegate.delegate(on: KFDelegateObserver.default) { (_, error) in
             block?(error)
         }
-        return self
+        return result
     }
 }
 
@@ -103,8 +114,9 @@ extension KFOptionSetter {
     /// such as attempting to retrieve cached images and storing downloaded images within it.
     ///
     public func targetCache(_ cache: ImageCache) -> Self {
-        options.targetCache = cache
-        return self
+        let result = copyForMutation()
+        result.options.targetCache = cache
+        return result
     }
     
     /// Sets the target image cache to store the original downloaded image for this task.
@@ -125,8 +137,9 @@ extension KFOptionSetter {
     /// applied with the given processor. It is an optimization for not downloading the same image for multiple times.
     ///
     public func originalCache(_ cache: ImageCache) -> Self {
-        options.originalCache = cache
-        return self
+        let result = copyForMutation()
+        result.options.originalCache = cache
+        return result
     }
 
     /// Sets the downloader to be used for the image download task.
@@ -137,8 +150,9 @@ extension KFOptionSetter {
     /// Kingfisher will utilize the specified ``ImageDownloader`` instance to download requested images.
     ///
     public func downloader(_ downloader: ImageDownloader) -> Self {
-        options.downloader = downloader
-        return self
+        let result = copyForMutation()
+        result.options.downloader = downloader
+        return result
     }
 
     /// Sets the download priority for the image task.
@@ -152,8 +166,9 @@ extension KFOptionSetter {
     /// (`URLSessionTask.defaultPriority`) will be used.
     ///
     public func downloadPriority(_ priority: Float) -> Self {
-        options.downloadPriority = priority
-        return self
+        let result = copyForMutation()
+        result.options.downloadPriority = priority
+        return result
     }
 
     /// Sets whether Kingfisher should ignore the cache and attempt to initiate a download task for the image source.
@@ -162,8 +177,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func forceRefresh(_ enabled: Bool = true) -> Self {
-        options.forceRefresh = enabled
-        return self
+        let result = copyForMutation()
+        result.options.forceRefresh = enabled
+        return result
     }
 
     /// Sets whether Kingfisher should attempt to retrieve the image from the memory cache first. If the image is not 
@@ -176,8 +192,9 @@ extension KFOptionSetter {
     /// while avoiding multiple downloads of the same image.
     ///
     public func fromMemoryCacheOrRefresh(_ enabled: Bool = true) -> Self {
-        options.fromMemoryCacheOrRefresh = enabled
-        return self
+        let result = copyForMutation()
+        result.options.fromMemoryCacheOrRefresh = enabled
+        return result
     }
 
     /// Sets whether the image should be cached only in memory and not on disk.
@@ -186,8 +203,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func cacheMemoryOnly(_ enabled: Bool = true) -> Self {
-        options.cacheMemoryOnly = enabled
-        return self
+        let result = copyForMutation()
+        result.options.cacheMemoryOnly = enabled
+        return result
     }
 
     /// Sets whether Kingfisher should wait for caching operations to be completed before invoking the `onSuccess` 
@@ -197,8 +215,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func waitForCache(_ enabled: Bool = true) -> Self {
-        options.waitForCache = enabled
-        return self
+        let result = copyForMutation()
+        result.options.waitForCache = enabled
+        return result
     }
 
     /// Sets whether Kingfisher should exclusively attempt to retrieve the image from the cache and not from the network.
@@ -210,8 +229,9 @@ extension KFOptionSetter {
     /// ``KingfisherError/CacheErrorReason/imageNotExisting(key:)`` error.
     ///
     public func onlyFromCache(_ enabled: Bool = true) -> Self {
-        options.onlyFromCache = enabled
-        return self
+        let result = copyForMutation()
+        result.options.onlyFromCache = enabled
+        return result
     }
 
     /// Sets whether the image should be decoded on a background thread before usage.
@@ -224,8 +244,9 @@ extension KFOptionSetter {
     /// image preparation before usage.
     ///
     public func backgroundDecode(_ enabled: Bool = true) -> Self {
-        options.backgroundDecode = enabled
-        return self
+        let result = copyForMutation()
+        result.options.backgroundDecode = enabled
+        return result
     }
 
     /// Sets the callback queue used as the target queue for dispatching callbacks when retrieving images from the 
@@ -238,8 +259,9 @@ extension KFOptionSetter {
     /// Callbacks for those methods will always be executed on the main queue.
     ///
     public func callbackQueue(_ queue: CallbackQueue) -> Self {
-        options.callbackQueue = queue
-        return self
+        let result = copyForMutation()
+        result.options.callbackQueue = queue
+        return result
     }
 
     /// Sets the scale factor value used when converting retrieved data to an image.
@@ -252,8 +274,9 @@ extension KFOptionSetter {
     /// converting the data to an image object with a `scale` of 1.0.
     ///
     public func scaleFactor(_ factor: CGFloat) -> Self {
-        options.scaleFactor = factor
-        return self
+        let result = copyForMutation()
+        result.options.scaleFactor = factor
+        return result
     }
 
     /// Sets whether the original image should be cached, even when the original image has been processed by other ``ImageProcessor``s.
@@ -269,8 +292,9 @@ extension KFOptionSetter {
     /// - Note: The original image will be cached only in disk storage.
     ///
     public func cacheOriginalImage(_ enabled: Bool = true) -> Self {
-        options.cacheOriginalImage = enabled
-        return self
+        let result = copyForMutation()
+        result.options.cacheOriginalImage = enabled
+        return result
     }
 
     /// Sets writing options for an original image on its initial write to disk storage.
@@ -283,8 +307,9 @@ extension KFOptionSetter {
     /// using `[.completeFileProtection]`.
     ///
     public func diskStoreWriteOptions(_ writingOptions: Data.WritingOptions) -> Self {
-        options.diskStoreWriteOptions = writingOptions
-        return self
+        let result = copyForMutation()
+        result.options.diskStoreWriteOptions = writingOptions
+        return result
     }
 
     /// Sets whether disk storage loading should occur in the same calling queue.
@@ -305,8 +330,9 @@ extension KFOptionSetter {
     /// environment. For UIKit/AppKit usage, the default remains `false` for optimal performance.
     ///
     public func loadDiskFileSynchronously(_ enabled: Bool = true) -> Self {
-        options.loadDiskFileSynchronously = enabled
-        return self
+        let result = copyForMutation()
+        result.options.loadDiskFileSynchronously = enabled
+        return result
     }
 
     /// Sets the queue on which image processing should occur.
@@ -319,8 +345,9 @@ extension KFOptionSetter {
     ///  potential flickering but may lead to UI blocking if the processor requires substantial time to execute.
     ///
     public func processingQueue(_ queue: CallbackQueue?) -> Self {
-        options.processingQueue = queue
-        return self
+        let result = copyForMutation()
+        result.options.processingQueue = queue
+        return result
     }
 
     /// Sets the alternative sources to be used when loading the original input `Source` fails.
@@ -340,8 +367,9 @@ extension KFOptionSetter {
     /// loading of alternative sources.
     ///
     public func alternativeSources(_ sources: [Source]?) -> Self {
-        options.alternativeSources = sources
-        return self
+        let result = copyForMutation()
+        result.options.alternativeSources = sources
+        return result
     }
 
     /// Sets a retry strategy to be used when issues arise during image retrieval.
@@ -350,8 +378,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func retry(_ strategy: (any RetryStrategy)?) -> Self {
-        options.retryStrategy = strategy
-        return self
+        let result = copyForMutation()
+        result.options.retryStrategy = strategy
+        return result
     }
 
     /// Sets a retry strategy with a maximum retry count and retry interval.
@@ -368,8 +397,9 @@ extension KFOptionSetter {
     ///
     public func retry(maxCount: Int, interval: DelayRetryStrategy.Interval = .seconds(3)) -> Self {
         let strategy = DelayRetryStrategy(maxRetryCount: maxCount, retryInterval: interval)
-        options.retryStrategy = strategy
-        return self
+        let result = copyForMutation()
+        result.options.retryStrategy = strategy
+        return result
     }
 
     /// Sets the `Source` to be loaded when the user enables Low Data Mode and the original source fails with an
@@ -387,8 +417,9 @@ extension KFOptionSetter {
     /// and the original source will be loaded following the system's default behavior in a regular manner.
     ///
     public func lowDataModeSource(_ source: Source?) -> Self {
-        options.lowDataModeSource = source
-        return self
+        let result = copyForMutation()
+        result.options.lowDataModeSource = source
+        return result
     }
 
     /// Sets whether the image setting for an image view should include a transition even when the image is retrieved 
@@ -398,8 +429,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func forceTransition(_ enabled: Bool = true) -> Self {
-        options.forceTransition = enabled
-        return self
+        let result = copyForMutation()
+        result.options.forceTransition = enabled
+        return result
     }
 
     /// Sets the image to be used in the event of a failure during image retrieval.
@@ -412,8 +444,9 @@ extension KFOptionSetter {
     ///  loading process but prefer to use a default image when requests fail.
     ///
     public func onFailureImage(_ image: KFCrossPlatformImage?) -> Self {
-        options.onFailureImage = .some(image)
-        return self
+        let result = copyForMutation()
+        result.options.onFailureImage = .some(image)
+        return result
     }
 }
 
@@ -429,8 +462,9 @@ extension KFOptionSetter {
     /// purposes, such as adding an authentication token to the header, implementing basic HTTP authentication,
     /// or URL mapping.
     public func requestModifier(_ modifier: any AsyncImageDownloadRequestModifier) -> Self {
-        options.requestModifier = modifier
-        return self
+        let result = copyForMutation()
+        result.options.requestModifier = modifier
+        return result
     }
 
     /// Sets a block to modify the image download request before it is sent.
@@ -442,12 +476,13 @@ extension KFOptionSetter {
     /// such as adding an authentication token to the header, implementing basic HTTP authentication, or URL mapping.
     ///
     public func requestModifier(_ modifyBlock: @escaping @Sendable (inout URLRequest) -> Void) -> Self {
-        options.requestModifier = AnyModifier { r -> URLRequest? in
+        let result = copyForMutation()
+        result.options.requestModifier = AnyModifier { r -> URLRequest? in
             var request = r
             modifyBlock(&request)
             return request
         }
-        return self
+        return result
     }
 }
 
@@ -465,8 +500,9 @@ extension KFOptionSetter {
     /// modification.
     ///
     public func redirectHandler(_ handler: any ImageDownloadRedirectHandler) -> Self {
-        options.redirectHandler = handler
-        return self
+        let result = copyForMutation()
+        result.options.redirectHandler = handler
+        return result
     }
 
     /// Sets a block to modify the image download request during redirection.
@@ -486,8 +522,9 @@ extension KFOptionSetter {
             )
             block(payload)
         }
-        options.redirectHandler = redirectHandler
-        return self
+        let result = copyForMutation()
+        result.options.redirectHandler = redirectHandler
+        return result
     }
 }
 
@@ -502,8 +539,9 @@ extension KFOptionSetter {
     /// - Note: To append a processor to the current ones instead of replacing them all, use ``appendProcessor(_:)``.
     ///
     public func setProcessor(_ processor: any ImageProcessor) -> Self {
-        options.processor = processor
-        return self
+        let result = copyForMutation()
+        result.options.processor = processor
+        return result
     }
     
     /// Enables progressive image loading with a specified `ImageProgressive` setting to process the
@@ -511,8 +549,9 @@ extension KFOptionSetter {
     /// - Parameter progressive: The progressive settings which is used while loading.
     /// - Returns: A ``KF/Builder`` with changes applied.
     public func progressiveJPEG(_ progressive: ImageProgressive? = .init()) -> Self {
-        options.progressiveJPEG = progressive
-        return self
+        let result = copyForMutation()
+        result.options.progressiveJPEG = progressive
+        return result
     }
 
     /// Sets an array of image processors for the image task, replacing the current image processor settings.
@@ -525,15 +564,16 @@ extension KFOptionSetter {
     /// `|>` operator, and then use ``KFOptionSetter/appendProcessor(_:)``.
     ///
     public func setProcessors(_ processors: [any ImageProcessor]) -> Self {
+        let result = copyForMutation()
         switch processors.count {
         case 0:
-            options.processor = DefaultImageProcessor.default
+            result.options.processor = DefaultImageProcessor.default
         case 1...:
-            options.processor = processors.dropFirst().reduce(processors[0]) { $0 |> $1 }
+            result.options.processor = processors.dropFirst().reduce(processors[0]) { $0 |> $1 }
         default:
             assertionFailure("Never happen")
         }
-        return self
+        return result
     }
 
     /// Appends a processor to the current set of processors.
@@ -542,8 +582,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func appendProcessor(_ processor: any ImageProcessor) -> Self {
-        options.processor = options.processor |> processor
-        return self
+        let result = copyForMutation()
+        result.options.processor = result.options.processor |> processor
+        return result
     }
 
     /// Appends a ``RoundCornerImageProcessor`` to the current set of processors.
@@ -683,8 +724,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func serialize(by cacheSerializer: any CacheSerializer) -> Self {
-        options.cacheSerializer = cacheSerializer
-        return self
+        let result = copyForMutation()
+        result.options.cacheSerializer = cacheSerializer
+        return result
     }
 
     /// Uses a specified format to serialize the image data to disk. It converts the image object to the given data 
@@ -708,8 +750,9 @@ extension KFOptionSetter {
         case .unknown:
             cacheSerializer = .png
         }
-        options.cacheSerializer = cacheSerializer
-        return self
+        let result = copyForMutation()
+        result.options.cacheSerializer = cacheSerializer
+        return result
     }
 }
 
@@ -726,8 +769,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func imageModifier(_ modifier: (any ImageModifier)?) -> Self {
-        options.imageModifier = modifier
-        return self
+        let result = copyForMutation()
+        result.options.imageModifier = modifier
+        return result
     }
 
     /// Sets a block to modify the image object. Use this to modify the fetched image object's properties if needed.
@@ -745,8 +789,9 @@ extension KFOptionSetter {
             try block(&image)
             return image
         }
-        options.imageModifier = modifier
-        return self
+        let result = copyForMutation()
+        result.options.imageModifier = modifier
+        return result
     }
 }
 
@@ -764,8 +809,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func memoryCacheExpiration(_ expiration: StorageExpiration?) -> Self {
-        options.memoryCacheExpiration = expiration
-        return self
+        let result = copyForMutation()
+        result.options.memoryCacheExpiration = expiration
+        return result
     }
 
     /// Sets the expiration extending setting for the memory cache. The item expiration time will be incremented by this 
@@ -780,8 +826,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func memoryCacheAccessExtending(_ extending: ExpirationExtending) -> Self {
-        options.memoryCacheAccessExtendingExpiration = extending
-        return self
+        let result = copyForMutation()
+        result.options.memoryCacheAccessExtendingExpiration = extending
+        return result
     }
 
     /// Sets the expiration setting for the disk cache of this image task.
@@ -794,8 +841,9 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func diskCacheExpiration(_ expiration: StorageExpiration?) -> Self {
-        options.diskCacheExpiration = expiration
-        return self
+        let result = copyForMutation()
+        result.options.diskCacheExpiration = expiration
+        return result
     }
 
     /// Sets the expiration extending setting for the disk cache. The item expiration time will be incremented by this 
@@ -810,7 +858,8 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     public func diskCacheAccessExtending(_ extending: ExpirationExtending) -> Self {
-        options.diskCacheAccessExtendingExpiration = extending
-        return self
+        let result = copyForMutation()
+        result.options.diskCacheAccessExtendingExpiration = extending
+        return result
     }
 }

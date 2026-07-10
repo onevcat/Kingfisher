@@ -104,12 +104,41 @@ extension KFImage {
             set { propertyQueue.sync { _swiftUIAnimation = newValue } }
         }
 
-        let onFailureDelegate = Delegate<KingfisherError, Void>()
-        let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
-        let onProgressDelegate = Delegate<(Int64, Int64), Void>()
+        let onFailureDelegate: Delegate<KingfisherError, Void>
+        let onSuccessDelegate: Delegate<RetrieveImageResult, Void>
+        let onProgressDelegate: Delegate<(Int64, Int64), Void>
         
-        init(source: Source?) {
+        init(
+            source: Source?,
+            onFailureDelegate: Delegate<KingfisherError, Void> = Delegate<KingfisherError, Void>(),
+            onSuccessDelegate: Delegate<RetrieveImageResult, Void> = Delegate<RetrieveImageResult, Void>(),
+            onProgressDelegate: Delegate<(Int64, Int64), Void> = Delegate<(Int64, Int64), Void>()
+        ) {
             self.source = source
+            self.onFailureDelegate = onFailureDelegate
+            self.onSuccessDelegate = onSuccessDelegate
+            self.onProgressDelegate = onProgressDelegate
+        }
+        
+        func copy() -> Context<HoldingView> {
+            let copied = Context(
+                source: source,
+                onFailureDelegate: onFailureDelegate.copy(),
+                onSuccessDelegate: onSuccessDelegate.copy(),
+                onProgressDelegate: onProgressDelegate.copy()
+            )
+            copied.options = options
+            copied.configurations = configurations
+            copied.renderConfigurations = renderConfigurations
+            copied.contentConfiguration = contentConfiguration
+            copied.cancelOnDisappear = cancelOnDisappear
+            copied.reducePriorityOnDisappear = reducePriorityOnDisappear
+            copied.placeholder = placeholder
+            copied.failureView = failureView
+            copied.startLoadingBeforeViewAppear = startLoadingBeforeViewAppear
+            copied.swiftUITransition = swiftUITransition
+            copied.swiftUIAnimation = swiftUIAnimation
+            return copied
         }
         
         func shouldApplyFade(cacheType: CacheType) -> Bool {

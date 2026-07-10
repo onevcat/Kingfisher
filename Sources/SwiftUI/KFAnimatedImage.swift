@@ -51,8 +51,10 @@ public struct KFAnimatedImage: KFImageProtocol {
     /// - Parameter block: The block applies to the animated image view.
     /// - Returns: A `KFAnimatedImage` view that being configured by the `block`.
     public func configure(_ block: @escaping (HoldingView.RenderingView) -> Void) -> Self {
-        context.renderConfigurations.append(block)
-        return self
+        var result = self
+        result.context = context.copy()
+        result.context.renderConfigurations.append(block)
+        return result
     }
 
 #if os(iOS)
