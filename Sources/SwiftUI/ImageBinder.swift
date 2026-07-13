@@ -114,22 +114,31 @@ extension KFImage {
                                    context.shouldApplyFade(cacheType: value.cacheType) {
                                     // Apply SwiftUI loadTransition with custom animation (higher priority than fade)
                                     self.animating = true
+                                    self.loadedImage = value.image
+
                                     let animation = context.swiftUIAnimation ?? .default
-                                    withAnimation(animation) {
-                                        self.markLoaded(sendChangeEvent: true)
+                                    CallbackQueueMain.async {
+                                        withAnimation(animation) {
+                                            self.markLoaded(sendChangeEvent: true)
+                                        }
+                                        self.animating = false
                                     }
                                 } else if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
+                                    self.loadedImage = value.image
+
                                     let animation = Animation.linear(duration: fadeDuration)
-                                    withAnimation(animation) {
-                                        // Trigger the view render to apply the animation.
-                                        self.markLoaded(sendChangeEvent: true)
+                                    CallbackQueueMain.async {
+                                        withAnimation(animation) {
+                                            // Trigger the view render to apply the animation.
+                                            self.markLoaded(sendChangeEvent: true)
+                                        }
+                                        self.animating = false
                                     }
                                 } else {
                                     self.markLoaded(sendChangeEvent: false)
+                                    self.loadedImage = value.image
                                 }
-                                self.loadedImage = value.image
-                                self.animating = false
                             }
 
                             CallbackQueueMain.async {
