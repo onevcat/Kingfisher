@@ -104,12 +104,49 @@ extension KFImage {
             set { propertyQueue.sync { _swiftUIAnimation = newValue } }
         }
 
-        let onFailureDelegate = Delegate<KingfisherError, Void>()
-        let onSuccessDelegate = Delegate<RetrieveImageResult, Void>()
-        let onProgressDelegate = Delegate<(Int64, Int64), Void>()
+        let onFailureDelegate: Delegate<KingfisherError, Void>
+        let onSuccessDelegate: Delegate<RetrieveImageResult, Void>
+        let onProgressDelegate: Delegate<(Int64, Int64), Void>
         
-        init(source: Source?) {
+        init(
+            source: Source?,
+            onFailureDelegate: Delegate<KingfisherError, Void> = Delegate<KingfisherError, Void>(),
+            onSuccessDelegate: Delegate<RetrieveImageResult, Void> = Delegate<RetrieveImageResult, Void>(),
+            onProgressDelegate: Delegate<(Int64, Int64), Void> = Delegate<(Int64, Int64), Void>()
+        ) {
             self.source = source
+            self.onFailureDelegate = onFailureDelegate
+            self.onSuccessDelegate = onSuccessDelegate
+            self.onProgressDelegate = onProgressDelegate
+        }
+        
+        /// Creates a new context with all settings copied from `self`.
+        ///
+        /// - Important: When adding a new stored property to `Context`, it must be copied here as well.
+        /// Otherwise the setting is silently dropped as soon as another modifier is applied after it in a chain.
+        func copy() -> Context<HoldingView> {
+            let copied = Context(
+                source: source,
+                onFailureDelegate: onFailureDelegate.copy(),
+                onSuccessDelegate: onSuccessDelegate.copy(),
+                onProgressDelegate: onProgressDelegate.copy()
+            )
+            // `copied` is not visible to any other thread yet, so its backing storage can be written directly.
+            // Reading through a single `sync` gives an atomic snapshot and avoids per-property queue hops.
+            propertyQueue.sync {
+                copied._options = _options
+                copied._configurations = _configurations
+                copied._renderConfigurations = _renderConfigurations
+                copied._contentConfiguration = _contentConfiguration
+                copied._cancelOnDisappear = _cancelOnDisappear
+                copied._reducePriorityOnDisappear = _reducePriorityOnDisappear
+                copied._placeholder = _placeholder
+                copied._failureView = _failureView
+                copied._startLoadingBeforeViewAppear = _startLoadingBeforeViewAppear
+                copied._swiftUITransition = _swiftUITransition
+                copied._swiftUIAnimation = _swiftUIAnimation
+            }
+            return copied
         }
         
         func shouldApplyFade(cacheType: CacheType) -> Bool {

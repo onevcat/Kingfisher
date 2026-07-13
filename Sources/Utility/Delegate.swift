@@ -114,6 +114,14 @@ public class Delegate<Input, Output>: @unchecked Sendable {
     public var isSet: Bool {
         block != nil || asyncBlock != nil
     }
+    
+    /// Creates a new `Delegate` holding the same blocks, so setting a block on the copy does not affect `self`.
+    func copy() -> Delegate<Input, Output> {
+        let result = Delegate<Input, Output>()
+        result.block = block
+        result.asyncBlock = asyncBlock
+        return result
+    }
 }
 
 extension Delegate where Input == Void {

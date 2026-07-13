@@ -27,6 +27,10 @@
 
 import XCTest
 @testable import Kingfisher
+#if canImport(SwiftUI) && canImport(Combine)
+import SwiftUI
+import Combine
+#endif
 
 class KingfisherOptionsInfoTests: XCTestCase {
 
@@ -144,6 +148,112 @@ class KingfisherOptionsInfoTests: XCTestCase {
         options = KingfisherParsedOptionsInfo([.downloadPriority(0.5), .onlyFromCache, .downloadPriority(0.8)])
         XCTAssertEqual(options.downloadPriority, 0.8)
     }
+
+    #if canImport(SwiftUI) && canImport(Combine)
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @MainActor
+    func testKFImageContextModifiersDoNotMutateOriginalImage() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+
+        let withPlaceholder = image.placeholder {
+            Text("Loading")
+        }
+        let withCancelOnDisappear = image.cancelOnDisappear(true)
+
+        XCTAssertFalse(image.context === withPlaceholder.context)
+        XCTAssertFalse(image.context === withCancelOnDisappear.context)
+        XCTAssertNil(image.context.placeholder)
+        XCTAssertFalse(image.context.cancelOnDisappear)
+
+        XCTAssertNotNil(withPlaceholder.context.placeholder)
+        XCTAssertFalse(withPlaceholder.context.cancelOnDisappear)
+
+        XCTAssertNil(withCancelOnDisappear.context.placeholder)
+        XCTAssertTrue(withCancelOnDisappear.context.cancelOnDisappear)
+    }
+    
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @MainActor
+    func testKFImageOptionModifiersDoNotMutateOriginalImage() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+
+        let withMemoryExpiration = image.memoryCacheExpiration(.seconds(60))
+        let withForceRefresh = image.forceRefresh(true)
+
+        XCTAssertFalse(image.context === withMemoryExpiration.context)
+        XCTAssertFalse(image.context === withForceRefresh.context)
+        XCTAssertNil(image.context.options.memoryCacheExpiration)
+        XCTAssertFalse(image.context.options.forceRefresh)
+
+        switch withMemoryExpiration.context.options.memoryCacheExpiration {
+        case .seconds(let seconds):
+            XCTAssertEqual(seconds, 60)
+        default:
+            XCTFail("Expected memory cache expiration to be set on derived image.")
+        }
+        XCTAssertFalse(withMemoryExpiration.context.options.forceRefresh)
+
+        XCTAssertNil(withForceRefresh.context.options.memoryCacheExpiration)
+        XCTAssertTrue(withForceRefresh.context.options.forceRefresh)
+    }
+    
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @MainActor
+    func testKFImageCallbackModifiersDoNotShareDelegateState() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+
+        let withSuccess = image.onSuccess { _ in }
+        let withFailure = image.onFailure { _ in }
+
+        XCTAssertFalse(image.context === withSuccess.context)
+        XCTAssertFalse(image.context === withFailure.context)
+        XCTAssertFalse(image.context.onSuccessDelegate.isSet)
+        XCTAssertFalse(image.context.onFailureDelegate.isSet)
+
+        XCTAssertTrue(withSuccess.context.onSuccessDelegate.isSet)
+        XCTAssertFalse(withSuccess.context.onFailureDelegate.isSet)
+
+        XCTAssertFalse(withFailure.context.onSuccessDelegate.isSet)
+        XCTAssertTrue(withFailure.context.onFailureDelegate.isSet)
+    }
+
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @MainActor
+    func testKFImageModifierChainPreservesEarlierSettings() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+            .placeholder { Text("Loading") }
+            .cancelOnDisappear(true)
+            .resizable()
+            .forceRefresh()
+            .onSuccess { _ in }
+
+        // Every modifier copies the context, so settings applied earlier in the chain must survive each copy.
+        // This fails if `Context.copy()` misses a stored property.
+        XCTAssertNotNil(image.context.placeholder)
+        XCTAssertTrue(image.context.cancelOnDisappear)
+        XCTAssertEqual(image.context.configurations.count, 1)
+        XCTAssertTrue(image.context.options.forceRefresh)
+        XCTAssertTrue(image.context.onSuccessDelegate.isSet)
+    }
+
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    @MainActor
+    func testKFImageOnFailureImageDoesNotMutateOriginalImage() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+
+        let withFailureImage = image.onFailureImage(testImage)
+
+        XCTAssertFalse(image.context === withFailureImage.context)
+        XCTAssertNil(image.context.options.onFailureImage ?? nil)
+        XCTAssertNotNil(withFailureImage.context.options.onFailureImage ?? nil)
+    }
+    #endif
 }
 
 final class TestModifier: ImageDownloadRequestModifier {
