@@ -302,6 +302,38 @@ class DiskStorageTests: XCTestCase {
         XCTAssertEqual(originalFileName, key)
     }
 
+    // Regression test for https://github.com/onevcat/Kingfisher/issues/2301
+    //
+    // When the URL path itself contains `@`, the extracted "extension" used to contain a
+    // path separator (`net/57373197`), producing a nonexistent sub-directory path as the
+    // cache file name and silently breaking disk caching. Such keys should fall back to
+    // an extension-less hashed file name.
+    func testConfigUsesHashedFileNameWithAutoExtAndAtSignInPath() {
+        let key = "https://t.furaffinity.net/57373197@300-1720981878.jpg"
+
+        storage.config.usesHashedFileName = true
+        storage.config.autoExtAfterHashedFileName = true
+        let hashedFileName = storage.cacheFileName(forKey: key)
+        XCTAssertEqual(hashedFileName, key.kf.sha256)
+        XCTAssertFalse(hashedFileName.contains("/"))
+
+        // The broken file name made every write fail, so pin the whole roundtrip too.
+        try! storage.store(value: "1", forKey: key)
+        XCTAssertTrue(storage.isCached(forKey: key))
+        XCTAssertEqual(try! storage.value(forKey: key), "1")
+    }
+
+    // A query string makes the trailing part an implausible extension (`jpg?v=2`), so the
+    // hashed file name should contain no extension instead of a raw query-carrying one.
+    func testConfigUsesHashedFileNameWithAutoExtAndQueryString() {
+        let key = "https://example.com/image.jpg?v=2"
+
+        storage.config.usesHashedFileName = true
+        storage.config.autoExtAfterHashedFileName = true
+        let hashedFileName = storage.cacheFileName(forKey: key)
+        XCTAssertEqual(hashedFileName, key.kf.sha256)
+    }
+
     func testFileMetaOrder() {
         let urls = [URL(string: "test1")!, URL(string: "test2")!, URL(string: "test3")!]
 
