@@ -54,6 +54,22 @@ extension KingfisherWrapper where Base == String {
             let extRange = firstSeg.index(index, offsetBy: 1)..<firstSeg.endIndex
             ext = String(firstSeg[extRange])
         }
-        return ext.count > 0 ? ext : nil
+
+        // The result is appended to the hashed cache file name as a file extension
+        // (e.g. `<hash>.png`). The text after the last `.` is not guaranteed to be a valid
+        // extension: when the original URL path itself contains `@` (such as
+        // `.../57373197@300-1720981878.jpg`), the `@`-split above yields `.../57373197`, and
+        // this extracts `net/57373197`. A value containing a path separator turns the cache
+        // file name into a nonexistent sub-directory path, so the file can never be written
+        // and disk caching silently breaks. See https://github.com/onevcat/Kingfisher/issues/2301
+        //
+        // Only accept a plausible file extension: non-empty, short, and alphanumeric.
+        guard !ext.isEmpty,
+              ext.count <= 20,
+              ext.allSatisfy({ $0.isLetter || $0.isNumber })
+        else {
+            return nil
+        }
+        return ext
     }
 }
