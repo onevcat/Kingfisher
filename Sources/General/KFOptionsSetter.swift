@@ -40,13 +40,25 @@ public protocol KFOptionSetter {
     var onFailureDelegate: Delegate<KingfisherError, Void> { get }
     var onSuccessDelegate: Delegate<RetrieveImageResult, Void> { get }
     var onProgressDelegate: Delegate<(Int64, Int64), Void> { get }
-    
+
+    /// Returns the value that a chained setter method should apply its changes to.
+    ///
+    /// Value-type conformers backed by shared reference state (such as ``KFImage`` and ``KFAnimatedImage``)
+    /// return a value holding a copy of that state, so applying a modifier never mutates the value it was
+    /// called on. Reference-type conformers (such as ``KF/Builder``) return `self` and are mutated in place.
+    ///
+    /// You normally do not need to call this method yourself; it is invoked by the setter methods in this protocol's
+    /// extensions before they apply any change.
     func copyForMutation() -> Self
 }
 
 extension KF.Builder: KFOptionSetter { }
 
 extension KFOptionSetter {
+    /// Returns `self` without copying, so chained setter methods mutate the value in place.
+    ///
+    /// This default implementation suits reference-type conformers like ``KF/Builder``. Value-type conformers
+    /// backed by shared reference state should provide their own implementation that copies the state.
     public func copyForMutation() -> Self {
         self
     }

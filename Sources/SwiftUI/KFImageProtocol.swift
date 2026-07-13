@@ -84,8 +84,7 @@ extension KFImageProtocol {
     /// > If you want to configure the input image (which is usually an `Image` value) and use a non-`Image` value as
     /// > the configured result, use ``KFImageProtocol/contentConfigure(_:)`` instead.
     public func configure(_ block: @escaping (HoldingView) -> HoldingView) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.configurations.append(block)
         return result
     }
@@ -100,8 +99,7 @@ extension KFImageProtocol {
     /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
     /// `block`.
     public func contentConfigure<V: View>(_ block: @escaping (HoldingView) -> V) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.contentConfiguration = { AnyView(block($0)) }
         return result
     }
@@ -116,12 +114,17 @@ public protocol KFImageHoldingView: View {
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
+    /// Returns a new view value whose ``KFImage/Context`` is a copy of the current one.
+    ///
+    /// ``KFImage`` and ``KFAnimatedImage`` are value types but hold their settings in a reference type context.
+    /// All modifiers apply changes to the copied context returned by this method, so a derived view never mutates
+    /// the view value it was created from.
     public func copyForMutation() -> Self {
         var result = self
         result.context = context.copy()
         return result
     }
-    
+
     public var options: KingfisherParsedOptionsInfo {
         get { context.options }
         nonmutating set { context.options = newValue }

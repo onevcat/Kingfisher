@@ -120,6 +120,10 @@ extension KFImage {
             self.onProgressDelegate = onProgressDelegate
         }
         
+        /// Creates a new context with all settings copied from `self`.
+        ///
+        /// - Important: When adding a new stored property to `Context`, it must be copied here as well.
+        /// Otherwise the setting is silently dropped as soon as another modifier is applied after it in a chain.
         func copy() -> Context<HoldingView> {
             let copied = Context(
                 source: source,
@@ -127,17 +131,21 @@ extension KFImage {
                 onSuccessDelegate: onSuccessDelegate.copy(),
                 onProgressDelegate: onProgressDelegate.copy()
             )
-            copied.options = options
-            copied.configurations = configurations
-            copied.renderConfigurations = renderConfigurations
-            copied.contentConfiguration = contentConfiguration
-            copied.cancelOnDisappear = cancelOnDisappear
-            copied.reducePriorityOnDisappear = reducePriorityOnDisappear
-            copied.placeholder = placeholder
-            copied.failureView = failureView
-            copied.startLoadingBeforeViewAppear = startLoadingBeforeViewAppear
-            copied.swiftUITransition = swiftUITransition
-            copied.swiftUIAnimation = swiftUIAnimation
+            // `copied` is not visible to any other thread yet, so its backing storage can be written directly.
+            // Reading through a single `sync` gives an atomic snapshot and avoids per-property queue hops.
+            propertyQueue.sync {
+                copied._options = _options
+                copied._configurations = _configurations
+                copied._renderConfigurations = _renderConfigurations
+                copied._contentConfiguration = _contentConfiguration
+                copied._cancelOnDisappear = _cancelOnDisappear
+                copied._reducePriorityOnDisappear = _reducePriorityOnDisappear
+                copied._placeholder = _placeholder
+                copied._failureView = _failureView
+                copied._startLoadingBeforeViewAppear = _startLoadingBeforeViewAppear
+                copied._swiftUITransition = _swiftUITransition
+                copied._swiftUIAnimation = _swiftUIAnimation
+            }
             return copied
         }
         

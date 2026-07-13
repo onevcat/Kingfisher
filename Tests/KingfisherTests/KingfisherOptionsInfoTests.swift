@@ -219,6 +219,40 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(withFailure.context.onSuccessDelegate.isSet)
         XCTAssertTrue(withFailure.context.onFailureDelegate.isSet)
     }
+
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @MainActor
+    func testKFImageModifierChainPreservesEarlierSettings() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+            .placeholder { Text("Loading") }
+            .cancelOnDisappear(true)
+            .resizable()
+            .forceRefresh()
+            .onSuccess { _ in }
+
+        // Every modifier copies the context, so settings applied earlier in the chain must survive each copy.
+        // This fails if `Context.copy()` misses a stored property.
+        XCTAssertNotNil(image.context.placeholder)
+        XCTAssertTrue(image.context.cancelOnDisappear)
+        XCTAssertEqual(image.context.configurations.count, 1)
+        XCTAssertTrue(image.context.options.forceRefresh)
+        XCTAssertTrue(image.context.onSuccessDelegate.isSet)
+    }
+
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    @MainActor
+    func testKFImageOnFailureImageDoesNotMutateOriginalImage() {
+        let url = URL(string: "https://example.com/image.png")!
+        let image = KFImage(url)
+
+        let withFailureImage = image.onFailureImage(testImage)
+
+        XCTAssertFalse(image.context === withFailureImage.context)
+        XCTAssertNil(image.context.options.onFailureImage ?? nil)
+        XCTAssertNotNil(withFailureImage.context.options.onFailureImage ?? nil)
+    }
     #endif
 }
 

@@ -109,8 +109,7 @@ extension KFImageProtocol {
     /// - Parameter content: A view that represents the placeholder.
     /// - Returns: A Kingfisher-compatible image view that includes the provided `content` as its placeholder.
     public func placeholder<P: View>(@ViewBuilder _ content: @escaping (Progress) -> P) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.placeholder = { progress in
             return AnyView(content(progress))
         }
@@ -151,8 +150,7 @@ extension KFImageProtocol {
     /// - Parameter content: A view builder that creates the failure view.
     /// - Returns: A Kingfisher-compatible image view that displays the provided `content` when image loading fails.
     public func onFailureView<F: View>(@ViewBuilder _ content: @escaping () -> F) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.failureView = { AnyView(content()) }
         return result
     }
@@ -164,8 +162,9 @@ extension KFImageProtocol {
     ///   backward compatibility and will be removed in a future major release.
     @available(*, deprecated, message: "Use `onFailureView(_:)` to customize SwiftUI failure placeholders instead.")
     public func onFailureImage(_ image: KFCrossPlatformImage?) -> Self {
-        options.onFailureImage = .some(image)
-        return self
+        let result = copyForMutation()
+        result.options.onFailureImage = .some(image)
+        return result
     }
 
     /// Enables canceling the download task associated with `self` when the view disappears.
@@ -173,8 +172,7 @@ extension KFImageProtocol {
     /// - Parameter flag: A boolean value indicating whether to cancel the task.
     /// - Returns: A Kingfisher-compatible image view that cancels the download task when it disappears.
     public func cancelOnDisappear(_ flag: Bool) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.cancelOnDisappear = flag
         return result
     }
@@ -183,8 +181,7 @@ extension KFImageProtocol {
     /// - Parameter flag: Whether reduce the priority task or not.
     /// - Returns: A `KFImage` view that reduces downloading task priority when disappears.
     public func reducePriorityOnDisappear(_ flag: Bool) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.reducePriorityOnDisappear = flag
         return result
     }
@@ -200,8 +197,7 @@ extension KFImageProtocol {
     /// transition to occur even when the image is retrieved from the cache, also call
     /// ``KFOptionSetter/forceRefresh(_:)`` on the returned view.
     public func fade(duration: TimeInterval) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.options.transition = .fade(duration)
         return result
     }
@@ -225,8 +221,7 @@ extension KFImageProtocol {
     /// >
     /// > Please refer to [#1988](https://github.com/onevcat/Kingfisher/issues/1988) for more information.
     public func startLoadingBeforeViewAppear(_ flag: Bool = true) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.startLoadingBeforeViewAppear = flag
         return result
     }
@@ -256,8 +251,7 @@ extension KFImageProtocol {
     ///
     /// - Note: For UIKit/AppKit applications, use ``KingfisherOptionsInfoItem/transition(_:)`` instead.
     public func loadTransition(_ transition: AnyTransition, animation: Animation? = .default) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.swiftUITransition = transition
         result.context.swiftUIAnimation = animation
         return result
@@ -285,8 +279,7 @@ extension KFImageProtocol {
     /// - Note: For UIKit/AppKit applications, use ``KingfisherOptionsInfoItem/transition(_:)`` instead.
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     public func loadTransition<T: Transition>(_ transition: T, animation: Animation? = .default) -> Self {
-        var result = self
-        result.context = context.copy()
+        let result = copyForMutation()
         result.context.swiftUITransition = AnyTransition(transition)
         result.context.swiftUIAnimation = animation
         return result
