@@ -59,6 +59,7 @@ class KFImageRendererTests: XCTestCase {
     @MainActor
     func testFailureViewDefinesLayoutWhenLoadedImageIsNil() async {
         let maxHeight: CGFloat = 200
+        let failureExpectation = expectation(description: "Image loading fails")
 
         let view = KFImage.dataProvider(FailingImageDataProvider())
             .resizable()
@@ -66,9 +67,12 @@ class KFImageRendererTests: XCTestCase {
                 Color.red
                     .frame(maxHeight: maxHeight)
             }
+            .onFailure { _ in
+                failureExpectation.fulfill()
+            }
             .aspectRatio(contentMode: .fit)
 
-        let measuredSize = await measureLayout(view)
+        let measuredSize = await measureLayout(view, after: failureExpectation)
 
         XCTAssertLessThanOrEqual(
             measuredSize.height,
@@ -79,7 +83,10 @@ class KFImageRendererTests: XCTestCase {
     }
 
     @MainActor
-    private func measureLayout<V: View>(_ view: V) async -> CGSize {
+    private func measureLayout<V: View>(
+        _ view: V,
+        after expectation: XCTestExpectation? = nil
+    ) async -> CGSize {
         let width: CGFloat = 390
         let height: CGFloat = 800
 
@@ -108,6 +115,10 @@ class KFImageRendererTests: XCTestCase {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: width, height: height))
         window.rootViewController = controller
         window.makeKeyAndVisible()
+
+        if let expectation {
+            await fulfillment(of: [expectation], timeout: 1)
+        }
 
         for _ in 0..<5 {
             await Task.yield()
