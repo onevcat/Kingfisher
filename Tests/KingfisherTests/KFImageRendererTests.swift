@@ -159,16 +159,20 @@ class KFImageRendererTests: XCTestCase {
     }
 
     // MARK: - Renderer intermediate states
+    // Regression test for the fade scaling artifact. The image branch keeps a zero frame while
+    // `loadedImage` is nil, and the zero frame must be released as soon as `loadedImage` is set —
+    // one render pass *before* `markLoaded` flips `loaded` inside `withAnimation`. If the layout
+    // release happened in the animated pass instead, SwiftUI would interpolate the image frame
+    // from zero and every fade-in would scale the image up from the center.
     @MainActor
-    func testFadeKeepsPlaceholderLayoutWhileImageIsPrepared() async {
-        let maxHeight: CGFloat = 200
+    func testFadeRestoresImageLayoutBeforeAnimationBegins() async {
         let binder = KFImage.ImageBinder()
         // Simulates the state ImageBinder creates before starting a fade animation.
         binder.loadedImage = testImage
 
         let context = KFImage.Context<Image>(source: nil)
         context.placeholder = { _ in
-            AnyView(Color.gray.frame(height: maxHeight))
+            AnyView(Color.gray.frame(height: 200))
         }
         context.contentConfiguration = { image in
             AnyView(image.resizable().aspectRatio(contentMode: .fit))
@@ -178,11 +182,12 @@ class KFImageRendererTests: XCTestCase {
             KFImageRenderer(context: context, binder: binder)
         )
 
+        let expectedHeight = measuredSize.width * testImage.size.height / testImage.size.width
         XCTAssertEqual(
             measuredSize.height,
-            maxHeight,
+            expectedHeight,
             accuracy: 0.5,
-            "The prepared fade image must not affect placeholder layout before it is marked loaded."
+            "The prepared image must already define the layout before the fade animation starts."
         )
     }
 

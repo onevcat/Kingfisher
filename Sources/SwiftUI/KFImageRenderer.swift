@@ -56,10 +56,17 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
 
             if context.swiftUITransition == nil {
                 // Fade transition or no transition: use opacity control
-                // Keep the image branch for external transitions without affecting layout until it is renderable.
+                // Keep the image branch for external transitions without affecting layout while no
+                // image is loaded. The zero frame is intentionally tied to `loadedImage` instead of
+                // `isImageRenderable`: it is released in the render pass that sets `loadedImage`,
+                // one pass before the animated `markLoaded`, so the layout change never falls into
+                // the fade transaction and gets interpolated into a scaling effect.
                 renderedImage()
                     .opacity(isImageRenderable ? 1.0 : 0.0)
-                    .frame(width: isImageRenderable ? nil : 0, height: isImageRenderable ? nil : 0)
+                    .frame(
+                        width: binder.loadedImage == nil ? 0 : nil,
+                        height: binder.loadedImage == nil ? 0 : nil
+                    )
             } else if isImageRenderable {
                 // SwiftUI loadTransition: insert/remove view for proper transition behavior
                 renderedImage()
