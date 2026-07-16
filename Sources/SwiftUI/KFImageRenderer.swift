@@ -36,6 +36,15 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     @StateObject var binder: KFImage.ImageBinder = .init()
     let context: KFImage.Context<HoldingView>
     
+    init(context: KFImage.Context<HoldingView>) {
+        self.init(context: context, binder: .init())
+    }
+
+    init(context: KFImage.Context<HoldingView>, binder: KFImage.ImageBinder) {
+        _binder = StateObject(wrappedValue: binder)
+        self.context = context
+    }
+
     var body: some View {
         if context.startLoadingBeforeViewAppear && !binder.loadingOrSucceeded && !binder.animating {
             binder.markLoading()
@@ -43,17 +52,27 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         }
         
         return ZStack {
-            if context.swiftUITransition != nil {
-                // SwiftUI loadTransition: insert/remove view for proper transition behavior
-                if binder.loaded {
-                    renderedImage()
-                }
-            } else {
+            let isImageRenderable = binder.loadedImage != nil && binder.loaded
+
+            if context.swiftUITransition == nil {
                 // Fade transition or no transition: use opacity control
+                // Keep the image branch for external transitions without affecting layout while no
+                // image is loaded. The zero frame is intentionally tied to `loadedImage` instead of
+                // `isImageRenderable`: it is released in the render pass that sets `loadedImage`,
+                // one pass before the animated `markLoaded`, so the layout change never falls into
+                // the fade transaction and gets interpolated into a scaling effect.
                 renderedImage()
-                    .opacity(binder.loaded ? 1.0 : 0.0)
+                    .opacity(isImageRenderable ? 1.0 : 0.0)
+                    .frame(
+                        width: binder.loadedImage == nil ? 0 : nil,
+                        height: binder.loadedImage == nil ? 0 : nil
+                    )
+            } else if isImageRenderable {
+                // SwiftUI loadTransition: insert/remove view for proper transition behavior
+                renderedImage()
             }
-            if binder.loadedImage == nil {
+
+            if !isImageRenderable {
                 ZStack {
                     // Priority: failureView > placeholder > Color.clear
                     // failureView is only set when image loading fails
