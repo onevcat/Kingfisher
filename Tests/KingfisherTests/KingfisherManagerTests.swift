@@ -1059,6 +1059,133 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNil(context.popAlternativeSource())
     }
 
+    // Regression test for a data race on `RetrievingContext`. The type is `@unchecked Sendable`
+    // and protects `_options` with `propertyQueue`, but `propagationErrors` used to be an
+    // unsynchronized `var` that is appended from `@Sendable` download completion handlers across
+    // alternative-source failovers. Hammering `appendError` concurrently must record every append
+    // (and stay clean under Thread Sanitizer); the unsynchronized version loses updates and races.
+    func testContextAppendErrorIsThreadSafe() {
+        let info = KingfisherParsedOptionsInfo(nil)
+        let source = Source.network(URL(string: "https://example.com/a.png")!)
+        let context = RetrievingContext<Source>(options: info, originalSource: source)
+        let error = KingfisherError.requestError(reason: .emptyRequest)
+
+        let workers = 8
+        let perWorker = 250
+        let queue = DispatchQueue(label: "test.context.append", attributes: .concurrent)
+        let group = DispatchGroup()
+        for _ in 0..<workers {
+            group.enter()
+            queue.async {
+                for _ in 0..<perWorker {
+                    context.appendError(error, to: source)
+                    _ = context.propagationErrors
+                }
+                group.leave()
+            }
+        }
+        group.wait()
+        XCTAssertEqual(context.propagationErrors.count, workers * perWorker)
+    }
+
+    // Regression test for the atomicity of `popAlternativeSource()`. The pop is a read-modify-write
+    // of `_options.alternativeSources`; if it were only synchronized per access instead of as one
+    // critical section, two concurrent failovers could pop the same source. Concurrent pops must
+    // hand out every alternative exactly once and then run dry.
+    func testContextPopAlternativeSourceIsThreadSafe() {
+        let sourceCount = 1000
+        let allSources: [Source] = (0..<sourceCount).map {
+            .network(URL(string: "https://example.com/alt-\($0).png")!)
+        }
+        let info = KingfisherParsedOptionsInfo([.alternativeSources(allSources)])
+        let context = RetrievingContext<Source>(
+            options: info, originalSource: .network(URL(string: "https://example.com/original.png")!))
+
+        let workers = 8
+        let queue = DispatchQueue(label: "test.context.pop", attributes: .concurrent)
+        let resultQueue = DispatchQueue(label: "test.context.pop.results")
+        let group = DispatchGroup()
+        var popped: [String] = []
+        for _ in 0..<workers {
+            group.enter()
+            queue.async {
+                var local: [String] = []
+                while let source = context.popAlternativeSource() {
+                    local.append(source.url!.absoluteString)
+                }
+                resultQueue.sync { popped.append(contentsOf: local) }
+                group.leave()
+            }
+        }
+        group.wait()
+
+        XCTAssertEqual(popped.count, sourceCount)
+        XCTAssertEqual(Set(popped).count, sourceCount, "Each alternative source must be popped exactly once")
+        XCTAssertNil(context.popAlternativeSource())
+    }
+
+    // Regression test for the low-data-mode fallback racing with alternative-source failover.
+    // Clearing `lowDataModeSource` through the `options` accessor is a get-modify-set of the whole
+    // options value: it can write back a stale snapshot and restore an alternative source that a
+    // concurrent `popAlternativeSource()` already consumed, letting the same source be selected
+    // twice. `takeLowDataModeSource()` must read and clear within one critical section, so racing
+    // takes and pops still hand out the low data source and every alternative exactly once.
+    func testContextTakeLowDataModeSourceIsThreadSafe() {
+        let sourceCount = 500
+        let allSources: [Source] = (0..<sourceCount).map {
+            .network(URL(string: "https://example.com/alt-\($0).png")!)
+        }
+        let lowDataURL = URL(string: "https://example.com/low-data.png")!
+        let info = KingfisherParsedOptionsInfo([
+            .alternativeSources(allSources),
+            .lowDataMode(.network(lowDataURL))
+        ])
+        let context = RetrievingContext<Source>(
+            options: info, originalSource: .network(URL(string: "https://example.com/original.png")!))
+
+        let popWorkers = 4
+        let takeWorkers = 4
+        let takesPerWorker = 250
+        let queue = DispatchQueue(label: "test.context.take", attributes: .concurrent)
+        let resultQueue = DispatchQueue(label: "test.context.take.results")
+        let group = DispatchGroup()
+        var popped: [String] = []
+        var taken: [String] = []
+
+        for _ in 0..<popWorkers {
+            group.enter()
+            queue.async {
+                var local: [String] = []
+                while let source = context.popAlternativeSource() {
+                    local.append(source.url!.absoluteString)
+                }
+                resultQueue.sync { popped.append(contentsOf: local) }
+                group.leave()
+            }
+        }
+        for _ in 0..<takeWorkers {
+            group.enter()
+            queue.async {
+                var local: [String] = []
+                for _ in 0..<takesPerWorker {
+                    if let source = context.takeLowDataModeSource() {
+                        local.append(source.url!.absoluteString)
+                    }
+                }
+                resultQueue.sync { taken.append(contentsOf: local) }
+                group.leave()
+            }
+        }
+        group.wait()
+
+        XCTAssertEqual(popped.count, sourceCount)
+        XCTAssertEqual(Set(popped).count, sourceCount, "A popped alternative source must not be reintroduced")
+        XCTAssertEqual(taken, [lowDataURL.absoluteString], "The low data mode source must be taken exactly once")
+        XCTAssertNil(context.popAlternativeSource())
+        XCTAssertNil(context.takeLowDataModeSource())
+        XCTAssertNil(context.options.lowDataModeSource)
+    }
+
     func testRetrievingWithAlternativeSource() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
