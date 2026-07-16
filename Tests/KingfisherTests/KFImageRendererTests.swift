@@ -313,6 +313,9 @@ class KFImageRendererTests: XCTestCase {
 
         let state = ExternalTransitionState()
         let loaded = expectation(description: "Cached image loads")
+        // A branch inserted after the cache hit would not receive the parent's animation transaction.
+        let animatedInsertion = expectation(description: "Image branch receives the external animation transaction")
+        animatedInsertion.assertForOverFulfill = false
 
         let view = ExternalTransitionHost(
             state: state,
@@ -321,6 +324,9 @@ class KFImageRendererTests: XCTestCase {
             onSuccess: { result in
                 XCTAssertEqual(result.cacheType, .memory)
                 loaded.fulfill()
+            },
+            onImageBranchReceivesAnimationTransaction: {
+                animatedInsertion.fulfill()
             }
         )
 
@@ -339,8 +345,24 @@ class KFImageRendererTests: XCTestCase {
             state.showImage = true
         }
 
-        await fulfillment(of: [loaded], timeout: 1)
+        await fulfillment(of: [loaded, animatedInsertion], timeout: 1)
         window.isHidden = true
+    }
+}
+
+private struct AnimatedTransactionProbe: View {
+    let onAnimatedTransaction: () -> Void
+
+    var body: some View {
+        Color.clear
+            .transaction { transaction in
+                if transaction.animation != nil {
+                    // Avoid fulfilling the expectation while SwiftUI is updating the view hierarchy.
+                    DispatchQueue.main.async {
+                        onAnimatedTransaction()
+                    }
+                }
+            }
     }
 }
 
@@ -355,6 +377,7 @@ private struct ExternalTransitionHost: View {
     let url: URL
     let cache: ImageCache
     let onSuccess: (RetrieveImageResult) -> Void
+    let onImageBranchReceivesAnimationTransaction: () -> Void
 
     var body: some View {
         ZStack {
@@ -363,6 +386,13 @@ private struct ExternalTransitionHost: View {
                     .targetCache(cache)
                     .onSuccess { result in
                         onSuccess(result)
+                    }
+                    .contentConfigure { image in
+                        image.background(
+                            AnimatedTransactionProbe(
+                                onAnimatedTransaction: onImageBranchReceivesAnimationTransaction
+                            )
+                        )
                     }
                     .resizable()
                     .frame(width: 100, height: 100)
