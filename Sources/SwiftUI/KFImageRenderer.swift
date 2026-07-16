@@ -36,6 +36,15 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     @StateObject var binder: KFImage.ImageBinder = .init()
     let context: KFImage.Context<HoldingView>
     
+    init(context: KFImage.Context<HoldingView>) {
+        self.init(context: context, binder: .init())
+    }
+
+    init(context: KFImage.Context<HoldingView>, binder: KFImage.ImageBinder) {
+        _binder = StateObject(wrappedValue: binder)
+        self.context = context
+    }
+
     var body: some View {
         if context.startLoadingBeforeViewAppear && !binder.loadingOrSucceeded && !binder.animating {
             binder.markLoading()
@@ -54,7 +63,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                     .opacity(binder.loaded ? 1.0 : 0.0)
                     .frame(width: binder.loadedImage == nil ? 0 : nil, height: binder.loadedImage == nil ? 0 : nil)
             }
-            if binder.loadedImage == nil {
+            if binder.loadedImage == nil || !binder.loaded {
                 ZStack {
                     // Priority: failureView > placeholder > Color.clear
                     // failureView is only set when image loading fails
