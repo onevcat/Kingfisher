@@ -84,6 +84,33 @@ class KFImageRendererTests: XCTestCase {
     }
 
     @MainActor
+    func testFailureViewDefinesLayoutWithLoadTransitionWhenLoadedImageIsNil() async {
+        let maxHeight: CGFloat = 200
+        let failureExpectation = expectation(description: "Image loading fails")
+
+        let view = KFImage.dataProvider(FailingImageDataProvider())
+            .resizable()
+            .onFailureView {
+                Color.red
+                    .frame(maxHeight: maxHeight)
+            }
+            .loadTransition(.opacity)
+            .onFailure { _ in
+                failureExpectation.fulfill()
+            }
+            .aspectRatio(contentMode: .fit)
+
+        let measuredSize = await measureLayout(view, after: failureExpectation)
+
+        XCTAssertEqual(
+            measuredSize.height,
+            maxHeight,
+            accuracy: 0.5,
+            "The failure view should define the KFImage layout while loadedImage is nil. Before the fix, the empty image branch still participated in layout and made KFImage taller than the failure view."
+        )
+    }
+
+    @MainActor
     private func measureLayout<V: View>(
         _ view: V,
         after expectation: XCTestExpectation? = nil
@@ -133,17 +160,34 @@ class KFImageRendererTests: XCTestCase {
 
     // MARK: - Renderer intermediate states
     @MainActor
-    func testOpacityRendererKeepsPlaceholderWhileImageIsPrepared() async {
-        await assertPlaceholderIsRenderedWhileImageIsPrepared(swiftUITransition: nil)
+    func testFadeKeepsPlaceholderLayoutWhileImageIsPrepared() async {
+        let maxHeight: CGFloat = 200
+        let binder = KFImage.ImageBinder()
+        // Simulates the state ImageBinder creates before starting a fade animation.
+        binder.loadedImage = testImage
+
+        let context = KFImage.Context<Image>(source: nil)
+        context.placeholder = { _ in
+            AnyView(Color.gray.frame(height: maxHeight))
+        }
+        context.contentConfiguration = { image in
+            AnyView(image.resizable().aspectRatio(contentMode: .fit))
+        }
+
+        let measuredSize = await measureLayout(
+            KFImageRenderer(context: context, binder: binder)
+        )
+
+        XCTAssertEqual(
+            measuredSize.height,
+            maxHeight,
+            accuracy: 0.5,
+            "The prepared fade image must not affect placeholder layout before it is marked loaded."
+        )
     }
 
     @MainActor
     func testLoadTransitionKeepsPlaceholderWhileImageIsPrepared() async {
-        await assertPlaceholderIsRenderedWhileImageIsPrepared(swiftUITransition: .opacity)
-    }
-
-    @MainActor
-    private func assertPlaceholderIsRenderedWhileImageIsPrepared(swiftUITransition: AnyTransition?) async {
         let placeholderAppeared = expectation(description: "Placeholder appeared")
 
         let binder = KFImage.ImageBinder()
@@ -151,7 +195,7 @@ class KFImageRendererTests: XCTestCase {
         binder.loadedImage = testImage
 
         let context = KFImage.Context<Image>(source: nil)
-        context.swiftUITransition = swiftUITransition
+        context.swiftUITransition = .opacity
         context.placeholder = { _ in
             AnyView(
                 Color.gray
@@ -261,6 +305,9 @@ class KFImageRendererTests: XCTestCase {
     @MainActor
     func testExternalTransitionPreservesCachedImageInsertion() async throws {
         let cache = ImageCache(name: "com.onevcat.KingfisherTests.ExternalTransition.\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([cache])
+        }
         let url = URL(string: "https://example.com/image.png")!
         try await cache.store(testImage, forKey: url.cacheKey, toDisk: false)
 

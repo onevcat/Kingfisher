@@ -122,6 +122,7 @@ extension KFImage {
                                             self.markLoaded(sendChangeEvent: true)
                                         }
                                         self.animating = false
+                                        context.onSuccessDelegate.call(value)
                                     }
                                 } else if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
@@ -134,15 +135,16 @@ extension KFImage {
                                             self.markLoaded(sendChangeEvent: true)
                                         }
                                         self.animating = false
+                                        context.onSuccessDelegate.call(value)
                                     }
                                 } else {
                                     self.markLoaded(sendChangeEvent: false)
                                     self.loadedImage = value.image
-                                }
-                            }
 
-                            CallbackQueueMain.async {
-                                context.onSuccessDelegate.call(value)
+                                    CallbackQueueMain.async {
+                                        context.onSuccessDelegate.call(value)
+                                    }
+                                }
                             }
                         case .failure(let error):
                             CallbackQueueMain.currentOrAsync {

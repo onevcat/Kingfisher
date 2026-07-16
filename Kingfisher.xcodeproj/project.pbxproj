@@ -29,6 +29,7 @@
 		38D5D4A12C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */; };
 		3ADE9AF92A73CD69009A86CA /* String+SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE9AF82A73CD69009A86CA /* String+SHA256.swift */; };
 		4B0C35B22FFF5F4C00BBDEA1 /* KFImageRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0C35B12FFF5F4C00BBDEA1 /* KFImageRendererTests.swift */; };
+		4B0C57F03008A31100BBDEA1 /* ImageBinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0C57EF3008A30A00BBDEA1 /* ImageBinderTests.swift */; };
 		4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B10480C216F157000300C61 /* ImageDataProcessor.swift */; };
 		4B46CC5F217449C600D90C4A /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC5E217449C600D90C4A /* MemoryStorage.swift */; };
 		4B46CC64217449E000D90C4A /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B46CC63217449E000D90C4A /* Storage.swift */; };
@@ -192,6 +193,7 @@
 		38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderCancellationTests.swift; sourceTree = "<group>"; };
 		3ADE9AF82A73CD69009A86CA /* String+SHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+SHA256.swift"; sourceTree = "<group>"; };
 		4B0C35B12FFF5F4C00BBDEA1 /* KFImageRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFImageRendererTests.swift; sourceTree = "<group>"; };
+		4B0C57EF3008A30A00BBDEA1 /* ImageBinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageBinderTests.swift; sourceTree = "<group>"; };
 		4B10480C216F157000300C61 /* ImageDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProcessor.swift; sourceTree = "<group>"; };
 		4B164ACE1B8D554200768EC6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		4B3E714D1B01FEB200F5AAED /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = System/Library/Frameworks/WatchKit.framework; sourceTree = SDKROOT; };
@@ -535,6 +537,7 @@
 				D12E0C491C47F23500AC98AD /* Info.plist */,
 				D12E0C441C47F23500AC98AD /* dancing-banana.gif */,
 				D1D2C3291C70A3230018F2F9 /* single-frame.gif */,
+				4B0C57EF3008A30A00BBDEA1 /* ImageBinderTests.swift */,
 				D12E0C451C47F23500AC98AD /* ImageCacheTests.swift */,
 				D1DC4B401D60996D00DFDFAA /* StringExtensionTests.swift */,
 				D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */,
@@ -1022,6 +1025,7 @@
 				D16FEA4D23078C63006E67D5 /* LSMatcher.m in Sources */,
 				4B8351C8217066580081EED8 /* StubHelpers.swift in Sources */,
 				D1F1F6FF24625EC600910725 /* RetryStrategyTests.swift in Sources */,
+				4B0C57F03008A31100BBDEA1 /* ImageBinderTests.swift in Sources */,
 				D1DC4B411D60996D00DFDFAA /* StringExtensionTests.swift in Sources */,
 				D1BFED95222ACC6B009330C8 /* ImageProcessorTests.swift in Sources */,
 				D16FEA5223078C63006E67D5 /* LSHTTPRequestDSLRepresentation.m in Sources */,
