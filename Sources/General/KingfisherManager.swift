@@ -364,8 +364,7 @@ public class KingfisherManager: @unchecked Sendable {
             }
             // When low data mode constrained error, retry with the low data mode source instead of use alternative on fly.
             guard !error.isLowDataModeConstrained else {
-                if let source = retrievingContext.options.lowDataModeSource {
-                    retrievingContext.options.lowDataModeSource = nil
+                if let source = retrievingContext.takeLowDataModeSource() {
                     startNewRetrieveTask(with: source, retryContext: retryContext, downloadTaskUpdated: downloadTaskUpdated)
                 } else {
                     // This should not happen.
@@ -1240,6 +1239,18 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
             let nextSource = alternativeSources.removeFirst()
             _options.alternativeSources = alternativeSources
             return nextSource
+        }
+    }
+
+    func takeLowDataModeSource() -> Source? {
+        // Read and clear `lowDataModeSource` in a single critical section. Clearing it through the
+        // `options` accessor would be a get-modify-set of the whole options value, which can write
+        // back a stale snapshot and restore an alternative source that a concurrent
+        // `popAlternativeSource()` already consumed.
+        propertyQueue.sync {
+            guard let source = _options.lowDataModeSource else { return nil }
+            _options.lowDataModeSource = nil
+            return source
         }
     }
 
