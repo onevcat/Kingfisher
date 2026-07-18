@@ -125,6 +125,85 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
+    // `imageDownloader(_:didFinishDownloadingImageForURL:with:error:)` must be called exactly once
+    // per download. Historically two paths invoked it for the same completion (`onDownloadingFinished`
+    // in `setupSessionHandler()` and `reportDidDownloadImageData` in `startDownloadTask`'s `onTaskDone`
+    // handler), so success and network-error downloads notified the delegate twice, while a
+    // data-modifying failure first reported a success (nil error) and then a failure.
+    func testDidFinishDownloadingDelegateCalledOncePerSuccessfulDownload() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let delegate = DownloadFinishCountingDelegate()
+        downloader.delegate = delegate
+
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(delegate.finishedEvents.count, 1)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+        _ = delegate // keep the weak delegate alive for the duration of the test
+    }
+
+    func testDidFinishDownloadingDelegateCalledOncePerFailedDownload() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData, statusCode: 404)
+
+        let delegate = DownloadFinishCountingDelegate()
+        downloader.delegate = delegate
+
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertEqual(delegate.finishedEvents.count, 1)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+        _ = delegate
+    }
+
+    func testDidFinishDownloadingDelegateCalledOncePerErroredDownload() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, errorCode: NSURLErrorNotConnectedToInternet)
+
+        let delegate = DownloadFinishCountingDelegate()
+        downloader.delegate = delegate
+
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertEqual(delegate.finishedEvents.count, 1)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+        _ = delegate
+    }
+
+    func testDidFinishDownloadingDelegateConsistentWhenDataModifyingFails() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let delegate = NilModifierCountingDelegate()
+        downloader.delegate = delegate
+
+        downloader.downloadImage(with: url) { result in
+            XCTAssertNotNil(result.error)
+            XCTAssertEqual(delegate.finishedEvents.count, 1)
+            // The single event should report the failure, not a success.
+            XCTAssertNotNil(delegate.finishedEvents.first?.error)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+        _ = delegate
+    }
+
     func testDownloadWithModifyingRequest() {
         let exp = expectation(description: #function)
 
@@ -791,6 +870,57 @@ class TaskResponseCompletion: ImageDownloaderDelegate {
     let onReceiveResponse = Delegate<URLResponse, URLSession.ResponseDisposition>()
     func imageDownloader(_ downloader: ImageDownloader, didReceive response: URLResponse) async -> URLSession.ResponseDisposition {
         return onReceiveResponse.call(response)!
+    }
+}
+
+class DownloadFinishCountingDelegate: ImageDownloaderDelegate, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _finishedEvents: [(url: URL, response: URLResponse?, error: (any Error)?)] = []
+
+    var finishedEvents: [(url: URL, response: URLResponse?, error: (any Error)?)] {
+        lock.lock()
+        defer { lock.unlock() }
+        return _finishedEvents
+    }
+
+    func imageDownloader(
+        _ downloader: ImageDownloader,
+        didFinishDownloadingImageForURL url: URL,
+        with response: URLResponse?,
+        error: (any Error)?)
+    {
+        lock.lock()
+        defer { lock.unlock() }
+        _finishedEvents.append((url, response, error))
+    }
+}
+
+// Implements the data-modifying method directly instead of subclassing
+// `DownloadFinishCountingDelegate`: a protocol requirement satisfied by a protocol extension in the
+// parent is not re-dispatched to a subclass override through the existential.
+class NilModifierCountingDelegate: ImageDownloaderDelegate, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _finishedEvents: [(url: URL, response: URLResponse?, error: (any Error)?)] = []
+
+    var finishedEvents: [(url: URL, response: URLResponse?, error: (any Error)?)] {
+        lock.lock()
+        defer { lock.unlock() }
+        return _finishedEvents
+    }
+
+    func imageDownloader(
+        _ downloader: ImageDownloader,
+        didFinishDownloadingImageForURL url: URL,
+        with response: URLResponse?,
+        error: (any Error)?)
+    {
+        lock.lock()
+        defer { lock.unlock() }
+        _finishedEvents.append((url, response, error))
+    }
+
+    func imageDownloader(_ downloader: ImageDownloader, didDownload data: Data, with task: SessionDataTask) -> Data? {
+        return nil
     }
 }
 

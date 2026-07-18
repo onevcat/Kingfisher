@@ -48,7 +48,6 @@ open class SessionDelegate: NSObject, @unchecked Sendable {
 
     let onValidStatusCode = Delegate<Int, Bool>()
     let onResponseReceived = Delegate<URLResponse, URLSession.ResponseDisposition>()
-    let onDownloadingFinished = Delegate<(URL, Result<URLResponse, KingfisherError>), Void>()
     let onDidDownloadData = Delegate<SessionDataTask, Data?>()
 
     let onReceiveSessionChallenge = Delegate<SessionChallengeFunc, (URLSession.AuthChallengeDisposition, URLCredential?)>()
@@ -198,18 +197,6 @@ extension SessionDelegate: URLSessionDataDelegate {
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         guard let sessionTask = self.task(for: task) else { return }
-
-        if let url = sessionTask.originalURL {
-            let result: Result<URLResponse, KingfisherError>
-            if let error = error {
-                result = .failure(KingfisherError.responseError(reason: .URLSessionError(error: error)))
-            } else if let response = task.response {
-                result = .success(response)
-            } else {
-                result = .failure(KingfisherError.responseError(reason: .noURLResponse(task: sessionTask)))
-            }
-            onDownloadingFinished.call((url, result))
-        }
 
         let result: Result<(Data, URLResponse?), KingfisherError>
         if let error = error {
