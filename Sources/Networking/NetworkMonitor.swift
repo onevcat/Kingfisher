@@ -157,16 +157,18 @@ internal final class NetworkObserverImpl: @unchecked Sendable, NetworkObserver {
     }
 
     func notify(isConnected: Bool) {
-        queue.async { [weak self] in
-            guard let self, !isFinished else { return }
-            isFinished = true
+        // Capture self strongly: a pending notification must be delivered (exactly once)
+        // even if the caller drops its reference right after scheduling it.
+        queue.async {
+            guard !self.isFinished else { return }
+            self.isFinished = true
 
             // Cancel timeout if we're notifying
-            timeoutWorkItem?.cancel()
-            timeoutWorkItem = nil
+            self.timeoutWorkItem?.cancel()
+            self.timeoutWorkItem = nil
 
             // Remove from monitor
-            monitor?.removeObserver(self)
+            self.monitor?.removeObserver(self)
 
             // Call the callback
             DispatchQueue.main.async {
@@ -176,16 +178,16 @@ internal final class NetworkObserverImpl: @unchecked Sendable, NetworkObserver {
     }
 
     func cancel() {
-        queue.async { [weak self] in
-            guard let self, !isFinished else { return }
-            isFinished = true
+        queue.async {
+            guard !self.isFinished else { return }
+            self.isFinished = true
 
             // Cancel timeout
-            timeoutWorkItem?.cancel()
-            timeoutWorkItem = nil
+            self.timeoutWorkItem?.cancel()
+            self.timeoutWorkItem = nil
 
             // Remove from monitor
-            monitor?.removeObserver(self)
+            self.monitor?.removeObserver(self)
         }
     }
 }

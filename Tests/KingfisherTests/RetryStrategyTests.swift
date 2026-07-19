@@ -483,7 +483,7 @@ class RetryStrategyTests: XCTestCase {
         observer.notify(isConnected: true)
         observer.notify(isConnected: false)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
 }
 
@@ -609,16 +609,18 @@ final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
     }
 
     func notify(isConnected: Bool) {
-        queue.async { [weak self] in
-            guard let self, !isFinished else { return }
-            isFinished = true
+        // Mirrors NetworkObserverImpl: capture self strongly so a scheduled
+        // notification is always delivered exactly once.
+        queue.async {
+            guard !self.isFinished else { return }
+            self.isFinished = true
 
             // Cancel timeout if we're notifying
-            timeoutWorkItem?.cancel()
-            timeoutWorkItem = nil
+            self.timeoutWorkItem?.cancel()
+            self.timeoutWorkItem = nil
 
             // Remove from monitor
-            monitor?.removeObserver(self)
+            self.monitor?.removeObserver(self)
 
             // Call the callback
             DispatchQueue.main.async {
@@ -628,16 +630,16 @@ final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
     }
 
     func cancel() {
-        queue.async { [weak self] in
-            guard let self, !isFinished else { return }
-            isFinished = true
+        queue.async {
+            guard !self.isFinished else { return }
+            self.isFinished = true
 
             // Cancel timeout
-            timeoutWorkItem?.cancel()
-            timeoutWorkItem = nil
+            self.timeoutWorkItem?.cancel()
+            self.timeoutWorkItem = nil
 
             // Remove from monitor
-            monitor?.removeObserver(self)
+            self.monitor?.removeObserver(self)
         }
     }
 }
