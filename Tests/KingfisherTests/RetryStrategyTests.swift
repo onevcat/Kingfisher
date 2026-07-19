@@ -585,13 +585,15 @@ final class TestNetworkMonitor: @unchecked Sendable, NetworkMonitoring {
 }
 
 /// Test implementation of NetworkObserver for testing purposes.
+/// Mirrors NetworkObserverImpl: the one-shot transition is decided synchronously
+/// under a lock; only the callback is dispatched to the main queue.
 final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
     let timeoutInterval: TimeInterval?
     let callback: @Sendable (Bool) -> Void
     private weak var monitor: TestNetworkMonitor?
     private var timeoutWorkItem: DispatchWorkItem?
     private var isFinished = false
-    private let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.TestNetworkObserver", qos: .utility)
+    private let lock = NSLock()
 
     init(timeoutInterval: TimeInterval?, callback: @escaping @Sendable (Bool) -> Void, monitor: TestNetworkMonitor) {
         self.timeoutInterval = timeoutInterval
@@ -604,42 +606,32 @@ final class TestNetworkObserver: @unchecked Sendable, NetworkObserver {
                 self?.notify(isConnected: false)
             }
             timeoutWorkItem = workItem
-            queue.asyncAfter(deadline: .now() + timeoutInterval, execute: workItem)
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + timeoutInterval, execute: workItem)
         }
     }
 
     func notify(isConnected: Bool) {
-        // Mirrors NetworkObserverImpl: capture self strongly so a scheduled
-        // notification is always delivered exactly once.
-        queue.async {
-            guard !self.isFinished else { return }
-            self.isFinished = true
-
-            // Cancel timeout if we're notifying
-            self.timeoutWorkItem?.cancel()
-            self.timeoutWorkItem = nil
-
-            // Remove from monitor
-            self.monitor?.removeObserver(self)
-
-            // Call the callback
-            DispatchQueue.main.async {
-                self.callback(isConnected)
-            }
+        guard finish() else { return }
+        DispatchQueue.main.async {
+            self.callback(isConnected)
         }
     }
 
     func cancel() {
-        queue.async {
-            guard !self.isFinished else { return }
-            self.isFinished = true
+        _ = finish()
+    }
 
-            // Cancel timeout
-            self.timeoutWorkItem?.cancel()
-            self.timeoutWorkItem = nil
+    private func finish() -> Bool {
+        lock.lock()
+        let isFirst = !isFinished
+        isFinished = true
+        let workItem = timeoutWorkItem
+        timeoutWorkItem = nil
+        lock.unlock()
 
-            // Remove from monitor
-            self.monitor?.removeObserver(self)
-        }
+        guard isFirst else { return false }
+        workItem?.cancel()
+        monitor?.removeObserver(self)
+        return true
     }
 }
