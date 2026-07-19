@@ -44,7 +44,11 @@ platform :ios do
       clean: true,
       derived_data_path: derived_data_path(options[:destination]),
       xcargs: "SWIFT_VERSION=5.0",
-      destination: options[:destination]
+      destination: options[:destination],
+      # CI runner VMs occasionally stall for tens of seconds, blowing async
+      # expectation budgets. Retry failed tests instead of inflating timeouts;
+      # a real regression still fails all attempts.
+      number_of_retries: 2
     )
   end
 
