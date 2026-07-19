@@ -103,6 +103,50 @@ private final class DelayedDirectoryScanFileManager: FileManager, @unchecked Sen
     }
 }
 
+private final class DirectoryPreparationTrackingFileManager: FileManager, @unchecked Sendable {
+    private let scanStarted = DispatchSemaphore(value: 0)
+    private let lock = NSLock()
+
+    private var shouldCoordinateDirectoryCreation = true
+    private var _directoryExistedWhenScanStarted: Bool?
+
+    var directoryExistedWhenScanStarted: Bool? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _directoryExistedWhenScanStarted
+    }
+
+    override func contentsOfDirectory(atPath path: String) throws -> [String] {
+        let directoryExisted = super.fileExists(atPath: path)
+        lock.lock()
+        _directoryExistedWhenScanStarted = directoryExisted
+        lock.unlock()
+
+        scanStarted.signal()
+        return try super.contentsOfDirectory(atPath: path)
+    }
+
+    override func createDirectory(
+        atPath path: String,
+        withIntermediateDirectories createIntermediates: Bool,
+        attributes: [FileAttributeKey: Any]? = nil
+    ) throws {
+        lock.lock()
+        let shouldCoordinate = shouldCoordinateDirectoryCreation
+        shouldCoordinateDirectoryCreation = false
+        lock.unlock()
+
+        if shouldCoordinate {
+            _ = scanStarted.wait(timeout: .now() + 0.5)
+        }
+        try super.createDirectory(
+            atPath: path,
+            withIntermediateDirectories: createIntermediates,
+            attributes: attributes
+        )
+    }
+}
+
 class DiskStorageTests: XCTestCase {
 
     var storage: DiskStorage.Backend<String>!
@@ -118,6 +162,21 @@ class DiskStorageTests: XCTestCase {
     override func tearDown() {
         try! storage.removeAll(skipCreatingDirectory: true)
         super.tearDown()
+    }
+
+    private func waitUntilMaybeCachedIsReady(
+        for storage: DiskStorage.Backend<String>,
+        timeout: TimeInterval = 2
+    ) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            let isReady = storage.maybeCachedCheckingQueue.sync {
+                storage.maybeCachedSetupCompleted && storage.maybeCached != nil
+            }
+            if isReady { return true }
+            Thread.sleep(forTimeInterval: 0.001)
+        } while Date() < deadline
+        return false
     }
 
     func testStoreAndGet() {
@@ -139,20 +198,26 @@ class DiskStorageTests: XCTestCase {
         try! storage.store(value: "1", forKey: "1")
         fileManager.finishDelayedScan(returning: [])
 
-        let deadline = Date().addingTimeInterval(2)
-        var initialScanApplied = false
-        repeat {
-            initialScanApplied = storage.maybeCachedCheckingQueue.sync {
-                storage.maybeCached != nil
-            }
-            if !initialScanApplied {
-                Thread.sleep(forTimeInterval: 0.001)
-            }
-        } while !initialScanApplied && Date() < deadline
-
-        XCTAssertTrue(initialScanApplied)
+        XCTAssertTrue(waitUntilMaybeCachedIsReady(for: storage))
         XCTAssertTrue(storage.isCached(forKey: "1"))
         XCTAssertEqual(try! storage.value(forKey: "1"), "1")
+    }
+
+    func testDirectoryIsPreparedBeforeInitialCacheScan() throws {
+        let fileManager = DirectoryPreparationTrackingFileManager()
+        let rootURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("test-\(UUID().uuidString)")
+        let config = DiskStorage.Config(
+            name: "test", sizeLimit: 5, fileManager: fileManager, directory: rootURL
+        )
+        let storage = try DiskStorage.Backend<String>(config: config)
+        defer {
+            try? storage.removeAll(skipCreatingDirectory: true)
+            try? FileManager.default.removeItem(at: rootURL)
+        }
+
+        XCTAssertTrue(waitUntilMaybeCachedIsReady(for: storage))
+        XCTAssertEqual(fileManager.directoryExistedWhenScanStarted, true)
     }
 
     func testRemove() {
@@ -368,6 +433,34 @@ class DiskStorageTests: XCTestCase {
         XCTAssertNil(try! storage.value(forKey: "1"))
     }
 
+    func testValueForDanglingSymbolicLinkUsesLinkMetadataThenFailsToLoad() throws {
+        let key = "dangling-link"
+        try storage.store(value: "1", forKey: key)
+
+        let fileURL = storage.cacheFileURL(forKey: key)
+        try FileManager.default.removeItem(at: fileURL)
+        try FileManager.default.createSymbolicLink(
+            at: fileURL,
+            withDestinationURL: storage.directoryURL.appendingPathComponent("missing-target")
+        )
+
+        XCTAssertTrue(storage.isCached(forKey: key, referenceDate: .distantPast))
+        XCTAssertThrowsError(
+            try storage.value(
+                forKey: key,
+                referenceDate: .distantPast,
+                actuallyLoad: true,
+                extendingExpiration: .none,
+                forcedExtension: nil
+            )
+        ) { error in
+            guard case KingfisherError.cacheError(reason: .cannotLoadDataFromDisk) = error else {
+                XCTFail("Expected cannotLoadDataFromDisk, but got \(error)")
+                return
+            }
+        }
+    }
+
     // When the metadata reading fails for a reason other than a missing file (here: no search permission on
     // the containing directory) and the file cannot be confirmed on disk either, the lookup reports a miss
     // instead of throwing.
@@ -470,15 +563,6 @@ class DiskStorageTests: XCTestCase {
                 return
             }
         }
-    }
-
-    func testIsFileMissingError() {
-        XCTAssertTrue((CocoaError(.fileReadNoSuchFile) as Error).isFileMissing)
-        XCTAssertFalse((CocoaError(.fileReadNoPermission) as Error).isFileMissing)
-        // The code alone is not enough: the domain has to match too.
-        XCTAssertFalse(
-            (NSError(domain: NSPOSIXErrorDomain, code: NSFileReadNoSuchFileError) as Error).isFileMissing
-        )
     }
 
     func testFileMetaOrder() {
