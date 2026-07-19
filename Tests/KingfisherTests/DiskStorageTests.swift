@@ -42,6 +42,26 @@ extension String {
     public static var empty: String { return "" }
 }
 
+// Reports the given paths as existing regardless of the disk state, so tests can separate the
+// "file exists but its metadata is unreadable" case from the "file is missing" one.
+private final class FileExistsLyingFileManager: FileManager, @unchecked Sendable {
+    private let lock = NSLock()
+    private var lyingPaths = Set<String>()
+
+    func lieAboutExistence(ofPath path: String) {
+        lock.lock()
+        lyingPaths.insert(path)
+        lock.unlock()
+    }
+
+    override func fileExists(atPath path: String) -> Bool {
+        lock.lock()
+        let lying = lyingPaths.contains(path)
+        lock.unlock()
+        return lying || super.fileExists(atPath: path)
+    }
+}
+
 private final class DelayedDirectoryScanFileManager: FileManager, @unchecked Sendable {
     private let scanStarted = DispatchSemaphore(value: 0)
     private let releaseScan = DispatchSemaphore(value: 0)
@@ -332,6 +352,133 @@ class DiskStorageTests: XCTestCase {
         storage.config.autoExtAfterHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertEqual(hashedFileName, key.kf.sha256)
+    }
+
+    // The value lookup reads the file metadata directly and treats a missing file as a normal cache miss,
+    // without a separate `fileExists` check. Removing the file behind the storage keeps its name in the
+    // `maybeCached` shortcut, so the lookup must reach the metadata reading and observe the missing file there.
+    func testValueForFileRemovedBehindStorageIsMiss() {
+        try! storage.store(value: "1", forKey: "1")
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+
+        let fileURL = storage.cacheFileURL(forKey: "1")
+        try! FileManager.default.removeItem(at: fileURL)
+
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        XCTAssertNil(try! storage.value(forKey: "1"))
+    }
+
+    // When the metadata reading fails for a reason other than a missing file (here: no search permission on
+    // the containing directory) and the file cannot be confirmed on disk either, the lookup reports a miss
+    // instead of throwing.
+    func testValueWithUnreadableDirectoryReportsMiss() throws {
+        try XCTSkipIf(geteuid() == 0, "File permissions are not effective for root.")
+
+        let config = DiskStorage.Config(name: "test-\(UUID().uuidString)", sizeLimit: 5)
+        let storage = try DiskStorage.Backend<String>(config: config)
+        try storage.store(value: "1", forKey: "1")
+
+        let directoryPath = storage.directoryURL.path
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: directoryPath)
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directoryPath)
+            try? storage.removeAll(skipCreatingDirectory: true)
+        }
+
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        XCTAssertNil(try storage.value(forKey: "1"))
+    }
+
+    // Once the initial directory scan is applied, a key that was never stored is answered from the
+    // `maybeCached` shortcut without any disk touch. The scan bookkeeping is driven directly to keep the
+    // shortcut state deterministic regardless of the background scan timing.
+    func testMissForUnknownKeyAfterInitialScanApplied() {
+        storage.maybeCachedCheckingQueue.sync {
+            storage.maybeCached = []
+            storage.maybeCachedSetupCompleted = true
+        }
+
+        XCTAssertFalse(storage.isCached(forKey: "never-stored"))
+        XCTAssertNil(try! storage.value(forKey: "never-stored"))
+    }
+
+    // A file whose metadata is readable but whose content is not fails the actual loading, not the probe.
+    func testValueWithUnreadableFileDataThrows() throws {
+        try XCTSkipIf(geteuid() == 0, "File permissions are not effective for root.")
+
+        try storage.store(value: "1", forKey: "1")
+        let filePath = storage.cacheFileURL(forKey: "1").path
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: filePath)
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: filePath)
+        }
+
+        // The existence probe reads only metadata, so it still reports a hit.
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+        XCTAssertThrowsError(try storage.value(forKey: "1")) { error in
+            guard case KingfisherError.cacheError(reason: .cannotLoadDataFromDisk) = error else {
+                XCTFail("Expected cannotLoadDataFromDisk, but got \(error)")
+                return
+            }
+        }
+    }
+
+    // A file that is confirmed on disk but whose metadata cannot be read keeps failing with
+    // `invalidURLResource`, as it did when `fileExists` guarded the metadata reading.
+    func testValueWithUnreadableMetadataOnExistingFileThrows() throws {
+        try XCTSkipIf(geteuid() == 0, "File permissions are not effective for root.")
+
+        let fileManager = FileExistsLyingFileManager()
+        let config = DiskStorage.Config(
+            name: "test-\(UUID().uuidString)", sizeLimit: 5, fileManager: fileManager
+        )
+        let storage = try DiskStorage.Backend<String>(config: config)
+        try storage.store(value: "1", forKey: "1")
+        fileManager.lieAboutExistence(ofPath: storage.cacheFileURL(forKey: "1").path)
+
+        let directoryPath = storage.directoryURL.path
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: directoryPath)
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directoryPath)
+            try? storage.removeAll(skipCreatingDirectory: true)
+        }
+
+        XCTAssertThrowsError(try storage.value(forKey: "1")) { error in
+            guard case KingfisherError.cacheError(reason: .invalidURLResource) = error else {
+                XCTFail("Expected invalidURLResource, but got \(error)")
+                return
+            }
+        }
+    }
+
+    func testValueOnNotReadyStorageThrows() {
+        let fileManager = FileManager.default
+        let fileBlockingDirectory = URL(
+            fileURLWithPath: NSTemporaryDirectory()
+        ).appendingPathComponent(UUID().uuidString)
+        fileManager.createFile(atPath: fileBlockingDirectory.path, contents: Data())
+        defer { try? fileManager.removeItem(at: fileBlockingDirectory) }
+
+        // Creating the storage folder under a regular file fails, which marks the storage as not ready.
+        let config = DiskStorage.Config(name: "test", sizeLimit: 5, directory: fileBlockingDirectory)
+        let storage = DiskStorage.Backend<String>(noThrowConfig: config, creatingDirectory: true)
+
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        XCTAssertThrowsError(try storage.value(forKey: "1")) { error in
+            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                XCTFail("Expected diskStorageIsNotReady, but got \(error)")
+                return
+            }
+        }
+    }
+
+    func testIsFileMissingError() {
+        XCTAssertTrue((CocoaError(.fileReadNoSuchFile) as Error).isFileMissing)
+        XCTAssertFalse((CocoaError(.fileReadNoPermission) as Error).isFileMissing)
+        // The code alone is not enough: the domain has to match too.
+        XCTAssertFalse(
+            (NSError(domain: NSPOSIXErrorDomain, code: NSFileReadNoSuchFileError) as Error).isFileMissing
+        )
     }
 
     func testFileMetaOrder() {

@@ -256,17 +256,12 @@ public enum DiskStorage {
                 throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
             }
 
-            let fileManager = config.fileManager
             let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
-            let filePath = fileURL.path
 
             let fileMaybeCached = maybeCachedCheckingQueue.sync {
                 return !maybeCachedSetupCompleted || (maybeCached?.contains(fileURL.lastPathComponent) ?? true)
             }
             guard fileMaybeCached else {
-                return nil
-            }
-            guard fileManager.fileExists(atPath: filePath) else {
                 return nil
             }
 
@@ -275,6 +270,17 @@ public enum DiskStorage {
                 let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey, .creationDateKey]
                 meta = try FileMeta(fileURL: fileURL, resourceKeys: resourceKeys)
             } catch {
+                // A missing file is already reported by the resource values reading, so a separate `fileExists`
+                // check before it is not needed. This runs on the caller thread when probing cache existence, so
+                // it should touch the disk as few times as possible.
+                if error.isFileMissing {
+                    return nil
+                }
+                // Other metadata failures keep the original semantics: a file that cannot be confirmed on disk
+                // is a cache miss, while an existing file with unreadable metadata is an error.
+                guard config.fileManager.fileExists(atPath: fileURL.path) else {
+                    return nil
+                }
                 throw KingfisherError.cacheError(
                     reason: .invalidURLResource(error: error, key: key, url: fileURL))
             }
@@ -670,6 +676,16 @@ extension DiskStorage {
             cacheName = "com.onevcat.Kingfisher.ImageCache.\(config.name)"
             directoryURL = config.cachePathBlock(url, cacheName)
         }
+    }
+}
+
+extension Error {
+    // `URL.resourceValues(forKeys:)` reports a nonexistent file (or a missing intermediate directory in its
+    // path) as `NSFileReadNoSuchFileError`. Treating it as a normal cache miss allows the disk lookup to skip
+    // a dedicated `fileExists` disk touch on the hot path.
+    var isFileMissing: Bool {
+        let nsError = self as NSError
+        return nsError.domain == NSCocoaErrorDomain && nsError.code == NSFileReadNoSuchFileError
     }
 }
 
