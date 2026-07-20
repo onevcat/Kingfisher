@@ -345,7 +345,9 @@ public class KingfisherManager: @unchecked Sendable {
             let newTask = self.retrieveImage(
                 with: source,
                 context: retrievingContext,
-                downloadTaskUpdated: reporter.report,
+                downloadTaskUpdated: { task in
+                    reporter.report(task)
+                },
                 notifyStartedDownloadTask: true
             ) { result in
                 updateGate.execute {
@@ -696,7 +698,9 @@ public class KingfisherManager: @unchecked Sendable {
         case .network(let resource):
             let downloader = options.downloader ?? self.downloader
             let taskCreatedReporter = DownloadTaskCreatedReporter(downloadTaskCreated)
-            let downloadOptions = options.appendingDownloadTaskStartedHandler(taskCreatedReporter.report)
+            let downloadOptions = options.appendingDownloadTaskStartedHandler { task in
+                taskCreatedReporter.report(task)
+            }
             let task = downloader.downloadImage(
                 with: resource.downloadURL, options: downloadOptions, completionHandler: _cacheImage
             )
