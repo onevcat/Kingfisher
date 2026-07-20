@@ -44,26 +44,26 @@ jobs:
             label: 'watchOS 26.2'
             cache-key: xcode-26.2-watchos
 
-          - xcode: '26.5'
+          - xcode: '26.6'
             runner: macos-26
             destination: 'platform=macOS'
             label: 'macOS'
-            cache-key: xcode-26.5-macos
-          - xcode: '26.5'
+            cache-key: xcode-26.6-macos
+          - xcode: '26.6'
             runner: macos-26
             destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
             label: 'iOS 26.5'
-            cache-key: xcode-26.5-ios
-          - xcode: '26.5'
+            cache-key: xcode-26.6-ios
+          - xcode: '26.6'
             runner: macos-26
             destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.5'
             label: 'tvOS 26.5'
-            cache-key: xcode-26.5-tvos
-          - xcode: '26.5'
+            cache-key: xcode-26.6-tvos
+          - xcode: '26.6'
             runner: macos-26
             sdk: watchsimulator
             label: 'watchOS 26.5'
-            cache-key: xcode-26.5-watchos
+            cache-key: xcode-26.6-watchos
     steps:
       - uses: actions/checkout@v6
       - name: Setup Ruby

@@ -85,6 +85,26 @@ jobs:
             sdk: watchsimulator
             label: 'watchOS Simulator'
             cache-key: xcode-26.4.1-watchos
+          - xcode: '26.5'
+            runner: macos-26
+            destination: 'platform=macOS'
+            label: 'macOS'
+            cache-key: xcode-26.5-macos
+          - xcode: '26.5'
+            runner: macos-26
+            sdk: iphonesimulator
+            label: 'iOS Simulator'
+            cache-key: xcode-26.5-ios
+          - xcode: '26.5'
+            runner: macos-26
+            sdk: appletvsimulator
+            label: 'tvOS Simulator'
+            cache-key: xcode-26.5-tvos
+          - xcode: '26.5'
+            runner: macos-26
+            sdk: watchsimulator
+            label: 'watchOS Simulator'
+            cache-key: xcode-26.5-watchos
     steps:
       - uses: actions/checkout@v6
       - name: Setup Ruby
