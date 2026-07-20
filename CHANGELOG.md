@@ -2,6 +2,26 @@
 
 -----
 
+## [8.11.0 - Steady Flight](https://github.com/onevcat/Kingfisher/releases/tag/8.11.0) (2026-07-20)
+
+#### Add
+* Add `KFOptionSetter.copyForMutation()` for value-type conformers that need safe copy-on-mutate behavior; `KF.Builder` keeps its existing in-place semantics. [#2554](https://github.com/onevcat/Kingfisher/pull/2554) [#2551](https://github.com/onevcat/Kingfisher/pull/2551) @onevcat @EmanTahir888
+
+#### Fix
+* Fix `KFImage` and `KFAnimatedImage` modifiers mutating a shared context across copied view values, which could overwrite sibling options and callbacks or crash optimized builds. [#2554](https://github.com/onevcat/Kingfisher/pull/2554) [#2551](https://github.com/onevcat/Kingfisher/pull/2551) [#2440](https://github.com/onevcat/Kingfisher/issues/2440) @onevcat @EmanTahir888 @greatsk55
+* Fix `KFImage` placeholder and failure-view layout before image load while retaining fade, load, and caller-provided SwiftUI transitions. [#2555](https://github.com/onevcat/Kingfisher/pull/2555) [#2550](https://github.com/onevcat/Kingfisher/pull/2550) [#2533](https://github.com/onevcat/Kingfisher/issues/2533) @onevcat @wodud1107 @mrtsamma
+* Fix `SessionDataTask` races when concurrent cancellation and download startup access its callback storage and `started` state. [#2539](https://github.com/onevcat/Kingfisher/pull/2539) [#2549](https://github.com/onevcat/Kingfisher/pull/2549) [#2441](https://github.com/onevcat/Kingfisher/issues/2441) @devzahirul @onevcat @nickm01
+* Avoid full-size data copies during completed-download and progressive-decoding reads, reducing memory pressure and out-of-memory crashes on large images. [#2547](https://github.com/onevcat/Kingfisher/pull/2547) [#2543](https://github.com/onevcat/Kingfisher/issues/2543) @onevcat @MANEG-SEON-A
+* Ensure `ImageDownloaderDelegate` receives exactly one `didFinishDownloadingImageForURL` callback for each completed download, with the correct failure. [#2548](https://github.com/onevcat/Kingfisher/pull/2548) @onevcat
+* Synchronize retrieval-context state so alternative-source and low-data fallbacks do not lose errors or reuse removed sources. [#2541](https://github.com/onevcat/Kingfisher/pull/2541) @devzahirul
+* Ensure replacement retry, low-data, and alternative-source download tasks reach `downloadTaskUpdated` before their completion callback can run. [#2537](https://github.com/onevcat/Kingfisher/pull/2537) @onevcat
+* Make network observers one-shot and cancellation-safe, without delivery depending on a starved internal queue. [#2536](https://github.com/onevcat/Kingfisher/pull/2536) [#2559](https://github.com/onevcat/Kingfisher/pull/2559) @onevcat
+* Fix disk-cache initial-index races to preserve files stored during setup and avoid permanently disabling the `maybeCached` shortcut for a new cache. [#2535](https://github.com/onevcat/Kingfisher/pull/2535) [#2558](https://github.com/onevcat/Kingfisher/pull/2558) @onevcat
+* Remove a redundant file-existence lookup when reading disk-cache metadata. [#2556](https://github.com/onevcat/Kingfisher/pull/2556) @devzahirul
+* Fix disk caching with `autoExtAfterHashedFileName` for image URLs whose paths contain `@`. [#2540](https://github.com/onevcat/Kingfisher/pull/2540) [#2301](https://github.com/onevcat/Kingfisher/issues/2301) @devzahirul @Ceylo
+
+---
+
 ## [8.10.0 - Bean Counter](https://github.com/onevcat/Kingfisher/releases/tag/8.10.0) (2026-06-12)
 
 #### Add
