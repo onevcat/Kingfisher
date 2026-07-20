@@ -79,10 +79,11 @@ public enum DiskStorage {
         public convenience init(config: Config) throws {
             self.init(noThrowConfig: config, creatingDirectory: false)
             try prepareDirectory()
+            setupCacheChecking()
         }
 
-        // If `creatingDirectory` is `false`, the directory preparation will be skipped.
-        // We need to call `prepareDirectory` manually after this returns.
+        // If `creatingDirectory` is `false`, directory preparation and cache checking will be skipped.
+        // We need to call `prepareDirectory` and then `setupCacheChecking` manually after this returns.
         init(noThrowConfig config: Config, creatingDirectory: Bool) {
             var config = config
 
@@ -94,10 +95,10 @@ public enum DiskStorage {
             _config = config
 
             metaChangingQueue = DispatchQueue(label: creation.cacheName)
-            setupCacheChecking()
 
             if creatingDirectory {
                 try? prepareDirectory()
+                setupCacheChecking()
             }
         }
 
@@ -679,7 +680,7 @@ extension DiskStorage {
     }
 }
 
-extension Error {
+fileprivate extension Error {
     // `URL.resourceValues(forKeys:)` reports a nonexistent file (or a missing intermediate directory in its
     // path) as `NSFileReadNoSuchFileError`. Treating it as a normal cache miss allows the disk lookup to skip
     // a dedicated `fileExists` disk touch on the hot path.
@@ -687,9 +688,7 @@ extension Error {
         let nsError = self as NSError
         return nsError.domain == NSCocoaErrorDomain && nsError.code == NSFileReadNoSuchFileError
     }
-}
 
-fileprivate extension Error {
     var isFolderMissing: Bool {
         let nsError = self as NSError
         guard nsError.domain == NSCocoaErrorDomain, nsError.code == 4 else {
