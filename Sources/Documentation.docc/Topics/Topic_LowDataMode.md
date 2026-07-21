@@ -12,7 +12,7 @@ automatically switch to this version when Low Data Mode is activated, helping to
 ```swift
 imageView.kf.setImage(
     with: highResolutionURL, 
-    options: [.lowDataSource(.network(lowResolutionURL)]
+    options: [.lowDataMode(.network(lowResolutionURL))]
 )
 ```
 
@@ -20,7 +20,7 @@ In the scenario described, if the user has not applied any network restrictions,
 utilized for fetching the image. However, if the device is in Low Data Mode and the `highResolutionURL` version is not
 found in the cache, the `lowResolutionURL` will be selected as the fallback option to save data.
 
-Given that the `.lowDataSource` option accepts any `Source` parameter, not just a URL, you have the flexibility to pass 
+Given that the `.lowDataMode` option accepts any `Source` parameter, not just a URL, you have the flexibility to pass 
 in a local image provider. This approach effectively eliminates the need for a downloading task, allowing for the use 
 of locally stored images when operating under Low Data Mode or other restrictive network conditions.
 
@@ -28,7 +28,7 @@ of locally stored images when operating under Low Data Mode or other restrictive
 imageView.kf.setImage(
     with: highResolutionURL, 
     options: [
-        .lowDataSource(
+        .lowDataMode(
             .provider(LocalFileImageDataProvider(fileURL: localFileURL))
         )
     ]
@@ -37,5 +37,5 @@ imageView.kf.setImage(
 
 > For more about this topic, check <doc:Topic_ImageDataProvider> and ``ImageDataProvider`` documentation.
 
-> tip: If the `.lowDataSource` option is not specified, the `highResolutionURL` will be used by default, regardless of 
+> tip: If the `.lowDataMode` option is not specified, the `highResolutionURL` will be used by default, regardless of 
 > the Low Data Mode setting on the device.
