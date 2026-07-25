@@ -27,8 +27,25 @@ import Foundation
 
 class Box<T> {
     var value: T
-    
+
     init(_ value: T) {
+        self.value = value
+    }
+}
+
+/// A `Sendable` box that holds its content weakly.
+///
+/// It is used to hand a view to escaping download callbacks without extending the view's
+/// lifetime. The callbacks retain the box, but the box only references its `value` weakly, so
+/// a view whose owner was already released is not kept alive until the download finishes.
+/// See https://github.com/onevcat/Kingfisher/issues/2313
+///
+/// The stored `value` is expected to be accessed on the main thread only (image views are
+/// deallocated on the main thread), which is why `@unchecked Sendable` is safe here.
+final class WeakBox<T: AnyObject>: @unchecked Sendable {
+    weak var value: T?
+
+    init(_ value: T?) {
         self.value = value
     }
 }

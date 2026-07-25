@@ -324,18 +324,34 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         }
         let finalOptions = options
 
+        // Hold the image view weakly in the escaping download callbacks below. Otherwise an
+        // in-flight download keeps the view alive until it finishes, so a view whose owner was
+        // already released (for example, an image view in a popped view controller) survives
+        // longer than expected. The download itself keeps running and still populates the cache.
+        // See https://github.com/onevcat/Kingfisher/issues/2313
+        let weakBase = WeakBox(base)
+
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: finalOptions,
             downloadTaskUpdated: { task in
-                CallbackQueueMain.currentOrAsync { self.setImageTaskValue(task) }
+                CallbackQueueMain.currentOrAsync { weakBase.value?.kf.setImageTaskValue(task) }
             },
-            progressiveImageSetter: { self.base.image = $0 },
+            progressiveImageSetter: { weakBase.value?.image = $0 },
             referenceTaskIdentifierChecker: { !token.isCancelled },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
+                    // The image view might have been released while the download was still in
+                    // flight. In that case skip every UI update, but still forward the result so
+                    // callers awaiting completion are not left hanging.
+                    guard let base = weakBase.value else {
+                        completionHandler?(result)
+                        return
+                    }
+                    let mutatingSelf = base.kf
+
                     maybeIndicator?.stopAnimatingView()
-                    guard issuedIdentifier == self.taskIdentifier else {
+                    guard issuedIdentifier == mutatingSelf.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -348,26 +364,26 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                         return
                     }
 
-                    self.setImageTaskValue(nil)
-                    self.setTaskIdentifierValue(nil)
+                    mutatingSelf.setImageTaskValue(nil)
+                    mutatingSelf.setTaskIdentifierValue(nil)
 
                     switch result {
                     case .success(let value):
-                        guard self.needsTransition(options: finalOptions, cacheType: value.cacheType) else {
-                            self.setPlaceholderValue(nil)
-                            self.base.image = value.image
+                        guard mutatingSelf.needsTransition(options: finalOptions, cacheType: value.cacheType) else {
+                            mutatingSelf.setPlaceholderValue(nil)
+                            base.image = value.image
                             completionHandler?(result)
                             return
                         }
 
-                        self.makeTransition(image: value.image, transition: finalOptions.transition) {
+                        mutatingSelf.makeTransition(image: value.image, transition: finalOptions.transition) {
                             completionHandler?(result)
                         }
 
                     case .failure:
                         if let image = finalOptions.onFailureImage {
-                            self.setPlaceholderValue(nil)
-                            self.base.image = image
+                            mutatingSelf.setPlaceholderValue(nil)
+                            base.image = image
                         }
                         completionHandler?(result)
                     }

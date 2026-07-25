@@ -156,6 +156,35 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    @MainActor func testImageViewNotRetainedByInFlightDownload() {
+        // https://github.com/onevcat/Kingfisher/issues/2313
+        // A download that is still in flight must not keep its target image view alive. Once the
+        // view's owner is released, the view should be deallocated immediately instead of surviving
+        // until the download finishes.
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakImageView: KFCrossPlatformImageView?
+        autoreleasepool {
+            let imageView = KFCrossPlatformImageView()
+            weakImageView = imageView
+            imageView.kf.setImage(with: url)
+            // The stubbed response is delayed, so the download is still in flight at this point.
+        }
+
+        // The image view has no other owner, so the pending download must not keep it alive.
+        XCTAssertNil(weakImageView, "The image view should be released while its download is still in flight.")
+
+        // The download itself should keep running and still populate the cache.
+        _ = stub.go()
+        delay(0.5) {
+            XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     @MainActor func testImageDownloadCancelPartialTaskBeforeRequest() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
