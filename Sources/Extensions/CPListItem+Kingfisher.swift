@@ -109,11 +109,10 @@ extension KingfisherWrapper where Base: CPListItem {
         progressBlock: DownloadProgressBlock? = nil,
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil) -> DownloadTask?
     {
-        var mutatingSelf = self
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
-                setImage: { image, _ in
+                setImage: { listItem, image, _ in
                     /**
                      * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
                      * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
@@ -122,23 +121,36 @@ extension KingfisherWrapper where Base: CPListItem {
                      * users to compile the framework.
                      */
                     #if compiler(>=5.4)
-                    self.base.setImage(image)
+                    listItem.setImage(image)
                     #else
                     if let image = image {
-                        self.base.setImage(image)
+                        listItem.setImage(image)
                     }
                     #endif
                 },
-                getImage: {
-                    self.base.image
+                getImage: { listItem in
+                    listItem.image
                 }
             ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { mutatingSelf.taskIdentifier = $0 },
-                getTaskIdentifier: { mutatingSelf.taskIdentifier },
-                setTask: { mutatingSelf.imageTask = $0 },
-                getCancellationToken: { mutatingSelf.cancellationToken },
-                setCancellationToken: { mutatingSelf.cancellationToken = $0 }
+                setTaskIdentifier: { listItem, identifier in
+                    var wrapper = listItem.kf
+                    wrapper.taskIdentifier = identifier
+                },
+                getTaskIdentifier: { listItem in
+                    listItem.kf.taskIdentifier
+                },
+                setTask: { listItem, task in
+                    var wrapper = listItem.kf
+                    wrapper.imageTask = task
+                },
+                getCancellationToken: { listItem in
+                    listItem.kf.cancellationToken
+                },
+                setCancellationToken: { listItem, token in
+                    var wrapper = listItem.kf
+                    wrapper.cancellationToken = token
+                }
             ),
             placeholder: placeholder,
             parsedOptions: parsedOptions,

@@ -109,6 +109,54 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
     }
     
     @MainActor
+    func testButtonNotRetainedByInFlightImageDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakButton: NSButton?
+        autoreleasepool {
+            let button = NSButton()
+            weakButton = button
+            button.kf.setImage(with: url, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            })
+        }
+
+        XCTAssertNil(weakButton, "A button should be released while its image download is still in flight.")
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
+    @MainActor
+    func testButtonNotRetainedByInFlightAlternateImageDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakButton: NSButton?
+        autoreleasepool {
+            let button = NSButton()
+            weakButton = button
+            button.kf.setAlternateImage(with: url, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            })
+        }
+
+        XCTAssertNil(weakButton, "A button should be released while its alternate image download is still in flight.")
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
+    @MainActor
     func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

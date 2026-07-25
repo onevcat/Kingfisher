@@ -110,6 +110,52 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    @MainActor func testButtonNotRetainedByInFlightImageDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakButton: UIButton?
+        autoreleasepool {
+            let button = UIButton()
+            weakButton = button
+            button.kf.setImage(with: url, for: .normal, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            })
+        }
+
+        XCTAssertNil(weakButton, "A button should be released while its image download is still in flight.")
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
+    @MainActor func testButtonNotRetainedByInFlightBackgroundImageDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakButton: UIButton?
+        autoreleasepool {
+            let button = UIButton()
+            weakButton = button
+            button.kf.setBackgroundImage(with: url, for: .normal, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            })
+        }
+
+        XCTAssertNil(weakButton, "A button should be released while its background image download is still in flight.")
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
     @MainActor func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

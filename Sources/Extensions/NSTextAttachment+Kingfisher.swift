@@ -195,15 +195,23 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
         }
         let finalOptions = options
+        let weakBase = WeakBox(base)
+        let weakAttributedView = WeakBox(attributedView())
 
         let task = KingfisherManager.shared.retrieveImage(
             with: source,
             options: finalOptions,
-            progressiveImageSetter: { self.base.image = $0 },
+            progressiveImageSetter: { weakBase.value?.image = $0 },
             referenceTaskIdentifierChecker: { !token.isCancelled },
             completionHandler: { result in
                 CallbackQueueMain.currentOrAsync {
-                    guard issuedIdentifier == self.taskIdentifier else {
+                    guard let base = weakBase.value else {
+                        completionHandler?(result)
+                        return
+                    }
+                    let mutatingSelf = base.kf
+
+                    guard issuedIdentifier == mutatingSelf.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -216,26 +224,27 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                         return
                     }
 
-                    self.setImageTaskValue(nil)
-                    self.setTaskIdentifierValue(nil)
+                    mutatingSelf.setImageTaskValue(nil)
+                    mutatingSelf.setTaskIdentifierValue(nil)
 
                     switch result {
                     case .success(let value):
-                        self.base.image = value.image
-                        let view = attributedView()
-                        #if canImport(UIKit)
-                        view.setNeedsDisplay()
-                        #else
-                        view.setNeedsDisplay(view.bounds)
-                        #endif
+                        base.image = value.image
+                        if let view = weakAttributedView.value {
+                            #if canImport(UIKit)
+                            view.setNeedsDisplay()
+                            #else
+                            view.setNeedsDisplay(view.bounds)
+                            #endif
+                        }
                     case .failure:
                         if let image = finalOptions.onFailureImage {
-                            self.base.image = image
+                            base.image = image
                         }
                     }
                     completionHandler?(result)
                 }
-        }
+            }
         )
 
         setImageTaskValue(task)

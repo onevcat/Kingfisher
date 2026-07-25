@@ -31,6 +31,26 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
+private final class DelayedImageDataProvider: ImageDataProvider, @unchecked Sendable {
+    let cacheKey = "com.onevcat.KingfisherTests.ImageBinder.\(UUID().uuidString)"
+    private let payload: Data
+    private let onDataProvided: @Sendable () -> Void
+
+    init(payload: Data, onDataProvided: @escaping @Sendable () -> Void) {
+        self.payload = payload
+        self.onDataProvided = onDataProvided
+    }
+
+    func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
+        let payload = payload
+        let onDataProvided = onDataProvided
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            onDataProvided()
+            handler(.success(payload))
+        }
+    }
+}
+
 @available(iOS 14.0, tvOS 14.0, *)
 class ImageBinderTests: XCTestCase {
     @MainActor
@@ -89,6 +109,27 @@ class ImageBinderTests: XCTestCase {
         binder.start(context: context)
 
         await fulfillment(of: [success], timeout: 1)
+    }
+
+    @MainActor
+    func testBinderNotRetainedByInFlightDataProvider() async {
+        let dataProvided = expectation(description: "Data provider finishes")
+        let provider = DelayedImageDataProvider(
+            payload: testImagePNGData,
+            onDataProvided: { dataProvided.fulfill() }
+        )
+        let context = KFImage.Context<Image>(source: .provider(provider))
+
+        weak var weakBinder: KFImage.ImageBinder?
+        autoreleasepool {
+            let binder = KFImage.ImageBinder()
+            weakBinder = binder
+            binder.start(context: context)
+        }
+
+        XCTAssertNil(weakBinder, "A binder should be released while its image retrieval is still in flight.")
+
+        await fulfillment(of: [dataProvided], timeout: 1)
     }
 }
 
