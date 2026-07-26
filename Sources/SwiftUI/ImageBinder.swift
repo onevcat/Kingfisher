@@ -101,8 +101,17 @@ extension KFImage {
                         }
                     },
                     completionHandler: { [weak self] result in
-
-                        guard let self else { return }
+                        guard let self else {
+                            CallbackQueueMain.async {
+                                switch result {
+                                case .success(let value):
+                                    context.onSuccessDelegate.call(value)
+                                case .failure(let error):
+                                    context.onFailureDelegate.call(error)
+                                }
+                            }
+                            return
+                        }
 
                         CallbackQueueMain.currentOrAsync {
                             self.downloadTask = nil
