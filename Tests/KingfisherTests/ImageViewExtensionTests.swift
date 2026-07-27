@@ -27,6 +27,10 @@
 import XCTest
 @testable import Kingfisher
 
+#if canImport(PhotosUI) && !os(watchOS)
+import PhotosUI
+#endif
+
 @MainActor
 private final class TestImageComponent: KingfisherHasImageComponent {
     var image: KFCrossPlatformImage?
@@ -241,6 +245,50 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
+
+    #if canImport(PhotosUI) && !os(watchOS)
+    @MainActor func testLivePhotoViewNotRetainedByInFlightDownload() {
+        let completion = expectation(description: #function)
+        let stubs = [
+            delayedStub(LivePhotoURL.heic, data: testImageData),
+            delayedStub(LivePhotoURL.mov, data: testImageData)
+        ]
+
+        weak var weakView: PHLivePhotoView?
+        autoreleasepool {
+            let view = PHLivePhotoView()
+            weakView = view
+            view.kf.setImage(with: [LivePhotoURL.heic, LivePhotoURL.mov]) { result in
+                // The stubbed data is not a real live photo, so PhotoKit ends the request with an
+                // error. What matters is that the terminal result is still forwarded after the
+                // view is released, and that the downloaded resources are cached.
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            }
+        }
+
+        XCTAssertNil(weakView, "A live photo view should be released while its downloads are still in flight.")
+
+        stubs.forEach { _ = $0.go() }
+        waitForExpectations(timeout: 5, handler: nil)
+
+        let cache = KingfisherManager.shared.cache
+        XCTAssertTrue(
+            cache.isCached(
+                forKey: LivePhotoURL.heic.cacheKey,
+                processorIdentifier: LivePhotoImageProcessor.default.identifier,
+                forcedExtension: LivePhotoURL.heic.pathExtension
+            )
+        )
+        XCTAssertTrue(
+            cache.isCached(
+                forKey: LivePhotoURL.mov.cacheKey,
+                processorIdentifier: LivePhotoImageProcessor.default.identifier,
+                forcedExtension: LivePhotoURL.mov.pathExtension
+            )
+        )
+    }
+    #endif
 
     @MainActor func testImageDownloadCancelPartialTaskBeforeRequest() {
         let exp = expectation(description: #function)

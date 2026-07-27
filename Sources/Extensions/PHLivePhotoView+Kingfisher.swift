@@ -206,7 +206,10 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         // Copy these associated values to prevent issues from reentrance.
         let targetSize = targetSize
         let contentMode = contentMode
-        
+
+        // The task and the PhotoKit result handler only retain this weak box, so the view can be
+        // released while the retrieval is still in flight; terminal results are still forwarded.
+        let weakBase = WeakBox(base)
         let task = Task { @MainActor in
             do {
                 let loadingInfo = try await KingfisherManager.shared.retrieveLivePhoto(
@@ -215,7 +218,8 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                     progressBlock: nil, // progressBlock, // Not supported yet
                     referenceTaskIdentifierChecker: taskIdentifierChecking
                 )
-                if let notCurrentTaskError = self.checkNotCurrentTask(
+                if let notCurrentTaskError = Self.checkNotCurrentTask(
+                    view: weakBase.value,
                     issuedIdentifier: issuedIdentifier,
                     result: .init(loadingInfo: loadingInfo, livePhoto: nil, info: nil),
                     error: nil,
@@ -224,7 +228,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                     completionHandler?(.failure(notCurrentTaskError))
                     return
                 }
-                
+
                 PHLivePhoto.request(
                     withResourceFileURLs: loadingInfo.fileURLs,
                     placeholderImage: nil,
@@ -236,8 +240,9 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                             livePhoto: livePhoto,
                             info: info
                         )
-                        
-                        if let notCurrentTaskError = self.checkNotCurrentTask(
+
+                        if let notCurrentTaskError = Self.checkNotCurrentTask(
+                            view: weakBase.value,
                             issuedIdentifier: issuedIdentifier,
                             result: result,
                             error: nil,
@@ -246,8 +251,8 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                             completionHandler?(.failure(notCurrentTaskError))
                             return
                         }
-                        
-                        base.livePhoto = livePhoto
+
+                        weakBase.value?.livePhoto = livePhoto
                         
                         if let error = info[PHLivePhotoInfoErrorKey] as? NSError {
                             let failingReason: KingfisherError.ImageSettingErrorReason =
@@ -278,7 +283,8 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
                     }
                 )
             } catch {
-                if let notCurrentTaskError = self.checkNotCurrentTask(
+                if let notCurrentTaskError = Self.checkNotCurrentTask(
+                    view: weakBase.value,
                     issuedIdentifier: issuedIdentifier,
                     result: nil,
                     error: error,
@@ -303,13 +309,17 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         return task
     }
     
-    private func checkNotCurrentTask(
+    private static func checkNotCurrentTask(
+        view: Base?,
         issuedIdentifier: Source.Identifier.Value,
         result: RetrieveLivePhotoResult?,
         error: (any Error)?,
         source: LivePhotoSource
     ) -> KingfisherError? {
-        if issuedIdentifier == self.taskIdentifier {
+        // A released view cannot issue a newer task, so its in-flight task is still the current
+        // one and the terminal result should be forwarded.
+        guard let view else { return nil }
+        if issuedIdentifier == view.kf.taskIdentifier {
             return nil
         }
         return .imageSettingError(reason: .notCurrentLivePhotoSourceTask(result: result, error: error, source: source))
