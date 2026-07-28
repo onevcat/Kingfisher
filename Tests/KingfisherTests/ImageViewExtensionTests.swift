@@ -27,6 +27,15 @@
 import XCTest
 @testable import Kingfisher
 
+#if canImport(PhotosUI) && !os(watchOS)
+import PhotosUI
+#endif
+
+@MainActor
+private final class TestImageComponent: KingfisherHasImageComponent {
+    var image: KFCrossPlatformImage?
+}
+
 class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     var imageView: KFCrossPlatformImageView!
@@ -161,7 +170,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         // A download that is still in flight must not keep its target image view alive. Once the
         // view's owner is released, the view should be deallocated immediately instead of surviving
         // until the download finishes.
-        let exp = expectation(description: #function)
+        let completion = expectation(description: #function)
         let url = testURLs[0]
         let stub = delayedStub(url, data: testImageData, length: 123)
 
@@ -169,21 +178,117 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         autoreleasepool {
             let imageView = KFCrossPlatformImageView()
             weakImageView = imageView
-            imageView.kf.setImage(with: url)
+            imageView.kf.setImage(with: url) { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            }
             // The stubbed response is delayed, so the download is still in flight at this point.
         }
 
         // The image view has no other owner, so the pending download must not keep it alive.
         XCTAssertNil(weakImageView, "The image view should be released while its download is still in flight.")
 
-        // The download itself should keep running and still populate the cache.
+        // The download itself should keep running, call the completion handler, and populate the cache.
         _ = stub.go()
-        delay(0.5) {
-            XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
-            exp.fulfill()
-        }
         waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+
     }
+
+    @MainActor func testImageSettableObjectNotRetainedByInFlightDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakTarget: TestImageComponent?
+        autoreleasepool {
+            let target = TestImageComponent()
+            weakTarget = target
+            target.kf.setImage(with: url) { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            }
+        }
+
+        XCTAssertNil(weakTarget, "An image-settable object should be released while its download is still in flight.")
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
+    @MainActor func testTextAttachmentAndAttributedViewNotRetainedByInFlightDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakAttachment: NSTextAttachment?
+        weak var weakAttributedView: KFCrossPlatformView?
+        autoreleasepool {
+            let attributedView = KFCrossPlatformView()
+            let attachment = NSTextAttachment()
+            weakAttachment = attachment
+            weakAttributedView = attributedView
+            attachment.kf.setImage(with: url, attributedView: attributedView, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            })
+        }
+
+        XCTAssertNil(weakAttachment, "A text attachment should be released while its download is still in flight.")
+        XCTAssertNil(weakAttributedView, "An attributed view should not be retained by an attachment download.")
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
+    #if canImport(PhotosUI) && !os(watchOS)
+    @MainActor func testLivePhotoViewNotRetainedByInFlightDownload() {
+        let completion = expectation(description: #function)
+        let stubs = [
+            delayedStub(LivePhotoURL.heic, data: testImageData),
+            delayedStub(LivePhotoURL.mov, data: testImageData)
+        ]
+
+        weak var weakView: PHLivePhotoView?
+        autoreleasepool {
+            let view = PHLivePhotoView()
+            weakView = view
+            view.kf.setImage(with: [LivePhotoURL.heic, LivePhotoURL.mov]) { result in
+                // The stubbed data is not a real live photo, so PhotoKit ends the request with an
+                // error. What matters is that the terminal result is still forwarded after the
+                // view is released, and that the downloaded resources are cached.
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            }
+        }
+
+        XCTAssertNil(weakView, "A live photo view should be released while its downloads are still in flight.")
+
+        stubs.forEach { _ = $0.go() }
+        waitForExpectations(timeout: 5, handler: nil)
+
+        let cache = KingfisherManager.shared.cache
+        XCTAssertTrue(
+            cache.isCached(
+                forKey: LivePhotoURL.heic.cacheKey,
+                processorIdentifier: LivePhotoImageProcessor.default.identifier,
+                forcedExtension: LivePhotoURL.heic.pathExtension
+            )
+        )
+        XCTAssertTrue(
+            cache.isCached(
+                forKey: LivePhotoURL.mov.cacheKey,
+                processorIdentifier: LivePhotoImageProcessor.default.identifier,
+                forcedExtension: LivePhotoURL.mov.pathExtension
+            )
+        )
+    }
+    #endif
 
     @MainActor func testImageDownloadCancelPartialTaskBeforeRequest() {
         let exp = expectation(description: #function)

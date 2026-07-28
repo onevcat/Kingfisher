@@ -107,21 +107,36 @@ extension KingfisherWrapper where Base: NSButton {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask?
     {
-        var mutatingSelf = self
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
-                setImage: { image, _ in
-                    base.image = image
-                }, getImage: {
-                    base.image
-                }),
+                setImage: { button, image, _ in
+                    button.image = image
+                },
+                getImage: { button in
+                    button.image
+                }
+            ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { mutatingSelf.taskIdentifier = $0 },
-                getTaskIdentifier: { mutatingSelf.taskIdentifier },
-                setTask: { mutatingSelf.imageTask = $0 },
-                getCancellationToken: { mutatingSelf.imageCancellationToken },
-                setCancellationToken: { mutatingSelf.imageCancellationToken = $0 }),
+                setTaskIdentifier: { button, identifier in
+                    var wrapper = button.kf
+                    wrapper.taskIdentifier = identifier
+                },
+                getTaskIdentifier: { button in
+                    button.kf.taskIdentifier
+                },
+                setTask: { button, task in
+                    var wrapper = button.kf
+                    wrapper.imageTask = task
+                },
+                getCancellationToken: { button in
+                    button.kf.imageCancellationToken
+                },
+                setCancellationToken: { button, token in
+                    var wrapper = button.kf
+                    wrapper.imageCancellationToken = token
+                }
+            ),
             placeholder: placeholder,
             parsedOptions: parsedOptions,
             progressBlock: progressBlock,
@@ -199,21 +214,35 @@ extension KingfisherWrapper where Base: NSButton {
         completionHandler: (@MainActor @Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
     ) -> DownloadTask?
     {
-        var mutatingSelf = self
         return setImage(
             with: source,
             imageAccessor: ImagePropertyAccessor(
-                setImage: { image, _ in
-                    base.alternateImage = image
-                }, getImage: {
-                    base.alternateImage
-                }),
+                setImage: { button, image, _ in
+                    button.alternateImage = image
+                },
+                getImage: { button in
+                    button.alternateImage
+                }
+            ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { mutatingSelf.alternateTaskIdentifier = $0 },
-                getTaskIdentifier: { mutatingSelf.alternateTaskIdentifier },
-                setTask: { mutatingSelf.alternateImageTask = $0 },
-                getCancellationToken: { mutatingSelf.alternateImageCancellationToken },
-                setCancellationToken: { mutatingSelf.alternateImageCancellationToken = $0 }
+                setTaskIdentifier: { button, identifier in
+                    var wrapper = button.kf
+                    wrapper.alternateTaskIdentifier = identifier
+                },
+                getTaskIdentifier: { button in
+                    button.kf.alternateTaskIdentifier
+                },
+                setTask: { button, task in
+                    var wrapper = button.kf
+                    wrapper.alternateImageTask = task
+                },
+                getCancellationToken: { button in
+                    button.kf.alternateImageCancellationToken
+                },
+                setCancellationToken: { button, token in
+                    var wrapper = button.kf
+                    wrapper.alternateImageCancellationToken = token
+                }
             ),
             placeholder: placeholder,
             parsedOptions: parsedOptions,

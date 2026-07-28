@@ -88,19 +88,30 @@ extension KFImage {
                 .retrieveImage(
                     with: source,
                     options: context.options,
-                    progressBlock: { size, total in
+                    progressBlock: { [weak self] size, total in
+                        guard let self else { return }
                         self.updateProgress(downloaded: size, total: total)
                         context.onProgressDelegate.call((size, total))
                     },
-                    progressiveImageSetter: { image in
-                        CallbackQueueMain.currentOrAsync {
+                    progressiveImageSetter: { [weak self] image in
+                        CallbackQueueMain.currentOrAsync { [weak self] in
+                            guard let self else { return }
                             self.markLoaded(sendChangeEvent: true)
                             self.loadedImage = image
                         }
                     },
                     completionHandler: { [weak self] result in
-
-                        guard let self else { return }
+                        guard let self else {
+                            CallbackQueueMain.async {
+                                switch result {
+                                case .success(let value):
+                                    context.onSuccessDelegate.call(value)
+                                case .failure(let error):
+                                    context.onFailureDelegate.call(error)
+                                }
+                            }
+                            return
+                        }
 
                         CallbackQueueMain.currentOrAsync {
                             self.downloadTask = nil

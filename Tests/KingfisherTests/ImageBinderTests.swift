@@ -31,6 +31,38 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
+private enum DelayedImageDataProviderError: Error, Sendable {
+    case expected
+}
+
+private final class DelayedImageDataProvider: ImageDataProvider, @unchecked Sendable {
+    let cacheKey = "com.onevcat.KingfisherTests.ImageBinder.\(UUID().uuidString)"
+    private let result: Result<Data, DelayedImageDataProviderError>
+    private let onResultProvided: @Sendable () -> Void
+
+    init(
+        result: Result<Data, DelayedImageDataProviderError>,
+        onResultProvided: @escaping @Sendable () -> Void
+    ) {
+        self.result = result
+        self.onResultProvided = onResultProvided
+    }
+
+    func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
+        let result = result
+        let onResultProvided = onResultProvided
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            onResultProvided()
+            switch result {
+            case .success(let data):
+                handler(.success(data))
+            case .failure(let error):
+                handler(.failure(error))
+            }
+        }
+    }
+}
+
 @available(iOS 14.0, tvOS 14.0, *)
 class ImageBinderTests: XCTestCase {
     @MainActor
@@ -89,6 +121,76 @@ class ImageBinderTests: XCTestCase {
         binder.start(context: context)
 
         await fulfillment(of: [success], timeout: 1)
+    }
+
+    @MainActor
+    func testBinderNotRetainedByInFlightDataProvider() async {
+        let dataProvided = expectation(description: "Data provider finishes")
+        let provider = DelayedImageDataProvider(
+            result: .success(testImagePNGData),
+            onResultProvided: { dataProvided.fulfill() }
+        )
+        let context = KFImage.Context<Image>(source: .provider(provider))
+
+        weak var weakBinder: KFImage.ImageBinder?
+        autoreleasepool {
+            let binder = KFImage.ImageBinder()
+            weakBinder = binder
+            binder.start(context: context)
+        }
+
+        XCTAssertNil(weakBinder, "A binder should be released while its image retrieval is still in flight.")
+
+        await fulfillment(of: [dataProvided], timeout: 1)
+    }
+
+    @MainActor
+    func testReleasedBinderForwardsSuccess() async {
+        let resultReceived = expectation(description: "Success is forwarded")
+        let provider = DelayedImageDataProvider(
+            result: .success(testImagePNGData),
+            onResultProvided: {}
+        )
+        let context = KFImage.Context<Image>(source: .provider(provider))
+        context.onSuccessDelegate.delegate(on: self) { _, result in
+            XCTAssertNotNil(result.image)
+            resultReceived.fulfill()
+        }
+
+        weak var weakBinder: KFImage.ImageBinder?
+        autoreleasepool {
+            let binder = KFImage.ImageBinder()
+            weakBinder = binder
+            binder.start(context: context)
+        }
+
+        XCTAssertNil(weakBinder, "A binder should be released while its image retrieval is still in flight.")
+
+        await fulfillment(of: [resultReceived], timeout: 1)
+    }
+
+    @MainActor
+    func testReleasedBinderForwardsFailure() async {
+        let resultReceived = expectation(description: "Failure is forwarded")
+        let provider = DelayedImageDataProvider(
+            result: .failure(.expected),
+            onResultProvided: {}
+        )
+        let context = KFImage.Context<Image>(source: .provider(provider))
+        context.onFailureDelegate.delegate(on: self) { _, _ in
+            resultReceived.fulfill()
+        }
+
+        weak var weakBinder: KFImage.ImageBinder?
+        autoreleasepool {
+            let binder = KFImage.ImageBinder()
+            weakBinder = binder
+            binder.start(context: context)
+        }
+
+        XCTAssertNil(weakBinder, "A binder should be released while its image retrieval is still in flight.")
+
+        await fulfillment(of: [resultReceived], timeout: 1)
     }
 }
 
