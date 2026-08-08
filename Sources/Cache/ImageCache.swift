@@ -145,7 +145,7 @@ public enum ImageCacheResult: Sendable {
 /// Represents a hybrid caching system composed of a ``MemoryStorage`` and a ``DiskStorage``.
 ///
 /// ``ImageCache`` serves as a high-level abstraction for storing an image and its data in memory and on disk, as well
-/// as retrieving them. You can define configurations for the memory cache backend and disk cache backend, and the the
+/// as retrieving them. You can define configurations for the memory cache backend and disk cache backend, and the
 /// unified methods to store images to the cache or retrieve images from either the memory cache or the disk cache.
 ///
 /// > While a default image cache object will be used if you prefer the extension methods of Kingfisher, you can create
