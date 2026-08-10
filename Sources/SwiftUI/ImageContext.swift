@@ -55,8 +55,9 @@ extension KFImage {
             set { propertyQueue.sync { _renderConfigurations = newValue } }
         }
         
-        var _contentConfiguration: ((HoldingView) -> AnyView)? = nil
-        var contentConfiguration: ((HoldingView) -> AnyView)? {
+        // The `Bool` parameter tells whether the passed-in view holds an image retrieved from the cache or the network.
+        var _contentConfiguration: ((HoldingView, Bool) -> AnyView)? = nil
+        var contentConfiguration: ((HoldingView, Bool) -> AnyView)? {
             get { propertyQueue.sync { _contentConfiguration } }
             set { propertyQueue.sync { _contentConfiguration = newValue } }
         }

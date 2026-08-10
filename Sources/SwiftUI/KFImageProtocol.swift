@@ -98,9 +98,45 @@ extension KFImageProtocol {
     /// - Parameter block: The block applies to the loaded image. The block should return a `View` that is configured.
     /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
     /// `block`.
-    public func contentConfigure<V: View>(_ block: @escaping (HoldingView) -> V) -> Self {
+    public func contentConfigure<V: View>(@ViewBuilder _ block: @escaping (HoldingView) -> V) -> Self {
+        contentConfigure { view, _ in block(view) }
+    }
+
+    /// Configures the current image with a `block` and returns a `View` to use as the final content, with a flag
+    /// telling whether the image is loaded as input.
+    ///
+    /// This block will be lazily applied when creating the final `Image`. Since the block is also evaluated before the
+    /// image is loaded, the `isLoaded` parameter lets you skip configurations that only make sense for a real image:
+    ///
+    /// ```swift
+    /// KFImage(url)
+    ///     .contentConfigure { image, isLoaded in
+    ///         if isLoaded {
+    ///             image.resizable().scaledToFit().overlay(Badge())
+    ///         } else {
+    ///             image
+    ///         }
+    ///     }
+    /// ```
+    ///
+    /// The `isLoaded` parameter is `true` only when the image comes from the cache or the network, including a partial
+    /// image delivered by progressive loading. It is `false` before the loading finishes, as well as for the fallback
+    /// supplied by the deprecated `onFailureImage`.
+    ///
+    /// - Note: The view returned while `isLoaded` is `false` does not appear on screen, since the image branch is kept
+    /// hidden until an image is available. Use `placeholder(_:)` for the loading state and ``onFailureView(_:)`` for
+    /// the failure state instead. If a load transition is set by `loadTransition(_:animation:)`, the block is only
+    /// evaluated after the image is loaded, so `isLoaded` is always `true` there.
+    ///
+    /// If multiple `contentConfigure` modifiers are added to the image, only the last one will be stored and used.
+    ///
+    /// - Parameter block: The block applies to the loaded image and a flag telling whether the image is loaded. The
+    /// block should return a `View` that is configured.
+    /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
+    /// `block`.
+    public func contentConfigure<V: View>(@ViewBuilder _ block: @escaping (HoldingView, Bool) -> V) -> Self {
         let result = copyForMutation()
-        result.context.contentConfiguration = { AnyView(block($0)) }
+        result.context.contentConfiguration = { AnyView(block($0, $1)) }
         return result
     }
 }

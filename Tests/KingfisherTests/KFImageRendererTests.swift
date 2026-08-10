@@ -158,6 +158,88 @@ class KFImageRendererTests: XCTestCase {
         return measuredSize
     }
 
+    // MARK: - contentConfigure isLoaded
+    // The `isLoaded` flag lets the caller gate configurations that only make sense for a real image. It must
+    // distinguish an image retrieved from the cache or the network from the fallback set by `onFailureImage`, which
+    // is rendered through the very same branch.
+    private let loadedHeight: CGFloat = 123
+    private let notLoadedHeight: CGFloat = 45
+
+    @MainActor
+    func testContentConfigureReceivesIsLoadedAfterSuccess() async {
+        let successExpectation = expectation(description: "Image loading succeeds")
+
+        let view = KFImage
+            .data(testImageData, cacheKey: "com.onevcat.KingfisherTests.contentConfigureIsLoadedOnSuccess")
+            .contentConfigure { image, isLoaded in
+                if isLoaded {
+                    image.resizable().frame(height: self.loadedHeight)
+                } else {
+                    image.resizable().frame(height: self.notLoadedHeight)
+                }
+            }
+            .onSuccess { _ in
+                successExpectation.fulfill()
+            }
+
+        let measuredSize = await measureLayout(view, after: successExpectation)
+
+        XCTAssertEqual(
+            measuredSize.height,
+            loadedHeight,
+            accuracy: 0.5,
+            "`isLoaded` should be `true` once the image is retrieved from the cache or the network."
+        )
+    }
+
+    @MainActor
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    func testContentConfigureReceivesIsLoadedFalseForFailureImage() async {
+        let failureExpectation = expectation(description: "Image loading fails")
+
+        let view = KFImage.dataProvider(FailingImageDataProvider())
+            .onFailureImage(testImage)
+            .contentConfigure { image, isLoaded in
+                if isLoaded {
+                    image.resizable().frame(height: self.loadedHeight)
+                } else {
+                    image.resizable().frame(height: self.notLoadedHeight)
+                }
+            }
+            .onFailure { _ in
+                failureExpectation.fulfill()
+            }
+
+        let measuredSize = await measureLayout(view, after: failureExpectation)
+
+        // A non-zero height proves the image branch is rendered, so the `false` flag comes from the fallback image
+        // rather than from an empty image branch.
+        XCTAssertEqual(
+            measuredSize.height,
+            notLoadedHeight,
+            accuracy: 0.5,
+            "`isLoaded` should be `false` for the fallback set by `onFailureImage`, even while it is rendered."
+        )
+    }
+
+    @MainActor
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    func testFailureImageFlagIsResetWhenLoadingRestarts() {
+        let binder = KFImage.ImageBinder()
+
+        // `onFailureImage` accepts a `nil` image, so the flag can be set while `loadedImage` stays empty. That state
+        // is not terminal, and a stale flag would make the next successful load look like a fallback image.
+        let failingContext = KFImage.Context<Image>(source: nil)
+        failingContext.options.onFailureImage = .some(nil)
+
+        binder.start(context: failingContext)
+        XCTAssertTrue(binder.usesFailureImage)
+        XCTAssertNil(binder.loadedImage)
+
+        binder.start(context: KFImage.Context<Image>(source: nil))
+        XCTAssertFalse(binder.usesFailureImage)
+    }
+
     // MARK: - Renderer intermediate states
     // Regression test for the fade scaling artifact. The image branch keeps a zero frame while
     // `loadedImage` is nil, and the zero frame must be released as soon as `loadedImage` is set —
@@ -174,7 +256,7 @@ class KFImageRendererTests: XCTestCase {
         context.placeholder = { _ in
             AnyView(Color.gray.frame(height: 200))
         }
-        context.contentConfiguration = { image in
+        context.contentConfiguration = { image, _ in
             AnyView(image.resizable().aspectRatio(contentMode: .fit))
         }
 
@@ -287,7 +369,7 @@ class KFImageRendererTests: XCTestCase {
         let binder = KFImage.ImageBinder()
         let context = KFImage.Context<Image>(source: nil)
         // Keep the image branch in the hierarchy before a cache hit resolves.
-        context.contentConfiguration = { _ in
+        context.contentConfiguration = { _, _ in
             AnyView(
                 Color.clear
                     .onAppear {

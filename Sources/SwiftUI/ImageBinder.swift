@@ -55,6 +55,12 @@ extension KFImage {
         var failureView: (() -> AnyView)? = nil { willSet { objectWillChange.send() } }
         var progress: Progress = .init()
 
+        /// Whether the current `loadedImage` is the fallback supplied by the deprecated `onFailureImage`, instead of
+        /// an image retrieved from the cache or the network.
+        ///
+        /// It is always set right before `loadedImage`, so the change event sent by `loadedImage` also covers it.
+        private(set) var usesFailureImage = false
+
         func markLoading() {
             loading = true
         }
@@ -67,12 +73,17 @@ extension KFImage {
         }
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) where HoldingView: Sendable {
+            // `onFailureImage` accepts a `nil` image, which leaves `loadedImage` empty while the flag is set. That
+            // state is not terminal, so a retry has to clear the flag before it can set a retrieved image again.
+            usesFailureImage = false
+
             guard let source = context.source else {
                 CallbackQueueMain.currentOrAsync {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
                     if let view = context.failureView {
                         self.failureView = view
                     } else if let image = context.options.onFailureImage {
+                        self.usesFailureImage = true
                         self.loadedImage = image
                     }
                     self.loading = false
@@ -162,6 +173,7 @@ extension KFImage {
                                 if let view = context.failureView {
                                     self.failureView = view
                                 } else if let image = context.options.onFailureImage {
+                                    self.usesFailureImage = true
                                     self.loadedImage = image
                                 }
                                 self.markLoaded(sendChangeEvent: false)
