@@ -222,22 +222,37 @@ class KFImageRendererTests: XCTestCase {
         )
     }
 
+    // A cancelled request keeps `loadedImage` empty, so the binder can be restarted while the cancelled request has
+    // not delivered its failure yet. When that failure lands afterwards it installs the fallback image, and the
+    // restarted load must still be able to report its own image as retrieved.
     @MainActor
     @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
-    func testFailureImageFlagIsResetWhenLoadingRestarts() {
+    func testRetrievedImageClearsProvenanceLeftByAStaleFailureCallback() async {
         let binder = KFImage.ImageBinder()
+        let successExpectation = expectation(description: "Restarted loading succeeds")
 
-        // `onFailureImage` accepts a `nil` image, so the flag can be set while `loadedImage` stays empty. That state
-        // is not terminal, and a stale flag would make the next successful load look like a fallback image.
-        let failingContext = KFImage.Context<Image>(source: nil)
-        failingContext.options.onFailureImage = .some(nil)
+        // The restarted request. A fresh cache key keeps it out of the cache, so it stays in flight below.
+        let restartedContext = KFImage.Context<Image>(
+            source: .provider(RawImageDataProvider(data: testImageData, cacheKey: UUID().uuidString))
+        )
+        restartedContext.onSuccessDelegate.delegate(on: self) { _, _ in
+            successExpectation.fulfill()
+        }
+        binder.start(context: restartedContext)
 
-        binder.start(context: failingContext)
-        XCTAssertTrue(binder.usesFailureImage)
-        XCTAssertNil(binder.loadedImage)
+        // The cancelled request delivers its failure while the restarted one is still loading.
+        let staleFailureContext = KFImage.Context<Image>(source: nil)
+        staleFailureContext.options.onFailureImage = .some(testImage)
+        binder.start(context: staleFailureContext)
+        XCTAssertTrue(binder.usesFailureImage, "The stale failure callback should install the fallback image.")
 
-        binder.start(context: KFImage.Context<Image>(source: nil))
-        XCTAssertFalse(binder.usesFailureImage)
+        await fulfillment(of: [successExpectation], timeout: 1)
+
+        XCTAssertNotNil(binder.loadedImage)
+        XCTAssertFalse(
+            binder.usesFailureImage,
+            "A retrieved image must carry its own provenance instead of inheriting the stale one."
+        )
     }
 
     // MARK: - Renderer intermediate states

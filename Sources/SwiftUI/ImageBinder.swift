@@ -57,9 +57,17 @@ extension KFImage {
 
         /// Whether the current `loadedImage` is the fallback supplied by the deprecated `onFailureImage`, instead of
         /// an image retrieved from the cache or the network.
-        ///
-        /// It is always set right before `loadedImage`, so the change event sent by `loadedImage` also covers it.
         private(set) var usesFailureImage = false
+
+        /// Sets `loadedImage` together with where that image came from.
+        ///
+        /// A cancelled request can still deliver its failure after a restarted load has begun, so the two values have
+        /// to change as a pair. Otherwise the provenance outlives the image it described, and a retrieved image ends
+        /// up reported as a fallback. Assigning here also covers the change event, since `loadedImage` sends it.
+        private func setLoadedImage(_ image: KFCrossPlatformImage?, isFailureImage: Bool = false) {
+            usesFailureImage = isFailureImage
+            loadedImage = image
+        }
 
         func markLoading() {
             loading = true
@@ -73,18 +81,13 @@ extension KFImage {
         }
 
         func start<HoldingView: KFImageHoldingView>(context: Context<HoldingView>) where HoldingView: Sendable {
-            // `onFailureImage` accepts a `nil` image, which leaves `loadedImage` empty while the flag is set. That
-            // state is not terminal, so a retry has to clear the flag before it can set a retrieved image again.
-            usesFailureImage = false
-
             guard let source = context.source else {
                 CallbackQueueMain.currentOrAsync {
                     context.onFailureDelegate.call(KingfisherError.imageSettingError(reason: .emptySource))
                     if let view = context.failureView {
                         self.failureView = view
                     } else if let image = context.options.onFailureImage {
-                        self.usesFailureImage = true
-                        self.loadedImage = image
+                        self.setLoadedImage(image, isFailureImage: true)
                     }
                     self.loading = false
                     self.markLoaded(sendChangeEvent: false)
@@ -108,7 +111,7 @@ extension KFImage {
                         CallbackQueueMain.currentOrAsync { [weak self] in
                             guard let self else { return }
                             self.markLoaded(sendChangeEvent: true)
-                            self.loadedImage = image
+                            self.setLoadedImage(image)
                         }
                     },
                     completionHandler: { [weak self] result in
@@ -136,7 +139,7 @@ extension KFImage {
                                    context.shouldApplyFade(cacheType: value.cacheType) {
                                     // Apply SwiftUI loadTransition with custom animation (higher priority than fade)
                                     self.animating = true
-                                    self.loadedImage = value.image
+                                    self.setLoadedImage(value.image)
 
                                     let animation = context.swiftUIAnimation ?? .default
                                     CallbackQueueMain.async {
@@ -148,7 +151,7 @@ extension KFImage {
                                     }
                                 } else if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
-                                    self.loadedImage = value.image
+                                    self.setLoadedImage(value.image)
 
                                     let animation = Animation.linear(duration: fadeDuration)
                                     CallbackQueueMain.async {
@@ -161,7 +164,7 @@ extension KFImage {
                                     }
                                 } else {
                                     self.markLoaded(sendChangeEvent: false)
-                                    self.loadedImage = value.image
+                                    self.setLoadedImage(value.image)
 
                                     CallbackQueueMain.async {
                                         context.onSuccessDelegate.call(value)
@@ -173,8 +176,7 @@ extension KFImage {
                                 if let view = context.failureView {
                                     self.failureView = view
                                 } else if let image = context.options.onFailureImage {
-                                    self.usesFailureImage = true
-                                    self.loadedImage = image
+                                    self.setLoadedImage(image, isFailureImage: true)
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }
