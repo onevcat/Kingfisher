@@ -207,6 +207,31 @@ class KFImageRendererTests: XCTestCase {
         )
     }
 
+    // A load transition drops the render pass that evaluates the block before an image exists, but it does not change
+    // what a displayed fallback reports: the fallback is still an image the caller did not retrieve.
+    @MainActor
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    func testContentConfigureReceivesIsLoadedFalseForFailureImageWithLoadTransition() async {
+        let failureExpectation = expectation(description: "Image loading fails")
+
+        let view = KFImage.dataProvider(FailingImageDataProvider())
+            .onFailureImage(testImage)
+            .measuringIsLoaded()
+            .loadTransition(.opacity)
+            .onFailure { _ in
+                failureExpectation.fulfill()
+            }
+
+        let measuredSize = await measureLayout(view, after: failureExpectation)
+
+        XCTAssertEqual(
+            measuredSize.height,
+            isLoadedFalseHeight,
+            accuracy: 0.5,
+            "A displayed `onFailureImage` fallback should report `isLoaded` as `false` with a load transition too."
+        )
+    }
+
     // MARK: - Renderer intermediate states
     // Regression test for the fade scaling artifact. The image branch keeps a zero frame while
     // `loadedImage` is nil, and the zero frame must be released as soon as `loadedImage` is set —

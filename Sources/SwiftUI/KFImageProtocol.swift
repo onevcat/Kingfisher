@@ -105,8 +105,8 @@ extension KFImageProtocol {
     /// Configures the current image with a `block` and returns a `View` to use as the final content, with a flag
     /// telling whether the image is loaded as input.
     ///
-    /// This block will be lazily applied when creating the final `Image`. Since the block is also evaluated before the
-    /// image is loaded, the `isLoaded` parameter lets you skip configurations that only make sense for a real image:
+    /// This block will be lazily applied when creating the final `Image`. It does not run only for images the caller
+    /// retrieved, so the `isLoaded` parameter lets you gate configurations that only make sense for a real image:
     ///
     /// ```swift
     /// KFImage(url)
@@ -120,13 +120,15 @@ extension KFImageProtocol {
     /// ```
     ///
     /// The `isLoaded` parameter is `true` only when the image comes from the cache or the network, including a partial
-    /// image delivered by progressive loading. It is `false` before the loading finishes, as well as for the fallback
-    /// supplied by the deprecated `onFailureImage`.
+    /// image delivered by progressive loading. It is `false` in two situations, which differ in whether the view the
+    /// block returns reaches the screen:
     ///
-    /// - Note: The view returned while `isLoaded` is `false` does not appear on screen, since the image branch is kept
-    /// hidden until an image is available. Use `placeholder(_:)` for the loading state and ``onFailureView(_:)`` for
-    /// the failure state instead. If a load transition is set by `loadTransition(_:animation:)`, the block is only
-    /// evaluated after the image is loaded, so `isLoaded` is always `true` there.
+    /// - **Before any image exists.** The default rendering path still evaluates the block, but keeps the image branch
+    /// hidden, so what the block returns is not displayed. Setting a load transition with
+    /// `loadTransition(_:animation:)` skips this evaluation instead. Use `placeholder(_:)` to fill the loading state.
+    /// - **While the fallback supplied by the deprecated `onFailureImage` is shown.** That fallback is a real image, so
+    /// the block is evaluated *and* its result displayed with `isLoaded` as `false` — on the default path and with a
+    /// load transition alike. Use ``onFailureView(_:)`` to render a failure state that is not an image.
     ///
     /// If multiple `contentConfigure` modifiers are added to the image, only the last one will be stored and used.
     ///
