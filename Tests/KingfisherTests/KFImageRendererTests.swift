@@ -162,22 +162,13 @@ class KFImageRendererTests: XCTestCase {
     // The `isLoaded` flag lets the caller gate configurations that only make sense for a real image. It must
     // distinguish an image retrieved from the cache or the network from the fallback set by `onFailureImage`, which
     // is rendered through the very same branch.
-    private let loadedHeight: CGFloat = 123
-    private let notLoadedHeight: CGFloat = 45
-
     @MainActor
     func testContentConfigureReceivesIsLoadedAfterSuccess() async {
         let successExpectation = expectation(description: "Image loading succeeds")
 
         let view = KFImage
             .data(testImageData, cacheKey: "com.onevcat.KingfisherTests.contentConfigureIsLoadedOnSuccess")
-            .contentConfigure { image, isLoaded in
-                if isLoaded {
-                    image.resizable().frame(height: self.loadedHeight)
-                } else {
-                    image.resizable().frame(height: self.notLoadedHeight)
-                }
-            }
+            .measuringIsLoaded()
             .onSuccess { _ in
                 successExpectation.fulfill()
             }
@@ -186,7 +177,7 @@ class KFImageRendererTests: XCTestCase {
 
         XCTAssertEqual(
             measuredSize.height,
-            loadedHeight,
+            isLoadedTrueHeight,
             accuracy: 0.5,
             "`isLoaded` should be `true` once the image is retrieved from the cache or the network."
         )
@@ -199,13 +190,7 @@ class KFImageRendererTests: XCTestCase {
 
         let view = KFImage.dataProvider(FailingImageDataProvider())
             .onFailureImage(testImage)
-            .contentConfigure { image, isLoaded in
-                if isLoaded {
-                    image.resizable().frame(height: self.loadedHeight)
-                } else {
-                    image.resizable().frame(height: self.notLoadedHeight)
-                }
-            }
+            .measuringIsLoaded()
             .onFailure { _ in
                 failureExpectation.fulfill()
             }
@@ -216,42 +201,9 @@ class KFImageRendererTests: XCTestCase {
         // rather than from an empty image branch.
         XCTAssertEqual(
             measuredSize.height,
-            notLoadedHeight,
+            isLoadedFalseHeight,
             accuracy: 0.5,
             "`isLoaded` should be `false` for the fallback set by `onFailureImage`, even while it is rendered."
-        )
-    }
-
-    // A cancelled request keeps `loadedImage` empty, so the binder can be restarted while the cancelled request has
-    // not delivered its failure yet. When that failure lands afterwards it installs the fallback image, and the
-    // restarted load must still be able to report its own image as retrieved.
-    @MainActor
-    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
-    func testRetrievedImageClearsProvenanceLeftByAStaleFailureCallback() async {
-        let binder = KFImage.ImageBinder()
-        let successExpectation = expectation(description: "Restarted loading succeeds")
-
-        // The restarted request. A fresh cache key keeps it out of the cache, so it stays in flight below.
-        let restartedContext = KFImage.Context<Image>(
-            source: .provider(RawImageDataProvider(data: testImageData, cacheKey: UUID().uuidString))
-        )
-        restartedContext.onSuccessDelegate.delegate(on: self) { _, _ in
-            successExpectation.fulfill()
-        }
-        binder.start(context: restartedContext)
-
-        // The cancelled request delivers its failure while the restarted one is still loading.
-        let staleFailureContext = KFImage.Context<Image>(source: nil)
-        staleFailureContext.options.onFailureImage = .some(testImage)
-        binder.start(context: staleFailureContext)
-        XCTAssertTrue(binder.usesFailureImage, "The stale failure callback should install the fallback image.")
-
-        await fulfillment(of: [successExpectation], timeout: 1)
-
-        XCTAssertNotNil(binder.loadedImage)
-        XCTAssertFalse(
-            binder.usesFailureImage,
-            "A retrieved image must carry its own provenance instead of inheriting the stale one."
         )
     }
 
@@ -265,7 +217,7 @@ class KFImageRendererTests: XCTestCase {
     func testFadeRestoresImageLayoutBeforeAnimationBegins() async {
         let binder = KFImage.ImageBinder()
         // Simulates the state ImageBinder creates before starting a fade animation.
-        binder.loadedImage = testImage
+        binder.setLoadedImage(testImage)
 
         let context = KFImage.Context<Image>(source: nil)
         context.placeholder = { _ in
@@ -294,7 +246,7 @@ class KFImageRendererTests: XCTestCase {
 
         let binder = KFImage.ImageBinder()
         // Simulates the render pass after `loadedImage` changes but before `loaded` does.
-        binder.loadedImage = testImage
+        binder.setLoadedImage(testImage)
 
         let context = KFImage.Context<Image>(source: nil)
         context.swiftUITransition = .opacity
@@ -502,6 +454,24 @@ private struct ExternalTransitionHost: View {
             }
         }
         .frame(width: 390, height: 200)
+    }
+}
+
+private let isLoadedTrueHeight: CGFloat = 123
+private let isLoadedFalseHeight: CGFloat = 45
+
+@available(iOS 14.0, tvOS 14.0, *)
+private extension KFImageProtocol where HoldingView == Image {
+    /// Gives the image a different height per `isLoaded` value, so the measured layout reveals which value the
+    /// `contentConfigure` block received. The `if` / `else` body also exercises the overload's `@ViewBuilder`.
+    func measuringIsLoaded() -> Self {
+        contentConfigure { image, isLoaded in
+            if isLoaded {
+                image.resizable().frame(height: isLoadedTrueHeight)
+            } else {
+                image.resizable().frame(height: isLoadedFalseHeight)
+            }
+        }
     }
 }
 

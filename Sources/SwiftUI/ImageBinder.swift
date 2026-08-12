@@ -51,7 +51,7 @@ extension KFImage {
 
         private(set) var animating = false
 
-        var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        private(set) var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
         var failureView: (() -> AnyView)? = nil { willSet { objectWillChange.send() } }
         var progress: Progress = .init()
 
@@ -63,8 +63,9 @@ extension KFImage {
         ///
         /// A cancelled request can still deliver its failure after a restarted load has begun, so the two values have
         /// to change as a pair. Otherwise the provenance outlives the image it described, and a retrieved image ends
-        /// up reported as a fallback. Assigning here also covers the change event, since `loadedImage` sends it.
-        private func setLoadedImage(_ image: KFCrossPlatformImage?, isFailureImage: Bool = false) {
+        /// up reported as a fallback. Going through here is the only way to set the image, so no assignment site can
+        /// leave the two out of step. It also covers the change event, since `loadedImage` sends it.
+        func setLoadedImage(_ image: KFCrossPlatformImage?, isFailureImage: Bool = false) {
             usesFailureImage = isFailureImage
             loadedImage = image
         }
