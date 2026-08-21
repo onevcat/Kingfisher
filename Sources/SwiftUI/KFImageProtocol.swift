@@ -98,9 +98,47 @@ extension KFImageProtocol {
     /// - Parameter block: The block applies to the loaded image. The block should return a `View` that is configured.
     /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
     /// `block`.
-    public func contentConfigure<V: View>(_ block: @escaping (HoldingView) -> V) -> Self {
+    public func contentConfigure<V: View>(@ViewBuilder _ block: @escaping (HoldingView) -> V) -> Self {
+        contentConfigure { view, _ in block(view) }
+    }
+
+    /// Configures the current image with a `block` and returns a `View` to use as the final content, with a flag
+    /// telling whether the image is loaded as input.
+    ///
+    /// This block will be lazily applied when creating the final `Image`. It does not run only for images the caller
+    /// retrieved, so the `isLoaded` parameter lets you gate configurations that only make sense for a real image:
+    ///
+    /// ```swift
+    /// KFImage(url)
+    ///     .contentConfigure { image, isLoaded in
+    ///         if isLoaded {
+    ///             image.resizable().scaledToFit().overlay(Badge())
+    ///         } else {
+    ///             image
+    ///         }
+    ///     }
+    /// ```
+    ///
+    /// The `isLoaded` parameter is `true` only when the image comes from the cache or the network, including a partial
+    /// image delivered by progressive loading. It is `false` in two situations, which differ in whether the view the
+    /// block returns reaches the screen:
+    ///
+    /// - **Before any image exists.** The default rendering path still evaluates the block, but keeps the image branch
+    /// hidden, so what the block returns is not displayed. Setting a load transition with
+    /// `loadTransition(_:animation:)` skips this evaluation instead. Use `placeholder(_:)` to fill the loading state.
+    /// - **While the fallback supplied by the deprecated `onFailureImage` is shown.** That fallback is a real image, so
+    /// the block is evaluated *and* its result displayed with `isLoaded` as `false` — on the default path and with a
+    /// load transition alike. Use ``onFailureView(_:)`` to render a failure state that is not an image.
+    ///
+    /// If multiple `contentConfigure` modifiers are added to the image, only the last one will be stored and used.
+    ///
+    /// - Parameter block: The block applies to the loaded image and a flag telling whether the image is loaded. The
+    /// block should return a `View` that is configured.
+    /// - Returns: A ``KFImage`` or ``KFAnimatedImage`` view that configures the internal `Image` with the provided
+    /// `block`.
+    public func contentConfigure<V: View>(@ViewBuilder _ block: @escaping (HoldingView, Bool) -> V) -> Self {
         let result = copyForMutation()
-        result.context.contentConfiguration = { AnyView(block($0)) }
+        result.context.contentConfiguration = { AnyView(block($0, $1)) }
         return result
     }
 }
