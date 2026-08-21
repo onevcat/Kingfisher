@@ -750,6 +750,60 @@ class ImageDownloaderTests: XCTestCase {
         _ = stub.go()
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testJoiningDownloadTaskDoesNotLowerSharedPriority() {
+        let exp = expectation(description: #function)
+        exp.expectedFulfillmentCount = 2
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        let highPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        let lowPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.lowPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertTrue(highPriorityTask.sessionTask === lowPriorityTask.sessionTask)
+        XCTAssertEqual(highPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testSharedPriorityFallsBackAfterHighPriorityTaskCancellation() {
+        let exp = expectation(description: #function)
+        exp.expectedFulfillmentCount = 2
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        let lowPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.lowPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        let highPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        highPriorityTask.cancel()
+
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     
     func testSessionDelegate() {
