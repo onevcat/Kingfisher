@@ -722,6 +722,34 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testJoiningDownloadTaskRaisesSharedPriority() {
+        let exp = expectation(description: #function)
+        exp.expectedFulfillmentCount = 2
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        let lowPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.lowPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        let highPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertTrue(lowPriorityTask.sessionTask === highPriorityTask.sessionTask)
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
     
     
     func testSessionDelegate() {
