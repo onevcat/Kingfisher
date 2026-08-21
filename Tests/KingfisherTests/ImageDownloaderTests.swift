@@ -528,6 +528,12 @@ class ImageDownloaderTests: XCTestCase {
 
             hammer { for _ in 0..<20 { _ = task.addCallback(.init(onCompleted: nil, options: options)) } }
             hammer { for _ in 0..<5 { task.forceCancel() } }
+            hammer {
+                for token in 0..<20 {
+                    task.setPriority(URLSessionTask.highPriority, for: token)
+                    task.resetPriority(for: token)
+                }
+            }
             hammer { for _ in 0..<20 { task.resume() } }
             hammer { for _ in 0..<20 { _ = task.started; _ = task.containsCallbacks } }
             hammer { for _ in 0..<20 { task.didReceiveData(Data([0x01])); _ = task.mutableDataCount } }
@@ -799,6 +805,9 @@ class ImageDownloaderTests: XCTestCase {
 
         highPriorityTask.cancel()
 
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        highPriorityTask.setPriority(URLSessionTask.highPriority)
         XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
 
         _ = stub.go()
