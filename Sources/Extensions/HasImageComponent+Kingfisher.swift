@@ -93,11 +93,11 @@ struct ImagePropertyAccessor<Object: AnyObject, ImageType>: Sendable {
 }
 
 struct TaskPropertyAccessor<Object: AnyObject>: Sendable {
-    let setTaskIdentifier: @Sendable @MainActor (Object, Source.Identifier.Value?) -> Void
-    let getTaskIdentifier: @Sendable @MainActor (Object) -> Source.Identifier.Value?
-    let setTask: @Sendable @MainActor (Object, DownloadTask?) -> Void
-    let getCancellationToken: @Sendable @MainActor (Object) -> CancellationToken?
-    let setCancellationToken: @Sendable @MainActor (Object, CancellationToken) -> Void
+    let setTaskIdentifier: @Sendable @MainActor (KingfisherWrapper<Object>, Source.Identifier.Value?) -> Void
+    let getTaskIdentifier: @Sendable @MainActor (KingfisherWrapper<Object>) -> Source.Identifier.Value?
+    let setTask: @Sendable @MainActor (KingfisherWrapper<Object>, DownloadTask?) -> Void
+    let getCancellationToken: @Sendable @MainActor (KingfisherWrapper<Object>) -> CancellationToken?
+    let setCancellationToken: @Sendable @MainActor (KingfisherWrapper<Object>, CancellationToken) -> Void
 }
 
 @MainActor
@@ -373,22 +373,19 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
                 }
             ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { base, identifier in
-                    var wrapper = base.kf
+                setTaskIdentifier: { wrapper, identifier in
                     wrapper.taskIdentifier = identifier
                 },
-                getTaskIdentifier: { base in
-                    base.kf.taskIdentifier
+                getTaskIdentifier: { wrapper in
+                    wrapper.taskIdentifier
                 },
-                setTask: { base, task in
-                    var wrapper = base.kf
+                setTask: { wrapper, task in
                     wrapper.imageTask = task
                 },
-                getCancellationToken: { base in
-                    base.kf.cancellationToken
+                getCancellationToken: { wrapper in
+                    wrapper.cancellationToken
                 },
-                setCancellationToken: { base, token in
-                    var wrapper = base.kf
+                setCancellationToken: { wrapper, token in
                     wrapper.cancellationToken = token
                 }
             ),
@@ -414,7 +411,7 @@ extension KingfisherWrapper where Base: AnyObject {
     {
         guard let source = source else {
             imageAccessor.setImage(base, placeholder, parsedOptions)
-            taskAccessor.setTaskIdentifier(base, nil)
+            taskAccessor.setTaskIdentifier(self, nil)
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -432,11 +429,11 @@ extension KingfisherWrapper where Base: AnyObject {
         }
 
         let issuedIdentifier = Source.Identifier.next()
-        taskAccessor.setTaskIdentifier(base, issuedIdentifier)
+        taskAccessor.setTaskIdentifier(self, issuedIdentifier)
 
         let token = CancellationToken()
-        taskAccessor.getCancellationToken(base)?.cancel()
-        taskAccessor.setCancellationToken(base, token)
+        taskAccessor.getCancellationToken(self)?.cancel()
+        taskAccessor.setCancellationToken(self, token)
 
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
@@ -452,7 +449,7 @@ extension KingfisherWrapper where Base: AnyObject {
             downloadTaskUpdated: { task in
                 Task { @MainActor in
                     guard let base = weakBase.value else { return }
-                    taskAccessor.setTask(base, task)
+                    taskAccessor.setTask(.init(base), task)
                 }
             },
             progressiveImageSetter: { image in
@@ -466,7 +463,8 @@ extension KingfisherWrapper where Base: AnyObject {
                         completionHandler?(result)
                         return
                     }
-                    guard issuedIdentifier == taskAccessor.getTaskIdentifier(base) else {
+                    let wrapper = KingfisherWrapper(base)
+                    guard issuedIdentifier == taskAccessor.getTaskIdentifier(wrapper) else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -479,8 +477,8 @@ extension KingfisherWrapper where Base: AnyObject {
                         return
                     }
 
-                    taskAccessor.setTask(base, nil)
-                    taskAccessor.setTaskIdentifier(base, nil)
+                    taskAccessor.setTask(wrapper, nil)
+                    taskAccessor.setTaskIdentifier(wrapper, nil)
 
                     switch result {
                     case .success(let value):
@@ -494,7 +492,7 @@ extension KingfisherWrapper where Base: AnyObject {
                 }
             }
         )
-        taskAccessor.setTask(base, task)
+        taskAccessor.setTask(self, task)
         return task
     }
 }
@@ -513,7 +511,7 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
-        set {
+        nonmutating set {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
@@ -521,12 +519,12 @@ extension KingfisherWrapper where Base: KingfisherImageSettable {
     
     var cancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &cancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+        nonmutating set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
     
     /// Cancels the image download task of the image view if it is running.
