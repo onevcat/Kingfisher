@@ -78,6 +78,11 @@ public class SessionDataTask: @unchecked Sendable {
     private var callbacksStore = [CancelToken: TaskCallback]()
     private var completed = false
 
+    // The download priority each joined callback asks for, keyed by its cancel token.
+    // `task.priority` is kept at the maximum of these values.
+    // This way one consumer lowering its own priority cannot degrade another consumer of the shared task.
+    private var priorities = [CancelToken: Float]()
+
     var callbacks: [SessionDataTask.TaskCallback] {
         lock.lock()
         defer { lock.unlock() }
@@ -122,22 +127,61 @@ public class SessionDataTask: @unchecked Sendable {
 
     func addCallback(_ callback: TaskCallback) -> CancelToken? {
         lock.lock()
-        defer { lock.unlock() }
-        guard !completed else { return nil }
+        guard !completed else {
+            lock.unlock()
+            return nil
+        }
 
-        callbacksStore[currentToken] = callback
-        defer { currentToken += 1 }
-        return currentToken
+        let token = currentToken
+        currentToken += 1
+        callbacksStore[token] = callback
+        priorities[token] = callback.options.downloadPriority
+        let aggregated = aggregatedPriority
+        lock.unlock()
+
+        if let aggregated { task.priority = aggregated }
+        return token
     }
 
     func removeCallback(_ token: CancelToken) -> TaskCallback? {
         lock.lock()
-        defer { lock.unlock() }
-        if let callback = callbacksStore[token] {
-            callbacksStore[token] = nil
-            return callback
+        guard let callback = callbacksStore[token] else {
+            lock.unlock()
+            return nil
         }
-        return nil
+        callbacksStore[token] = nil
+        priorities[token] = nil
+        let aggregated = aggregatedPriority
+        lock.unlock()
+
+        // `aggregated` is nil when no consumer remains; the task is about to be cancelled then.
+        if let aggregated { task.priority = aggregated }
+        return callback
+    }
+
+    // Must be called while holding `lock`.
+    private var aggregatedPriority: Float? {
+        priorities.values.max()
+    }
+
+    func priority(forToken token: CancelToken) -> Float? {
+        lock.lock()
+        defer { lock.unlock() }
+        return priorities[token]
+    }
+
+    func updatePriority(_ priority: Float, forToken token: CancelToken) {
+        lock.lock()
+        // A missing token means the callback behind it is already completed or cancelled.
+        guard priorities[token] != nil else {
+            lock.unlock()
+            return
+        }
+        priorities[token] = priority
+        let aggregated = aggregatedPriority
+        lock.unlock()
+
+        if let aggregated { task.priority = aggregated }
     }
     
     @discardableResult
@@ -146,6 +190,7 @@ public class SessionDataTask: @unchecked Sendable {
         defer { lock.unlock() }
         let callbacks = callbacksStore.values
         callbacksStore.removeAll()
+        priorities.removeAll()
         return Array(callbacks)
     }
 
@@ -156,6 +201,7 @@ public class SessionDataTask: @unchecked Sendable {
         completed = true
         let callbacks = callbacksStore.values
         callbacksStore.removeAll()
+        priorities.removeAll()
         return Array(callbacks)
     }
 

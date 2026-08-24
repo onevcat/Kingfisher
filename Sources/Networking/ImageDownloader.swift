@@ -416,6 +416,8 @@ open class ImageDownloader: @unchecked Sendable {
         defer { lock.unlock() }
 
         // Ready to start download. Add it to session task manager (`sessionHandler`)
+        // `addCallback` applies `options.downloadPriority` in both branches.
+        // This is how a request joining an in-flight task can still raise the shared task priority (#2567).
         let downloadTask: DownloadTask
         if let existingTask = sessionDelegate.task(for: context.url),
            let existingDownloadTask = sessionDelegate.append(existingTask, callback: callback)
@@ -423,7 +425,6 @@ open class ImageDownloader: @unchecked Sendable {
             downloadTask = existingDownloadTask
         } else {
             let sessionDataTask = session.dataTask(with: context.request)
-            sessionDataTask.priority = context.options.downloadPriority
             downloadTask = sessionDelegate.add(sessionDataTask, url: context.url, callback: callback)
         }
         return downloadTask

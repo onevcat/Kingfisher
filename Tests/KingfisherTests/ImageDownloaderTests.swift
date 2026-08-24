@@ -722,8 +722,109 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.highPriority)
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
-    
+
+    func testDownloadPriorityEscalatedWhenJoiningRequestAsksHigher() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+
+        let group = DispatchGroup()
+        group.enter()
+        let lowTask = downloader.downloadImage(
+            with: url, options: [.downloadPriority(URLSessionTask.lowPriority)])
+        {
+            _ in
+            group.leave()
+        }
+        group.enter()
+        let highTask = downloader.downloadImage(
+            with: url, options: [.downloadPriority(URLSessionTask.highPriority)])
+        {
+            _ in
+            group.leave()
+        }
+
+        XCTAssertTrue(
+            lowTask.sessionTask === highTask.sessionTask,
+            "The second request should join the in-flight session task."
+        )
+        XCTAssertEqual(lowTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        group.notify(queue: .main) { exp.fulfill() }
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadPriorityNotDegradedByJoiningRequestAskingLower() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+
+        let group = DispatchGroup()
+        group.enter()
+        let highTask = downloader.downloadImage(
+            with: url, options: [.downloadPriority(URLSessionTask.highPriority)])
+        {
+            _ in
+            group.leave()
+        }
+        group.enter()
+        let lowTask = downloader.downloadImage(
+            with: url, options: [.downloadPriority(URLSessionTask.lowPriority)])
+        {
+            _ in
+            group.leave()
+        }
+
+        XCTAssertTrue(
+            highTask.sessionTask === lowTask.sessionTask,
+            "The second request should join the in-flight session task."
+        )
+        XCTAssertEqual(highTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        group.notify(queue: .main) { exp.fulfill() }
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadPriorityRecalculatedWhenConsumerCancels() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+
+        let lowTask = downloader.downloadImage(
+            with: url, options: [.downloadPriority(URLSessionTask.lowPriority)])
+        {
+            result in
+            XCTAssertNotNil(result.value)
+            exp.fulfill()
+        }
+        let highTask = downloader.downloadImage(
+            with: url, options: [.downloadPriority(URLSessionTask.highPriority)])
+        {
+            result in
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false)
+        }
+
+        XCTAssertTrue(
+            lowTask.sessionTask === highTask.sessionTask,
+            "The second request should join the in-flight session task."
+        )
+        XCTAssertEqual(lowTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        highTask.cancel()
+        XCTAssertEqual(
+            lowTask.sessionTask?.task.priority, URLSessionTask.lowPriority,
+            "After the high priority consumer leaves, the task should run at the remaining consumer's priority."
+        )
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     func testSessionDelegate() {
         class ExtensionDelegate: SessionDelegate, @unchecked Sendable {
             //'exp' only for test
