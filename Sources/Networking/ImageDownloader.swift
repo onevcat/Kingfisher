@@ -146,28 +146,17 @@ public final class DownloadTask: @unchecked Sendable {
             }
         }
         set {
-            enum Target {
-                case linked(DownloadTask)
-                case session(SessionDataTask, SessionDataTask.CancelToken)
-                case notLinkedYet
-            }
-            // Decide the forwarding target under `propertyQueue`.
-            // The forwarding itself takes other locks and must happen outside of it.
-            let target: Target = propertyQueue.sync {
+            // Forwarding under `propertyQueue` keeps the stored value and its publication atomic.
+            // Otherwise this setter and `linkToTask` could interleave and publish a stale value.
+            // The links form a chain towards the session task, so the nested locking cannot cycle.
+            propertyQueue.sync {
                 _explicitPriority = newValue
-                if let linked = _linkedTask { return .linked(linked) }
-                if let sessionTask = _sessionTask, let token = _cancelToken {
-                    return .session(sessionTask, token)
+                if let linked = _linkedTask {
+                    linked.priority = newValue
+                } else if let sessionTask = _sessionTask, let token = _cancelToken {
+                    sessionTask.updatePriority(newValue, forToken: token)
                 }
-                return .notLinkedYet
-            }
-            switch target {
-            case .linked(let task):
-                task.priority = newValue
-            case .session(let sessionTask, let token):
-                sessionTask.updatePriority(newValue, forToken: token)
-            case .notLinkedYet:
-                break // Applied in `linkToTask` once the actual task exists.
+                // Without a target yet, the value is applied in `linkToTask` once the task exists.
             }
         }
     }
@@ -206,13 +195,14 @@ public final class DownloadTask: @unchecked Sendable {
     }
     
     func linkToTask(_ task: DownloadTask) {
-        let explicitPriority: Float? = propertyQueue.sync {
+        // Linking and forwarding happen under `propertyQueue` as one step.
+        // A concurrent `priority` setter is then ordered fully before or after this, so neither can
+        // overwrite the other's forwarded value with a stale one.
+        propertyQueue.sync {
             _linkedTask = task
-            return _explicitPriority
-        }
-        // Forward a priority that was set before this link, so a value set on the shell is not lost.
-        if let explicitPriority {
-            task.priority = explicitPriority
+            if let explicitPriority = _explicitPriority {
+                task.priority = explicitPriority
+            }
         }
     }
 }

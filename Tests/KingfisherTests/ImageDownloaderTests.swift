@@ -877,6 +877,74 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testConcurrentPriorityUpdatesPublishConsistently() {
+        let url = URL(string: "https://example.com/concurrent-priority")!
+        let options = KingfisherParsedOptionsInfo(nil)
+
+        for _ in 0..<50 {
+            let task = SessionDataTask(task: URLSession.shared.dataTask(with: url))
+            let stayingToken = task.addCallback(.init(onCompleted: nil, options: options))!
+            let cancelledToken = task.addCallback(.init(onCompleted: nil, options: options))!
+
+            let group = DispatchGroup()
+            func hammer(_ body: @escaping () -> Void) {
+                group.enter()
+                DispatchQueue.global().async {
+                    body()
+                    group.leave()
+                }
+            }
+
+            hammer { for i in 0..<100 { task.updatePriority(i % 2 == 0 ? 0.25 : 0.75, forToken: stayingToken) } }
+            hammer { for i in 0..<100 { task.updatePriority(i % 2 == 0 ? 0.75 : 0.25, forToken: cancelledToken) } }
+            hammer { _ = task.removeCallback(cancelledToken) }
+            hammer {
+                for _ in 0..<50 {
+                    if let token = task.addCallback(.init(onCompleted: nil, options: options)) {
+                        _ = task.removeCallback(token)
+                    }
+                }
+            }
+            group.wait()
+
+            // At quiescence the published priority must match the aggregate of the stored values.
+            // Only `stayingToken` remains, so the aggregate is its stored value.
+            XCTAssertEqual(task.task.priority, task.priority(forToken: stayingToken))
+        }
+    }
+
+    func testLinkToTaskConcurrentWithPrioritySetterKeepsNewestValue() {
+        let url = URL(string: "https://example.com/concurrent-linking")!
+        let options = KingfisherParsedOptionsInfo(nil)
+
+        for _ in 0..<200 {
+            let sessionTask = SessionDataTask(task: URLSession.shared.dataTask(with: url))
+            let token = sessionTask.addCallback(.init(onCompleted: nil, options: options))!
+            let target = DownloadTask(sessionTask: sessionTask, cancelToken: token)
+
+            let shell = DownloadTask()
+            shell.priority = 0.25
+
+            let group = DispatchGroup()
+            group.enter()
+            DispatchQueue.global().async {
+                shell.linkToTask(target)
+                group.leave()
+            }
+            group.enter()
+            DispatchQueue.global().async {
+                shell.priority = 0.75
+                group.leave()
+            }
+            group.wait()
+
+            // Whatever the interleaving, the newer value must win over the one captured for linking.
+            XCTAssertEqual(shell.priority, 0.75)
+            XCTAssertEqual(sessionTask.priority(forToken: token), 0.75)
+            XCTAssertEqual(sessionTask.task.priority, 0.75)
+        }
+    }
+
     func testSessionDelegate() {
         class ExtensionDelegate: SessionDelegate, @unchecked Sendable {
             //'exp' only for test

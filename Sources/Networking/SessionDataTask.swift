@@ -127,41 +127,37 @@ public class SessionDataTask: @unchecked Sendable {
 
     func addCallback(_ callback: TaskCallback) -> CancelToken? {
         lock.lock()
-        guard !completed else {
-            lock.unlock()
-            return nil
-        }
+        defer { lock.unlock() }
+        guard !completed else { return nil }
 
         let token = currentToken
         currentToken += 1
         callbacksStore[token] = callback
         priorities[token] = callback.options.downloadPriority
-        let aggregated = aggregatedPriority
-        lock.unlock()
-
-        if let aggregated { task.priority = aggregated }
+        applyAggregatedPriority()
         return token
     }
 
     func removeCallback(_ token: CancelToken) -> TaskCallback? {
         lock.lock()
-        guard let callback = callbacksStore[token] else {
-            lock.unlock()
-            return nil
-        }
+        defer { lock.unlock() }
+        guard let callback = callbacksStore[token] else { return nil }
+
         callbacksStore[token] = nil
         priorities[token] = nil
-        let aggregated = aggregatedPriority
-        lock.unlock()
-
-        // `aggregated` is nil when no consumer remains; the task is about to be cancelled then.
-        if let aggregated { task.priority = aggregated }
+        applyAggregatedPriority()
         return callback
     }
 
     // Must be called while holding `lock`.
-    private var aggregatedPriority: Float? {
-        priorities.values.max()
+    // This keeps a change to `priorities` and its publication to the task atomic.
+    // Otherwise a paused thread could publish a stale aggregate over a newer one.
+    // Assigning `URLSessionTask.priority` does not call back into Kingfisher.
+    private func applyAggregatedPriority() {
+        // The maximum is nil when no consumer remains; the task is about to be cancelled then.
+        if let aggregated = priorities.values.max() {
+            task.priority = aggregated
+        }
     }
 
     func priority(forToken token: CancelToken) -> Float? {
@@ -172,16 +168,12 @@ public class SessionDataTask: @unchecked Sendable {
 
     func updatePriority(_ priority: Float, forToken token: CancelToken) {
         lock.lock()
+        defer { lock.unlock() }
         // A missing token means the callback behind it is already completed or cancelled.
-        guard priorities[token] != nil else {
-            lock.unlock()
-            return
-        }
-        priorities[token] = priority
-        let aggregated = aggregatedPriority
-        lock.unlock()
+        guard priorities[token] != nil else { return }
 
-        if let aggregated { task.priority = aggregated }
+        priorities[token] = priority
+        applyAggregatedPriority()
     }
     
     @discardableResult
