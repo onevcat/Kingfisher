@@ -110,7 +110,7 @@ public final class DownloadTask: @unchecked Sendable {
     }
 
     private var _cancelToken: SessionDataTask.CancelToken? = nil
-    
+
     /// The cancellation token used to cancel the task.
     ///
     /// This is solely for identifying the task when it is cancelled. To cancel a ``DownloadTask``, call
@@ -118,6 +118,58 @@ public final class DownloadTask: @unchecked Sendable {
     public private(set) var cancelToken: SessionDataTask.CancelToken? {
         get { propertyQueue.sync { _cancelToken ?? _linkedTask?.cancelToken } }
         set { propertyQueue.sync { _cancelToken = newValue } }
+    }
+
+    // The last priority set through the `priority` setter.
+    // It is kept around so it can be applied when the task is linked, or re-applied when a retry links a new task.
+    private var _explicitPriority: Float? = nil
+
+    /// The relative priority of this download task.
+    ///
+    /// The value is between 0.0 and 1.0, with `URLSessionTask.defaultPriority` (0.5) as the default.
+    /// See the documentation of `URLSessionTask.priority` for more about how the value is used.
+    ///
+    /// In Kingfisher, the underlying session task may be shared by multiple `DownloadTask`s requesting the same URL.
+    /// Setting this value only changes the priority this task asks for.
+    /// The shared session task always runs at the highest priority among all `DownloadTask`s currently sharing it.
+    /// So lowering the value here never slows down another consumer of the same URL.
+    public var priority: Float {
+        get {
+            propertyQueue.sync {
+                if let linked = _linkedTask { return linked.priority }
+                if let sessionTask = _sessionTask, let token = _cancelToken,
+                   let value = sessionTask.priority(forToken: token)
+                {
+                    return value
+                }
+                return _explicitPriority ?? URLSessionTask.defaultPriority
+            }
+        }
+        set {
+            enum Target {
+                case linked(DownloadTask)
+                case session(SessionDataTask, SessionDataTask.CancelToken)
+                case notLinkedYet
+            }
+            // Decide the forwarding target under `propertyQueue`.
+            // The forwarding itself takes other locks and must happen outside of it.
+            let target: Target = propertyQueue.sync {
+                _explicitPriority = newValue
+                if let linked = _linkedTask { return .linked(linked) }
+                if let sessionTask = _sessionTask, let token = _cancelToken {
+                    return .session(sessionTask, token)
+                }
+                return .notLinkedYet
+            }
+            switch target {
+            case .linked(let task):
+                task.priority = newValue
+            case .session(let sessionTask, let token):
+                sessionTask.updatePriority(newValue, forToken: token)
+            case .notLinkedYet:
+                break // Applied in `linkToTask` once the actual task exists.
+            }
+        }
     }
 
     /// Cancel this single download task if it is running.
@@ -154,8 +206,13 @@ public final class DownloadTask: @unchecked Sendable {
     }
     
     func linkToTask(_ task: DownloadTask) {
-        propertyQueue.sync {
+        let explicitPriority: Float? = propertyQueue.sync {
             _linkedTask = task
+            return _explicitPriority
+        }
+        // Forward a priority that was set before this link, so a value set on the shell is not lost.
+        if let explicitPriority {
+            task.priority = explicitPriority
         }
     }
 }

@@ -825,6 +825,58 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testDownloadTaskPriorityChangesOwnShareOnly() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+
+        let group = DispatchGroup()
+        group.enter()
+        let firstTask = downloader.downloadImage(with: url) { _ in group.leave() }
+        group.enter()
+        let secondTask = downloader.downloadImage(with: url) { _ in group.leave() }
+
+        XCTAssertTrue(firstTask.sessionTask === secondTask.sessionTask)
+
+        secondTask.priority = URLSessionTask.lowPriority
+        XCTAssertEqual(secondTask.priority, URLSessionTask.lowPriority)
+        XCTAssertEqual(firstTask.priority, URLSessionTask.defaultPriority)
+        XCTAssertEqual(firstTask.sessionTask?.task.priority, URLSessionTask.defaultPriority)
+
+        firstTask.priority = URLSessionTask.lowPriority
+        XCTAssertEqual(firstTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        firstTask.priority = URLSessionTask.highPriority
+        XCTAssertEqual(firstTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        group.notify(queue: .main) { exp.fulfill() }
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadTaskPriorityAppliedWhenLinkedLater() {
+        let exp = expectation(description: #function)
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+
+        // A not-yet-linked shell.
+        // `KingfisherManager` returns one like this while a cache check or an async request modifier is running.
+        let shell = DownloadTask()
+        shell.priority = URLSessionTask.highPriority
+        XCTAssertEqual(shell.priority, URLSessionTask.highPriority)
+
+        let task = downloader.downloadImage(with: url) { _ in exp.fulfill() }
+        shell.linkToTask(task)
+
+        XCTAssertEqual(shell.sessionTask?.task.priority, URLSessionTask.highPriority)
+        XCTAssertEqual(shell.priority, URLSessionTask.highPriority)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     func testSessionDelegate() {
         class ExtensionDelegate: SessionDelegate, @unchecked Sendable {
             //'exp' only for test
