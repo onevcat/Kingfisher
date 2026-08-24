@@ -41,6 +41,10 @@ extension KFImage {
         var downloadTask: DownloadTask?
         private var loading = false
 
+        // The priority the load originally asked for.
+        // `restorePriorityOnAppear` returns to it instead of the global default.
+        private var originalPriority: Float = URLSessionTask.defaultPriority
+
         var loadingOrSucceeded: Bool {
             return loading || loadedImage != nil
         }
@@ -97,7 +101,8 @@ extension KFImage {
             }
 
             loading = true
-            
+
+            originalPriority = context.options.downloadPriority
             progress = .init()
             downloadTask = KingfisherManager.shared
                 .retrieveImage(
@@ -202,10 +207,10 @@ extension KFImage {
             loading = false
         }
         
-        /// Restores the download task priority to default if it is in progress.
+        /// Restores the download task priority to the originally requested one if it is in progress.
         func restorePriorityOnAppear() {
             guard let downloadTask = downloadTask, loading == true else { return }
-            downloadTask.priority = URLSessionTask.defaultPriority
+            downloadTask.priority = originalPriority
         }
 
         /// Reduce the download task priority if it is in progress.
