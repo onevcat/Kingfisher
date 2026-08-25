@@ -121,7 +121,6 @@ extension PHLivePhotoView           : KingfisherCompatible { }
 
 
 #if os(tvOS) && canImport(TVUIKit)
-@available(tvOS 12.0, *)
 extension TVMonogramView            : KingfisherCompatible { }
 #endif
 
