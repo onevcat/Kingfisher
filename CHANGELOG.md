@@ -2,6 +2,20 @@
 
 -----
 
+## [8.12.0 - Let It Go](https://github.com/onevcat/Kingfisher/releases/tag/8.12.0) (2026-08-26)
+
+#### Add
+* Add a `contentConfigure(_:)` overload for `KFImage` and `KFAnimatedImage` that passes an `isLoaded` flag alongside the image, so callers can distinguish the placeholder and failure states from a real loaded image. [#2565](https://github.com/onevcat/Kingfisher/pull/2565) @mlight3
+
+#### Fix
+* Release image views, buttons, CarPlay list items, text attachments, and SwiftUI binders while their download is still in flight, instead of retaining them until the request completes. Downloads and caching stay active, and terminal results are still forwarded to the caller. [#2561](https://github.com/onevcat/Kingfisher/pull/2561) [#2562](https://github.com/onevcat/Kingfisher/pull/2562) [#2313](https://github.com/onevcat/Kingfisher/issues/2313) @devzahirul @onevcat @bing-feng-v587
+* Track download priority per consumer of a shared in-flight task. A request joining an existing download can now raise its priority, and `reducePriorityOnDisappear` in SwiftUI no longer lowers the priority for other visible consumers or resets it to the default value. [#2568](https://github.com/onevcat/Kingfisher/pull/2568) [#2567](https://github.com/onevcat/Kingfisher/issues/2567) @onevtail @mini-min
+* Mark `KingfisherWrapper` setters as `nonmutating` so a single wrapper instance is reused across the `setImage` lifecycle instead of being re-created on every access. [#2569](https://github.com/onevcat/Kingfisher/pull/2569) @sereivoanyong
+* Remove availability and compiler version guards below the Kingfisher 8 baseline, including the CommonCrypto SHA256 fallback, which were always dead code. [#2571](https://github.com/onevcat/Kingfisher/pull/2571) @mini-min
+* Fix the option name in the Low Data Mode documentation (`.lowDataMode` instead of `.lowDataSource`) and a doubled word in the `ImageCache` doc comment. [#2560](https://github.com/onevcat/Kingfisher/pull/2560) [#2563](https://github.com/onevcat/Kingfisher/pull/2563) @meliharik @latent-9
+
+---
+
 ## [8.11.0 - Steady Flight](https://github.com/onevcat/Kingfisher/releases/tag/8.11.0) (2026-07-20)
 
 #### Add
