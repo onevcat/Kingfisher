@@ -388,7 +388,7 @@ open class ImageDownloader: @unchecked Sendable {
         // Creates default request.
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: downloadTimeout)
         request.httpShouldUsePipelining = requestsUsePipelining
-        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) , options.lowDataModeSource != nil {
+        if options.lowDataModeSource != nil {
             request.allowsConstrainedNetworkAccess = false
         }
         

@@ -427,12 +427,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             let scale = image.recommendedLayerContentsScale(window?.backingScaleFactor ?? 0.0)
             let contentMode = imageScaling
             #else
-            var scale: CGFloat = 0
-            if #available(iOS 13.0, tvOS 13.0, *) {
-                scale = UITraitCollection.current.displayScale
-            } else {
-                scale = UIScreen.main.scale
-            }
+            let scale = UITraitCollection.current.displayScale
             #endif
             currentFrame = image
             let targetSize = bounds.scaled(scale).size
