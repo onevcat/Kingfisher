@@ -61,19 +61,14 @@ extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {}
 #else
 extension NSView {
     func compatibleDisplayLink(target: Any, selector: Selector) -> any DisplayLinkCompatible {
-#if swift(>=5.9) // macOS 14 SDK is included in Xcode 15, which comes with swift 5.9. Add this check to make old compilers happy.
         if #available(macOS 14.0, *) {
             return displayLink(target: target, selector: selector)
         } else {
             return DisplayLink(target: target, selector: selector)
         }
-#else
-        return DisplayLink(target: target, selector: selector)
-#endif
     }
 }
 
-#if swift(>=5.9)
 @available(macOS 14.0, *)
 extension CADisplayLink: DisplayLinkCompatible {
     var preferredFramesPerSecond: NSInteger { return 0 }
@@ -85,7 +80,6 @@ extension CADisplayLink: @retroactive @unchecked Sendable { }
 @available(macOS 14.0, *)
 extension CADisplayLink: @unchecked Sendable { }
 #endif // compiler(>=6)
-#endif // swift(>=5.9)
 
 final class DisplayLink: DisplayLinkCompatible, @unchecked Sendable {
     private var link: CVDisplayLink?

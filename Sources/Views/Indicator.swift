@@ -158,37 +158,17 @@ final class ActivityIndicator: Indicator {
             let indicatorStyle: UIActivityIndicatorView.Style
 
             #if os(tvOS)
-            if #available(tvOS 13.0, *) {
-                indicatorStyle = UIActivityIndicatorView.Style.large
-            } else {
-                indicatorStyle = UIActivityIndicatorView.Style.white
-            }
+            indicatorStyle = UIActivityIndicatorView.Style.large
             #elseif os(visionOS)
             indicatorStyle = UIActivityIndicatorView.Style.medium
             #else
-            if #available(iOS 13.0, * ) {
-                indicatorStyle = UIActivityIndicatorView.Style.medium
-            } else {
-                indicatorStyle = UIActivityIndicatorView.Style.gray
-            }
+            indicatorStyle = UIActivityIndicatorView.Style.medium
             #endif
 
             activityIndicatorView = UIActivityIndicatorView(style: indicatorStyle)
         #endif
     }
 }
-
-#if canImport(UIKit)
-extension UIActivityIndicatorView.Style {
-    #if compiler(>=5.1)
-    #else
-    static let large = UIActivityIndicatorView.Style.white
-    #if !os(tvOS)
-    static let medium = UIActivityIndicatorView.Style.gray
-    #endif
-    #endif
-}
-#endif
 
 // MARK: - ImageIndicator
 // Displays an ImageView. Supports gif

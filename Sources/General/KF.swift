@@ -315,7 +315,6 @@ extension KF.Builder {
     /// - Parameter monogramView: The monogram view which loads the task and should be set with the image.
     /// - Returns: A task represents the image downloading, if initialized.
     ///            This value is `nil` if the image is being loaded from cache.
-    @available(tvOS 12.0, *)
     @discardableResult
     public func set(to monogramView: TVMonogramView) -> DownloadTask? {
         let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil

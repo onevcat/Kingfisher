@@ -464,8 +464,7 @@ public enum KingfisherError: Error {
     }
 
     var isLowDataModeConstrained: Bool {
-        if #available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *),
-           case .responseError(reason: .URLSessionError(let sessionError)) = self,
+        if case .responseError(reason: .URLSessionError(let sessionError)) = self,
            let urlError = sessionError as? URLError,
            urlError.networkUnavailableReason == .constrained
         {
