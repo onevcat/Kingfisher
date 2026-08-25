@@ -51,9 +51,24 @@ extension KFImage {
 
         private(set) var animating = false
 
-        var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        private(set) var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
         var failureView: (() -> AnyView)? = nil { willSet { objectWillChange.send() } }
         var progress: Progress = .init()
+
+        /// Whether the current `loadedImage` is the fallback supplied by the deprecated `onFailureImage`, instead of
+        /// an image retrieved from the cache or the network.
+        private(set) var usesFailureImage = false
+
+        /// Sets `loadedImage` together with where that image came from.
+        ///
+        /// A cancelled request can still deliver its failure after a restarted load has begun, so the two values have
+        /// to change as a pair. Otherwise the provenance outlives the image it described, and a retrieved image ends
+        /// up reported as a fallback. Going through here is the only way to set the image, so no assignment site can
+        /// leave the two out of step. It also covers the change event, since `loadedImage` sends it.
+        func setLoadedImage(_ image: KFCrossPlatformImage?, isFailureImage: Bool = false) {
+            usesFailureImage = isFailureImage
+            loadedImage = image
+        }
 
         func markLoading() {
             loading = true
@@ -73,7 +88,7 @@ extension KFImage {
                     if let view = context.failureView {
                         self.failureView = view
                     } else if let image = context.options.onFailureImage {
-                        self.loadedImage = image
+                        self.setLoadedImage(image, isFailureImage: true)
                     }
                     self.loading = false
                     self.markLoaded(sendChangeEvent: false)
@@ -97,7 +112,7 @@ extension KFImage {
                         CallbackQueueMain.currentOrAsync { [weak self] in
                             guard let self else { return }
                             self.markLoaded(sendChangeEvent: true)
-                            self.loadedImage = image
+                            self.setLoadedImage(image)
                         }
                     },
                     completionHandler: { [weak self] result in
@@ -125,7 +140,7 @@ extension KFImage {
                                    context.shouldApplyFade(cacheType: value.cacheType) {
                                     // Apply SwiftUI loadTransition with custom animation (higher priority than fade)
                                     self.animating = true
-                                    self.loadedImage = value.image
+                                    self.setLoadedImage(value.image)
 
                                     let animation = context.swiftUIAnimation ?? .default
                                     CallbackQueueMain.async {
@@ -137,7 +152,7 @@ extension KFImage {
                                     }
                                 } else if let fadeDuration = context.fadeTransitionDuration(cacheType: value.cacheType) {
                                     self.animating = true
-                                    self.loadedImage = value.image
+                                    self.setLoadedImage(value.image)
 
                                     let animation = Animation.linear(duration: fadeDuration)
                                     CallbackQueueMain.async {
@@ -150,7 +165,7 @@ extension KFImage {
                                     }
                                 } else {
                                     self.markLoaded(sendChangeEvent: false)
-                                    self.loadedImage = value.image
+                                    self.setLoadedImage(value.image)
 
                                     CallbackQueueMain.async {
                                         context.onSuccessDelegate.call(value)
@@ -162,7 +177,7 @@ extension KFImage {
                                 if let view = context.failureView {
                                     self.failureView = view
                                 } else if let image = context.options.onFailureImage {
-                                    self.loadedImage = image
+                                    self.setLoadedImage(image, isFailureImage: true)
                                 }
                                 self.markLoaded(sendChangeEvent: false)
                             }

@@ -52,8 +52,6 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         }
         
         return ZStack {
-            let isImageRenderable = binder.loadedImage != nil && binder.loaded
-
             if context.swiftUITransition == nil {
                 // Fade transition or no transition: use opacity control
                 // Keep the image branch for external transitions without affecting layout while no
@@ -120,6 +118,20 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         .onAppear()
     }
     
+    /// Whether the image branch takes part in rendering and layout.
+    ///
+    /// The fallback set by the deprecated `onFailureImage` also has to be rendered, so this stays independent of
+    /// `isImageLoaded`.
+    private var isImageRenderable: Bool {
+        binder.loadedImage != nil && binder.loaded
+    }
+
+    /// Whether the rendered image was retrieved from the cache or the network, as opposed to the fallback set by the
+    /// deprecated `onFailureImage`.
+    private var isImageLoaded: Bool {
+        isImageRenderable && !binder.usesFailureImage
+    }
+
     @ViewBuilder
     private func renderedImage() -> some View {
         if let swiftUITransition = context.swiftUITransition {
@@ -139,7 +151,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         
         // Apply contentConfiguration first, then loadTransition as the final step
         if let contentConfiguration = context.contentConfiguration {
-            contentConfiguration(configuredImage)
+            contentConfiguration(configuredImage, isImageLoaded)
         } else {
             configuredImage
         }

@@ -237,6 +237,41 @@ class ImageBinderTests: XCTestCase {
         binder.restorePriorityOnAppear()
         XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.highPriority)
     }
+  
+    // A cancelled request keeps `loadedImage` empty, so the binder can be restarted before that request has delivered
+    // its failure. When the failure lands afterwards it installs the fallback image and records it, and the restarted
+    // load must still be able to report its own image as retrieved.
+    @MainActor
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    func testRetrievedImageClearsProvenanceLeftByAStaleFailureCallback() async {
+        let binder = KFImage.ImageBinder()
+        let success = expectation(description: "The restarted loading succeeds")
+
+        // The restarted request. A fresh cache key keeps it out of the cache, so it stays in flight below.
+        let provider = RawImageDataProvider(
+            data: testImagePNGData,
+            cacheKey: "com.onevcat.KingfisherTests.ImageBinder.\(UUID().uuidString)"
+        )
+        let restartedContext = KFImage.Context<Image>(source: .provider(provider))
+        restartedContext.onSuccessDelegate.delegate(on: self) { _, _ in
+            success.fulfill()
+        }
+        binder.start(context: restartedContext)
+
+        // Stands in for the cancelled request delivering its failure while the restarted one is still loading.
+        let staleFailureContext = KFImage.Context<Image>(source: nil)
+        staleFailureContext.options.onFailureImage = .some(testImage)
+        binder.start(context: staleFailureContext)
+        XCTAssertTrue(binder.usesFailureImage, "The stale failure callback should install the fallback image.")
+
+        await fulfillment(of: [success], timeout: 1)
+
+        XCTAssertNotNil(binder.loadedImage)
+        XCTAssertFalse(
+            binder.usesFailureImage,
+            "A retrieved image must carry its own provenance instead of inheriting the stale one."
+        )
+    }
 }
 
 #endif
