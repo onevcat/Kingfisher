@@ -125,21 +125,19 @@ extension KingfisherWrapper where Base: UIButton {
                 }
             ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { button, identifier in
-                    button.kf.setTaskIdentifier(identifier, for: state)
+                setTaskIdentifier: { wrapper, identifier in
+                    wrapper.setTaskIdentifier(identifier, for: state)
                 },
-                getTaskIdentifier: { button in
-                    button.kf.taskIdentifier(for: state)
+                getTaskIdentifier: { wrapper in
+                    wrapper.taskIdentifier(for: state)
                 },
-                setTask: { button, task in
-                    var wrapper = button.kf
+                setTask: { wrapper, task in
                     wrapper.imageTask = task
                 },
-                getCancellationToken: { button in
-                    button.kf.imageCancellationToken
+                getCancellationToken: { wrapper in
+                    wrapper.imageCancellationToken
                 },
-                setCancellationToken: { button, token in
-                    var wrapper = button.kf
+                setCancellationToken: { wrapper, token in
                     wrapper.imageCancellationToken = token
                 }
             ),
@@ -252,21 +250,19 @@ extension KingfisherWrapper where Base: UIButton {
                 }
             ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { button, identifier in
-                    button.kf.setBackgroundTaskIdentifier(identifier, for: state)
+                setTaskIdentifier: { wrapper, identifier in
+                    wrapper.setBackgroundTaskIdentifier(identifier, for: state)
                 },
-                getTaskIdentifier: { button in
-                    button.kf.backgroundTaskIdentifier(for: state)
+                getTaskIdentifier: { wrapper in
+                    wrapper.backgroundTaskIdentifier(for: state)
                 },
-                setTask: { button, task in
-                    var wrapper = button.kf
+                setTask: { wrapper, task in
                     wrapper.backgroundImageTask = task
                 },
-                getCancellationToken: { button in
-                    button.kf.backgroundImageCancellationToken
+                getCancellationToken: { wrapper in
+                    wrapper.backgroundImageCancellationToken
                 },
-                setCancellationToken: { button, token in
-                    var wrapper = button.kf
+                setCancellationToken: { wrapper, token in
                     wrapper.backgroundImageCancellationToken = token
                 }
             ),
@@ -315,12 +311,12 @@ extension KingfisherWrapper where Base: UIButton {
     
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+        nonmutating set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 
     private var imageCancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &imageCancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &imageCancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &imageCancellationTokenKey, newValue) }
     }
 }
 
@@ -350,12 +346,12 @@ extension KingfisherWrapper where Base: UIButton {
     
     private var backgroundImageTask: DownloadTask? {
         get { return getAssociatedObject(base, &backgroundImageTaskKey) }
-        mutating set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &backgroundImageTaskKey, newValue) }
     }
 
     private var backgroundImageCancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &backgroundImageCancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &backgroundImageCancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &backgroundImageCancellationTokenKey, newValue) }
     }
 }
 #endif

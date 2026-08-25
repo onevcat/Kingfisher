@@ -133,22 +133,19 @@ extension KingfisherWrapper where Base: CPListItem {
                 }
             ),
             taskAccessor: TaskPropertyAccessor(
-                setTaskIdentifier: { listItem, identifier in
-                    var wrapper = listItem.kf
+                setTaskIdentifier: { wrapper, identifier in
                     wrapper.taskIdentifier = identifier
                 },
-                getTaskIdentifier: { listItem in
-                    listItem.kf.taskIdentifier
+                getTaskIdentifier: { wrapper in
+                    wrapper.taskIdentifier
                 },
-                setTask: { listItem, task in
-                    var wrapper = listItem.kf
+                setTask: { wrapper, task in
                     wrapper.imageTask = task
                 },
-                getCancellationToken: { listItem in
-                    listItem.kf.cancellationToken
+                getCancellationToken: { wrapper in
+                    wrapper.cancellationToken
                 },
-                setCancellationToken: { listItem, token in
-                    var wrapper = listItem.kf
+                setCancellationToken: { wrapper, token in
                     wrapper.cancellationToken = token
                 }
             ),
@@ -182,7 +179,7 @@ extension KingfisherWrapper where Base: CPListItem {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
-        set {
+        nonmutating set {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
@@ -190,12 +187,12 @@ extension KingfisherWrapper where Base: CPListItem {
 
     var cancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &cancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+        nonmutating set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 }
 #endif
