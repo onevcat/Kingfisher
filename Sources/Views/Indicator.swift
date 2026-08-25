@@ -170,18 +170,6 @@ final class ActivityIndicator: Indicator {
     }
 }
 
-#if canImport(UIKit)
-extension UIActivityIndicatorView.Style {
-    #if compiler(>=5.1)
-    #else
-    static let large = UIActivityIndicatorView.Style.white
-    #if !os(tvOS)
-    static let medium = UIActivityIndicatorView.Style.gray
-    #endif
-    #endif
-}
-#endif
-
 // MARK: - ImageIndicator
 // Displays an ImageView. Supports gif
 final class ImageIndicator: Indicator {

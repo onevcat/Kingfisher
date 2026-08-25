@@ -113,20 +113,7 @@ extension KingfisherWrapper where Base: CPListItem {
             with: source,
             imageAccessor: ImagePropertyAccessor(
                 setImage: { listItem, image, _ in
-                    /**
-                     * In iOS SDK 14.0-14.4 the image param was non-`nil`. The SDK changed in 14.5
-                     * to allow `nil`. The compiler version 5.4 was introduced in this same SDK,
-                     * which allows >=14.5 SDK to set a `nil` image. This compile check allows
-                     * newer SDK users to set the image to `nil`, while still allowing older SDK
-                     * users to compile the framework.
-                     */
-                    #if compiler(>=5.4)
                     listItem.setImage(image)
-                    #else
-                    if let image = image {
-                        listItem.setImage(image)
-                    }
-                    #endif
                 },
                 getImage: { listItem in
                     listItem.image
