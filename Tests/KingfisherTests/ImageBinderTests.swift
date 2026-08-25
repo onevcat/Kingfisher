@@ -65,6 +65,20 @@ private final class DelayedImageDataProvider: ImageDataProvider, @unchecked Send
 
 @available(iOS 14.0, tvOS 14.0, *)
 class ImageBinderTests: XCTestCase {
+    private func makeSharedDownloadTasks(priorities: [Float]) -> [DownloadTask] {
+        let url = URL(string: "https://example.com/shared-priority.png")!
+        let sessionTask = SessionDataTask(task: URLSession.shared.dataTask(with: url))
+        return priorities.map { priority in
+            let options = KingfisherParsedOptionsInfo([.downloadPriority(priority)])
+            let callback = SessionDataTask.TaskCallback(onCompleted: nil, options: options)
+            let token = sessionTask.addCallback(callback)!
+            let actualTask = DownloadTask(sessionTask: sessionTask, cancelToken: token)
+            let linkedTask = DownloadTask()
+            linkedTask.linkToTask(actualTask)
+            return linkedTask
+        }
+    }
+
     @MainActor
     func testFadeCallsSuccessAfterMarkingLoadedOnCustomCallbackQueue() async {
         let callbackQueue = DispatchQueue(
@@ -193,6 +207,37 @@ class ImageBinderTests: XCTestCase {
         await fulfillment(of: [resultReceived], timeout: 1)
     }
 
+    @MainActor
+    func testReducingPriorityDoesNotAffectHigherPriorityConsumer() {
+        let tasks = makeSharedDownloadTasks(
+            priorities: [URLSessionTask.highPriority, URLSessionTask.defaultPriority]
+        )
+        let visibleTask = tasks[0]
+        let disappearingTask = tasks[1]
+        let binder = KFImage.ImageBinder()
+        binder.downloadTask = disappearingTask
+        binder.markLoading()
+
+        binder.reducePriorityOnDisappear()
+
+        XCTAssertTrue(visibleTask.sessionTask === disappearingTask.sessionTask)
+        XCTAssertEqual(visibleTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+    }
+
+    @MainActor
+    func testRestoringPriorityUsesOriginalRequestPriority() {
+        let task = makeSharedDownloadTasks(priorities: [URLSessionTask.highPriority])[0]
+        let binder = KFImage.ImageBinder()
+        binder.downloadTask = task
+        binder.markLoading()
+
+        binder.reducePriorityOnDisappear()
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        binder.restorePriorityOnAppear()
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.highPriority)
+    }
+  
     // A cancelled request keeps `loadedImage` empty, so the binder can be restarted before that request has delivered
     // its failure. When the failure lands afterwards it installs the fallback image and records it, and the restarted
     // load must still be able to report its own image as retrieved.

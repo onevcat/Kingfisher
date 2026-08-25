@@ -144,6 +144,16 @@ public final class DownloadTask: @unchecked Sendable {
         guard let sessionTask, let cancelToken else { return }
         sessionTask.cancel(token: cancelToken)
     }
+
+    func setPriority(_ priority: Float) {
+        guard let sessionTask, let cancelToken else { return }
+        sessionTask.setPriority(priority, for: cancelToken)
+    }
+
+    func resetPriority() {
+        guard let sessionTask, let cancelToken else { return }
+        sessionTask.resetPriority(for: cancelToken)
+    }
     
     public var isInitialized: Bool {
         propertyQueue.sync {
@@ -423,7 +433,6 @@ open class ImageDownloader: @unchecked Sendable {
             downloadTask = existingDownloadTask
         } else {
             let sessionDataTask = session.dataTask(with: context.request)
-            sessionDataTask.priority = context.options.downloadPriority
             downloadTask = sessionDelegate.add(sessionDataTask, url: context.url, callback: callback)
         }
         return downloadTask

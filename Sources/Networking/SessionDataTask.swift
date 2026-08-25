@@ -76,6 +76,7 @@ public class SessionDataTask: @unchecked Sendable {
     public let task: URLSessionDataTask
     
     private var callbacksStore = [CancelToken: TaskCallback]()
+    private var prioritiesStore = [CancelToken: Float]()
     private var completed = false
 
     var callbacks: [SessionDataTask.TaskCallback] {
@@ -126,6 +127,8 @@ public class SessionDataTask: @unchecked Sendable {
         guard !completed else { return nil }
 
         callbacksStore[currentToken] = callback
+        prioritiesStore[currentToken] = callback.options.downloadPriority
+        updateTaskPriority()
         defer { currentToken += 1 }
         return currentToken
     }
@@ -135,9 +138,32 @@ public class SessionDataTask: @unchecked Sendable {
         defer { lock.unlock() }
         if let callback = callbacksStore[token] {
             callbacksStore[token] = nil
+            prioritiesStore[token] = nil
+            updateTaskPriority()
             return callback
         }
         return nil
+    }
+
+    func setPriority(_ priority: Float, for token: CancelToken) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard callbacksStore[token] != nil else { return }
+        prioritiesStore[token] = priority
+        updateTaskPriority()
+    }
+
+    func resetPriority(for token: CancelToken) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let callback = callbacksStore[token] else { return }
+        prioritiesStore[token] = callback.options.downloadPriority
+        updateTaskPriority()
+    }
+
+    private func updateTaskPriority() {
+        guard let priority = prioritiesStore.values.max() else { return }
+        task.priority = priority
     }
     
     @discardableResult
@@ -146,6 +172,7 @@ public class SessionDataTask: @unchecked Sendable {
         defer { lock.unlock() }
         let callbacks = callbacksStore.values
         callbacksStore.removeAll()
+        prioritiesStore.removeAll()
         return Array(callbacks)
     }
 
@@ -156,6 +183,7 @@ public class SessionDataTask: @unchecked Sendable {
         completed = true
         let callbacks = callbacksStore.values
         callbacksStore.removeAll()
+        prioritiesStore.removeAll()
         return Array(callbacks)
     }
 

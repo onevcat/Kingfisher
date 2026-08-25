@@ -528,6 +528,12 @@ class ImageDownloaderTests: XCTestCase {
 
             hammer { for _ in 0..<20 { _ = task.addCallback(.init(onCompleted: nil, options: options)) } }
             hammer { for _ in 0..<5 { task.forceCancel() } }
+            hammer {
+                for token in 0..<20 {
+                    task.setPriority(URLSessionTask.highPriority, for: token)
+                    task.resetPriority(for: token)
+                }
+            }
             hammer { for _ in 0..<20 { task.resume() } }
             hammer { for _ in 0..<20 { _ = task.started; _ = task.containsCallbacks } }
             hammer { for _ in 0..<20 { task.didReceiveData(Data([0x01])); _ = task.mutableDataCount } }
@@ -720,6 +726,91 @@ class ImageDownloaderTests: XCTestCase {
             exp.fulfill()
         }
         XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.highPriority)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testJoiningDownloadTaskRaisesSharedPriority() {
+        let exp = expectation(description: #function)
+        exp.expectedFulfillmentCount = 2
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        let lowPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.lowPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        let highPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertTrue(lowPriorityTask.sessionTask === highPriorityTask.sessionTask)
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testJoiningDownloadTaskDoesNotLowerSharedPriority() {
+        let exp = expectation(description: #function)
+        exp.expectedFulfillmentCount = 2
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        let highPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        let lowPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.lowPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertTrue(highPriorityTask.sessionTask === lowPriorityTask.sessionTask)
+        XCTAssertEqual(highPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testSharedPriorityFallsBackAfterHighPriorityTaskCancellation() {
+        let exp = expectation(description: #function)
+        exp.expectedFulfillmentCount = 2
+
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        let lowPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.lowPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        let highPriorityTask = downloader.downloadImage(
+            with: url,
+            options: [.downloadPriority(URLSessionTask.highPriority)]
+        ) { _ in
+            exp.fulfill()
+        }
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
+
+        highPriorityTask.cancel()
+
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        highPriorityTask.setPriority(URLSessionTask.highPriority)
+        XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        _ = stub.go()
         waitForExpectations(timeout: 3, handler: nil)
     }
     
