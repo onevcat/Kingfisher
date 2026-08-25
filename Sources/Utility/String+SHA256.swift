@@ -26,22 +26,13 @@
 
 import Foundation
 import CryptoKit
-import CommonCrypto
 
 extension String: KingfisherCompatibleValue { }
 extension KingfisherWrapper where Base == String {
     var sha256: String {
         guard let data = base.data(using: .utf8) else { return base }
-        if #available(iOS 13.0, tvOS 13.0, macOS 10.15, watchOS 6.0, macCatalyst 13.0, *) {
-            let hashed = SHA256.hash(data: data)
-            return hashed.compactMap { String(format: "%02x", $0) }.joined()
-        } else {
-            var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-            data.withUnsafeBytes { bytes in
-                _ = CC_SHA256(bytes.baseAddress, UInt32(data.count), &digest)
-            }
-            return digest.makeIterator().compactMap { String(format: "%02x", $0) }.joined()
-        }
+        let hashed = SHA256.hash(data: data)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
 
     var ext: String? {
