@@ -62,10 +62,23 @@ public protocol CacheSerializer: Sendable {
     /// By default, it is `false`, and the actual processed image is assumed to be serialized to and later deserialized
     /// from the disk. That means the processed version of the image is stored and loaded.
     var originalDataUsed: Bool { get }
+
+    /// Indicates whether ``data(with:original:)`` writes a self-describing image format, such as PNG, JPEG or GIF.
+    ///
+    /// When `true`, Kingfisher may hand the cached bytes straight to an ``ImageProcessor`` as
+    /// ``ImageProcessItem/data(_:)`` instead of deserializing them first. Data-based processors — most notably
+    /// ``DownsamplingImageProcessor`` — re-encode an image input to get back to data, so deserializing first costs a
+    /// full size decode and re-encode that the processor immediately discards.
+    ///
+    /// By default it is `false`, and ``image(with:options:)`` is always used. Return `true` only if the bytes this
+    /// serializer writes can be decoded by the system image APIs on their own; a serializer that encrypts or
+    /// otherwise wraps its payload must leave it `false`.
+    var producesDecodableImageData: Bool { get }
 }
 
 public extension CacheSerializer {
     var originalDataUsed: Bool { false }
+    var producesDecodableImageData: Bool { false }
 }
 
 /// Represents a basic and default `CacheSerializer` used in the Kingfisher disk cache system.
@@ -84,6 +97,9 @@ public extension CacheSerializer {
 /// > Tip: If you create a new image instance from an animated image in a custom processor, use
 /// > ``KingfisherWrapper/copyKingfisherState(to:)`` to propagate the embedded animated data to the new image.
 public struct DefaultCacheSerializer: CacheSerializer {
+
+    /// Writes PNG, JPEG or GIF, so the cached bytes can be decoded directly.
+    public var producesDecodableImageData: Bool { true }
     
     /// The default general cache serializer utilized throughout Kingfisher's caching mechanism.
     public static let `default` = DefaultCacheSerializer()

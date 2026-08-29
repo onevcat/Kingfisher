@@ -2319,3 +2319,141 @@ actor ActorArray<Element> {
         value.append(newElement)
     }
 }
+
+// MARK: - Original cache hit
+
+/// Records which `ImageProcessItem` case it was given, and how often it ran.
+final class ItemRecordingProcessor: ImageProcessor, @unchecked Sendable {
+
+    let identifier = "com.onevcat.Kingfisher.test.ItemRecordingProcessor"
+
+    private let lock = NSLock()
+    private var _dataCount = 0
+    private var _imageCount = 0
+
+    var dataCount: Int { lock.lock(); defer { lock.unlock() }; return _dataCount }
+    var imageCount: Int { lock.lock(); defer { lock.unlock() }; return _imageCount }
+    var runCount: Int { dataCount + imageCount }
+
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        lock.lock()
+        switch item {
+        case .data: _dataCount += 1
+        case .image: _imageCount += 1
+        }
+        lock.unlock()
+        return DefaultImageProcessor.default.process(item: item, options: options)
+    }
+}
+
+/// Serializes like the default one, but does not declare its data decodable, and counts deserializations.
+final class RecordingCacheSerializer: CacheSerializer, @unchecked Sendable {
+
+    private let lock = NSLock()
+    private var _imageCallCount = 0
+    var imageCallCount: Int { lock.lock(); defer { lock.unlock() }; return _imageCallCount }
+
+    func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
+        DefaultCacheSerializer.default.data(with: image, original: original)
+    }
+
+    func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        lock.lock()
+        _imageCallCount += 1
+        lock.unlock()
+        return DefaultCacheSerializer.default.image(with: data, options: options)
+    }
+}
+
+extension KingfisherManagerTests {
+
+    func testOriginalCacheHitGivesTheProcessorTheData() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let processor = ItemRecordingProcessor()
+        let cache = manager.cache
+
+        stub(url, data: testImageData)
+
+        // Store the unprocessed original only, then drop the memory copy so the disk is the source.
+        cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
+            cache.clearMemoryCache()
+            self.manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(processor.dataCount, 1, "the processor should receive the stored bytes")
+                XCTAssertEqual(processor.imageCount, 0, "the original should not be decoded first")
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testConcurrentOriginalCacheHitsProcessTheOriginalOnce() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let processor = ItemRecordingProcessor()
+        let cache = manager.cache
+        let requestCount = 10
+
+        stub(url, data: testImageData)
+
+        cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
+            cache.clearMemoryCache()
+
+            let group = DispatchGroup()
+            let delivered = LockIsolated(0)
+
+            for _ in 0 ..< requestCount {
+                group.enter()
+                self.manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
+                    if result.value?.image != nil {
+                        delivered.withValue { $0 += 1 }
+                    }
+                    group.leave()
+                }
+            }
+
+            group.notify(queue: .main) {
+                XCTAssertEqual(delivered.value, requestCount, "every request should be answered")
+                XCTAssertEqual(processor.runCount, 1, "the original should be processed once for the group")
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testOriginalCacheHitDeserializesWhenTheSerializerDoesNotDeclareDecodableData() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let processor = ItemRecordingProcessor()
+        let serializer = RecordingCacheSerializer()
+        let cache = manager.cache
+
+        stub(url, data: testImageData)
+
+        cache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            cacheSerializer: serializer,
+            toDisk: true
+        ) { _ in
+            cache.clearMemoryCache()
+            let options: KingfisherOptionsInfo = [.processor(processor), .cacheSerializer(serializer)]
+            self.manager.retrieveImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertGreaterThan(serializer.imageCallCount, 0, "the serializer should still be used")
+                XCTAssertEqual(processor.dataCount, 0, "raw bytes should not be given to the processor")
+                XCTAssertEqual(processor.imageCount, 1)
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testProducesDecodableImageDataDefaults() {
+        XCTAssertTrue(DefaultCacheSerializer.default.producesDecodableImageData)
+        XCTAssertTrue(FormatIndicatedCacheSerializer.png.producesDecodableImageData)
+        XCTAssertFalse(RecordingCacheSerializer().producesDecodableImageData)
+    }
+}
