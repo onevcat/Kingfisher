@@ -33,7 +33,7 @@ struct TimeConstants {
 }
 
 /// Represents the expiration strategy utilized in storage.
-public enum StorageExpiration: Sendable {
+public enum StorageExpiration: Hashable, Sendable {
     
     /// The item never expires.
     case never
@@ -89,7 +89,7 @@ public enum StorageExpiration: Sendable {
 }
 
 /// Represents the expiration extension strategy used in storage after access.
-public enum ExpirationExtending: Sendable {
+public enum ExpirationExtending: Hashable, Sendable {
     /// The item expires after the original time, without extension after access.
     case none
     /// The item expiration extends to the original cache time after each access.

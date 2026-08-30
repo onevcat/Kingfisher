@@ -981,13 +981,11 @@ public class KingfisherManager: @unchecked Sendable {
         fallbackToDownload: @escaping @Sendable () -> Void,
         completionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void)?)
     {
-        // Only reading and processing the original is shared between coalesced requests. Everything
-        // below stays per request, so a single request behaves as before.
-        let deliver: @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void = { result in
+        let processingQueue = options.processingQueue ?? self.processingQueue
+
+        let complete: @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void = { result in
             result.match(
                 onSuccess: { processedImage in
-                    // This request may have been superseded while the shared read was in flight. The read is
-                    // deliberately not gated on any one request's checker, so the verdict is applied here.
                     if processedImage != nil, options.isSourceTaskStale {
                         let error = KingfisherError.cacheError(reason: .imageNotExisting(key: key))
                         options.callbackQueue.execute { completionHandler?(.failure(error)) }
@@ -1050,41 +1048,74 @@ public class KingfisherManager: @unchecked Sendable {
             )
         }
 
-        // A serializer whose data only it can read keeps the previous route verbatim, and is not coalesced: a
-        // shared read carries one serializer, and only this one can turn its own bytes back into an image.
-        guard options.cacheSerializer.producesDecodableImageData else {
+        // Only the disk read and the processor run over its bytes are shared. Background decoding, the
+        // deserializing fallback, the image modifier and the cache store all use this request's own options.
+        let deliver: @Sendable (Result<SharedOriginalImage, KingfisherError>) -> Void = { shared in
+            switch shared {
+            case .failure(let error):
+                complete(.failure(error))
+
+            case .success(.none):
+                complete(.success(nil))
+
+            case .success(.processed(let image)):
+                guard options.backgroundDecode else {
+                    complete(.success(image))
+                    return
+                }
+                processingQueue.execute { complete(.success(image.kf.decoded)) }
+
+            case .success(.unprocessedData(let data)):
+                processingQueue.execute {
+                    guard let image = options.cacheSerializer.image(with: data, options: options) else {
+                        complete(.success(nil))
+                        return
+                    }
+                    let processed = Self.process(.image(image), with: options.processor, options: options)
+                    guard options.backgroundDecode else {
+                        complete(processed)
+                        return
+                    }
+                    complete(processed.map { $0?.kf.decoded })
+                }
+            }
+        }
+
+        // A serializer that does not declare its data decodable is the only one that can read what it wrote,
+        // so its requests keep the deserializing route and are not shared.
+        guard options.cacheSerializer.producesDecodableImageData, !options.fromMemoryCacheOrRefresh else {
             loadOriginalImage(from: originalCache, key: key, options: options, completionHandler: deliver)
             return
         }
 
-        let identifier = Self.originalProcessingIdentifier(originalCache: originalCache, key: key, options: options)
+        let identity = OriginalProcessingIdentity(cache: originalCache, key: key, options: options)
 
         // An identical read and process is already running. It reports to every joiner when it lands.
         guard originalProcessingCoalescer.join(
-            identifier,
+            identity,
             isCurrent: options.sourceTaskIdentifierChecker,
             completion: deliver
         ) else { return }
 
         // Held strongly, so the joined requests are still answered if this manager goes away, and drained on
         // deinit so a dropped processing block cannot strand them.
-        let drain = OriginalProcessingDrain(identifier: identifier, coalescer: originalProcessingCoalescer)
-        processOriginal(in: originalCache, key: key, options: options, identifier: identifier) { result in
+        let drain = OriginalProcessingDrain(identity: identity, coalescer: originalProcessingCoalescer)
+        processOriginal(in: originalCache, key: key, options: options, identity: identity) { result in
             drain.finish(result)
         }
     }
 
-    // Master's route, for a serializer whose data only it can read. `options` is passed through untouched apart
-    // from the processor, so the staleness checks inside `retrieveImageInDiskCache` still short-circuit a
-    // superseded request before it deserializes and promotes a full size original into the memory cache.
+    // The route for a serializer that only it can read: the original is deserialized before the processor sees it.
     private func loadOriginalImage(
         from originalCache: ImageCache,
         key: String,
         options: KingfisherParsedOptionsInfo,
-        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+        completionHandler: @escaping @Sendable (Result<SharedOriginalImage, KingfisherError>) -> Void)
     {
         var optionsWithoutProcessor = options
         optionsWithoutProcessor.processor = DefaultImageProcessor.default
+        // The original is discarded once the processor has run. Decoding is applied to the delivered image.
+        optionsWithoutProcessor.backgroundDecode = false
 
         let processor = options.processor
         let processingQueue = options.processingQueue ?? self.processingQueue
@@ -1093,12 +1124,13 @@ public class KingfisherManager: @unchecked Sendable {
             result.match(
                 onSuccess: { cacheResult in
                     guard let image = cacheResult.image else {
-                        completionHandler(.success(nil))
+                        completionHandler(.success(.none))
                         return
                     }
                     processingQueue.execute {
                         completionHandler(
-                            Self.process(.image(image), with: processor, options: options, decode: false)
+                            Self.process(.image(image), with: processor, options: options)
+                                .map { $0.map(SharedOriginalImage.processed) ?? .none }
                         )
                     }
                 },
@@ -1107,25 +1139,24 @@ public class KingfisherManager: @unchecked Sendable {
         }
     }
 
-    // The original is passed to the processor as data whenever it is still on disk. Deserializing it
-    // first costs a full size decode, which a data based processor such as `DownsamplingImageProcessor`
-    // then re-encodes to get back to the data it wanted. Reading the data also keeps a large original
-    // out of the memory cache, where it would be evicted again right after the processor has run.
+    // The original is passed to the processor as data whenever it is still on disk. Deserializing it first costs
+    // a full size decode, which a data based processor such as `DownsamplingImageProcessor` then re-encodes to
+    // get back to the data it wanted. Reading the data also keeps a large original out of the memory cache.
     private func processOriginal(
         in originalCache: ImageCache,
         key: String,
         options: KingfisherParsedOptionsInfo,
-        identifier: String,
-        completionHandler: @escaping @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void)
+        identity: OriginalProcessingIdentity,
+        completionHandler: @escaping @Sendable (Result<SharedOriginalImage, KingfisherError>) -> Void)
     {
-        // The original is stored unprocessed, so look it up without a processor. The read serves every coalesced
-        // request, so it answers for the group rather than for whichever one started it: one request's check
-        // would abandon work the others are still waiting for. Each still applies its own on delivery.
+        // The original is stored unprocessed, so look it up without a processor. The read serves every request
+        // waiting on it, so it is abandoned only once they have all gone away; each still applies its own
+        // staleness when the result is delivered.
         let optionsWithoutProcessor: KingfisherParsedOptionsInfo = {
             var copy = options
             copy.processor = DefaultImageProcessor.default
             copy.sourceTaskIdentifierChecker = { [weak coalescer = originalProcessingCoalescer] in
-                coalescer?.anyCurrent(identifier) ?? true
+                coalescer?.anyCurrent(identity) ?? true
             }
             return copy
         }()
@@ -1133,18 +1164,21 @@ public class KingfisherManager: @unchecked Sendable {
         let processor = options.processor
         let processingQueue = options.processingQueue ?? self.processingQueue
         let coalescer = originalProcessingCoalescer
-        // Whoever is already waiting when this read starts is answered by it. A request that joins later is
-        // not, which is what the stale arm below uses to decide whether the read has to happen again.
-        let waitingAtStart = coalescer.participantCount(identifier)
+        let waitingAtStart = coalescer.participantCount(identity)
 
         // A memory hit is already decoded, so there is nothing for the data route to save.
         if let image = originalCache.retrieveImageInMemoryCache(forKey: key, options: optionsWithoutProcessor) {
-            processingQueue.execute { completionHandler(Self.process(.image(image), with: processor, options: options, decode: false)) }
+            processingQueue.execute {
+                completionHandler(
+                    Self.process(.image(image), with: processor, options: options)
+                        .map { $0.map(SharedOriginalImage.processed) ?? .none }
+                )
+            }
             return
         }
 
         if options.fromMemoryCacheOrRefresh {
-            completionHandler(.success(nil))
+            completionHandler(.success(.none))
             return
         }
 
@@ -1157,47 +1191,36 @@ public class KingfisherManager: @unchecked Sendable {
             switch result {
             case .success(.data(let data)):
                 processingQueue.execute {
-                    // Reading the data skips the decode `backgroundDecode` used to be applied to, and that was
-                    // the original, which is dropped right after processing. Apply it to the displayed image.
-                    let processed = Self.process(.data(data), with: processor, options: options, decode: options.backgroundDecode)
-                    guard case .failure = processed else {
-                        completionHandler(processed)
+                    // A processor is free to accept an image but not data. Reporting the bytes lets each
+                    // request deserialize them with its own serializer instead of sharing one result.
+                    guard let image = processor.process(item: .data(data), options: options) else {
+                        completionHandler(.success(.unprocessedData(data)))
                         return
                     }
-
-                    // A processor may accept an image but not data. Falling back keeps it working.
-                    guard let image = optionsWithoutProcessor.cacheSerializer.image(
-                        with: data, options: optionsWithoutProcessor
-                    ) else {
-                        // Undecodable data is a cache miss, not a processing failure. The caller falls
-                        // back to downloading, which is how a corrupt original heals itself.
-                        completionHandler(.success(nil))
-                        return
-                    }
-                    completionHandler(Self.process(.image(image), with: processor, options: options, decode: options.backgroundDecode))
+                    completionHandler(.success(.processed(image)))
                 }
+
             case .success(.stale):
-                // The read was abandoned for the group as it stood at the staleness check, and that verdict only
-                // arrives here after a queue hop. Anyone who joined since did no read of their own, so the miss
-                // is not theirs to receive: read again for them. A retry needs a newly joined request, and a
-                // request joins once, so the number of retries cannot exceed the number of requests.
+                // The read was abandoned for the requests waiting on it at the staleness check, and that verdict
+                // reaches here after a queue hop. Anyone who joined since performed no read, so the read happens
+                // again for them. A retry needs a newly joined request, and a request joins once.
                 guard let self,
-                      coalescer.participantCount(identifier) > waitingAtStart,
-                      coalescer.anyCurrent(identifier)
+                      coalescer.participantCount(identity) > waitingAtStart,
+                      coalescer.anyCurrent(identity)
                 else {
-                    completionHandler(.success(nil))
+                    completionHandler(.success(.none))
                     return
                 }
                 self.processOriginal(
                     in: originalCache,
                     key: key,
                     options: options,
-                    identifier: identifier,
+                    identity: identity,
                     completionHandler: completionHandler
                 )
 
             case .success(.notFound):
-                completionHandler(.success(nil))
+                completionHandler(.success(.none))
             case .failure(let error):
                 completionHandler(.failure(error))
             }
@@ -1207,26 +1230,14 @@ public class KingfisherManager: @unchecked Sendable {
     private static func process(
         _ item: ImageProcessItem,
         with processor: any ImageProcessor,
-        options: KingfisherParsedOptionsInfo,
-        decode: Bool) -> Result<KFCrossPlatformImage?, KingfisherError>
+        options: KingfisherParsedOptionsInfo) -> Result<KFCrossPlatformImage?, KingfisherError>
     {
         guard let processedImage = processor.process(item: item, options: options) else {
             return .failure(
                 KingfisherError.processorError(reason: .processingFailed(processor: processor, item: item))
             )
         }
-        guard decode else { return .success(processedImage) }
-        return .success(processedImage.kf.decoded)
-    }
-
-    // Requests share the work only when they would compute the same image.
-    private static func originalProcessingIdentifier(
-        originalCache: ImageCache,
-        key: String,
-        options: KingfisherParsedOptionsInfo) -> String
-    {
-        let cacheIdentifier = UInt(bitPattern: ObjectIdentifier(originalCache))
-        return "\(cacheIdentifier)|\(key)|\(options.processor.identifier)|\(options.scaleFactor)|\(options.forcedExtension ?? "")"
+        return .success(processedImage)
     }
 }
 
@@ -1441,28 +1452,65 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
     }
 }
 
-/// Shares one original image read and process between the requests that would each perform it.
+/// What an original cache hit can share between the requests waiting on it.
+enum SharedOriginalImage: Sendable {
+
+    /// The processor produced this image from the stored data.
+    case processed(KFCrossPlatformImage)
+
+    /// The processor did not accept the stored data. Each request deserializes it with its own serializer.
+    case unprocessedData(Data)
+
+    /// No usable original.
+    case none
+}
+
+/// Identifies a shared original read and process.
 ///
-/// The download path already does this: a single `SessionDataTask` collects every callback and
-/// `ImageDataProcessor` runs each distinct processor once over the downloaded data. Without the same
-/// on the cache hit path, every view showing an image decodes and processes the original itself.
+/// Requests share the work only when the processor, and the inputs it is given, would produce the same image.
+struct OriginalProcessingIdentity: Hashable {
+
+    private let cache: ObjectIdentifier
+    private let key: String
+    private let processorIdentifier: String
+    /// The bit pattern of the scale, so that every value including `nan` is equal to itself.
+    private let scale: UInt64
+    private let forcedExtension: String?
+    private let preloadAllAnimationData: Bool
+    private let onlyLoadFirstFrame: Bool
+    private let diskCacheAccessExtendingExpiration: ExpirationExtending
+    private let memoryCacheAccessExtendingExpiration: ExpirationExtending
+
+    init(cache: ImageCache, key: String, options: KingfisherParsedOptionsInfo) {
+        self.cache = ObjectIdentifier(cache)
+        self.key = key
+        self.processorIdentifier = options.processor.identifier
+        self.scale = Double(options.scaleFactor).bitPattern
+        self.forcedExtension = options.forcedExtension
+        self.preloadAllAnimationData = options.preloadAllAnimationData
+        self.onlyLoadFirstFrame = options.onlyLoadFirstFrame
+        self.diskCacheAccessExtendingExpiration = options.diskCacheAccessExtendingExpiration
+        self.memoryCacheAccessExtendingExpiration = options.memoryCacheAccessExtendingExpiration
+    }
+}
+
 /// Guarantees a coalesced entry is drained, even if the work that should have reported it is dropped.
 ///
 /// A user supplied processing queue can release a block without running it. Without this the entry stays in
 /// `pending` and every later request for that key joins a leader that will never report.
 final class OriginalProcessingDrain: @unchecked Sendable {
 
-    private let identifier: String
+    private let identity: OriginalProcessingIdentity
     private let coalescer: OriginalImageProcessingCoalescer
     private let lock = NSLock()
     private var reported = false
 
-    init(identifier: String, coalescer: OriginalImageProcessingCoalescer) {
-        self.identifier = identifier
+    init(identity: OriginalProcessingIdentity, coalescer: OriginalImageProcessingCoalescer) {
+        self.identity = identity
         self.coalescer = coalescer
     }
 
-    func finish(_ result: Result<KFCrossPlatformImage?, KingfisherError>) {
+    func finish(_ result: Result<SharedOriginalImage, KingfisherError>) {
         lock.lock()
         if reported {
             lock.unlock()
@@ -1470,18 +1518,22 @@ final class OriginalProcessingDrain: @unchecked Sendable {
         }
         reported = true
         lock.unlock()
-        coalescer.finish(identifier, result: result)
+        coalescer.finish(identity, result: result)
     }
 
     deinit {
         // Degrades to a cache miss, so the joined requests heal by downloading.
-        finish(.success(nil))
+        finish(.success(.none))
     }
 }
 
+/// Shares one original image read and process between the requests that would each perform it.
+///
+/// The download path already does this: a single `SessionDataTask` collects every callback and
+/// `ImageDataProcessor` runs each distinct processor once over the downloaded data.
 class OriginalImageProcessingCoalescer: @unchecked Sendable {
 
-    typealias Completion = @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void
+    typealias Completion = @Sendable (Result<SharedOriginalImage, KingfisherError>) -> Void
 
     private struct Participant {
         let completion: Completion
@@ -1489,48 +1541,48 @@ class OriginalImageProcessingCoalescer: @unchecked Sendable {
     }
 
     private let stateQueue: DispatchQueue
-    private var pending: [String: [Participant]] = [:]
+    private var pending: [OriginalProcessingIdentity: [Participant]] = [:]
 
     init() {
         let stateQueueName = "com.onevcat.Kingfisher.OriginalImageProcessingCoalescer.stateQueue.\(UUID().uuidString)"
         self.stateQueue = DispatchQueue(label: stateQueueName)
     }
 
-    /// Adds `completion` to `identifier`, and returns whether the caller should perform the work.
+    /// Adds `completion` to `identity`, and returns whether the caller should perform the work.
     ///
     /// `isCurrent` is the joining request's own liveness check, `nil` when it has none and is therefore always
     /// current. It is kept so the shared work can be abandoned once every request waiting on it has gone away.
     func join(
-        _ identifier: String,
+        _ identity: OriginalProcessingIdentity,
         isCurrent: (@Sendable () -> Bool)?,
         completion: @escaping Completion) -> Bool
     {
         let participant = Participant(completion: completion, isCurrent: isCurrent)
         return stateQueue.sync { () -> Bool in
-            if pending[identifier] == nil {
-                pending[identifier] = [participant]
+            if pending[identity] == nil {
+                pending[identity] = [participant]
                 return true
             }
-            pending[identifier]?.append(participant)
+            pending[identity]?.append(participant)
             return false
         }
     }
 
-    /// How many requests are waiting on `identifier`.
+    /// How many requests are waiting on `identity`.
     ///
     /// Only `join` adds and only `finish` removes the whole entry, so for the life of one entry this only ever
     /// grows — which makes it usable as a join count.
-    func participantCount(_ identifier: String) -> Int {
-        stateQueue.sync { pending[identifier]?.count ?? 0 }
+    func participantCount(_ identity: OriginalProcessingIdentity) -> Int {
+        stateQueue.sync { pending[identity]?.count ?? 0 }
     }
 
-    /// Whether any request waiting on `identifier` is still current.
+    /// Whether any request waiting on `identity` is still current.
     ///
     /// `true` when nothing is waiting, so a race can never abandon work on an empty group. The checks belong to
     /// callers, so they are copied out and run with the lock released: calling one while `stateQueue` is held
     /// would deadlock the serial queue if it re-entered.
-    func anyCurrent(_ identifier: String) -> Bool {
-        let participants = stateQueue.sync { pending[identifier] }
+    func anyCurrent(_ identity: OriginalProcessingIdentity) -> Bool {
+        let participants = stateQueue.sync { pending[identity] }
         guard let participants = participants, !participants.isEmpty else { return true }
         for participant in participants {
             guard let isCurrent = participant.isCurrent else { return true }
@@ -1539,11 +1591,11 @@ class OriginalImageProcessingCoalescer: @unchecked Sendable {
         return false
     }
 
-    /// Reports `result` to everything waiting on `identifier`. Calling it again is a no-op.
-    func finish(_ identifier: String, result: Result<KFCrossPlatformImage?, KingfisherError>) {
+    /// Reports `result` to everything waiting on `identity`. Calling it again is a no-op.
+    func finish(_ identity: OriginalProcessingIdentity, result: Result<SharedOriginalImage, KingfisherError>) {
         // Taken out of `pending` under the lock, then called outside it. A completion may start a
         // download or re-enter the manager, and `stateQueue` is serial.
-        let participants = stateQueue.sync { pending.removeValue(forKey: identifier) ?? [] }
+        let participants = stateQueue.sync { pending.removeValue(forKey: identity) ?? [] }
         participants.forEach { $0.completion(result) }
     }
 }
