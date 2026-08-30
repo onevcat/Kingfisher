@@ -60,6 +60,9 @@ import UIKit
 /// imageView.kf.setImage(with: url, options: optionsInfo)
 /// ```
 public struct FormatIndicatedCacheSerializer: CacheSerializer {
+
+    /// Writes the indicated image format, so the cached bytes can be decoded directly.
+    public var producesDecodableImageData: Bool { true }
     
     /// A ``FormatIndicatedCacheSerializer`` instance that converts images to and from the PNG format. 
     ///
