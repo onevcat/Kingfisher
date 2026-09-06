@@ -1081,9 +1081,11 @@ public class KingfisherManager: @unchecked Sendable {
             }
         }
 
-        // A serializer that does not declare its data decodable is the only one that can read what it wrote,
-        // so its requests keep the deserializing route and are not shared.
-        guard options.cacheSerializer.producesDecodableImageData, !options.fromMemoryCacheOrRefresh else {
+        // Preserve custom cache retrieval overrides and serializers that must deserialize their own bytes.
+        guard type(of: originalCache) == ImageCache.self,
+              options.cacheSerializer.producesDecodableImageData,
+              !options.fromMemoryCacheOrRefresh
+        else {
             loadOriginalImage(from: originalCache, key: key, options: options, completionHandler: deliver)
             return
         }

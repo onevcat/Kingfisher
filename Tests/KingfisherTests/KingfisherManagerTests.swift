@@ -2413,7 +2413,7 @@ extension KingfisherManagerTests {
         let cache = manager.cache
         let requestCount = 10
 
-        stub(url, data: testImageData)
+        stub(url, errorCode: NSURLErrorNotConnectedToInternet)
 
         cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
             cache.clearMemoryCache()
@@ -2671,6 +2671,21 @@ final class ImageOnlyProcessor: ImageProcessor, @unchecked Sendable {
 }
 
 extension KingfisherManagerTests {
+    func testOriginalCacheHitUsesCacheSubclassOverride() throws {
+        let url = testURLs[0]
+        let originalCache = OverridingImageCache(name: UUID().uuidString)
+        defer { clearCaches([originalCache]) }
+        try originalCache.diskStorage.store(value: testImageGIFData, forKey: url.cacheKey)
+
+        let done = expectation(description: "Cache override used")
+        manager.retrieveImage(with: url, options: [.originalCache(originalCache), .onlyFromCache]) { result in
+            XCTAssertTrue(result.value?.image === testImage)
+            XCTAssertEqual(originalCache.retrievalCount.value, 1)
+            done.fulfill()
+        }
+        wait(for: [done], timeout: 3)
+    }
+
     func testSynchronousOriginalCacheHitDoesNotWaitForAnotherProcessingQueue() throws {
         let url = testURLs[0]
         let processor = ItemRecordingProcessor()
@@ -2720,5 +2735,19 @@ private final class DeferredProcessingQueue: CallbackOperationQueue, @unchecked 
         let block = operation.value
         operation.setValue(nil)
         block?()
+    }
+}
+
+private final class OverridingImageCache: ImageCache, @unchecked Sendable {
+    let retrievalCount = LockIsolated(0)
+
+    override func retrieveImage(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo,
+        callbackQueue: CallbackQueue = .mainCurrentOrAsync,
+        completionHandler: (@Sendable (Result<ImageCacheResult, KingfisherError>) -> Void)?)
+    {
+        retrievalCount.withValue { $0 += 1 }
+        callbackQueue.execute { completionHandler?(.success(.disk(testImage))) }
     }
 }
