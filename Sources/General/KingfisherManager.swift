@@ -1088,6 +1088,12 @@ public class KingfisherManager: @unchecked Sendable {
             return
         }
 
+        // Sharing must not make a synchronous request or a custom queue wait for another request's scheduler.
+        if options.loadDiskFileSynchronously || options.processingQueue != nil {
+            processOriginal(in: originalCache, key: key, options: options, identity: nil, completionHandler: deliver)
+            return
+        }
+
         let identity = OriginalProcessingIdentity(cache: originalCache, key: key, options: options)
 
         // An identical read and process is already running. It reports to every joiner when it lands.
@@ -1097,11 +1103,9 @@ public class KingfisherManager: @unchecked Sendable {
             completion: deliver
         ) else { return }
 
-        // Held strongly, so the joined requests are still answered if this manager goes away, and drained on
-        // deinit so a dropped processing block cannot strand them.
-        let drain = OriginalProcessingDrain(identity: identity, coalescer: originalProcessingCoalescer)
-        processOriginal(in: originalCache, key: key, options: options, identity: identity) { result in
-            drain.finish(result)
+        processOriginal(in: originalCache, key: key, options: options, identity: identity) {
+            [coalescer = originalProcessingCoalescer] result in
+            coalescer.finish(identity, result: result)
         }
     }
 
@@ -1146,17 +1150,18 @@ public class KingfisherManager: @unchecked Sendable {
         in originalCache: ImageCache,
         key: String,
         options: KingfisherParsedOptionsInfo,
-        identity: OriginalProcessingIdentity,
+        identity: OriginalProcessingIdentity?,
         completionHandler: @escaping @Sendable (Result<SharedOriginalImage, KingfisherError>) -> Void)
     {
-        // The original is stored unprocessed, so look it up without a processor. The read serves every request
-        // waiting on it, so it is abandoned only once they have all gone away; each still applies its own
-        // staleness when the result is delivered.
+        // The original is stored without a processor. A shared read stays current while any participant
+        // needs it; an independent read keeps its own staleness check.
         let optionsWithoutProcessor: KingfisherParsedOptionsInfo = {
             var copy = options
             copy.processor = DefaultImageProcessor.default
-            copy.sourceTaskIdentifierChecker = { [weak coalescer = originalProcessingCoalescer] in
-                coalescer?.anyCurrent(identity) ?? true
+            if let identity {
+                copy.sourceTaskIdentifierChecker = { [coalescer = originalProcessingCoalescer] in
+                    coalescer.anyCurrent(identity)
+                }
             }
             return copy
         }()
@@ -1164,7 +1169,7 @@ public class KingfisherManager: @unchecked Sendable {
         let processor = options.processor
         let processingQueue = options.processingQueue ?? self.processingQueue
         let coalescer = originalProcessingCoalescer
-        let waitingAtStart = coalescer.participantCount(identity)
+        let waitingAtStart = identity.map { coalescer.participantCount($0) } ?? 0
 
         // A memory hit is already decoded, so there is nothing for the data route to save.
         if let image = originalCache.retrieveImageInMemoryCache(forKey: key, options: optionsWithoutProcessor) {
@@ -1174,11 +1179,6 @@ public class KingfisherManager: @unchecked Sendable {
                         .map { $0.map(SharedOriginalImage.processed) ?? .none }
                 )
             }
-            return
-        }
-
-        if options.fromMemoryCacheOrRefresh {
-            completionHandler(.success(.none))
             return
         }
 
@@ -1204,7 +1204,7 @@ public class KingfisherManager: @unchecked Sendable {
                 // The read was abandoned for the requests waiting on it at the staleness check, and that verdict
                 // reaches here after a queue hop. Anyone who joined since performed no read, so the read happens
                 // again for them. A retry needs a newly joined request, and a request joins once.
-                guard let self,
+                guard let self, let identity,
                       coalescer.participantCount(identity) > waitingAtStart,
                       coalescer.anyCurrent(identity)
                 else {
@@ -1491,39 +1491,6 @@ struct OriginalProcessingIdentity: Hashable {
         self.onlyLoadFirstFrame = options.onlyLoadFirstFrame
         self.diskCacheAccessExtendingExpiration = options.diskCacheAccessExtendingExpiration
         self.memoryCacheAccessExtendingExpiration = options.memoryCacheAccessExtendingExpiration
-    }
-}
-
-/// Guarantees a coalesced entry is drained, even if the work that should have reported it is dropped.
-///
-/// A user supplied processing queue can release a block without running it. Without this the entry stays in
-/// `pending` and every later request for that key joins a leader that will never report.
-final class OriginalProcessingDrain: @unchecked Sendable {
-
-    private let identity: OriginalProcessingIdentity
-    private let coalescer: OriginalImageProcessingCoalescer
-    private let lock = NSLock()
-    private var reported = false
-
-    init(identity: OriginalProcessingIdentity, coalescer: OriginalImageProcessingCoalescer) {
-        self.identity = identity
-        self.coalescer = coalescer
-    }
-
-    func finish(_ result: Result<SharedOriginalImage, KingfisherError>) {
-        lock.lock()
-        if reported {
-            lock.unlock()
-            return
-        }
-        reported = true
-        lock.unlock()
-        coalescer.finish(identity, result: result)
-    }
-
-    deinit {
-        // Degrades to a cache miss, so the joined requests heal by downloading.
-        finish(.success(.none))
     }
 }
 

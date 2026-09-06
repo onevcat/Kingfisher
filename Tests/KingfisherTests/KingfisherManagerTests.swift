@@ -2334,10 +2334,12 @@ final class ItemRecordingProcessor: ImageProcessor, @unchecked Sendable {
     private let lock = NSLock()
     private var _dataCount = 0
     private var _imageCount = 0
+    private var _processedImage: KFCrossPlatformImage?
 
     var dataCount: Int { lock.lock(); defer { lock.unlock() }; return _dataCount }
     var imageCount: Int { lock.lock(); defer { lock.unlock() }; return _imageCount }
     var runCount: Int { dataCount + imageCount }
+    var processedImage: KFCrossPlatformImage? { lock.lock(); defer { lock.unlock() }; return _processedImage }
 
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         lock.lock()
@@ -2346,7 +2348,11 @@ final class ItemRecordingProcessor: ImageProcessor, @unchecked Sendable {
         case .image: _imageCount += 1
         }
         lock.unlock()
-        return DefaultImageProcessor.default.process(item: item, options: options)
+        let image = DefaultImageProcessor.default.process(item: item, options: options)
+        lock.lock()
+        _processedImage = image
+        lock.unlock()
+        return image
     }
 }
 
@@ -2383,7 +2389,7 @@ extension KingfisherManagerTests {
         let processor = ItemRecordingProcessor()
         let cache = manager.cache
 
-        stub(url, data: testImageData)
+        stub(url, errorCode: NSURLErrorNotConnectedToInternet)
 
         // Store the unprocessed original only, then drop the memory copy so the disk is the source.
         cache.store(testImage, original: testImageData, forKey: url.cacheKey, toDisk: true) { _ in
@@ -2393,6 +2399,7 @@ extension KingfisherManagerTests {
                 XCTAssertNotNil(result.value?.image)
                 XCTAssertEqual(processor.dataCount, 1, "the processor should receive the stored bytes")
                 XCTAssertEqual(processor.imageCount, 0, "the original should not be decoded first")
+                XCTAssertNil(cache.retrieveImageInMemoryCache(forKey: url.cacheKey))
                 exp.fulfill()
             }
         }
@@ -2586,6 +2593,7 @@ extension KingfisherManagerTests {
                 with: url, options: [.processor(processor), .backgroundDecode]
             ) { result in
                 XCTAssertNotNil(result.value?.image)
+                XCTAssertFalse(result.value?.image === processor.processedImage)
                 delivered.withValue { $0 += 1 }
                 group.leave()
             }
@@ -2593,6 +2601,7 @@ extension KingfisherManagerTests {
             group.enter()
             self.manager.retrieveImage(with: url, options: [.processor(processor)]) { result in
                 XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value?.image === processor.processedImage)
                 delivered.withValue { $0 += 1 }
                 group.leave()
             }
@@ -2658,5 +2667,58 @@ final class ImageOnlyProcessor: ImageProcessor, @unchecked Sendable {
         case .image(let image): return image
         case .data: return nil
         }
+    }
+}
+
+extension KingfisherManagerTests {
+    func testSynchronousOriginalCacheHitDoesNotWaitForAnotherProcessingQueue() throws {
+        let url = testURLs[0]
+        let processor = ItemRecordingProcessor()
+        try manager.cache.diskStorage.store(value: testImageData, forKey: url.cacheKey)
+        stub(url, errorCode: NSURLErrorNotConnectedToInternet)
+
+        let scheduled = expectation(description: "First request queued")
+        let queue = DeferredProcessingQueue(scheduled: scheduled)
+        let firstDone = expectation(description: "First request completed")
+        manager.retrieveImage(with: url, options: [
+            .processor(processor), .processingQueue(.operationQueue(queue)), .cacheMemoryOnly
+        ]) { result in
+            XCTAssertNotNil(result.value?.image)
+            firstDone.fulfill()
+        }
+        wait(for: [scheduled], timeout: 3)
+
+        let completed = LockIsolated(false)
+        manager.retrieveImage(with: url, options: [
+            .processor(processor), .loadDiskFileSynchronously, .processingQueue(.untouch),
+            .callbackQueue(.untouch), .cacheMemoryOnly
+        ]) { result in
+            XCTAssertNotNil(result.value?.image)
+            completed.setValue(true)
+        }
+        XCTAssertTrue(completed.value, "The synchronous request must finish before the other queue resumes")
+        queue.run()
+        wait(for: [firstDone], timeout: 3)
+        XCTAssertEqual(processor.dataCount, 2, "Independent requests must still process the original bytes")
+        XCTAssertEqual(processor.imageCount, 0)
+    }
+}
+
+private final class DeferredProcessingQueue: CallbackOperationQueue, @unchecked Sendable {
+    var underlyingQueue: DispatchQueue? { nil }
+    let scheduled: XCTestExpectation
+    private let operation = LockIsolated<(@Sendable () -> Void)?>(nil)
+
+    init(scheduled: XCTestExpectation) { self.scheduled = scheduled }
+
+    func addOperation(_ block: @escaping @Sendable () -> Void) {
+        operation.setValue(block)
+        scheduled.fulfill()
+    }
+
+    func run() {
+        let block = operation.value
+        operation.setValue(nil)
+        block?()
     }
 }
