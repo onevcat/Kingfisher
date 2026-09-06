@@ -736,6 +736,13 @@ open class ImageCache: @unchecked Sendable {
         case stale
     }
 
+    /// Represents the outcome of a raw disk cache data retrieval.
+    internal enum DiskDataRetrievalOutcome: Sendable {
+        case data(Data)
+        case notFound
+        case stale
+    }
+
     func retrieveImageInDiskCache(
         forKey key: String,
         options: KingfisherParsedOptionsInfo,
@@ -806,6 +813,55 @@ open class ImageCache: @unchecked Sendable {
                 }
             case .failure(let error):
                 completionHandler(.failure(error))
+            }
+        }
+    }
+
+    /// Retrieves the data stored on disk for `key`, without deserializing it to an image.
+    ///
+    /// Prefer this when the data is going to be passed to an ``ImageProcessor`` as
+    /// ``ImageProcessItem/data(_:)``. Deserializing first costs a full size decode, and data based
+    /// processors re-encode the image to get back to the data anyway.
+    func retrieveDataInDiskCache(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo,
+        callbackQueue: CallbackQueue = .untouch,
+        outcomeHandler: @escaping @Sendable (Result<DiskDataRetrievalOutcome, KingfisherError>) -> Void)
+    {
+        let computedKey = key.computedKey(with: options.processor.identifier)
+        let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
+        loadingQueue.execute {
+            // CHECK 1: The task is likely already stale by the time a block queued on the serial
+            // ioQueue begins executing during fast scrolling.
+            if options.isSourceTaskStale {
+                callbackQueue.execute { outcomeHandler(.success(.stale)) }
+                return
+            }
+
+            do {
+                guard let data = try self.diskStorage.value(
+                    forKey: computedKey,
+                    forcedExtension: options.forcedExtension,
+                    extendingExpiration: options.diskCacheAccessExtendingExpiration
+                ) else {
+                    callbackQueue.execute { outcomeHandler(.success(.notFound)) }
+                    return
+                }
+
+                // CHECK 2: Catches staleness that occurred during a slow disk read.
+                if options.isSourceTaskStale {
+                    callbackQueue.execute { outcomeHandler(.success(.stale)) }
+                    return
+                }
+
+                callbackQueue.execute { outcomeHandler(.success(.data(data))) }
+            } catch let error as KingfisherError {
+                callbackQueue.execute { outcomeHandler(.failure(error)) }
+            } catch {
+                assertionFailure("The internal thrown error should be a `KingfisherError`.")
+                // Callers coalesce on this handler, so it has to run on every path. Reporting a miss
+                // lets the caller heal by downloading.
+                callbackQueue.execute { outcomeHandler(.success(.notFound)) }
             }
         }
     }
