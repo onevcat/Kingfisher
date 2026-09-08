@@ -519,6 +519,80 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
 
         XCTAssertNil(animator.frame(at: 0))
     }
+
+    // `dancing-banana.gif` is 365x360.
+    func testFrameSourceDownsamplesToMaxSize() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
+
+        let fullSize = frameSource.frame(at: 0, maxSize: nil)
+        XCTAssertEqual(fullSize?.width, 365)
+        XCTAssertEqual(fullSize?.height, 360)
+
+        let downsampled = frameSource.frame(at: 0, maxSize: CGSize(width: 40, height: 40))
+        XCTAssertNotNil(downsampled)
+        XCTAssertLessThanOrEqual(max(downsampled!.width, downsampled!.height), 40)
+    }
+
+    func testAnimatorDownsamplesFramesToTargetSize() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorDownsampling")
+
+        #if os(macOS)
+        let contentMode: KFCrossPlatformContentMode = .scaleAxesIndependently
+        #else
+        let contentMode: KFCrossPlatformContentMode = .scaleToFill
+        #endif
+
+        let animator = AnimatedImageView.Animator(
+            imageSource: source,
+            contentMode: contentMode,
+            size: CGSize(width: 40, height: 40),
+            imageSize: CGSize(width: 365, height: 360),
+            imageScale: 1,
+            framePreloadCount: 1,
+            repeatCount: .infinite,
+            preloadQueue: queue
+        )
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        let frame = animator.frame(at: 0)
+        XCTAssertNotNil(frame)
+        // without a thumbnail decode this is the full 365pt wide frame
+        XCTAssertLessThan(frame!.size.width, 365)
+    }
+
+    #if os(iOS) || os(tvOS) || os(visionOS)
+    @MainActor
+    func testAnimatorIsRebuiltOnceWhenBoundsBecomeNonZero() {
+        // a view configured before its first layout, which is what a dequeued cell does
+        let imageView = AnimatedImageView(frame: .zero)
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+
+        let unbounded = imageView.animator
+        XCTAssertNotNil(unbounded)
+
+        imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        imageView.setNeedsLayout()
+        imageView.layoutIfNeeded()
+
+        XCTAssertNotNil(imageView.animator)
+        XCTAssertFalse(unbounded === imageView.animator)
+
+        // and not rebuilt again once it already has a size
+        let bounded = imageView.animator
+        imageView.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        imageView.setNeedsLayout()
+        imageView.layoutIfNeeded()
+
+        XCTAssertTrue(bounded === imageView.animator)
+    }
+    #endif
 }
 
 #if os(iOS)
