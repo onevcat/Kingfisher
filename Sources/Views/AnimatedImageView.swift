@@ -212,6 +212,10 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     private lazy var preloadQueue: DispatchQueue = {
         return DispatchQueue(label: "com.onevcat.Kingfisher.Animator.preloadQueue")
     }()
+
+    // Whether the current animator was built while `bounds` was still empty, which leaves its frame
+    // decoding unbounded. Used to rebuild it once real bounds arrive.
+    private var animatorSizeIsUnbounded = false
     
     // A flag to avoid invalidating the displayLink on deinit if it was never created, because displayLink is so lazy.
     private var isDisplayLinkInitialized: Bool = false
@@ -409,6 +413,17 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         super.didMoveToSuperview()
         didMove()
     }
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+
+        // The animator captures its target size once, from `bounds`, at the moment the image is
+        // assigned. A view configured before its first layout pass captures `.zero`, which disables
+        // frame downsampling for the rest of the animator's life. Rebuild it the first time real
+        // bounds arrive so the frames are decoded at the size they are actually drawn at.
+        guard animatorSizeIsUnbounded, bounds.size != .zero else { return }
+        reset()
+    }
 #endif
 
     // This is for back compatibility that using regular `UIImageView` to show animated image.
@@ -420,6 +435,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     private func reset() {
         animator = nil
         currentFrame = nil
+        animatorSizeIsUnbounded = false
         if let image = image, let frameSource = image.kf.frameSource {
             #if os(visionOS)
             let scale = UITraitCollection.current.displayScale
@@ -431,6 +447,7 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             #endif
             currentFrame = image
             let targetSize = bounds.scaled(scale).size
+            animatorSizeIsUnbounded = targetSize == .zero
             let animator = Animator(
                 frameSource: frameSource,
                 contentMode: contentMode,
