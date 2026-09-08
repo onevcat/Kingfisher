@@ -179,16 +179,24 @@ struct CGImageFrameSource: ImageFrameSource {
     }
 
     func frame(at index: Int, maxSize: CGSize?) -> CGImage? {
-        var options = self.options as? [CFString: Any]
-        if let maxSize = maxSize, maxSize != .zero {
-            options = (options ?? [:]).merging([
-                kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
-                kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceShouldCacheImmediately: true,
-                kCGImageSourceThumbnailMaxPixelSize: max(maxSize.width, maxSize.height)
-            ], uniquingKeysWith: { $1 })
+        let options = self.options as? [CFString: Any]
+        guard let maxSize = maxSize, maxSize != .zero else {
+            return CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary?)
         }
-        return CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary?)
+
+        // `kCGImageSourceThumbnailMaxPixelSize` and its companions are only honored by
+        // `CGImageSourceCreateThumbnailAtIndex`. `CGImageSourceCreateImageAtIndex` ignores them and
+        // decodes the frame at its native pixel size, so `maxSize` had no effect on the returned
+        // image and a large animated image was decoded in full for every frame, regardless of how
+        // small the view was. This mirrors `KingfisherWrapper.downsampledImage(data:to:scale:)`.
+        let thumbnailOptions = (options ?? [:]).merging([
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: max(maxSize.width, maxSize.height)
+        ], uniquingKeysWith: { $1 })
+
+        return CGImageSourceCreateThumbnailAtIndex(imageSource, index, thumbnailOptions as CFDictionary)
     }
 
     func duration(at index: Int) -> TimeInterval {
