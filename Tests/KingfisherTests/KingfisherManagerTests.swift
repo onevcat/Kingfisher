@@ -2751,3 +2751,67 @@ private final class OverridingImageCache: ImageCache, @unchecked Sendable {
         callbackQueue.execute { completionHandler?(.success(.disk(testImage))) }
     }
 }
+
+extension KingfisherManagerTests {
+    func testDownloaderReturningTaskBackedDownloadTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", waitsForCancellation: false)
+
+        let task = manager.retrieveImage(with: url, options: [.downloader(downloader)]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value?.cacheType, CacheType.none)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(task?.isInitialized, true)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testCancellingTaskBackedDownloadTaskCancelsWork() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", waitsForCancellation: true)
+
+        let task = manager.retrieveImage(with: url, options: [.downloader(downloader)]) { result in
+            XCTAssertNil(result.value)
+            XCTAssertTrue(downloader.workCancelled.value)
+            exp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        task?.cancel()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+}
+
+private final class TaskBackedImageDownloader: ImageDownloader, @unchecked Sendable {
+    let workCancelled = LockIsolated(false)
+    private let waitsForCancellation: Bool
+
+    init(name: String, waitsForCancellation: Bool) {
+        self.waitsForCancellation = waitsForCancellation
+        super.init(name: name)
+    }
+
+    override func downloadImage(
+        with url: URL,
+        options: KingfisherParsedOptionsInfo,
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask {
+        let waitsForCancellation = self.waitsForCancellation
+        let workCancelled = self.workCancelled
+        let work = Task {
+            if waitsForCancellation {
+                try? await Task.sleep(nanoseconds: 10 * NSEC_PER_SEC)
+            }
+            if Task.isCancelled {
+                workCancelled.setValue(true)
+                completionHandler?(.failure(.requestError(reason: .asyncTaskContextCancelled)))
+            } else {
+                completionHandler?(.success(ImageLoadingResult(image: testImage, url: url, originalData: testImageData)))
+            }
+        }
+        return DownloadTask(cancelling: work)
+    }
+}

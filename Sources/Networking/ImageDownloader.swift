@@ -85,6 +85,17 @@ public final class DownloadTask: @unchecked Sendable {
         _providerTask = providerTask
     }
 
+    /// Creates a task backed by a Swift concurrency `Task`, for an ``ImageDownloader``
+    /// subclass that performs its own transport.
+    ///
+    /// An override of ``ImageDownloader/downloadImage(with:options:completionHandler:)``
+    /// that does not call `super` still has to return a task. The one created here is
+    /// ``isInitialized``, so ``KingfisherManager`` hands it to the caller, and calling
+    /// ``cancel()`` on it cancels `work`.
+    public convenience init(cancelling work: Task<Void, Never>) {
+        self.init(providerTask: work)
+    }
+
     private var _linkedTask: DownloadTask? = nil
 
     private var _providerTask: Task<Void, Never>? = nil
