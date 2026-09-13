@@ -2751,3 +2751,97 @@ private final class OverridingImageCache: ImageCache, @unchecked Sendable {
         callbackQueue.execute { completionHandler?(.success(.disk(testImage))) }
     }
 }
+
+extension KingfisherManagerTests {
+    func testDownloaderReturningTaskBackedDownloadTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", holding: [])
+
+        let task = manager.retrieveImage(with: url, options: [.downloader(downloader)]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value?.cacheType, CacheType.none)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(task?.isInitialized, true)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testCancellingTaskBackedDownloadTaskCancelsWork() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", holding: [url])
+
+        let task = manager.retrieveImage(with: url, options: [.downloader(downloader)]) { result in
+            XCTAssertNil(result.value)
+            XCTAssertTrue(downloader.workCancelled.value)
+            exp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        task?.cancel()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testCancellingTaskBackedDownloadTaskSkipsAlternativeSources() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let alternativeURL = testURLs[1]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", holding: [url])
+
+        let task = manager.retrieveImage(
+            with: .network(url),
+            options: [.downloader(downloader), .alternativeSources([.network(alternativeURL)])]
+        ) { result in
+            guard case .requestError(reason: .asyncTaskContextCancelled)? = result.error else {
+                XCTFail("expected .asyncTaskContextCancelled, got: \(result)")
+                exp.fulfill()
+                return
+            }
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false)
+            XCTAssertEqual(downloader.requestedURLs.value, [url])
+            exp.fulfill()
+        }
+
+        task?.cancel()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+}
+
+private final class TaskBackedImageDownloader: ImageDownloader, @unchecked Sendable {
+    let workCancelled = LockIsolated(false)
+    let requestedURLs = LockIsolated<[URL]>([])
+    private let heldURLs: Set<URL>
+
+    /// Downloads of `heldURLs` wait until cancelled; any other URL succeeds immediately.
+    init(name: String, holding heldURLs: Set<URL>) {
+        self.heldURLs = heldURLs
+        super.init(name: name)
+    }
+
+    override func downloadImage(
+        with url: URL,
+        options: KingfisherParsedOptionsInfo,
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask {
+        requestedURLs.withValue { $0.append(url) }
+        let waitsForCancellation = heldURLs.contains(url)
+        let workCancelled = self.workCancelled
+        let callbackQueue = options.callbackQueue
+        let work = Task {
+            if waitsForCancellation {
+                try? await Task.sleep(nanoseconds: 10 * NSEC_PER_SEC)
+            }
+            let result: Result<ImageLoadingResult, KingfisherError>
+            if Task.isCancelled {
+                workCancelled.setValue(true)
+                result = .failure(.requestError(reason: .asyncTaskContextCancelled))
+            } else {
+                result = .success(ImageLoadingResult(image: testImage, url: url, originalData: testImageData))
+            }
+            callbackQueue.execute { completionHandler?(result) }
+        }
+        return DownloadTask(cancelling: work)
+    }
+}
