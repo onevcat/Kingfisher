@@ -93,10 +93,13 @@ public final class DownloadTask: @unchecked Sendable {
     /// ``isInitialized``, so ``KingfisherManager`` hands it to the caller, and calling
     /// ``cancel()`` on it cancels `work`.
     ///
-    /// When `work` is cancelled, complete with
-    /// ``KingfisherError/RequestErrorReason/asyncTaskContextCancelled`` so that
-    /// ``KingfisherManager`` treats the failure as a cancellation and does not retry or
-    /// move on to an alternative source.
+    /// Cancellation is cooperative: `work` must observe cancellation and call the completion handler
+    /// on `options.callbackQueue` with ``KingfisherError/RequestErrorReason/asyncTaskContextCancelled``.
+    /// This prevents alternative sources and retries by built-in strategies. Custom retry strategies
+    /// must check ``KingfisherError/isTaskCancelled`` themselves.
+    ///
+    /// This task is not registered with ``ImageDownloader/cancelAll()`` or ``ImageDownloader/cancel(url:)``.
+    /// Keep the returned task and call ``cancel()`` to cancel its work.
     public convenience init(cancelling work: Task<Void, Never>) {
         self.init(providerTask: work)
     }
