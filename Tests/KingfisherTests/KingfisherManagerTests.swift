@@ -2828,16 +2828,19 @@ private final class TaskBackedImageDownloader: ImageDownloader, @unchecked Senda
         requestedURLs.withValue { $0.append(url) }
         let waitsForCancellation = heldURLs.contains(url)
         let workCancelled = self.workCancelled
+        let callbackQueue = options.callbackQueue
         let work = Task {
             if waitsForCancellation {
                 try? await Task.sleep(nanoseconds: 10 * NSEC_PER_SEC)
             }
+            let result: Result<ImageLoadingResult, KingfisherError>
             if Task.isCancelled {
                 workCancelled.setValue(true)
-                completionHandler?(.failure(.requestError(reason: .asyncTaskContextCancelled)))
+                result = .failure(.requestError(reason: .asyncTaskContextCancelled))
             } else {
-                completionHandler?(.success(ImageLoadingResult(image: testImage, url: url, originalData: testImageData)))
+                result = .success(ImageLoadingResult(image: testImage, url: url, originalData: testImageData))
             }
+            callbackQueue.execute { completionHandler?(result) }
         }
         return DownloadTask(cancelling: work)
     }

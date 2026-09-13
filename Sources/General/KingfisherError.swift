@@ -88,6 +88,10 @@ public enum KingfisherError: Error {
         /// When a `URLSessionTask` is already in flight at the moment of cancellation,
         /// ``RequestErrorReason/taskCancelled(task:token:)`` is reported instead.
         ///
+        /// A custom ``ImageDownloader`` that returns ``DownloadTask/init(cancelling:)`` also reports this
+        /// reason when its work is cancelled, including after the load has started, since it has no
+        /// ``SessionDataTask`` either.
+        ///
         /// Error Code: 1005
         case asyncTaskContextCancelled
 
