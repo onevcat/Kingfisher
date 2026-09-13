@@ -92,6 +92,11 @@ public final class DownloadTask: @unchecked Sendable {
     /// that does not call `super` still has to return a task. The one created here is
     /// ``isInitialized``, so ``KingfisherManager`` hands it to the caller, and calling
     /// ``cancel()`` on it cancels `work`.
+    ///
+    /// When `work` is cancelled, complete with
+    /// ``KingfisherError/RequestErrorReason/asyncTaskContextCancelled`` so that
+    /// ``KingfisherManager`` treats the failure as a cancellation and does not retry or
+    /// move on to an alternative source.
     public convenience init(cancelling work: Task<Void, Never>) {
         self.init(providerTask: work)
     }

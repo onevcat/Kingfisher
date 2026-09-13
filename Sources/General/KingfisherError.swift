@@ -403,12 +403,15 @@ public enum KingfisherError: Error {
 
     // MARK: Helper Properties & Methods
 
-    /// A helper property to determine if this error is of type `RequestErrorReason.taskCancelled`.
+    /// A helper property to determine if this error is of type `RequestErrorReason.taskCancelled` or
+    /// `RequestErrorReason.asyncTaskContextCancelled`.
     public var isTaskCancelled: Bool {
-        if case .requestError(reason: .taskCancelled) = self {
+        switch self {
+        case .requestError(reason: .taskCancelled), .requestError(reason: .asyncTaskContextCancelled):
             return true
+        default:
+            return false
         }
-        return false
     }
 
     /// Helper method to check whether this error is a ``ResponseErrorReason/invalidHTTPStatusCode(response:)``
