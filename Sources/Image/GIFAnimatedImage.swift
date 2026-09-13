@@ -180,23 +180,48 @@ struct CGImageFrameSource: ImageFrameSource {
 
     func frame(at index: Int, maxSize: CGSize?) -> CGImage? {
         let options = self.options as? [CFString: Any]
-        guard let maxSize = maxSize, maxSize != .zero else {
+        guard let maxSize, let maxPixelSize = thumbnailMaxPixelSize(at: index, fitting: maxSize) else {
             return CGImageSourceCreateImageAtIndex(imageSource, index, options as CFDictionary?)
         }
 
-        // `kCGImageSourceThumbnailMaxPixelSize` and its companions are only honored by
-        // `CGImageSourceCreateThumbnailAtIndex`. `CGImageSourceCreateImageAtIndex` ignores them and
-        // decodes the frame at its native pixel size, so `maxSize` had no effect on the returned
-        // image and a large animated image was decoded in full for every frame, regardless of how
-        // small the view was. This mirrors `KingfisherWrapper.downsampledImage(data:to:scale:)`.
+        // `CGImageSourceCreateImageAtIndex` ignores the thumbnail keys. No transform is applied, same as that function.
         let thumbnailOptions = (options ?? [:]).merging([
             kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceThumbnailMaxPixelSize: max(maxSize.width, maxSize.height)
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
         ], uniquingKeysWith: { $1 })
 
         return CGImageSourceCreateThumbnailAtIndex(imageSource, index, thumbnailOptions as CFDictionary)
+    }
+
+    // The long edge, in pixels, of the frame scaled down to fit in `maxSize`. `nil` if the frame already fits, or
+    // if `maxSize` has no area to fit in.
+    private func thumbnailMaxPixelSize(at index: Int, fitting maxSize: CGSize) -> Int? {
+        guard maxSize.width >= 1, maxSize.height >= 1, maxSize.width.isFinite, maxSize.height.isFinite else {
+            return nil
+        }
+        guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, index, nil) as? [CFString: Any],
+              let pixelWidth = (properties[kCGImagePropertyPixelWidth] as? NSNumber).map(CGFloat.init(truncating:)),
+              let pixelHeight = (properties[kCGImagePropertyPixelHeight] as? NSNumber).map(CGFloat.init(truncating:)),
+              pixelWidth > 0, pixelHeight > 0
+        else {
+            // Without the pixel size, the short edge of `maxSize` is the only limit that fits for sure.
+            return Int(min(maxSize.width, maxSize.height))
+        }
+        let scale = min(maxSize.width / pixelWidth, maxSize.height / pixelHeight)
+        guard scale < 1 else { return nil }
+
+        // ImageIO rounds the short edge to the nearest pixel. Do the same for the long edge while both still fit.
+        let isWide = pixelWidth >= pixelHeight
+        let longEdge = isWide ? pixelWidth : pixelHeight
+        let shortEdge = isWide ? pixelHeight : pixelWidth
+        let longLimit = (isWide ? maxSize.width : maxSize.height).rounded(.down)
+        let shortLimit = (isWide ? maxSize.height : maxSize.width).rounded(.down)
+        var maxPixelSize = min((longEdge * scale).rounded(), longLimit)
+        if (maxPixelSize * shortEdge / longEdge).rounded() > shortLimit {
+            maxPixelSize -= 1
+        }
+        return max(1, Int(maxPixelSize))
     }
 
     func duration(at index: Int) -> TimeInterval {
