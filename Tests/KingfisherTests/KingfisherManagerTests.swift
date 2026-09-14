@@ -2807,16 +2807,99 @@ extension KingfisherManagerTests {
         task?.cancel()
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testTaskBackedDownloaderReportsProgress() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(
+            name: "test.manager.task-backed", holding: [], reportingProgress: [(10, 40), (40, 40)])
+        let reported = LockIsolated<[[Int64]]>([])
+
+        manager.retrieveImage(
+            with: url,
+            options: [.downloader(downloader)],
+            progressBlock: { receivedSize, totalSize in
+                XCTAssertTrue(Thread.isMainThread)
+                reported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(reported.value, [[10, 40], [40, 40]])
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testTaskBackedDownloaderProgressWithUnknownTotalSizeIsNotReported() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(
+            name: "test.manager.task-backed", holding: [], reportingProgress: [(10, -1), (20, 40)])
+        let reported = LockIsolated<[[Int64]]>([])
+
+        manager.retrieveImage(
+            with: url,
+            options: [.downloader(downloader)],
+            progressBlock: { receivedSize, totalSize in
+                reported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(reported.value, [[20, 40]])
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testTaskBackedDownloaderProgressSkipsReplacedImageViewTask() {
+        let replacedCompleted = expectation(description: "replaced task completed")
+        let currentCompleted = expectation(description: "current task completed")
+        let imageView = KFCrossPlatformImageView()
+        let downloader = TaskBackedImageDownloader(
+            name: "test.manager.task-backed", holding: [], reportingProgress: [(40, 40)])
+        let replacedReported = LockIsolated<[[Int64]]>([])
+        let currentReported = LockIsolated<[[Int64]]>([])
+
+        imageView.kf.setImage(
+            with: testURLs[0],
+            options: [.downloader(downloader), .forceRefresh],
+            progressBlock: { receivedSize, totalSize in
+                replacedReported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { _ in
+            replacedCompleted.fulfill()
+        }
+        // Replaces the first task before its progress, which is only applied on the main queue, can run.
+        imageView.kf.setImage(
+            with: testURLs[1],
+            options: [.downloader(downloader), .forceRefresh],
+            progressBlock: { receivedSize, totalSize in
+                currentReported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            currentCompleted.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertEqual(replacedReported.value, [])
+        XCTAssertEqual(currentReported.value, [[40, 40]])
+    }
 }
 
 private final class TaskBackedImageDownloader: ImageDownloader, @unchecked Sendable {
     let workCancelled = LockIsolated(false)
     let requestedURLs = LockIsolated<[URL]>([])
     private let heldURLs: Set<URL>
+    private let progress: [(receivedSize: Int64, totalSize: Int64)]
 
     /// Downloads of `heldURLs` wait until cancelled; any other URL succeeds immediately.
-    init(name: String, holding heldURLs: Set<URL>) {
+    /// Every download reports `progress` through the options before it completes.
+    init(name: String, holding heldURLs: Set<URL>, reportingProgress progress: [(Int64, Int64)] = []) {
         self.heldURLs = heldURLs
+        self.progress = progress
         super.init(name: name)
     }
 
@@ -2829,9 +2912,13 @@ private final class TaskBackedImageDownloader: ImageDownloader, @unchecked Senda
         let waitsForCancellation = heldURLs.contains(url)
         let workCancelled = self.workCancelled
         let callbackQueue = options.callbackQueue
+        let progress = self.progress
         let work = Task {
             if waitsForCancellation {
                 try? await Task.sleep(nanoseconds: 10 * NSEC_PER_SEC)
+            }
+            for (receivedSize, totalSize) in progress {
+                options.reportDownloadProgress(receivedSize: receivedSize, totalSize: totalSize)
             }
             let result: Result<ImageLoadingResult, KingfisherError>
             if Task.isCancelled {
