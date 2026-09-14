@@ -60,6 +60,9 @@ let processor = ColorControlsProcessor(brightness: 1.0, contrast: 0.7, saturatio
 // Black & White
 let processor = BlackWhiteProcessor()
 
+// Flip horizontally and/or vertically
+let processor = FlippingImageProcessor(horizontal: true, vertical: false)
+
 // Blend (iOS)
 let processor = BlendImageProcessor(blendMode: .darken, alpha: 1.0, backgroundColor: .lightGray)
 

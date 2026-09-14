@@ -673,6 +673,19 @@ extension KFOptionSetter {
         )
     }
 
+    /// Appends a ``FlippingImageProcessor`` to the current set of processors.
+    ///
+    /// - Parameters:
+    ///   - horizontal: Whether to flip the input image horizontally. Default is `false`.
+    ///   - vertical: Whether to flip the input image vertically. Default is `false`.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    public func flip(horizontal: Bool = false, vertical: Bool = false) -> Self {
+        appendProcessor(
+            FlippingImageProcessor(horizontal: horizontal, vertical: vertical)
+        )
+    }
+
     /// Appends a ``CroppingImageProcessor`` to the current set of processors.
     ///
     /// - Parameters:

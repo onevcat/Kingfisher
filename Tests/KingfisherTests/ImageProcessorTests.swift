@@ -80,4 +80,35 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(rgbaBlackWhite.b, 0.3, accuracy: 0.01)
         XCTAssertEqual(rgbaBlackWhite.a, 1.0, accuracy: 0.01)
     }
+
+    func testFlippingProcessorIdentifier() {
+        let identifiers = [
+            FlippingImageProcessor().identifier,
+            FlippingImageProcessor(horizontal: true).identifier,
+            FlippingImageProcessor(vertical: true).identifier,
+            FlippingImageProcessor(horizontal: true, vertical: true).identifier
+        ]
+        XCTAssertEqual(Set(identifiers).count, identifiers.count)
+        XCTAssertEqual(
+            FlippingImageProcessor(horizontal: true).identifier,
+            FlippingImageProcessor(horizontal: true, vertical: false).identifier
+        )
+    }
+
+    func testFlippingProcessor() {
+        let options = KingfisherParsedOptionsInfo(nil)
+        let image = KFCrossPlatformImage.quadrants()
+
+        let flipped = FlippingImageProcessor(horizontal: true).process(item: .image(image), options: options)
+        XCTAssertEqual(flipped?.rgbaPixel(x: 0, y: 0), [0, 255, 0, 255])
+        XCTAssertEqual(flipped?.rgbaPixel(x: 1, y: 1), [0, 0, 255, 255])
+
+        let data = image.kf.pngRepresentation()!
+        let flippedFromData = FlippingImageProcessor(vertical: true).process(item: .data(data), options: options)
+        XCTAssertEqual(flippedFromData?.rgbaPixel(x: 0, y: 0), [0, 0, 255, 255])
+        XCTAssertEqual(flippedFromData?.rgbaPixel(x: 1, y: 1), [0, 255, 0, 255])
+
+        let unchanged = FlippingImageProcessor().process(item: .image(image), options: options)
+        XCTAssertTrue(unchanged === image)
+    }
 }
