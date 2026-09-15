@@ -874,7 +874,7 @@ public class KingfisherManager: @unchecked Sendable {
                 processorIdentifier: DefaultImageProcessor.default.identifier,
                 forcedExtension: options.forcedExtension,
                 callbackQueue: .untouch
-            ) { originalImageCacheType in
+            ) { [self] originalImageCacheType in
                 let canAcceptDiskCache = !options.fromMemoryCacheOrRefresh
                 let canUseOriginalImageCache =
                     (canAcceptDiskCache && originalImageCacheType.cached) ||

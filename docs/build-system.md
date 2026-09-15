@@ -106,10 +106,10 @@ Release steps performed:
 ### Supported Platforms
 
 From `Package.swift` and `Kingfisher.podspec`:
-- **iOS**: 13.0+
-- **macOS**: 10.15+
-- **tvOS**: 13.0+
-- **watchOS**: 6.0+
+- **iOS**: 15.0+
+- **macOS**: 12.0+
+- **tvOS**: 15.0+
+- **watchOS**: 9.0+
 - **visionOS**: 1.0+
 
 ### CI Test Matrix

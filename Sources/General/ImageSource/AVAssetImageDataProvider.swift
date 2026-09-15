@@ -29,11 +29,7 @@
 import Foundation
 import AVKit
 
-#if canImport(MobileCoreServices)
-import MobileCoreServices
-#else
-import CoreServices
-#endif
+import UniformTypeIdentifiers
 
 #if compiler(>=6)
 extension AVAssetImageGenerator: @unchecked @retroactive Sendable { }
@@ -136,17 +132,11 @@ extension CGImage {
         guard let mutableData = CFDataCreateMutable(nil, 0) else {
             return nil
         }
-#if os(visionOS)
         guard let destination = CGImageDestinationCreateWithData(
-            mutableData, UTType.jpeg.identifier as CFString , 1, nil
+            mutableData, UTType.jpeg.identifier as CFString, 1, nil
         ) else {
             return nil
         }
-#else
-        guard let destination = CGImageDestinationCreateWithData(mutableData, kUTTypeJPEG, 1, nil) else {
-            return nil
-        }
-#endif
         
         CGImageDestinationAddImage(destination, self, nil)
         guard CGImageDestinationFinalize(destination) else { return nil }

@@ -29,7 +29,6 @@
 import AppKit
 #else // os(macOS)
 import UIKit
-import MobileCoreServices
 #endif // os(macOS)
 
 #if !os(watchOS)
@@ -39,9 +38,7 @@ import CoreImage
 import CoreGraphics
 import ImageIO
 
-#if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
-#endif
 
 #if compiler(>=5.10)
 nonisolated(unsafe) private let animatedImageDataKey = malloc(1)!
@@ -337,17 +334,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///
     /// - Note: Currently, only GIF data is supported.
     public static func animatedImage(data: Data, options: ImageCreatingOptions) -> KFCrossPlatformImage? {
-        #if os(visionOS)
         let info: [String: Any] = [
             kCGImageSourceShouldCache as String: true,
             kCGImageSourceTypeIdentifierHint as String: UTType.gif.identifier
         ]
-        #else
-        let info: [String: Any] = [
-            kCGImageSourceShouldCache as String: true,
-            kCGImageSourceTypeIdentifierHint as String: kUTTypeGIF
-        ]
-        #endif
         
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, info as CFDictionary) else {
             return nil

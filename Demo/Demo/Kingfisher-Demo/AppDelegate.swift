@@ -27,13 +27,9 @@
 import UIKit
 import Kingfisher
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate { }
 
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        return true
-    }
-    
 }

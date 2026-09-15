@@ -48,10 +48,10 @@ The framework follows a modular architecture with clear separation of concerns, 
 ### Minimum Requirements
 - **Swift**: 5.9+ (Swift 6 strict concurrency ready)
 - **UIKit/AppKit**: 
-  - iOS 13.0+ (`#if os(iOS)`)
-  - macOS 10.15+ (`#if os(macOS)`)
-  - tvOS 13.0+ (`#if os(tvOS)`)
-  - watchOS 6.0+ (`#if os(watchOS)`)
+  - iOS 15.0+ (`#if os(iOS)`)
+  - macOS 12.0+ (`#if os(macOS)`)
+  - tvOS 15.0+ (`#if os(tvOS)`)
+  - watchOS 9.0+ (`#if os(watchOS)`)
   - visionOS 1.0+ (`#if os(visionOS)`)
 - **SwiftUI**: iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
 
