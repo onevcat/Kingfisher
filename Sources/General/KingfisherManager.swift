@@ -737,20 +737,21 @@ public class KingfisherManager: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - source: The target source from which to retrieve the image.
-    ///   - key: The key to use for caching the image.
-    ///   - url: The image request URL. This is not used when retrieving an image from the cache; it is solely used for 
-    ///   compatibility with ``RetrieveImageResult`` callbacks.
-    ///   - options: Options on how to retrieve the image from the image cache.
+    ///   - context: The retrieving context of the current task. Its `options` decide how the cache is searched, and
+    ///   its `originalSource` is used when reporting the result.
+    ///   - downloadTaskUpdated: Called with the optional task returned by fallback loading when an expected
+    ///   original cache hit cannot serve the image. Fallback loading may download the image or load it from
+    ///   a data provider. It is not called when the cache serves the image.
     ///   - completionHandler: Called when the image retrieval is complete, either with a successful
     ///   ``RetrieveImageResult`` or an error.
     ///
     /// - Returns: `true` if the requested image or the original image before processing exists in the cache. Otherwise, this method returns `false`.
     ///
     /// - Note: Image retrieval can occur in either the memory cache or the disk cache. The
-    /// ``KingfisherOptionsInfoItem/processor(_:)`` option in `options` is considered when searching the cache. If no
-    /// processed image is found, Kingfisher attempts to determine whether an original version of the image exists. If
-    /// an original exists, Kingfisher retrieves it from the cache and processes it. Subsequently, the processed image
-    /// is stored back in the cache for future use.
+    /// ``KingfisherOptionsInfoItem/processor(_:)`` option in the context's `options` is considered when searching the
+    /// cache. If no processed image is found, Kingfisher attempts to determine whether an original version of the
+    /// image exists. If an original exists, Kingfisher retrieves it from the cache and processes it. Subsequently, the
+    /// processed image is stored back in the cache for future use.
     ///
     func retrieveImageFromCache(
         source: Source,
