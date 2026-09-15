@@ -128,8 +128,13 @@ public class SessionDataTask: @unchecked Sendable {
         guard !completed else { return nil }
 
         callbacksStore[currentToken] = callback
-        prioritiesStore[currentToken] = callback.options.downloadPriority
-        updateTaskPriority()
+        let priority = callback.options.downloadPriority
+        prioritiesStore[currentToken] = priority
+        // A new subscriber can only raise the maximum. Scanning all subscribers on
+        // every join makes a large shared download take quadratic time to register.
+        if prioritiesStore.count == 1 || priority > task.priority {
+            task.priority = priority
+        }
         defer { currentToken += 1 }
         return currentToken
     }

@@ -1721,7 +1721,7 @@ private final class DownloadTaskUpdatedCallbackGate: @unchecked Sendable {
     }
 }
 
-private extension KingfisherParsedOptionsInfo {
+extension KingfisherParsedOptionsInfo {
     func appendingDownloadTaskStartedHandler(
         _ handler: (@Sendable (DownloadTask) -> Void)?
     ) -> KingfisherParsedOptionsInfo {

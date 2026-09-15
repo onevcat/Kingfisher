@@ -43,7 +43,8 @@ Branch: `fix/xcode-27-health-check`.
    allocation would defeat the memory-pressure fix. The internal comment now
    distinguishes older Foundation allocation behavior.
 7. **The shared scheme skipped all prefetch tests.** Enabled all 11 tests and ran
-   complete suites. One stress-test timeout remains a stability concern; see below.
+   complete suites. A follow-up investigation addresses the stress-test scaling
+   issue and four independent correctness bugs; see below.
 8. **Local automation still selected older Xcode/runtimes.** Fastlane now defaults
    to Xcode 27 and 27.0 simulators, and includes visionOS in its serial test lane.
    Explicit `XCODE_VERSION` overrides and existing CI matrices are preserved.
@@ -117,9 +118,10 @@ xcodebuild build -project Kingfisher.xcodeproj -scheme Kingfisher \
   initializing. The isolated run passed in 5.403 seconds; the subsequent full serial
   run passed, with this case taking 8.414 seconds. These results suggest load
   sensitivity, but do not establish the root cause. The first failure is retained
-  in `tvos-all.xcresult`. No production change or timeout increase was made for it.
-  Review whether to keep this stress workload in the default suite or give it a
-  separate scheduled job. All prefetch tests are currently enabled.
+  in `tvos-all.xcresult`. The [follow-up investigation](prefetch-concurrency-investigation.md)
+  found quadratic subscriber registration and dispatch-thread saturation, plus four
+  separately reproduced correctness bugs. These are now fixed, with the original
+  workload and timeout unchanged. The original failure's exact cause remains unproved.
 - WatchKit storyboard deprecation remains in the watch demo. Keeping the example
   preserves coverage of `WKInterfaceImage.kf`; replacing it with SwiftUI would be
   a separate demo migration.
