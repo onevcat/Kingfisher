@@ -1,9 +1,15 @@
-// swift-tools-version:5.1
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
     name: "Kingfisher",
-    platforms: [.iOS("15.0"), .macOS("12.0"), .tvOS("15.0"), .watchOS("9.0")],
+    platforms: [
+        .iOS(.v15),
+        .macOS(.v12),
+        .tvOS(.v15),
+        .watchOS(.v9),
+        .visionOS(.v1)
+    ],
     products: [
         .library(name: "Kingfisher", targets: ["Kingfisher"])
     ],
@@ -11,7 +17,9 @@ let package = Package(
         .target(
             name: "Kingfisher",
             path: "Sources",
-            exclude: ["Info.plist", "PrivacyInfo.xcprivacy"]
+            exclude: ["Info.plist"],
+            resources: [.process("PrivacyInfo.xcprivacy")]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

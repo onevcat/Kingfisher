@@ -25,6 +25,7 @@ Pod::Spec.new do |s|
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
   s.social_media_url   = "https://github.com/onevcat"
 
+  # Language mode; the minimum compiler is Swift 6.2 (Xcode 26.0).
   s.swift_versions = ['5.0']
 
   s.ios.deployment_target = "15.0"

@@ -46,7 +46,7 @@ The framework follows a modular architecture with clear separation of concerns, 
 ## Platform Support
 
 ### Minimum Requirements
-- **Swift**: 5.9+ (Swift 6 strict concurrency ready)
+- **Toolchain**: Xcode 26.0+ / Swift 6.2+ compiler (Swift 5 language mode by default; Swift 6 strict concurrency ready)
 - **UIKit/AppKit**: 
   - iOS 15.0+ (`#if os(iOS)`)
   - macOS 12.0+ (`#if os(macOS)`)

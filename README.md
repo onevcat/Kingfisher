@@ -157,7 +157,7 @@ struct ContentView: View {
 ### Current development branch
 
 - iOS 15.0+ / macOS 12.0+ / tvOS 15.0+ / watchOS 9.0+ / visionOS 1.0+
-- Swift 5.9+
+- Xcode 26.0+ / Swift 6.2+ compiler
 
 ### Kingfisher 8.0
 

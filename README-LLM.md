@@ -50,6 +50,6 @@ bundle exec fastlane release version:X.X.X
 
 ## Requirements
 
-- **Swift 5.9+** (Swift 6 strict concurrency ready)
+- **Xcode 26.0+ / Swift 6.2+ compiler** (Swift 5 language mode by default; Swift 6 strict concurrency ready)
 - **iOS 15.0+ / macOS 12.0+ / tvOS 15.0+ / watchOS 9.0+ / visionOS 1.0+**
 - **SwiftUI support**: iOS 15.0+ / macOS 12.0+ / tvOS 15.0+ / watchOS 9.0+ / visionOS 1.0+
