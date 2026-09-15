@@ -58,9 +58,9 @@ Kingfisher's test suite is located in the `Tests/KingfisherTests/` directory and
 - `Tests/KingfisherTests/RetryStrategyTests.swift` - Network retry strategy tests
 - `Tests/KingfisherTests/StringExtensionTests.swift` - String utility extension tests
 
-## Xcode 27 validation
+## Local platform validation
 
-The current development branch uses Xcode 27 by default in Fastlane. The `tests`
+Fastlane uses Xcode 27 by default. The `tests`
 lane uses macOS, iOS 27, tvOS 27, visionOS 27, and a watchOS 27 build. To run
 visionOS alone:
 
@@ -73,9 +73,6 @@ The shared scheme includes `ImagePrefetcherTests`. Its 10,000-prefetcher stress
 case has a fixed 15-second expectation timeout. Run platform test jobs serially
 on local machines; concurrent simulator initialization can consume this budget.
 Preserve the first failure result when investigating timeouts.
-
-See [the Xcode 27 health check](xcode-27-health-check.md) for measured results,
-remaining warnings, and demo verification.
 
 ## Running Tests
 
