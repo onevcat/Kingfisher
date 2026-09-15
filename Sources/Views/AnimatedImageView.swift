@@ -129,6 +129,10 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     ///
     /// If the downloaded image is larger than the image view's size, it will help reduce some memory usage.
     ///
+    /// Frames are decoded for the view's bounds, screen scale and content mode, and are decoded again when the view
+    /// grows. Transforms, such as zooming in a `UIScrollView` or a SwiftUI `scaleEffect`, are not taken into account.
+    /// Set this to `false` before setting the image to keep the frames at their original size.
+    ///
     /// The default is `true`.
     public var needsPrescaling = true
 
@@ -279,6 +283,8 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             removeBackgroundFramePurgeObservers()
             #endif
 
+            animator?.cancel()
+
             if isDisplayLinkInitialized {
                 displayLink.invalidate()
             }
@@ -339,7 +345,8 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         if let frame = animator?.currentFrameImage ?? currentFrame, let layer = layer {
             layer.contents = frame.kf.cgImage
             layer.contentsScale = frame.kf.scale
-            layer.contentsGravity = determineContentsGravity(for: frame)
+            // Frames can be decoded smaller than the image. Decide on the size of the image itself.
+            layer.contentsGravity = determineContentsGravity(for: image ?? frame)
             currentFrame = frame
         }
     }
@@ -347,7 +354,8 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     private func determineContentsGravity(for image: NSImage) -> CALayerContentsGravity {
         switch imageScaling {
             case .scaleProportionallyDown:
-                if image.size.width > bounds.width || image.size.height > bounds.height {
+                let imageSize = image.kf.size
+                if imageSize.width > bounds.width || imageSize.height > bounds.height {
                     return .resizeAspect
                 } else {
                     return .center
@@ -366,11 +374,29 @@ open class AnimatedImageView: KFCrossPlatformImageView {
     open override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         didMove()
+        updateAnimatorTargetSize()
     }
     
     open override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
         didMove()
+    }
+
+    open override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        updateAnimatorTargetSize()
+    }
+
+    open override func viewDidChangeBackingProperties() {
+        super.viewDidChangeBackingProperties()
+        updateAnimatorTargetSize()
+    }
+
+    open override var imageScaling: NSImageScaling {
+        didSet {
+            guard imageScaling != oldValue else { return }
+            updateAnimatorTargetSize()
+        }
     }
 #else
     override open var isAnimating: Bool {
@@ -409,6 +435,18 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         super.didMoveToSuperview()
         didMove()
     }
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        updateAnimatorTargetSize()
+    }
+
+    override open var contentMode: UIView.ContentMode {
+        didSet {
+            guard contentMode != oldValue else { return }
+            updateAnimatorTargetSize()
+        }
+    }
 #endif
 
     // This is for back compatibility that using regular `UIImageView` to show animated image.
@@ -418,23 +456,19 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 
     // Reset the animator.
     private func reset() {
+        // The old animator may still be preloading frames that nobody will show.
+        animator?.cancel()
         animator = nil
         currentFrame = nil
         if let image = image, let frameSource = image.kf.frameSource {
-            #if os(visionOS)
-            let scale = UITraitCollection.current.displayScale
-            #elseif os(macOS)
-            let scale = image.recommendedLayerContentsScale(window?.backingScaleFactor ?? 0.0)
+            #if os(macOS)
             let contentMode = imageScaling
-            #else
-            let scale = UITraitCollection.current.displayScale
             #endif
             currentFrame = image
-            let targetSize = bounds.scaled(scale).size
             let animator = Animator(
                 frameSource: frameSource,
                 contentMode: contentMode,
-                size: targetSize,
+                size: animatorTargetSize,
                 imageSize: image.kf.size,
                 imageScale: image.kf.scale,
                 framePreloadCount: framePreloadCount,
@@ -448,6 +482,27 @@ open class AnimatedImageView: KFCrossPlatformImageView {
         didMove()
     }
     
+    // The size, in pixels, the animator prepares frames for.
+    private var animatorTargetSize: CGSize {
+        #if os(macOS)
+        // `recommendedLayerContentsScale` of a bitmap image is its own scale, not the screen's.
+        let scale = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 1.0
+        #else
+        let scale = UITraitCollection.current.displayScale
+        #endif
+        return bounds.scaled(scale).size
+    }
+
+    // Lets the animator decode its frames again when they are too small for the current size or content mode.
+    private func updateAnimatorTargetSize() {
+        guard let animator else { return }
+        #if os(macOS)
+        animator.updateTargetSize(animatorTargetSize, contentMode: imageScaling)
+        #else
+        animator.updateTargetSize(animatorTargetSize, contentMode: contentMode)
+        #endif
+    }
+
     private func didMove() {
         if autoPlayAnimatedImage && animator != nil {
             if let _ = superview, let _ = window {
@@ -527,6 +582,11 @@ open class AnimatedImageView: KFCrossPlatformImageView {
             return
         }
 
+        // A subclass that skips `super.layoutSubviews()` would otherwise never report a size.
+        if animator.frameSizing == .pending {
+            updateAnimatorTargetSize()
+        }
+
         guard !animator.isFinished else {
             stopAnimating()
             delegate?.animatedImageViewDidFinishAnimating(self)
@@ -561,11 +621,22 @@ open class AnimatedImageView: KFCrossPlatformImageView {
 @MainActor
 protocol AnimatorDelegate: AnyObject {
     func animator(_ animator: AnimatedImageView.Animator, didPlayAnimationLoops count: UInt)
+    func animatorDidReloadCurrentFrame(_ animator: AnimatedImageView.Animator)
 }
 
 extension AnimatedImageView: AnimatorDelegate {
     func animator(_ animator: Animator, didPlayAnimationLoops count: UInt) {
         delegate?.animatedImageView(self, didPlayAnimationLoops: count)
+    }
+
+    // A view that is not playing does not display again by itself, and would keep showing the smaller frame.
+    func animatorDidReloadCurrentFrame(_ animator: Animator) {
+        guard animator === self.animator else { return }
+        #if os(macOS)
+        layer?.setNeedsDisplay()
+        #else
+        layer.setNeedsDisplay()
+        #endif
     }
 }
 
@@ -629,6 +700,27 @@ extension AnimatedImageView {
 
         var needsPrescaling = true
 
+        // Guards `_frameSizing`, `frameSizingVersion` and `_isCancelled`.
+        private let lock = NSLock()
+        private var _frameSizing: FrameSizing?
+        private var frameSizingVersion = 0
+        private var _isCancelled: Bool = false
+        // The `frameSizingVersion` the frames were last set up with. Only used on `preloadQueue`.
+        private var setupFrameSizingVersion = 0
+
+        // How frames are decoded. `nil` until frames are prepared.
+        var frameSizing: FrameSizing? {
+            lock.lock()
+            defer { lock.unlock() }
+            return _frameSizing
+        }
+
+        var isCancelled: Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            return _isCancelled
+        }
+
         weak var delegate: (any AnimatorDelegate)?
 
         // Total duration of one animation loop
@@ -653,9 +745,7 @@ extension AnimatedImageView {
 
         var previousFrameIndex = 0 {
             didSet {
-                preloadQueue.async {
-                    self.updatePreloadedFrames()
-                }
+                preload { $0.updatePreloadedFrames() }
             }
         }
 
@@ -765,8 +855,56 @@ extension AnimatedImageView {
         func prepareFramesAsynchronously() {
             frameCount = frameSource.frameCount
             animatedFrames.reserveCapacity(frameCount)
+            lock.lock()
+            if _frameSizing == nil {
+                _frameSizing = Self.frameSizing(
+                    imageSize: imagePixelSize,
+                    targetSize: size,
+                    contentMode: contentMode,
+                    needsPrescaling: needsPrescaling
+                )
+            }
+            lock.unlock()
+            preload { $0.setupAnimatedFrames() }
+        }
+
+        // Stops decoding frames for an animator that is no longer displayed.
+        func cancel() {
+            lock.lock()
+            defer { lock.unlock() }
+            _isCancelled = true
+        }
+
+        // Frames are only decoded again when they are too small, never to make them smaller.
+        func updateTargetSize(_ targetSize: CGSize, contentMode: KFCrossPlatformContentMode) {
+            let requiredSizing = Self.frameSizing(
+                imageSize: imagePixelSize,
+                targetSize: targetSize,
+                contentMode: contentMode,
+                needsPrescaling: needsPrescaling
+            )
+            lock.lock()
+            guard let currentSizing = _frameSizing, let sizing = currentSizing.growing(to: requiredSizing) else {
+                lock.unlock()
+                return
+            }
+            _frameSizing = sizing
+            frameSizingVersion += 1
+            let version = frameSizingVersion
+            lock.unlock()
+
+            let fillsBuffer = currentSizing == .pending
+            preload { $0.reloadPreparedFrames(version: version, fillsBuffer: fillsBuffer) }
+        }
+
+        private func preload(_ work: @escaping @Sendable (Animator) -> Void) {
             preloadQueue.async { [weak self] in
-                self?.setupAnimatedFrames()
+                guard let self else { return }
+                work(self)
+                // A cancelled animator may be released by this work. Ensure its frame images dealloc in main thread.
+                if self.isCancelled {
+                    DispatchQueue.main.async { _ = self }
+                }
             }
         }
 
@@ -808,6 +946,7 @@ extension AnimatedImageView {
 
         private func setupAnimatedFrames() {
             resetAnimatedFrames()
+            setupFrameSizingVersion = currentFrameSizingVersion
 
             var duration: TimeInterval = 0
 
@@ -816,7 +955,7 @@ extension AnimatedImageView {
                 duration += min(frameDuration, maxTimeStep)
                 animatedFrames.append(AnimatedFrame(image: nil, duration: frameDuration))
 
-                if index > maxFrameCount { return }
+                if index > maxFrameCount || isCancelled { return }
                 animatedFrames[index] = animatedFrames[index]?.makeAnimatedFrame(image: loadFrame(at: index))
             }
 
@@ -827,9 +966,79 @@ extension AnimatedImageView {
             animatedFrames.removeAll()
         }
 
+        // Decodes the buffered frames again for a larger `frameSizing`, from the current frame in playing order.
+        private func reloadPreparedFrames(version: Int, fillsBuffer: Bool) {
+            // Frames set up after the size changed are already decoded for it.
+            guard animatedFrames.count == frameCount, version != setupFrameSizingVersion else { return }
+
+            let currentIndex = currentFrameIndex
+            let bufferIndexes = preloadingIsNeeded ?
+                [currentIndex] + preloadIndexes(start: currentIndex) :
+                Array(0..<frameCount)
+
+            // Frames that playing has left are released rather than decoded again.
+            let bufferIndexSet = Set(bufferIndexes)
+            var imagesToRelease: [KFCrossPlatformImage] = []
+            for index in 0..<frameCount where !bufferIndexSet.contains(index) {
+                guard let frame = animatedFrames[index], let image = frame.image else { continue }
+                imagesToRelease.append(image)
+                animatedFrames[index] = frame.placeholderFrame
+            }
+            if !imagesToRelease.isEmpty {
+                // Ensure the image dealloc in main thread.
+                let imagesToReleaseCopy = imagesToRelease
+                DispatchQueue.main.async { _ = imagesToReleaseCopy }
+            }
+
+            for index in bufferIndexes {
+                // A newer size takes over the remaining frames.
+                guard isCurrentFrameSizing(version: version) else { return }
+                // Purged frames stay purged. The buffer is only filled if nothing was decoded before.
+                guard let frame = animatedFrames[index],
+                      !frame.isPlaceholder || fillsBuffer,
+                      let image = loadFrame(at: index)
+                else {
+                    continue
+                }
+
+                animatedFrames[index] = frame.makeAnimatedFrame(image: image)
+                // Ensure the image dealloc in main thread.
+                if let previousImage = frame.image {
+                    DispatchQueue.main.async {
+                        _ = previousImage
+                    }
+                }
+                if index == currentIndex {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self else { return }
+                        MainActor.runUnsafely { self.delegate?.animatorDidReloadCurrentFrame(self) }
+                    }
+                }
+            }
+        }
+
+        private var currentFrameSizingVersion: Int {
+            lock.lock()
+            defer { lock.unlock() }
+            return frameSizingVersion
+        }
+
+        private func isCurrentFrameSizing(version: Int) -> Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            return !_isCancelled && version == frameSizingVersion
+        }
+
         private func loadFrame(at index: Int) -> KFCrossPlatformImage? {
-            let resize = needsPrescaling && size != .zero
-            let maxSize = resize ? size : nil
+            let maxSize: CGSize?
+            switch frameSizing ?? .original {
+            case .pending:
+                return nil
+            case .original:
+                maxSize = nil
+            case .limited(let size):
+                maxSize = size
+            }
             guard let cgImage = frameSource.frame(at: index, maxSize: maxSize) else {
                 return nil
             }
@@ -856,7 +1065,7 @@ extension AnimatedImageView {
         }
         
         private func updatePreloadedFrames() {
-            guard preloadingIsNeeded else {
+            guard preloadingIsNeeded, !isCancelled else {
                 return
             }
 
@@ -918,6 +1127,72 @@ extension AnimatedImageView {
                 return [Int](nextIndex..<frameCount) + [Int](0...lastIndex)
             }
         }
+    }
+}
+
+extension AnimatedImageView.Animator {
+
+    enum FrameSizing: Equatable {
+        // The view has no area yet. Frames are not decoded until it has.
+        case pending
+        case original
+        // Frames fit in this size, in pixels.
+        case limited(CGSize)
+
+        // The sizing with enough pixels for both `self` and `required`, or `nil` if `self` already has them.
+        func growing(to required: FrameSizing) -> FrameSizing? {
+            switch (self, required) {
+            case (_, .pending), (.original, _):
+                return nil
+            case (.pending, _), (.limited, .original):
+                return required
+            case let (.limited(current), .limited(size)):
+                // Less than a pixel gives the same frames.
+                guard size.width >= current.width + 1 || size.height >= current.height + 1 else { return nil }
+                return .limited(CGSize(
+                    width: max(size.width, current.width),
+                    height: max(size.height, current.height)
+                ))
+            }
+        }
+    }
+
+    // The size the image is drawn at in `targetSize` for the content mode. Modes that do not scale the image, and
+    // images drawn at or above their own size, use the original frames.
+    static func frameSizing(
+        imageSize: CGSize,
+        targetSize: CGSize,
+        contentMode: KFCrossPlatformContentMode,
+        needsPrescaling: Bool
+    ) -> FrameSizing {
+        guard needsPrescaling, imageSize.width > 0, imageSize.height > 0 else { return .original }
+
+        let fillsTarget: Bool
+        switch contentMode {
+        #if os(macOS)
+        case .scaleAxesIndependently:
+            fillsTarget = true
+        case .scaleProportionallyUpOrDown, .scaleProportionallyDown:
+            fillsTarget = false
+        #else
+        case .scaleToFill, .scaleAspectFill, .redraw:
+            fillsTarget = true
+        case .scaleAspectFit:
+            fillsTarget = false
+        #endif
+        default:
+            return .original
+        }
+
+        guard targetSize.width > 0, targetSize.height > 0 else { return .pending }
+
+        let drawnSize = fillsTarget ? imageSize.kf.filling(targetSize) : imageSize.kf.constrained(targetSize)
+        guard drawnSize.width < imageSize.width, drawnSize.height < imageSize.height else { return .original }
+        return .limited(CGSize(width: max(drawnSize.width, 1), height: max(drawnSize.height, 1)))
+    }
+
+    private var imagePixelSize: CGSize {
+        CGSize(width: imageSize.width * imageScale, height: imageSize.height * imageScale)
     }
 }
 
