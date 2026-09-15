@@ -739,8 +739,9 @@ public class KingfisherManager: @unchecked Sendable {
     ///   - source: The target source from which to retrieve the image.
     ///   - context: The retrieving context of the current task. Its `options` decide how the cache is searched, and
     ///   its `originalSource` is used when reporting the result.
-    ///   - downloadTaskUpdated: Called with the newly created download task when an expected original cache hit turns
-    ///   out to be missing and a download is issued as a fallback. It is not called when the cache serves the image.
+    ///   - downloadTaskUpdated: Called with the optional task returned by fallback loading when an expected
+    ///   original cache hit cannot serve the image. Fallback loading may download the image or load it from
+    ///   a data provider. It is not called when the cache serves the image.
     ///   - completionHandler: Called when the image retrieval is complete, either with a successful
     ///   ``RetrieveImageResult`` or an error.
     ///
