@@ -52,11 +52,7 @@ extension UIView {
     }
 }
 
-#if compiler(>=6)
 extension CADisplayLink: DisplayLinkCompatible, @retroactive @unchecked Sendable {}
-#else
-extension CADisplayLink: DisplayLinkCompatible, @unchecked Sendable {}
-#endif
 
 #else
 extension NSView {
@@ -73,13 +69,8 @@ extension NSView {
 extension CADisplayLink: DisplayLinkCompatible {
     var preferredFramesPerSecond: NSInteger { return 0 }
 }
-#if compiler(>=6)
 @available(macOS 14.0, *)
 extension CADisplayLink: @retroactive @unchecked Sendable { }
-#else // compiler(>=6)
-@available(macOS 14.0, *)
-extension CADisplayLink: @unchecked Sendable { }
-#endif // compiler(>=6)
 
 final class DisplayLink: DisplayLinkCompatible, @unchecked Sendable {
     private var link: CVDisplayLink?

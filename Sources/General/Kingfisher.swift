@@ -36,11 +36,7 @@ public typealias KFCrossPlatformImageView   = NSImageView
 public typealias KFCrossPlatformButton      = NSButton
 
 // `NSImage` is not yet Sendable. We have to assume it sendable to resolve warnings in Kingfisher.
-#if compiler(>=6)
 extension KFCrossPlatformImage: @retroactive @unchecked Sendable { }
-#else
-extension KFCrossPlatformImage: @unchecked Sendable { }
-#endif // compiler(>=6)
 #else // os(macOS)
 import UIKit
 public typealias KFCrossPlatformImage       = UIImage
@@ -125,6 +121,5 @@ extension TVMonogramView            : KingfisherCompatible { }
 #endif
 
 #if canImport(CarPlay) && !targetEnvironment(macCatalyst)
-@available(iOS 14.0, *)
 extension CPListItem                : KingfisherCompatible { }
 #endif

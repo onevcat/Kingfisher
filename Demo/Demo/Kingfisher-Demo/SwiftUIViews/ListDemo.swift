@@ -27,7 +27,6 @@
 import Kingfisher
 import SwiftUI
 
-@available(iOS 14.0, *)
 struct ListDemo : View {
 
     var body: some View {
@@ -38,7 +37,6 @@ struct ListDemo : View {
     }
 }
 
-@available(iOS 14.0, *)
 struct ImageCell: View {
 
     var alreadyCached: Bool {
@@ -85,7 +83,6 @@ struct ImageCell: View {
 
 }
 
-@available(iOS 14.0, *)
 struct SwiftUIList_Previews : PreviewProvider {
     static var previews: some View {
         ListDemo()

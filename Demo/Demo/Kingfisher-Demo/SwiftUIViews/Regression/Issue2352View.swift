@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct Issue2352View: View {
     @Environment(\.displayScale) private var displayScale
 

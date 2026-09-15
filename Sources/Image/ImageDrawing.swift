@@ -554,22 +554,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         if images != nil { return base }
         #endif
         
-        // For older system versions, revert to the drawing for decoding.
         guard let imageRef = cgImage else {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
             return base
         }
         
         #if !os(watchOS) && !os(macOS)
-        // In newer system versions, use `preparingForDisplay`.
-        if #available(iOS 15.0, tvOS 15.0, visionOS 1.0, *) {
-            if base.scale == scale, let image = base.preparingForDisplay() {
-                return image
-            }
-            let scaledImage = KFCrossPlatformImage(cgImage: imageRef, scale: scale, orientation: base.imageOrientation)
-            if let image = scaledImage.preparingForDisplay() {
-                return image
-            }
+        if base.scale == scale, let image = base.preparingForDisplay() {
+            return image
+        }
+        let scaledImage = KFCrossPlatformImage(cgImage: imageRef, scale: scale, orientation: base.imageOrientation)
+        if let image = scaledImage.preparingForDisplay() {
+            return image
         }
         #endif
 

@@ -40,7 +40,6 @@ import ImageIO
 
 import UniformTypeIdentifiers
 
-#if compiler(>=5.10)
 nonisolated(unsafe) private let animatedImageDataKey = malloc(1)!
 nonisolated(unsafe) private let imageFrameCountKey = malloc(1)!
 nonisolated(unsafe) private let imageSourceKey = malloc(1)!
@@ -49,16 +48,6 @@ nonisolated(unsafe) private let imageCreatingOptionsKey = malloc(1)!
 nonisolated(unsafe) private let imagesKey = malloc(1)!
 nonisolated(unsafe) private let durationKey = malloc(1)!
 #endif // os(macOS)
-#else // compiler(>=5.10)
-private let animatedImageDataKey = malloc(1)!
-private let imageFrameCountKey = malloc(1)!
-private let imageSourceKey = malloc(1)!
-private let imageCreatingOptionsKey = malloc(1)!
-#if os(macOS)
-private let imagesKey = malloc(1)!
-private let durationKey = malloc(1)!
-#endif // os(macOS)
-#endif // compiler(>=5.10)
 
 // MARK: - Image Properties
 extension KingfisherWrapper where Base: KFCrossPlatformImage {

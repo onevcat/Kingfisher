@@ -31,11 +31,7 @@ import AVKit
 
 import UniformTypeIdentifiers
 
-#if compiler(>=6)
 extension AVAssetImageGenerator: @unchecked @retroactive Sendable { }
-#else
-extension AVAssetImageGenerator: @unchecked Sendable { }
-#endif
 
 /// A data provider to provide thumbnail data from a given AVKit asset.
 public struct AVAssetImageDataProvider: ImageDataProvider {
