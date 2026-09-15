@@ -25,6 +25,9 @@
 //  THE SOFTWARE.
 
 import XCTest
+#if os(macOS)
+import AppKit
+#endif
 @testable import Kingfisher
 
 class ImageDrawingTests: XCTestCase {
@@ -50,5 +53,125 @@ class ImageDrawingTests: XCTestCase {
         XCTAssertEqual(result.kf.scale, 2)
         XCTAssertEqual(result.size.height, testImage.size.height / 2)
         #endif
+    }
+
+    func testImageFlipping() {
+        let image = KFCrossPlatformImage.quadrants()
+        let red: [UInt8] = [255, 0, 0, 255]
+        let green: [UInt8] = [0, 255, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let white: [UInt8] = [255, 255, 255, 255]
+
+        assertPixels(of: image, equalTo: [red, green, blue, white])
+        assertPixels(of: image.kf.flipped(horizontal: true, vertical: false), equalTo: [green, red, white, blue])
+        assertPixels(of: image.kf.flipped(horizontal: false, vertical: true), equalTo: [blue, white, red, green])
+        assertPixels(of: image.kf.flipped(horizontal: true, vertical: true), equalTo: [white, blue, green, red])
+    }
+
+    func testImageFlippingWithoutDirectionReturnsSameImage() {
+        let image = KFCrossPlatformImage.quadrants()
+        XCTAssertTrue(image.kf.flipped(horizontal: false, vertical: false) === image)
+    }
+
+    func testImageFlippingKeepsScale() {
+        #if os(macOS)
+        let image = KFCrossPlatformImage.quadrants(blockSize: 2)
+        #else
+        let image = KFCrossPlatformImage.quadrants(blockSize: 2, scale: 2)
+        XCTAssertEqual(image.size, CGSize(width: 2, height: 2))
+        #endif
+
+        let result = image.kf.flipped(horizontal: true, vertical: false)
+        XCTAssertEqual(result.size, image.size)
+        XCTAssertEqual(result.kf.scale, image.kf.scale)
+        XCTAssertEqual(result.kf.cgImage?.width, 4)
+        XCTAssertEqual(result.kf.cgImage?.height, 4)
+        XCTAssertEqual(result.rgbaPixel(x: 0, y: 0), [0, 255, 0, 255])
+        XCTAssertEqual(result.rgbaPixel(x: 3, y: 3), [0, 0, 255, 255])
+    }
+
+    func testImageFlippingNonSquareTransparentImage() {
+        let red: [UInt8] = [255, 0, 0, 255]
+        let green: [UInt8] = [0, 255, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let clear: [UInt8] = [0, 0, 0, 0]
+        let image = KFCrossPlatformImage.fromPixels([[red, green, clear], [blue, clear, clear]])
+
+        XCTAssertEqual(image.pixelRows(), [[red, green, clear], [blue, clear, clear]])
+        XCTAssertEqual(image.kf.flipped(horizontal: true, vertical: false).pixelRows(), [[clear, green, red], [clear, clear, blue]])
+        XCTAssertEqual(image.kf.flipped(horizontal: false, vertical: true).pixelRows(), [[blue, clear, clear], [red, green, clear]])
+        XCTAssertEqual(image.kf.flipped(horizontal: true, vertical: true).pixelRows(), [[clear, clear, blue], [clear, green, red]])
+    }
+
+    func testImageFlippingTwiceRestoresTheOriginalImage() throws {
+        #if os(macOS)
+        // A drawn image is created with `NSImage(cgImage:size: .zero)`, so drawing it again on a Retina
+        // display doubles its pixel size. Every drawing method shares that path.
+        try XCTSkipIf(
+            (NSScreen.main?.backingScaleFactor ?? 1) > 1,
+            "Redrawing a drawn image doubles its pixel size on a Retina display."
+        )
+        #endif
+        let red: [UInt8] = [255, 0, 0, 255]
+        let green: [UInt8] = [0, 255, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let clear: [UInt8] = [0, 0, 0, 0]
+        let image = KFCrossPlatformImage.fromPixels([[red, green, clear], [blue, clear, clear]])
+
+        XCTAssertEqual(
+            image.kf.flipped(horizontal: true, vertical: true).kf.flipped(horizontal: true, vertical: true).pixelRows(),
+            image.pixelRows()
+        )
+    }
+
+    #if os(iOS) || os(tvOS) || os(visionOS)
+    func testImageFlippingRespectsOrientationAndScale() {
+        let red: [UInt8] = [255, 0, 0, 255]
+        let green: [UInt8] = [0, 255, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let clear: [UInt8] = [0, 0, 0, 0]
+        let cgImage = KFCrossPlatformImage.fromPixels([[red, green, clear], [blue, clear, clear]]).cgImage!
+        let orientations: [UIImage.Orientation] = [
+            .up, .down, .left, .right, .upMirrored, .downMirrored, .leftMirrored, .rightMirrored
+        ]
+
+        for orientation in orientations {
+            for scale in [1, 2, 3] as [CGFloat] {
+                let image = KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: orientation)
+                // Render the image upright with UIKit, as the reference for what the flipped result should mirror.
+                let format = UIGraphicsImageRendererFormat()
+                format.scale = scale
+                format.opaque = false
+                format.preferredRange = .standard
+                let upright = UIGraphicsImageRenderer(size: image.size, format: format).image { _ in
+                    image.draw(at: .zero)
+                }.pixelRows()!
+                let message = "orientation: \(orientation.rawValue), scale: \(scale)"
+
+                let horizontal = image.kf.flipped(horizontal: true, vertical: false)
+                XCTAssertEqual(horizontal.size, image.size, message)
+                XCTAssertEqual(horizontal.scale, scale, message)
+                XCTAssertEqual(horizontal.imageOrientation, .up, message)
+                XCTAssertEqual(horizontal.pixelRows(), upright.map { Array($0.reversed()) }, message)
+                XCTAssertEqual(image.kf.flipped(horizontal: false, vertical: true).pixelRows(), Array(upright.reversed()), message)
+                XCTAssertEqual(
+                    image.kf.flipped(horizontal: true, vertical: true).pixelRows(),
+                    upright.reversed().map { Array($0.reversed()) },
+                    message
+                )
+            }
+        }
+    }
+    #endif
+
+    // Asserts the pixels of a 2x2 image, in the order of top-left, top-right, bottom-left and bottom-right.
+    private func assertPixels(
+        of image: KFCrossPlatformImage,
+        equalTo expected: [[UInt8]],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let pixels = [(0, 0), (1, 0), (0, 1), (1, 1)].map { image.rgbaPixel(x: $0.0, y: $0.1) }
+        XCTAssertEqual(pixels, expected, file: file, line: line)
     }
 }

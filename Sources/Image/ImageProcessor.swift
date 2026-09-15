@@ -720,6 +720,43 @@ public struct BlackWhiteProcessor: ImageProcessor {
     }
 }
 
+/// Processor for flipping images horizontally and/or vertically.
+///
+/// > Only CG-based images are supported.
+public struct FlippingImageProcessor: ImageProcessor {
+
+    public let identifier: String
+
+    /// Whether the input image is flipped horizontally, mirroring its left and right sides.
+    public let horizontal: Bool
+
+    /// Whether the input image is flipped vertically, mirroring its top and bottom sides.
+    public let vertical: Bool
+
+    /// Create a ``FlippingImageProcessor``.
+    ///
+    /// - Parameters:
+    ///   - horizontal: Whether to flip the input image horizontally. Default is `false`.
+    ///   - vertical: Whether to flip the input image vertically. Default is `false`.
+    ///
+    /// If both `horizontal` and `vertical` are `false`, the input image is returned without being flipped.
+    public init(horizontal: Bool = false, vertical: Bool = false) {
+        self.horizontal = horizontal
+        self.vertical = vertical
+        self.identifier = "com.onevcat.Kingfisher.FlippingImageProcessor(\(horizontal)_\(vertical))"
+    }
+
+    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        switch item {
+        case .image(let image):
+            return image.kf.scaled(to: options.scaleFactor)
+                        .kf.flipped(horizontal: horizontal, vertical: vertical)
+        case .data:
+            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
+        }
+    }
+}
+
 /// Processor for cropping an image.
 public struct CroppingImageProcessor: ImageProcessor {
     
