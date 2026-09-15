@@ -208,15 +208,20 @@ extension KFCrossPlatformImage {
     static func quadrants(blockSize: Int = 1, scale: CGFloat = 1) -> KFCrossPlatformImage {
         let colors: [[UInt8]] = [[255, 0, 0, 255], [0, 255, 0, 255], [0, 0, 255, 255], [255, 255, 255, 255]]
         let width = blockSize * 2
-        var bytes = [UInt8]()
-        for y in 0..<width {
-            for x in 0..<width {
-                bytes += colors[(y / blockSize) * 2 + x / blockSize]
-            }
+        let rows = (0..<width).map { y in
+            (0..<width).map { x in colors[(y / blockSize) * 2 + x / blockSize] }
         }
+        return fromPixels(rows, scale: scale)
+    }
+
+    // An image built from rows of RGBA pixels, with the first row at the top.
+    static func fromPixels(_ rows: [[[UInt8]]], scale: CGFloat = 1) -> KFCrossPlatformImage {
+        let height = rows.count
+        let width = rows[0].count
+        let bytes = rows.flatMap { $0.flatMap { $0 } }
         let cgImage = CGImage(
             width: width,
-            height: width,
+            height: height,
             bitsPerComponent: 8,
             bitsPerPixel: 32,
             bytesPerRow: width * 4,
@@ -234,6 +239,14 @@ extension KFCrossPlatformImage {
         #else
         return KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: .up)
         #endif
+    }
+
+    // RGBA components of every pixel, as rows from top to bottom.
+    func pixelRows() -> [[[UInt8]]]? {
+        guard let cgImage = kf.cgImage else { return nil }
+        return (0..<cgImage.height).map { y in
+            (0..<cgImage.width).map { x in rgbaPixel(x: x, y: y)! }
+        }
     }
 
     // RGBA components of the pixel at the given pixel position, with (0, 0) at the top-left corner.
