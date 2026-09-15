@@ -25,6 +25,9 @@
 //  THE SOFTWARE.
 
 import XCTest
+#if os(macOS)
+import AppKit
+#endif
 @testable import Kingfisher
 
 class ImageDrawingTests: XCTestCase {
@@ -98,14 +101,27 @@ class ImageDrawingTests: XCTestCase {
         XCTAssertEqual(image.kf.flipped(horizontal: true, vertical: false).pixelRows(), [[clear, green, red], [clear, clear, blue]])
         XCTAssertEqual(image.kf.flipped(horizontal: false, vertical: true).pixelRows(), [[blue, clear, clear], [red, green, clear]])
         XCTAssertEqual(image.kf.flipped(horizontal: true, vertical: true).pixelRows(), [[clear, clear, blue], [clear, green, red]])
-        #if !os(macOS)
-        // Flipping twice restores the original image. Not checked on macOS, where a drawn image is created with
-        // `NSImage(cgImage:size: .zero)`, so drawing it again on a Retina display doubles its pixel size.
+    }
+
+    func testImageFlippingTwiceRestoresTheOriginalImage() throws {
+        #if os(macOS)
+        // A drawn image is created with `NSImage(cgImage:size: .zero)`, so drawing it again on a Retina
+        // display doubles its pixel size. Every drawing method shares that path.
+        try XCTSkipIf(
+            (NSScreen.main?.backingScaleFactor ?? 1) > 1,
+            "Redrawing a drawn image doubles its pixel size on a Retina display."
+        )
+        #endif
+        let red: [UInt8] = [255, 0, 0, 255]
+        let green: [UInt8] = [0, 255, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let clear: [UInt8] = [0, 0, 0, 0]
+        let image = KFCrossPlatformImage.fromPixels([[red, green, clear], [blue, clear, clear]])
+
         XCTAssertEqual(
             image.kf.flipped(horizontal: true, vertical: true).kf.flipped(horizontal: true, vertical: true).pixelRows(),
             image.pixelRows()
         )
-        #endif
     }
 
     #if os(iOS) || os(tvOS) || os(visionOS)
