@@ -25,12 +25,13 @@ Pod::Spec.new do |s|
   s.authors            = { "onevcat" => "onevcat@gmail.com" }
   s.social_media_url   = "https://github.com/onevcat"
 
+  # Language mode; the minimum compiler is Swift 6.2 (Xcode 26.0).
   s.swift_versions = ['5.0']
 
-  s.ios.deployment_target = "13.0"
-  s.tvos.deployment_target = "13.0"
-  s.osx.deployment_target = "10.15"
-  s.watchos.deployment_target = "6.0"
+  s.ios.deployment_target = "15.0"
+  s.tvos.deployment_target = "15.0"
+  s.osx.deployment_target = "12.0"
+  s.watchos.deployment_target = "9.0"
   s.visionos.deployment_target = "1.0"
 
   s.source       = { :git => "https://github.com/onevcat/Kingfisher.git", :tag => s.version }

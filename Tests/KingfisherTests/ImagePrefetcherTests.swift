@@ -297,6 +297,112 @@ class ImagePrefetcherTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testPrefetchStopWaitsForPendingRetryDecisions() {
+        let entered = expectation(description: "Both retry decisions pending")
+        entered.expectedFulfillmentCount = 2
+        let firstFailed = expectation(description: "First source failed")
+        let completed = expectation(description: "Both sources accounted for")
+        let retry = PrefetchGatedRetryStrategy(entered: entered)
+        let sources = (0..<2).map { _ in
+            Source.provider(RawImageDataProvider(data: Data(), cacheKey: UUID().uuidString))
+        }
+        let prefetcher = ImagePrefetcher(
+            sources: sources, options: [.retryStrategy(retry)],
+            progressBlock: { _, failed, _ in
+                if failed.count == 1 { firstFailed.fulfill() }
+            },
+            completionHandler: { skipped, failed, successful in
+                XCTAssertTrue(skipped.isEmpty)
+                XCTAssertEqual(failed.count, 2)
+                XCTAssertTrue(successful.isEmpty)
+                completed.fulfill()
+            }
+        )
+        prefetcher.start()
+        wait(for: [entered], timeout: 3)
+        prefetcher.stop()
+        retry.resolveNext()
+        wait(for: [firstFailed], timeout: 3)
+        retry.resolveNext()
+        wait(for: [completed], timeout: 3)
+    }
+
+    func testPrefetchStopWhileRequestModifierIsPending() {
+        let entered = expectation(description: "Modifier entered")
+        let completed = expectation(description: "Prefetch completed")
+        let modifier = PrefetchGatedRequestModifier(entered: entered)
+        stub(testURLs[0], data: testImageData)
+        let prefetcher = ImagePrefetcher(
+            urls: [testURLs[0]], options: [.requestModifier(modifier)],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertTrue(skipped.isEmpty)
+                XCTAssertEqual(failed.count, 1)
+                XCTAssertTrue(successful.isEmpty)
+                completed.fulfill()
+            }
+        )
+        prefetcher.start()
+        wait(for: [entered], timeout: 3)
+        prefetcher.stop()
+        modifier.resume()
+        wait(for: [completed], timeout: 3)
+    }
+
+    func testPrefetchFallsBackWhenDiskCacheDisappears() {
+        let cache = EvictingPrefetchCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        let stored = expectation(description: "Stored on disk")
+        cache.store(testImage, forKey: url.cacheKey) { _ in stored.fulfill() }
+        wait(for: [stored], timeout: 3)
+        cache.clearMemoryCache()
+        stub(url, data: testImageData)
+        let completed = expectation(description: "Fallback completed")
+        let prefetcher = ImagePrefetcher(
+            urls: [url], options: [.targetCache(cache), .alsoPrefetchToMemory],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertTrue(skipped.isEmpty)
+                XCTAssertTrue(failed.isEmpty)
+                XCTAssertEqual(successful.count, 1)
+                completed.fulfill()
+            }
+        )
+        prefetcher.start()
+        wait(for: [completed], timeout: 2)
+    }
+
+    func testPrefetchStopCancelsEverySourceWithDuplicateCacheKeys() {
+        let started = expectation(description: "Both providers started")
+        started.expectedFulfillmentCount = 2
+        let exited = expectation(description: "Both providers exited")
+        exited.expectedFulfillmentCount = 2
+        let completed = expectation(description: "Prefetch completed")
+        completed.assertForOverFulfill = true
+        let cancellations = LockIsolated(0)
+        let callbacks = LockIsolated(0)
+        let provider = PrefetchCancellationProbe(
+            cacheKey: UUID().uuidString, started: started, exited: exited, cancellations: cancellations
+        )
+        let prefetcher = ImagePrefetcher(sources: [.provider(provider), .provider(provider)], completionHandler: {
+            skipped, failed, successful in
+            callbacks.withValue { $0 += 1 }
+            XCTAssertEqual(skipped.count, 0)
+            XCTAssertEqual(failed.count, 2)
+            XCTAssertEqual(successful.count, 0)
+            XCTAssertEqual(cancellations.value, 2)
+            completed.fulfill()
+        })
+        prefetcher.start()
+        wait(for: [started], timeout: 3)
+        prefetcher.stop()
+        wait(for: [completed, exited], timeout: 3)
+        XCTAssertEqual(cancellations.value, 2)
+        let settled = expectation(description: "Queued callbacks drained")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { settled.fulfill() }
+        wait(for: [settled], timeout: 1)
+        XCTAssertEqual(callbacks.value, 1)
+    }
+
     func testPrefetchMultiTimes() {
         let exp = expectation(description: #function)
         let group = DispatchGroup()
@@ -356,5 +462,76 @@ class ImagePrefetcherTests: XCTestCase {
         prefetcher.start()
 
         waitForExpectations(timeout: 3, handler: nil)
+    }
+}
+
+private struct PrefetchCancellationProbe: ImageDataProvider {
+    let cacheKey: String
+    let started: XCTestExpectation
+    let exited: XCTestExpectation
+    let cancellations: LockIsolated<Int>
+
+    func data() async throws -> Data {
+        started.fulfill()
+        defer { exited.fulfill() }
+        do {
+            try await Task.sleep(nanoseconds: 500_000_000)
+            return testImageData
+        } catch {
+            cancellations.withValue { $0 += 1 }
+            throw error
+        }
+    }
+}
+
+private final class EvictingPrefetchCache: ImageCache, @unchecked Sendable {
+    override func imageCachedType(
+        forKey key: String,
+        processorIdentifier identifier: String = DefaultImageProcessor.default.identifier,
+        forcedExtension: String? = nil
+    ) -> CacheType {
+        let type = super.imageCachedType(forKey: key, processorIdentifier: identifier, forcedExtension: forcedExtension)
+        if type == .disk { try? diskStorage.removeAll() }
+        return type
+    }
+}
+
+private final class PrefetchGatedRequestModifier: AsyncImageDownloadRequestModifier, @unchecked Sendable {
+    let entered: XCTestExpectation
+    let pending = LockIsolated<(@Sendable () -> Void)?>(nil)
+    var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { nil }
+
+    init(entered: XCTestExpectation) { self.entered = entered }
+
+    func modified(for request: URLRequest) async -> URLRequest? {
+        await withCheckedContinuation { continuation in
+            pending.withValue { $0 = { continuation.resume(returning: request) } }
+            entered.fulfill()
+        }
+    }
+
+    func resume() {
+        let callback = pending.withValue { value in
+            defer { value = nil }
+            return value
+        }
+        callback?()
+    }
+}
+
+private final class PrefetchGatedRetryStrategy: RetryStrategy, @unchecked Sendable {
+    let entered: XCTestExpectation
+    let pending = LockIsolated<[@Sendable (RetryDecision) -> Void]>([])
+
+    init(entered: XCTestExpectation) { self.entered = entered }
+
+    func retry(context: RetryContext, retryHandler: @escaping @Sendable (RetryDecision) -> Void) {
+        pending.withValue { $0.append(retryHandler) }
+        entered.fulfill()
+    }
+
+    func resolveNext() {
+        let handler = pending.withValue { $0.removeFirst() }
+        handler(.stop)
     }
 }

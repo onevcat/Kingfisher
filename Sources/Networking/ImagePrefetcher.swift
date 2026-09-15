@@ -92,7 +92,7 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     private var progressSourceBlock: PrefetcherSourceProgressBlock?
     private var completionSourceHandler: PrefetcherSourceCompletionHandler?
     
-    private var tasks = [String: DownloadTask.WrappedTask]()
+    private var tasks = [UUID: CancellationDownloadTask]()
     
     private var pendingSources: ArraySlice<Source>
     private var skippedSources = [Source]()
@@ -254,39 +254,36 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     }
     
     private func downloadAndCache(_ source: Source, retryContext: RetryContext? = nil) {
+        guard !stopped else {
+            failedSources.append(source)
+            reportProgress()
+            reportCompletionOrStartNext()
+            return
+        }
+
+        // Cache keys identify stored images, not individual in-flight consumers.
+        let taskIdentifier = UUID()
+        let cancellation = CancellationDownloadTask()
+        tasks[taskIdentifier] = cancellation
 
         let retryStrategy = optionsInfo.retryStrategy
 
         @Sendable func completeWithSuccess() {
             self.completedSources.append(source)
             self.reportProgress()
-            if self.stopped {
-                if self.tasks.isEmpty {
-                    self.failedSources.append(contentsOf: self.pendingSources)
-                    self.handleComplete()
-                }
-            } else {
-                self.reportCompletionOrStartNext()
-            }
+            self.reportCompletionOrStartNext()
         }
 
         @Sendable func completeWithFailure() {
             self.failedSources.append(source)
             self.reportProgress()
-            if self.stopped {
-                if self.tasks.isEmpty {
-                    self.failedSources.append(contentsOf: self.pendingSources)
-                    self.handleComplete()
-                }
-            } else {
-                self.reportCompletionOrStartNext()
-            }
+            self.reportCompletionOrStartNext()
         }
 
         let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
             result in
 
-            self.tasks.removeValue(forKey: source.cacheKey)
+            self.tasks.removeValue(forKey: taskIdentifier)
             switch result {
             case .success:
                 completeWithSuccess()
@@ -321,19 +318,16 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
             }
         }
 
-        var downloadTask: DownloadTask.WrappedTask?
+        let options = optionsInfo.appendingDownloadTaskStartedHandler { task in
+            cancellation.setTask(task)
+        }
         ImagePrefetcher.requestingQueue.sync {
-            let context = RetrievingContext(
-                options: optionsInfo, originalSource: source
-            )
-            downloadTask = manager.loadAndCacheImage(
+            let context = RetrievingContext(options: options, originalSource: source)
+            let downloadTask = manager.loadAndCacheImage(
                 source: source,
                 context: context,
                 completionHandler: downloadTaskCompletionHandler)
-        }
-
-        if let downloadTask = downloadTask {
-            tasks[source.cacheKey] = downloadTask
+            cancellation.setTask(downloadTask?.value)
         }
     }
     
@@ -361,14 +355,21 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         case .disk:
             if optionsInfo.alsoPrefetchToMemory {
                 let context = RetrievingContext(options: optionsInfo, originalSource: source)
-                _ = manager.retrieveImageFromCache(
+                let retrieved = manager.retrieveImageFromCache(
                     source: source,
                     context: context,
                     downloadTaskUpdated: nil)
                 {
-                    _ in
-                    self.append(cached: source)
+                    result in
+                    switch result {
+                    case .success:
+                        self.append(cached: source)
+                    case .failure:
+                        self.downloadAndCache(source)
+                    }
                 }
+                // Expiration or eviction can invalidate the first cache probe.
+                if !retrieved { downloadAndCache(source) }
             } else {
                 append(cached: source)
             }
@@ -386,9 +387,11 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         let skipped = self.skippedSources
         let failed = self.failedSources
         let completed = self.completedSources
+        let progressSourceBlock = self.progressSourceBlock
+        let progressBlock = self.progressBlock
         CallbackQueue.mainCurrentOrAsync.execute {
-            self.progressSourceBlock?(skipped, failed, completed)
-            self.progressBlock?(
+            progressSourceBlock?(skipped, failed, completed)
+            progressBlock?(
                 skipped.compactMap { $0.asResource },
                 failed.compactMap { $0.asResource },
                 completed.compactMap { $0.asResource }
@@ -397,6 +400,14 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     }
     
     private func reportCompletionOrStartNext() {
+        if stopped {
+            failedSources.append(contentsOf: pendingSources)
+            pendingSources.removeAll()
+            // Cache reads and retry decisions can outlive the active download tasks.
+            if allFinished { handleComplete() }
+            return
+        }
+
         if let resource = self.pendingSources.popFirst() {
             // Loose call stack for huge amount of sources.
             prefetchQueue.async { self.startPrefetching(resource) }
@@ -422,6 +433,10 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         let completed = self.completedSources
         let completionSourceHandler = self.completionSourceHandler
         let completionHandler = self.completionHandler
+        self.completionHandler = nil
+        self.completionSourceHandler = nil
+        self.progressBlock = nil
+        self.progressSourceBlock = nil
 
         // The completion handler should be called on the main thread
         CallbackQueue.mainCurrentOrAsync.execute {
@@ -431,8 +446,6 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
                 failed.compactMap { $0.asResource },
                 completed.compactMap { $0.asResource }
             )
-            self.completionHandler = nil
-            self.progressBlock = nil
         }
     }
 }

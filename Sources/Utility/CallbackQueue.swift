@@ -98,14 +98,7 @@ enum CallbackQueueMain {
 extension MainActor {
     @_unavailableFromAsync
     static func runUnsafely<T: Sendable>(_ body: @MainActor () throws -> T) rethrows -> T {
-#if swift(>=5.10)
         return try MainActor.assumeIsolated(body)
-#else
-        dispatchPrecondition(condition: .onQueue(.main))
-        return try withoutActuallyEscaping(body) { fn in
-            try unsafeBitCast(fn, to: (() throws -> T).self)()
-        }
-#endif
     }
 }
 

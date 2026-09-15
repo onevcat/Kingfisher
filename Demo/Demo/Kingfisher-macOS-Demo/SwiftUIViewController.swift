@@ -27,14 +27,12 @@
 import SwiftUI
 import Kingfisher
 
-@available(macOS 11, *)
 class SwiftUIViewController: NSHostingController<MainView> {
     required init?(coder: NSCoder) {
         super.init(coder: coder, rootView: MainView())
     }
 }
 
-@available(macOS 11, *)
 struct MainView: View {
     @State private var index = 1
     

@@ -92,7 +92,6 @@ The project supports multiple platforms (iOS, macOS, tvOS, watchOS, visionOS) an
 
 ### Package Management
 - **`Package.swift`** - Swift Package Manager manifest with dependencies and targets
-- **`Package@swift-5.9.swift`** - Swift 5.9 compatibility package manifest
 - **`Kingfisher.podspec`** - CocoaPods specification for distribution
 - **`Gemfile`** - Ruby dependencies for Fastlane and build tools
 - **`Gemfile.lock`** - Locked Ruby gem versions for reproducible builds

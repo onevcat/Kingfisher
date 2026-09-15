@@ -875,7 +875,7 @@ public class KingfisherManager: @unchecked Sendable {
                 processorIdentifier: DefaultImageProcessor.default.identifier,
                 forcedExtension: options.forcedExtension,
                 callbackQueue: .untouch
-            ) { originalImageCacheType in
+            ) { [self] originalImageCacheType in
                 let canAcceptDiskCache = !options.fromMemoryCacheOrRefresh
                 let canUseOriginalImageCache =
                     (canAcceptDiskCache && originalImageCacheType.cached) ||
@@ -1722,7 +1722,7 @@ private final class DownloadTaskUpdatedCallbackGate: @unchecked Sendable {
     }
 }
 
-private extension KingfisherParsedOptionsInfo {
+extension KingfisherParsedOptionsInfo {
     func appendingDownloadTaskStartedHandler(
         _ handler: (@Sendable (DownloadTask) -> Void)?
     ) -> KingfisherParsedOptionsInfo {

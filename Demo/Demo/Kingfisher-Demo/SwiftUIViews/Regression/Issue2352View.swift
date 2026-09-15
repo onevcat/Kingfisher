@@ -27,8 +27,9 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct Issue2352View: View {
+    @Environment(\.displayScale) private var displayScale
+
     var body: some View {
         List {
             ForEach(0..<40, id: \.self) { row in
@@ -37,7 +38,7 @@ struct Issue2352View: View {
                         URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/refs/heads/master/DemoAppImage/GIF/jumping.gif")!
                     )
                     .backgroundDecode()
-                    .scaleFactor(UIScreen.main.scale)
+                    .scaleFactor(displayScale)
                     .scaledToFill()
                     .frame(width: 50, height: 50)
                     .clipShape(.circle)

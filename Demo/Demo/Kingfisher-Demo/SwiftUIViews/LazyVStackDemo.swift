@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct LazyVStackDemo: View {
     @State private var singleImage = false
     
@@ -48,7 +47,6 @@ struct LazyVStackDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct LazyVStackDemo_Previews: PreviewProvider {
     static var previews: some View {
         LazyVStackDemo()

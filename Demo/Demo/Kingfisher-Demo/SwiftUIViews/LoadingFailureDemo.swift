@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct LoadingFailureDemo: View {
 
     var url: URL {
@@ -62,7 +61,6 @@ struct LoadingFailureDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct LoadingFailureDemo_Previews: PreviewProvider {
     static var previews: some View {
         LoadingFailureDemo()

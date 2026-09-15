@@ -75,7 +75,7 @@ Sources/
 ## Platform Support
 - **UIKit/AppKit**: iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ / visionOS 1.0+
 - **SwiftUI**: iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
-- **Swift**: 5.9+ (with Swift 6 strict concurrency support)
+- **Toolchain**: Xcode 26.0+ / Swift 6.2+ compiler (Swift 5 language mode by default; with Swift 6 strict concurrency support)
 
 ## Testing
 

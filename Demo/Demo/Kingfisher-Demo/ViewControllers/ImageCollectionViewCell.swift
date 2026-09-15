@@ -34,8 +34,10 @@ class ImageCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        cellImageView.adjustsImageWhenAncestorFocused = true
-        cellImageView.clipsToBounds = false
+        MainActor.assumeIsolated {
+            cellImageView.adjustsImageWhenAncestorFocused = true
+            cellImageView.clipsToBounds = false
+        }
     }
     #endif
 }
