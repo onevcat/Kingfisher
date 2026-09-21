@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct Issue2295View: View {
     
     @State private var count = 0
@@ -75,7 +74,6 @@ struct Issue2295View: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct Issue2295View_Previews: PreviewProvider {
     static var previews: some View {
         Issue1998View()

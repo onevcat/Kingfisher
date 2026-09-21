@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct TransitionViewDemo: View {
     @State private var showDetails = false
     
@@ -47,7 +46,6 @@ struct TransitionViewDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct TransitionViewDemo_Previews: PreviewProvider {
     static var previews: some View {
         TransitionViewDemo()

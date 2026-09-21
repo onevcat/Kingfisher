@@ -54,8 +54,9 @@ public class SessionDataTask: @unchecked Sendable {
         return _mutableData.count
     }
 
-    // Zero-copy access to the accumulated data for internal use. Unlike `mutableData`, this shares
-    // the storage of `_mutableData` through copy-on-write instead of allocating a full-size copy.
+    // Zero-copy access to the accumulated data for internal use. This shares the storage of
+    // `_mutableData` through copy-on-write. `Data(_mutableData)` can allocate a full-size copy
+    // on older Foundation versions.
     // That allocation can trap (`EXC_BREAKPOINT` in `__DataStorage`) on memory-constrained devices
     // when the downloaded data is large (#2543). Sharing is safe: a later `didReceiveData` append
     // copies on write and never mutates the storage a previously returned value sees.
@@ -127,8 +128,13 @@ public class SessionDataTask: @unchecked Sendable {
         guard !completed else { return nil }
 
         callbacksStore[currentToken] = callback
-        prioritiesStore[currentToken] = callback.options.downloadPriority
-        updateTaskPriority()
+        let priority = callback.options.downloadPriority
+        prioritiesStore[currentToken] = priority
+        // A new subscriber can only raise the maximum. Scanning all subscribers on
+        // every join makes a large shared download take quadratic time to register.
+        if prioritiesStore.count == 1 || priority > task.priority {
+            task.priority = priority
+        }
         defer { currentToken += 1 }
         return currentToken
     }

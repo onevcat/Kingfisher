@@ -29,7 +29,6 @@ import SwiftUI
 import Combine
 
 // MARK: - KFImage creating.
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
 
     /// Creates a Kingfisher-compatible image view with a given ``Source``.
@@ -101,7 +100,6 @@ extension KFImageProtocol {
     }
 }
 
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     
     /// Sets a placeholder `View` that is displayed during the image loading, with a progress parameter as input.

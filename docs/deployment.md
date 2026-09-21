@@ -41,7 +41,9 @@ The deployment process is fully automated using Fastlane with comprehensive plat
 **Build Targets**:
 - Single library target: `Kingfisher`
 - Source path: `Sources/`
-- Minimum Swift tools version: 5.1
+- Minimum toolchain: Xcode 26.0+ / Swift 6.2+
+- Swift tools version: 6.2; Swift 5 language mode
+- Privacy manifest resource: `Sources/PrivacyInfo.xcprivacy`
 
 **Platform Support**:
 - iOS 13.0+
@@ -164,12 +166,12 @@ swift package resolve
 ### GitHub Actions Workflows
 
 **Build Workflow**: `.github/workflows/build.yaml`
-- Builds across multiple Xcode versions (15.2, 15.3, 16.0, 16.1)
+- Builds across Xcode 26 versions; see `.github/workflows/build.yaml` for the current matrix
 - Tests all platforms in matrix configuration
 - Uses self-hosted runners
 
 **Test Workflow**: `.github/workflows/test.yaml`
-- Runs tests on Xcode 15.4 and 16.2
+- Runs tests across Xcode 26 versions; see `.github/workflows/test.yaml` for the current matrix
 - Covers all platform destinations
 - Concurrent execution with cancellation
 

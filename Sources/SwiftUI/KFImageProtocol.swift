@@ -34,7 +34,6 @@ import Combine
 /// As a framework user, you do not need to know the details of this protocol. As the public types, ``KFImage`` and
 /// ``KFAnimatedImage`` conform this type and should be used in your app to represent an image view with network and
 /// cache support in SwiftUI.
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 @MainActor
 public protocol KFImageProtocol: View, KFOptionSetter {
     associatedtype HoldingView: KFImageHoldingView & Sendable
@@ -42,7 +41,6 @@ public protocol KFImageProtocol: View, KFOptionSetter {
     init(context: KFImage.Context<HoldingView>)
 }
 
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     @MainActor
     public var body: some View {
@@ -143,14 +141,12 @@ extension KFImageProtocol {
     }
 }
 
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 @MainActor
 public protocol KFImageHoldingView: View {
     associatedtype RenderingView
     static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> Self
 }
 
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 extension KFImageProtocol {
     /// Returns a new view value whose ``KFImage/Context`` is a copy of the current one.
     ///

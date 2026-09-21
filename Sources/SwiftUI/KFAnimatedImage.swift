@@ -37,7 +37,6 @@ import Combine
 /// but may impact performance when loading large animated images from disk. You can disable this behavior 
 /// by calling `.loadDiskFileSynchronously(false)` if you prefer better loading performance over visual consistency.
 ///
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, *)
 public struct KFAnimatedImage: KFImageProtocol {
     public typealias HoldingView = KFAnimatedImageViewRepresenter
     public var context: Context<HoldingView>
@@ -73,15 +72,12 @@ public struct KFAnimatedImage: KFImageProtocol {
 }
 
 #if os(macOS)
-@available(macOS 11.0, *)
 typealias KFCrossPlatformViewRepresentable = NSViewRepresentable
 #else
-@available(iOS 14.0, tvOS 14.0, watchOS 7.0, *)
 typealias KFCrossPlatformViewRepresentable = UIViewRepresentable
 #endif
 
 /// A wrapped `UIViewRepresentable` of `AnimatedImageView`
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, KFImageHoldingView, Sendable {
     public typealias RenderingView = AnimatedImageView
     public static func created(from image: KFCrossPlatformImage?, context: KFImage.Context<Self>) -> KFAnimatedImageViewRepresenter {
@@ -134,7 +130,6 @@ public struct KFAnimatedImageViewRepresenter: KFCrossPlatformViewRepresentable, 
 }
 
 #if DEBUG
-@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 struct KFAnimatedImage_Previews: PreviewProvider {
     static var previews: some View {
         Group {

@@ -26,7 +26,6 @@
 
 import SwiftUI
 
-@available(iOS 14.0, *)
 struct GridDemo: View {
 
     @State var columns = [
@@ -57,7 +56,6 @@ struct GridDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct GridDemo_Previews: PreviewProvider {
     static var previews: some View {
         GridDemo()

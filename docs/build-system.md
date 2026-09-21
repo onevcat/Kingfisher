@@ -103,20 +103,26 @@ Release steps performed:
 
 ## Platform-specific Setup
 
+### Toolchain
+
+Xcode 26.0+ and the Swift 6.2+ compiler are required. The package and Xcode
+project use Swift 5 language mode by default. Compiler versions and language
+modes are separate settings; `SWIFT_VERSION` selects the language mode.
+
 ### Supported Platforms
 
 From `Package.swift` and `Kingfisher.podspec`:
-- **iOS**: 13.0+
-- **macOS**: 10.15+
-- **tvOS**: 13.0+
-- **watchOS**: 6.0+
+- **iOS**: 15.0+
+- **macOS**: 12.0+
+- **tvOS**: 15.0+
+- **watchOS**: 9.0+
 - **visionOS**: 1.0+
 
 ### CI Test Matrix
 
 From `.github/workflows/test.yaml`:
 - **Destinations**: macOS, iOS Simulator, tvOS Simulator, watchOS Simulator
-- **Xcode Versions**: 15.4, 16.2
+- **Xcode Versions**: See `.github/workflows/test.yaml` for the current matrix
 
 ### Platform Build Commands
 
@@ -189,10 +195,10 @@ Located in `fastlane/actions/`:
 2. **Xcode version mismatch**
    ```bash
    # Set Xcode version explicitly
-   XCODE_VERSION=16.2 bundle exec fastlane tests
+   XCODE_VERSION=26.0 bundle exec fastlane build destination:"platform=macOS"
    
    # Or use xcode-select
-   sudo xcode-select -s /Applications/Xcode_16.2.app
+   sudo xcode-select -s /Applications/Xcode.app
    ```
 
 3. **Simulator not found**
@@ -214,8 +220,8 @@ Located in `fastlane/actions/`:
 
 5. **Swift version issues**
    ```bash
-   # Override Swift version in build
-   bundle exec fastlane build xcargs:"SWIFT_VERSION=5.9"
+   # Use Swift 6 language mode
+   bundle exec fastlane build xcargs:"SWIFT_VERSION=6.0"
    ```
 
 ### Build Settings

@@ -31,23 +31,25 @@ class DataReceivingSideEffectTests: XCTestCase {
 
     var manager: KingfisherManager!
 
-    func testSessionDataTaskMutableDataGetterDoesNotShareStorage() {
+    func testSessionDataTaskMutableDataSnapshotIsIndependentOfLaterMutations() {
         let url = URL(string: "https://example.com/image.png")!
         let urlTask = URLSession(configuration: .ephemeral).dataTask(with: url)
         let task = SessionDataTask(task: urlTask)
+        let received = Data(repeating: 0x11, count: 1024 * 1024)
+        task.didReceiveData(received)
 
-        // Use a large buffer to avoid inline Data storage, making COW storage sharing observable.
-        task.didReceiveData(Data(repeating: 0x11, count: 1024 * 1024))
-
-        let snapshot = task.mutableData
+        var snapshot = task.mutableData
         let secondSnapshot = task.mutableData
+        snapshot[0] = 0x22
 
-        XCTAssertEqual(snapshot.count, secondSnapshot.count)
-        XCTAssertNotEqual(
-            storageAddress(of: snapshot),
-            storageAddress(of: secondSnapshot),
-            "mutableData should return an independent Data copy instead of sharing the internal COW storage."
-        )
+        XCTAssertEqual(secondSnapshot, received)
+        XCTAssertEqual(task.mutableData, received)
+
+        task.didReceiveData(Data([0x33]))
+        XCTAssertEqual(snapshot.count, received.count)
+        XCTAssertEqual(snapshot[0], 0x22)
+        XCTAssertEqual(secondSnapshot, received)
+        XCTAssertEqual(task.mutableData, received + Data([0x33]))
     }
 
     func testSessionDataTaskSharedDataIsZeroCopyAndUnaffectedByLaterAppends() {

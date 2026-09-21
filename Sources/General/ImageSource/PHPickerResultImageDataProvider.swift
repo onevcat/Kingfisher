@@ -30,16 +30,11 @@ import Foundation
 
 import PhotosUI
 
-#if compiler(>=6)
-@available(iOS 14.0, macOS 13.0, *)
+@available(macOS 13.0, *)
 extension PHPickerResult: @unchecked @retroactive Sendable { }
-#else
-@available(iOS 14.0, macOS 13.0, *)
-extension PHPickerResult: @unchecked Sendable { }
-#endif
 
 /// A data provider to provide image data from a given `PHPickerResult`.
-@available(iOS 14.0, macOS 13.0, *)
+@available(macOS 13.0, *)
 public struct PHPickerResultImageDataProvider: ImageDataProvider {
 
     internal static func _cacheKey(

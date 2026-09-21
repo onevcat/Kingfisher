@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct SizingAnimationDemo: View {
     @State var imageSize: CGFloat = 250
     @State var isPlaying = false
@@ -61,7 +60,6 @@ struct SizingAnimationDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct SizingAnimationDemo_Previews: PreviewProvider {
     static var previews: some View {
         SizingAnimationDemo()
