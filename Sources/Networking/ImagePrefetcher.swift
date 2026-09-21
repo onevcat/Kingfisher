@@ -275,9 +275,7 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         }
 
         @Sendable func completeWithFailure() {
-            self.failedSources.append(source)
-            self.reportProgress()
-            self.reportCompletionOrStartNext()
+            self.append(failed: source)
         }
 
         let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
@@ -333,7 +331,12 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     
     private func append(cached source: Source) {
         skippedSources.append(source)
- 
+        reportProgress()
+        reportCompletionOrStartNext()
+    }
+
+    private func append(failed source: Source) {
+        failedSources.append(source)
         reportProgress()
         reportCompletionOrStartNext()
     }
@@ -365,15 +368,23 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
                     case .success:
                         self.append(cached: source)
                     case .failure:
-                        self.downloadAndCache(source)
+                        self.loadOrFailForCacheMiss(source)
                     }
                 }
                 // Expiration or eviction can invalidate the first cache probe.
-                if !retrieved { downloadAndCache(source) }
+                if !retrieved { loadOrFailForCacheMiss(source) }
             } else {
                 append(cached: source)
             }
         case .none:
+            loadOrFailForCacheMiss(source)
+        }
+    }
+
+    private func loadOrFailForCacheMiss(_ source: Source) {
+        if optionsInfo.onlyFromCache {
+            append(failed: source)
+        } else {
             downloadAndCache(source)
         }
     }

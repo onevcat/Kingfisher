@@ -371,6 +371,60 @@ class ImagePrefetcherTests: XCTestCase {
         wait(for: [completed], timeout: 2)
     }
 
+    func testPrefetchOnlyFromCacheDoesNotLoadMissingSource() {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let loads = LockIsolated(0)
+        let provider = SimpleImageDataProvider(cacheKey: UUID().uuidString) {
+            loads.withValue { $0 += 1 }
+            return .success(testImageData)
+        }
+        let completed = expectation(description: "Only-from-cache prefetch completed")
+        let prefetcher = ImagePrefetcher(
+            sources: [.provider(provider)], options: [.targetCache(cache), .onlyFromCache],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertTrue(skipped.isEmpty)
+                XCTAssertEqual(failed.count, 1)
+                XCTAssertTrue(successful.isEmpty)
+                XCTAssertEqual(loads.value, 0)
+                completed.fulfill()
+            }
+        )
+
+        prefetcher.start()
+        wait(for: [completed], timeout: 2)
+    }
+
+    func testPrefetchOnlyFromCacheDoesNotFallBackWhenDiskCacheDisappears() {
+        let cache = EvictingPrefetchCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let key = UUID().uuidString
+        let stored = expectation(description: "Stored on disk")
+        cache.store(testImage, forKey: key) { _ in stored.fulfill() }
+        wait(for: [stored], timeout: 3)
+        cache.clearMemoryCache()
+
+        let loads = LockIsolated(0)
+        let provider = SimpleImageDataProvider(cacheKey: key) {
+            loads.withValue { $0 += 1 }
+            return .success(testImageData)
+        }
+        let completed = expectation(description: "Only-from-cache prefetch completed")
+        let prefetcher = ImagePrefetcher(
+            sources: [.provider(provider)], options: [.targetCache(cache), .alsoPrefetchToMemory, .onlyFromCache],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertTrue(skipped.isEmpty)
+                XCTAssertEqual(failed.count, 1)
+                XCTAssertTrue(successful.isEmpty)
+                XCTAssertEqual(loads.value, 0)
+                completed.fulfill()
+            }
+        )
+
+        prefetcher.start()
+        wait(for: [completed], timeout: 2)
+    }
+
     func testPrefetchStopCancelsEverySourceWithDuplicateCacheKeys() {
         let started = expectation(description: "Both providers started")
         started.expectedFulfillmentCount = 2
