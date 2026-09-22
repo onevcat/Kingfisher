@@ -45,6 +45,18 @@ public enum ImageProcessItem: Sendable {
     case data(Data)
 }
 
+private extension ImageProcessItem {
+    func decodedImage(options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        switch self {
+        case .image(let image):
+            // Keep the input scale and size until the processor applies its own rules.
+            return image
+        case .data:
+            return DefaultImageProcessor.default.process(item: self, options: options)
+        }
+    }
+}
+
 /// An `ImageProcessor` is used to convert downloaded data into an image.
 public protocol ImageProcessor: Sendable {
     
@@ -214,13 +226,9 @@ public struct BlendImageProcessor: ImageProcessor {
     }
 
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.image(withBlendMode: blendMode, alpha: alpha, backgroundColor: backgroundColor)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.image(withBlendMode: blendMode, alpha: alpha, backgroundColor: backgroundColor)
     }
 }
 #endif
@@ -264,16 +272,12 @@ public struct CompositingImageProcessor: ImageProcessor {
     }
 
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.image(
-                            withCompositingOperation: compositingOperation,
-                            alpha: alpha,
-                            backgroundColor: backgroundColor)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.image(
+                        withCompositingOperation: compositingOperation,
+                        alpha: alpha,
+                        backgroundColor: backgroundColor)
     }
 }
 #endif
@@ -413,18 +417,14 @@ public struct RoundCornerImageProcessor: ImageProcessor {
     }
 
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            let size = targetSize ?? image.kf.size
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.image(
-                            withRadius: radius,
-                            fit: size,
-                            roundingCorners: roundingCorners,
-                            backgroundColor: backgroundColor)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        let size = targetSize ?? image.kf.size
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.image(
+                        withRadius: radius,
+                        fit: size,
+                        roundingCorners: roundingCorners,
+                        backgroundColor: backgroundColor)
     }
 }
 
@@ -488,12 +488,8 @@ public struct BorderImageProcessor: ImageProcessor {
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.addingBorder(border)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.addingBorder(border)
     }
 }
 
@@ -547,13 +543,9 @@ public struct ResizingImageProcessor: ImageProcessor {
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.resize(to: referenceSize, for: targetContentMode)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.resize(to: referenceSize, for: targetContentMode)
     }
 }
 
@@ -577,14 +569,10 @@ public struct BlurImageProcessor: ImageProcessor {
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            let radius = blurRadius * options.scaleFactor
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.blurred(withRadius: radius)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        let radius = blurRadius * options.scaleFactor
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.blurred(withRadius: radius)
     }
 }
 
@@ -614,13 +602,9 @@ public struct OverlayImageProcessor: ImageProcessor {
     }
 
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.overlaying(with: overlay, fraction: fraction)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.overlaying(with: overlay, fraction: fraction)
     }
 }
 
@@ -645,13 +629,9 @@ public struct TintImageProcessor: ImageProcessor {
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.tinted(with: tint)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.tinted(with: tint)
     }
 }
 
@@ -692,13 +672,9 @@ public struct ColorControlsProcessor: ImageProcessor {
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
-        case .data:
-            return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.adjusted(brightness: brightness, contrast: contrast, saturation: saturation, inputEV: inputEV)
     }
 }
 
@@ -765,12 +741,9 @@ public struct CroppingImageProcessor: ImageProcessor {
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        switch item {
-        case .image(let image):
-            return image.kf.scaled(to: options.scaleFactor)
-                        .kf.crop(to: size, anchorOn: anchor)
-        case .data: return (DefaultImageProcessor.default |> self).process(item: item, options: options)
-        }
+        guard let image = item.decodedImage(options: options) else { return nil }
+        return image.kf.scaled(to: options.scaleFactor)
+                    .kf.crop(to: size, anchorOn: anchor)
     }
 }
 
