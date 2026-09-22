@@ -707,6 +707,8 @@ extension AnimatedImageView {
         private var _isCancelled: Bool = false
         // The `frameSizingVersion` the frames were last set up with. Only used on `preloadQueue`.
         private var setupFrameSizingVersion = 0
+        // Keep the initial fill pending across superseded layout updates. Only used on `preloadQueue`.
+        private var needsInitialFrameLoading = false
 
         // How frames are decoded. `nil` until frames are prepared.
         var frameSizing: FrameSizing? {
@@ -893,8 +895,7 @@ extension AnimatedImageView {
             let version = frameSizingVersion
             lock.unlock()
 
-            let fillsBuffer = currentSizing == .pending
-            preload { $0.reloadPreparedFrames(version: version, fillsBuffer: fillsBuffer) }
+            preload { $0.reloadPreparedFrames(version: version) }
         }
 
         private func preload(_ work: @escaping @Sendable (Animator) -> Void) {
@@ -947,6 +948,7 @@ extension AnimatedImageView {
         private func setupAnimatedFrames() {
             resetAnimatedFrames()
             setupFrameSizingVersion = currentFrameSizingVersion
+            needsInitialFrameLoading = frameSizing == .pending
 
             var duration: TimeInterval = 0
 
@@ -967,7 +969,7 @@ extension AnimatedImageView {
         }
 
         // Decodes the buffered frames again for a larger `frameSizing`, from the current frame in playing order.
-        private func reloadPreparedFrames(version: Int, fillsBuffer: Bool) {
+        private func reloadPreparedFrames(version: Int) {
             // Frames set up after the size changed are already decoded for it.
             guard animatedFrames.count == frameCount, version != setupFrameSizingVersion else { return }
 
@@ -995,7 +997,7 @@ extension AnimatedImageView {
                 guard isCurrentFrameSizing(version: version) else { return }
                 // Purged frames stay purged. The buffer is only filled if nothing was decoded before.
                 guard let frame = animatedFrames[index],
-                      !frame.isPlaceholder || fillsBuffer,
+                      !frame.isPlaceholder || needsInitialFrameLoading,
                       let image = loadFrame(at: index)
                 else {
                     continue
@@ -1015,6 +1017,7 @@ extension AnimatedImageView {
                     }
                 }
             }
+            needsInitialFrameLoading = false
         }
 
         private var currentFrameSizingVersion: Int {
@@ -1030,6 +1033,7 @@ extension AnimatedImageView {
         }
 
         private func loadFrame(at index: Int) -> KFCrossPlatformImage? {
+            guard !isCancelled else { return nil }
             let maxSize: CGSize?
             switch frameSizing ?? .original {
             case .pending:

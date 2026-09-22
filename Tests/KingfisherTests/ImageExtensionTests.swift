@@ -805,6 +805,54 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
         XCTAssertFalse(maxSizes.value.contains(nil), "Frames should not be decoded at the original size")
     }
 
+    func testAnimatorFillsInitialBufferAfterConsecutiveLayoutChanges() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(
+            data: makeAnimatedImageData(size: CGSize(width: 100, height: 100), frameCount: 2),
+            imageSize: CGSize(width: 100, height: 100),
+            maxSizes: maxSizes,
+            size: .zero,
+            queue: queue
+        )
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        queue.suspend()
+        animator.updateTargetSize(CGSize(width: 40, height: 40), contentMode: fillContentMode)
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.resume()
+        queue.sync { }
+
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(animator.frame(at: 1)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(maxSizes.value.count, 2)
+    }
+
+    func testCancelledAnimatorStopsAnActivePreloadBatch() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let cancellingAnimator = LockIsolated<AnimatedImageView.Animator?>(nil)
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(
+            maxSizes: maxSizes,
+            size: CGSize(width: 40, height: 40),
+            queue: queue,
+            framePreloadCount: 3,
+            onFrame: { cancellingAnimator.value?.cancel() }
+        )
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        let initialDecodeCount = maxSizes.value.count
+        cancellingAnimator.setValue(animator)
+        defer { cancellingAnimator.setValue(nil) }
+
+        animator.currentFrameIndex = 4
+        queue.sync { }
+
+        XCTAssertEqual(maxSizes.value.count - initialDecodeCount, 1,
+                       "Only the frame in flight should finish after cancellation")
+    }
+
     func testAnimatorWithoutPrescalingDecodesOriginalFrames() {
         let maxSizes = LockIsolated<[CGSize?]>([])
         let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
@@ -865,6 +913,7 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
         maxSizes: LockIsolated<[CGSize?]>,
         size: CGSize,
         queue: DispatchQueue,
+        framePreloadCount: Int = 1,
         onFrame: (@Sendable () -> Void)? = nil
     ) -> AnimatedImageView.Animator {
         let source = CGImageSourceCreateWithData(data as CFData, nil)!
@@ -879,7 +928,7 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
             size: size,
             imageSize: imageSize,
             imageScale: 1,
-            framePreloadCount: 1,
+            framePreloadCount: framePreloadCount,
             repeatCount: .infinite,
             preloadQueue: queue
         )
