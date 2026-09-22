@@ -255,9 +255,7 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     
     private func downloadAndCache(_ source: Source, retryContext: RetryContext? = nil) {
         guard !stopped else {
-            failedSources.append(source)
-            reportProgress()
-            reportCompletionOrStartNext()
+            self.append(failed: source)
             return
         }
 
@@ -267,27 +265,16 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         tasks[taskIdentifier] = cancellation
 
         let retryStrategy = optionsInfo.retryStrategy
-
-        @Sendable func completeWithSuccess() {
-            self.completedSources.append(source)
-            self.reportProgress()
-            self.reportCompletionOrStartNext()
-        }
-
-        @Sendable func completeWithFailure() {
-            self.append(failed: source)
-        }
-
         let downloadTaskCompletionHandler: (@Sendable (Result<RetrieveImageResult, KingfisherError>) -> Void) = {
             result in
 
             self.tasks.removeValue(forKey: taskIdentifier)
             switch result {
             case .success:
-                completeWithSuccess()
+                self.append(done: source)
             case .failure(let error):
                 guard let retryStrategy else {
-                    completeWithFailure()
+                    self.append(failed: source)
                     return
                 }
 
@@ -298,18 +285,14 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
                         context.userInfo = userInfo
                         self.prefetchQueue.async {
                             guard !self.stopped else {
-                                completeWithFailure()
+                                self.append(failed: source)
                                 return
                             }
                             self.downloadAndCache(source, retryContext: context)
                         }
                     case .stop:
                         self.prefetchQueue.async {
-                            guard !self.stopped else {
-                                completeWithFailure()
-                                return
-                            }
-                            completeWithFailure()
+                            self.append(failed: source)
                         }
                     }
                 }
@@ -329,6 +312,12 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         }
     }
     
+    private func append(done source: Source) {
+        completedSources.append(source)
+        reportProgress()
+        reportCompletionOrStartNext()
+    }
+
     private func append(cached source: Source) {
         skippedSources.append(source)
         reportProgress()
