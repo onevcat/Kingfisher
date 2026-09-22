@@ -531,16 +531,41 @@ class ImageLoadingProgressSideEffect: DataReceivingSideEffect, @unchecked Sendab
     }
 
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+        report(received: { Int64(task.mutableDataCount) },
+               total: { task.task.response?.expectedContentLength ?? -1 })
+    }
+
+    /// Both sizes are read on the main queue, as `onDataReceived` always did.
+    func report(received: @escaping @Sendable () -> Int64, total: @escaping @Sendable () -> Int64) {
         DispatchQueue.main.async {
             guard self.onShouldApply() else { return }
-            guard let expectedContentLength = task.task.response?.expectedContentLength,
-                      expectedContentLength != -1 else
-            {
-                return
-            }
+            let expectedContentLength = total()
+            guard expectedContentLength != -1 else { return }
+            self.block(received(), expectedContentLength)
+        }
+    }
+}
 
-            let dataLength = Int64(task.mutableDataCount)
-            self.block(dataLength, expectedContentLength)
+extension KingfisherParsedOptionsInfo {
+    /// Reports download progress to the progress blocks of this request.
+    ///
+    /// An ``ImageDownloader`` subclass that overrides `downloadImage(with:options:completionHandler:)` to replace
+    /// the URLSession transport never goes through the URLSession delegate that normally reports progress. Call
+    /// this as data arrives so that a `progressBlock` passed to ``KingfisherManager``, the image view extensions
+    /// or ``KFImage``'s `onProgress` still receives updates.
+    ///
+    /// It can be called from any thread. The blocks run on the main queue, and are skipped in the same cases as
+    /// for a URLSession download, such as once an image view extension has started loading another image into
+    /// the same view. A `totalSize` of `-1` (unknown length) is not reported. Only progress blocks are fed: ``KingfisherOptionsInfoItem/progressiveJPEG(_:)`` needs the
+    /// received data itself and gets no updates from this method.
+    ///
+    /// - Parameters:
+    ///   - receivedSize: The number of bytes received so far.
+    ///   - totalSize: The expected number of bytes, or `-1` if it is unknown.
+    public func reportDownloadProgress(receivedSize: Int64, totalSize: Int64) {
+        onDataReceived?.forEach {
+            ($0 as? ImageLoadingProgressSideEffect)?
+                .report(received: { receivedSize }, total: { totalSize })
         }
     }
 }

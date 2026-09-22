@@ -544,6 +544,9 @@ open class ImageDownloader: @unchecked Sendable {
     // MARK: Downloading Task
     /// Downloads an image with a URL and options.
     ///
+    /// An override that replaces the URLSession transport reports progress with
+    /// ``KingfisherParsedOptionsInfo/reportDownloadProgress(receivedSize:totalSize:)``.
+    ///
     /// - Parameters:
     ///   - url: The target URL.
     ///   - options: The options that can control download behavior. See ``KingfisherOptionsInfo``.
