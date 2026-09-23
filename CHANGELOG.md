@@ -2,6 +2,23 @@
 
 -----
 
+## [8.13.0 - Mirror Mirror](https://github.com/onevcat/Kingfisher/releases/tag/8.13.0) (2026-09-23)
+
+#### Add
+* Add `FlippingImageProcessor` and `image.kf.flipped(horizontal:vertical:)` to mirror images horizontally, vertically, or both. [#2578](https://github.com/onevcat/Kingfisher/pull/2578) @anandghegde
+* Add a public `DownloadTask.init(cancelling:)` initializer, so a custom `ImageDownloader` subclass can return a cancellable task for its own transport. `KingfisherError.isTaskCancelled` now also matches `.asyncTaskContextCancelled`. [#2576](https://github.com/onevcat/Kingfisher/pull/2576) @Ceylo
+* Add `KingfisherParsedOptionsInfo.reportDownloadProgress(receivedSize:totalSize:)`, so a custom transport can report download progress to `progressBlock` and `KFImage.onProgress`. [#2579](https://github.com/onevcat/Kingfisher/pull/2579) @Ceylo
+* Support building with Xcode 27. The minimum toolchain is now Xcode 26.0 / Swift 6.2, and the minimum deployment targets are now iOS 15, macOS 12, tvOS 15, watchOS 9 and visionOS 1. [#2581](https://github.com/onevcat/Kingfisher/pull/2581) @onevcat
+
+#### Fix
+* Downsample animated frames in `AnimatedImageView` with the ImageIO thumbnail API. Frames are now sized for the view and its content mode instead of being decoded at native size. This reduces memory usage for large GIFs in small views. [#2585](https://github.com/onevcat/Kingfisher/pull/2585) [#2574](https://github.com/onevcat/Kingfisher/pull/2574) @omarH2007
+* Avoid repeated full-size decoding when a processed image misses the cache but its original image is on disk. Overlapping requests now share the decoding work. [#2573](https://github.com/onevcat/Kingfisher/pull/2573) [#2572](https://github.com/onevcat/Kingfisher/pull/2572) @oahhariri
+* {"Fix several prefetch issues"=>"cancellation for duplicate cache keys and pending async request modifiers, premature completion during retry decisions, missing completion when a disk entry disappears between cache probes, and the `onlyFromCache` fallback. Joining a shared download no longer scans priorities in quadratic time. [#2581](https://github.com/onevcat/Kingfisher/pull/2581) [#2583](https://github.com/onevcat/Kingfisher/pull/2583) @onevcat"}
+* Share input decoding across built-in image processors to remove duplicated code. [#2584](https://github.com/onevcat/Kingfisher/pull/2584) @onevcat
+* Clarify the cancellation and processing requirements for custom downloaders, and fix the parameter documentation of `retrieveImageFromCache`. [#2577](https://github.com/onevcat/Kingfisher/pull/2577) [#2580](https://github.com/onevcat/Kingfisher/pull/2580) @onevcat @hxperl
+
+---
+
 ## [8.12.0 - Let It Go](https://github.com/onevcat/Kingfisher/releases/tag/8.12.0) (2026-08-26)
 
 #### Add
