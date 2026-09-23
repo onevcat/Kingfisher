@@ -537,6 +537,34 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
         }
     }
 
+    func testDownsampledFramesMatchFullFrameRendering() throws {
+        let source = try XCTUnwrap(CGImageSourceCreateWithData(testImageGIFData as CFData, nil))
+        let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
+
+        func pixels(of image: CGImage, width: Int, height: Int) throws -> [UInt8] {
+            var bytes = [UInt8](repeating: 0, count: width * height * 4)
+            try bytes.withUnsafeMutableBytes { buffer in
+                let context = try XCTUnwrap(CGContext(
+                    data: buffer.baseAddress, width: width, height: height,
+                    bitsPerComponent: 8, bytesPerRow: width * 4,
+                    space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+                ))
+                context.interpolationQuality = .high
+                context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+            }
+            return bytes
+        }
+
+        for index in 0..<frameSource.frameCount {
+            let original = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, index, nil))
+            let thumbnail = try XCTUnwrap(frameSource.frame(at: index, maxSize: CGSize(width: 40, height: 40)))
+            let expected = try pixels(of: original, width: thumbnail.width, height: thumbnail.height)
+            let actual = try pixels(of: thumbnail, width: thumbnail.width, height: thumbnail.height)
+            XCTAssertTrue(actual == expected, "Frame \(index) should preserve the composited pixels")
+        }
+    }
+
     func testFrameSourceKeepsOriginalSizeWhenMaxSizeDoesNotLimit() {
         let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
         let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
