@@ -128,7 +128,7 @@ class KFImageRendererTests: XCTestCase {
                             .onAppear {
                                 measuredSize = proxy.size
                             }
-                            .onChange(of: proxy.size) { newSize in
+                            .onChange(of: proxy.size) { _, newSize in
                                 measuredSize = newSize
                             }
                     }

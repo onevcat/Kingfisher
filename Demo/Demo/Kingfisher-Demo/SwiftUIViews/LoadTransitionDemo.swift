@@ -25,7 +25,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct LoadTransitionDemo: View {
     @State private var imageIndex = 0
     @State private var currentTransition: TransitionType = .none
@@ -175,7 +174,6 @@ struct LoadTransitionDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct LoadTransitionDemo_Previews: PreviewProvider {
     static var previews: some View {
         LoadTransitionDemo()

@@ -27,7 +27,6 @@
 import Kingfisher
 import SwiftUI
 
-@available(iOS 14.0, *)
 struct ProgressiveJPEGDemo: View {
     
     @State private var totalSize: Int64?
@@ -48,7 +47,6 @@ struct ProgressiveJPEGDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct ProgressiveJPEGDemo_Previews : PreviewProvider {
     static var previews: some View {
         ProgressiveJPEGDemo()

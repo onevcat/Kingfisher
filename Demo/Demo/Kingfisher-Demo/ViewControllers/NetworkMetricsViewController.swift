@@ -71,19 +71,20 @@ class NetworkMetricsViewController: UIViewController {
     }
     
     private func setupButton(_ button: UIButton, title: String, icon: String, color: UIColor, action: Selector) {
-        button.setTitle(title, for: .normal)
-        button.setImage(UIImage(systemName: icon), for: .normal)
-        button.backgroundColor = color
-        button.setTitleColor(.white, for: .normal)
-        button.tintColor = .white
-        button.layer.cornerRadius = 8
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = title
+        configuration.image = UIImage(systemName: icon)
+        configuration.baseBackgroundColor = color
+        configuration.baseForegroundColor = .white
+        configuration.imagePadding = 16
+        configuration.background.cornerRadius = 8
+        configuration.attributedTitle = AttributedString(NSAttributedString(
+            string: title,
+            attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        ))
+        button.configuration = configuration
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: action, for: .touchUpInside)
-        
-        // Configure image and title positioning
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 0)
-        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
     }
     
     private func setupStackViews() {

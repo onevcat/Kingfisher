@@ -1050,21 +1050,17 @@ extension AnimatedImageView {
             #if os(macOS)
             return KFCrossPlatformImage(cgImage: cgImage, size: .zero)
             #else
-            if #available(iOS 15, tvOS 15, *) {
-                // From iOS 15, a plain image loading causes iOS calling `-[_UIImageCGImageContent initWithCGImage:scale:]`
-                // in ImageIO, which holds the image ref on the creating thread.
-                // To get a workaround, create another image ref and use that to create the final image. This leads to
-                // some performance loss, but there is little we can do.
-                // https://github.com/onevcat/Kingfisher/issues/1844
-                // https://github.com/onevcat/Kingfisher/pulls/2194
-                guard let unretainedImage = CGImage.create(ref: cgImage) else {
-                    return KFCrossPlatformImage(cgImage: cgImage)
-                }
-                
-                return KFCrossPlatformImage(cgImage: unretainedImage).preparingForDisplay()
-            } else {
+            // From iOS 15, a plain image loading causes iOS calling `-[_UIImageCGImageContent initWithCGImage:scale:]`
+            // in ImageIO, which holds the image ref on the creating thread.
+            // To get a workaround, create another image ref and use that to create the final image. This leads to
+            // some performance loss, but there is little we can do.
+            // https://github.com/onevcat/Kingfisher/issues/1844
+            // https://github.com/onevcat/Kingfisher/pulls/2194
+            guard let unretainedImage = CGImage.create(ref: cgImage) else {
                 return KFCrossPlatformImage(cgImage: cgImage)
             }
+
+            return KFCrossPlatformImage(cgImage: unretainedImage).preparingForDisplay()
             #endif
         }
         

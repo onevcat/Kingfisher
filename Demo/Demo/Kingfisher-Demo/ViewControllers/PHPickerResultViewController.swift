@@ -33,21 +33,9 @@ class PHPickerResultViewController: UIViewController {
     @IBOutlet var imageView: UIImageView!
 
     @IBAction func onTapButton() {
-        if #available(iOS 14.0, *) {
-            presentPickerViewController()
-        } else {
-            presentAlertController()
-        }
+        presentPickerViewController()
     }
 
-    private func presentAlertController() {
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        let alertController = UIAlertController(title: "Warning!", message: "Only supports iOS 14+", preferredStyle: .alert)
-        alertController.addAction(cancelAction)
-        present(alertController, animated: true)
-    }
-
-    @available(iOS 14.0, *)
     private func presentPickerViewController() {
         var configuration = PHPickerConfiguration(photoLibrary: .shared())
         configuration.filter = .images
@@ -58,7 +46,6 @@ class PHPickerResultViewController: UIViewController {
     }
 }
 
-@available(iOS 14, *)
 extension PHPickerResultViewController: PHPickerViewControllerDelegate {
     public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)

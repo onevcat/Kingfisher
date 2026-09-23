@@ -474,6 +474,35 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 #endif
     }
     
+    // MARK: Flip
+
+    /// Create an image from the `base` image by flipping it horizontally and/or vertically.
+    ///
+    /// - Parameters:
+    ///   - horizontal: Whether to flip the image horizontally, mirroring its left and right sides.
+    ///   - vertical: Whether to flip the image vertically, mirroring its top and bottom sides.
+    /// - Returns: The flipped image. If both `horizontal` and `vertical` are `false`, the `base` image is returned.
+    ///
+    /// > This method is only applicable to CG-based images. The current image scale is preserved.
+    /// > For any non-CG-based image, the `base` image itself is returned.
+    public func flipped(horizontal: Bool, vertical: Bool) -> KFCrossPlatformImage {
+        guard horizontal || vertical else {
+            return base
+        }
+        guard let _ = cgImage else {
+            assertionFailure("[Kingfisher] Flipping only works for CG-based image.")
+            return base
+        }
+
+        let rect = CGRect(origin: .zero, size: size)
+        return draw(to: rect.size, inverting: false) { context in
+            context.translateBy(x: horizontal ? rect.width : 0, y: vertical ? rect.height : 0)
+            context.scaleBy(x: horizontal ? -1 : 1, y: vertical ? -1 : 1)
+            base.draw(in: rect)
+            return false
+        }
+    }
+
     // MARK: Color Control
     
     /// Create an image from `self` with color control adjustments.
@@ -554,22 +583,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         if images != nil { return base }
         #endif
         
-        // For older system versions, revert to the drawing for decoding.
         guard let imageRef = cgImage else {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
             return base
         }
         
         #if !os(watchOS) && !os(macOS)
-        // In newer system versions, use `preparingForDisplay`.
-        if #available(iOS 15.0, tvOS 15.0, visionOS 1.0, *) {
-            if base.scale == scale, let image = base.preparingForDisplay() {
-                return image
-            }
-            let scaledImage = KFCrossPlatformImage(cgImage: imageRef, scale: scale, orientation: base.imageOrientation)
-            if let image = scaledImage.preparingForDisplay() {
-                return image
-            }
+        if base.scale == scale, let image = base.preparingForDisplay() {
+            return image
+        }
+        let scaledImage = KFCrossPlatformImage(cgImage: imageRef, scale: scale, orientation: base.imageOrientation)
+        if let image = scaledImage.preparingForDisplay() {
+            return image
         }
         #endif
 

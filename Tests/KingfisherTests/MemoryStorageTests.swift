@@ -33,11 +33,7 @@ extension Int {
     }
 }
 
-#if compiler(>=6)
 extension Int: @retroactive CacheCostCalculable { }
-#else
-extension Int: CacheCostCalculable { }
-#endif
 
 class MemoryStorageTests: XCTestCase {
 

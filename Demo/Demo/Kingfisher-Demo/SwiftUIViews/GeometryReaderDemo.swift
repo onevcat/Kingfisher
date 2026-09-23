@@ -27,7 +27,6 @@
 import SwiftUI
 import Kingfisher
 
-@available(iOS 14.0, *)
 struct GeometryReaderDemo: View {
     var body: some View {
         GeometryReader { geo in
@@ -43,7 +42,6 @@ struct GeometryReaderDemo: View {
     }
 }
 
-@available(iOS 14.0, *)
 struct GeometryReaderDemo_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReaderDemo()

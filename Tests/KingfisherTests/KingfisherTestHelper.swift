@@ -202,6 +202,76 @@ extension KFCrossPlatformImage {
         return context.makeImage().flatMap { KFCrossPlatformImage(cgImage: $0) }
         #endif
     }
+
+    // An image of 2x2 quadrants, each `blockSize` pixels wide, colored red (top-left), green (top-right),
+    // blue (bottom-left) and white (bottom-right).
+    static func quadrants(blockSize: Int = 1, scale: CGFloat = 1) -> KFCrossPlatformImage {
+        let colors: [[UInt8]] = [[255, 0, 0, 255], [0, 255, 0, 255], [0, 0, 255, 255], [255, 255, 255, 255]]
+        let width = blockSize * 2
+        let rows = (0..<width).map { y in
+            (0..<width).map { x in colors[(y / blockSize) * 2 + x / blockSize] }
+        }
+        return fromPixels(rows, scale: scale)
+    }
+
+    // An image built from rows of RGBA pixels, with the first row at the top.
+    static func fromPixels(_ rows: [[[UInt8]]], scale: CGFloat = 1) -> KFCrossPlatformImage {
+        let height = rows.count
+        let width = rows[0].count
+        let bytes = rows.flatMap { $0.flatMap { $0 } }
+        let cgImage = CGImage(
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bitsPerPixel: 32,
+            bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
+            provider: CGDataProvider(data: Data(bytes) as CFData)!,
+            decode: nil,
+            shouldInterpolate: false,
+            intent: .defaultIntent
+        )!
+        #if os(macOS)
+        // Load from PNG data, so the image representation reports its real pixel size on Retina displays.
+        let pngData = KFCrossPlatformImage(cgImage: cgImage, size: .zero).kf.pngRepresentation()!
+        return KFCrossPlatformImage(data: pngData)!
+        #else
+        return KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: .up)
+        #endif
+    }
+
+    // RGBA components of every pixel, as rows from top to bottom.
+    func pixelRows() -> [[[UInt8]]]? {
+        guard let cgImage = kf.cgImage else { return nil }
+        return (0..<cgImage.height).map { y in
+            (0..<cgImage.width).map { x in rgbaPixel(x: x, y: y)! }
+        }
+    }
+
+    // RGBA components of the pixel at the given pixel position, with (0, 0) at the top-left corner.
+    func rgbaPixel(x: Int, y: Int) -> [UInt8]? {
+        guard let cgImage = kf.cgImage else { return nil }
+        var bytes = [UInt8](repeating: 0, count: cgImage.width * cgImage.height * 4)
+        let drawn: Bool = bytes.withUnsafeMutableBytes { buffer in
+            guard let context = CGContext(
+                data: buffer.baseAddress,
+                width: cgImage.width,
+                height: cgImage.height,
+                bitsPerComponent: 8,
+                bytesPerRow: cgImage.width * 4,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else {
+                return false
+            }
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+            return true
+        }
+        guard drawn else { return nil }
+        let offset = (y * cgImage.width + x) * 4
+        return Array(bytes[offset..<offset + 4])
+    }
 }
 
 #if os(iOS) || os(tvOS) || os(visionOS)

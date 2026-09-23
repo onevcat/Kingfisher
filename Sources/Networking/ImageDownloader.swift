@@ -85,6 +85,25 @@ public final class DownloadTask: @unchecked Sendable {
         _providerTask = providerTask
     }
 
+    /// Creates a task backed by a Swift concurrency `Task`, for an ``ImageDownloader``
+    /// subclass that performs its own transport.
+    ///
+    /// An override of ``ImageDownloader/downloadImage(with:options:completionHandler:)``
+    /// that does not call `super` still has to return a task. The one created here is
+    /// ``isInitialized``, so ``KingfisherManager`` hands it to the caller, and calling
+    /// ``cancel()`` on it cancels `work`.
+    ///
+    /// Cancellation is cooperative: `work` must observe cancellation and call the completion handler
+    /// on `options.callbackQueue` with ``KingfisherError/RequestErrorReason/asyncTaskContextCancelled``.
+    /// This prevents alternative sources and retries by built-in strategies. Custom retry strategies
+    /// must check ``KingfisherError/isTaskCancelled`` themselves.
+    ///
+    /// This task is not registered with ``ImageDownloader/cancelAll()`` or ``ImageDownloader/cancel(url:)``.
+    /// Keep the returned task and call ``cancel()`` to cancel its work.
+    public convenience init(cancelling work: Task<Void, Never>) {
+        self.init(providerTask: work)
+    }
+
     private var _linkedTask: DownloadTask? = nil
 
     private var _providerTask: Task<Void, Never>? = nil
@@ -527,6 +546,9 @@ open class ImageDownloader: @unchecked Sendable {
 
     // MARK: Downloading Task
     /// Downloads an image with a URL and options.
+    ///
+    /// An override that replaces the URLSession transport reports progress with
+    /// ``KingfisherParsedOptionsInfo/reportDownloadProgress(receivedSize:totalSize:)``.
     ///
     /// - Parameters:
     ///   - url: The target URL.

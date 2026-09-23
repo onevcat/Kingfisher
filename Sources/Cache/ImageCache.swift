@@ -1006,11 +1006,7 @@ open class ImageCache: @unchecked Sendable {
             Task { @MainActor in
                 guard let bgTask = await taskState.takeValidValueAndInvalidate() else { return }
                 guard let sharedApplication = KingfisherWrapper<UIApplication>.shared else { return }
-                #if compiler(>=6)
                 sharedApplication.endBackgroundTask(bgTask)
-                #else
-                await sharedApplication.endBackgroundTask(bgTask)
-                #endif
             }
         }
 

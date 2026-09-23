@@ -25,6 +25,23 @@ downloader.downloadImage(with: url) { result in
 }
 ```
 
+### Use a custom transport
+
+An ``ImageDownloader`` subclass can override `downloadImage(with:options:completionHandler:)` and return
+``DownloadTask/init(cancelling:)`` for its Swift `Task`. The override is responsible for processing the data
+and delivering the result on `options.callbackQueue`.
+
+Use `options.processor.process(item: .data(data), options: options)` to create the result image, and report
+`.processorError(reason: .processingFailed(processor: options.processor, item: .data(data)))` if it returns `nil`.
+Return the processed image and the original data in ``ImageLoadingResult``. The manager caches this image under
+the processor's identifier; it does not apply the processor again to a successful download result.
+
+Report `.requestError(reason: .asyncTaskContextCancelled)` only for cancellation. Preserve other failures,
+for example as `.responseError(reason: .URLSessionError(error: error))` for a URLSession transport error.
+Calling `cancel()` only signals the Swift task; the override must observe cancellation and complete the request.
+Downloader-wide `cancelAll()` and `cancel(url:)` do not track these tasks. Custom retry strategies must check
+``KingfisherError/isTaskCancelled`` before retrying.
+
 ### Modify a request before sending
 
 When managing access to your image resources with permission controls, you can customize the request using a

@@ -29,6 +29,70 @@ import XCTest
 
 class ImageProcessorTests: XCTestCase {
 
+    private var imageProcessors: [any ImageProcessor] {
+        var processors: [any ImageProcessor] = [
+            RoundCornerImageProcessor(cornerRadius: 5),
+            BorderImageProcessor(border: Border(color: .red, lineWidth: 2)),
+            ResizingImageProcessor(referenceSize: CGSize(width: 20, height: 30), mode: .aspectFit),
+            BlurImageProcessor(blurRadius: 2),
+            OverlayImageProcessor(overlay: .blue),
+            TintImageProcessor(tint: .red),
+            ColorControlsProcessor(brightness: 0.1, contrast: 1.2, saturation: 0.5, inputEV: 0.2),
+            CroppingImageProcessor(size: CGSize(width: 20, height: 30))
+        ]
+        #if os(macOS)
+        processors.append(CompositingImageProcessor(compositingOperation: .sourceOver))
+        #else
+        processors.append(BlendImageProcessor(blendMode: .normal))
+        #endif
+        return processors
+    }
+
+    func testImageProcessorsDecodeDataWithOptions() throws {
+        let optionSets: [KingfisherOptionsInfo] = [
+            [], [.scaleFactor(2)], [.scaleFactor(2), .onlyLoadFirstFrame], [.preloadAllAnimationData]
+        ]
+        for data in [testImageData, testImageGIFData] {
+            for optionSet in optionSets {
+                let options = KingfisherParsedOptionsInfo(optionSet)
+                for processor in imageProcessors {
+                    let decoded = try XCTUnwrap(DefaultImageProcessor.default.process(item: .data(data), options: options))
+                    let expected = try XCTUnwrap(processor.process(item: .image(decoded), options: options))
+                    let actual = try XCTUnwrap(processor.process(item: .data(data), options: options))
+                    XCTAssertEqual(actual.kf.scale, expected.kf.scale, processor.identifier)
+                    XCTAssertTrue(actual.renderEqual(to: expected), "\(processor.identifier), \(data.kf.imageFormat), \(optionSet)")
+                }
+            }
+        }
+    }
+
+    func testImageProcessorsRejectInvalidData() {
+        let options = KingfisherParsedOptionsInfo(nil)
+        for processor in imageProcessors {
+            XCTAssertNil(processor.process(item: .data(Data()), options: options), processor.identifier)
+        }
+    }
+
+    func testBorderProcessorPreservesInputImageScale() throws {
+        let options = KingfisherParsedOptionsInfo([.scaleFactor(2)])
+        let processor = BorderImageProcessor(border: Border())
+        let result = try XCTUnwrap(processor.process(item: .image(testImage), options: options))
+
+        XCTAssertEqual(result.size, testImage.size)
+        XCTAssertEqual(result.kf.scale, testImage.kf.scale)
+    }
+
+    func testRoundCornerProcessorUsesInputSizeBeforeScaling() throws {
+        let options = KingfisherParsedOptionsInfo([.scaleFactor(2)])
+        let processor = RoundCornerImageProcessor(cornerRadius: 5)
+        let result = try XCTUnwrap(processor.process(item: .image(testImage), options: options))
+
+        XCTAssertEqual(result.size, testImage.size)
+        #if !os(macOS)
+        XCTAssertEqual(result.kf.scale, 2)
+        #endif
+    }
+
     // Issue 1125. https://github.com/onevcat/Kingfisher/issues/1125
     func testDownsamplingSizes() {
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
@@ -79,5 +143,36 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(rgbaBlackWhite.g, 0.3, accuracy: 0.01)
         XCTAssertEqual(rgbaBlackWhite.b, 0.3, accuracy: 0.01)
         XCTAssertEqual(rgbaBlackWhite.a, 1.0, accuracy: 0.01)
+    }
+
+    func testFlippingProcessorIdentifier() {
+        let identifiers = [
+            FlippingImageProcessor().identifier,
+            FlippingImageProcessor(horizontal: true).identifier,
+            FlippingImageProcessor(vertical: true).identifier,
+            FlippingImageProcessor(horizontal: true, vertical: true).identifier
+        ]
+        XCTAssertEqual(Set(identifiers).count, identifiers.count)
+        XCTAssertEqual(
+            FlippingImageProcessor(horizontal: true).identifier,
+            FlippingImageProcessor(horizontal: true, vertical: false).identifier
+        )
+    }
+
+    func testFlippingProcessor() {
+        let options = KingfisherParsedOptionsInfo(nil)
+        let image = KFCrossPlatformImage.quadrants()
+
+        let flipped = FlippingImageProcessor(horizontal: true).process(item: .image(image), options: options)
+        XCTAssertEqual(flipped?.rgbaPixel(x: 0, y: 0), [0, 255, 0, 255])
+        XCTAssertEqual(flipped?.rgbaPixel(x: 1, y: 1), [0, 0, 255, 255])
+
+        let data = image.kf.pngRepresentation()!
+        let flippedFromData = FlippingImageProcessor(vertical: true).process(item: .data(data), options: options)
+        XCTAssertEqual(flippedFromData?.rgbaPixel(x: 0, y: 0), [0, 0, 255, 255])
+        XCTAssertEqual(flippedFromData?.rgbaPixel(x: 1, y: 1), [0, 255, 0, 255])
+
+        let unchanged = FlippingImageProcessor().process(item: .image(image), options: options)
+        XCTAssertTrue(unchanged === image)
     }
 }

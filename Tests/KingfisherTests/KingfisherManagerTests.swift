@@ -2751,3 +2751,184 @@ private final class OverridingImageCache: ImageCache, @unchecked Sendable {
         callbackQueue.execute { completionHandler?(.success(.disk(testImage))) }
     }
 }
+
+extension KingfisherManagerTests {
+    func testDownloaderReturningTaskBackedDownloadTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", holding: [])
+
+        let task = manager.retrieveImage(with: url, options: [.downloader(downloader)]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value?.cacheType, CacheType.none)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(task?.isInitialized, true)
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testCancellingTaskBackedDownloadTaskCancelsWork() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", holding: [url])
+
+        let task = manager.retrieveImage(with: url, options: [.downloader(downloader)]) { result in
+            XCTAssertNil(result.value)
+            XCTAssertTrue(downloader.workCancelled.value)
+            exp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        task?.cancel()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testCancellingTaskBackedDownloadTaskSkipsAlternativeSources() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let alternativeURL = testURLs[1]
+        let downloader = TaskBackedImageDownloader(name: "test.manager.task-backed", holding: [url])
+
+        let task = manager.retrieveImage(
+            with: .network(url),
+            options: [.downloader(downloader), .alternativeSources([.network(alternativeURL)])]
+        ) { result in
+            guard case .requestError(reason: .asyncTaskContextCancelled)? = result.error else {
+                XCTFail("expected .asyncTaskContextCancelled, got: \(result)")
+                exp.fulfill()
+                return
+            }
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false)
+            XCTAssertEqual(downloader.requestedURLs.value, [url])
+            exp.fulfill()
+        }
+
+        task?.cancel()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testTaskBackedDownloaderReportsProgress() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(
+            name: "test.manager.task-backed", holding: [], reportingProgress: [(10, 40), (40, 40)])
+        let reported = LockIsolated<[[Int64]]>([])
+
+        manager.retrieveImage(
+            with: url,
+            options: [.downloader(downloader)],
+            progressBlock: { receivedSize, totalSize in
+                XCTAssertTrue(Thread.isMainThread)
+                reported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(reported.value, [[10, 40], [40, 40]])
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testTaskBackedDownloaderProgressWithUnknownTotalSizeIsNotReported() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let downloader = TaskBackedImageDownloader(
+            name: "test.manager.task-backed", holding: [], reportingProgress: [(10, -1), (20, 40)])
+        let reported = LockIsolated<[[Int64]]>([])
+
+        manager.retrieveImage(
+            with: url,
+            options: [.downloader(downloader)],
+            progressBlock: { receivedSize, totalSize in
+                reported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(reported.value, [[20, 40]])
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testTaskBackedDownloaderProgressSkipsReplacedImageViewTask() {
+        let replacedCompleted = expectation(description: "replaced task completed")
+        let currentCompleted = expectation(description: "current task completed")
+        let imageView = KFCrossPlatformImageView()
+        let downloader = TaskBackedImageDownloader(
+            name: "test.manager.task-backed", holding: [], reportingProgress: [(40, 40)])
+        let replacedReported = LockIsolated<[[Int64]]>([])
+        let currentReported = LockIsolated<[[Int64]]>([])
+
+        imageView.kf.setImage(
+            with: testURLs[0],
+            options: [.downloader(downloader), .forceRefresh],
+            progressBlock: { receivedSize, totalSize in
+                replacedReported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { _ in
+            replacedCompleted.fulfill()
+        }
+        // Replaces the first task before its progress, which is only applied on the main queue, can run.
+        imageView.kf.setImage(
+            with: testURLs[1],
+            options: [.downloader(downloader), .forceRefresh],
+            progressBlock: { receivedSize, totalSize in
+                currentReported.withValue { $0.append([receivedSize, totalSize]) }
+            }
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            currentCompleted.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertEqual(replacedReported.value, [])
+        XCTAssertEqual(currentReported.value, [[40, 40]])
+    }
+}
+
+private final class TaskBackedImageDownloader: ImageDownloader, @unchecked Sendable {
+    let workCancelled = LockIsolated(false)
+    let requestedURLs = LockIsolated<[URL]>([])
+    private let heldURLs: Set<URL>
+    private let progress: [(receivedSize: Int64, totalSize: Int64)]
+
+    /// Downloads of `heldURLs` wait until cancelled; any other URL succeeds immediately.
+    /// Every download reports `progress` through the options before it completes.
+    init(name: String, holding heldURLs: Set<URL>, reportingProgress progress: [(Int64, Int64)] = []) {
+        self.heldURLs = heldURLs
+        self.progress = progress
+        super.init(name: name)
+    }
+
+    override func downloadImage(
+        with url: URL,
+        options: KingfisherParsedOptionsInfo,
+        completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil
+    ) -> DownloadTask {
+        requestedURLs.withValue { $0.append(url) }
+        let waitsForCancellation = heldURLs.contains(url)
+        let workCancelled = self.workCancelled
+        let callbackQueue = options.callbackQueue
+        let progress = self.progress
+        let work = Task {
+            if waitsForCancellation {
+                try? await Task.sleep(nanoseconds: 10 * NSEC_PER_SEC)
+            }
+            for (receivedSize, totalSize) in progress {
+                options.reportDownloadProgress(receivedSize: receivedSize, totalSize: totalSize)
+            }
+            let result: Result<ImageLoadingResult, KingfisherError>
+            if Task.isCancelled {
+                workCancelled.setValue(true)
+                result = .failure(.requestError(reason: .asyncTaskContextCancelled))
+            } else {
+                result = .success(ImageLoadingResult(image: testImage, url: url, originalData: testImageData))
+            }
+            callbackQueue.execute { completionHandler?(result) }
+        }
+        return DownloadTask(cancelling: work)
+    }
+}
