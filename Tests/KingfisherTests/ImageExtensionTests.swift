@@ -519,6 +519,695 @@ final class AnimatedImageViewAnimatorTests: XCTestCase {
 
         XCTAssertNil(animator.frame(at: 0))
     }
+
+    func testFrameSourceDownsamplesToFitMaxSize() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
+
+        let original = frameSource.frame(at: 0, maxSize: nil)
+        XCTAssertEqual(original?.width, 365)
+        XCTAssertEqual(original?.height, 360)
+
+        for maxSize in [CGSize(width: 40, height: 40), CGSize(width: 100, height: 20), CGSize(width: 20, height: 100)] {
+            let frame = frameSource.frame(at: 0, maxSize: maxSize)
+            XCTAssertNotNil(frame, "\(maxSize)")
+            XCTAssertLessThanOrEqual(CGFloat(frame?.width ?? .max), maxSize.width, "\(maxSize)")
+            XCTAssertLessThanOrEqual(CGFloat(frame?.height ?? .max), maxSize.height, "\(maxSize)")
+            XCTAssertGreaterThanOrEqual(CGFloat(frame?.height ?? 0), min(maxSize.width, maxSize.height) - 1, "\(maxSize)")
+        }
+    }
+
+    func testDownsampledFramesMatchFullFrameRendering() throws {
+        let source = try XCTUnwrap(CGImageSourceCreateWithData(testImageGIFData as CFData, nil))
+        let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
+
+        func pixels(of image: CGImage, width: Int, height: Int) throws -> [UInt8] {
+            var bytes = [UInt8](repeating: 0, count: width * height * 4)
+            try bytes.withUnsafeMutableBytes { buffer in
+                let context = try XCTUnwrap(CGContext(
+                    data: buffer.baseAddress, width: width, height: height,
+                    bitsPerComponent: 8, bytesPerRow: width * 4,
+                    space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+                ))
+                context.interpolationQuality = .high
+                context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+            }
+            return bytes
+        }
+
+        for index in 0..<frameSource.frameCount {
+            let original = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, index, nil))
+            let thumbnail = try XCTUnwrap(frameSource.frame(at: index, maxSize: CGSize(width: 40, height: 40)))
+            let expected = try pixels(of: original, width: thumbnail.width, height: thumbnail.height)
+            let actual = try pixels(of: thumbnail, width: thumbnail.width, height: thumbnail.height)
+            XCTAssertTrue(actual == expected, "Frame \(index) should preserve the composited pixels")
+        }
+    }
+
+    func testFrameSourceKeepsOriginalSizeWhenMaxSizeDoesNotLimit() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
+
+        for maxSize in [CGSize(width: 1000, height: 1000), CGSize(width: 0, height: 1), CGSize(width: 40, height: 0)] {
+            let frame = frameSource.frame(at: 0, maxSize: maxSize)
+            XCTAssertEqual(frame?.width, 365, "\(maxSize)")
+            XCTAssertEqual(frame?.height, 360, "\(maxSize)")
+        }
+    }
+
+    func testFrameSourceDownsamplesEveryFrame() {
+        let source = CGImageSourceCreateWithData(testImageGIFData as CFData, nil)!
+        let frameSource = CGImageFrameSource(data: testImageGIFData, imageSource: source, options: nil)
+        XCTAssertGreaterThan(frameSource.frameCount, 1)
+
+        for index in 0..<frameSource.frameCount {
+            let frame = frameSource.frame(at: index, maxSize: CGSize(width: 40, height: 40))
+            XCTAssertLessThanOrEqual(frame?.width ?? .max, 40, "Frame \(index) should fit in the max size")
+            XCTAssertLessThanOrEqual(frame?.height ?? .max, 40, "Frame \(index) should fit in the max size")
+        }
+    }
+
+    func testFrameSizingFollowsContentMode() {
+        typealias Animator = AnimatedImageView.Animator
+        let wide = CGSize(width: 800, height: 200)
+        let target = CGSize(width: 120, height: 120)
+
+        #if os(macOS)
+        let fill: KFCrossPlatformContentMode = .scaleAxesIndependently
+        let fit: KFCrossPlatformContentMode = .scaleProportionallyDown
+        let unscaled: KFCrossPlatformContentMode = .scaleNone
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: target, contentMode: .scaleProportionallyUpOrDown, needsPrescaling: true),
+            .limited(CGSize(width: 120, height: 30))
+        )
+        #else
+        let fill: KFCrossPlatformContentMode = .scaleAspectFill
+        let fit: KFCrossPlatformContentMode = .scaleAspectFit
+        let unscaled: KFCrossPlatformContentMode = .center
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: target, contentMode: .scaleToFill, needsPrescaling: true),
+            .limited(CGSize(width: 480, height: 120))
+        )
+        #endif
+
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: target, contentMode: fill, needsPrescaling: true),
+            .limited(CGSize(width: 480, height: 120))
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: target, contentMode: fit, needsPrescaling: true),
+            .limited(CGSize(width: 120, height: 30))
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: target, contentMode: unscaled, needsPrescaling: true),
+            .original
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: CGSize(width: 300, height: 300), contentMode: fill, needsPrescaling: true),
+            .original
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: CGSize(width: 0, height: 120), contentMode: fill, needsPrescaling: true),
+            .pending
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: .zero, contentMode: unscaled, needsPrescaling: true),
+            .original
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: target, contentMode: fill, needsPrescaling: false),
+            .original
+        )
+        XCTAssertEqual(
+            Animator.frameSizing(imageSize: wide, targetSize: .zero, contentMode: fill, needsPrescaling: false),
+            .original
+        )
+    }
+
+    func testFrameSizingOnlyGrows() {
+        typealias FrameSizing = AnimatedImageView.Animator.FrameSizing
+        let small = FrameSizing.limited(CGSize(width: 40, height: 40))
+        let large = FrameSizing.limited(CGSize(width: 60, height: 60))
+
+        XCTAssertEqual(small.growing(to: large), large)
+        XCTAssertNil(large.growing(to: small))
+        XCTAssertNil(large.growing(to: large))
+        XCTAssertNil(large.growing(to: .pending))
+        XCTAssertEqual(FrameSizing.pending.growing(to: small), small)
+        XCTAssertEqual(small.growing(to: .original), .original)
+        XCTAssertNil(FrameSizing.original.growing(to: large))
+        XCTAssertNil(FrameSizing.pending.growing(to: .pending))
+        XCTAssertNil(small.growing(to: .limited(CGSize(width: 40.5, height: 40.5))))
+    }
+
+    func testAnimatorDownsamplesFramesToTargetSize() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        let frame = animator.frame(at: 0)?.kf.cgImage
+        XCTAssertEqual(frame?.width, 41)
+        XCTAssertEqual(frame?.height, 40, "The short side of the frame should fill the target")
+        XCTAssertFalse(maxSizes.value.isEmpty)
+        XCTAssertFalse(maxSizes.value.contains(nil), "Frames should not be decoded at the original size")
+    }
+
+    func testAnimatorDecodesEnoughPixelsToFillTarget() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(
+            data: makeAnimatedImageData(size: CGSize(width: 800, height: 200), frameCount: 2),
+            imageSize: CGSize(width: 800, height: 200),
+            maxSizes: maxSizes,
+            size: CGSize(width: 120, height: 120),
+            queue: queue
+        )
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        let frame = animator.frame(at: 0)?.kf.cgImage
+        XCTAssertEqual(frame?.width, 480)
+        XCTAssertEqual(frame?.height, 120, "The short side of the frame should fill the target")
+    }
+
+    func testAnimatorDecodesLargerFramesWhenTargetGrows() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.width, 41)
+
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(animator.currentFrameIndex, 0)
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(animator.frame(at: 1)?.kf.cgImage?.height, 60)
+
+        let decodeCount = maxSizes.value.count
+        animator.updateTargetSize(CGSize(width: 20, height: 20), contentMode: fillContentMode)
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(maxSizes.value.count, decodeCount, "Frames should not be decoded again when they are large enough")
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 60)
+    }
+
+    func testAnimatorReloadsFramesFromCurrentFrame() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        for index in 1...4 {
+            animator.currentFrameIndex = index
+            queue.sync { }
+        }
+        XCTAssertNil(animator.frame(at: 0))
+
+        let decodeCount = maxSizes.value.count
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(animator.currentFrameIndex, 4)
+        XCTAssertEqual(animator.frame(at: 4)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(animator.frame(at: 5)?.kf.cgImage?.height, 60)
+        XCTAssertNil(animator.frame(at: 0), "Frames out of the buffer should not be decoded again")
+        XCTAssertNil(animator.frame(at: 3), "Frames out of the buffer should not be decoded again")
+        XCTAssertEqual(maxSizes.value.count - decodeCount, 2)
+    }
+
+    func testAnimatorReleasesFramesOutOfBufferWhenTargetGrows() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        animator.currentFrameIndex = 4
+        queue.sync { }
+        XCTAssertNotNil(animator.frame(at: 1))
+
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertNil(animator.frame(at: 1), "Frames out of the buffer should be released")
+        XCTAssertEqual(animator.frame(at: 5)?.kf.cgImage?.height, 60)
+    }
+
+    func testAnimatorDoesNotDecodePurgedFramesWhenTargetGrows() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        animator.purgeFrames()
+        queue.sync { }
+
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 60)
+        XCTAssertNil(animator.frame(at: 1), "Purged frames should stay purged")
+    }
+
+    func testAnimatorDoesNotReloadFramesSetUpForNewTarget() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+
+        queue.suspend()
+        animator.prepareFramesAsynchronously()
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.resume()
+        queue.sync { }
+
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(maxSizes.value.count, 2, "Frames should be decoded once")
+    }
+
+    @MainActor
+    func testAnimatorAsksToDisplayReloadedCurrentFrame() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+        let delegate = ReloadRecordingAnimatorDelegate()
+        animator.delegate = delegate
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        delegate.reloaded = expectation(description: "Current frame reloaded")
+
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        wait(for: [delegate.reloaded!], timeout: 3)
+
+        XCTAssertEqual(animator.frame(at: animator.currentFrameIndex)?.kf.cgImage?.height, 60)
+    }
+
+    func testAnimatorDoesNotDecodeFramesUntilTargetHasArea() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 0, height: 1), queue: queue)
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertEqual(animator.frameSizing, .pending)
+        XCTAssertEqual(maxSizes.value.count, 0)
+        XCTAssertNil(animator.frame(at: 0))
+        XCTAssertGreaterThan(animator.loopDuration, 0)
+
+        animator.updateTargetSize(CGSize(width: 40, height: 40), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 40)
+        XCTAssertFalse(maxSizes.value.contains(nil), "Frames should not be decoded at the original size")
+    }
+
+    func testAnimatorFillsInitialBufferAfterConsecutiveLayoutChanges() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(
+            data: makeAnimatedImageData(size: CGSize(width: 100, height: 100), frameCount: 2),
+            imageSize: CGSize(width: 100, height: 100),
+            maxSizes: maxSizes,
+            size: .zero,
+            queue: queue
+        )
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        queue.suspend()
+        animator.updateTargetSize(CGSize(width: 40, height: 40), contentMode: fillContentMode)
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.resume()
+        queue.sync { }
+
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(animator.frame(at: 1)?.kf.cgImage?.height, 60)
+        XCTAssertEqual(maxSizes.value.count, 2)
+    }
+
+    func testCancelledAnimatorStopsAnActivePreloadBatch() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let cancellingAnimator = LockIsolated<AnimatedImageView.Animator?>(nil)
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(
+            maxSizes: maxSizes,
+            size: CGSize(width: 40, height: 40),
+            queue: queue,
+            framePreloadCount: 3,
+            onFrame: { cancellingAnimator.value?.cancel() }
+        )
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+        let initialDecodeCount = maxSizes.value.count
+        cancellingAnimator.setValue(animator)
+        defer { cancellingAnimator.setValue(nil) }
+
+        animator.currentFrameIndex = 4
+        queue.sync { }
+
+        XCTAssertEqual(maxSizes.value.count - initialDecodeCount, 1,
+                       "Only the frame in flight should finish after cancellation")
+    }
+
+    func testAnimatorWithoutPrescalingDecodesOriginalFrames() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(maxSizes: maxSizes, size: CGSize(width: 40, height: 40), queue: queue)
+        animator.needsPrescaling = false
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertEqual(animator.frameSizing, .original)
+        XCTAssertEqual(animator.frame(at: 0)?.kf.cgImage?.width, 365)
+        XCTAssertFalse(maxSizes.value.isEmpty)
+        XCTAssertEqual(maxSizes.value.compactMap { $0 }, [])
+
+        let decodeCount = maxSizes.value.count
+        animator.updateTargetSize(CGSize(width: 20, height: 20), contentMode: fillContentMode)
+        animator.updateTargetSize(.zero, contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(maxSizes.value.count, decodeCount)
+    }
+
+    func testCancelledAnimatorStopsDecodingFrames() {
+        let maxSizes = LockIsolated<[CGSize?]>([])
+        let cancellingAnimator = LockIsolated<AnimatedImageView.Animator?>(nil)
+        let queue = DispatchQueue(label: "com.onevcat.KingfisherTests.AnimatorPreload")
+        let animator = makeAnimator(
+            maxSizes: maxSizes,
+            size: CGSize(width: 40, height: 40),
+            queue: queue,
+            onFrame: { cancellingAnimator.value?.cancel() }
+        )
+        cancellingAnimator.setValue(animator)
+        defer { cancellingAnimator.setValue(nil) }
+
+        animator.prepareFramesAsynchronously()
+        queue.sync { }
+
+        XCTAssertEqual(maxSizes.value.count, 1, "No frame should be decoded after the animator is cancelled")
+
+        animator.updateTargetSize(CGSize(width: 60, height: 60), contentMode: fillContentMode)
+        queue.sync { }
+
+        XCTAssertEqual(maxSizes.value.count, 1, "No frame should be decoded after the animator is cancelled")
+    }
+
+    private var fillContentMode: KFCrossPlatformContentMode {
+        #if os(macOS)
+        return .scaleAxesIndependently
+        #else
+        return .scaleToFill
+        #endif
+    }
+
+    private func makeAnimator(
+        data: Data = testImageGIFData,
+        imageSize: CGSize = CGSize(width: 365, height: 360),
+        maxSizes: LockIsolated<[CGSize?]>,
+        size: CGSize,
+        queue: DispatchQueue,
+        framePreloadCount: Int = 1,
+        onFrame: (@Sendable () -> Void)? = nil
+    ) -> AnimatedImageView.Animator {
+        let source = CGImageSourceCreateWithData(data as CFData, nil)!
+        let frameSource = RecordingFrameSource(
+            base: CGImageFrameSource(data: nil, imageSource: source, options: nil),
+            maxSizes: maxSizes,
+            onFrame: onFrame
+        )
+        return AnimatedImageView.Animator(
+            frameSource: frameSource,
+            contentMode: fillContentMode,
+            size: size,
+            imageSize: imageSize,
+            imageScale: 1,
+            framePreloadCount: framePreloadCount,
+            repeatCount: .infinite,
+            preloadQueue: queue
+        )
+    }
+
+    private func makeAnimatedImageData(size: CGSize, frameCount: Int) -> Data {
+        let data = NSMutableData()
+        let destination = CGImageDestinationCreateWithData(data, "com.compuserve.gif" as CFString, frameCount, nil)!
+        let context = CGContext(
+            data: nil,
+            width: Int(size.width),
+            height: Int(size.height),
+            bitsPerComponent: 8,
+            bytesPerRow: 0,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        )!
+        for index in 0..<frameCount {
+            context.setFillColor(red: CGFloat(index % 2), green: 0, blue: 1, alpha: 1)
+            context.fill(CGRect(origin: .zero, size: size))
+            CGImageDestinationAddImage(destination, context.makeImage()!, nil)
+        }
+        CGImageDestinationFinalize(destination)
+        return data as Data
+    }
+}
+
+final class AnimatedImageViewLayoutTests: XCTestCase {
+
+    #if os(macOS)
+    @MainActor
+    func testAnimatedImageViewFollowsFrameSizeWithoutRebuildingAnimator() {
+        let imageView = AnimatedImageView(frame: .zero)
+        imageView.imageScaling = .scaleAxesIndependently
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: .init())
+        defer { imageView.image = nil }
+
+        let animator = imageView.animator
+        XCTAssertNotNil(animator)
+        XCTAssertEqual(animator?.frameSizing, .pending)
+
+        imageView.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        guard case .limited(let small)? = imageView.animator?.frameSizing else {
+            return XCTFail("Frames should be limited to the view size")
+        }
+
+        imageView.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        guard case .limited(let large)? = imageView.animator?.frameSizing else {
+            return XCTFail("Frames should be limited to the view size")
+        }
+        XCTAssertGreaterThan(large.width, small.width)
+
+        imageView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        XCTAssertEqual(imageView.animator?.frameSizing, .limited(large))
+
+        imageView.imageScaling = .scaleNone
+        XCTAssertEqual(imageView.animator?.frameSizing, .original)
+        XCTAssertTrue(animator === imageView.animator, "Layout should not restart the animation")
+    }
+
+    @MainActor
+    func testAnimatedImageViewUsesWindowBackingScale() {
+        let window = ScaledWindow(
+            contentRect: CGRect(x: 0, y: 0, width: 100, height: 100),
+            styleMask: .borderless,
+            backing: .buffered,
+            defer: false
+        )
+        let imageView = AnimatedImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        imageView.imageScaling = .scaleAxesIndependently
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: .init())
+        defer { imageView.image = nil }
+
+        window.contentView?.addSubview(imageView)
+
+        XCTAssertEqual(imageView.animator?.frameSizing, .limited(CGSize(width: 122, height: 120)))
+    }
+
+    @MainActor
+    func testReplacingImageCancelsPreviousAnimator() {
+        let imageView = AnimatedImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: .init())
+        let animator = imageView.animator
+        XCTAssertEqual(animator?.isCancelled, false)
+
+        imageView.image = nil
+
+        XCTAssertEqual(animator?.isCancelled, true)
+    }
+    #else
+    @MainActor
+    func testAnimatedImageViewFollowsLayoutWithoutRebuildingAnimator() {
+        let imageView = AnimatedImageView()
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+        defer { imageView.image = nil }
+
+        let animator = imageView.animator
+        XCTAssertNotNil(animator)
+        XCTAssertEqual(animator?.frameSizing, .pending)
+
+        layout(imageView, size: CGSize(width: 40, height: 40))
+        guard case .limited(let small)? = imageView.animator?.frameSizing else {
+            return XCTFail("Frames should be limited to the view size")
+        }
+
+        layout(imageView, size: CGSize(width: 60, height: 60))
+        guard case .limited(let large)? = imageView.animator?.frameSizing else {
+            return XCTFail("Frames should be limited to the view size")
+        }
+        XCTAssertGreaterThan(large.width, small.width)
+
+        layout(imageView, size: CGSize(width: 20, height: 20))
+        XCTAssertEqual(imageView.animator?.frameSizing, .limited(large))
+
+        imageView.contentMode = .center
+        XCTAssertEqual(imageView.animator?.frameSizing, .original)
+        XCTAssertTrue(animator === imageView.animator, "Layout should not restart the animation")
+    }
+
+    @MainActor
+    func testAnimatedImageViewWithoutPrescalingIgnoresLayout() {
+        let imageView = AnimatedImageView()
+        imageView.needsPrescaling = false
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+        defer { imageView.image = nil }
+
+        let animator = imageView.animator
+        XCTAssertEqual(animator?.frameSizing, .original)
+
+        layout(imageView, size: CGSize(width: 40, height: 40))
+        layout(imageView, size: CGSize(width: 60, height: 60))
+
+        XCTAssertEqual(imageView.animator?.frameSizing, .original)
+        XCTAssertTrue(animator === imageView.animator)
+    }
+
+    @MainActor
+    func testReplacingImageCancelsPreviousAnimator() {
+        let imageView = AnimatedImageView()
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+        let animator = imageView.animator
+        XCTAssertEqual(animator?.isCancelled, false)
+
+        imageView.image = nil
+
+        XCTAssertEqual(animator?.isCancelled, true)
+    }
+
+    #if os(iOS)
+    @MainActor
+    func testLayoutDoesNotRestartStoppedAnimation() {
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let host = UIViewController()
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+
+        let imageView = AnimatedImageView()
+        host.view.addSubview(imageView)
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+        defer { imageView.image = nil }
+        XCTAssertTrue(imageView.isAnimating)
+
+        imageView.stopAnimating()
+        layout(imageView, size: CGSize(width: 40, height: 40))
+
+        XCTAssertFalse(imageView.isAnimating)
+    }
+
+    @MainActor
+    func testPlayingViewLeavesPendingSizingWithoutLayoutSubviews() {
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let host = UIViewController()
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+
+        let imageView = LayoutSkippingAnimatedImageView()
+        host.view.addSubview(imageView)
+        imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData,
+            options: .init(scale: 1, duration: 0, preloadAll: false, onlyFirstFrame: false)
+        )
+        defer { imageView.image = nil }
+        XCTAssertEqual(imageView.animator?.frameSizing, .pending)
+
+        layout(imageView, size: CGSize(width: 40, height: 40))
+        let sized = expectation(for: NSPredicate { _, _ in
+            MainActor.runUnsafely { imageView.animator?.frameSizing != .pending }
+        }, evaluatedWith: nil)
+        wait(for: [sized], timeout: 3)
+    }
+    #endif
+
+    @MainActor
+    private func layout(_ view: UIView, size: CGSize) {
+        view.frame = CGRect(origin: .zero, size: size)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+    }
+    #endif
+}
+
+@MainActor
+private final class ReloadRecordingAnimatorDelegate: AnimatorDelegate {
+    var reloaded: XCTestExpectation?
+
+    func animator(_ animator: AnimatedImageView.Animator, didPlayAnimationLoops count: UInt) {}
+
+    func animatorDidReloadCurrentFrame(_ animator: AnimatedImageView.Animator) {
+        reloaded?.fulfill()
+    }
+}
+
+#if os(macOS)
+private final class ScaledWindow: NSWindow {
+    override var backingScaleFactor: CGFloat { 3 }
+}
+#elseif os(iOS)
+private final class LayoutSkippingAnimatedImageView: AnimatedImageView {
+    override func layoutSubviews() {}
+}
+#endif
+
+private struct RecordingFrameSource: ImageFrameSource {
+    let base: CGImageFrameSource
+    let maxSizes: LockIsolated<[CGSize?]>
+    let onFrame: (@Sendable () -> Void)?
+
+    var data: Data? { base.data }
+    var frameCount: Int { base.frameCount }
+
+    func frame(at index: Int, maxSize: CGSize?) -> CGImage? {
+        maxSizes.withValue { $0.append(maxSize) }
+        onFrame?()
+        return base.frame(at: index, maxSize: maxSize)
+    }
+
+    func duration(at index: Int) -> TimeInterval {
+        base.duration(at: index)
+    }
 }
 
 #if os(iOS)
