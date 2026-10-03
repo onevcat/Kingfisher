@@ -127,9 +127,14 @@ extension KingfisherWrapper where Base: UIButton {
             imageAccessor: ImagePropertyAccessor(
                 setImage: { button, image, _ in
                     button.setImage(image, for: state)
+                    // For a configuration-based button, UIKit copies the state image to `configuration.image`,
+                    // but does not clear that copy when the normal image is removed.
+                    if image == nil, state == .normal, button.configuration?.image != nil {
+                        button.configuration?.image = nil
+                    }
                 },
                 getImage: { button in
-                    button.image(for: state)
+                    button.image(for: state) ?? button.configuration?.image
                 }
             ),
             taskAccessor: TaskPropertyAccessor(

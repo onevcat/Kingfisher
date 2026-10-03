@@ -245,6 +245,96 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
     }
 
+    @MainActor func testSettingNilSourceClearsConfigurationImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        button = UIButton(configuration: .plain())
+
+        button.kf.setImage(with: url, for: .normal, completionHandler: { _ in
+            self.button.layoutIfNeeded()
+            XCTAssertNotNil(self.button.configuration?.image)
+
+            let nilURL: URL? = nil
+            self.button.kf.setImage(with: nilURL, for: .normal)
+            self.button.layoutIfNeeded()
+            XCTAssertNil(self.button.configuration?.image)
+            exp.fulfill()
+        })
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testLoadingWithoutPlaceholderClearsPreviousConfigurationImage() {
+        let exp = expectation(description: #function)
+        stub(testURLs[0], data: testImageData)
+        let delayed = delayedStub(testURLs[1], data: testImageData)
+        button = UIButton(configuration: .plain())
+
+        button.kf.setImage(with: testURLs[0], for: .normal, completionHandler: { _ in
+            self.button.layoutIfNeeded()
+            XCTAssertNotNil(self.button.configuration?.image)
+
+            self.button.kf.setImage(with: testURLs[1], for: .normal, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                self.button.layoutIfNeeded()
+                XCTAssertTrue(self.button.configuration?.image?.renderEqual(to: testImage) ?? false)
+                exp.fulfill()
+            })
+            self.button.layoutIfNeeded()
+            XCTAssertNil(self.button.configuration?.image)
+
+            _ = delayed.go()
+        })
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testKeepCurrentImageWhileLoadingKeepsConfigurationImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let delayed = delayedStub(url, data: testImageData)
+        let icon = UIImage(systemName: "star")!
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = icon
+        button = UIButton(configuration: configuration)
+
+        button.kf.setImage(
+            with: url,
+            for: .normal,
+            options: [.keepCurrentImageWhileLoading],
+            completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                exp.fulfill()
+            }
+        )
+        button.layoutIfNeeded()
+        XCTAssertIdentical(button.configuration?.image, icon)
+
+        _ = delayed.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testLoadingNonNormalStateKeepsConfigurationImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let delayed = delayedStub(url, data: testImageData)
+        let icon = UIImage(systemName: "star")!
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = icon
+        button = UIButton(configuration: configuration)
+
+        button.kf.setImage(with: url, for: .selected, completionHandler: { result in
+            XCTAssertNotNil(result.value)
+            exp.fulfill()
+        })
+        button.layoutIfNeeded()
+        XCTAssertIdentical(button.configuration?.image, icon)
+
+        _ = delayed.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
     @MainActor func testSupersededDiskCachedImageDoesNotPromoteToMemory() {
         let exp = expectation(description: #function)
         let url1 = testURLs[0]
