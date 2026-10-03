@@ -131,6 +131,32 @@ imageView.kf.setImage(with: url) { result in
 }
 ```
 
+### Setting Image to a Button with Configuration
+
+For a `UIButton` that uses `UIButton.Configuration`, set the foreground image with the same method as other buttons.
+UIKit applies the image to `configuration.image` in each configuration update:
+
+```swift
+let button = UIButton(configuration: .plain())
+button.kf.setImage(with: url, for: .normal)
+```
+
+UIKit ignores the background images that you set with `setBackgroundImage(with:for:)` on such a button. Use 
+`setConfigurationBackgroundImage(with:)` instead. It sets the image to `configuration.background.image`:
+
+```swift
+let button = UIButton(configuration: .filled())
+button.kf.setConfigurationBackgroundImage(with: url)
+
+// Or with the builder:
+KF.url(url).setConfigurationBackground(to: button)
+```
+
+> Important: The button must have a `configuration` before you set the background image. Kingfisher sets 
+> `configuration.background.image` only once. If you replace `configuration` with a new value later, for example in a 
+> `configurationUpdateHandler`, the image is removed. To keep it, change the current configuration instead of creating 
+> a new one.
+
 ### Getting an Image without Setting to UI
 
 Occasionally, you might need to retrieve an image using Kingfisher without assigning it to an image view. In such
