@@ -351,5 +351,183 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
             "cancelBackgroundImageDownloadTask() must prevent disk cache result from being promoted to memory"
         )
     }
+
+    // MARK: - Configuration-based button
+
+    @MainActor func testSetImageToConfigurationButtonUpdatesConfigurationImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        button = UIButton(configuration: .plain())
+
+        button.kf.setImage(with: url, for: .normal, completionHandler: { result in
+            XCTAssertNotNil(result.value)
+            // UIKit merges the state-based image into `configuration.image` in the next update pass.
+            self.button.layoutIfNeeded()
+            XCTAssertTrue(self.button.configuration?.image?.renderEqual(to: testImage) ?? false)
+            exp.fulfill()
+        })
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testDownloadAndSetConfigurationBackgroundImage() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, length: 123)
+        button = UIButton(configuration: .filled())
+
+        var progressBlockIsCalled = false
+        KF.url(url)
+            .onProgress { _, _ in
+                progressBlockIsCalled = true
+            }
+            .onSuccess { result in
+                XCTAssertTrue(progressBlockIsCalled)
+
+                XCTAssertTrue(result.image.renderEqual(to: testImage))
+                XCTAssertTrue(self.button.configuration?.background.image?.renderEqual(to: testImage) ?? false)
+                XCTAssertNil(self.button.backgroundImage(for: .normal))
+
+                XCTAssertEqual(result.cacheType, .none)
+
+                exp.fulfill()
+            }
+            .setConfigurationBackground(to: button)
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testConfigurationBackgroundImageShowsPlaceholderWhileLoading() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        button = UIButton(configuration: .filled())
+        let placeholder = UIImage()
+
+        button.kf.setConfigurationBackgroundImage(with: url, placeholder: placeholder, completionHandler: { result in
+            XCTAssertNotNil(result.value)
+            XCTAssertTrue(self.button.configuration?.background.image?.renderEqual(to: testImage) ?? false)
+            exp.fulfill()
+        })
+        XCTAssertIdentical(button.configuration?.background.image, placeholder)
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testConfigurationBackgroundImageSurvivesConfigurationUpdates() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        button = UIButton(configuration: .filled())
+
+        button.kf.setConfigurationBackgroundImage(with: url, completionHandler: { result in
+            XCTAssertNotNil(result.value)
+
+            self.button.isHighlighted = true
+            self.button.layoutIfNeeded()
+            XCTAssertTrue(self.button.configuration?.background.image?.renderEqual(to: testImage) ?? false)
+
+            self.button.configurationUpdateHandler = { button in
+                var configuration = button.configuration
+                configuration?.baseBackgroundColor = button.isHighlighted ? .gray : .blue
+                button.configuration = configuration
+            }
+            self.button.isHighlighted = false
+            self.button.layoutIfNeeded()
+            XCTAssertTrue(self.button.configuration?.background.image?.renderEqual(to: testImage) ?? false)
+
+            exp.fulfill()
+        })
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testConfigurationBackgroundImageTaskIsIndependentOfImageTasks() {
+        let exp = expectation(description: #function)
+        let group = DispatchGroup()
+        stub(testURLs[0], data: testImageData)
+        stub(testURLs[1], data: testImageData)
+        button = UIButton(configuration: .filled())
+
+        group.enter()
+        button.kf.setImage(with: testURLs[0], for: .normal, completionHandler: { result in
+            XCTAssertNotNil(result.value)
+            group.leave()
+        })
+        group.enter()
+        button.kf.setConfigurationBackgroundImage(with: testURLs[1], completionHandler: { result in
+            XCTAssertNotNil(result.value)
+            group.leave()
+        })
+        button.kf.cancelBackgroundImageDownloadTask()
+
+        group.notify(queue: .main) { exp.fulfill() }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testButtonNotRetainedByInFlightConfigurationBackgroundImageDownload() {
+        let completion = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData, length: 123)
+
+        weak var weakButton: UIButton?
+        autoreleasepool {
+            let button = UIButton(configuration: .filled())
+            weakButton = button
+            button.kf.setConfigurationBackgroundImage(with: url, completionHandler: { result in
+                XCTAssertNotNil(result.value)
+                XCTAssertTrue(Thread.isMainThread)
+                completion.fulfill()
+            })
+        }
+
+        XCTAssertNil(
+            weakButton,
+            "A button should be released while its configuration background image download is still in flight."
+        )
+
+        _ = stub.go()
+        waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
+    }
+
+    @MainActor func testCancelConfigurationBackgroundImageTask() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = delayedStub(url, data: testImageData)
+        button = UIButton(configuration: .filled())
+
+        KF.url(url)
+            .onFailure { error in
+                XCTAssertTrue(error.isTaskCancelled)
+                delay(0.1) { exp.fulfill() }
+            }
+            .setConfigurationBackground(to: button)
+
+        button.kf.cancelConfigurationBackgroundImageDownloadTask()
+        _ = stub.go()
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor func testSettingNilSourceClearsConfigurationBackgroundImage() {
+        let exp = expectation(description: #function)
+        button = UIButton(configuration: .filled())
+        button.configuration?.background.image = testImage
+
+        let url: URL? = nil
+        button.kf.setConfigurationBackgroundImage(with: url, completionHandler: { result in
+            guard case .imageSettingError(reason: .emptySource) = result.error else {
+                XCTFail("Expected an empty source error, got: \(result)")
+                return
+            }
+            XCTAssertNil(self.button.configuration?.background.image)
+            exp.fulfill()
+        })
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 #endif

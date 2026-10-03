@@ -233,6 +233,27 @@ extension KF.Builder {
             completionHandler: resultHandler
         )
     }
+
+    /// Builds the image task request and sets it to the background image of a button's configuration.
+    /// - Parameter button: The button which loads the task and should be set with the image. It must have a
+    ///                     non-`nil` `configuration`.
+    /// - Returns: A task represents the image downloading, if initialized.
+    ///            This value is `nil` if the image is being loaded from cache.
+    ///
+    /// The image is set to `configuration.background.image` of the button. See
+    /// `KingfisherWrapper.setConfigurationBackgroundImage(with:placeholder:options:progressBlock:completionHandler:)`
+    /// for the requirements and the limitations.
+    @discardableResult
+    public func setConfigurationBackground(to button: UIButton) -> DownloadTask? {
+        let placeholderImage = placeholder as? KFCrossPlatformImage ?? nil
+        return button.kf.setConfigurationBackgroundImage(
+            with: source,
+            placeholder: placeholderImage,
+            parsedOptions: options,
+            progressBlock: progressBlock,
+            completionHandler: resultHandler
+        )
+    }
     #endif // end of canImport(UIKit)
     
     #if canImport(CarPlay) && !targetEnvironment(macCatalyst)
