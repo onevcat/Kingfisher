@@ -908,8 +908,8 @@ public class KingfisherManager: @unchecked Sendable {
     /// Returns the result for an image in the target memory cache, when it can be delivered at once.
     ///
     /// It follows the rules of the target cache hit in `deliverTargetCacheHit`, but never processes an image. It
-    /// returns `nil` when the normal retrieving flow is necessary: on a cache miss, when `forceRefresh` is set, or when
-    /// the cached image must be processed again before it is delivered.
+    /// returns `nil` when the normal retrieving flow is necessary: on a cache miss, when `forceRefresh` is set, when
+    /// the cached image must be processed again before it is delivered, or when the target cache is a subclass.
     func retrieveImageInMemoryCacheSynchronously(
         with source: Source,
         options: KingfisherParsedOptionsInfo
@@ -919,7 +919,10 @@ public class KingfisherManager: @unchecked Sendable {
             return nil
         }
         let targetCache = options.targetCache ?? cache
-        guard var image = targetCache.retrieveImageInMemoryCache(forKey: source.cacheKey, options: options) else {
+        // Preserve custom cache retrieval overrides. The normal flow calls them.
+        guard type(of: targetCache) == ImageCache.self,
+              var image = targetCache.retrieveImageInMemoryCache(forKey: source.cacheKey, options: options)
+        else {
             return nil
         }
         // An animated image created with other options must be created again.

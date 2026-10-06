@@ -39,7 +39,7 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
         // Create the binder here, not in the `StateObject` autoclosure. In a `List`, SwiftUI can create the state of
         // the same view value more than one time while it scrolls. Then all of them use this binder and load the image
         // only one time. A binder created in the autoclosure would load the image again for each of them.
-        self.init(context: context, binder: KFImage.ImageBinder(context: context))
+        self.init(context: context, binder: .init())
     }
 
     init(context: KFImage.Context<HoldingView>, binder: KFImage.ImageBinder) {
@@ -48,6 +48,8 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     }
 
     var body: some View {
+        binder.loadFromMemoryCacheIfNeeded(context: context)
+
         if context.startLoadingBeforeViewAppear && !binder.loadingOrSucceeded && !binder.animating {
             binder.markLoading()
             DispatchQueue.main.async { binder.start(context: context) }
@@ -108,8 +110,8 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                 }
             }
         }
-        // Reports the memory cache hit that the binder got when it was created. The placeholder is not shown for it,
-        // so the `onAppear` of the placeholder does not report it.
+        // Reports the memory cache hit that the binder got before the first render pass. The placeholder is not shown
+        // for it, so the `onAppear` of the placeholder does not report it.
         //
         // This `onAppear` is also a workaround for https://github.com/onevcat/Kingfisher/issues/1988
         // on iOS 16 there seems to be a bug that when in a List, the `onAppear` of the `ZStack` above in the

@@ -1775,6 +1775,20 @@ class KingfisherManagerTests: XCTestCase {
         ))
     }
 
+    // A subclass can override how the cache retrieves an image. The normal flow calls these overrides.
+    func testRetrieveImageInMemoryCacheSynchronouslyIgnoresCacheSubclass() async throws {
+        let url = testURLs[0]
+        let targetCache = OverridingImageCache(name: "test.cache.target.\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([targetCache])
+        }
+        try await targetCache.store(testImage, forKey: url.cacheKey, toDisk: false)
+
+        XCTAssertNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init([.targetCache(targetCache)])
+        ))
+    }
+
     func testMissingResourceOfLivePhotoFound() {
         let resource = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         let source = LivePhotoSource(resources: [resource])

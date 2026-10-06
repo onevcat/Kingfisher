@@ -647,6 +647,40 @@ extension KFImageRendererTests {
         windows.forEach { $0.isHidden = true }
     }
 
+    // A parent update creates the view value again, but SwiftUI keeps the binder of the first value. Only that binder
+    // can use the memory cache. Otherwise each update applies `imageModifier` again and extends the expiration of the
+    // cached image.
+    @MainActor
+    func testParentUpdatesDoNotUseMemoryCacheAgain() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image loads from the memory cache")
+        let modifierCount = LockIsolated(0)
+        let state = ParentUpdateState()
+
+        let view = ParentUpdateHost(state: state) {
+            KFImage(url)
+                .targetCache(cache)
+                .imageModifier { _ in modifierCount.withValue { $0 += 1 } }
+                .onSuccess { _ in loaded.fulfill() }
+        }
+        let controller = UIHostingController(rootView: view)
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: memoryCacheRenderWidth, height: 800))
+        window.rootViewController = controller
+        window.makeKeyAndVisible()
+        controller.view.layoutIfNeeded()
+
+        for _ in 0..<10 {
+            state.tick += 1
+            await Task.yield()
+            controller.view.layoutIfNeeded()
+        }
+        await fulfillment(of: [loaded], timeout: 1)
+        window.isHidden = true
+
+        XCTAssertGreaterThan(state.contentCount, 5, "The parent should create the image view again in each update.")
+        XCTAssertEqual(modifierCount.value, 1)
+    }
+
     @MainActor
     private func makeCacheWithImage(
         toDisk: Bool,
@@ -731,6 +765,24 @@ private final class FirstRenderRecorder {
 
 private final class LoadRecorder {
     var loadCount = 0
+}
+
+private final class ParentUpdateState: ObservableObject {
+    @Published var tick = 0
+    var contentCount = 0
+}
+
+private struct ParentUpdateHost<Content: View>: View {
+    @ObservedObject var state: ParentUpdateState
+    let content: () -> Content
+
+    var body: some View {
+        state.contentCount += 1
+        return VStack {
+            Text("\(state.tick)")
+            content()
+        }
+    }
 }
 
 private let memoryCacheRenderWidth: CGFloat = 390
