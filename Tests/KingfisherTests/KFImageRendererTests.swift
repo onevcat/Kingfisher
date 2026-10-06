@@ -429,6 +429,288 @@ class KFImageRendererTests: XCTestCase {
     }
 }
 
+// MARK: - Synchronous memory cache loading
+// https://github.com/onevcat/Kingfisher/issues/2589
+// If the placeholder defines the first render pass and the image replaces it in `onAppear`, a recreated row in a lazy
+// container changes its height after it is placed, and the scroll view has to correct its content offset. So an image
+// in the memory cache must define the first render pass. All other loading paths must stay the same.
+@available(iOS 14.0, tvOS 14.0, *)
+extension KFImageRendererTests {
+
+    @MainActor
+    func testMemoryCachedImageDefinesFirstRender() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image loads from the memory cache")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .memory)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertFalse(render.placeholderAppeared, "The placeholder should not appear for an image in the memory cache.")
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), memoryCacheImageHeight, accuracy: 0.5)
+    }
+
+    @MainActor
+    func testProcessedMemoryCachedImageDefinesFirstRender() async throws {
+        let processor = RoundCornerImageProcessor(cornerRadius: 5)
+        let (cache, url) = try await makeCacheWithImage(toDisk: false, processorIdentifier: processor.identifier)
+        let loaded = expectation(description: "Processed image loads from the memory cache")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .setProcessor(processor)
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .memory)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertFalse(render.placeholderAppeared, "The cache key should include the processor identifier.")
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), memoryCacheImageHeight, accuracy: 0.5)
+    }
+
+    @MainActor
+    func testImageModifierAppliesToMemoryCachedImageInFirstRender() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image loads from the memory cache")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .imageModifier { $0 = $0.withRenderingMode(.alwaysTemplate) }
+            .onSuccess { result in
+                XCTAssertEqual(result.image.renderingMode, .alwaysTemplate)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertFalse(render.placeholderAppeared, "The placeholder should not appear for an image in the memory cache.")
+    }
+
+    @MainActor
+    func testMemoryCachedImageShowsPlaceholderFirstWhenNotLoadingMemoryCacheSynchronously() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image loads from the memory cache")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .loadMemoryCacheSynchronously(false)
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .memory)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertTrue(render.placeholderAppeared)
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), firstRenderPlaceholderHeight, accuracy: 0.5)
+    }
+
+    // Disk access must not happen while SwiftUI updates the view.
+    @MainActor
+    func testDiskCachedImageShowsPlaceholderFirst() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: true)
+        cache.clearMemoryCache()
+        let loaded = expectation(description: "Image loads from the disk cache")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .disk)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertTrue(render.placeholderAppeared)
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), firstRenderPlaceholderHeight, accuracy: 0.5)
+    }
+
+    // The unprocessed image must not be shown for a request with a processor.
+    @MainActor
+    func testOriginalMemoryCachedImageShowsPlaceholderFirstForProcessor() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image is processed from the original image")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .setProcessor(RoundCornerImageProcessor(cornerRadius: 5))
+            .onSuccess { _ in
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertTrue(render.placeholderAppeared)
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), firstRenderPlaceholderHeight, accuracy: 0.5)
+    }
+
+    // A transition forced for cached images needs the normal flow to animate the image in.
+    @MainActor
+    func testForceTransitionShowsPlaceholderFirstForMemoryCachedImage() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image loads from the memory cache")
+
+        let view = KFImage(url)
+            .targetCache(cache)
+            .fade(duration: 0.1)
+            .forceTransition()
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .memory)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertTrue(render.placeholderAppeared)
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), firstRenderPlaceholderHeight, accuracy: 0.5)
+    }
+
+    @MainActor
+    func testForceRefreshShowsPlaceholderFirstForMemoryCachedImage() async throws {
+        let cache = ImageCache(name: "com.onevcat.KingfisherTests.MemoryCacheSync.\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([cache])
+        }
+        let image = makeMemoryCacheTestImage()
+        let cacheKey = "com.onevcat.KingfisherTests.MemoryCacheSync.forceRefresh"
+        try await cache.store(image, forKey: cacheKey, toDisk: false)
+        let loaded = expectation(description: "Image loads from the provider")
+
+        let view = KFImage.data(try XCTUnwrap(image.pngData()), cacheKey: cacheKey)
+            .targetCache(cache)
+            .forceRefresh()
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .none)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(view, after: loaded)
+
+        XCTAssertTrue(render.placeholderAppeared)
+        XCTAssertEqual(try XCTUnwrap(render.firstHeight), firstRenderPlaceholderHeight, accuracy: 0.5)
+    }
+
+    @MainActor
+    func testMemoryCachedImageDefinesFirstRenderOfAnimatedImage() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: false)
+        let loaded = expectation(description: "Image loads from the memory cache")
+
+        let view = KFAnimatedImage(url)
+            .targetCache(cache)
+            .onSuccess { result in
+                XCTAssertEqual(result.cacheType, .memory)
+                loaded.fulfill()
+            }
+
+        let render = await renderFirstPass(of: view, after: loaded)
+
+        XCTAssertFalse(render.placeholderAppeared, "The placeholder should not appear for an image in the memory cache.")
+    }
+
+    @MainActor
+    private func makeCacheWithImage(
+        toDisk: Bool,
+        processorIdentifier: String = DefaultImageProcessor.default.identifier
+    ) async throws -> (ImageCache, URL) {
+        let cache = ImageCache(name: "com.onevcat.KingfisherTests.MemoryCacheSync.\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([cache])
+        }
+        let url = URL(string: "https://example.com/memory-cache-sync.png")!
+        try await cache.store(
+            makeMemoryCacheTestImage(),
+            forKey: url.cacheKey,
+            processorIdentifier: processorIdentifier,
+            toDisk: toDisk
+        )
+        return (cache, url)
+    }
+
+    /// Renders `image` with a placeholder whose height differs from the image, and reports what the first render
+    /// pass showed once `expectation` is fulfilled.
+    @MainActor
+    private func renderFirstPass(
+        _ image: KFImage,
+        after expectation: XCTestExpectation
+    ) async -> (firstHeight: CGFloat?, placeholderAppeared: Bool) {
+        await renderFirstPass(of: image.resizable(), after: expectation)
+    }
+
+    @MainActor
+    private func renderFirstPass<ImageView: KFImageProtocol>(
+        of image: ImageView,
+        after expectation: XCTestExpectation
+    ) async -> (firstHeight: CGFloat?, placeholderAppeared: Bool) {
+        let recorder = FirstRenderRecorder()
+
+        let view = image
+            .placeholder {
+                Color.gray
+                    .frame(height: firstRenderPlaceholderHeight)
+                    .onAppear { recorder.placeholderAppeared = true }
+            }
+            .aspectRatio(contentMode: .fit)
+            .background(
+                GeometryReader { proxy in
+                    Color.clear
+                        .onAppear {
+                            if recorder.firstHeight == nil {
+                                recorder.firstHeight = proxy.size.height
+                            }
+                        }
+                }
+            )
+
+        let rootView = VStack(spacing: 0) {
+            view
+            Spacer()
+        }
+        .frame(width: memoryCacheRenderWidth, height: 800)
+
+        let controller = UIHostingController(rootView: rootView)
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: memoryCacheRenderWidth, height: 800))
+        window.rootViewController = controller
+        window.makeKeyAndVisible()
+
+        await fulfillment(of: [expectation], timeout: 1)
+        // Give a duplicated `onSuccess` call the chance to over-fulfill the expectation.
+        for _ in 0..<5 {
+            await Task.yield()
+            controller.view.layoutIfNeeded()
+        }
+
+        window.isHidden = true
+        return (recorder.firstHeight, recorder.placeholderAppeared)
+    }
+}
+
+private final class FirstRenderRecorder {
+    var firstHeight: CGFloat?
+    var placeholderAppeared = false
+}
+
+private let memoryCacheRenderWidth: CGFloat = 390
+private let firstRenderPlaceholderHeight: CGFloat = 200
+private let memoryCacheTestImageSize = CGSize(width: 300, height: 100)
+private let memoryCacheImageHeight: CGFloat =
+    memoryCacheRenderWidth * memoryCacheTestImageSize.height / memoryCacheTestImageSize.width
+
+private func makeMemoryCacheTestImage() -> UIImage {
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = 1
+    return UIGraphicsImageRenderer(size: memoryCacheTestImageSize, format: format).image { context in
+        UIColor.red.setFill()
+        context.fill(CGRect(origin: .zero, size: memoryCacheTestImageSize))
+    }
+}
+
 private struct AnimatedTransactionProbe: View {
     let onAnimatedTransaction: () -> Void
 

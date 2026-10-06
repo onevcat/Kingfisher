@@ -36,7 +36,10 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     let context: KFImage.Context<HoldingView>
     
     init(context: KFImage.Context<HoldingView>) {
-        self.init(context: context, binder: .init())
+        // `StateObject` evaluates this autoclosure only once for the lifetime of the view identity, so the memory
+        // cache lookup in the binder does not run again in every view update.
+        _binder = StateObject(wrappedValue: KFImage.ImageBinder(context: context))
+        self.context = context
     }
 
     init(context: KFImage.Context<HoldingView>, binder: KFImage.ImageBinder) {
@@ -105,16 +108,21 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
                 }
             }
         }
-        // Workaround for https://github.com/onevcat/Kingfisher/issues/1988
+        // Reports the memory cache hit that the binder got when it was created. The placeholder is not shown for it,
+        // so the `onAppear` of the placeholder does not report it.
+        //
+        // This `onAppear` is also a workaround for https://github.com/onevcat/Kingfisher/issues/1988
         // on iOS 16 there seems to be a bug that when in a List, the `onAppear` of the `ZStack` above in the
-        // `binder.loadedImage == nil` not get called. Adding this empty `onAppear` fixes it and the life cycle can
+        // `binder.loadedImage == nil` not get called. Adding this `onAppear` fixes it and the life cycle can
         // work again.
         //
         // There is another "fix": adding an `else` clause and put a `Color.clear` there. But I believe this `onAppear`
         // should work better.
         //
         // It should be a bug in iOS 16, I guess it is some kinds of over-optimization in list cell loading caused it.
-        .onAppear()
+        .onAppear { [weak binder = self.binder] in
+            binder?.reportPendingMemoryCacheResult(context: context)
+        }
     }
     
     /// Whether the image branch takes part in rendering and layout.

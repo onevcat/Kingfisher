@@ -1660,6 +1660,121 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    // MARK: - Synchronous memory cache retrieving
+
+    func testRetrieveImageInMemoryCacheSynchronously() async throws {
+        let url = testURLs[0]
+        try await manager.cache.store(testImage, forKey: url.cacheKey, toDisk: false)
+
+        let result = manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init(nil)
+        )
+
+        XCTAssertEqual(result?.cacheType, .memory)
+        XCTAssertTrue(result?.image === testImage)
+        XCTAssertEqual(result?.source.url, url)
+        XCTAssertEqual(result?.originalSource.url, url)
+    }
+
+    func testRetrieveImageInMemoryCacheSynchronouslyIgnoresDiskCache() async throws {
+        let url = testURLs[0]
+        try await manager.cache.store(testImage, forKey: url.cacheKey, toDisk: true)
+        manager.cache.clearMemoryCache()
+
+        let result = manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init(nil)
+        )
+
+        XCTAssertNil(result)
+    }
+
+    func testRetrieveImageInMemoryCacheSynchronouslyUsesTargetCache() async throws {
+        let url = testURLs[0]
+        let targetCache = ImageCache(name: "test.cache.target.\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([targetCache])
+        }
+        try await targetCache.store(testImage, forKey: url.cacheKey, toDisk: false)
+
+        XCTAssertNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init(nil)
+        ))
+        XCTAssertNotNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init([.targetCache(targetCache)])
+        ))
+    }
+
+    func testRetrieveImageInMemoryCacheSynchronouslyIgnoresCacheWhenForceRefresh() async throws {
+        let url = testURLs[0]
+        try await manager.cache.store(testImage, forKey: url.cacheKey, toDisk: false)
+
+        let result = manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init([.forceRefresh])
+        )
+
+        XCTAssertNil(result)
+    }
+
+    func testRetrieveImageInMemoryCacheSynchronouslyUsesProcessorIdentifier() async throws {
+        let url = testURLs[0]
+        let processor = RoundCornerImageProcessor(cornerRadius: 5)
+        try await manager.cache.store(
+            testImage, forKey: url.cacheKey, processorIdentifier: processor.identifier, toDisk: false
+        )
+
+        XCTAssertNotNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init([.processor(processor)])
+        ))
+        XCTAssertNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init(nil)
+        ))
+    }
+
+    func testRetrieveImageInMemoryCacheSynchronouslyAppliesImageModifier() async throws {
+        let url = testURLs[0]
+        try await manager.cache.store(testImage, forKey: url.cacheKey, toDisk: false)
+        let modifiedImage = KFCrossPlatformImage(data: testImagePNGData)!
+        let modifier = AnyImageModifier { _ in modifiedImage }
+
+        let result = manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init([.imageModifier(modifier)])
+        )
+
+        XCTAssertTrue(result?.image === modifiedImage)
+    }
+
+    // A serializer that uses the original data processes the cached image again, which must not happen synchronously.
+    func testRetrieveImageInMemoryCacheSynchronouslyIgnoresCacheWhenSerializerUsesOriginalData() async throws {
+        let url = testURLs[0]
+        try await manager.cache.store(testImage, forKey: url.cacheKey, toDisk: false)
+        var serializer = DefaultCacheSerializer()
+        serializer.preferCacheOriginalData = true
+
+        let result = manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init([.cacheSerializer(serializer)])
+        )
+
+        XCTAssertNil(result)
+    }
+
+    // https://github.com/onevcat/Kingfisher/issues/1923
+    // An animated image created with other options must be created again, which must not happen synchronously.
+    func testRetrieveImageInMemoryCacheSynchronouslyIgnoresAnimatedImageWithOtherCreatingOptions() async throws {
+        let url = testURLs[0]
+        let firstFrameOptions = KingfisherParsedOptionsInfo([.onlyLoadFirstFrame])
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.animatedImage(
+            data: testImageGIFData, options: firstFrameOptions.imageCreatingOptions
+        ))
+        try await manager.cache.store(image, forKey: url.cacheKey, toDisk: false)
+
+        XCTAssertNotNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: firstFrameOptions
+        ))
+        XCTAssertNil(manager.retrieveImageInMemoryCacheSynchronously(
+            with: url.convertToSource(), options: .init(nil)
+        ))
+    }
+
     func testMissingResourceOfLivePhotoFound() {
         let resource = KF.ImageResource(downloadURL: LivePhotoURL.mov)
         let source = LivePhotoSource(resources: [resource])
