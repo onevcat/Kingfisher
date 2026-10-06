@@ -36,10 +36,10 @@ struct KFImageRenderer<HoldingView> : View where HoldingView: KFImageHoldingView
     let context: KFImage.Context<HoldingView>
     
     init(context: KFImage.Context<HoldingView>) {
-        // `StateObject` evaluates this autoclosure only once for the lifetime of the view identity, so the memory
-        // cache lookup in the binder does not run again in every view update.
-        _binder = StateObject(wrappedValue: KFImage.ImageBinder(context: context))
-        self.context = context
+        // Create the binder here, not in the `StateObject` autoclosure. In a `List`, SwiftUI can create the state of
+        // the same view value more than one time while it scrolls. Then all of them use this binder and load the image
+        // only one time. A binder created in the autoclosure would load the image again for each of them.
+        self.init(context: context, binder: KFImage.ImageBinder(context: context))
     }
 
     init(context: KFImage.Context<HoldingView>, binder: KFImage.ImageBinder) {

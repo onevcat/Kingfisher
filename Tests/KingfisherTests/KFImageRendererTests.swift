@@ -614,6 +614,39 @@ extension KFImageRendererTests {
         XCTAssertFalse(render.placeholderAppeared, "The placeholder should not appear for an image in the memory cache.")
     }
 
+    // In a `List`, SwiftUI can create the state of the same view value more than one time while it scrolls. All of
+    // them must use the same binder. Otherwise each one shows the placeholder and loads the image again.
+    @MainActor
+    func testRendererInstalledTwiceLoadsImageOnce() async throws {
+        let (cache, url) = try await makeCacheWithImage(toDisk: true)
+        cache.clearMemoryCache()
+        let loaded = expectation(description: "Image loads from the disk cache")
+        let loadedAgain = expectation(description: "Image loads again")
+        loadedAgain.isInverted = true
+        let recorder = LoadRecorder()
+
+        let image = KFImage(url)
+            .targetCache(cache)
+            .onSuccess { _ in
+                recorder.loadCount += 1
+                (recorder.loadCount == 1 ? loaded : loadedAgain).fulfill()
+            }
+        let renderer = KFImageRenderer<Image>(context: image.context)
+
+        // Lay out both before the image is in the memory cache.
+        let windows = (0..<2).map { _ in
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: memoryCacheRenderWidth, height: 800))
+            window.rootViewController = UIHostingController(rootView: renderer)
+            window.makeKeyAndVisible()
+            window.rootViewController?.view.layoutIfNeeded()
+            return window
+        }
+
+        await fulfillment(of: [loaded], timeout: 1)
+        await fulfillment(of: [loadedAgain], timeout: 0.3)
+        windows.forEach { $0.isHidden = true }
+    }
+
     @MainActor
     private func makeCacheWithImage(
         toDisk: Bool,
@@ -694,6 +727,10 @@ extension KFImageRendererTests {
 private final class FirstRenderRecorder {
     var firstHeight: CGFloat?
     var placeholderAppeared = false
+}
+
+private final class LoadRecorder {
+    var loadCount = 0
 }
 
 private let memoryCacheRenderWidth: CGFloat = 390
