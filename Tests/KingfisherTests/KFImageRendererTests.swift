@@ -681,6 +681,92 @@ extension KFImageRendererTests {
         XCTAssertEqual(modifierCount.value, 1)
     }
 
+    // https://github.com/onevcat/Kingfisher/issues/1988
+    // In a `List`, each row must load and report its image one time, for all the loading paths.
+    @MainActor
+    func testListRowsReportMemoryCachedImageOnce() async throws {
+        let (cache, urls) = try await makeCacheWithImages(count: 5, toDisk: false)
+
+        let render = await renderList(urls: urls) { $0.targetCache(cache) }
+
+        XCTAssertEqual(render.results.map(\.cacheType), Array(repeating: .memory, count: urls.count))
+        XCTAssertEqual(Set(render.results.compactMap(\.source.url)), Set(urls))
+        XCTAssertFalse(render.placeholderAppeared, "The placeholder should not appear for an image in the memory cache.")
+    }
+
+    @MainActor
+    func testListRowsReportDiskCachedImageOnce() async throws {
+        let (cache, urls) = try await makeCacheWithImages(count: 5, toDisk: true)
+        cache.clearMemoryCache()
+
+        let render = await renderList(urls: urls) { $0.targetCache(cache) }
+
+        XCTAssertEqual(render.results.map(\.cacheType), Array(repeating: .disk, count: urls.count))
+        XCTAssertEqual(Set(render.results.compactMap(\.source.url)), Set(urls))
+        XCTAssertTrue(render.placeholderAppeared)
+    }
+
+    @MainActor
+    func testListRowsReportMemoryCachedImageOnceWhenNotLoadingMemoryCacheSynchronously() async throws {
+        let (cache, urls) = try await makeCacheWithImages(count: 5, toDisk: false)
+
+        let render = await renderList(urls: urls) { $0.targetCache(cache).loadMemoryCacheSynchronously(false) }
+
+        XCTAssertEqual(render.results.map(\.cacheType), Array(repeating: .memory, count: urls.count))
+        XCTAssertEqual(Set(render.results.compactMap(\.source.url)), Set(urls))
+        XCTAssertTrue(render.placeholderAppeared)
+    }
+
+    /// Shows a `List` with one row for each URL, all of them on the screen, and reports the results of `onSuccess`.
+    @MainActor
+    private func renderList(
+        urls: [URL],
+        configure: @escaping (KFImage) -> KFImage
+    ) async -> (results: [RetrieveImageResult], placeholderAppeared: Bool) {
+        let recorder = ListLoadRecorder()
+        let reported = expectation(description: "Each row reports its image")
+        reported.expectedFulfillmentCount = urls.count
+        let reportedAgain = expectation(description: "A row reports its image again")
+        reportedAgain.isInverted = true
+
+        let view = List {
+            ForEach(urls, id: \.self) { url in
+                configure(KFImage(url))
+                    .onSuccess { result in
+                        recorder.results.append(result)
+                        (recorder.results.count <= urls.count ? reported : reportedAgain).fulfill()
+                    }
+                    .placeholder {
+                        Color.gray.onAppear { recorder.placeholderAppeared = true }
+                    }
+                    .frame(width: 48, height: 48)
+            }
+        }
+        let controller = UIHostingController(rootView: view)
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: memoryCacheRenderWidth, height: 800))
+        window.rootViewController = controller
+        window.makeKeyAndVisible()
+        controller.view.layoutIfNeeded()
+
+        await fulfillment(of: [reported], timeout: 2)
+        await fulfillment(of: [reportedAgain], timeout: 0.3)
+        window.isHidden = true
+        return (recorder.results, recorder.placeholderAppeared)
+    }
+
+    @MainActor
+    private func makeCacheWithImages(count: Int, toDisk: Bool) async throws -> (ImageCache, [URL]) {
+        let cache = ImageCache(name: "com.onevcat.KingfisherTests.MemoryCacheSync.\(UUID().uuidString)")
+        addTeardownBlock {
+            clearCaches([cache])
+        }
+        let urls = (0..<count).map { URL(string: "https://example.com/memory-cache-sync-\($0).png")! }
+        for url in urls {
+            try await cache.store(makeMemoryCacheTestImage(), forKey: url.cacheKey, toDisk: toDisk)
+        }
+        return (cache, urls)
+    }
+
     @MainActor
     private func makeCacheWithImage(
         toDisk: Bool,
@@ -765,6 +851,11 @@ private final class FirstRenderRecorder {
 
 private final class LoadRecorder {
     var loadCount = 0
+}
+
+private final class ListLoadRecorder {
+    var results: [RetrieveImageResult] = []
+    var placeholderAppeared = false
 }
 
 private final class ParentUpdateState: ObservableObject {
