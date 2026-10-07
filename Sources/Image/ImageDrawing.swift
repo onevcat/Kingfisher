@@ -554,11 +554,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     
     /// Returns the decoded image of the `base` image. 
     ///
-    /// On iOS 15 or later, this is identical to the `UIImage.preparingForDisplay` method.
-    ///
-    /// In previous versions, this method draws the image in a plain context and returns the data from it. Using this
-    ///  method can improve drawing performance when an image is created from data but hasn't been displayed for the
-    ///  first time.
+    /// On iOS, tvOS and visionOS, this method uses the `UIImage.preparingForDisplay` method. On other platforms, or
+    /// when that method fails, it draws the image in a plain context and returns the data from it. Using this method
+    /// can improve drawing performance when an image is created from data but hasn't been displayed for the first
+    /// time.
     ///
     /// > This method is only applicable to CG-based images. The current image scale is preserved.
     /// > For any non-CG-based image or animated image, the `base` image itself is returned.
@@ -566,11 +565,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     
     /// Returns the decoded image of the `base` image at a given `scale`.
     ///
-    /// On iOS 15 or later, this is identical to the `UIImage.preparingForDisplay` method.
-    ///
-    /// In previous versions, this method draws the image in a plain context and returns the data from it. Using this
-    ///  method can improve drawing performance when an image is created from data but hasn't been displayed for the
-    ///  first time.
+    /// On iOS, tvOS and visionOS, this method uses the `UIImage.preparingForDisplay` method. On other platforms, or
+    /// when that method fails, it draws the image in a plain context and returns the data from it. Using this method
+    /// can improve drawing performance when an image is created from data but hasn't been displayed for the first
+    /// time.
     ///
     /// > This method is only applicable to CG-based images. The current image scale is preserved.
     /// > For any non-CG-based image or animated image, the `base` image itself is returned.

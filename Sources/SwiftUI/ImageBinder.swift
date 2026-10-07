@@ -76,8 +76,8 @@ extension KFImage {
             return loading || loadedImage != nil
         }
 
-        // Do not use @Published due to https://github.com/onevcat/Kingfisher/issues/1717. Revert to @Published once
-        // we can drop iOS 12.
+        // Not `@Published`: `markLoaded(sendChangeEvent:)` decides whether a change of this value sends a change
+        // event, and `loadFromMemoryCacheIfNeeded(context:)` sets it while SwiftUI updates the view.
         private(set) var loaded = false
 
         private(set) var animating = false
