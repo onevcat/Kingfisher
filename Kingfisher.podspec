@@ -41,5 +41,4 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
   s.frameworks = "CFNetwork", "Accelerate"
-  s.weak_frameworks = "SwiftUI", "Combine"
 end
