@@ -224,6 +224,30 @@ extension KFImageProtocol {
         return result
     }
     
+    /// Sets whether to show an image in the memory cache in the first render pass of the view.
+    ///
+    /// - Parameter flag: A boolean value indicating whether an image in the memory cache is shown in the first render
+    /// pass. The default is `true`.
+    /// - Returns: A Kingfisher-compatible image view with the applied changes.
+    ///
+    /// When this is enabled, which is the default behavior, the view looks up the memory cache synchronously before
+    /// its first render pass. If the image is there, the view shows it at once and does not show the placeholder.
+    /// This keeps the layout stable, for example when a lazy container such as `LazyVStack` or `List` creates a row
+    /// again while scrolling. The ``KFOptionSetter/onSuccess(_:)`` handler is still called with a result whose
+    /// ``RetrieveImageResult/cacheType`` is ``CacheType/memory``, after the view appears.
+    ///
+    /// Only the memory cache is used for this. On a memory cache miss, the view shows the placeholder first and loads
+    /// the image as usual when it appears. The normal loading is also used when ``KFOptionSetter/forceRefresh(_:)`` or
+    /// ``KFOptionSetter/forceTransition(_:)`` is set, when the cached image must be processed again, or when the cache
+    /// is a subclass of ``ImageCache``, so that the methods that the subclass overrides are used.
+    ///
+    /// Set it to `false` to always show the placeholder first and start the loading when the view appears.
+    public func loadMemoryCacheSynchronously(_ flag: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.context.loadMemoryCacheSynchronously = flag
+        return result
+    }
+
     /// Sets a SwiftUI transition for the image loading.
     ///
     /// - Parameters:

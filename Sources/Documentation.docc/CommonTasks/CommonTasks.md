@@ -80,6 +80,16 @@ The `imageView` will display the `image` as the placeholder during its download 
 > 
 > The instance of `MyView` will be dynamically added to or removed from the `imageView` as required.
 
+For SwiftUI:
+```swift
+KFImage(url)
+    .placeholder { ProgressView() }
+```
+
+If the image is already in the memory cache, `KFImage` shows it in the first render pass and does not show the
+placeholder. This keeps the layout stable in lazy containers such as `LazyVStack` and `List`. To always show the
+placeholder first, call `.loadMemoryCacheSynchronously(false)`.
+
 ### Showing a Loading Indicator while Downloading
 
 ```swift

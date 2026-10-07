@@ -37,6 +37,38 @@ extension KFImage {
         
         init() {}
 
+        /// Takes the image from the memory cache, if it can be shown at once. Only the first call does something.
+        ///
+        /// Call it in the body of the view, before the body reads the binder. Then the first render pass shows the
+        /// image instead of the placeholder, and the layout does not change when the view appears.
+        ///
+        /// SwiftUI creates the view value again in each update of the parent, but keeps the binder of the first value.
+        /// Thus, the memory cache is not used in the initializer. Otherwise each update would apply the image modifier
+        /// again and extend the expiration of the cached image, for a binder that SwiftUI discards.
+        func loadFromMemoryCacheIfNeeded<HoldingView: KFImageHoldingView>(
+            context: Context<HoldingView>
+        ) where HoldingView: Sendable {
+            guard !memoryCacheChecked else { return }
+            memoryCacheChecked = true
+            guard context.loadMemoryCacheSynchronously,
+                  !loadingOrSucceeded,
+                  let source = context.source,
+                  // A transition forced for a cached image needs the normal flow to animate the image in.
+                  !context.shouldApplyFade(cacheType: .memory),
+                  let result = KingfisherManager.shared.retrieveImageInMemoryCacheSynchronously(
+                    with: source, options: context.options
+                  )
+            else {
+                return
+            }
+            // Set the storage directly. SwiftUI does not allow a change event while it updates the view, and the body
+            // reads the new values after this call. `usesFailureImage` keeps `false`, which is correct for a retrieved
+            // image.
+            _loadedImage = result.image
+            loaded = true
+            pendingMemoryCacheResult = result
+        }
+
         var downloadTask: DownloadTask?
         private var loading = false
 
@@ -50,9 +82,23 @@ extension KFImage {
 
         private(set) var animating = false
 
-        private(set) var loadedImage: KFCrossPlatformImage? = nil { willSet { objectWillChange.send() } }
+        private var _loadedImage: KFCrossPlatformImage? = nil
+        private(set) var loadedImage: KFCrossPlatformImage? {
+            get { _loadedImage }
+            set {
+                objectWillChange.send()
+                _loadedImage = newValue
+            }
+        }
         var failureView: (() -> AnyView)? = nil { willSet { objectWillChange.send() } }
         var progress: Progress = .init()
+
+        /// Whether `loadFromMemoryCacheIfNeeded(context:)` was called.
+        private var memoryCacheChecked = false
+
+        /// The result of the memory cache hit in `loadFromMemoryCacheIfNeeded(context:)`, which is not reported to
+        /// `onSuccess` yet.
+        private var pendingMemoryCacheResult: RetrieveImageResult?
 
         /// Whether the current `loadedImage` is the fallback supplied by the deprecated `onFailureImage`, instead of
         /// an image retrieved from the cache or the network.
@@ -62,11 +108,26 @@ extension KFImage {
         ///
         /// A cancelled request can still deliver its failure after a restarted load has begun, so the two values have
         /// to change as a pair. Otherwise the provenance outlives the image it described, and a retrieved image ends
-        /// up reported as a fallback. Going through here is the only way to set the image, so no assignment site can
-        /// leave the two out of step. It also covers the change event, since `loadedImage` sends it.
+        /// up reported as a fallback. Except for the memory cache hit in `loadFromMemoryCacheIfNeeded(context:)`, going
+        /// through here is the only way to set the image, so no assignment site can leave the two out of step. It also
+        /// covers the change event, since `loadedImage` sends it.
         func setLoadedImage(_ image: KFCrossPlatformImage?, isFailureImage: Bool = false) {
             usesFailureImage = isFailureImage
             loadedImage = image
+        }
+
+        /// Reports the result of the memory cache hit in `loadFromMemoryCacheIfNeeded(context:)` to `onSuccess`, if it
+        /// is not reported yet.
+        ///
+        /// The placeholder is not shown for this result, so its `onAppear` does not start a loading that reports it.
+        func reportPendingMemoryCacheResult<HoldingView: KFImageHoldingView>(
+            context: Context<HoldingView>
+        ) where HoldingView: Sendable {
+            guard let result = pendingMemoryCacheResult else { return }
+            pendingMemoryCacheResult = nil
+            CallbackQueueMain.async {
+                context.onSuccessDelegate.call(result)
+            }
         }
 
         func markLoading() {

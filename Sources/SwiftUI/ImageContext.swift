@@ -91,6 +91,12 @@ extension KFImage {
             set { propertyQueue.sync { _startLoadingBeforeViewAppear = newValue } }
         }
         
+        var _loadMemoryCacheSynchronously: Bool = true
+        var loadMemoryCacheSynchronously: Bool {
+            get { propertyQueue.sync { _loadMemoryCacheSynchronously } }
+            set { propertyQueue.sync { _loadMemoryCacheSynchronously = newValue } }
+        }
+
         // SwiftUI transition support
         var _swiftUITransition: AnyTransition? = nil
         var swiftUITransition: AnyTransition? {
@@ -143,6 +149,7 @@ extension KFImage {
                 copied._placeholder = _placeholder
                 copied._failureView = _failureView
                 copied._startLoadingBeforeViewAppear = _startLoadingBeforeViewAppear
+                copied._loadMemoryCacheSynchronously = _loadMemoryCacheSynchronously
                 copied._swiftUITransition = _swiftUITransition
                 copied._swiftUIAnimation = _swiftUIAnimation
             }
