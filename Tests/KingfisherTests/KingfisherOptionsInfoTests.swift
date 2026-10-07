@@ -150,7 +150,6 @@ class KingfisherOptionsInfoTests: XCTestCase {
     }
 
     #if canImport(SwiftUI) && canImport(Combine)
-    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     @MainActor
     func testKFImageContextModifiersDoNotMutateOriginalImage() {
         let url = URL(string: "https://example.com/image.png")!
@@ -173,7 +172,6 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(withCancelOnDisappear.context.cancelOnDisappear)
     }
     
-    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     @MainActor
     func testKFImageOptionModifiersDoNotMutateOriginalImage() {
         let url = URL(string: "https://example.com/image.png")!
@@ -199,7 +197,6 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(withForceRefresh.context.options.forceRefresh)
     }
     
-    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     @MainActor
     func testKFImageCallbackModifiersDoNotShareDelegateState() {
         let url = URL(string: "https://example.com/image.png")!
@@ -220,7 +217,6 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(withFailure.context.onFailureDelegate.isSet)
     }
 
-    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     @MainActor
     func testKFImageModifierChainPreservesEarlierSettings() {
         let url = URL(string: "https://example.com/image.png")!
@@ -240,7 +236,6 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(image.context.onSuccessDelegate.isSet)
     }
 
-    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
     @MainActor
     func testKFImageOnFailureImageDoesNotMutateOriginalImage() {
