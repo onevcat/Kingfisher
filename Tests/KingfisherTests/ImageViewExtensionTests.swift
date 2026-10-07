@@ -1050,7 +1050,6 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
     @MainActor func testLowDataModeSource() {
         let exp = expectation(description: #function)
 

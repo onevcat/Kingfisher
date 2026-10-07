@@ -73,8 +73,7 @@ Sources/
 - **Cross-platform**: Extensive conditional compilation for iOS/macOS/tvOS/watchOS/visionOS
 
 ## Platform Support
-- **UIKit/AppKit**: iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ / visionOS 1.0+
-- **SwiftUI**: iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
+- **Platforms** (UIKit/AppKit and SwiftUI): iOS 15.0+ / macOS 12.0+ / tvOS 15.0+ / watchOS 9.0+ / visionOS 1.0+
 - **Toolchain**: Xcode 26.0+ / Swift 6.2+ compiler (Swift 5 language mode by default; with Swift 6 strict concurrency support)
 
 ## Testing

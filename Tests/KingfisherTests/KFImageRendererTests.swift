@@ -32,7 +32,6 @@ import UIKit
 import XCTest
 @testable import Kingfisher
 
-@available(iOS 14.0, tvOS 14.0, *)
 class KFImageRendererTests: XCTestCase {
     // MARK: - Layout
     @MainActor
@@ -434,7 +433,6 @@ class KFImageRendererTests: XCTestCase {
 // If the placeholder defines the first render pass and the image replaces it in `onAppear`, a recreated row in a lazy
 // container changes its height after it is placed, and the scroll view has to correct its content offset. So an image
 // in the memory cache must define the first render pass. All other loading paths must stay the same.
-@available(iOS 14.0, tvOS 14.0, *)
 extension KFImageRendererTests {
 
     @MainActor
@@ -912,7 +910,6 @@ private final class ExternalTransitionState: ObservableObject {
     @Published var showImage = false
 }
 
-@available(iOS 14.0, tvOS 14.0, *)
 private struct ExternalTransitionHost: View {
     @ObservedObject var state: ExternalTransitionState
     let url: URL
@@ -947,7 +944,6 @@ private struct ExternalTransitionHost: View {
 private let isLoadedTrueHeight: CGFloat = 123
 private let isLoadedFalseHeight: CGFloat = 45
 
-@available(iOS 14.0, tvOS 14.0, *)
 private extension KFImageProtocol where HoldingView == Image {
     /// Gives the image a different height per `isLoaded` value, so the measured layout reveals which value the
     /// `contentConfigure` block received. The `if` / `else` body also exercises the overload's `@ViewBuilder`.

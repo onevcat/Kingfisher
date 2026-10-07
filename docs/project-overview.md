@@ -53,11 +53,11 @@ The framework follows a modular architecture with clear separation of concerns, 
   - tvOS 15.0+ (`#if os(tvOS)`)
   - watchOS 9.0+ (`#if os(watchOS)`)
   - visionOS 1.0+ (`#if os(visionOS)`)
-- **SwiftUI**: iOS 14.0+ / macOS 11.0+ / tvOS 14.0+ / watchOS 7.0+ / visionOS 1.0+
+- **SwiftUI**: Same as UIKit/AppKit
 
 ### Platform-Specific Files
 - **macOS**: `Sources/Extensions/NSButton+Kingfisher.swift` - NSButton image loading
 - **iOS/tvOS**: `Sources/Extensions/UIButton+Kingfisher.swift` - UIButton extensions
 - **watchOS**: `Sources/Extensions/WKInterfaceImage+Kingfisher.swift` - WatchKit support
-- **CarPlay**: `Sources/Extensions/CPListItem+Kingfisher.swift` - CarPlay list items (iOS 14.0+)
+- **CarPlay**: `Sources/Extensions/CPListItem+Kingfisher.swift` - CarPlay list items
 - **tvOS**: `Sources/Extensions/TVMonogramView+Kingfisher.swift` - Apple TV monogram views

@@ -63,7 +63,6 @@ private final class DelayedImageDataProvider: ImageDataProvider, @unchecked Send
     }
 }
 
-@available(iOS 14.0, tvOS 14.0, *)
 class ImageBinderTests: XCTestCase {
     private func makeSharedDownloadTasks(priorities: [Float]) -> [DownloadTask] {
         let url = URL(string: "https://example.com/shared-priority.png")!
