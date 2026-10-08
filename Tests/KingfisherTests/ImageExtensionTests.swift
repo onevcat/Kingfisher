@@ -1048,6 +1048,17 @@ final class AnimatedImageViewLayoutTests: XCTestCase {
     }
     #else
     @MainActor
+    func testAnimatedImageViewInheritsAllInitializers() {
+        let image = KFCrossPlatformImage(data: testImageData)!
+        let frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+
+        XCTAssertEqual(AnimatedImageView().frame, .zero)
+        XCTAssertEqual(AnimatedImageView(frame: frame).frame, frame)
+        XCTAssertTrue(AnimatedImageView(image: image).image === image)
+        XCTAssertTrue(AnimatedImageView(image: image, highlightedImage: nil).image === image)
+    }
+
+    @MainActor
     func testAnimatedImageViewFollowsLayoutWithoutRebuildingAnimator() {
         let imageView = AnimatedImageView()
         imageView.image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(

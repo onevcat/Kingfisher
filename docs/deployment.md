@@ -31,7 +31,6 @@ The deployment process is fully automated using Fastlane with comprehensive plat
 **Key Features**:
 - Module stability enabled (`BUILD_LIBRARY_FOR_DISTRIBUTION`)
 - Privacy manifest included (`PrivacyInfo.xcprivacy`)
-- Weak framework dependencies (SwiftUI, Combine)
 - Required frameworks (CFNetwork, Accelerate)
 
 ### Swift Package Manager
