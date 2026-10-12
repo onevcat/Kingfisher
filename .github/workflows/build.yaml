@@ -16,6 +16,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  spm-integration:
+    name: SwiftPM consumer integration
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Build Swift package
+        run: swift build
+      - name: Verify SwiftPM app integration and privacy manifest
+        run: bundle exec ruby Scripts/verify-spm-consumer.rb
+
   build-framework:
     name: build (Xcode ${{ matrix.xcode }}, ${{ matrix.label }})
     runs-on: ${{ matrix.runner }}
