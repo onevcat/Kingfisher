@@ -98,3 +98,6 @@ vendor/
 # xcode-build-server files
 buildServer.json
 .compile
+
+# Leftover from Scripts/verify-spm-consumer.rb when the process is killed
+/kingfisher-spm-consumer-*/
