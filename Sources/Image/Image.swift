@@ -40,6 +40,10 @@ import ImageIO
 
 import UniformTypeIdentifiers
 
+#if canImport(os)
+import os
+#endif
+
 nonisolated(unsafe) private let animatedImageDataKey = malloc(1)!
 nonisolated(unsafe) private let imageFrameCountKey = malloc(1)!
 nonisolated(unsafe) private let imageSourceKey = malloc(1)!
@@ -249,6 +253,69 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
 // MARK: - Image Representation
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
+
+    /// The estimated byte count of the decoded bitmap of the `base` image (width * height * scale^2 * 4 bytes).
+    ///
+    /// Serializing an image (PNG/JPEG encoding) requires at least this much memory for the pixel buffer, plus
+    /// additional space for the encoded output. This value is used to preflight the serialization and skip it
+    /// gracefully when the device does not have enough free memory, instead of crashing inside the system encoder.
+    var estimatedBitmapByteCount: Int {
+        let pixelWidth: Int
+        let pixelHeight: Int
+        if let cgImage = cgImage {
+            pixelWidth = cgImage.width
+            pixelHeight = cgImage.height
+        } else {
+            pixelWidth = Int(size.width * scale)
+            pixelHeight = Int(size.height * scale)
+        }
+        return pixelWidth * pixelHeight * 4
+    }
+
+    /// The number of bytes the process can still allocate before the system terminates it, or `nil` if unknown.
+    static var availableMemoryByteCount: Int? {
+        #if canImport(os)
+        let bytes = os_proc_available_memory()
+        return bytes > 0 ? bytes : nil
+        #else
+        return nil
+        #endif
+    }
+
+    /// Whether serializing an image with the given decoded bitmap size is unlikely to exhaust the process memory.
+    ///
+    /// PNG/JPEG encoding needs to hold the decoded bitmap and the encoded data in memory at the same time, so the
+    /// working set is estimated as twice the bitmap size. Serialization is considered unsafe when that working set
+    /// exceeds either the currently available process memory or a quarter of the physical memory. In those cases the
+    /// encoder would raise an `NSInvalidArgumentException` (`NSAllocateMemoryPages failed`), which cannot be caught
+    /// in Swift and crashes the app.
+    ///
+    /// - Parameters:
+    ///   - estimatedBitmapByteCount: The estimated byte count of the decoded bitmap.
+    ///   - availableMemoryByteCount: The bytes the process can still allocate, or `nil` if unknown.
+    ///   - physicalMemoryByteCount: The physical memory of the device.
+    static func isSerializationSafe(
+        estimatedBitmapByteCount: Int,
+        availableMemoryByteCount: Int?,
+        physicalMemoryByteCount: UInt64
+    ) -> Bool {
+        guard estimatedBitmapByteCount > 0 else { return true }
+        let workingByteCount = estimatedBitmapByteCount * 2
+        if let available = availableMemoryByteCount, workingByteCount > available {
+            return false
+        }
+        return workingByteCount <= physicalMemoryByteCount / 4
+    }
+
+    /// Whether the `base` image can be serialized to PNG/JPEG data without risking an out-of-memory crash.
+    var isSerializationSafe: Bool {
+        Self.isSerializationSafe(
+            estimatedBitmapByteCount: estimatedBitmapByteCount,
+            availableMemoryByteCount: Self.availableMemoryByteCount,
+            physicalMemoryByteCount: ProcessInfo.processInfo.physicalMemory
+        )
+    }
+
     /// Returns a data object that contains the specified image in PNG format.
     ///
     /// - Returns: PNG data of image.
@@ -294,8 +361,16 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///             converted to PNG representation.
     ///   - compressionQuality: The compression quality when converting the image to a lossy format data.
     ///
-    /// - Returns: The resulting data representation.
+    /// - Returns: The resulting data representation. Returns `nil` when the image is too large to be serialized
+    ///            safely under the current memory condition. In that case Kingfisher skips writing to the disk
+    ///            cache instead of crashing in the system image encoder.
     public func data(format: ImageFormat, compressionQuality: CGFloat = 1.0) -> Data? {
+        // GIF serialization just returns the already existing data, so no large allocation is required.
+        // For other formats, preflight the memory condition to prevent an `NSAllocateMemoryPages failed` crash
+        // inside the system encoder when the image is huge or the app is under memory pressure.
+        if format != .GIF, !isSerializationSafe {
+            return nil
+        }
         return autoreleasepool { () -> Data? in
             let data: Data?
             switch format {

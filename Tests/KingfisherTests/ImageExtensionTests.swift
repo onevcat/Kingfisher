@@ -149,6 +149,63 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(resizeImage.size.width, 100)
         XCTAssertEqual(resizeImage.size.height, 50)
     }
+
+    func testEstimatedBitmapByteCount() {
+        let image = testImage
+        let expectedWidth = Int(image.kf.size.width * image.kf.scale)
+        let expectedHeight = Int(image.kf.size.height * image.kf.scale)
+        XCTAssertEqual(image.kf.estimatedBitmapByteCount, expectedWidth * expectedHeight * 4)
+        XCTAssertGreaterThan(image.kf.estimatedBitmapByteCount, 0)
+    }
+
+    func testIsSerializationSafe() {
+        typealias Wrapper = KingfisherWrapper<KFCrossPlatformImage>
+        let gigaByte = 1024 * 1024 * 1024
+
+        // A small image is always safe to serialize.
+        XCTAssertTrue(
+            Wrapper.isSerializationSafe(
+                estimatedBitmapByteCount: 100 * 100 * 4,
+                availableMemoryByteCount: gigaByte,
+                physicalMemoryByteCount: UInt64(4 * gigaByte)
+            )
+        )
+
+        // Unsafe when the serialization working set exceeds the available process memory.
+        XCTAssertFalse(
+            Wrapper.isSerializationSafe(
+                estimatedBitmapByteCount: gigaByte,
+                availableMemoryByteCount: gigaByte,
+                physicalMemoryByteCount: UInt64(64 * gigaByte)
+            )
+        )
+
+        // Unsafe when the serialization working set exceeds a quarter of the physical memory,
+        // even if the available process memory is unknown.
+        XCTAssertFalse(
+            Wrapper.isSerializationSafe(
+                estimatedBitmapByteCount: gigaByte,
+                availableMemoryByteCount: nil,
+                physicalMemoryByteCount: UInt64(4 * gigaByte)
+            )
+        )
+
+        // A zero-sized image does not allocate, so it is always considered safe.
+        XCTAssertTrue(
+            Wrapper.isSerializationSafe(
+                estimatedBitmapByteCount: 0,
+                availableMemoryByteCount: 0,
+                physicalMemoryByteCount: 0
+            )
+        )
+    }
+
+    func testImageDataSerializationUnderMemoryCondition() {
+        let image = testImage
+        // A normal image can be serialized when the memory condition is fine.
+        XCTAssertNotNil(image.kf.data(format: .PNG))
+        XCTAssertNotNil(image.kf.data(format: .JPEG, compressionQuality: 0.8))
+    }
     
     func testSizeConstraintByAnchor() {
         let size = CGSize(width: 100, height: 100)
