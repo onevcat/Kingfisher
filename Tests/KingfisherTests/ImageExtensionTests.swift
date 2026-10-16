@@ -198,6 +198,48 @@ class ImageExtensionTests: XCTestCase {
                 physicalMemoryByteCount: 0
             )
         )
+
+        // An available memory of zero means the process has reached its memory limit. It must not be treated
+        // as "unknown": even a small image is unsafe to serialize in that state.
+        XCTAssertFalse(
+            Wrapper.isSerializationSafe(
+                estimatedBitmapByteCount: 100 * 100 * 4,
+                availableMemoryByteCount: 0,
+                physicalMemoryByteCount: UInt64(4 * gigaByte)
+            )
+        )
+    }
+
+    func testSerializationGuardUnderMemoryPressure() {
+        let originalProvider = serializationAvailableMemoryProvider
+        // Simulate a process that has only 1 byte left before being terminated.
+        serializationAvailableMemoryProvider = { 1 }
+        defer { serializationAvailableMemoryProvider = originalProvider }
+
+        let image = testImage
+
+        // All encoding entry points are guarded.
+        XCTAssertNil(image.kf.pngRepresentation())
+        XCTAssertNil(image.kf.jpegRepresentation(compressionQuality: 0.8))
+        XCTAssertNil(image.kf.data(format: .PNG))
+        XCTAssertNil(image.kf.data(format: .JPEG))
+        XCTAssertNil(image.kf.data(format: .unknown))
+
+        // The explicit-format serializers must not bypass the guard.
+        XCTAssertNil(FormatIndicatedCacheSerializer.png.data(with: image, original: nil))
+        XCTAssertNil(FormatIndicatedCacheSerializer.jpeg(compressionQuality: 0.5).data(with: image, original: nil))
+        // Requesting GIF for a static image falls back to PNG encoding, which is guarded as well.
+        XCTAssertNil(FormatIndicatedCacheSerializer.gif.data(with: image, original: nil))
+
+        // Paths that reuse existing data do not allocate, so they keep working under memory pressure.
+        var originalSerializer = DefaultCacheSerializer()
+        originalSerializer.preferCacheOriginalData = true
+        XCTAssertEqual(originalSerializer.data(with: image, original: testImageData), testImageData)
+
+        let gifImage = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: .init())!
+        XCTAssertNotNil(gifImage.kf.gifRepresentation())
+        XCTAssertNotNil(gifImage.kf.data(format: .GIF))
+        XCTAssertNotNil(FormatIndicatedCacheSerializer.gif.data(with: gifImage, original: nil))
     }
 
     func testImageDataSerializationUnderMemoryCondition() {

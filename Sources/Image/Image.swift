@@ -40,8 +40,18 @@ import ImageIO
 
 import UniformTypeIdentifiers
 
-#if canImport(os)
+// `os_proc_available_memory` is only available on Darwin platforms other than macOS. The Simulator has no
+// per-process memory limit and the function returns 0 there, so the query is treated as unsupported on
+// Simulator as well.
+#if canImport(os) && !os(macOS) && !targetEnvironment(simulator)
 import os
+
+// Queries the bytes the process can still allocate before the system terminates it. A return value of `nil` means
+// the query is unsupported on the current platform, while a return value of `0` means the process has reached or
+// exceeded its memory limit. Declared as a variable so tests can inject a fake memory condition.
+nonisolated(unsafe) var serializationAvailableMemoryProvider: () -> Int? = { os_proc_available_memory() }
+#else
+nonisolated(unsafe) var serializationAvailableMemoryProvider: () -> Int? = { nil }
 #endif
 
 nonisolated(unsafe) private let animatedImageDataKey = malloc(1)!
@@ -272,14 +282,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return pixelWidth * pixelHeight * 4
     }
 
-    /// The number of bytes the process can still allocate before the system terminates it, or `nil` if unknown.
+    /// The number of bytes the process can still allocate before the system terminates it.
+    ///
+    /// A `nil` value means the query is unsupported on the current platform and the memory condition is unknown.
+    /// A value of `0` means the process has reached or exceeded its memory limit.
     static var availableMemoryByteCount: Int? {
-        #if canImport(os)
-        let bytes = os_proc_available_memory()
-        return bytes > 0 ? bytes : nil
-        #else
-        return nil
-        #endif
+        serializationAvailableMemoryProvider()
     }
 
     /// Whether serializing an image with the given decoded bitmap size is unlikely to exhaust the process memory.
@@ -308,6 +316,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
 
     /// Whether the `base` image can be serialized to PNG/JPEG data without risking an out-of-memory crash.
+    ///
+    /// This is a best-effort reduction of the OOM risk: the fixed memory estimate cannot cover allocations happening
+    /// after the check, so a `true` result does not guarantee a safe encoding.
     var isSerializationSafe: Bool {
         Self.isSerializationSafe(
             estimatedBitmapByteCount: estimatedBitmapByteCount,
@@ -318,8 +329,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
     /// Returns a data object that contains the specified image in PNG format.
     ///
-    /// - Returns: PNG data of image.
+    /// - Returns: PNG data of image. Returns `nil` when the image is too large to be encoded safely under the
+    ///            current memory condition, in which case Kingfisher skips writing to the disk cache instead of
+    ///            crashing in the system image encoder.
     public func pngRepresentation() -> Data? {
+        // Preflight the memory condition to prevent an uncatchable `NSAllocateMemoryPages failed` crash inside the
+        // system encoder when the image is huge or the app is under memory pressure.
+        guard isSerializationSafe else { return nil }
         #if os(macOS)
             guard let cgImage = cgImage else {
                 return nil
@@ -334,8 +350,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// Returns a data object that contains the specified image in JPEG format.
     ///
     /// - Parameter compressionQuality: The compression quality when converting image to JPEG data.
-    /// - Returns: JPEG data of image.
+    /// - Returns: JPEG data of image. Returns `nil` when the image is too large to be encoded safely under the
+    ///            current memory condition, in which case Kingfisher skips writing to the disk cache instead of
+    ///            crashing in the system image encoder.
     public func jpegRepresentation(compressionQuality: CGFloat) -> Data? {
+        // See `pngRepresentation()`.
+        guard isSerializationSafe else { return nil }
         #if os(macOS)
             guard let cgImage = cgImage else {
                 return nil

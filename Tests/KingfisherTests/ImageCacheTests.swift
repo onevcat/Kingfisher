@@ -93,6 +93,32 @@ class ImageCacheTests: XCTestCase {
         cache.diskStorage.config.expiration = .seconds(1)
         XCTAssertEqual(cache.diskStorage.config.expiration.timeInterval, 1)
     }
+
+    func testStoreSkipsDiskCacheUnderMemoryPressure() {
+        let originalProvider = serializationAvailableMemoryProvider
+        // Simulate a process that has only 1 byte left before being terminated, so serialization is declined.
+        serializationAvailableMemoryProvider = { 1 }
+        defer { serializationAvailableMemoryProvider = originalProvider }
+
+        let exp = expectation(description: #function)
+        let key = "test-key-memory-pressure"
+        cache.store(testImage, forKey: key, options: KingfisherParsedOptionsInfo(nil)) { result in
+            // The memory cache still succeeds; only the disk cache write is skipped.
+            guard case .failure(let error) = result.diskCacheResult,
+                  case .cacheError(let reason) = error,
+                  case .cannotSerializeImage = reason
+            else {
+                XCTFail("The disk cache should fail with cannotSerializeImage.")
+                return
+            }
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3)
+
+        // The image is still available in the memory cache, but nothing was written to the disk cache.
+        XCTAssertTrue(cache.isCached(forKey: key))
+        XCTAssertFalse(cache.diskStorage.isCached(forKey: key))
+    }
     
     func testMaxMemorySize() {
         cache.memoryStorage.config.totalCostLimit = 1
