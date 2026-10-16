@@ -93,6 +93,19 @@ class ImageProcessorTests: XCTestCase {
         #endif
     }
 
+    // Issue 2097. https://github.com/onevcat/Kingfisher/issues/2097
+    func testCroppingAfterResizingUsesResizedSize() throws {
+        let options = KingfisherParsedOptionsInfo(nil)
+        let processor = ResizingImageProcessor(referenceSize: CGSize(width: 32, height: 32))
+            |> CroppingImageProcessor(size: CGSize(width: 16, height: 16))
+        let result = try XCTUnwrap(processor.process(item: .image(testImage), options: options))
+
+        XCTAssertEqual(result.size, CGSize(width: 16, height: 16))
+        let cgImage = try XCTUnwrap(result.kf.cgImage)
+        XCTAssertEqual(cgImage.width, 16 * Int(result.kf.scale))
+        XCTAssertEqual(cgImage.height, 16 * Int(result.kf.scale))
+    }
+
     // Issue 1125. https://github.com/onevcat/Kingfisher/issues/1125
     func testDownsamplingSizes() {
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
