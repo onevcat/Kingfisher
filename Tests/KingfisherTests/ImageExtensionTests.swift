@@ -231,6 +231,20 @@ class ImageExtensionTests: XCTestCase {
         // Requesting GIF for a static image falls back to PNG encoding, which is guarded as well.
         XCTAssertNil(FormatIndicatedCacheSerializer.gif.data(with: image, original: nil))
 
+        // When encoding is refused, the serializers must not fall back to the unprocessed original data:
+        // it would be cached under a key containing the processor identifier and served unprocessed later.
+        XCTAssertNil(FormatIndicatedCacheSerializer.png.data(with: image, original: testImageData))
+        XCTAssertNil(
+            FormatIndicatedCacheSerializer.jpeg(compressionQuality: 0.5).data(with: image, original: testImageData)
+        )
+
+        #if !os(macOS)
+        // A refused encoding must not trigger the orientation-normalization redraw in the PNG fallback.
+        let rotatedImage = UIImage(cgImage: testImage.cgImage!, scale: testImage.scale, orientation: .right)
+        XCTAssertNil(FormatIndicatedCacheSerializer.png.data(with: rotatedImage, original: nil))
+        XCTAssertNil(rotatedImage.kf.data(format: .unknown))
+        #endif
+
         // Paths that reuse existing data do not allocate, so they keep working under memory pressure.
         var originalSerializer = DefaultCacheSerializer()
         originalSerializer.preferCacheOriginalData = true

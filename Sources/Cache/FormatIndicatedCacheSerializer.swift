@@ -108,7 +108,20 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     private let jpegCompressionQuality: CGFloat?
     
     public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
-        
+
+        // Reusing the embedded GIF data does not allocate memory, so it stays available even when encoding is
+        // refused due to memory pressure.
+        if imageFormat == .GIF, let data = image.kf.gifRepresentation() {
+            return data
+        }
+
+        // All paths below either encode the image or fall back to the unprocessed `original`. When encoding is
+        // refused for memory pressure, decline the whole store: caching `original` under a key that may contain a
+        // processor identifier would serve the unprocessed image on later retrieval, and the `normalized` fallback
+        // would still perform a bitmap redraw. Format-based fallbacks (when encoding fails for non-memory reasons)
+        // are unchanged.
+        guard image.kf.isSerializationSafe else { return nil }
+
         func imageData(withFormat imageFormat: ImageFormat) -> Data? {
             return autoreleasepool { () -> Data? in
                 switch imageFormat {

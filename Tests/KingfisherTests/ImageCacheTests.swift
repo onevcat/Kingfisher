@@ -119,6 +119,38 @@ class ImageCacheTests: XCTestCase {
         XCTAssertTrue(cache.isCached(forKey: key))
         XCTAssertFalse(cache.diskStorage.isCached(forKey: key))
     }
+
+    func testProcessedImageNotReplacedByOriginalUnderMemoryPressure() async throws {
+        let key = "test-key-processed-memory-pressure"
+        let p = ResizingImageProcessor(referenceSize: CGSize(width: 8, height: 8), mode: .none)
+        let options = KingfisherParsedOptionsInfo([.processor(p)])
+        // The manager stores the processed image together with the downloaded original data.
+        let processedImage = p.process(item: .image(testImage), options: options)!
+
+        let originalProvider = serializationAvailableMemoryProvider
+
+        // The first store attempt happens under memory pressure. Serialization is declined, so nothing
+        // (in particular not the unprocessed original data) may be written under the processed-image key.
+        serializationAvailableMemoryProvider = { 1 }
+        _ = try? await cache.store(
+            processedImage, original: testImageData, forKey: key, processorIdentifier: p.identifier, toDisk: true
+        )
+        serializationAvailableMemoryProvider = originalProvider
+
+        XCTAssertEqual(cache.imageCachedType(forKey: key, processorIdentifier: p.identifier), .memory)
+
+        // Storing again with a normal memory condition writes the processed image to the disk cache.
+        try await cache.store(
+            processedImage, original: testImageData, forKey: key, processorIdentifier: p.identifier, toDisk: true
+        )
+
+        // Retrieving from disk after clearing the memory cache must return the processed image,
+        // not the unprocessed original.
+        cache.clearMemoryCache()
+        let result = try await cache.retrieveImage(forKey: key, options: [.processor(p)])
+        XCTAssertEqual(result.cacheType, .disk)
+        XCTAssertEqual(result.image?.size, CGSize(width: 8, height: 8))
+    }
     
     func testMaxMemorySize() {
         cache.memoryStorage.config.totalCostLimit = 1
