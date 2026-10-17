@@ -103,15 +103,7 @@ class ImageDrawingTests: XCTestCase {
         XCTAssertEqual(image.kf.flipped(horizontal: true, vertical: true).pixelRows(), [[clear, clear, blue], [clear, green, red]])
     }
 
-    func testImageFlippingTwiceRestoresTheOriginalImage() throws {
-        #if os(macOS)
-        // A drawn image is created with `NSImage(cgImage:size: .zero)`, so drawing it again on a Retina
-        // display doubles its pixel size. Every drawing method shares that path.
-        try XCTSkipIf(
-            (NSScreen.main?.backingScaleFactor ?? 1) > 1,
-            "Redrawing a drawn image doubles its pixel size on a Retina display."
-        )
-        #endif
+    func testImageFlippingTwiceRestoresTheOriginalImage() {
         let red: [UInt8] = [255, 0, 0, 255]
         let green: [UInt8] = [0, 255, 0, 255]
         let blue: [UInt8] = [0, 0, 255, 255]

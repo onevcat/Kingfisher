@@ -166,7 +166,12 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
     #if os(macOS)
     static func image(cgImage: CGImage, scale: CGFloat, refImage: KFCrossPlatformImage?) -> KFCrossPlatformImage {
-        return KFCrossPlatformImage(cgImage: cgImage, size: .zero)
+        // `NSImage(cgImage:size:)` reports its pixel size in screen backing pixels (2x on Retina), which makes
+        // `size` wrong for the following processors. A bitmap rep keeps the real pixel size of `cgImage`.
+        let rep = NSBitmapImageRep(cgImage: cgImage)
+        let image = KFCrossPlatformImage(size: rep.size)
+        image.addRepresentation(rep)
+        return image
     }
     
     /// The normalized image. On macOS, this getter returns the image itself without performing any additional operations.
