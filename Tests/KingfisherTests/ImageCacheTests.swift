@@ -1180,3 +1180,130 @@ extension NSRecursiveLock {
     return try work()
   }
 }
+
+extension ImageCacheTests {
+    private final class MemoryAllowance: @unchecked Sendable {
+        private let lock = NSLock()
+        private var count = 0
+        private let first: Int?
+        init(_ first: Int?) { self.first = first }
+        var reads: Int {
+            lock.lock(); defer { lock.unlock() }
+            return count
+        }
+        func next() -> Int? {
+            lock.lock(); defer { lock.unlock() }
+            count += 1
+            return count == 1 ? first : 0
+        }
+        var policy: CacheSerializationMemoryPolicy { .init(availableMemory: { self.next() }) }
+    }
+
+    private func serializers(_ policy: CacheSerializationMemoryPolicy) -> [any CacheSerializer] {
+        var standard = DefaultCacheSerializer()
+        standard.memoryPolicy = policy
+        return [standard] + [FormatIndicatedCacheSerializer.png, .jpeg, .gif].map {
+            var serializer = $0
+            serializer.memoryPolicy = policy
+            return serializer
+        }
+    }
+
+    func testSerializationMemoryRefusalDoesNotFallbackToOriginal() {
+        let original = testImagePNGData
+        for serializer in serializers(.init(availableMemory: { 0 })) {
+            XCTAssertNil(serializer.data(with: testImage, original: original))
+            XCTAssertNil(serializer.data(with: testImage, original: nil))
+        }
+    }
+
+    func testSerializationMemoryDecisionIsMadeOnce() throws {
+        let original = testImagePNGData
+        let image = try XCTUnwrap(ResizingImageProcessor(referenceSize: CGSize(width: 8, height: 8))
+            .process(item: .image(testImage), options: KingfisherParsedOptionsInfo(nil)))
+        for index in 0..<4 {
+            let allowance = MemoryAllowance(Int.max)
+            let serializer = serializers(allowance.policy)[index]
+            let data = try XCTUnwrap(serializer.data(with: image, original: original))
+            let decoded = try XCTUnwrap(KFCrossPlatformImage(data: data))
+            XCTAssertEqual(decoded.size, image.size)
+            XCTAssertEqual(allowance.reads, 1)
+        }
+    }
+
+    func testSerializationMemoryPolicyPreservesDataReuse() throws {
+        let allowance = MemoryAllowance(0)
+        var standard = DefaultCacheSerializer()
+        standard.memoryPolicy = allowance.policy
+        standard.preferCacheOriginalData = true
+        XCTAssertEqual(standard.data(with: testImage, original: testImagePNGData), testImagePNGData)
+        let gif = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(
+            data: testImageGIFData, options: KingfisherParsedOptionsInfo(nil).imageCreatingOptions))
+        standard.preferCacheOriginalData = false
+        XCTAssertEqual(standard.data(with: gif, original: nil), testImageGIFData)
+        var serializer = FormatIndicatedCacheSerializer.gif
+        serializer.memoryPolicy = allowance.policy
+        XCTAssertEqual(serializer.data(with: gif, original: nil), testImageGIFData)
+        XCTAssertEqual(allowance.reads, 0)
+    }
+
+    func testSerializationMemoryPolicyDoesNotAffectPublicEncodingOrDefaults() {
+        let policy = CacheSerializationMemoryPolicy(availableMemory: { 0 })
+        XCTAssertFalse(policy.allowsSerialization(of: testImage))
+        XCTAssertNotNil(testImage.kf.pngRepresentation())
+        XCTAssertNotNil(testImage.kf.jpegRepresentation(compressionQuality: 1))
+        XCTAssertNotNil(testImage.kf.data(format: .unknown))
+        XCTAssertNotNil(DefaultCacheSerializer.default.data(with: testImage, original: nil))
+        XCTAssertNotNil(FormatIndicatedCacheSerializer.png.data(with: testImage, original: nil))
+        XCTAssertTrue(CacheSerializationMemoryPolicy(availableMemory: { nil }).allowsSerialization(of: testImage))
+    }
+
+    func testSerializationMemoryPolicyBoundary() throws {
+        let cgImage = try XCTUnwrap(testImage.kf.cgImage)
+        let estimate = max(cgImage.bytesPerRow, cgImage.width * 4) * cgImage.height * 2
+        XCTAssertTrue(CacheSerializationMemoryPolicy(availableMemory: { estimate }).allowsSerialization(of: testImage))
+        XCTAssertFalse(CacheSerializationMemoryPolicy(availableMemory: { estimate - 1 }).allowsSerialization(of: testImage))
+        XCTAssertFalse(CacheSerializationMemoryPolicy(availableMemory: { -1 }).allowsSerialization(of: testImage))
+    }
+
+    func testSerializationMemoryRefusalKeepsMemoryCacheAndReportsDiskFailure() {
+        var serializer = FormatIndicatedCacheSerializer.png
+        serializer.memoryPolicy = .init(availableMemory: { 0 })
+        let options = KingfisherParsedOptionsInfo([.cacheSerializer(serializer)])
+        let stored = expectation(description: "Store completes")
+        cache.store(testImage, original: testImagePNGData, forKey: "refused", options: options) { result in
+            switch result.diskCacheResult {
+            case .failure(.cacheError(reason: .cannotSerializeImage)): break
+            default: XCTFail("Expected a serialization failure")
+            }
+            stored.fulfill()
+        }
+        wait(for: [stored], timeout: 3)
+        XCTAssertNotNil(cache.retrieveImageInMemoryCache(forKey: "refused"))
+        XCTAssertFalse(cache.diskStorage.isCached(forKey: "refused"))
+    }
+
+    func testSerializationMemoryDropPreservesProcessedDiskEntry() throws {
+        let processor = ResizingImageProcessor(referenceSize: CGSize(width: 8, height: 8))
+        let image = try XCTUnwrap(processor.process(item: .image(testImage), options: KingfisherParsedOptionsInfo(nil)))
+        let allowance = MemoryAllowance(Int.max)
+        var serializer = FormatIndicatedCacheSerializer.png
+        serializer.memoryPolicy = allowance.policy
+        let options = KingfisherParsedOptionsInfo([.processor(processor), .cacheSerializer(serializer)])
+        let stored = expectation(description: "Stored")
+        cache.store(image, original: testImagePNGData, forKey: "processed", options: options) { result in
+            if case .failure(let error) = result.diskCacheResult { XCTFail("\(error)") }
+            stored.fulfill()
+        }
+        wait(for: [stored], timeout: 3)
+        cache.clearMemoryCache()
+        let retrieved = expectation(description: "Retrieved")
+        cache.retrieveImage(forKey: "processed", options: options) { result in
+            XCTAssertEqual(result.value?.image?.size, image.size)
+            XCTAssertEqual(result.value?.cacheType, .disk)
+            retrieved.fulfill()
+        }
+        wait(for: [retrieved], timeout: 3)
+        XCTAssertEqual(allowance.reads, 1)
+    }
+}

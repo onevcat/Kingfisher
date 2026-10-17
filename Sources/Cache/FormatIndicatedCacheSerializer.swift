@@ -101,6 +101,9 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     /// `original` data in ``CacheSerializer/data(with:original:)``.
     public static let gif = FormatIndicatedCacheSerializer(imageFormat: .GIF, jpegCompressionQuality: nil)
     
+    /// The memory policy checked once before encoding. The default is ``CacheSerializationMemoryPolicy/unrestricted``.
+    public var memoryPolicy: CacheSerializationMemoryPolicy = .unrestricted
+
     // The specified image format.
     private let imageFormat: ImageFormat
 
@@ -108,7 +111,10 @@ public struct FormatIndicatedCacheSerializer: CacheSerializer {
     private let jpegCompressionQuality: CGFloat?
     
     public func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
-        
+        if imageFormat == .GIF, let data = image.kf.gifRepresentation() { return data }
+        // A policy refusal ends this write; it must not enter the original-data fallback.
+        guard memoryPolicy.allowsSerialization(of: image) else { return nil }
+
         func imageData(withFormat imageFormat: ImageFormat) -> Data? {
             return autoreleasepool { () -> Data? in
                 switch imageFormat {
