@@ -1047,6 +1047,50 @@ class NilModifierCountingDelegate: ImageDownloaderDelegate, @unchecked Sendable 
     }
 }
 
+// Keeps only a weak reference to the session task of the download it sees start, so a test can check that the
+// session task is released without holding it.
+final class SessionTaskTrackingDelegate: ImageDownloaderDelegate, @unchecked Sendable {
+    private let started: XCTestExpectation
+    private let lock = NSLock()
+    private weak var _sessionTask: SessionDataTask?
+
+    init(started: XCTestExpectation) { self.started = started }
+
+    var sessionTask: SessionDataTask? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _sessionTask
+    }
+
+    func imageDownloader(_ downloader: ImageDownloader, willDownloadImageForURL url: URL, with request: URLRequest?) {
+        lock.lock()
+        _sessionTask = downloader.sessionDelegate.task(for: url)
+        lock.unlock()
+        started.fulfill()
+    }
+
+    // `willDownloadImageForURL` is reported right before the session task resumes. A second request for the same URL
+    // joins the download only once the task has started; before that, it goes through the start path again.
+    func waitUntilSessionTaskStarted(timeout: TimeInterval = 3) -> Bool {
+        waitUntil(timeout: timeout) { $0?.started == true }
+    }
+
+    // The last references go away on the session, processing and cache queues, so poll until the session task is
+    // released instead of asserting right after the completion handler.
+    func waitUntilSessionTaskReleased(timeout: TimeInterval = 3) -> Bool {
+        waitUntil(timeout: timeout) { $0 == nil }
+    }
+
+    private func waitUntil(timeout: TimeInterval, _ condition: (SessionDataTask?) -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            if condition(sessionTask) { return true }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.01))
+        } while Date() < deadline
+        return condition(sessionTask)
+    }
+}
+
 final class URLModifier: ImageDownloadRequestModifier {
     let url: URL?
     init(url: URL?) {

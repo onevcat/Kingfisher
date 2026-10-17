@@ -499,19 +499,24 @@ open class ImageDownloader: @unchecked Sendable {
             return downloadTask
         }
 
+        // Capturing `context` keeps its options alive, and their request modifier can retain this task.
+        let url = context.url
+        let processingQueue = context.options.processingQueue
         sessionTask.onTaskDone.delegate(on: self) { [weak sessionTask] (self, done) in
             // Underlying downloading finishes.
             // result: Result<(Data, URLResponse?)>, callbacks: [TaskCallback]
             let (result, callbacks) = done
 
             // Before processing the downloaded data.
-            self.reportDidDownloadImageData(result: result, url: context.url)
+            self.reportDidDownloadImageData(result: result, url: url)
 
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
+                // The session task can be released before processing finishes, so read its metrics now.
+                let metrics = sessionTask?.metrics
                 let processor = ImageDataProcessor(
-                    data: data, callbacks: callbacks, processingQueue: context.options.processingQueue
+                    data: data, callbacks: callbacks, processingQueue: processingQueue
                 )
                 processor.onImageProcessed.delegate(on: self) { (self, done) in
                     // `onImageProcessed` will be called for `callbacks.count` times, with each
@@ -519,9 +524,9 @@ open class ImageDownloader: @unchecked Sendable {
                     // result: Result<Image>, callback: SessionDataTask.TaskCallback
                     let (result, callback) = done
 
-                    self.reportDidProcessImage(result: result, url: context.url, response: response)
+                    self.reportDidProcessImage(result: result, url: url, response: response)
 
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: context.url, originalData: data, metrics: sessionTask?.metrics) }
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data, metrics: metrics) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }

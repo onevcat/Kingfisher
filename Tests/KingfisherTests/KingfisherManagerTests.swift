@@ -2341,6 +2341,82 @@ class KingfisherManagerTests: XCTestCase {
         _ = delayedResponse.go()
         wait(for: [completionExp], timeout: 2)
     }
+
+    // A finished download must release its session task while the manager and its downloader stay alive. The
+    // `onTaskDone` handler used to keep the download context, whose request modifier leads back to the task.
+    func testRetrieveImageWithAsyncCacheTypeCheckReleasesSessionTaskAfterDownload() {
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData)
+        let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
+        manager.downloader.delegate = delegate
+
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value?.cacheType, CacheType.none)
+            completionExp.fulfill()
+        }
+
+        wait(for: [downloadStarted], timeout: 2)
+        XCTAssertNotNil(delegate.sessionTask)
+        _ = delayedResponse.go()
+        wait(for: [completionExp], timeout: 3)
+        XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A finished download should release its session task.")
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckReleasesSessionTaskAfterFailedDownload() {
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData, statusCode: 404)
+        let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
+        manager.downloader.delegate = delegate
+
+        manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+            XCTAssertTrue(result.error?.isInvalidResponseStatusCode(404) ?? false)
+            completionExp.fulfill()
+        }
+
+        wait(for: [downloadStarted], timeout: 2)
+        XCTAssertNotNil(delegate.sessionTask)
+        _ = delayedResponse.go()
+        wait(for: [completionExp], timeout: 3)
+        XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A failed download should release its session task.")
+    }
+
+    func testRetrieveImageWithAsyncCacheTypeCheckReleasesSessionTaskAfterCancellingInitiatingRequest() {
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let cancelledExp = expectation(description: "\(#function) cancelled")
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData)
+        let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
+        manager.downloader.delegate = delegate
+
+        autoreleasepool {
+            let initiatingTask = manager.retrieveImage(with: url, options: [.asyncCacheTypeCheck]) { result in
+                XCTAssertTrue(result.error?.isTaskCancelled ?? false)
+                cancelledExp.fulfill()
+            }
+            wait(for: [downloadStarted], timeout: 2)
+            XCTAssertTrue(delegate.waitUntilSessionTaskStarted())
+
+            // Without the async cache type check, this request joins the running download synchronously.
+            let otherTask = manager.retrieveImage(with: url) { result in
+                XCTAssertNotNil(result.value?.image)
+                completionExp.fulfill()
+            }
+            XCTAssertTrue(otherTask?.sessionTask === delegate.sessionTask)
+            initiatingTask?.cancel()
+        }
+        wait(for: [cancelledExp], timeout: 3)
+        XCTAssertNotNil(delegate.sessionTask, "The other request should keep the shared download running.")
+
+        _ = delayedResponse.go()
+        wait(for: [completionExp], timeout: 3)
+        XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "The shared session task should be released.")
+    }
 }
 
 private var imageCreatingOptionsKey: Void?
