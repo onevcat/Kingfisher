@@ -128,6 +128,35 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertTrue(pixels.allSatisfy { $0 == red }, "The crop should come from the red center of the resized image")
     }
 
+    // Issue 2097. https://github.com/onevcat/Kingfisher/issues/2097
+    func testCroppingNonSquareImageAfterResizingWithEdgeAnchor() throws {
+        // A 64x32 image, red where x < 24 and 4 <= y < 28, blue elsewhere. After resizing to 32x16 the red
+        // area is x < 12, 2 <= y < 14, so an 8x8 crop anchored on the left edge (4..<12 vertically) is all red.
+        // A crop from the wrong origin picks up blue.
+        let red: [UInt8] = [255, 0, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let image = KFCrossPlatformImage.fromPixels((0..<32).map { y in
+            (0..<64).map { x in x < 24 && (4..<28).contains(y) ? red : blue }
+        })
+        let options = KingfisherParsedOptionsInfo(nil)
+
+        let resized = try XCTUnwrap(
+            ResizingImageProcessor(referenceSize: CGSize(width: 32, height: 16)).process(item: .image(image), options: options)
+        )
+        XCTAssertEqual(resized.size, CGSize(width: 32, height: 16))
+
+        let result = try XCTUnwrap(
+            CroppingImageProcessor(size: CGSize(width: 8, height: 8), anchor: CGPoint(x: 0, y: 0.5))
+                .process(item: .image(resized), options: options)
+        )
+        XCTAssertEqual(result.size, CGSize(width: 8, height: 8))
+        let cgImage = try XCTUnwrap(result.kf.cgImage)
+        XCTAssertEqual(cgImage.width, 8 * Int(result.kf.scale))
+        XCTAssertEqual(cgImage.height, 8 * Int(result.kf.scale))
+        let pixels = try XCTUnwrap(result.pixelRows()).flatMap { $0 }
+        XCTAssertTrue(pixels.allSatisfy { $0 == red }, "The crop should come from the red left edge of the resized image")
+    }
+
     // Issue 1125. https://github.com/onevcat/Kingfisher/issues/1125
     func testDownsamplingSizes() {
         XCTAssertEqual(testImage.size, CGSize(width: 64, height: 64))
