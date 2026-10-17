@@ -26,6 +26,9 @@
 
 import Foundation
 import CoreGraphics
+#if !os(macOS) && !targetEnvironment(simulator)
+import os
+#endif
 #if os(macOS)
 import AppKit
 #else
@@ -81,6 +84,61 @@ public extension CacheSerializer {
     var producesDecodableImageData: Bool { false }
 }
 
+/// Controls whether a built-in cache serializer starts encoding an image under memory pressure.
+///
+/// Set the serializer's `memoryPolicy` to ``availableMemory`` to opt in. The default is ``unrestricted``.
+/// Existing original or GIF data can still be reused without encoding.
+///
+/// ```swift
+/// var serializer = DefaultCacheSerializer.default
+/// serializer.memoryPolicy = .availableMemory
+/// let options: KingfisherOptionsInfo = [.cacheSerializer(serializer)]
+/// ```
+public struct CacheSerializationMemoryPolicy: Sendable {
+    /// Encodes images without checking the available process memory.
+    public static let unrestricted = CacheSerializationMemoryPolicy(availableMemory: { nil })
+
+    /// Skips encoding when its estimated working memory exceeds the available process memory.
+    ///
+    /// The estimate is twice the bitmap size, with at least four bytes per pixel. It is a heuristic,
+    /// not an upper bound on encoder allocations. Memory availability can change after the check.
+    /// This policy does not guarantee protection from out-of-memory termination or limit queued images.
+    ///
+    /// Enable this policy for apps with observed memory pressure during image encoding; it does not reduce
+    /// the memory cost of accepted writes. Skipping writes can reduce disk cache hits and require images
+    /// to be downloaded or processed again, even when encoding would have succeeded.
+    ///
+    /// On macOS and Simulator, the process memory query is unavailable, so encoding proceeds.
+    /// A skipped write returns `nil` from the serializer. `ImageCache` keeps its memory entry and reports
+    /// ``KingfisherError/CacheErrorReason/cannotSerializeImage(image:original:serializer:)`` for the disk write.
+    public static let availableMemory = CacheSerializationMemoryPolicy {
+        #if !os(macOS) && !targetEnvironment(simulator)
+        return os_proc_available_memory()
+        #else
+        return nil
+        #endif
+    }
+
+    private let availableMemory: @Sendable () -> Int?
+
+    init(availableMemory: @escaping @Sendable () -> Int?) {
+        self.availableMemory = availableMemory
+    }
+
+    func allowsSerialization(of image: KFCrossPlatformImage) -> Bool {
+        guard let available = availableMemory() else { return true }
+        let bitmapBytes: Double
+        if let cgImage = image.kf.cgImage {
+            bitmapBytes = max(Double(cgImage.bytesPerRow), Double(cgImage.width) * 4) * Double(cgImage.height)
+        } else {
+            let scale = Double(image.kf.scale)
+            bitmapBytes = Double(image.size.width) * Double(image.size.height) * scale * scale * 4
+        }
+        // Floating-point arithmetic avoids an integer overflow for unusually large image dimensions.
+        return bitmapBytes.isFinite && bitmapBytes >= 0 && bitmapBytes * 2 <= Double(available)
+    }
+}
+
 /// Represents a basic and default `CacheSerializer` used in the Kingfisher disk cache system.
 ///
 /// It can serialize and deserialize images in PNG, JPEG, and GIF formats. For images other than these formats, a 
@@ -117,6 +175,9 @@ public struct DefaultCacheSerializer: CacheSerializer {
     /// > This value is used as ``CacheSerializer/originalDataUsed-d2v9``.
     public var preferCacheOriginalData: Bool = false
 
+    /// The memory policy checked once before encoding. The default is ``CacheSerializationMemoryPolicy/unrestricted``.
+    public var memoryPolicy: CacheSerializationMemoryPolicy = .unrestricted
+
     public var originalDataUsed: Bool { preferCacheOriginalData }
     
     /// Creates a cache serializer that serializes and deserializes images in PNG, JPEG, and GIF formats.
@@ -139,6 +200,7 @@ public struct DefaultCacheSerializer: CacheSerializer {
             if format == .GIF { return image.kf.gifRepresentation() }
         }
 
+        if format != .GIF, !memoryPolicy.allowsSerialization(of: image) { return nil }
         return image.kf.data(format: format, compressionQuality: compressionQuality)
     }
     
