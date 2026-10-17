@@ -104,6 +104,10 @@ public struct CacheSerializationMemoryPolicy: Sendable {
     /// not an upper bound on encoder allocations. Memory availability can change after the check.
     /// This policy does not guarantee protection from out-of-memory termination or limit queued images.
     ///
+    /// Enable this policy for apps with observed memory pressure during image encoding; it does not reduce
+    /// the memory cost of accepted writes. Skipping writes can reduce disk cache hits and require images
+    /// to be downloaded or processed again, even when encoding would have succeeded.
+    ///
     /// On macOS and Simulator, the process memory query is unavailable, so encoding proceeds.
     /// A skipped write returns `nil` from the serializer. `ImageCache` keeps its memory entry and reports
     /// ``KingfisherError/CacheErrorReason/cannotSerializeImage(image:original:serializer:)`` for the disk write.
