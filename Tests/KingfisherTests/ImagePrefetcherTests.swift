@@ -517,6 +517,34 @@ class ImagePrefetcherTests: XCTestCase {
 
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testPrefetchReleasesSessionTaskAfterDownload() {
+        let downloadStarted = expectation(description: "Download started")
+        let completed = expectation(description: "Prefetch completed")
+        let url = URL(string: "https://example.com/prefetch-session-task")!
+        let delayedResponse = delayedStub(url, data: testImageData)
+        let downloader = ImageDownloader(name: "test.prefetcher.\(UUID().uuidString)")
+        let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
+        downloader.delegate = delegate
+
+        let prefetcher = ImagePrefetcher(
+            urls: [url], options: [.downloader(downloader), .waitForCache],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertTrue(skipped.isEmpty)
+                XCTAssertTrue(failed.isEmpty)
+                XCTAssertEqual(successful.count, 1)
+                completed.fulfill()
+            }
+        )
+        prefetcher.start()
+
+        wait(for: [downloadStarted], timeout: 3)
+        XCTAssertNotNil(delegate.sessionTask)
+        _ = delayedResponse.go()
+        wait(for: [completed], timeout: 3)
+        XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A finished prefetch should release its session task.")
+        _ = prefetcher // keep the prefetcher, its manager and downloader alive for the duration of the test
+    }
 }
 
 private struct PrefetchCancellationProbe: ImageDataProvider {
