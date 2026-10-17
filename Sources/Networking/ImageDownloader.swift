@@ -513,6 +513,8 @@ open class ImageDownloader: @unchecked Sendable {
             switch result {
             // Download finished. Now process the data to an image.
             case .success(let (data, response)):
+                // The session task can be released before processing finishes, so read its metrics now.
+                let metrics = sessionTask?.metrics
                 let processor = ImageDataProcessor(
                     data: data, callbacks: callbacks, processingQueue: processingQueue
                 )
@@ -524,7 +526,7 @@ open class ImageDownloader: @unchecked Sendable {
 
                     self.reportDidProcessImage(result: result, url: url, response: response)
 
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data, metrics: sessionTask?.metrics) }
+                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data, metrics: metrics) }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }
