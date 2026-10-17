@@ -2,6 +2,21 @@
 
 -----
 
+## [8.14.0 - Leaf Me Alone](https://github.com/onevcat/Kingfisher/releases/tag/8.14.0) (2026-10-17)
+
+#### Add
+* Add `setConfigurationBackgroundImage`, its cancellation method, and `KF.Builder.setConfigurationBackground(to:)` for buttons that use `UIButton.Configuration`. [#2587](https://github.com/onevcat/Kingfisher/pull/2587) [#2566](https://github.com/onevcat/Kingfisher/issues/2566) @onevcat @zhangyutao12
+* Show eligible memory-cached images in the first render pass of `KFImage` and `KFAnimatedImage` to reduce placeholder flashes and scroll jumps. This is enabled by default; use `loadMemoryCacheSynchronously(false)` to keep the previous behavior. [#2590](https://github.com/onevcat/Kingfisher/pull/2590) [#2589](https://github.com/onevcat/Kingfisher/issues/2589) [#2490](https://github.com/onevcat/Kingfisher/issues/2490) @onevcat @esthefanielanza @dream4java
+* Add an opt-in `memoryPolicy` to the built-in cache serializers to skip encoding when estimated memory needs exceed the available process allowance. The default remains unrestricted. The check is inactive on macOS and Simulator; on supported devices, skipped writes can reduce disk cache hits. This policy does not guarantee protection from out-of-memory termination. [#2597](https://github.com/onevcat/Kingfisher/pull/2597) [#2434](https://github.com/onevcat/Kingfisher/issues/2434) @onevcat @ethanwa @feather2222
+
+#### Fix
+* Fix a retain cycle that keeps finished download tasks, downloaded data, and options alive when using `asyncCacheTypeCheck` or `ImagePrefetcher`. [#2596](https://github.com/onevcat/Kingfisher/pull/2596) @oahhariri
+* Preserve the real pixel size of processed images on Retina Macs, fixing incorrect crops after resizing and chained image transformations. [#2595](https://github.com/onevcat/Kingfisher/pull/2595) [#2097](https://github.com/onevcat/Kingfisher/issues/2097) @gxlactuss @strangeliu
+* Clear `UIButton.Configuration.image` when removing the normal-state image, including when loading without a placeholder. Use `keepCurrentImageWhileLoading` to retain the previous image. [#2588](https://github.com/onevcat/Kingfisher/pull/2588) @onevcat
+* Restore inherited `AnimatedImageView` initializers on tvOS and remove obsolete weak links for SwiftUI and Combine in CocoaPods. tvOS subclasses that declare `init(frame:)` or `init(image:)` may need to add `override`. [#2592](https://github.com/onevcat/Kingfisher/pull/2592) @onevcat
+
+---
+
 ## [8.13.0 - Mirror Mirror](https://github.com/onevcat/Kingfisher/releases/tag/8.13.0) (2026-09-23)
 
 #### Add
