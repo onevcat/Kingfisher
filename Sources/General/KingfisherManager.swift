@@ -86,7 +86,14 @@ public struct RetrieveImageResult: Sendable {
     /// This property contains network performance metrics when the image was downloaded from the network
     /// (`cacheType == .none`). For cached images (`cacheType == .memory` or `.disk`), this will be `nil`.
     public let metrics: NetworkMetrics?
-    
+
+    /// The total wall-clock duration of the retrieval task, in seconds.
+    ///
+    /// It is measured from when the retrieval task starts until the result is produced, covering cache lookup,
+    /// downloading, and image processing. Unlike ``metrics``, it is available for all cache types, so it can be
+    /// used to compare loading performance across different configurations.
+    public let duration: TimeInterval
+
     /// Creates a RetrieveImageResult.
     ///
     /// - Parameters:
@@ -96,13 +103,15 @@ public struct RetrieveImageResult: Sendable {
     ///   - originalSource: The original source that initiated the retrieval.
     ///   - data: A closure that provides the image data.
     ///   - metrics: The network metrics collected during download. Defaults to nil for cached images.
+    ///   - duration: The total duration of the retrieval task. Defaults to 0.
     public init(
         image: KFCrossPlatformImage,
         cacheType: CacheType,
         source: Source,
         originalSource: Source,
         data: @escaping @Sendable () -> Data?,
-        metrics: NetworkMetrics? = nil
+        metrics: NetworkMetrics? = nil,
+        duration: TimeInterval = 0
     ) {
         self.image = image
         self.cacheType = cacheType
@@ -110,6 +119,7 @@ public struct RetrieveImageResult: Sendable {
         self.originalSource = originalSource
         self.data = data
         self.metrics = metrics
+        self.duration = duration
     }
 }
 
@@ -634,7 +644,8 @@ public class KingfisherManager: @unchecked Sendable {
                 source: source,
                 originalSource: context.originalSource,
                 data: { value.originalData },
-                metrics: value.metrics
+                metrics: value.metrics,
+                duration: context.elapsedTime
             )
             // Add image to cache.
             let targetCache = options.targetCache ?? self.cache
@@ -906,6 +917,9 @@ public class KingfisherManager: @unchecked Sendable {
         options: KingfisherParsedOptionsInfo
     ) -> RetrieveImageResult?
     {
+        // This synchronous fast path is the whole retrieval task when it hits, so the duration is measured
+        // locally from the entry of this method.
+        let startTime = CFAbsoluteTimeGetCurrent()
         guard !options.forceRefresh, !options.cacheSerializer.originalDataUsed else {
             return nil
         }
@@ -931,7 +945,8 @@ public class KingfisherManager: @unchecked Sendable {
             cacheType: .memory,
             source: source,
             originalSource: source,
-            data: { [image] in options.cacheSerializer.data(with: image, original: nil) }
+            data: { [image] in options.cacheSerializer.data(with: image, original: nil) },
+            duration: CFAbsoluteTimeGetCurrent() - startTime
         )
     }
 
@@ -963,7 +978,8 @@ public class KingfisherManager: @unchecked Sendable {
                         cacheType: $0.cacheType,
                         source: source,
                         originalSource: context.originalSource,
-                        data: { [image] in options.cacheSerializer.data(with: image, original: nil) }
+                        data: { [image] in options.cacheSerializer.data(with: image, original: nil) },
+                        duration: context.elapsedTime
                     )
                 }
                 completionHandler(value)
@@ -1054,7 +1070,8 @@ public class KingfisherManager: @unchecked Sendable {
                         cacheType: .none,
                         source: source,
                         originalSource: context.originalSource,
-                        data: { options.cacheSerializer.data(with: processedImage, original: nil) }
+                        data: { options.cacheSerializer.data(with: processedImage, original: nil) },
+                        duration: context.elapsedTime
                     )
 
                     targetCache.store(
@@ -1436,6 +1453,15 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
 
     let originalSource: SourceType
 
+    /// The time at which the retrieval task started. Used to measure the total duration reported in
+    /// ``RetrieveImageResult/duration``.
+    let startTime: CFAbsoluteTime
+
+    /// The time elapsed since the retrieval task started.
+    var elapsedTime: TimeInterval {
+        CFAbsoluteTimeGetCurrent() - startTime
+    }
+
     private var _propagationErrors: [PropagationError] = []
     var propagationErrors: [PropagationError] {
         propertyQueue.sync { _propagationErrors }
@@ -1443,6 +1469,7 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
 
     init(options: KingfisherParsedOptionsInfo, originalSource: SourceType) {
         self.originalSource = originalSource
+        self.startTime = CFAbsoluteTimeGetCurrent()
         _options = options
     }
 
