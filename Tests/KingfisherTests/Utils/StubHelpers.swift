@@ -71,3 +71,9 @@ func clearStubs(afterCancelling downloader: ImageDownloader?) {
 func clearStubs(afterCancelling manager: KingfisherManager?) {
     clearStubs(afterCancelling: manager?.downloader)
 }
+
+struct DownloadStartObserver: ImageDownloadRequestModifier {
+    let onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
+
+    func modified(for request: URLRequest) -> URLRequest? { request }
+}

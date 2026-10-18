@@ -80,32 +80,38 @@ class ImagePrefetcherTests: XCTestCase {
     }
     
     func testCancelPrefetching() {
-        let exp = expectation(description: #function)
-        let stubs = testURLs.map { delayedStub($0, data: testImageData) }
-        
+        let completed = expectation(description: "Prefetch cancelled")
+        let started = expectation(description: "Initial downloads started")
+        // Keep late URLProtocol requests from matching a later test's delayed stub.
+        let prefix = "https://kingfisher.test/prefetch-cancel/\(UUID().uuidString)"
+        let urls = testURLs.indices.map { URL(string: "\(prefix)/\($0)")! }
+        let stubs = urls.map { delayedStub($0, data: testImageData) }
+        defer { stubs.forEach { _ = $0.go() } }
+
         let maxConcurrentCount = 2
+        started.expectedFulfillmentCount = maxConcurrentCount
+        let modifier = DownloadStartObserver(onDownloadTaskStarted: { task in
+            XCTAssertNotNil(task)
+            started.fulfill()
+        })
         let prefetcher = ImagePrefetcher(
-            urls: testURLs,
-            options: [.waitForCache],
+            urls: urls,
+            options: [.waitForCache, .requestModifier(modifier)],
             completionHandler: { skippedResources, failedResources, completedResources in
                 XCTAssertEqual(skippedResources.count, 0)
-                XCTAssertEqual(failedResources.count, testURLs.count)
+                XCTAssertEqual(failedResources.count, urls.count)
                 XCTAssertEqual(completedResources.count, 0)
-                delay(0.1) { exp.fulfill() }
+                completed.fulfill()
             }
         )
-        
         prefetcher.maxConcurrentDownloads = maxConcurrentCount
-        
         prefetcher.start()
-        
-        DispatchQueue.main.async {
-            prefetcher.stop()
-            stubs.forEach { _ = $0.go() }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+
+        wait(for: [started], timeout: 3)
+        prefetcher.stop()
+        // stop() queues cancellation. Keep responses blocked until it completes.
+        wait(for: [completed], timeout: 3)
     }
-    
 
     func testPrefetcherCouldSkipCachedImages() {
         let exp = expectation(description: #function)
