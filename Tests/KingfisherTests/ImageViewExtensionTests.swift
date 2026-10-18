@@ -1016,38 +1016,37 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     }
 
     @MainActor func testImageSettingCanCancelAlternativeSource() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
+        let completed = expectation(description: "Alternative source cancelled")
+        let started = expectation(description: "Alternative download started")
+        // A cancelled URLProtocol can start late. Do not let it match the next test's delayed stub.
+        let url = URL(string: "https://kingfisher.test/alternative-cancel/\(UUID().uuidString)")!
         let dataStub = delayedStub(url, data: testImageData)
+        defer { _ = dataStub.go() }
 
-        let brokenURL = testURLs[1]
+        let brokenURL = URL(string: "https://kingfisher.test/original-cancel/\(UUID().uuidString)")!
         stub(brokenURL, data: Data())
-
-        var finishCalled = false
-
-        delay(1.0) {
-            self.imageView.kf.cancelDownloadTask()
-        }
-        delay(1.2) {
-            _ = dataStub.go()
-            XCTAssertTrue(finishCalled)
-            exp.fulfill()
-        }
+        let modifier = DownloadStartObserver(onDownloadTaskStarted: { task in
+            if task?.sessionTask?.task.originalRequest?.url == url {
+                started.fulfill()
+            }
+        })
 
         imageView.kf.setImage(
             with: .network(brokenURL),
-            options: [.alternativeSources([.network(url)])]
+            options: [.alternativeSources([.network(url)]), .requestModifier(modifier)]
         ) { result in
-            finishCalled = true
-            XCTAssertNotNil(result.error)
-            guard case .requestError(reason: .taskCancelled(let task, _)) = result.error! else {
+            defer { completed.fulfill() }
+            guard case .requestError(reason: .taskCancelled(let task, _)) = result.error else {
                 XCTFail("The error should be a task cancelled.")
                 return
             }
             XCTAssertEqual(task.task.originalRequest?.url, url, "Should be the alternative url cancelled.")
         }
 
-        waitForExpectations(timeout: 3, handler: nil)
+        // A fixed delay can cancel the original request before the fallback starts on a busy runner.
+        wait(for: [started], timeout: 3)
+        imageView.kf.cancelDownloadTask()
+        wait(for: [completed], timeout: 3)
     }
 
     @MainActor func testLowDataModeSource() {
