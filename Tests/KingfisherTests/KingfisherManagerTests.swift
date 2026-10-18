@@ -151,7 +151,36 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNotNil(result.image)
         XCTAssertEqual(result.cacheType, .none)
     }
-    
+
+    func testRetrieveImageResultDuration() async throws {
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+
+        // Downloaded from network.
+        var result = try await manager.retrieveImage(with: url)
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertGreaterThan(result.duration, 0)
+
+        // Memory cache hit.
+        result = try await manager.retrieveImage(with: url)
+        XCTAssertEqual(result.cacheType, .memory)
+        XCTAssertGreaterThan(result.duration, 0)
+
+        // Synchronous memory fast path (used by SwiftUI `KFImage`).
+        let syncResult = manager.retrieveImageInMemoryCacheSynchronously(
+            with: .network(url), options: KingfisherParsedOptionsInfo(nil))
+        XCTAssertNotNil(syncResult)
+        XCTAssertGreaterThan(syncResult!.duration, 0)
+
+        // Disk cache hit.
+        manager.cache.clearMemoryCache()
+        result = try await manager.retrieveImage(with: url)
+        XCTAssertEqual(result.cacheType, .disk)
+        XCTAssertGreaterThan(result.duration, 0)
+    }
+
     func testRetrieveImageWithProcessor() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
