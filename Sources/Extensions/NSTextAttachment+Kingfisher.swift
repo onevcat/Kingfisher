@@ -174,7 +174,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
     {
         guard let source = source else {
             base.image = placeholder
-            setTaskIdentifierValue(nil)
+            taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -185,11 +185,11 @@ extension KingfisherWrapper where Base: NSTextAttachment {
         }
 
         let issuedIdentifier = Source.Identifier.next()
-        setTaskIdentifierValue(issuedIdentifier)
+        taskIdentifier = issuedIdentifier
 
         let token = CancellationToken()
         cancellationToken?.cancel()
-        setCancellationTokenValue(token)
+        cancellationToken = token
 
         if let block = progressBlock {
             options.onDataReceived = (options.onDataReceived ?? []) + [ImageLoadingProgressSideEffect(block)]
@@ -224,8 +224,8 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                         return
                     }
 
-                    mutatingSelf.setImageTaskValue(nil)
-                    mutatingSelf.setTaskIdentifierValue(nil)
+                    mutatingSelf.imageTask = nil
+                    mutatingSelf.taskIdentifier = nil
 
                     switch result {
                     case .success(let value):
@@ -247,7 +247,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             }
         )
 
-        setImageTaskValue(task)
+        imageTask = task
         return task
     }
 
@@ -275,7 +275,7 @@ extension KingfisherWrapper where Base: NSTextAttachment {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
-        set {
+        nonmutating set {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
@@ -283,25 +283,12 @@ extension KingfisherWrapper where Base: NSTextAttachment {
 
     var cancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &cancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
-    }
-
-    private func setTaskIdentifierValue(_ value: Source.Identifier.Value?) {
-        let box = value.map { Box($0) }
-        setRetainedAssociatedObject(base, &taskIdentifierKey, box)
-    }
-
-    private func setCancellationTokenValue(_ value: CancellationToken?) {
-        setRetainedAssociatedObject(base, &cancellationTokenKey, value)
-    }
-
-    private func setImageTaskValue(_ value: DownloadTask?) {
-        setRetainedAssociatedObject(base, &imageTaskKey, value)
+        nonmutating set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 }
 
