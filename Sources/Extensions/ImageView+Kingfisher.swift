@@ -288,8 +288,8 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
     ) -> DownloadTask?
     {
         guard let source = source else {
-            setPlaceholderValue(placeholder)
-            setTaskIdentifierValue(nil)
+            self.placeholder = placeholder
+            taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
@@ -299,21 +299,21 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         let isEmptyImage = base.image == nil && self.placeholder == nil
         if !options.keepCurrentImageWhileLoading || isEmptyImage {
             // Always set placeholder while there is no image/placeholder yet.
-            setPlaceholderValue(placeholder)
+            self.placeholder = placeholder
         }
 
         let maybeIndicator = indicator
         maybeIndicator?.startAnimatingView()
 
         let issuedIdentifier = Source.Identifier.next()
-        setTaskIdentifierValue(issuedIdentifier)
+        taskIdentifier = issuedIdentifier
 
         // Create a thread-safe cancellation token for background checks.
         // This avoids reading the view's taskIdentifier associated object
         // from non-main threads (e.g., the disk cache ioQueue).
         let token = CancellationToken()
         cancellationToken?.cancel()
-        setCancellationTokenValue(token)
+        cancellationToken = token
 
         if base.shouldPreloadAllAnimation() {
             options.preloadAllAnimationData = true
@@ -335,7 +335,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             with: source,
             options: finalOptions,
             downloadTaskUpdated: { task in
-                CallbackQueueMain.currentOrAsync { weakBase.value?.kf.setImageTaskValue(task) }
+                CallbackQueueMain.currentOrAsync { weakBase.value?.kf.imageTask = task }
             },
             progressiveImageSetter: { weakBase.value?.image = $0 },
             referenceTaskIdentifierChecker: { !token.isCancelled },
@@ -364,13 +364,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                         return
                     }
 
-                    mutatingSelf.setImageTaskValue(nil)
-                    mutatingSelf.setTaskIdentifierValue(nil)
+                    mutatingSelf.imageTask = nil
+                    mutatingSelf.taskIdentifier = nil
 
                     switch result {
                     case .success(let value):
                         guard mutatingSelf.needsTransition(options: finalOptions, cacheType: value.cacheType) else {
-                            mutatingSelf.setPlaceholderValue(nil)
+                            mutatingSelf.placeholder = nil
                             base.image = value.image
                             completionHandler?(result)
                             return
@@ -382,7 +382,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
                     case .failure:
                         if let image = finalOptions.onFailureImage {
-                            mutatingSelf.setPlaceholderValue(nil)
+                            mutatingSelf.placeholder = nil
                             base.image = image
                         }
                         completionHandler?(result)
@@ -390,7 +390,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                 }
             }
         )
-        setImageTaskValue(task)
+        imageTask = task
         return task
     }
 
@@ -429,7 +429,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             options: [],
             animations: { self.indicator?.stopAnimatingView() },
             completion: { _ in
-                var mutatingSelf = self
+                let mutatingSelf = self
                 mutatingSelf.placeholder = nil
                 UIView.transition(
                     with: self.base,
@@ -466,7 +466,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
-        set {
+        nonmutating set {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
@@ -474,7 +474,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
 
     var cancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &cancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     /// Specifies which indicator type is going to be used.
@@ -484,8 +484,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
         get {
             return getAssociatedObject(base, &indicatorTypeKey) ?? .none
         }
-        
-        set {
+        nonmutating set {
             switch newValue {
             case .none: indicator = nil
             case .activity: indicator = ActivityIndicator()
@@ -506,8 +505,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             let box: Box<any Indicator>? = getAssociatedObject(base, &indicatorKey)
             return box?.value
         }
-        
-        set {
+        nonmutating set {
             // Remove previous
             if let previousIndicator = indicator {
                 previousIndicator.view.removeFromSuperview()
@@ -548,7 +546,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
     
     private var imageTask: DownloadTask? {
         get { return getAssociatedObject(base, &imageTaskKey) }
-        set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
+        nonmutating set { setRetainedAssociatedObject(base, &imageTaskKey, newValue)}
     }
 
     /// Represents the ``Placeholder`` used for this image view.
@@ -556,33 +554,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
     /// A ``Placeholder`` will be shown in the view while it is downloading an image.
     public private(set) var placeholder: (any Placeholder)? {
         get { return getAssociatedObject(base, &placeholderKey) }
-        set { setPlaceholderValue(newValue) }
-    }
+        nonmutating set {
+            if let previousPlaceholder = placeholder {
+                previousPlaceholder.remove(from: base)
+            }
 
-    private func setTaskIdentifierValue(_ value: Source.Identifier.Value?) {
-        let box = value.map { Box($0) }
-        setRetainedAssociatedObject(base, &taskIdentifierKey, box)
-    }
-
-    private func setCancellationTokenValue(_ value: CancellationToken?) {
-        setRetainedAssociatedObject(base, &cancellationTokenKey, value)
-    }
-
-    private func setImageTaskValue(_ value: DownloadTask?) {
-        setRetainedAssociatedObject(base, &imageTaskKey, value)
-    }
-
-    private func setPlaceholderValue(_ value: (any Placeholder)?) {
-        if let previousPlaceholder = placeholder {
-            previousPlaceholder.remove(from: base)
+            if let newPlaceholder = newValue {
+                newPlaceholder.add(to: base)
+            } else {
+                base.image = nil
+            }
+            setRetainedAssociatedObject(base, &placeholderKey, newValue)
         }
-
-        if let newPlaceholder = value {
-            newPlaceholder.add(to: base)
-        } else {
-            base.image = nil
-        }
-        setRetainedAssociatedObject(base, &placeholderKey, value)
     }
 }
 
