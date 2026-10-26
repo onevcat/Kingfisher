@@ -70,7 +70,7 @@ public enum KingfisherError: Error {
         /// The live photo downloading task is canceled by the user.
         ///
         /// - Parameters:
-        ///   - source: The live phot source.
+        ///   - source: The live photo source.
         ///
         /// Error Code: 1004
         case livePhotoTaskCancelled(source: LivePhotoSource)

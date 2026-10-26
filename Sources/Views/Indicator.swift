@@ -76,7 +76,7 @@ public protocol Indicator: Sendable {
     func sizeStrategy(in imageView: KFCrossPlatformImageView) -> IndicatorSizeStrategy
 }
 
-/// The idicator size strategy used when sizing the indicator in the image view.
+/// The indicator size strategy used when sizing the indicator in the image view.
 public enum IndicatorSizeStrategy {
     /// Uses the intrinsic size of the indicator.
     case intrinsicSize

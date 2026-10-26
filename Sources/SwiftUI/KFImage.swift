@@ -35,7 +35,7 @@ import Combine
 ///  Kingfisher will first look for the required image in the cache. If it is not found, it will load it via the
 ///  ``Source`` and provide the result for display, following sending the result to cache and for the future use.
 ///
-/// When using a `URL` valve as the ``Source``, it is similar to SwiftUI's `AsyncImage` but with additional support
+/// When using a `URL` value as the ``Source``, it is similar to SwiftUI's `AsyncImage` but with additional support
 /// for caching.
 ///
 /// Here is a basic example of using ``KFImage``:

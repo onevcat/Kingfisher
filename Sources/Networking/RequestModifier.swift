@@ -71,7 +71,7 @@ public protocol AsyncImageDownloadRequestModifier: Sendable {
     /// related download method will not return a valid ``DownloadTask`` value. Instead, you can get one from this
     /// method.
     ///
-    /// User the ``DownloadTask`` value to track the task, or cancel it when you need to.
+    /// Use the ``DownloadTask`` value to track the task, or cancel it when you need to.
     var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? { get }
 }
 
