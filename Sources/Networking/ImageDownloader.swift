@@ -47,6 +47,13 @@ public struct ImageLoadingResult: Sendable {
     /// The network metrics collected during the download process.
     public let metrics: NetworkMetrics?
 
+    /// The HTTP response of the download, if the image was retrieved over HTTP.
+    ///
+    /// Kingfisher uses this to honor response policies such as `Cache-Control` when
+    /// ``KingfisherOptionsInfoItem/respectCacheControl`` is set. It is `nil` for images
+    /// provided by an ``ImageDataProvider`` or by a custom transport that does not report one.
+    public let response: HTTPURLResponse?
+
     /// Creates an `ImageDownloadResult` object.
     ///
     /// - Parameters:
@@ -54,11 +61,19 @@ public struct ImageLoadingResult: Sendable {
     ///   - url: The URL from which the image was downloaded.
     ///   - originalData: The binary data of the image.
     ///   - metrics: The network metrics collected during the download.
-    public init(image: KFCrossPlatformImage, url: URL? = nil, originalData: Data, metrics: NetworkMetrics? = nil) {
+    ///   - response: The HTTP response of the download, if available.
+    public init(
+        image: KFCrossPlatformImage,
+        url: URL? = nil,
+        originalData: Data,
+        metrics: NetworkMetrics? = nil,
+        response: HTTPURLResponse? = nil
+    ) {
         self.image = image
         self.url = url
         self.originalData = originalData
         self.metrics = metrics
+        self.response = response
     }
 }
 
@@ -526,7 +541,15 @@ open class ImageDownloader: @unchecked Sendable {
 
                     self.reportDidProcessImage(result: result, url: url, response: response)
 
-                    let imageResult = result.map { ImageLoadingResult(image: $0, url: url, originalData: data, metrics: metrics) }
+                    let imageResult = result.map {
+                        ImageLoadingResult(
+                            image: $0,
+                            url: url,
+                            originalData: data,
+                            metrics: metrics,
+                            response: response as? HTTPURLResponse
+                        )
+                    }
                     let queue = callback.options.callbackQueue
                     queue.execute { callback.onCompleted?.call(imageResult) }
                 }

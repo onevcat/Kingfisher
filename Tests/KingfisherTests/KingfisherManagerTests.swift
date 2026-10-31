@@ -2417,6 +2417,128 @@ class KingfisherManagerTests: XCTestCase {
         wait(for: [completionExp], timeout: 3)
         XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "The shared session task should be released.")
     }
+
+    // MARK: - Respect Cache-Control
+
+    func testRespectCacheControlNoStoreSkipsDiskCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            // The image was never written to disk, so this downloads again.
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlNotSetKeepsDiskCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(with: url) { result in
+            // Without the option, the header is ignored and the image is on disk.
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .disk)
+            exp.fulfill()
+        }}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlMaxAgeOverridesDiskExpiration() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=0"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            // The disk copy was stored with a zero lifetime, so it is already expired.
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlMaxAgeKeepsFreshDiskCache() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .disk)
+            exp.fulfill()
+        }}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+}
+
+class CacheControlPolicyParsingTests: XCTestCase {
+
+    private func response(withHeader header: String?) -> HTTPURLResponse {
+        let url = URL(string: "https://example.com/image.png")!
+        var headers: [String: String] = [:]
+        if let header {
+            headers["Cache-Control"] = header
+        }
+        return HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headers)!
+    }
+
+    func testNoHeaderReturnsNil() {
+        XCTAssertNil(response(withHeader: nil).cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "public").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "no-cache").cacheControlPolicy)
+    }
+
+    func testNoStore() {
+        XCTAssertEqual(response(withHeader: "no-store").cacheControlPolicy, .noStore)
+        XCTAssertEqual(response(withHeader: "public, no-store").cacheControlPolicy, .noStore)
+        XCTAssertEqual(response(withHeader: " No-Store ").cacheControlPolicy, .noStore)
+    }
+
+    func testNoStoreTakesPrecedenceOverMaxAge() {
+        XCTAssertEqual(response(withHeader: "max-age=3600, no-store").cacheControlPolicy, .noStore)
+    }
+
+    func testMaxAge() {
+        XCTAssertEqual(response(withHeader: "max-age=3600").cacheControlPolicy, .maxAge(3600))
+        XCTAssertEqual(response(withHeader: "public, max-age=60").cacheControlPolicy, .maxAge(60))
+        XCTAssertEqual(response(withHeader: "max-age=\"120\"").cacheControlPolicy, .maxAge(120))
+    }
+
+    func testInvalidMaxAgeReturnsNil() {
+        XCTAssertNil(response(withHeader: "max-age=").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "max-age=abc").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "max-age=-10").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "max-age").cacheControlPolicy)
+    }
 }
 
 private var imageCreatingOptionsKey: Void?

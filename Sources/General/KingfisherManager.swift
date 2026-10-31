@@ -636,14 +636,29 @@ public class KingfisherManager: @unchecked Sendable {
                 data: { value.originalData },
                 metrics: value.metrics
             )
+
+            // Honor the response's `Cache-Control` header when asked to. `no-store` skips the disk cache;
+            // `max-age` overrides the disk cache expiration for this image only.
+            var storeOptions = options
+            var noStoreInResponse = false
+            if options.respectCacheControl, let cacheControl = value.response?.cacheControlPolicy {
+                switch cacheControl {
+                case .noStore:
+                    noStoreInResponse = true
+                case .maxAge(let seconds):
+                    storeOptions.diskCacheExpiration = .seconds(seconds)
+                }
+            }
+            let toDisk = !options.cacheMemoryOnly && !noStoreInResponse
+
             // Add image to cache.
             let targetCache = options.targetCache ?? self.cache
             targetCache.store(
                 value.image,
                 original: value.originalData,
                 forKey: source.cacheKey,
-                options: options,
-                toDisk: !options.cacheMemoryOnly)
+                options: storeOptions,
+                toDisk: toDisk)
             {
                 _ in
                 coordinator.apply(.cachingImage) {
@@ -653,13 +668,13 @@ public class KingfisherManager: @unchecked Sendable {
 
             // Add original image to cache if necessary.
 
-            if needToCacheOriginalImage {
+            if needToCacheOriginalImage && !noStoreInResponse {
                 let originalCache = options.originalCache ?? targetCache
                 originalCache.storeToDisk(
                     value.originalData,
                     forKey: source.cacheKey,
                     processorIdentifier: DefaultImageProcessor.default.identifier,
-                    expiration: options.diskCacheExpiration)
+                    expiration: storeOptions.diskCacheExpiration)
                 {
                     _ in
                     coordinator.apply(.cachingOriginalImage) {
@@ -1807,5 +1822,51 @@ private struct AsyncDownloadTaskReportingModifier: AsyncImageDownloadRequestModi
 
     func modified(for request: URLRequest) async -> URLRequest? {
         await base.modified(for: request)
+    }
+}
+
+// MARK: - Cache-Control Parsing
+
+/// The caching policy declared by an HTTP response's `Cache-Control` header.
+///
+/// Only the directives Kingfisher can act on are represented: `no-store` and `max-age`.
+enum ResponseCacheControlPolicy: Sendable, Equatable {
+    /// The response must not be persisted. The image is kept in the memory cache only.
+    case noStore
+    /// The response may be cached for at most the given number of seconds.
+    case maxAge(TimeInterval)
+}
+
+extension HTTPURLResponse {
+    /// Parses the `Cache-Control` header of the response into a ``ResponseCacheControlPolicy``.
+    ///
+    /// `no-store` takes precedence over `max-age` when both are present. Responses without a
+    /// `Cache-Control` header, or with only directives Kingfisher does not handle (such as
+    /// `no-cache` or `private`), return `nil` and the regular cache settings apply.
+    var cacheControlPolicy: ResponseCacheControlPolicy? {
+        guard let header = value(forHTTPHeaderField: "Cache-Control") else {
+            return nil
+        }
+        var maxAge: TimeInterval?
+        for directive in header.split(separator: ",") {
+            let parts = directive.split(separator: "=", maxSplits: 1)
+            let name = parts[0].trimmingCharacters(in: .whitespaces).lowercased()
+            switch name {
+            case "no-store":
+                return .noStore
+            case "max-age":
+                guard parts.count == 2,
+                      let seconds = TimeInterval(
+                        parts[1].trimmingCharacters(in: .whitespaces).trimmingCharacters(in: CharacterSet(charactersIn: "\""))),
+                      seconds >= 0
+                else {
+                    continue
+                }
+                maxAge = seconds
+            default:
+                continue
+            }
+        }
+        return maxAge.map { .maxAge($0) }
     }
 }
