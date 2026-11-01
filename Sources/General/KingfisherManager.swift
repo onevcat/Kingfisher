@@ -642,6 +642,12 @@ public class KingfisherManager: @unchecked Sendable {
                 }
             }
             let toDisk = !options.cacheMemoryOnly && !noStoreInResponse
+            // Carry the `no-store` restriction into the store call, so the flag is attached to the
+            // memory entry atomically with it — a synchronously executed completion handler must never
+            // observe the entry without its restriction. The flag then shares the entry's lifetime:
+            // replacing the entry with an unrestricted store, expiring, evicting, or clearing it drops
+            // the restriction with it.
+            storeOptions.responseRestricted = noStoreInResponse
 
             let coordinator = CacheCallbackCoordinator(
                 shouldWaitForCache: options.waitForCache,
@@ -656,18 +662,7 @@ public class KingfisherManager: @unchecked Sendable {
             )
 
             // Add image to cache.
-            //
-            // With the default processor the stored image *is* the original, so a later request with a
-            // different processor can hit it as a cached original. A `no-store` restriction has to be
-            // visible to that path, or the derived image would be written to disk. When a later response
-            // allows storing again, the mark is removed.
             let targetCache = options.targetCache ?? self.cache
-            let originalComputedKey = source.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
-            if noStoreInResponse {
-                targetCache.markResponseRestricted(forComputedKey: originalComputedKey)
-            } else {
-                targetCache.unmarkResponseRestricted(forComputedKey: originalComputedKey)
-            }
             targetCache.store(
                 value.image,
                 original: value.originalData,
@@ -1044,6 +1039,13 @@ public class KingfisherManager: @unchecked Sendable {
     {
         let processingQueue = options.processingQueue ?? self.processingQueue
 
+        // Capture the restriction now, together with the confirmed cache hit that brought us here. The
+        // original is retrieved and processed asynchronously, and a `clearMemoryCache()` (also triggered
+        // by memory warnings) in between would drop the flag along with the entry.
+        let originalComputedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+        let originalIsResponseRestricted = originalCache.isResponseRestricted(
+            forComputedKey: originalComputedKey)
+
         let complete: @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void = { result in
             result.match(
                 onSuccess: { processedImage in
@@ -1074,6 +1076,11 @@ public class KingfisherManager: @unchecked Sendable {
 
                     var cacheOptions = options
                     cacheOptions.callbackQueue = .untouch
+                    // Propagate the restriction to the derived entry: it may serve as the cached
+                    // original for a later request (e.g. the default-processor transfer between two
+                    // caches), and that path must keep its own derivatives off the disk too. Setting it
+                    // on the options attaches the flag atomically with the store.
+                    cacheOptions.responseRestricted = originalIsResponseRestricted
 
                     let coordinator = CacheCallbackCoordinator(
                         shouldWaitForCache: options.waitForCache, shouldCacheOriginal: false)
@@ -1090,10 +1097,6 @@ public class KingfisherManager: @unchecked Sendable {
                     // The original came from the cache, so no response is available here. If it only
                     // exists in memory because a `Cache-Control: no-store` response forbade disk
                     // storage, the derived image must not be written to disk either.
-                    let originalComputedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
-                    let originalIsResponseRestricted = originalCache.isResponseRestricted(
-                        forComputedKey: originalComputedKey)
-
                     targetCache.store(
                         processedImage,
                         forKey: key,

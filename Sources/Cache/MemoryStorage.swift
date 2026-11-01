@@ -137,19 +137,21 @@ public enum MemoryStorage {
         func storeNoThrow(
             value: T,
             forKey key: String,
-            expiration: StorageExpiration? = nil)
+            expiration: StorageExpiration? = nil,
+            responseRestricted: Bool = false)
         {
             lock.lock()
             defer { lock.unlock() }
             let expiration = expiration ?? config.expiration
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
-            
+
             let object: StorageObject<T>
             if config.keepWhenEnteringBackground {
-                object = BackgroundKeepingStorageObject(value, expiration: expiration)
+                object = BackgroundKeepingStorageObject(
+                    value, expiration: expiration, responseRestricted: responseRestricted)
             } else {
-                object = StorageObject(value, expiration: expiration)
+                object = StorageObject(value, expiration: expiration, responseRestricted: responseRestricted)
             }
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
@@ -191,6 +193,17 @@ public enum MemoryStorage {
             defer { lock.unlock() }
             storage.removeObject(forKey: key as NSString)
             keys.remove(key)
+        }
+
+        /// Whether the entry under `key` exists in memory only because a response forbade disk storage.
+        /// Expired entries report `false`, matching ``value(forKey:extendingExpiration:)``.
+        func isResponseRestricted(forKey key: String) -> Bool {
+            lock.lock()
+            defer { lock.unlock() }
+            guard let object = storage.object(forKey: key as NSString), !object.isExpired else {
+                return false
+            }
+            return object.responseRestricted
         }
 
         /// Removes all values in this storage.
@@ -306,13 +319,22 @@ extension MemoryStorage {
     class StorageObject<T> {
         var value: T?
         let expiration: StorageExpiration
-        
+
+        /// Whether this entry exists in memory only because an HTTP response forbade disk storage
+        /// (`Cache-Control: no-store`, honored via `KingfisherOptionsInfoItem.respectCacheControl`).
+        ///
+        /// The flag lives and dies with the entry itself: replacing, expiring, evicting, or clearing the
+        /// entry drops the restriction with it, and a reprocess-from-original path can read it to keep
+        /// derived images off the disk as well.
+        var responseRestricted: Bool
+
         private(set) var estimatedExpiration: Date
-        
-        init(_ value: T, expiration: StorageExpiration) {
+
+        init(_ value: T, expiration: StorageExpiration, responseRestricted: Bool = false) {
             self.value = value
             self.expiration = expiration
-            
+            self.responseRestricted = responseRestricted
+
             self.estimatedExpiration = expiration.estimatedExpirationSinceNow
         }
 

@@ -2580,6 +2580,145 @@ class KingfisherManagerTests: XCTestCase {
         }}}
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testRespectCacheControlUnrelatedProcessorStoreKeepsOriginalRestriction() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let processorA = ItemRecordingProcessor(identifier: "com.onevcat.Kingfisher.test.ProcessorA")
+        let processorB = ItemRecordingProcessor(identifier: "com.onevcat.Kingfisher.test.ProcessorB")
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        // Download with the default processor: the original is memory-only and restricted.
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // Force-refresh with processor A under an unrestricted response. Processor A stores its own
+        // entry; the restricted original must keep its restriction.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData)
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .forceRefresh, .processor(processorA)]
+        ) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // Processor B reprocesses the still-restricted original; its derivative must stay off disk.
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .processor(processorB)]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .processor(processorB)]
+        ) { result in
+            // A `.disk` hit would mean the derivative was persisted from the restricted original.
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlClearingMemoryDuringProcessingKeepsRestriction() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        // A processor that clears the memory cache in the middle of processing, as a memory warning
+        // would. The restriction was captured with the cache hit, before processing started.
+        let processor = CacheClearingProcessor { [weak manager] in
+            manager?.cache.clearMemoryCache()
+        }
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .processor(processor)]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .processor(processor)]
+        ) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlTransferBetweenCachesPropagatesRestriction() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let processor = ItemRecordingProcessor()
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        let cacheA = manager.cache
+        let cacheB = ImageCache(name: "test.cacheB.\(UUID().uuidString)")
+        defer { clearCaches([cacheB]) }
+
+        // The restricted original lands in cache A, memory-only.
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // Transfer the original from A into target cache B with the default processor.
+        manager.retrieveImage(
+            with: url,
+            options: [.respectCacheControl, .originalCache(cacheA), .targetCache(cacheB)]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+
+        // A processor request that only knows cache B must still keep the derivative off disk.
+        manager.retrieveImage(
+            with: url,
+            options: [.respectCacheControl, .targetCache(cacheB), .processor(processor)]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+
+        cacheA.clearMemoryCache()
+        cacheB.clearMemoryCache()
+        manager.retrieveImage(
+            with: url,
+            options: [.respectCacheControl, .targetCache(cacheB), .processor(processor)]
+        ) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testResponseRestrictionDropsWithExpiredEntry() {
+        let exp = expectation(description: #function)
+        let key = "com.onevcat.Kingfisher.test.respectCacheControl.expiring"
+        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+        let cache = manager.cache
+
+        var options = KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.1))])
+        options.responseRestricted = true
+        cache.store(testImage, forKey: key, options: options, toDisk: false) { _ in
+            XCTAssertTrue(cache.isResponseRestricted(forComputedKey: computedKey))
+
+            // Once the entry expires, the restriction must go with it instead of accumulating.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                XCTAssertFalse(cache.isResponseRestricted(forComputedKey: computedKey))
+                exp.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+}
+
+/// A processor that runs a side effect (e.g. clearing the memory cache) in the middle of processing.
+final class CacheClearingProcessor: ImageProcessor, @unchecked Sendable {
+    let identifier = "com.onevcat.Kingfisher.test.CacheClearingProcessor"
+    let onProcess: () -> Void
+    init(onProcess: @escaping () -> Void) { self.onProcess = onProcess }
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        onProcess()
+        return DefaultImageProcessor.default.process(item: item, options: options)
+    }
 }
 
 class CacheControlPolicyParsingTests: XCTestCase {

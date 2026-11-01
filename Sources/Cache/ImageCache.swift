@@ -179,33 +179,13 @@ open class ImageCache: @unchecked Sendable {
     
     private let ioQueue: DispatchQueue
 
-    // Computed keys whose memory entry exists only because an HTTP response forbade disk storage
-    // (`Cache-Control: no-store`, honored via `KingfisherOptionsInfoItem.respectCacheControl`). A later
-    // request that reprocesses such an original must not write its derived image to disk either, so the
-    // restriction has to outlive the response itself. The marks are in-memory only: when the entry is
-    // evicted or expired, the next load downloads again and re-derives the policy from the new response.
-    private let responseRestrictedKeysLock = NSLock()
-    private var responseRestrictedKeys = Set<String>()
-
-    /// Marks a computed key as restricted to memory-only storage by a response's `Cache-Control` policy.
-    func markResponseRestricted(forComputedKey key: String) {
-        responseRestrictedKeysLock.lock()
-        defer { responseRestrictedKeysLock.unlock() }
-        responseRestrictedKeys.insert(key)
-    }
-
-    /// Removes the memory-only restriction for a computed key, e.g. when a later response allows storing.
-    func unmarkResponseRestricted(forComputedKey key: String) {
-        responseRestrictedKeysLock.lock()
-        defer { responseRestrictedKeysLock.unlock() }
-        responseRestrictedKeys.remove(key)
-    }
-
-    /// Whether the memory entry of a computed key exists only because a response forbade disk storage.
+    /// Whether the memory entry of a computed key exists only because a response forbade disk storage
+    /// (`Cache-Control: no-store`, honored via ``KingfisherOptionsInfoItem/respectCacheControl``).
+    ///
+    /// The flag is attached to the memory entry itself, so it shares the entry's lifetime: replacing,
+    /// expiring, evicting, or clearing the entry drops the restriction with it.
     func isResponseRestricted(forComputedKey key: String) -> Bool {
-        responseRestrictedKeysLock.lock()
-        defer { responseRestrictedKeysLock.unlock() }
-        return responseRestrictedKeys.contains(key)
+        memoryStorage.isResponseRestricted(forKey: key)
     }
 
     /// A closure that specifies the disk cache path based on a given path and the cache name.
@@ -378,7 +358,11 @@ open class ImageCache: @unchecked Sendable {
         
         let computedKey = key.computedKey(with: identifier)
         // Memory storage should not throw.
-        memoryStorage.storeNoThrow(value: image, forKey: computedKey, expiration: options.memoryCacheExpiration)
+        memoryStorage.storeNoThrow(
+            value: image,
+            forKey: computedKey,
+            expiration: options.memoryCacheExpiration,
+            responseRestricted: options.responseRestricted)
         
         guard toDisk else {
             if let completionHandler = completionHandler {
@@ -600,7 +584,6 @@ open class ImageCache: @unchecked Sendable {
 
         if fromMemory {
             memoryStorage.remove(forKey: computedKey)
-            unmarkResponseRestricted(forComputedKey: computedKey)
         }
         
         @Sendable func callHandler(_ error: (any Error)?) {
@@ -932,9 +915,6 @@ open class ImageCache: @unchecked Sendable {
     /// Clears the memory storage of this cache.
     @objc public func clearMemoryCache() {
         memoryStorage.removeAll()
-        responseRestrictedKeysLock.lock()
-        responseRestrictedKeys.removeAll()
-        responseRestrictedKeysLock.unlock()
     }
     
     /// Clears the disk storage of this cache. 
