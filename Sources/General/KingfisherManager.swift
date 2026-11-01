@@ -626,19 +626,11 @@ public class KingfisherManager: @unchecked Sendable {
         case .success(let value):
             let needToCacheOriginalImage = options.cacheOriginalImage &&
                                            options.processor != DefaultImageProcessor.default
-            let coordinator = CacheCallbackCoordinator(
-                shouldWaitForCache: options.waitForCache, shouldCacheOriginal: needToCacheOriginalImage)
-            let result = RetrieveImageResult(
-                image: options.imageModifier?.modify(value.image) ?? value.image,
-                cacheType: .none,
-                source: source,
-                originalSource: context.originalSource,
-                data: { value.originalData },
-                metrics: value.metrics
-            )
 
             // Honor the response's `Cache-Control` header when asked to. `no-store` skips the disk cache;
-            // `max-age` overrides the disk cache expiration for this image only.
+            // `max-age` overrides the disk cache expiration for this image only. This has to be resolved
+            // before the coordinator is created: it is initialized with the effective set of cache
+            // operations, so a `no-store` response must already have disabled the original-image store.
             var storeOptions = options
             var noStoreInResponse = false
             if options.respectCacheControl, let cacheControl = value.response?.cacheControlPolicy {
@@ -651,8 +643,31 @@ public class KingfisherManager: @unchecked Sendable {
             }
             let toDisk = !options.cacheMemoryOnly && !noStoreInResponse
 
+            let coordinator = CacheCallbackCoordinator(
+                shouldWaitForCache: options.waitForCache,
+                shouldCacheOriginal: needToCacheOriginalImage && !noStoreInResponse)
+            let result = RetrieveImageResult(
+                image: options.imageModifier?.modify(value.image) ?? value.image,
+                cacheType: .none,
+                source: source,
+                originalSource: context.originalSource,
+                data: { value.originalData },
+                metrics: value.metrics
+            )
+
             // Add image to cache.
+            //
+            // With the default processor the stored image *is* the original, so a later request with a
+            // different processor can hit it as a cached original. A `no-store` restriction has to be
+            // visible to that path, or the derived image would be written to disk. When a later response
+            // allows storing again, the mark is removed.
             let targetCache = options.targetCache ?? self.cache
+            let originalComputedKey = source.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
+            if noStoreInResponse {
+                targetCache.markResponseRestricted(forComputedKey: originalComputedKey)
+            } else {
+                targetCache.unmarkResponseRestricted(forComputedKey: originalComputedKey)
+            }
             targetCache.store(
                 value.image,
                 original: value.originalData,
@@ -1072,11 +1087,18 @@ public class KingfisherManager: @unchecked Sendable {
                         data: { options.cacheSerializer.data(with: processedImage, original: nil) }
                     )
 
+                    // The original came from the cache, so no response is available here. If it only
+                    // exists in memory because a `Cache-Control: no-store` response forbade disk
+                    // storage, the derived image must not be written to disk either.
+                    let originalComputedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
+                    let originalIsResponseRestricted = originalCache.isResponseRestricted(
+                        forComputedKey: originalComputedKey)
+
                     targetCache.store(
                         processedImage,
                         forKey: key,
                         options: cacheOptions,
-                        toDisk: !options.cacheMemoryOnly)
+                        toDisk: !options.cacheMemoryOnly && !originalIsResponseRestricted)
                     {
                         _ in
                         coordinator.apply(.cachingImage) {
@@ -1842,27 +1864,34 @@ extension HTTPURLResponse {
     ///
     /// `no-store` takes precedence over `max-age` when both are present. Responses without a
     /// `Cache-Control` header, or with only directives Kingfisher does not handle (such as
-    /// `no-cache` or `private`), return `nil` and the regular cache settings apply.
+    /// `no-cache` or `private`), return `nil` and the regular cache settings apply. Malformed
+    /// directives and non-integer `max-age` values (such as `1.5` or `inf`) are ignored.
     var cacheControlPolicy: ResponseCacheControlPolicy? {
         guard let header = value(forHTTPHeaderField: "Cache-Control") else {
             return nil
         }
         var maxAge: TimeInterval?
-        for directive in header.split(separator: ",") {
-            let parts = directive.split(separator: "=", maxSplits: 1)
+        // Do not omit empty subsequences: a malformed directive like `=` or an empty entry
+        // between commas must not produce an out-of-bounds access below.
+        for directive in header.split(separator: ",", omittingEmptySubsequences: false) {
+            let parts = directive.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
             let name = parts[0].trimmingCharacters(in: .whitespaces).lowercased()
             switch name {
             case "no-store":
                 return .noStore
             case "max-age":
-                guard parts.count == 2,
-                      let seconds = TimeInterval(
-                        parts[1].trimmingCharacters(in: .whitespaces).trimmingCharacters(in: CharacterSet(charactersIn: "\""))),
-                      seconds >= 0
-                else {
+                // delta-seconds is a non-negative integer per RFC 9111. Reject anything else
+                // (`1.5`, `inf`, negative or missing values) instead of silently accepting it.
+                guard parts.count == 2 else {
                     continue
                 }
-                maxAge = seconds
+                let rawValue = parts[1]
+                    .trimmingCharacters(in: .whitespaces)
+                    .trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                guard let seconds = Int(rawValue), seconds >= 0 else {
+                    continue
+                }
+                maxAge = TimeInterval(seconds)
             default:
                 continue
             }

@@ -2498,6 +2498,88 @@ class KingfisherManagerTests: XCTestCase {
         }}
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testRespectCacheControlNoStoreWithCacheOriginalImageCompletes() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        let processor = ItemRecordingProcessor()
+        // With a non-default processor and `cacheOriginalImage`, the coordinator must be told up front
+        // that `no-store` disables the original-image store, or it would wait for a callback that never
+        // comes and the completion would never fire.
+        let options: KingfisherOptionsInfo = [
+            .respectCacheControl, .processor(processor), .cacheOriginalImage, .waitForCache
+        ]
+        manager.retrieveImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlNoStoreSurvivesOriginalCacheReprocessing() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let processor = ItemRecordingProcessor()
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        // Download with the default processor. The stored image is the original, kept in memory only.
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // A request with a processor hits the cached original and reprocesses it. The derived image
+        // must inherit the no-store restriction instead of being written to disk.
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .processor(processor)]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(processor.runCount, 1)
+
+        manager.cache.clearMemoryCache()
+        // Everything derived from that original is gone now, so this must download again. A `.disk`
+        // hit here would mean the restriction was lost during reprocessing.
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .processor(processor)]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlClearedByLaterUnrestrictedResponse() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // A later response without the header lifts the restriction again.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData)
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .forceRefresh]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.cache.clearMemoryCache()
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .disk)
+            exp.fulfill()
+        }}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 class CacheControlPolicyParsingTests: XCTestCase {
@@ -2538,6 +2620,20 @@ class CacheControlPolicyParsingTests: XCTestCase {
         XCTAssertNil(response(withHeader: "max-age=abc").cacheControlPolicy)
         XCTAssertNil(response(withHeader: "max-age=-10").cacheControlPolicy)
         XCTAssertNil(response(withHeader: "max-age").cacheControlPolicy)
+        // Non-integer values are not valid delta-seconds.
+        XCTAssertNil(response(withHeader: "max-age=inf").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "max-age=1.5").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "max-age=0x10").cacheControlPolicy)
+    }
+
+    func testMalformedDirectivesDoNotCrash() {
+        XCTAssertNil(response(withHeader: "=").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: "").cacheControlPolicy)
+        XCTAssertNil(response(withHeader: ",").cacheControlPolicy)
+        XCTAssertEqual(response(withHeader: "max-age=10,").cacheControlPolicy, .maxAge(10))
+        XCTAssertEqual(response(withHeader: "=, max-age=10, =").cacheControlPolicy, .maxAge(10))
+        XCTAssertEqual(response(withHeader: "=no-store").cacheControlPolicy, nil)
+        XCTAssertEqual(response(withHeader: "==, no-store").cacheControlPolicy, .noStore)
     }
 }
 
