@@ -723,6 +723,24 @@ open class ImageCache: @unchecked Sendable {
         )
     }
 
+    /// Retrieves an image from the memory storage together with its response restriction flag.
+    ///
+    /// The flag and the image come from the same storage entry in a single lookup, so a concurrent
+    /// replacement cannot pair a new image with the old entry's restriction (or vice versa).
+    func retrieveImageInMemoryCacheWithRestriction(
+        forKey key: String,
+        options: KingfisherParsedOptionsInfo
+    ) -> (image: KFCrossPlatformImage, responseRestricted: Bool)? {
+        let computedKey = key.computedKey(with: options.processor.identifier)
+        guard let result = memoryStorage.valueAndResponseRestriction(
+            forKey: computedKey,
+            extendingExpiration: options.memoryCacheAccessExtendingExpiration
+        ) else {
+            return nil
+        }
+        return (result.value, result.responseRestricted)
+    }
+
     /// Retrieves an image associated with a given key from the memory storage.
     ///
     /// - Parameters:

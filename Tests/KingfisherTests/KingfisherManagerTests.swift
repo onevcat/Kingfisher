@@ -2689,6 +2689,69 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testRespectCacheControlCoalescedProcessingCarriesRestriction() {
+        let exp = expectation(description: #function)
+        let completionA = expectation(description: "A completed")
+        let completionB = expectation(description: "B completed")
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+
+        let manager = self.manager!
+        let cacheB = ImageCache(name: "test.cacheB.\(UUID().uuidString)")
+        defer { clearCaches([cacheB]) }
+        let processor = BlockingProcessor()
+
+        // The restricted original lands in the manager's cache, memory-only.
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // Request A starts processing the restricted original and blocks inside the processor.
+        manager.retrieveImage(with: url, options: [.respectCacheControl, .processor(processor)]) { result in
+            XCTAssertNotNil(result.value?.image)
+            completionA.fulfill()
+        }
+
+        // Once A is blocked inside the processor, hop back to the main queue to continue. Waiting
+        // on a background thread keeps the main queue free for cache and completion callbacks.
+        DispatchQueue.global().async {
+            processor.waitUntilProcessing()
+            DispatchQueue.main.async {
+        // While A is blocked, the original entry is replaced by an unrestricted store. A request B
+        // that arrives now would capture an unrestricted snapshot of the entry — but it joins A's
+        // shared processing instead, and the restriction must travel with A's image.
+        manager.cache.store(testImage, forKey: url.cacheKey, toDisk: false) { _ in
+            manager.retrieveImage(
+                with: url,
+                options: [
+                    .respectCacheControl, .processor(processor),
+                    .targetCache(cacheB), .originalCache(manager.cache)
+                ]
+            ) { result in
+                XCTAssertNotNil(result.value?.image)
+                completionB.fulfill()
+
+                // B's derived image must have stayed memory-only even in its own target cache.
+                manager.cache.clearMemoryCache()
+                cacheB.clearMemoryCache()
+                manager.retrieveImage(
+                    with: url,
+                    options: [
+                        .respectCacheControl, .processor(processor),
+                        .targetCache(cacheB), .originalCache(manager.cache)
+                    ]
+                ) { result in
+                    XCTAssertNotNil(result.value?.image)
+                    XCTAssertEqual(result.value!.cacheType, .none)
+                    exp.fulfill()
+                }
+            }
+            processor.releaseProcessing()
+        }
+            }
+        }}
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
     func testResponseRestrictionDropsWithExpiredEntry() {
         let exp = expectation(description: #function)
         let key = "com.onevcat.Kingfisher.test.respectCacheControl.expiring"
@@ -2717,6 +2780,37 @@ final class CacheClearingProcessor: ImageProcessor, @unchecked Sendable {
     init(onProcess: @escaping () -> Void) { self.onProcess = onProcess }
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         onProcess()
+        return DefaultImageProcessor.default.process(item: item, options: options)
+    }
+}
+
+/// A processor that blocks inside `process` until released, for deterministic concurrency tests.
+final class BlockingProcessor: ImageProcessor, @unchecked Sendable {
+    let identifier = "com.onevcat.Kingfisher.test.BlockingProcessor"
+    private let started = DispatchSemaphore(value: 0)
+    private let gate = DispatchSemaphore(value: 0)
+    private let lock = NSLock()
+    private var released = false
+
+    func waitUntilProcessing() {
+        started.wait()
+    }
+
+    func releaseProcessing() {
+        lock.lock()
+        released = true
+        lock.unlock()
+        gate.signal()
+    }
+
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+        started.signal()
+        lock.lock()
+        let isReleased = released
+        lock.unlock()
+        if !isReleased {
+            gate.wait()
+        }
         return DefaultImageProcessor.default.process(item: item, options: options)
     }
 }
@@ -2773,6 +2867,27 @@ class CacheControlPolicyParsingTests: XCTestCase {
         XCTAssertEqual(response(withHeader: "=, max-age=10, =").cacheControlPolicy, .maxAge(10))
         XCTAssertEqual(response(withHeader: "=no-store").cacheControlPolicy, nil)
         XCTAssertEqual(response(withHeader: "==, no-store").cacheControlPolicy, .noStore)
+    }
+
+    func testQuotedStringCommasDoNotSplitDirectives() {
+        // A comma inside a quoted extension value is not a directive boundary.
+        XCTAssertEqual(
+            response(withHeader: #"max-age=0, x-note="foo,max-age=3600,bar""#).cacheControlPolicy,
+            .maxAge(0)
+        )
+        XCTAssertEqual(
+            response(withHeader: #"x-note="no-store", max-age=60"#).cacheControlPolicy,
+            .maxAge(60)
+        )
+        // Backslash-escaped quotes stay inside the quoted string.
+        XCTAssertEqual(
+            response(withHeader: #"x-note="a\", no-store", max-age=30"#).cacheControlPolicy,
+            .maxAge(30)
+        )
+        XCTAssertEqual(
+            response(withHeader: #"x-note="a,b", no-store"#).cacheControlPolicy,
+            .noStore
+        )
     }
 }
 

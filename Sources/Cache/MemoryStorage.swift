@@ -174,6 +174,25 @@ public enum MemoryStorage {
             return object.value
         }
 
+        /// Gets a value from the storage together with its response restriction flag, in one lookup.
+        ///
+        /// Reading the flag from the same `StorageObject` as the value closes the replacement window
+        /// that two separate reads would leave: a value and its restriction always come from the same
+        /// cache entry.
+        func valueAndResponseRestriction(
+            forKey key: String,
+            extendingExpiration: ExpirationExtending = .cacheTime
+        ) -> (value: T, responseRestricted: Bool)? {
+            guard let object = storage.object(forKey: key as NSString), let value = object.value else {
+                return nil
+            }
+            if object.isExpired {
+                return nil
+            }
+            object.extendExpiration(extendingExpiration)
+            return (value, object.responseRestricted)
+        }
+
         /// Determines whether there is valid cached data under a given key.
         ///
         /// - Parameter key: The cache key of the value.
