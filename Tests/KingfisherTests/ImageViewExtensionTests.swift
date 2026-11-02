@@ -412,6 +412,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(imageView.kf.indicator)
     }
     
+    #if canImport(PhotosUI) && !os(watchOS)
+    @MainActor func testLivePhotoViewWrapperSettersDoNotRequireMutableWrapper() {
+        let view = PHLivePhotoView()
+        let kf = view.kf
+        kf.targetSize = CGSize(width: 10, height: 20)
+        kf.contentMode = .aspectFill
+
+        XCTAssertEqual(view.kf.targetSize, CGSize(width: 10, height: 20))
+        XCTAssertEqual(view.kf.contentMode, .aspectFill)
+    }
+    #endif
+    
     @MainActor func testCustomizeStructIndicatorExisting() {
         struct StructIndicator: Indicator {
             let view = KFCrossPlatformView()
