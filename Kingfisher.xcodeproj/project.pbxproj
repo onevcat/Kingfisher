@@ -146,6 +146,10 @@
 		E9E3ED8B2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E3ED8A2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift */; };
 		F39B68C82E33AC2A00404B02 /* NetworkMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39B68C72E33AC2A00404B02 /* NetworkMetrics.swift */; };
 		F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72CE9CD1FCF17ED00CC522A /* ImageModifierTests.swift */; };
+		260400000000000000000100 /* ProgressiveJPEGViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260400000000000000000000 /* ProgressiveJPEGViewController.swift */; platformFilter = ios; };
+		260400000000000000000101 /* UIViewController+KingfisherOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260400000000000000000001 /* UIViewController+KingfisherOperation.swift */; platformFilter = ios; };
+		260400000000000000000102 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260400000000000000000002 /* ImageLoader.swift */; platformFilter = ios; };
+		260400000000000000000103 /* ProgressiveJPEGDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260400000000000000000003 /* ProgressiveJPEGDemoTests.swift */; platformFilter = ios; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -349,6 +353,10 @@
 		E9E3ED8A2B1F66B200734CFF /* HasImageComponent+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HasImageComponent+Kingfisher.swift"; sourceTree = "<group>"; };
 		F39B68C72E33AC2A00404B02 /* NetworkMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMetrics.swift; sourceTree = "<group>"; };
 		F72CE9CD1FCF17ED00CC522A /* ImageModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModifierTests.swift; sourceTree = "<group>"; };
+		260400000000000000000000 /* ProgressiveJPEGViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Demo/Demo/Kingfisher-Demo/ViewControllers/ProgressiveJPEGViewController.swift"; sourceTree = SOURCE_ROOT; };
+		260400000000000000000001 /* UIViewController+KingfisherOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Demo/Demo/Kingfisher-Demo/Extensions/UIViewController+KingfisherOperation.swift"; sourceTree = SOURCE_ROOT; };
+		260400000000000000000002 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Demo/Demo/Kingfisher-Demo/Resources/ImageLoader.swift"; sourceTree = SOURCE_ROOT; };
+		260400000000000000000003 /* ProgressiveJPEGDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/KingfisherTests/ProgressiveJPEGDemoTests.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -546,6 +554,10 @@
 				38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */,
 				D186696C21834261002B502E /* ImageDrawingTests.swift */,
 				D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */,
+				260400000000000000000000 /* ProgressiveJPEGViewController.swift */,
+				260400000000000000000001 /* UIViewController+KingfisherOperation.swift */,
+				260400000000000000000002 /* ImageLoader.swift */,
+				260400000000000000000003 /* ProgressiveJPEGDemoTests.swift */,
 				D12E0C481C47F23500AC98AD /* ImageViewExtensionTests.swift */,
 				4B0C35B12FFF5F4C00BBDEA1 /* KFImageRendererTests.swift */,
 				D12E0C4A1C47F23500AC98AD /* KingfisherManagerTests.swift */,
@@ -1008,6 +1020,10 @@
 				F72CE9CE1FCF17ED00CC522A /* ImageModifierTests.swift in Sources */,
 				4B0C35B22FFF5F4C00BBDEA1 /* KFImageRendererTests.swift in Sources */,
 				D1F66CC12CB2CF2E004959F3 /* LivePhotoSourceTests.swift in Sources */,
+				260400000000000000000100 /* ProgressiveJPEGViewController.swift in Sources */,
+				260400000000000000000101 /* UIViewController+KingfisherOperation.swift in Sources */,
+				260400000000000000000102 /* ImageLoader.swift in Sources */,
+				260400000000000000000103 /* ProgressiveJPEGDemoTests.swift in Sources */,
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				D16FEA4023078C63006E67D5 /* LSHTTPClientHook.m in Sources */,
 				D16FEA3F23078C63006E67D5 /* LSHTTPRequestDiff.m in Sources */,
