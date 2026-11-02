@@ -401,6 +401,17 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(imageView.kf.indicator)
     }
     
+    @MainActor func testWrapperSettersDoNotRequireMutableWrapper() {
+        // The wrapper setters are `nonmutating`, so a `let` copy is enough to configure the view.
+        let kf = imageView.kf
+        kf.indicatorType = .activity
+        XCTAssertNotNil(imageView.kf.indicator)
+        XCTAssertTrue(imageView.kf.indicator is ActivityIndicator)
+
+        kf.indicatorType = .none
+        XCTAssertNil(imageView.kf.indicator)
+    }
+    
     @MainActor func testCustomizeStructIndicatorExisting() {
         struct StructIndicator: Indicator {
             let view = KFCrossPlatformView()
