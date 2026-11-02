@@ -58,7 +58,15 @@ class ProgressiveJPEGDemoTests: XCTestCase {
         try checkReload(actions: ["Disable Fastest Scan"])
     }
 
-    @MainActor private func checkReload(actions: [String]) throws {
+    @MainActor func testTogglesDownloadAgainFromDiskOnlyCache() throws {
+        try checkReload(actions: ["Disable Blur", "Disable Fastest Scan"], diskOnly: true)
+    }
+
+    @MainActor func testTogglesCanBeEnabledAgainWithoutRemovingOtherVariants() throws {
+        try checkReload(actions: ["Disable Blur", "Enable Blur", "Disable Fastest Scan", "Enable Fastest Scan"])
+    }
+
+    @MainActor private func checkReload(actions: [String], diskOnly: Bool = false) throws {
         let manager = KingfisherManager.shared
         let originalCache = manager.cache
         let originalDownloader = manager.downloader
@@ -79,6 +87,15 @@ class ProgressiveJPEGDemoTests: XCTestCase {
 
         let data = try XCTUnwrap(testImage.jpegData(compressionQuality: 0.9))
         stub(ImageLoader.progressiveImageURL, data: data, length: data.count)
+        let key = ImageLoader.progressiveImageURL.cacheKey
+        let otherProcessor = RoundCornerImageProcessor(cornerRadius: 12)
+        let stored = expectation(description: "Unrelated variant stored")
+        cache.store(testImage, forKey: key, processorIdentifier: otherProcessor.identifier) { result in
+            XCTAssertNotNil(try? result.diskCacheResult.get())
+            stored.fulfill()
+        }
+        wait(for: [stored], timeout: 5)
+
         let controller = ProgressiveJPEGViewController()
         let imageView = ProgressiveDemoImageView()
         let label = UILabel()
@@ -91,7 +108,19 @@ class ProgressiveJPEGDemoTests: XCTestCase {
         wait(for: [initialLoad], timeout: 5)
         XCTAssertEqual(label.text, "\(data.count) / \(data.count)")
 
+        // Replacing the composed processor must preserve its rendered output.
+        let processor = RoundCornerImageProcessor(cornerRadius: 30)
+        let composedProcessor = DefaultImageProcessor.default |> processor
+        let expectedImage = try XCTUnwrap(composedProcessor.process(
+            item: .data(data), options: KingfisherParsedOptionsInfo([])))
+        XCTAssertTrue(try XCTUnwrap(imageView.image).renderEqual(to: expectedImage))
+
         for title in actions {
+            XCTAssertEqual(cache.imageCachedType(forKey: key, processorIdentifier: processor.identifier), .memory)
+            if diskOnly {
+                cache.clearMemoryCache()
+                XCTAssertEqual(cache.imageCachedType(forKey: key, processorIdentifier: processor.identifier), .disk)
+            }
             let alert = controller.alertPopup(self)
             let action = try XCTUnwrap(alert.actions.first { $0.title == title })
             // UIKit has no public API for invoking an alert action without presenting UI.
@@ -103,6 +132,11 @@ class ProgressiveJPEGDemoTests: XCTestCase {
             withExtendedLifetime(alert) { handler(action) }
             wait(for: [reloaded], timeout: 5)
             XCTAssertEqual(label.text, "\(data.count) / \(data.count)", "\(title) must download again")
+            XCTAssertTrue(try XCTUnwrap(imageView.image).renderEqual(to: expectedImage))
+            if !diskOnly {
+                XCTAssertEqual(cache.imageCachedType(forKey: key, processorIdentifier: otherProcessor.identifier), .memory)
+            }
+            XCTAssertTrue(cache.diskStorage.isCached(forKey: key.computedKey(with: otherProcessor.identifier)))
         }
         imageView.didSetImage = nil
     }
