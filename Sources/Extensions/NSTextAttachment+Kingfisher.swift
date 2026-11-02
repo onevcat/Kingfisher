@@ -209,9 +209,9 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                         completionHandler?(result)
                         return
                     }
-                    let mutatingSelf = base.kf
+                    let wrapper = base.kf
 
-                    guard issuedIdentifier == mutatingSelf.taskIdentifier else {
+                    guard issuedIdentifier == wrapper.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -224,8 +224,8 @@ extension KingfisherWrapper where Base: NSTextAttachment {
                         return
                     }
 
-                    mutatingSelf.imageTask = nil
-                    mutatingSelf.taskIdentifier = nil
+                    wrapper.imageTask = nil
+                    wrapper.taskIdentifier = nil
 
                     switch result {
                     case .success(let value):

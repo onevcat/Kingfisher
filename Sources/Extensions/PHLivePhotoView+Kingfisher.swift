@@ -184,22 +184,20 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         // progressBlock: DownloadProgressBlock? = nil, // Not supported yet
         completionHandler: (@MainActor @Sendable (Result<RetrieveLivePhotoResult, KingfisherError>) -> Void)? = nil
     ) -> Task<(), Never>? {
-        let mutatingSelf = self
-
         // Empty source fails the loading early and clear the current task identifier.
         guard let source = source else {
             base.livePhoto = nil
-            mutatingSelf.taskIdentifier = nil
+            taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
         
         let issuedIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedIdentifier
+        taskIdentifier = issuedIdentifier
 
         let token = CancellationToken()
-        mutatingSelf.cancellationToken?.cancel()
-        mutatingSelf.cancellationToken = token
+        cancellationToken?.cancel()
+        cancellationToken = token
 
         let taskIdentifierChecking: @Sendable () -> Bool = { !token.isCancelled }
 

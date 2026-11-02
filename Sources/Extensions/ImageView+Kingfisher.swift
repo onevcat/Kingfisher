@@ -348,10 +348,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                         completionHandler?(result)
                         return
                     }
-                    let mutatingSelf = base.kf
+                    let wrapper = base.kf
 
                     maybeIndicator?.stopAnimatingView()
-                    guard issuedIdentifier == mutatingSelf.taskIdentifier else {
+                    guard issuedIdentifier == wrapper.taskIdentifier else {
                         let reason: KingfisherError.ImageSettingErrorReason
                         do {
                             let value = try result.get()
@@ -364,25 +364,25 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
                         return
                     }
 
-                    mutatingSelf.imageTask = nil
-                    mutatingSelf.taskIdentifier = nil
+                    wrapper.imageTask = nil
+                    wrapper.taskIdentifier = nil
 
                     switch result {
                     case .success(let value):
-                        guard mutatingSelf.needsTransition(options: finalOptions, cacheType: value.cacheType) else {
-                            mutatingSelf.placeholder = nil
+                        guard wrapper.needsTransition(options: finalOptions, cacheType: value.cacheType) else {
+                            wrapper.placeholder = nil
                             base.image = value.image
                             completionHandler?(result)
                             return
                         }
 
-                        mutatingSelf.makeTransition(image: value.image, transition: finalOptions.transition) {
+                        wrapper.makeTransition(image: value.image, transition: finalOptions.transition) {
                             completionHandler?(result)
                         }
 
                     case .failure:
                         if let image = finalOptions.onFailureImage {
-                            mutatingSelf.placeholder = nil
+                            wrapper.placeholder = nil
                             base.image = image
                         }
                         completionHandler?(result)
@@ -429,8 +429,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImageView {
             options: [],
             animations: { self.indicator?.stopAnimatingView() },
             completion: { _ in
-                let mutatingSelf = self
-                mutatingSelf.placeholder = nil
+                self.placeholder = nil
                 UIView.transition(
                     with: self.base,
                     duration: transition.duration,
