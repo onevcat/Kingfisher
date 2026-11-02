@@ -67,7 +67,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
             let box: Box<Source.Identifier.Value>? = getAssociatedObject(base, &taskIdentifierKey)
             return box?.value
         }
-        set {
+        nonmutating set {
             let box = newValue.map { Box($0) }
             setRetainedAssociatedObject(base, &taskIdentifierKey, box)
         }
@@ -75,7 +75,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
 
     var cancellationToken: CancellationToken? {
         get { getAssociatedObject(base, &cancellationTokenKey) }
-        set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &cancellationTokenKey, newValue) }
     }
 
     /// The target size of the live photo view. It is used in the 
@@ -85,7 +85,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
     /// If not set, `.zero` will be used.
     public var targetSize: CGSize {
         get { getAssociatedObject(base, &targetSizeKey) ?? .zero }
-        set { setRetainedAssociatedObject(base, &targetSizeKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &targetSizeKey, newValue) }
     }
     
     /// The content mode of the live photo view. It is used in the
@@ -95,7 +95,7 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
     /// If not set, `.default` will be used.
     public var contentMode: PHImageContentMode {
         get { getAssociatedObject(base, &contentModeKey) ?? .default }
-        set { setRetainedAssociatedObject(base, &contentModeKey, newValue) }
+        nonmutating set { setRetainedAssociatedObject(base, &contentModeKey, newValue) }
     }
     
     /// Sets a live photo to the view with an array of `URL`.
@@ -184,22 +184,20 @@ extension KingfisherWrapper where Base: PHLivePhotoView {
         // progressBlock: DownloadProgressBlock? = nil, // Not supported yet
         completionHandler: (@MainActor @Sendable (Result<RetrieveLivePhotoResult, KingfisherError>) -> Void)? = nil
     ) -> Task<(), Never>? {
-        var mutatingSelf = self
-
         // Empty source fails the loading early and clear the current task identifier.
         guard let source = source else {
             base.livePhoto = nil
-            mutatingSelf.taskIdentifier = nil
+            taskIdentifier = nil
             completionHandler?(.failure(KingfisherError.imageSettingError(reason: .emptySource)))
             return nil
         }
         
         let issuedIdentifier = Source.Identifier.next()
-        mutatingSelf.taskIdentifier = issuedIdentifier
+        taskIdentifier = issuedIdentifier
 
         let token = CancellationToken()
-        mutatingSelf.cancellationToken?.cancel()
-        mutatingSelf.cancellationToken = token
+        cancellationToken?.cancel()
+        cancellationToken = token
 
         let taskIdentifierChecking: @Sendable () -> Bool = { !token.isCancelled }
 

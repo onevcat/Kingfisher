@@ -401,6 +401,29 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(imageView.kf.indicator)
     }
     
+    @MainActor func testWrapperSettersDoNotRequireMutableWrapper() {
+        // The wrapper setters are `nonmutating`, so a `let` copy is enough to configure the view.
+        let kf = imageView.kf
+        kf.indicatorType = .activity
+        XCTAssertNotNil(imageView.kf.indicator)
+        XCTAssertTrue(imageView.kf.indicator is ActivityIndicator)
+
+        kf.indicatorType = .none
+        XCTAssertNil(imageView.kf.indicator)
+    }
+    
+    #if canImport(PhotosUI) && !os(watchOS)
+    @MainActor func testLivePhotoViewWrapperSettersDoNotRequireMutableWrapper() {
+        let view = PHLivePhotoView()
+        let kf = view.kf
+        kf.targetSize = CGSize(width: 10, height: 20)
+        kf.contentMode = .aspectFill
+
+        XCTAssertEqual(view.kf.targetSize, CGSize(width: 10, height: 20))
+        XCTAssertEqual(view.kf.contentMode, .aspectFill)
+    }
+    #endif
+    
     @MainActor func testCustomizeStructIndicatorExisting() {
         struct StructIndicator: Indicator {
             let view = KFCrossPlatformView()
