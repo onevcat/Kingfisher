@@ -627,27 +627,45 @@ public class KingfisherManager: @unchecked Sendable {
             let needToCacheOriginalImage = options.cacheOriginalImage &&
                                            options.processor != DefaultImageProcessor.default
 
-            // Honor the response's `Cache-Control` header when asked to. `no-store` skips the disk cache;
-            // `max-age` overrides the disk cache expiration for this image only. This has to be resolved
-            // before the coordinator is created: it is initialized with the effective set of cache
-            // operations, so a `no-store` response must already have disabled the original-image store.
+            // Honor the response's `Cache-Control` header when asked to. `no-store` skips the cache
+            // entirely; `max-age` caps the expiration of both cache layers for this image only. This
+            // has to be resolved before the coordinator is created: it is initialized with the
+            // effective set of cache operations, so a `no-store` response must already have disabled
+            // the original-image store.
+            let targetCache = options.targetCache ?? self.cache
             var storeOptions = options
             var noStoreInResponse = false
-            if options.respectCacheControl, let cacheControl = value.response?.cacheControlPolicy {
-                switch cacheControl {
+            if options.respectCacheControl, let response = value.response {
+                switch response.cacheControlPolicy {
                 case .noStore:
                     noStoreInResponse = true
+                    // The memory backend skips already-expired stores, so the image is not stored
+                    // anywhere, matching the directive's RFC 9111 semantics.
+                    storeOptions.memoryCacheExpiration = .expired
                 case .maxAge(let seconds):
-                    storeOptions.diskCacheExpiration = .seconds(seconds)
+                    // Count the time the response already spent in downstream caches against the
+                    // budget, then treat it as an upper bound: a server should not make the app cache
+                    // longer than the app wants.
+                    let budget = max(0, seconds - response.responseAge)
+                    let now = Date()
+                    let effectiveMemory = storeOptions.memoryCacheExpiration ??
+                        targetCache.memoryStorage.config.expiration
+                    if budget < effectiveMemory.estimatedExpirationSinceNow.timeIntervalSince(now) {
+                        // A fixed deadline: `.seconds` would slide on every extending access.
+                        storeOptions.memoryCacheExpiration = .date(now.addingTimeInterval(budget))
+                    }
+                    let effectiveDisk = storeOptions.diskCacheExpiration ??
+                        targetCache.diskStorage.config.expiration
+                    if budget < effectiveDisk.estimatedExpirationSinceNow.timeIntervalSince(now) {
+                        // The disk expiration still slides on access; opt out with
+                        // `.diskCacheAccessExtendingExpiration(.none)`.
+                        storeOptions.diskCacheExpiration = .seconds(budget)
+                    }
+                case nil:
+                    break
                 }
             }
             let toDisk = !options.cacheMemoryOnly && !noStoreInResponse
-            // Carry the `no-store` restriction into the store call, so the flag is attached to the
-            // memory entry atomically with it — a synchronously executed completion handler must never
-            // observe the entry without its restriction. The flag then shares the entry's lifetime:
-            // replacing the entry with an unrestricted store, expiring, evicting, or clearing it drops
-            // the restriction with it.
-            storeOptions.responseRestricted = noStoreInResponse
 
             let coordinator = CacheCallbackCoordinator(
                 shouldWaitForCache: options.waitForCache,
@@ -662,7 +680,6 @@ public class KingfisherManager: @unchecked Sendable {
             )
 
             // Add image to cache.
-            let targetCache = options.targetCache ?? self.cache
             targetCache.store(
                 value.image,
                 original: value.originalData,
@@ -690,6 +707,19 @@ public class KingfisherManager: @unchecked Sendable {
                     coordinator.apply(.cachingOriginalImage) {
                         completionHandler?(.success(result))
                     }
+                }
+            }
+
+            if noStoreInResponse {
+                // A copy stored from an earlier permissive response must not be served after the
+                // server switched to `no-store`.
+                targetCache.removeImage(
+                    forKey: source.cacheKey, processorIdentifier: options.processor.identifier)
+                if options.cacheOriginalImage {
+                    let originalCache = options.originalCache ?? targetCache
+                    originalCache.removeImage(
+                        forKey: source.cacheKey,
+                        processorIdentifier: DefaultImageProcessor.default.identifier)
                 }
             }
 
@@ -1039,11 +1069,7 @@ public class KingfisherManager: @unchecked Sendable {
     {
         let processingQueue = options.processingQueue ?? self.processingQueue
 
-        // The restriction flag arrives together with the retrieved image (see `SharedOriginalImage`),
-        // read from the same cache entry in one lookup. Neither a `clearMemoryCache()` during async
-        // processing nor a coalesced request that joined later can pair the image with a stale flag.
-        let complete: @Sendable (Result<KFCrossPlatformImage?, KingfisherError>, Bool) -> Void = {
-            result, originalIsResponseRestricted in
+        let complete: @Sendable (Result<KFCrossPlatformImage?, KingfisherError>) -> Void = { result in
             result.match(
                 onSuccess: { processedImage in
                     if processedImage != nil, options.isSourceTaskStale {
@@ -1073,11 +1099,6 @@ public class KingfisherManager: @unchecked Sendable {
 
                     var cacheOptions = options
                     cacheOptions.callbackQueue = .untouch
-                    // Propagate the restriction to the derived entry: it may serve as the cached
-                    // original for a later request (e.g. the default-processor transfer between two
-                    // caches), and that path must keep its own derivatives off the disk too. Setting it
-                    // on the options attaches the flag atomically with the store.
-                    cacheOptions.responseRestricted = originalIsResponseRestricted
 
                     let coordinator = CacheCallbackCoordinator(
                         shouldWaitForCache: options.waitForCache, shouldCacheOriginal: false)
@@ -1091,14 +1112,11 @@ public class KingfisherManager: @unchecked Sendable {
                         data: { options.cacheSerializer.data(with: processedImage, original: nil) }
                     )
 
-                    // The original came from the cache, so no response is available here. If it only
-                    // exists in memory because a `Cache-Control: no-store` response forbade disk
-                    // storage, the derived image must not be written to disk either.
                     targetCache.store(
                         processedImage,
                         forKey: key,
                         options: cacheOptions,
-                        toDisk: !options.cacheMemoryOnly && !originalIsResponseRestricted)
+                        toDisk: !options.cacheMemoryOnly)
                     {
                         _ in
                         coordinator.apply(.cachingImage) {
@@ -1121,32 +1139,32 @@ public class KingfisherManager: @unchecked Sendable {
         let deliver: @Sendable (Result<SharedOriginalImage, KingfisherError>) -> Void = { shared in
             switch shared {
             case .failure(let error):
-                complete(.failure(error), false)
+                complete(.failure(error))
 
             case .success(.none):
-                complete(.success(nil), false)
+                complete(.success(nil))
 
-            case .success(.processed(let image, let responseRestricted)):
+            case .success(.processed(let image)):
                 guard options.backgroundDecode else {
-                    complete(.success(image), responseRestricted)
+                    complete(.success(image))
                     return
                 }
                 processingQueue.execute {
-                    complete(.success(image.kf.decoded), responseRestricted)
+                    complete(.success(image.kf.decoded))
                 }
 
-            case .success(.unprocessedData(let data, let responseRestricted)):
+            case .success(.unprocessedData(let data)):
                 processingQueue.execute {
                     guard let image = options.cacheSerializer.image(with: data, options: options) else {
-                        complete(.success(nil), false)
+                        complete(.success(nil))
                         return
                     }
                     let processed = Self.process(.image(image), with: options.processor, options: options)
                     guard options.backgroundDecode else {
-                        complete(processed, responseRestricted)
+                        complete(processed)
                         return
                     }
-                    complete(processed.map { $0?.kf.decoded }, responseRestricted)
+                    complete(processed.map { $0?.kf.decoded })
                 }
             }
         }
@@ -1203,20 +1221,10 @@ public class KingfisherManager: @unchecked Sendable {
                         completionHandler(.success(.none))
                         return
                     }
-                    // A disk entry can never be response-restricted (such entries are never written),
-                    // so only a memory hit can carry the flag.
-                    let responseRestricted = cacheResult.cacheType == .memory &&
-                        originalCache.isResponseRestricted(
-                            forComputedKey: key.computedKey(with: DefaultImageProcessor.default.identifier))
                     processingQueue.execute {
                         completionHandler(
                             Self.process(.image(image), with: processor, options: options)
-                                .map {
-                                    $0.map {
-                                        SharedOriginalImage.processed(
-                                            $0, responseRestricted: responseRestricted)
-                                    } ?? .none
-                                }
+                                .map { $0.map { SharedOriginalImage.processed($0) } ?? .none }
                         )
                     }
                 },
@@ -1254,19 +1262,13 @@ public class KingfisherManager: @unchecked Sendable {
         let waitingAtStart = identity.map { coalescer.participantCount($0) } ?? 0
 
         // A memory hit is already decoded, so there is nothing for the data route to save.
-        // The restriction flag is read from the same entry in the same lookup as the image.
-        if let (image, responseRestricted) = originalCache.retrieveImageInMemoryCacheWithRestriction(
+        if let image = originalCache.retrieveImageInMemoryCache(
             forKey: key, options: optionsWithoutProcessor)
         {
             processingQueue.execute {
                 completionHandler(
                     Self.process(.image(image), with: processor, options: options)
-                        .map {
-                            $0.map {
-                                SharedOriginalImage.processed(
-                                    $0, responseRestricted: responseRestricted)
-                            } ?? .none
-                        }
+                        .map { $0.map { SharedOriginalImage.processed($0) } ?? .none }
                 )
             }
             return
@@ -1283,12 +1285,11 @@ public class KingfisherManager: @unchecked Sendable {
                 processingQueue.execute {
                     // A processor is free to accept an image but not data. Reporting the bytes lets each
                     // request deserialize them with its own serializer instead of sharing one result.
-                    // Disk entries are never response-restricted, so the flag is `false` here.
                     guard let image = processor.process(item: .data(data), options: options) else {
-                        completionHandler(.success(.unprocessedData(data, responseRestricted: false)))
+                        completionHandler(.success(.unprocessedData(data)))
                         return
                     }
-                    completionHandler(.success(.processed(image, responseRestricted: false)))
+                    completionHandler(.success(.processed(image)))
                 }
 
             case .success(.stale):
@@ -1547,14 +1548,10 @@ class RetrievingContext<SourceType>: @unchecked Sendable {
 enum SharedOriginalImage: Sendable {
 
     /// The processor produced this image from the stored data.
-    ///
-    /// `responseRestricted` travels with the image: when the original only exists in memory because a
-    /// `Cache-Control: no-store` response forbade disk storage, every participant of the shared work
-    /// keeps its derived image off the disk as well, no matter when it joined.
-    case processed(KFCrossPlatformImage, responseRestricted: Bool)
+    case processed(KFCrossPlatformImage)
 
     /// The processor did not accept the stored data. Each request deserializes it with its own serializer.
-    case unprocessedData(Data, responseRestricted: Bool)
+    case unprocessedData(Data)
 
     /// No usable original.
     case none
@@ -1872,81 +1869,3 @@ private struct AsyncDownloadTaskReportingModifier: AsyncImageDownloadRequestModi
     }
 }
 
-// MARK: - Cache-Control Parsing
-
-/// The caching policy declared by an HTTP response's `Cache-Control` header.
-///
-/// Only the directives Kingfisher can act on are represented: `no-store` and `max-age`.
-enum ResponseCacheControlPolicy: Sendable, Equatable {
-    /// The response must not be persisted. The image is kept in the memory cache only.
-    case noStore
-    /// The response may be cached for at most the given number of seconds.
-    case maxAge(TimeInterval)
-}
-
-extension HTTPURLResponse {
-    /// Parses the `Cache-Control` header of the response into a ``ResponseCacheControlPolicy``.
-    ///
-    /// `no-store` takes precedence over `max-age` when both are present. Responses without a
-    /// `Cache-Control` header, or with only directives Kingfisher does not handle (such as
-    /// `no-cache` or `private`), return `nil` and the regular cache settings apply. Malformed
-    /// directives and non-integer `max-age` values (such as `1.5` or `inf`) are ignored.
-    var cacheControlPolicy: ResponseCacheControlPolicy? {
-        guard let header = value(forHTTPHeaderField: "Cache-Control") else {
-            return nil
-        }
-        var maxAge: TimeInterval?
-        for directive in splitCacheControlDirectives(header) {
-            let parts = directive.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-            let name = parts[0].trimmingCharacters(in: .whitespaces).lowercased()
-            switch name {
-            case "no-store":
-                return .noStore
-            case "max-age":
-                // delta-seconds is a non-negative integer per RFC 9111. Reject anything else
-                // (`1.5`, `inf`, negative or missing values) instead of silently accepting it.
-                guard parts.count == 2 else {
-                    continue
-                }
-                let rawValue = parts[1]
-                    .trimmingCharacters(in: .whitespaces)
-                    .trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-                guard let seconds = Int(rawValue), seconds >= 0 else {
-                    continue
-                }
-                maxAge = TimeInterval(seconds)
-            default:
-                continue
-            }
-        }
-        return maxAge.map { .maxAge($0) }
-    }
-}
-
-/// Splits a `Cache-Control` header value into directives on commas, honoring quoted strings.
-///
-/// A comma inside a quoted-string (including backslash-escaped quotes, per RFC 9110) does not
-/// separate directives, so an extension like `x-note="a,b"` never shadows a real directive.
-private func splitCacheControlDirectives(_ header: String) -> [Substring] {
-    var directives: [Substring] = []
-    var segmentStart = header.startIndex
-    var index = segmentStart
-    var inQuotes = false
-    var escaped = false
-    while index < header.endIndex {
-        let character = header[index]
-        if escaped {
-            escaped = false
-        } else if inQuotes && character == "\\" {
-            escaped = true
-        } else if character == "\"" {
-            inQuotes.toggle()
-        } else if character == ",", !inQuotes {
-            directives.append(header[segmentStart..<index])
-            segmentStart = header.index(after: index)
-        }
-        index = header.index(after: index)
-    }
-    directives.append(header[segmentStart...])
-    return directives
-}

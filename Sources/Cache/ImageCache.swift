@@ -179,15 +179,6 @@ open class ImageCache: @unchecked Sendable {
     
     private let ioQueue: DispatchQueue
 
-    /// Whether the memory entry of a computed key exists only because a response forbade disk storage
-    /// (`Cache-Control: no-store`, honored via ``KingfisherOptionsInfoItem/respectCacheControl``).
-    ///
-    /// The flag is attached to the memory entry itself, so it shares the entry's lifetime: replacing,
-    /// expiring, evicting, or clearing the entry drops the restriction with it.
-    func isResponseRestricted(forComputedKey key: String) -> Bool {
-        memoryStorage.isResponseRestricted(forKey: key)
-    }
-
     /// A closure that specifies the disk cache path based on a given path and the cache name.
     public typealias DiskCachePathClosure = @Sendable (URL, String) -> URL
 
@@ -361,8 +352,7 @@ open class ImageCache: @unchecked Sendable {
         memoryStorage.storeNoThrow(
             value: image,
             forKey: computedKey,
-            expiration: options.memoryCacheExpiration,
-            responseRestricted: options.responseRestricted)
+            expiration: options.memoryCacheExpiration)
         
         guard toDisk else {
             if let completionHandler = completionHandler {
@@ -721,24 +711,6 @@ open class ImageCache: @unchecked Sendable {
             forKey: computedKey,
             extendingExpiration: options.memoryCacheAccessExtendingExpiration
         )
-    }
-
-    /// Retrieves an image from the memory storage together with its response restriction flag.
-    ///
-    /// The flag and the image come from the same storage entry in a single lookup, so a concurrent
-    /// replacement cannot pair a new image with the old entry's restriction (or vice versa).
-    func retrieveImageInMemoryCacheWithRestriction(
-        forKey key: String,
-        options: KingfisherParsedOptionsInfo
-    ) -> (image: KFCrossPlatformImage, responseRestricted: Bool)? {
-        let computedKey = key.computedKey(with: options.processor.identifier)
-        guard let result = memoryStorage.valueAndResponseRestriction(
-            forKey: computedKey,
-            extendingExpiration: options.memoryCacheAccessExtendingExpiration
-        ) else {
-            return nil
-        }
-        return (result.value, result.responseRestricted)
     }
 
     /// Retrieves an image associated with a given key from the memory storage.

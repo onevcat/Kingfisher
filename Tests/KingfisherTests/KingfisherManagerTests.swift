@@ -2520,39 +2520,6 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testRespectCacheControlNoStoreSurvivesOriginalCacheReprocessing() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        let processor = ItemRecordingProcessor()
-        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
-
-        let manager = self.manager!
-        // Download with the default processor. The stored image is the original, kept in memory only.
-        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.cacheType, .none)
-
-        // A request with a processor hits the cached original and reprocesses it. The derived image
-        // must inherit the no-store restriction instead of being written to disk.
-        manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .processor(processor)]
-        ) { result in
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(processor.runCount, 1)
-
-        manager.cache.clearMemoryCache()
-        // Everything derived from that original is gone now, so this must download again. A `.disk`
-        // hit here would mean the restriction was lost during reprocessing.
-        manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .processor(processor)]
-        ) { result in
-            XCTAssertNotNil(result.value?.image)
-            XCTAssertEqual(result.value!.cacheType, .none)
-            exp.fulfill()
-        }}}
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-
     func testRespectCacheControlClearedByLaterUnrestrictedResponse() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -2581,237 +2548,101 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testRespectCacheControlUnrelatedProcessorStoreKeepsOriginalRestriction() {
+    func testRespectCacheControlNoStoreSkipsMemoryCache() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let processorA = ItemRecordingProcessor(identifier: "com.onevcat.Kingfisher.test.ProcessorA")
-        let processorB = ItemRecordingProcessor(identifier: "com.onevcat.Kingfisher.test.ProcessorB")
         stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
 
         let manager = self.manager!
-        // Download with the default processor: the original is memory-only and restricted.
         manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
-            XCTAssertEqual(result.value!.cacheType, .none)
-
-        // Force-refresh with processor A under an unrestricted response. Processor A stores its own
-        // entry; the restricted original must keep its restriction.
-        LSNocilla.sharedInstance().clearStubs()
-        stub(url, data: testImageData)
-        manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .forceRefresh, .processor(processorA)]
-        ) { result in
-            XCTAssertEqual(result.value!.cacheType, .none)
-
-        // Processor B reprocesses the still-restricted original; its derivative must stay off disk.
-        manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .processor(processorB)]
-        ) { result in
             XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
 
-        manager.cache.clearMemoryCache()
-        manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .processor(processorB)]
-        ) { result in
-            // A `.disk` hit would mean the derivative was persisted from the restricted original.
+        // No clearing: a `no-store` response leaves nothing in the memory cache either, so a second
+        // request in the same session downloads again. That is what the server asked for.
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
             XCTAssertEqual(result.value!.cacheType, .none)
             exp.fulfill()
-        }}}}
+        }}
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testRespectCacheControlClearingMemoryDuringProcessingKeepsRestriction() {
+    func testRespectCacheControlNoStoreRemovesExistingEntry() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+        stub(url, data: testImageData)
 
         let manager = self.manager!
-        // A processor that clears the memory cache in the middle of processing, as a memory warning
-        // would. The restriction was captured with the cache hit, before processing started.
-        let processor = CacheClearingProcessor { [weak manager] in
-            manager?.cache.clearMemoryCache()
-        }
         manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
             XCTAssertEqual(result.value!.cacheType, .none)
 
+        // The server switches to `no-store`. A copy cached under the earlier permissive response
+        // must not be served anymore.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
         manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .processor(processor)]
+            with: url, options: [.respectCacheControl, .forceRefresh]
         ) { result in
             XCTAssertNotNil(result.value?.image)
 
-        manager.cache.clearMemoryCache()
-        manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .processor(processor)]
-        ) { result in
-            XCTAssertEqual(result.value!.cacheType, .none)
-            exp.fulfill()
+        // The disk removal is asynchronous; give it a beat before checking.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            manager.retrieveImage(
+                with: url, options: [.respectCacheControl, .onlyFromCache]
+            ) { result in
+                XCTAssertNotNil(result.error)
+                exp.fulfill()
+            }
         }}}
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testRespectCacheControlTransferBetweenCachesPropagatesRestriction() {
+    func testRespectCacheControlMaxAgeCapsMemoryCache() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let processor = ItemRecordingProcessor()
-        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=1"])
 
         let manager = self.manager!
-        let cacheA = manager.cache
-        let cacheB = ImageCache(name: "test.cacheB.\(UUID().uuidString)")
-        defer { clearCaches([cacheB]) }
-
-        // The restricted original lands in cache A, memory-only.
         manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
             XCTAssertEqual(result.value!.cacheType, .none)
 
-        // Transfer the original from A into target cache B with the default processor.
-        manager.retrieveImage(
-            with: url,
-            options: [.respectCacheControl, .originalCache(cacheA), .targetCache(cacheB)]
-        ) { result in
-            XCTAssertNotNil(result.value?.image)
-
-        // A processor request that only knows cache B must still keep the derivative off disk.
-        manager.retrieveImage(
-            with: url,
-            options: [.respectCacheControl, .targetCache(cacheB), .processor(processor)]
-        ) { result in
-            XCTAssertNotNil(result.value?.image)
-
-        cacheA.clearMemoryCache()
-        cacheB.clearMemoryCache()
-        manager.retrieveImage(
-            with: url,
-            options: [.respectCacheControl, .targetCache(cacheB), .processor(processor)]
-        ) { result in
-            XCTAssertEqual(result.value!.cacheType, .none)
-            exp.fulfill()
-        }}}}
-        waitForExpectations(timeout: 3, handler: nil)
+        // The memory cache default (300 s) would still serve the image, but `max-age` is an upper
+        // bound for both layers: once it elapses, the image downloads again. (The disk expiration is
+        // stored as a file attribute with one-second granularity, so wait a little past it.)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertEqual(result.value!.cacheType, .none)
+                exp.fulfill()
+            }
+        }}
+        waitForExpectations(timeout: 8, handler: nil)
     }
 
-    func testRespectCacheControlCoalescedProcessingCarriesRestriction() {
+    func testRespectCacheControlMaxAgeDoesNotExtendConfiguredExpiration() {
         let exp = expectation(description: #function)
-        let completionA = expectation(description: "A completed")
-        let completionB = expectation(description: "B completed")
         let url = testURLs[0]
-        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600"])
 
         let manager = self.manager!
-        let cacheB = ImageCache(name: "test.cacheB.\(UUID().uuidString)")
-        defer { clearCaches([cacheB]) }
-        let processor = BlockingProcessor()
-
-        // The restricted original lands in the manager's cache, memory-only.
-        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+        let options: KingfisherOptionsInfo = [
+            .respectCacheControl, .memoryCacheExpiration(.seconds(1))
+        ]
+        manager.retrieveImage(with: url, options: options) { result in
             XCTAssertEqual(result.value!.cacheType, .none)
 
-        // Request A starts processing the restricted original and blocks inside the processor.
-        manager.retrieveImage(with: url, options: [.respectCacheControl, .processor(processor)]) { result in
-            XCTAssertNotNil(result.value?.image)
-            completionA.fulfill()
-        }
-
-        // Once A is blocked inside the processor, hop back to the main queue to continue. Waiting
-        // on a background thread keeps the main queue free for cache and completion callbacks.
-        DispatchQueue.global().async {
-            processor.waitUntilProcessing()
-            DispatchQueue.main.async {
-        // While A is blocked, the original entry is replaced by an unrestricted store. A request B
-        // that arrives now would capture an unrestricted snapshot of the entry — but it joins A's
-        // shared processing instead, and the restriction must travel with A's image.
-        manager.cache.store(testImage, forKey: url.cacheKey, toDisk: false) { _ in
-            manager.retrieveImage(
-                with: url,
-                options: [
-                    .respectCacheControl, .processor(processor),
-                    .targetCache(cacheB), .originalCache(manager.cache)
-                ]
-            ) { result in
+        // A generous `max-age` must not stretch the shorter per-request expiration: the memory
+        // entry is gone after the configured one second, so the image comes from the disk cache
+        // (whose own expiration is still valid) instead of the memory cache.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            manager.retrieveImage(with: url, options: options) { result in
                 XCTAssertNotNil(result.value?.image)
-                completionB.fulfill()
-
-                // B's derived image must have stayed memory-only even in its own target cache.
-                manager.cache.clearMemoryCache()
-                cacheB.clearMemoryCache()
-                manager.retrieveImage(
-                    with: url,
-                    options: [
-                        .respectCacheControl, .processor(processor),
-                        .targetCache(cacheB), .originalCache(manager.cache)
-                    ]
-                ) { result in
-                    XCTAssertNotNil(result.value?.image)
-                    XCTAssertEqual(result.value!.cacheType, .none)
-                    exp.fulfill()
-                }
-            }
-            processor.releaseProcessing()
-        }
+                XCTAssertEqual(result.value!.cacheType, .disk)
+                exp.fulfill()
             }
         }}
         waitForExpectations(timeout: 5, handler: nil)
-    }
-
-    func testResponseRestrictionDropsWithExpiredEntry() {
-        let exp = expectation(description: #function)
-        let key = "com.onevcat.Kingfisher.test.respectCacheControl.expiring"
-        let computedKey = key.computedKey(with: DefaultImageProcessor.default.identifier)
-        let cache = manager.cache
-
-        var options = KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.1))])
-        options.responseRestricted = true
-        cache.store(testImage, forKey: key, options: options, toDisk: false) { _ in
-            XCTAssertTrue(cache.isResponseRestricted(forComputedKey: computedKey))
-
-            // Once the entry expires, the restriction must go with it instead of accumulating.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                XCTAssertFalse(cache.isResponseRestricted(forComputedKey: computedKey))
-                exp.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-}
-
-/// A processor that runs a side effect (e.g. clearing the memory cache) in the middle of processing.
-final class CacheClearingProcessor: ImageProcessor, @unchecked Sendable {
-    let identifier = "com.onevcat.Kingfisher.test.CacheClearingProcessor"
-    let onProcess: () -> Void
-    init(onProcess: @escaping () -> Void) { self.onProcess = onProcess }
-    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        onProcess()
-        return DefaultImageProcessor.default.process(item: item, options: options)
-    }
-}
-
-/// A processor that blocks inside `process` until released, for deterministic concurrency tests.
-final class BlockingProcessor: ImageProcessor, @unchecked Sendable {
-    let identifier = "com.onevcat.Kingfisher.test.BlockingProcessor"
-    private let started = DispatchSemaphore(value: 0)
-    private let gate = DispatchSemaphore(value: 0)
-    private let lock = NSLock()
-    private var released = false
-
-    func waitUntilProcessing() {
-        started.wait()
-    }
-
-    func releaseProcessing() {
-        lock.lock()
-        released = true
-        lock.unlock()
-        gate.signal()
-    }
-
-    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
-        started.signal()
-        lock.lock()
-        let isReleased = released
-        lock.unlock()
-        if !isReleased {
-            gate.wait()
-        }
-        return DefaultImageProcessor.default.process(item: item, options: options)
     }
 }
 

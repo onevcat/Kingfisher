@@ -137,8 +137,7 @@ public enum MemoryStorage {
         func storeNoThrow(
             value: T,
             forKey key: String,
-            expiration: StorageExpiration? = nil,
-            responseRestricted: Bool = false)
+            expiration: StorageExpiration? = nil)
         {
             lock.lock()
             defer { lock.unlock() }
@@ -148,10 +147,9 @@ public enum MemoryStorage {
 
             let object: StorageObject<T>
             if config.keepWhenEnteringBackground {
-                object = BackgroundKeepingStorageObject(
-                    value, expiration: expiration, responseRestricted: responseRestricted)
+                object = BackgroundKeepingStorageObject(value, expiration: expiration)
             } else {
-                object = StorageObject(value, expiration: expiration, responseRestricted: responseRestricted)
+                object = StorageObject(value, expiration: expiration)
             }
             storage.setObject(object, forKey: key as NSString, cost: value.cacheCost)
             keys.insert(key)
@@ -174,25 +172,6 @@ public enum MemoryStorage {
             return object.value
         }
 
-        /// Gets a value from the storage together with its response restriction flag, in one lookup.
-        ///
-        /// Reading the flag from the same `StorageObject` as the value closes the replacement window
-        /// that two separate reads would leave: a value and its restriction always come from the same
-        /// cache entry.
-        func valueAndResponseRestriction(
-            forKey key: String,
-            extendingExpiration: ExpirationExtending = .cacheTime
-        ) -> (value: T, responseRestricted: Bool)? {
-            guard let object = storage.object(forKey: key as NSString), let value = object.value else {
-                return nil
-            }
-            if object.isExpired {
-                return nil
-            }
-            object.extendExpiration(extendingExpiration)
-            return (value, object.responseRestricted)
-        }
-
         /// Determines whether there is valid cached data under a given key.
         ///
         /// - Parameter key: The cache key of the value.
@@ -212,17 +191,6 @@ public enum MemoryStorage {
             defer { lock.unlock() }
             storage.removeObject(forKey: key as NSString)
             keys.remove(key)
-        }
-
-        /// Whether the entry under `key` exists in memory only because a response forbade disk storage.
-        /// Expired entries report `false`, matching ``value(forKey:extendingExpiration:)``.
-        func isResponseRestricted(forKey key: String) -> Bool {
-            lock.lock()
-            defer { lock.unlock() }
-            guard let object = storage.object(forKey: key as NSString), !object.isExpired else {
-                return false
-            }
-            return object.responseRestricted
         }
 
         /// Removes all values in this storage.
@@ -338,21 +306,11 @@ extension MemoryStorage {
     class StorageObject<T> {
         var value: T?
         let expiration: StorageExpiration
-
-        /// Whether this entry exists in memory only because an HTTP response forbade disk storage
-        /// (`Cache-Control: no-store`, honored via `KingfisherOptionsInfoItem.respectCacheControl`).
-        ///
-        /// The flag lives and dies with the entry itself: replacing, expiring, evicting, or clearing the
-        /// entry drops the restriction with it, and a reprocess-from-original path can read it to keep
-        /// derived images off the disk as well.
-        var responseRestricted: Bool
-
         private(set) var estimatedExpiration: Date
 
-        init(_ value: T, expiration: StorageExpiration, responseRestricted: Bool = false) {
+        init(_ value: T, expiration: StorageExpiration) {
             self.value = value
             self.expiration = expiration
-            self.responseRestricted = responseRestricted
 
             self.estimatedExpiration = expiration.estimatedExpirationSinceNow
         }

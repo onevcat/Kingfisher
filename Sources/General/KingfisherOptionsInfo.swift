@@ -395,19 +395,18 @@ public enum KingfisherOptionsInfoItem: Sendable {
     ///
     /// The supported directives are:
     ///
-    /// - `no-store`: The image is only kept in the memory cache and is not written to the disk cache. The
-    ///   restriction is attached to the memory entry, so images derived from it by another processor are
-    ///   kept off the disk as well.
-    /// - `max-age=N`: The disk cache expiration for this image is overridden with `N` seconds, regardless of
-    ///   ``diskCacheExpiration(_:)`` or the disk storage configuration.
+    /// - `no-store`: The image is not stored anywhere, in neither the memory nor the disk cache, and any entry
+    ///   cached under the same key from an earlier response is removed. Requesting the image again downloads it
+    ///   again, which is what the server asked for.
+    /// - `max-age=N`: `N` (minus any `Age` header value) caps the expiration of both the memory and the disk
+    ///   cache for this image: the effective expiration is the smaller of `N` and the configured one. The memory
+    ///   entry is stored with a fixed deadline that does not slide on access; the disk entry still slides under
+    ///   the configured ``ExpirationExtending`` policy — use ``diskCacheAccessExtendingExpiration(_:)`` with
+    ///   `.none` to opt out.
     ///
-    /// Other directives are ignored. If the response does not contain a `Cache-Control` header, the regular cache
-    /// settings apply. This option is off by default, so existing behavior is not affected.
-    ///
-    /// - Note: This option maps response directives to *storage policy*; it does not guarantee server-defined
-    ///   freshness. In particular, a `max-age=0` response can still be served from the memory cache, and reading
-    ///   a disk entry may extend its expiration under the configured ``ExpirationExtending`` policy. Kingfisher
-    ///   does not revalidate stale entries with the server.
+    /// Other directives (including `no-cache`) are ignored. If the response does not contain a `Cache-Control`
+    /// header, the regular cache settings apply. This option is off by default, so existing behavior is not
+    /// affected.
     ///
     /// - Note: This option only affects how a downloaded image is stored. It does not apply to images loaded from
     ///   an ``ImageDataProvider``, which have no HTTP response.
@@ -467,10 +466,6 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var respectCacheControl = false
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
-    /// Whether the stored memory entry is restricted to memory-only storage by a response's
-    /// `Cache-Control` policy. Carried into the store call so the flag is attached atomically with the
-    /// entry, before any completion handler can observe it.
-    var responseRestricted = false
     var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
     var isSourceTaskStale: Bool { sourceTaskIdentifierChecker.map { !$0() } ?? false }
 
