@@ -735,7 +735,8 @@ public class KingfisherManager: @unchecked Sendable {
                         value.originalData,
                         forKey: source.cacheKey,
                         processorIdentifier: DefaultImageProcessor.default.identifier,
-                        expiration: originalDiskExpiration)
+                        expiration: originalDiskExpiration,
+                        callbackQueue: options.callbackQueue)
                     {
                         _ in
                         coordinator.apply(.cachingOriginalImage) {
@@ -1697,9 +1698,8 @@ class CacheCallbackCoordinator: @unchecked Sendable {
     private let stateQueue: DispatchQueue
     private var threadSafeState: State = .idle
 
-    private(set) var state: State {
-        set { stateQueue.sync { threadSafeState = newValue } }
-        get { stateQueue.sync { threadSafeState } }
+    var state: State {
+        stateQueue.sync { threadSafeState }
     }
 
     init(shouldWaitForCache: Bool, shouldCacheOriginal: Bool) {
@@ -1710,39 +1710,44 @@ class CacheCallbackCoordinator: @unchecked Sendable {
     }
 
     func apply(_ action: Action, trigger: () -> Void) {
-        switch (state, action) {
-        case (.done, _):
-            break
+        // The transition is decided and committed in one critical section. The two store callbacks can
+        // arrive on different queues; reading the state and writing it back separately lets both of them
+        // observe `.idle`, and the completion is never delivered. `trigger` runs outside of the section,
+        // since a completion can re-enter the manager.
+        let shouldTrigger: Bool = stateQueue.sync {
+            switch (threadSafeState, action) {
+            case (.done, _):
+                return false
 
-        // From .idle
-        case (.idle, .cacheInitiated):
-            if !shouldWaitForCache {
-                state = .done
-                trigger()
+            // A store with a synchronous callback queue reports back before the initiation is applied.
+            case (_, .cacheInitiated):
+                guard !shouldWaitForCache else { return false }
+                threadSafeState = .done
+                return true
+
+            case (.idle, .cachingImage):
+                guard shouldCacheOriginal else {
+                    threadSafeState = .done
+                    return true
+                }
+                threadSafeState = .imageCached
+                return false
+            case (.idle, .cachingOriginalImage):
+                threadSafeState = .originalImageCached
+                return false
+
+            case (.imageCached, .cachingOriginalImage), (.originalImageCached, .cachingImage):
+                threadSafeState = .done
+                return true
+
+            case (.imageCached, .cachingImage), (.originalImageCached, .cachingOriginalImage):
+                assertionFailure(
+                    "This case should not happen in CacheCallbackCoordinator: \(threadSafeState) - \(action)"
+                )
+                return false
             }
-        case (.idle, .cachingImage):
-            if shouldCacheOriginal {
-                state = .imageCached
-            } else {
-                state = .done
-                trigger()
-            }
-        case (.idle, .cachingOriginalImage):
-            state = .originalImageCached
-
-        // From .imageCached
-        case (.imageCached, .cachingOriginalImage):
-            state = .done
-            trigger()
-
-        // From .originalImageCached
-        case (.originalImageCached, .cachingImage):
-            state = .done
-            trigger()
-
-        default:
-            assertionFailure("This case should not happen in CacheCallbackCoordinator: \(state) - \(action)")
         }
+        if shouldTrigger { trigger() }
     }
 }
 

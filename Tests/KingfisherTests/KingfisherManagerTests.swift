@@ -546,6 +546,76 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    func testWaitForCacheWithOriginalImageCompletesOnCallbackQueue() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        // `.cacheMemoryOnly` finishes the processed image store synchronously on the main queue, so the
+        // original image disk write is always the last cache operation to report back.
+        let options: KingfisherOptionsInfo = [
+            .processor(SimpleProcessor()), .cacheOriginalImage, .cacheMemoryOnly, .waitForCache
+        ]
+        manager.retrieveImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertTrue(Thread.isMainThread, "The completion must be delivered on the callback queue.")
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3)
+    }
+
+    func testWaitForCacheWithOriginalImageCompletesOnCustomCallbackQueue() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let key = DispatchSpecificKey<Void>()
+        let callbackQueue = DispatchQueue(label: "com.onevcat.Kingfisher.test.callbackQueue")
+        callbackQueue.setSpecific(key: key, value: ())
+
+        // Hold the cache I/O queue, so the original image write cannot finish before the processed image
+        // store has reported back on the callback queue. In this order the original image write delivers
+        // the final completion.
+        let blocker = DispatchSemaphore(value: 0)
+        manager.cache.store(testImage, forKey: "blocker", toDisk: true, callbackQueue: .untouch) { _ in
+            blocker.wait()
+        }
+
+        let p = SimpleProcessor()
+        let options = KingfisherParsedOptionsInfo([
+            .processor(p), .cacheOriginalImage, .cacheMemoryOnly, .waitForCache,
+            .callbackQueue(.dispatch(callbackQueue))
+        ])
+        let source = Source.network(url)
+        let context = RetrievingContext(options: options, originalSource: source)
+        let manager = self.manager!
+        manager.loadAndCacheImage(source: source, context: context) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertNotNil(
+                DispatchQueue.getSpecific(key: key), "The completion must be delivered on the callback queue."
+            )
+            exp.fulfill()
+        }
+
+        let stored = expectation(description: "Processed image stored")
+        func waitForProcessedStore() {
+            guard manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier) == .memory
+            else {
+                delay(0.02) { waitForProcessedStore() }
+                return
+            }
+            // The store completion is already queued on the callback queue. Drain it before the I/O queue
+            // is released.
+            callbackQueue.sync { }
+            stored.fulfill()
+        }
+        waitForProcessedStore()
+        wait(for: [stored], timeout: 3)
+
+        blocker.signal()
+        wait(for: [exp], timeout: 3)
+    }
+
     func testOriginalImageNotBeStoredWithoutOptionSet() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
@@ -1486,6 +1556,48 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(coordinator.state, .done)
     }
     
+    func testCacheCallbackCoordinatorTriggersOnceUnderConcurrentApplies() {
+        let iterations = 2_000
+        let triggers = LockIsolated(0)
+        let group = DispatchGroup()
+        let queue = DispatchQueue(label: "com.onevcat.Kingfisher.test.coordinator", attributes: .concurrent)
+        let actions: [CacheCallbackCoordinator.Action] = [.cachingImage, .cachingOriginalImage]
+        for _ in 0 ..< iterations {
+            let coordinator = CacheCallbackCoordinator(shouldWaitForCache: true, shouldCacheOriginal: true)
+            for action in actions {
+                group.enter()
+                queue.async {
+                    coordinator.apply(action) { triggers.withValue { $0 += 1 } }
+                    group.leave()
+                }
+            }
+        }
+        XCTAssertEqual(group.wait(timeout: .now() + 10), .success)
+        XCTAssertEqual(triggers.value, iterations)
+    }
+
+    func testCacheCallbackCoordinatorAcceptsCacheInitiatedAfterStoreCompletion() {
+        // A store with a synchronous callback queue reports back before `cacheInitiated` is applied.
+        var coordinator = CacheCallbackCoordinator(shouldWaitForCache: true, shouldCacheOriginal: true)
+        var called = false
+        coordinator.apply(.cachingImage) { XCTFail() }
+        coordinator.apply(.cacheInitiated) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .imageCached)
+        coordinator.apply(.cachingOriginalImage) { called = true }
+        XCTAssertTrue(called)
+        XCTAssertEqual(coordinator.state, .done)
+
+        coordinator = CacheCallbackCoordinator(shouldWaitForCache: false, shouldCacheOriginal: true)
+        called = false
+        coordinator.apply(.cachingImage) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .imageCached)
+        coordinator.apply(.cacheInitiated) { called = true }
+        XCTAssertTrue(called)
+        XCTAssertEqual(coordinator.state, .done)
+        coordinator.apply(.cachingOriginalImage) { XCTFail() }
+        XCTAssertEqual(coordinator.state, .done)
+    }
+
     func testCallbackClearAfterSuccess() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
