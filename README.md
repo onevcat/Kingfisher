@@ -188,9 +188,12 @@ Alternatively, you can follow either of the methods below.
 
 #### CocoaPods
 
+> [!IMPORTANT]
+> CocoaPods trunk becomes read-only on December 2, 2026 ([announcement](https://blog.cocoapods.org/CocoaPods-Specs-Repo/)). After that date, new Kingfisher versions cannot be published to CocoaPods. The versions that are already published keep resolving, but you will not get updates or security fixes through CocoaPods. Migrate to Swift Package Manager or the pre-built framework to stay on supported releases.
+
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '13.0'
+platform :ios, '15.0'
 use_frameworks!
 
 target 'MyApp' do
