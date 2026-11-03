@@ -2,6 +2,19 @@
 
 -----
 
+## [8.15.0 - Control Freak](https://github.com/onevcat/Kingfisher/releases/tag/8.15.0) (2026-11-03)
+
+#### Add
+* Add an opt-in `.respectCacheControl` option and `KF.Builder.respectCacheControl()` to honor the response `Cache-Control` header when an image is stored. `no-store` stores nothing and removes an entry cached earlier under the same key; `max-age` minus the `Age` header caps the expiration of both cache layers, never beyond the configured one. The response is available as `ImageLoadingResult.response`. The cap applies to the entries stored for that response only; an image processed later from a cached original gets the regular expiration. [#2609](https://github.com/onevcat/Kingfisher/pull/2609) [#2603](https://github.com/onevcat/Kingfisher/pull/2603) [#2507](https://github.com/onevcat/Kingfisher/issues/2507) @feather2222 @buscarini
+* Mark all `KingfisherWrapper` stored-property setters on image views, `NSTextAttachment`, and `PHLivePhotoView` as `nonmutating`, so a `let` copy of the wrapper can configure the view, the same as the button and `CPListItem` extensions. [#2607](https://github.com/onevcat/Kingfisher/pull/2607) [#2601](https://github.com/onevcat/Kingfisher/pull/2601) @sereivoanyong
+
+#### Fix
+* Deliver the final completion on `options.callbackQueue` when `waitForCache` and `cacheOriginalImage` are used with a processor. The original image disk write reported back on the cache I/O queue, which could run the completion off the callback queue, or drop it when the two store callbacks raced in `CacheCallbackCoordinator`. A store that reports back synchronously no longer trips an assertion. [#2611](https://github.com/onevcat/Kingfisher/pull/2611) @onevcat
+* Fix the Progressive JPEG demo so that toggling Disable Blur or Disable Fastest Scan downloads the image again with the new options. [#2608](https://github.com/onevcat/Kingfisher/pull/2608) [#2605](https://github.com/onevcat/Kingfisher/pull/2605) [#2604](https://github.com/onevcat/Kingfisher/issues/2604) @suojae
+* Fix typos in doc comments. [#2602](https://github.com/onevcat/Kingfisher/pull/2602) @suojae
+
+---
+
 ## [8.14.0 - Leaf Me Alone](https://github.com/onevcat/Kingfisher/releases/tag/8.14.0) (2026-10-17)
 
 #### Add
