@@ -399,12 +399,13 @@ public enum KingfisherOptionsInfoItem: Sendable {
     ///   cached under the same key from an earlier response is removed. Requesting the image again downloads it
     ///   again, which is what the server asked for.
     /// - `max-age=N`: `N` (minus any `Age` header value) caps the expiration of both the memory and the disk
-    ///   cache for this image: the effective expiration is the smaller of `N` and the configured one. The memory
-    ///   entry is stored with a fixed deadline that does not slide on access; the disk entry still slides under
+    ///   cache for this image: the effective expiration is the smaller of `N` and the configured one. A budget
+    ///   of zero, including when `Age` is at least `N`, behaves like `no-store`. The memory entry is stored with
+    ///   a fixed deadline at that expiration, so it does not slide on access; the disk entry still slides under
     ///   the configured ``ExpirationExtending`` policy. Use ``diskCacheAccessExtendingExpiration(_:)`` with
     ///   `.none` to opt out. The cap applies to the entries stored for this response only: an image that
-    ///   Kingfisher later processes from a cached original (see ``cacheOriginalImage``) is stored with the
-    ///   regular expiration.
+    ///   Kingfisher later processes from a cached original (see ``cacheOriginalImage``), or loads back into the
+    ///   memory cache from the disk cache, is stored with the regular expiration.
     ///
     /// Other directives (including `no-cache`) are ignored. If the response does not contain a `Cache-Control`
     /// header, the regular cache settings apply. This option is off by default, so existing behavior is not

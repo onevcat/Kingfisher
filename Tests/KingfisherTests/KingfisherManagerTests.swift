@@ -2669,20 +2669,134 @@ class KingfisherManagerTests: XCTestCase {
     func testRespectCacheControlMaxAgeCountsResponseAge() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        // The response already spent its whole `max-age` in a downstream cache, so nothing is left to
-        // store: the next request downloads again.
-        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600", "Age": "3600"])
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600"])
 
         let manager = self.manager!
-        manager.retrieveImage(with: url, options: [.respectCacheControl, .waitForCache]) { result in
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // The next response already spent its whole `max-age` in a downstream cache, so nothing is left to
+        // store. The copy cached under the earlier response is removed, and the next request downloads again.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600", "Age": "3600"])
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .forceRefresh, .waitForCache]
+        ) { result in
             XCTAssertEqual(result.value!.cacheType, .none)
 
         manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
             XCTAssertNotNil(result.value?.image)
             XCTAssertEqual(result.value!.cacheType, .none)
             exp.fulfill()
-        }}
+        }}}
         waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlExhaustedMaxAgeRemovesExistingEntry() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // The server stops allowing caching. A refresh with no budget left must not keep the copy cached
+        // under the earlier response, in memory or on disk.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=0"])
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .forceRefresh, .waitForCache]
+        ) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.retrieveImage(with: url, options: [.respectCacheControl, .onlyFromCache]) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlMaxAgeGivesMemoryEntryFixedDeadline() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600"])
+
+        let manager = self.manager!
+        // The configured lifetime is shorter than the budget. The entry still gets a fixed deadline at the
+        // configured lifetime: a sliding expiration would extend it on every access and could outlive the budget.
+        let options: KingfisherOptionsInfo = [.respectCacheControl, .memoryCacheExpiration(.seconds(60))]
+        let start = Date()
+        manager.retrieveImage(with: url, options: options) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+            let key = url.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
+            guard let object = manager.cache.memoryStorage.storage.object(forKey: key as NSString) else {
+                XCTFail("The image should be in the memory cache.")
+                return exp.fulfill()
+            }
+            guard case .date(let deadline) = object.expiration else {
+                XCTFail("Expected a fixed deadline, got \(object.expiration).")
+                return exp.fulfill()
+            }
+            XCTAssertEqual(deadline.timeIntervalSince(start), 60, accuracy: 2)
+
+            // An access extends a sliding expiration. A fixed deadline stays where it is.
+            XCTAssertNotNil(manager.cache.memoryStorage.value(forKey: key, extendingExpiration: .cacheTime))
+            XCTAssertEqual(object.estimatedExpiration, deadline)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlMaxAgeCapsOriginalCacheOnItsOwnConfiguration() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=60"])
+
+        let uuid = UUID()
+        let originalCache = ImageCache(name: "test.original.\(uuid.uuidString)")
+        let targetCache = ImageCache(name: "test.target.\(uuid.uuidString)")
+        addTeardownBlock {
+            clearCaches([originalCache, targetCache])
+        }
+
+        let manager = self.manager!
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let originalKey = url.cacheKey.computedKey(with: DefaultImageProcessor.default.identifier)
+        let originalFileURL = originalCache.diskStorage.cacheFileURL(forKey: originalKey)
+
+        // The modification date of a cache file holds its expiration.
+        func originalLifetime() -> TimeInterval {
+            let attributes = try? FileManager.default.attributesOfItem(atPath: originalFileURL.path)
+            let expiration = attributes?[.modificationDate] as? Date
+            return expiration?.timeIntervalSinceNow ?? -1
+        }
+        func load(targetLifetime: TimeInterval, originalLifetime: TimeInterval, completion: @escaping () -> Void) {
+            targetCache.diskStorage.config.expiration = .seconds(targetLifetime)
+            originalCache.diskStorage.config.expiration = .seconds(originalLifetime)
+            let options: KingfisherOptionsInfo = [
+                .respectCacheControl, .forceRefresh, .waitForCache, .processor(processor), .cacheOriginalImage,
+                .targetCache(targetCache), .originalCache(originalCache)
+            ]
+            manager.retrieveImage(with: url, options: options) { result in
+                XCTAssertEqual(result.value!.cacheType, .none)
+                completion()
+            }
+        }
+
+        // The original cache keeps images longer than the budget: the budget caps it, whatever the target
+        // cache is configured with.
+        load(targetLifetime: 10, originalLifetime: 300) {
+            XCTAssertEqual(originalLifetime(), 60, accuracy: 2)
+
+        // The original cache keeps images shorter than the budget: its own configuration applies, not the
+        // target cache's.
+        load(targetLifetime: 300, originalLifetime: 10) {
+            XCTAssertEqual(originalLifetime(), 10, accuracy: 2)
+            exp.fulfill()
+        }}
+        waitForExpectations(timeout: 5, handler: nil)
     }
 }
 
