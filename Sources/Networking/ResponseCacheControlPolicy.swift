@@ -2,9 +2,9 @@
 //  ResponseCacheControlPolicy.swift
 //  Kingfisher
 //
-//  Created by Kingfisher contributors on 2025/11/3.
+//  Created by feather2222 on 2026/11/03.
 //
-//  Copyright (c) 2025 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2026 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
