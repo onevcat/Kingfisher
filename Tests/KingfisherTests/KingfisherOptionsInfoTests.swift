@@ -57,6 +57,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.onlyLoadFirstFrame)
         XCTAssertFalse(options.cacheOriginalImage)
         XCTAssertEqual(options.diskStoreWriteOptions, [])
+        XCTAssertFalse(options.respectCacheControl)
     }
     
     func testSetOptionsShouldParseCorrectly() {
@@ -94,6 +95,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .keepCurrentImageWhileLoading,
             .onlyLoadFirstFrame,
             .cacheOriginalImage,
+            .respectCacheControl,
             .diskStoreWriteOptions([.atomic]),
             .alternativeSources([alternativeSource]),
             .retryStrategy(DelayRetryStrategy(maxRetryCount: 10))
@@ -132,6 +134,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.keepCurrentImageWhileLoading)
         XCTAssertTrue(options.onlyLoadFirstFrame)
         XCTAssertTrue(options.cacheOriginalImage)
+        XCTAssertTrue(options.respectCacheControl)
         XCTAssertEqual(options.diskStoreWriteOptions, [Data.WritingOptions.atomic])
         XCTAssertEqual(options.alternativeSources?.count, 1)
         XCTAssertEqual(options.alternativeSources?.first?.url, alternativeSource.url)
@@ -195,6 +198,15 @@ class KingfisherOptionsInfoTests: XCTestCase {
 
         XCTAssertNil(withForceRefresh.context.options.memoryCacheExpiration)
         XCTAssertTrue(withForceRefresh.context.options.forceRefresh)
+    }
+
+    @MainActor
+    func testRespectCacheControlOptionModifier() {
+        let url = URL(string: "https://example.com/image.png")!
+        XCTAssertFalse(KF.url(url).options.respectCacheControl)
+        XCTAssertTrue(KF.url(url).respectCacheControl().options.respectCacheControl)
+        XCTAssertFalse(KF.url(url).respectCacheControl(false).options.respectCacheControl)
+        XCTAssertTrue(KFImage(url).respectCacheControl().context.options.respectCacheControl)
     }
     
     @MainActor

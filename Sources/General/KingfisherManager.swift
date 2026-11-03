@@ -626,8 +626,60 @@ public class KingfisherManager: @unchecked Sendable {
         case .success(let value):
             let needToCacheOriginalImage = options.cacheOriginalImage &&
                                            options.processor != DefaultImageProcessor.default
+
+            // Honor the response's `Cache-Control` header when asked to. `no-store` skips the cache
+            // entirely; `max-age` caps the expiration of both cache layers for this image only. This
+            // has to be resolved before the coordinator is created: it is initialized with the
+            // effective set of cache operations, so a response that stores nothing must already have
+            // disabled the original-image store.
+            let targetCache = options.targetCache ?? self.cache
+            let originalCache = options.originalCache ?? targetCache
+            var storeOptions = options
+            var originalDiskExpiration = options.diskCacheExpiration
+            // `no-store`, or a `max-age` budget that is already used up: nothing is stored, and the
+            // entries this request would have written are removed instead, so a copy cached under an
+            // earlier response is not served anymore.
+            var storesNothing = false
+            if options.respectCacheControl, let response = value.response {
+                switch response.cacheControlPolicy {
+                case .noStore:
+                    // Matching the directive's RFC 9111 semantics.
+                    storesNothing = true
+                case .maxAge(let seconds):
+                    // Count the time the response already spent in downstream caches against the
+                    // budget, then treat it as an upper bound: a server should not make the app cache
+                    // longer than the app wants.
+                    let budget = max(0, seconds - response.responseAge)
+                    if budget == 0 {
+                        storesNothing = true
+                    } else {
+                        // A fixed deadline for the memory entry, at the smaller of the two lifetimes: a
+                        // sliding expiration would be extended on every access and could outlive the
+                        // budget.
+                        let memoryExpiration = options.memoryCacheExpiration
+                            ?? targetCache.memoryStorage.config.expiration
+                        if !memoryExpiration.isExpired {
+                            let lifetime = min(budget, memoryExpiration.timeInterval)
+                            storeOptions.memoryCacheExpiration = .date(Date().addingTimeInterval(lifetime))
+                        }
+                        // The disk expiration still slides on access; opt out with
+                        // `.diskCacheAccessExtendingExpiration(.none)`. The target and the original cache
+                        // can be configured differently, so each one is capped against its own
+                        // configuration.
+                        func cappedDiskExpiration(for cache: ImageCache) -> StorageExpiration? {
+                            let expiration = options.diskCacheExpiration ?? cache.diskStorage.config.expiration
+                            return budget < expiration.timeInterval ? .seconds(budget) : options.diskCacheExpiration
+                        }
+                        storeOptions.diskCacheExpiration = cappedDiskExpiration(for: targetCache)
+                        originalDiskExpiration = cappedDiskExpiration(for: originalCache)
+                    }
+                case nil:
+                    break
+                }
+            }
             let coordinator = CacheCallbackCoordinator(
-                shouldWaitForCache: options.waitForCache, shouldCacheOriginal: needToCacheOriginalImage)
+                shouldWaitForCache: options.waitForCache,
+                shouldCacheOriginal: needToCacheOriginalImage && !storesNothing)
             let result = RetrieveImageResult(
                 image: options.imageModifier?.modify(value.image) ?? value.image,
                 cacheType: .none,
@@ -636,34 +688,59 @@ public class KingfisherManager: @unchecked Sendable {
                 data: { value.originalData },
                 metrics: value.metrics
             )
-            // Add image to cache.
-            let targetCache = options.targetCache ?? self.cache
-            targetCache.store(
-                value.image,
-                original: value.originalData,
-                forKey: source.cacheKey,
-                options: options,
-                toDisk: !options.cacheMemoryOnly)
-            {
-                _ in
-                coordinator.apply(.cachingImage) {
-                    completionHandler?(.success(result))
-                }
-            }
 
-            // Add original image to cache if necessary.
-
-            if needToCacheOriginalImage {
-                let originalCache = options.originalCache ?? targetCache
-                originalCache.storeToDisk(
-                    value.originalData,
+            if storesNothing {
+                // The removal reports through the coordinator like a store does, so `waitForCache` also
+                // waits for it.
+                targetCache.removeImage(
                     forKey: source.cacheKey,
-                    processorIdentifier: DefaultImageProcessor.default.identifier,
-                    expiration: options.diskCacheExpiration)
+                    processorIdentifier: options.processor.identifier,
+                    forcedExtension: options.forcedExtension,
+                    callbackQueue: options.callbackQueue)
+                {
+                    guard needToCacheOriginalImage else {
+                        coordinator.apply(.cachingImage) {
+                            completionHandler?(.success(result))
+                        }
+                        return
+                    }
+                    originalCache.removeImage(
+                        forKey: source.cacheKey,
+                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        callbackQueue: options.callbackQueue)
+                    {
+                        coordinator.apply(.cachingImage) {
+                            completionHandler?(.success(result))
+                        }
+                    }
+                }
+            } else {
+                // Add image to cache.
+                targetCache.store(
+                    value.image,
+                    original: value.originalData,
+                    forKey: source.cacheKey,
+                    options: storeOptions,
+                    toDisk: !options.cacheMemoryOnly)
                 {
                     _ in
-                    coordinator.apply(.cachingOriginalImage) {
+                    coordinator.apply(.cachingImage) {
                         completionHandler?(.success(result))
+                    }
+                }
+
+                // Add original image to cache if necessary.
+                if needToCacheOriginalImage {
+                    originalCache.storeToDisk(
+                        value.originalData,
+                        forKey: source.cacheKey,
+                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        expiration: originalDiskExpiration)
+                    {
+                        _ in
+                        coordinator.apply(.cachingOriginalImage) {
+                            completionHandler?(.success(result))
+                        }
                     }
                 }
             }

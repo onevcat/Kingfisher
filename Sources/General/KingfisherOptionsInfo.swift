@@ -390,6 +390,30 @@ public enum KingfisherOptionsInfoItem: Sendable {
     /// If the associated value is `nil`, the behavior is the same as not setting this option: the file extension is
     /// determined by the disk storage configuration.
     case forcedCacheFileExtension(String?)
+
+    /// When set, Kingfisher honors the `Cache-Control` header of the HTTP response when storing the downloaded image.
+    ///
+    /// The supported directives are:
+    ///
+    /// - `no-store`: The image is not stored anywhere, in neither the memory nor the disk cache, and any entry
+    ///   cached under the same key from an earlier response is removed. Requesting the image again downloads it
+    ///   again, which is what the server asked for.
+    /// - `max-age=N`: `N` (minus any `Age` header value) caps the expiration of both the memory and the disk
+    ///   cache for this image: the effective expiration is the smaller of `N` and the configured one. A budget
+    ///   of zero, including when `Age` is at least `N`, behaves like `no-store`. The memory entry is stored with
+    ///   a fixed deadline at that expiration, so it does not slide on access; the disk entry still slides under
+    ///   the configured ``ExpirationExtending`` policy. Use ``diskCacheAccessExtendingExpiration(_:)`` with
+    ///   `.none` to opt out. The cap applies to the entries stored for this response only: an image that
+    ///   Kingfisher later processes from a cached original (see ``cacheOriginalImage``), or loads back into the
+    ///   memory cache from the disk cache, is stored with the regular expiration.
+    ///
+    /// Other directives (including `no-cache`) are ignored. If the response does not contain a `Cache-Control`
+    /// header, the regular cache settings apply. This option is off by default, so existing behavior is not
+    /// affected.
+    ///
+    /// - Note: This option only affects how a downloaded image is stored. It does not apply to images loaded from
+    ///   an ``ImageDataProvider``, which have no HTTP response.
+    case respectCacheControl
 }
 
 // MARK: - KingfisherParsedOptionsInfo
@@ -442,6 +466,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var retryStrategy: (any RetryStrategy)? = nil
     public var lowDataModeSource: Source? = nil
     public var forcedExtension: String? = nil
+    public var respectCacheControl = false
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
     var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
@@ -489,6 +514,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .retryStrategy(let strategy): retryStrategy = strategy
             case .lowDataMode(let source): lowDataModeSource = source
             case .forcedCacheFileExtension(let ext): forcedExtension = ext
+            case .respectCacheControl: respectCacheControl = true
             }
         }
 

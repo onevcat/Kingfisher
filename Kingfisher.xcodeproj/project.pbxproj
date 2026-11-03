@@ -55,6 +55,7 @@
 		D12AB6C0215D2BB50013BA68 /* RequestModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69D215D2BB50013BA68 /* RequestModifier.swift */; };
 		D12AB6C4215D2BB50013BA68 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69E215D2BB50013BA68 /* Resource.swift */; };
 		D12AB6C8215D2BB50013BA68 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */; };
+		D8CC0001A1B2C3D4000000AA /* ResponseCacheControlPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC0002A1B2C3D4000000AA /* ResponseCacheControlPolicy.swift */; };
 		D12AB6CC215D2BB50013BA68 /* ImageModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6A0215D2BB50013BA68 /* ImageModifier.swift */; };
 		D12AB6D0215D2BB50013BA68 /* ImagePrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6A1215D2BB50013BA68 /* ImagePrefetcher.swift */; };
 		D12AB6D4215D2BB50013BA68 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12AB6A3215D2BB50013BA68 /* Image.swift */; };
@@ -223,6 +224,7 @@
 		D12AB69D215D2BB50013BA68 /* RequestModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestModifier.swift; sourceTree = "<group>"; };
 		D12AB69E215D2BB50013BA68 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 		D12AB69F215D2BB50013BA68 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
+		D8CC0002A1B2C3D4000000AA /* ResponseCacheControlPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseCacheControlPolicy.swift; sourceTree = "<group>"; };
 		D12AB6A0215D2BB50013BA68 /* ImageModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageModifier.swift; sourceTree = "<group>"; };
 		D12AB6A1215D2BB50013BA68 /* ImagePrefetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePrefetcher.swift; sourceTree = "<group>"; };
 		D12AB6A3215D2BB50013BA68 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -440,6 +442,7 @@
 				D12AB6A0215D2BB50013BA68 /* ImageModifier.swift */,
 				D12AB6A1215D2BB50013BA68 /* ImagePrefetcher.swift */,
 				D11D9B71245FA6F700C5A0AE /* RetryStrategy.swift */,
+				D8CC0002A1B2C3D4000000AA /* ResponseCacheControlPolicy.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -944,6 +947,7 @@
 				4B10480D216F157000300C61 /* ImageDataProcessor.swift in Sources */,
 				D12AB72C215D2BB50013BA68 /* Indicator.swift in Sources */,
 				D12AB6C8215D2BB50013BA68 /* ImageDownloader.swift in Sources */,
+				D8CC0001A1B2C3D4000000AA /* ResponseCacheControlPolicy.swift in Sources */,
 				D11D9B72245FA6F700C5A0AE /* RetryStrategy.swift in Sources */,
 				D1A37BE3215D359F009B39B7 /* ImageFormat.swift in Sources */,
 				D12EB83C24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift in Sources */,
