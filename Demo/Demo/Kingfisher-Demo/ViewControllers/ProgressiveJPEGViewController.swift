@@ -44,7 +44,7 @@ class ProgressiveJPEGViewController: UIViewController {
         loadImage()
     }
     
-    private func loadImage() {
+    private func loadImage(forceRefresh: Bool = false) {
         progressLabel.text = "- / -"
         
         let progressive = ImageProgressive(
@@ -56,7 +56,8 @@ class ProgressiveJPEGViewController: UIViewController {
         KF.url(ImageLoader.progressiveImageURL)
             .loadDiskFileSynchronously()
             .progressiveJPEG(progressive)
-            .roundCorner(radius: .point(30))
+            .setProcessor(processor)
+            .forceRefresh(forceRefresh)
             .onProgress { receivedSize, totalSize in
                 print("\(receivedSize)/\(totalSize)")
                 self.progressLabel.text = "\(receivedSize) / \(totalSize)"
@@ -76,17 +77,11 @@ class ProgressiveJPEGViewController: UIViewController {
         let alert = super.alertPopup(sender)
         
         func reloadImage() {
-            // Cancel
             imageView.kf.cancelDownloadTask()
-            // Clean cache
-            KingfisherManager.shared.cache.removeImage(
-                forKey: ImageLoader.progressiveImageURL.cacheKey,
-                processorIdentifier: self.processor.identifier,
-                callbackQueue: .mainAsync,
-                completionHandler: {
-                    Task { @MainActor in self.loadImage() }
-                }
-            )
+            // Download again regardless of the cache. Both the processed image and the original image (the SwiftUI
+            // demo caches it for the same URL) would otherwise be reused, and the new progressive options would have
+            // no visible effect.
+            loadImage(forceRefresh: true)
         }
         
         do {
