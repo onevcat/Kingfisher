@@ -2581,19 +2581,40 @@ class KingfisherManagerTests: XCTestCase {
         // must not be served anymore.
         LSNocilla.sharedInstance().clearStubs()
         stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+        // `waitForCache` also waits for the removal, so the cache can be checked right away.
         manager.retrieveImage(
-            with: url, options: [.respectCacheControl, .forceRefresh]
+            with: url, options: [.respectCacheControl, .forceRefresh, .waitForCache]
         ) { result in
             XCTAssertNotNil(result.value?.image)
 
-        // The disk removal is asynchronous; give it a beat before checking.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            manager.retrieveImage(
-                with: url, options: [.respectCacheControl, .onlyFromCache]
-            ) { result in
-                XCTAssertNotNil(result.error)
-                exp.fulfill()
-            }
+        manager.retrieveImage(
+            with: url, options: [.respectCacheControl, .onlyFromCache]
+        ) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlNoStoreRemovesExistingEntryWithForcedExtension() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+        let options: KingfisherOptionsInfo = [.respectCacheControl, .forcedCacheFileExtension("jpg")]
+        manager.retrieveImage(with: url, options: options) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // The disk file was stored under the forced extension; the removal has to target the same file.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+        manager.retrieveImage(with: url, options: options + [.forceRefresh, .waitForCache]) { result in
+            XCTAssertNotNil(result.value?.image)
+
+        manager.retrieveImage(with: url, options: options + [.onlyFromCache]) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
         }}}
         waitForExpectations(timeout: 3, handler: nil)
     }

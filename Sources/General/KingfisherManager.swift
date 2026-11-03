@@ -638,10 +638,8 @@ public class KingfisherManager: @unchecked Sendable {
             if options.respectCacheControl, let response = value.response {
                 switch response.cacheControlPolicy {
                 case .noStore:
+                    // Nothing is stored anywhere, matching the directive's RFC 9111 semantics.
                     noStoreInResponse = true
-                    // The memory backend skips already-expired stores, so the image is not stored
-                    // anywhere, matching the directive's RFC 9111 semantics.
-                    storeOptions.memoryCacheExpiration = .expired
                 case .maxAge(let seconds):
                     // Count the time the response already spent in downstream caches against the
                     // budget, then treat it as an upper bound: a server should not make the app cache
@@ -665,8 +663,6 @@ public class KingfisherManager: @unchecked Sendable {
                     break
                 }
             }
-            let toDisk = !options.cacheMemoryOnly && !noStoreInResponse
-
             let coordinator = CacheCallbackCoordinator(
                 shouldWaitForCache: options.waitForCache,
                 shouldCacheOriginal: needToCacheOriginalImage && !noStoreInResponse)
@@ -679,47 +675,62 @@ public class KingfisherManager: @unchecked Sendable {
                 metrics: value.metrics
             )
 
-            // Add image to cache.
-            targetCache.store(
-                value.image,
-                original: value.originalData,
-                forKey: source.cacheKey,
-                options: storeOptions,
-                toDisk: toDisk)
-            {
-                _ in
-                coordinator.apply(.cachingImage) {
-                    completionHandler?(.success(result))
-                }
-            }
-
-            // Add original image to cache if necessary.
-
-            if needToCacheOriginalImage && !noStoreInResponse {
-                let originalCache = options.originalCache ?? targetCache
-                originalCache.storeToDisk(
-                    value.originalData,
+            let originalCache = options.originalCache ?? targetCache
+            if noStoreInResponse {
+                // Nothing is stored. Instead, remove the entries this request would have written: a copy
+                // stored from an earlier permissive response must not be served after the server
+                // switched to `no-store`. The removal reports through the coordinator like a store does,
+                // so `waitForCache` also waits for it.
+                targetCache.removeImage(
                     forKey: source.cacheKey,
-                    processorIdentifier: DefaultImageProcessor.default.identifier,
-                    expiration: storeOptions.diskCacheExpiration)
+                    processorIdentifier: options.processor.identifier,
+                    forcedExtension: options.forcedExtension,
+                    callbackQueue: options.callbackQueue)
+                {
+                    guard needToCacheOriginalImage else {
+                        coordinator.apply(.cachingImage) {
+                            completionHandler?(.success(result))
+                        }
+                        return
+                    }
+                    originalCache.removeImage(
+                        forKey: source.cacheKey,
+                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        callbackQueue: options.callbackQueue)
+                    {
+                        coordinator.apply(.cachingImage) {
+                            completionHandler?(.success(result))
+                        }
+                    }
+                }
+            } else {
+                // Add image to cache.
+                targetCache.store(
+                    value.image,
+                    original: value.originalData,
+                    forKey: source.cacheKey,
+                    options: storeOptions,
+                    toDisk: !options.cacheMemoryOnly)
                 {
                     _ in
-                    coordinator.apply(.cachingOriginalImage) {
+                    coordinator.apply(.cachingImage) {
                         completionHandler?(.success(result))
                     }
                 }
-            }
 
-            if noStoreInResponse {
-                // A copy stored from an earlier permissive response must not be served after the
-                // server switched to `no-store`.
-                targetCache.removeImage(
-                    forKey: source.cacheKey, processorIdentifier: options.processor.identifier)
-                if options.cacheOriginalImage {
-                    let originalCache = options.originalCache ?? targetCache
-                    originalCache.removeImage(
+                // Add original image to cache if necessary.
+                if needToCacheOriginalImage {
+                    originalCache.storeToDisk(
+                        value.originalData,
                         forKey: source.cacheKey,
-                        processorIdentifier: DefaultImageProcessor.default.identifier)
+                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        expiration: storeOptions.diskCacheExpiration)
+                    {
+                        _ in
+                        coordinator.apply(.cachingOriginalImage) {
+                            completionHandler?(.success(result))
+                        }
+                    }
                 }
             }
 
