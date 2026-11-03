@@ -309,6 +309,20 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Sets whether the `Cache-Control` header of the HTTP response is honored when the downloaded image is stored.
+    ///
+    /// - Parameter enabled: Whether to honor the response's `Cache-Control` header.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// See ``KingfisherOptionsInfoItem/respectCacheControl`` for the supported directives and how they affect the
+    /// memory and the disk cache.
+    ///
+    public func respectCacheControl(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.respectCacheControl = enabled
+        return result
+    }
+
     /// Sets writing options for an original image on its initial write to disk storage.
     ///
     /// - Parameter writingOptions: Options that control the data writing operation to disk storage.
