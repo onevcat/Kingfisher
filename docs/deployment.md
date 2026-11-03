@@ -166,24 +166,23 @@ swift package resolve
 ### GitHub Actions Workflows
 
 **Build Workflow**: `.github/workflows/build.yaml`
-- Builds across Xcode 26 versions; see `.github/workflows/build.yaml` for the current matrix
-- Tests all platforms in matrix configuration
-- Uses self-hosted runners
+- Compile-only checks across older Xcode 26 and 27 versions; see `.github/workflows/build.yaml` for the current matrix
+- Covers macOS, iOS Simulator, tvOS Simulator and watchOS Simulator for each Xcode version
+- Verifies SwiftPM consumer integration and the privacy manifest
 
 **Test Workflow**: `.github/workflows/test.yaml`
-- Runs tests across Xcode 26 versions; see `.github/workflows/test.yaml` for the current matrix
-- Covers all platform destinations
+- Runs the test suite on the newest Xcode 26 and the newest Xcode 27; see `.github/workflows/test.yaml` for the current matrix
+- Covers all platform destinations (watchOS is build-only)
 - Concurrent execution with cancellation
 
-**Matrix Configuration**:
-```yaml
-destination: [
-  'macOS',
-  'iOS Simulator,name=iPhone 15,OS=17.5',
-  'tvOS Simulator,name=Apple TV,OS=17.5',
-  'watchOS Simulator,name=Apple Watch Series 9 (41mm),OS=10.5'
-]
-```
+**Matrix Rotation Rule**:
+- The newest Xcode of each supported major runs tests; every other version is build-only
+- Xcode 26.0.1 stays in the build matrix as the minimum supported toolchain
+- When a new Xcode arrives, the previous test version moves to build-only and the oldest non-floor build version is dropped to keep CI time flat
+
+**Runners**:
+- `macos-26` (GitHub-hosted, macOS 26) for Xcode 26.x
+- `xcode-27` (GitHub-hosted, macOS 27) for Xcode 27.x
 
 ## Release Management
 
@@ -272,9 +271,9 @@ add:
 ### Server Configurations
 
 **GitHub Actions**:
-- **Runner Type**: Self-hosted
+- **Runner Type**: GitHub-hosted (`macos-26`, `xcode-27`)
 - **Concurrency**: Group-based with cancellation
-- **Shell**: `bash -leo pipefail {0}`
+- **Shell**: `bash -eo pipefail {0}`
 
 **Ruby Environment**:
 - **Fastlane**: Latest version

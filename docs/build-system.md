@@ -122,7 +122,7 @@ From `Package.swift` and `Kingfisher.podspec`:
 
 From `.github/workflows/test.yaml`:
 - **Destinations**: macOS, iOS Simulator, tvOS Simulator, watchOS Simulator
-- **Xcode Versions**: See `.github/workflows/test.yaml` for the current matrix
+- **Xcode Versions**: The newest Xcode 26 and the newest Xcode 27 run tests; older versions are build-only in `.github/workflows/build.yaml`. See the workflow files for the current matrix
 
 ### Platform Build Commands
 
