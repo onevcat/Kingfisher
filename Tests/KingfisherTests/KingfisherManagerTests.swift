@@ -2665,15 +2665,37 @@ class KingfisherManagerTests: XCTestCase {
         }}
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+    func testRespectCacheControlMaxAgeCountsResponseAge() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        // The response already spent its whole `max-age` in a downstream cache, so nothing is left to
+        // store: the next request downloads again.
+        stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600", "Age": "3600"])
+
+        let manager = self.manager!
+        manager.retrieveImage(with: url, options: [.respectCacheControl, .waitForCache]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
+        }}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 }
 
 class CacheControlPolicyParsingTests: XCTestCase {
 
-    private func response(withHeader header: String?) -> HTTPURLResponse {
+    private func response(withHeader header: String?, age: String? = nil) -> HTTPURLResponse {
         let url = URL(string: "https://example.com/image.png")!
         var headers: [String: String] = [:]
         if let header {
             headers["Cache-Control"] = header
+        }
+        if let age {
+            headers["Age"] = age
         }
         return HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headers)!
     }
@@ -2740,6 +2762,17 @@ class CacheControlPolicyParsingTests: XCTestCase {
             response(withHeader: #"x-note="a,b", no-store"#).cacheControlPolicy,
             .noStore
         )
+    }
+
+    func testResponseAge() {
+        XCTAssertEqual(response(withHeader: nil).responseAge, 0)
+        XCTAssertEqual(response(withHeader: nil, age: "30").responseAge, 30)
+        XCTAssertEqual(response(withHeader: nil, age: " 30 ").responseAge, 30)
+        XCTAssertEqual(response(withHeader: nil, age: "0").responseAge, 0)
+        // Malformed or negative values are ignored.
+        XCTAssertEqual(response(withHeader: nil, age: "abc").responseAge, 0)
+        XCTAssertEqual(response(withHeader: nil, age: "-5").responseAge, 0)
+        XCTAssertEqual(response(withHeader: nil, age: "1.5").responseAge, 0)
     }
 }
 
