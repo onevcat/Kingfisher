@@ -59,47 +59,6 @@ jobs:
             label: 'watchOS Simulator'
             cache-key: xcode-26.0.1-watchos
 
-          - xcode: '26.3'
-            runner: macos-26
-            destination: 'platform=macOS'
-            label: 'macOS'
-            cache-key: xcode-26.3-macos
-          - xcode: '26.3'
-            runner: macos-26
-            sdk: iphonesimulator
-            label: 'iOS Simulator'
-            cache-key: xcode-26.3-ios
-          - xcode: '26.3'
-            runner: macos-26
-            sdk: appletvsimulator
-            label: 'tvOS Simulator'
-            cache-key: xcode-26.3-tvos
-          - xcode: '26.3'
-            runner: macos-26
-            sdk: watchsimulator
-            label: 'watchOS Simulator'
-            cache-key: xcode-26.3-watchos
-
-          - xcode: '26.4.1'
-            runner: macos-26
-            destination: 'platform=macOS'
-            label: 'macOS'
-            cache-key: xcode-26.4.1-macos
-          - xcode: '26.4.1'
-            runner: macos-26
-            sdk: iphonesimulator
-            label: 'iOS Simulator'
-            cache-key: xcode-26.4.1-ios
-          - xcode: '26.4.1'
-            runner: macos-26
-            sdk: appletvsimulator
-            label: 'tvOS Simulator'
-            cache-key: xcode-26.4.1-tvos
-          - xcode: '26.4.1'
-            runner: macos-26
-            sdk: watchsimulator
-            label: 'watchOS Simulator'
-            cache-key: xcode-26.4.1-watchos
           - xcode: '26.5'
             runner: macos-26
             destination: 'platform=macOS'
@@ -120,6 +79,48 @@ jobs:
             sdk: watchsimulator
             label: 'watchOS Simulator'
             cache-key: xcode-26.5-watchos
+
+          - xcode: '27.0'
+            runner: xcode-27
+            destination: 'platform=macOS'
+            label: 'macOS'
+            cache-key: xcode-27.0-macos
+          - xcode: '27.0'
+            runner: xcode-27
+            sdk: iphonesimulator
+            label: 'iOS Simulator'
+            cache-key: xcode-27.0-ios
+          - xcode: '27.0'
+            runner: xcode-27
+            sdk: appletvsimulator
+            label: 'tvOS Simulator'
+            cache-key: xcode-27.0-tvos
+          - xcode: '27.0'
+            runner: xcode-27
+            sdk: watchsimulator
+            label: 'watchOS Simulator'
+            cache-key: xcode-27.0-watchos
+
+          - xcode: '27.1'
+            runner: xcode-27
+            destination: 'platform=macOS'
+            label: 'macOS'
+            cache-key: xcode-27.1-macos
+          - xcode: '27.1'
+            runner: xcode-27
+            sdk: iphonesimulator
+            label: 'iOS Simulator'
+            cache-key: xcode-27.1-ios
+          - xcode: '27.1'
+            runner: xcode-27
+            sdk: appletvsimulator
+            label: 'tvOS Simulator'
+            cache-key: xcode-27.1-tvos
+          - xcode: '27.1'
+            runner: xcode-27
+            sdk: watchsimulator
+            label: 'watchOS Simulator'
+            cache-key: xcode-27.1-watchos
     steps:
       - uses: actions/checkout@v6
       - name: Setup Ruby

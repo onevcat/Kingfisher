@@ -23,27 +23,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - xcode: '26.2'
-            runner: macos-26
-            destination: 'platform=macOS'
-            label: 'macOS'
-            cache-key: xcode-26.2-macos
-          - xcode: '26.2'
-            runner: macos-26
-            destination: 'platform=iOS Simulator,name=iPhone 17,OS=26.2'
-            label: 'iOS 26.2'
-            cache-key: xcode-26.2-ios
-          - xcode: '26.2'
-            runner: macos-26
-            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=26.2'
-            label: 'tvOS 26.2'
-            cache-key: xcode-26.2-tvos
-          - xcode: '26.2'
-            runner: macos-26
-            sdk: watchsimulator
-            label: 'watchOS 26.2'
-            cache-key: xcode-26.2-watchos
-
           - xcode: '26.6'
             runner: macos-26
             destination: 'platform=macOS'
@@ -64,6 +43,27 @@ jobs:
             sdk: watchsimulator
             label: 'watchOS 26.5'
             cache-key: xcode-26.6-watchos
+
+          - xcode: '27.2'
+            runner: xcode-27
+            destination: 'platform=macOS'
+            label: 'macOS'
+            cache-key: xcode-27.2-macos
+          - xcode: '27.2'
+            runner: xcode-27
+            destination: 'platform=iOS Simulator,name=iPhone 17,OS=27.0'
+            label: 'iOS 27.0'
+            cache-key: xcode-27.2-ios
+          - xcode: '27.2'
+            runner: xcode-27
+            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=27.0'
+            label: 'tvOS 27.0'
+            cache-key: xcode-27.2-tvos
+          - xcode: '27.2'
+            runner: xcode-27
+            sdk: watchsimulator
+            label: 'watchOS 27.2'
+            cache-key: xcode-27.2-watchos
     steps:
       - uses: actions/checkout@v6
       - name: Setup Ruby
