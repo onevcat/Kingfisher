@@ -144,7 +144,7 @@ public enum MemoryStorage {
             let expiration = expiration ?? config.expiration
             // The expiration indicates that already expired, no need to store.
             guard !expiration.isExpired else { return }
-
+            
             let object: StorageObject<T>
             if config.keepWhenEnteringBackground {
                 object = BackgroundKeepingStorageObject(value, expiration: expiration)
@@ -306,12 +306,13 @@ extension MemoryStorage {
     class StorageObject<T> {
         var value: T?
         let expiration: StorageExpiration
+        
         private(set) var estimatedExpiration: Date
-
+        
         init(_ value: T, expiration: StorageExpiration) {
             self.value = value
             self.expiration = expiration
-
+            
             self.estimatedExpiration = expiration.estimatedExpirationSinceNow
         }
 

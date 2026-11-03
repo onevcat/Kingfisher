@@ -178,7 +178,7 @@ open class ImageCache: @unchecked Sendable {
     public let diskStorage: DiskStorage.Backend<Data>
     
     private let ioQueue: DispatchQueue
-
+    
     /// A closure that specifies the disk cache path based on a given path and the cache name.
     public typealias DiskCachePathClosure = @Sendable (URL, String) -> URL
 
@@ -349,10 +349,7 @@ open class ImageCache: @unchecked Sendable {
         
         let computedKey = key.computedKey(with: identifier)
         // Memory storage should not throw.
-        memoryStorage.storeNoThrow(
-            value: image,
-            forKey: computedKey,
-            expiration: options.memoryCacheExpiration)
+        memoryStorage.storeNoThrow(value: image, forKey: computedKey, expiration: options.memoryCacheExpiration)
         
         guard toDisk else {
             if let completionHandler = completionHandler {

@@ -1149,9 +1149,7 @@ public class KingfisherManager: @unchecked Sendable {
                     complete(.success(image))
                     return
                 }
-                processingQueue.execute {
-                    complete(.success(image.kf.decoded))
-                }
+                processingQueue.execute { complete(.success(image.kf.decoded)) }
 
             case .success(.unprocessedData(let data)):
                 processingQueue.execute {
@@ -1224,7 +1222,7 @@ public class KingfisherManager: @unchecked Sendable {
                     processingQueue.execute {
                         completionHandler(
                             Self.process(.image(image), with: processor, options: options)
-                                .map { $0.map { SharedOriginalImage.processed($0) } ?? .none }
+                                .map { $0.map(SharedOriginalImage.processed) ?? .none }
                         )
                     }
                 },
@@ -1262,13 +1260,11 @@ public class KingfisherManager: @unchecked Sendable {
         let waitingAtStart = identity.map { coalescer.participantCount($0) } ?? 0
 
         // A memory hit is already decoded, so there is nothing for the data route to save.
-        if let image = originalCache.retrieveImageInMemoryCache(
-            forKey: key, options: optionsWithoutProcessor)
-        {
+        if let image = originalCache.retrieveImageInMemoryCache(forKey: key, options: optionsWithoutProcessor) {
             processingQueue.execute {
                 completionHandler(
                     Self.process(.image(image), with: processor, options: options)
-                        .map { $0.map { SharedOriginalImage.processed($0) } ?? .none }
+                        .map { $0.map(SharedOriginalImage.processed) ?? .none }
                 )
             }
             return
@@ -1868,4 +1864,3 @@ private struct AsyncDownloadTaskReportingModifier: AsyncImageDownloadRequestModi
         await base.modified(for: request)
     }
 }
-
