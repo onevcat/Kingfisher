@@ -469,6 +469,28 @@ class ImageCacheTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
+
+    func testCleanExpiredDiskCacheCompletesWhenRemovingFileFails() async throws {
+        try XCTSkipIf(geteuid() == 0, "File permissions are not effective for root.")
+
+        let key = testKeys[0]
+        try await cache.store(testImage, original: testImageData, forKey: key, toDisk: true)
+
+        // Expire the cached file, then make the cache folder read-only, so the file cannot be removed.
+        let directoryPath = cache.diskStorage.directoryURL.path
+        try FileManager.default.setAttributes(
+            [.modificationDate: Date.distantPast], ofItemAtPath: cache.cachePath(forKey: key))
+        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: directoryPath)
+        addTeardownBlock {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directoryPath)
+        }
+
+        // The completion reports that the cleaning is over, also when it could not remove everything.
+        let cleaned = expectation(description: #function)
+        cache.cleanExpiredDiskCache { cleaned.fulfill() }
+        await fulfillment(of: [cleaned], timeout: 3)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: cache.cachePath(forKey: key)))
+    }
     
     func testCannotRetrieveCacheWithProcessorIdentifier() {
         let exp = expectation(description: #function)
