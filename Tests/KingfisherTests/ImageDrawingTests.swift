@@ -37,6 +37,27 @@ class ImageDrawingTests: XCTestCase {
         XCTAssertEqual(result.size, CGSize(width: 20, height: 20))
     }
     
+    func testImageBlurringRunsOneBoxBlurPassPerIteration() {
+        // A white dot on black. The blur runs one box blur pass for a radius below 0.5, two passes below 1.5
+        // and three passes above, all with the same box size.
+        let black: [UInt8] = [0, 0, 0, 255]
+        let white: [UInt8] = [255, 255, 255, 255]
+        let image = KFCrossPlatformImage.fromPixels((0..<32).map { y in
+            (0..<32).map { x in x == 16 && y == 16 ? white : black }
+        })
+        // The red channel of the row through the dot shows how far the blur spreads.
+        func dotRow(_ image: KFCrossPlatformImage) -> [UInt8]? {
+            image.pixelRows()?[16].map { $0[0] }
+        }
+        let onePass = image.kf.blurred(withRadius: 0.4)
+        let twoPasses = onePass.kf.blurred(withRadius: 0.4)
+        let threePasses = twoPasses.kf.blurred(withRadius: 0.4)
+
+        XCTAssertNotEqual(dotRow(image.kf.blurred(withRadius: 1.0)), dotRow(onePass))
+        XCTAssertEqual(dotRow(image.kf.blurred(withRadius: 1.0)), dotRow(twoPasses))
+        XCTAssertEqual(dotRow(image.kf.blurred(withRadius: 1.6)), dotRow(threePasses))
+    }
+
     func testImageCropping() {
         let result = testImage.kf.crop(to: CGSize(width: 20, height: 20), anchorOn: .zero)
         XCTAssertEqual(result.size, CGSize(width: 20, height: 20))

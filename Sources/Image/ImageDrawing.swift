@@ -367,13 +367,15 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             // Next inBuffer should be the outButter of current iteration
             (inBuffer, outBuffer) = (outBuffer, inBuffer)
         }
+        // Each iteration swaps the buffers, so the last result is in `inputContext` after an even count.
+        let resultContext = iterations.isMultiple(of: 2) ? inputContext : outContext
         
         #if os(macOS)
-        let result = outContext.makeImage().flatMap {
+        let result = resultContext.makeImage().flatMap {
             fixedForRetinaPixel(cgImage: $0, to: size)
         }
         #else
-        let result = outContext.makeImage().flatMap {
+        let result = resultContext.makeImage().flatMap {
             KFCrossPlatformImage(cgImage: $0, scale: base.scale, orientation: base.imageOrientation)
         }
         #endif
