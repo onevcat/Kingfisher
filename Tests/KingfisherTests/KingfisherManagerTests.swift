@@ -2269,6 +2269,33 @@ class KingfisherManagerTests: XCTestCase {
         )
     }
     
+    func testCacheOriginalImageWithForcedExtensionIsReusedByAnotherProcessor() async throws {
+        let url = URL(string: "https://example.com/forced-extension-cache-original")!
+        stub(url, data: testImageData)
+
+        let options: KingfisherOptionsInfo = [.cacheOriginalImage, .forcedCacheFileExtension("heic")]
+        let first = RoundCornerImageProcessor(cornerRadius: 20)
+        var result = try await manager.retrieveImage(with: url, options: options + [.processor(first)])
+        XCTAssertEqual(result.cacheType, .none)
+
+        // The original is stored under the forced extension, which is where the original cache lookup searches.
+        XCTAssertEqual(manager.cache.imageCachedType(forKey: url.cacheKey, forcedExtension: "heic"), .disk)
+
+        // Another processor is then served from the cached original, without downloading again.
+        manager.cache.clearMemoryCache()
+        LSNocilla.sharedInstance().clearStubs()
+        let second = RoundCornerImageProcessor(cornerRadius: 40)
+        result = try await manager.retrieveImage(with: url, options: options + [.processor(second)])
+        XCTAssertEqual(result.cacheType, .none)
+        XCTAssertTrue(
+            manager.cache.imageCachedType(
+                forKey: url.cacheKey,
+                processorIdentifier: second.identifier,
+                forcedExtension: "heic"
+            ).cached
+        )
+    }
+
     // MARK: - Async cache-type check (issue #2512)
 
     func testRetrieveImageWithAsyncCacheTypeCheckAcrossCacheStates() {
@@ -2725,6 +2752,36 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertNotNil(result.value?.image)
 
         manager.retrieveImage(with: url, options: options + [.onlyFromCache]) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }}}
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testRespectCacheControlNoStoreRemovesCachedOriginalWithForcedExtension() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let manager = self.manager!
+        let options: KingfisherOptionsInfo = [
+            .respectCacheControl, .forcedCacheFileExtension("jpg"), .cacheOriginalImage
+        ]
+        let first = RoundCornerImageProcessor(cornerRadius: 20)
+        manager.retrieveImage(with: url, options: options + [.processor(first)]) { result in
+            XCTAssertEqual(result.value!.cacheType, .none)
+
+        // The original was stored under the forced extension; the `no-store` removal has to target the same file.
+        LSNocilla.sharedInstance().clearStubs()
+        stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
+        manager.retrieveImage(
+            with: url, options: options + [.processor(first), .forceRefresh, .waitForCache]
+        ) { result in
+            XCTAssertNotNil(result.value?.image)
+
+        // Another processor cannot be served from the removed original.
+        let second = RoundCornerImageProcessor(cornerRadius: 40)
+        manager.retrieveImage(with: url, options: options + [.processor(second), .onlyFromCache]) { result in
             XCTAssertNotNil(result.error)
             exp.fulfill()
         }}}
