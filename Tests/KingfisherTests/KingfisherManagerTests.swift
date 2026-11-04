@@ -2770,6 +2770,7 @@ class KingfisherManagerTests: XCTestCase {
         let first = RoundCornerImageProcessor(cornerRadius: 20)
         manager.retrieveImage(with: url, options: options + [.processor(first)]) { result in
             XCTAssertEqual(result.value!.cacheType, .none)
+            XCTAssertEqual(manager.cache.imageCachedType(forKey: url.cacheKey, forcedExtension: "jpg"), .disk)
 
         // The original was stored under the forced extension; the `no-store` removal has to target the same file.
         LSNocilla.sharedInstance().clearStubs()
