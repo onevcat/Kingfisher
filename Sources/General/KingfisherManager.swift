@@ -1871,7 +1871,9 @@ private struct DownloadTaskReportingModifier: ImageDownloadRequestModifier {
     }
 
     func modified(for request: URLRequest) -> URLRequest? {
-        base?.modified(for: request) ?? request
+        // A `nil` from the base modifier interrupts the download. Only a missing base keeps the request as it is.
+        guard let base else { return request }
+        return base.modified(for: request)
     }
 }
 
