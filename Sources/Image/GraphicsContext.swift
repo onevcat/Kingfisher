@@ -106,7 +106,7 @@ private struct BitmapContextDescriptor {
     }
     
     func makeContext() -> CGContext? {
-        CGContext(
+        if let context = CGContext(
             data: nil,
             width: width,
             height: height,
@@ -114,6 +114,19 @@ private struct BitmapContextDescriptor {
             bytesPerRow: bytesPerRow,
             space: colorSpace,
             bitmapInfo: bitmapInfo.rawValue
+        ) {
+            return context
+        }
+        // Some source formats cannot be a bitmap context destination, for example a gray color space with alpha
+        // at 16 bits per component. Fall back to RGBA in device RGB, which is supported at 8 and 16 bits.
+        return CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: bitsPerComponent,
+            bytesPerRow: 0,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         )
     }
     
