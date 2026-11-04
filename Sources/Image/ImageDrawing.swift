@@ -441,7 +441,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return draw(to: rect.size, inverting: false) { context in
             #if os(macOS)
             base.draw(in: rect)
-            if fraction > 0 {
+            if fraction < 1 {
                 color.withAlphaComponent(1 - fraction).set()
                 rect.fill(using: .sourceAtop)
             }

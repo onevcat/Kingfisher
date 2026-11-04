@@ -55,6 +55,19 @@ class ImageDrawingTests: XCTestCase {
         #endif
     }
 
+    func testImageOverlayingWithZeroFractionIsSolidColor() {
+        // A `fraction` of 0.0 means a solid overlay color, and 1.0 leaves the image as it is.
+        // Transparent pixels stay transparent in both cases.
+        let red: [UInt8] = [255, 0, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let clear: [UInt8] = [0, 0, 0, 0]
+        let image = KFCrossPlatformImage.fromPixels([[red, red], [red, clear]])
+        let color = KFCrossPlatformColor(red: 0, green: 0, blue: 1, alpha: 1)
+
+        XCTAssertEqual(image.kf.overlaying(with: color, fraction: 0).pixelRows(), [[blue, blue], [blue, clear]])
+        XCTAssertEqual(image.kf.overlaying(with: color, fraction: 1).pixelRows(), [[red, red], [red, clear]])
+    }
+
     func testImageFlipping() {
         let image = KFCrossPlatformImage.quadrants()
         let red: [UInt8] = [255, 0, 0, 255]
