@@ -96,7 +96,7 @@ struct MyProcessor: ImageProcessor {
     var identifier: String { "com.yourdomain.myprocessor-\(someValue)" }
     
     // Convert input data/image to target image and return it.
-    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> Image? {
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         switch item {
         case .image(let image):
             // A previous processor already converted the image to an image object.
