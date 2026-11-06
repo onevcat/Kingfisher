@@ -65,11 +65,11 @@ and ``CacheSerializer/image(with:options:)``:
 
 ```swift
 struct MyCacheSerializer: CacheSerializer {
-    func data(with image: Image, original: Data?) -> Data? {
+    func data(with image: KFCrossPlatformImage, original: Data?) -> Data? {
         return MyFramework.data(of: image)
     }
     
-    func image(with data: Data, options: KingfisherParsedOptionsInfo?) -> Image? {
+    func image(with data: Data, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         return MyFramework.createImage(from: data)
     }
 }
