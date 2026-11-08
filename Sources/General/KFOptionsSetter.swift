@@ -323,6 +323,21 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Sets whether the cache existence probe runs on the cache's I/O queue instead of the calling thread.
+    ///
+    /// - Parameter enabled: Whether the asynchronous cache-type check should be performed.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// By default, ``KingfisherManager`` checks ``ImageCache/imageCachedType(forKey:processorIdentifier:forcedExtension:)``
+    /// on whatever thread invoked `setImage`, which performs file-system `stat` syscalls there. Enabling this moves
+    /// the probe off the caller thread. See ``KingfisherOptionsInfoItem/asyncCacheTypeCheck`` for details.
+    ///
+    public func asyncCacheTypeCheck(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.asyncCacheTypeCheck = enabled
+        return result
+    }
+
     /// Sets writing options for an original image on its initial write to disk storage.
     ///
     /// - Parameter writingOptions: Options that control the data writing operation to disk storage.

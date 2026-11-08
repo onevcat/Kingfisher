@@ -208,6 +208,15 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(KF.url(url).respectCacheControl(false).options.respectCacheControl)
         XCTAssertTrue(KFImage(url).respectCacheControl().context.options.respectCacheControl)
     }
+
+    @MainActor
+    func testAsyncCacheTypeCheckOptionModifier() {
+        let url = URL(string: "https://example.com/image.png")!
+        XCTAssertFalse(KF.url(url).options.asyncCacheTypeCheck)
+        XCTAssertTrue(KF.url(url).asyncCacheTypeCheck().options.asyncCacheTypeCheck)
+        XCTAssertFalse(KF.url(url).asyncCacheTypeCheck(false).options.asyncCacheTypeCheck)
+        XCTAssertTrue(KFImage(url).asyncCacheTypeCheck().context.options.asyncCacheTypeCheck)
+    }
     
     @MainActor
     func testKFImageCallbackModifiersDoNotShareDelegateState() {
