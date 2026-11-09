@@ -383,6 +383,11 @@ extension KFOptionSetter {
     /// - Returns: A `Self` value with the changes applied.
     ///
     /// See ``KingfisherOptionsInfoItem/asyncCacheTypeCheck`` for details.
+    ///
+    /// - Note: When enabled, disk cache hits are delivered asynchronously, even if `loadDiskFileSynchronously` is set.
+    ///   `KFImage` enables `loadDiskFileSynchronously` by default to avoid flickering, so with this option a
+    ///   disk-cached image may briefly show the placeholder. Memory cache hits are not affected. The `DownloadTask`
+    ///   returned by `KF.Builder.set(to:)` is always non-nil when this option is enabled.
     public func asyncCacheTypeCheck(_ enabled: Bool = true) -> Self {
         let result = copyForMutation()
         result.options.asyncCacheTypeCheck = enabled
