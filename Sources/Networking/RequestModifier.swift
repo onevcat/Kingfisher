@@ -34,8 +34,8 @@ import Foundation
 /// For example, the code below defines a modifier to add a header field and its value to the request.
 ///
 /// ```swift
-/// class HeaderFieldModifier: AsyncImageDownloadRequestModifier {
-///   var onDownloadTaskStarted: ((DownloadTask?) -> Void)? = nil
+/// struct HeaderFieldModifier: AsyncImageDownloadRequestModifier {
+///   var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? = nil
 ///   func modified(for request: URLRequest) async -> URLRequest? {
 ///     var r = request
 ///     let token = await service.fetchToken()
@@ -83,7 +83,7 @@ public protocol AsyncImageDownloadRequestModifier: Sendable {
 /// For example, the code below defines a modifier to add a header field and its value to the request.
 ///
 /// ```swift
-/// class HeaderFieldModifier: AsyncImageDownloadRequestModifier {
+/// struct HeaderFieldModifier: ImageDownloadRequestModifier {
 ///   func modified(for request: URLRequest) -> URLRequest? {
 ///     var r = request
 ///     r.setValue("value", forHTTPHeaderField: "key")
