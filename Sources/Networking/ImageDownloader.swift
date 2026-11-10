@@ -120,6 +120,15 @@ public final class DownloadTask: @unchecked Sendable {
     }
 
     private var _linkedTask: DownloadTask? = nil
+    private var _isCancelled = false
+    private var _priority: Float? = nil
+
+    /// A Boolean value indicating whether this download task has been cancelled.
+    public var isCancelled: Bool {
+        propertyQueue.sync {
+            _isCancelled || (_linkedTask?.isCancelled ?? false)
+        }
+    }
 
     private var _providerTask: Task<Void, Never>? = nil
 
@@ -171,6 +180,13 @@ public final class DownloadTask: @unchecked Sendable {
     /// ``ImageDownloader/cancel(url:)``. If you need to cancel all downloading tasks of an ``ImageDownloader``, 
     /// use ``ImageDownloader/cancelAll()``.
     public func cancel() {
+        let (linkedTask, providerTask, sessionTask, cancelToken) = propertyQueue.sync {
+            () -> (DownloadTask?, Task<Void, Never>?, SessionDataTask?, SessionDataTask.CancelToken?) in
+            _isCancelled = true
+            return (_linkedTask, _providerTask, _sessionTask, _cancelToken)
+        }
+        
+        linkedTask?.cancel()
         if let providerTask {
             providerTask.cancel()
             return
@@ -180,11 +196,23 @@ public final class DownloadTask: @unchecked Sendable {
     }
 
     func setPriority(_ priority: Float) {
+        let (sessionTask, cancelToken, linkedTask) = propertyQueue.sync {
+            () -> (SessionDataTask?, SessionDataTask.CancelToken?, DownloadTask?) in
+            _priority = priority
+            return (_sessionTask, _cancelToken, _linkedTask)
+        }
+        linkedTask?.setPriority(priority)
         guard let sessionTask, let cancelToken else { return }
         sessionTask.setPriority(priority, for: cancelToken)
     }
 
     func resetPriority() {
+        let (sessionTask, cancelToken, linkedTask) = propertyQueue.sync {
+            () -> (SessionDataTask?, SessionDataTask.CancelToken?, DownloadTask?) in
+            _priority = nil
+            return (_sessionTask, _cancelToken, _linkedTask)
+        }
+        linkedTask?.resetPriority()
         guard let sessionTask, let cancelToken else { return }
         sessionTask.resetPriority(for: cancelToken)
     }
@@ -198,8 +226,16 @@ public final class DownloadTask: @unchecked Sendable {
     }
     
     func linkToTask(_ task: DownloadTask) {
-        propertyQueue.sync {
+        let (shouldCancel, pendingPriority) = propertyQueue.sync {
+            () -> (Bool, Float?) in
             _linkedTask = task
+            return (_isCancelled, _priority)
+        }
+        if let priority = pendingPriority {
+            task.setPriority(priority)
+        }
+        if shouldCancel {
+            task.cancel()
         }
     }
 }

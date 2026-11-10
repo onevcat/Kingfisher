@@ -246,6 +246,78 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testDownloadWithAsyncModifyingRequestCancelsImmediately() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: nil)
+
+        let someURL = URL(string: "https://example.com/test-async-cancel-immediately")!
+        let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { result in
+            guard let error = result.error else {
+                XCTFail("cancelling the task immediately should cancel the download, but got success")
+                exp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled)
+            exp.fulfill()
+        }
+        XCTAssertFalse(task.isInitialized)
+        XCTAssertFalse(task.isCancelled)
+        task.cancel()
+        XCTAssertTrue(task.isCancelled)
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadTaskShellReplaysCancellationWhenLinked() {
+        let shell = DownloadTask()
+        XCTAssertFalse(shell.isCancelled)
+        XCTAssertFalse(shell.isInitialized)
+
+        shell.cancel()
+        XCTAssertTrue(shell.isCancelled)
+
+        let exp = expectation(description: "work cancelled")
+        let work = Task<Void, Never> {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+            }
+            exp.fulfill()
+        }
+
+        let innerTask = DownloadTask(cancelling: work)
+        XCTAssertFalse(innerTask.isCancelled)
+
+        shell.linkToTask(innerTask)
+        XCTAssertTrue(innerTask.isCancelled)
+
+        wait(for: [exp], timeout: 2)
+    }
+
+    func testDownloadTaskShellCancelsLinkedTask() {
+        let shell = DownloadTask()
+        let exp = expectation(description: "work cancelled")
+        let work = Task<Void, Never> {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+            }
+            exp.fulfill()
+        }
+
+        let innerTask = DownloadTask(cancelling: work)
+        shell.linkToTask(innerTask)
+        XCTAssertFalse(shell.isCancelled)
+        XCTAssertFalse(innerTask.isCancelled)
+
+        shell.cancel()
+        XCTAssertTrue(shell.isCancelled)
+        XCTAssertTrue(innerTask.isCancelled)
+
+        wait(for: [exp], timeout: 2)
+    }
+
     func testDownloadWithModifyingRequestToNil() {
         let nilModifier = AnyModifier { _ in
             return nil

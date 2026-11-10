@@ -2454,6 +2454,30 @@ class KingfisherManagerTests: XCTestCase {
         wait(for: [completionExp], timeout: 2)
     }
 
+    func testRetrieveImageWithAsyncCacheTypeCheckCancelsImmediately() {
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let task = manager.retrieveImage(
+            with: url,
+            options: [.asyncCacheTypeCheck]
+        ) { result in
+            guard let error = result.error else {
+                XCTFail("cancelling the shell immediately should cancel the load, but got success: \(String(describing: result.value))")
+                completionExp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled, "Expected isTaskCancelled error but got: \(error)")
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        task?.cancel()
+
+        wait(for: [completionExp], timeout: 3)
+    }
+
     // A finished download must release its session task while the manager and its downloader stay alive. The
     // `onTaskDone` handler used to keep the download context, whose request modifier leads back to the task.
     func testRetrieveImageWithAsyncCacheTypeCheckReleasesSessionTaskAfterDownload() {
