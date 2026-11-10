@@ -80,10 +80,8 @@ struct AsyncModifier: AsyncImageDownloadRequestModifier {
 }
 ```
 
-Similarly, use the ``KingfisherOptionsInfoItem/requestModifier(_:)`` to apply this modifier. In such scenarios, the
-``KingfisherWrapper/setImage(with:placeholder:options:progressBlock:completionHandler:)-8lmr3`` or
-``ImageDownloader/downloadImage(with:options:completionHandler:)-2ztyq`` method will no longer return a ``DownloadTask``
-directly, as the download task isn't initiated instantly. To reference the task, monitor the
+Similarly, use the ``KingfisherOptionsInfoItem/requestModifier(_:)`` to apply this modifier. In such scenarios, view extension methods such as
+``KingfisherWrapper/setImage(with:placeholder:options:progressBlock:completionHandler:)-8lmr3`` will return `nil` instead of a valid ``DownloadTask`` directly, as the download task isn't initiated instantly. To reference the task, monitor the
 ``AsyncImageDownloadRequestModifier/onDownloadTaskStarted`` callback.
 
 ```swift
@@ -103,15 +101,16 @@ download task.
 
 ```swift
 let task = downloader.downloadImage(with: url) { result in
-    // ...
+    switch result {
+    case .success(let value):
+        print(value.image)
     case .failure(let error):
         print(error.isTaskCancelled) // true
     }
-
 }
 
 // After some time, but before the download task completes.
-task?.cancel()
+task.cancel()
 ```
 
 If you call ``DownloadTask/cancel()`` after the task has already finished, no action will be taken.
