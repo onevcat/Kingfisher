@@ -551,6 +551,70 @@ class ImagePrefetcherTests: XCTestCase {
         XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A finished prefetch should release its session task.")
         _ = prefetcher // keep the prefetcher, its manager and downloader alive for the duration of the test
     }
+
+    func testPrefetchSkipsDiskCachedImageWithForcedExtension() {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        let stored = expectation(description: "Stored on disk with forced extension")
+        cache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            forcedExtension: "heic",
+            toDisk: true
+        ) { _ in stored.fulfill() }
+        wait(for: [stored], timeout: 3)
+        cache.clearMemoryCache()
+
+        let completed = expectation(description: "Prefetch completed from disk cache")
+        let prefetcher = ImagePrefetcher(
+            urls: [url],
+            options: [.targetCache(cache), .forcedCacheFileExtension("heic")],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertEqual(skipped.count, 1)
+                XCTAssertEqual(skipped.first?.downloadURL, url)
+                XCTAssertTrue(failed.isEmpty)
+                XCTAssertTrue(successful.isEmpty)
+                completed.fulfill()
+            }
+        )
+        prefetcher.start()
+        wait(for: [completed], timeout: 3)
+    }
+
+    func testPrefetchWithForcedExtensionAndAlsoPrefetchToMemoryLoadsIntoMemory() {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        let stored = expectation(description: "Stored on disk with forced extension")
+        cache.store(
+            testImage,
+            original: testImageData,
+            forKey: url.cacheKey,
+            forcedExtension: "heic",
+            toDisk: true
+        ) { _ in stored.fulfill() }
+        wait(for: [stored], timeout: 3)
+        cache.clearMemoryCache()
+        XCTAssertFalse(cache.memoryStorage.isCached(forKey: url.cacheKey))
+
+        let completed = expectation(description: "Prefetch to memory completed")
+        let prefetcher = ImagePrefetcher(
+            urls: [url],
+            options: [.targetCache(cache), .forcedCacheFileExtension("heic"), .alsoPrefetchToMemory],
+            completionHandler: { skipped, failed, successful in
+                XCTAssertEqual(skipped.count, 1)
+                XCTAssertEqual(skipped.first?.downloadURL, url)
+                XCTAssertTrue(failed.isEmpty)
+                XCTAssertTrue(successful.isEmpty)
+                XCTAssertTrue(cache.memoryStorage.isCached(forKey: url.cacheKey))
+                completed.fulfill()
+            }
+        )
+        prefetcher.start()
+        wait(for: [completed], timeout: 3)
+    }
 }
 
 private struct PrefetchCancellationProbe: ImageDataProvider {
