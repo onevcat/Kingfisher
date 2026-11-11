@@ -123,8 +123,8 @@ public final class DownloadTask: @unchecked Sendable {
     private var _isCancelled = false
     private var _priority: Float? = nil
 
-    /// A Boolean value indicating whether this download task has been cancelled.
-    public var isCancelled: Bool {
+    /// Whether ``cancel()`` has been called on this task handle or its linked task chain.
+    var isCancelled: Bool {
         propertyQueue.sync {
             _isCancelled || (_linkedTask?.isCancelled ?? false)
         }
@@ -165,7 +165,8 @@ public final class DownloadTask: @unchecked Sendable {
 
     /// Cancel this single download task if it is running.
     ///
-    /// This method will do nothing if this task is not running.
+    /// If this task has not been linked to an underlying download yet (for example, while an async cache check or
+    /// request modifier is in flight), the cancellation is recorded and replayed once the underlying task is linked.
     ///
     /// In Kingfisher, there is an optimization to prevent starting another download task if the target URL is currently
     /// being downloaded. However, even when internally no new session task is created, a ``DownloadTask`` will still
@@ -185,7 +186,7 @@ public final class DownloadTask: @unchecked Sendable {
             _isCancelled = true
             return (_linkedTask, _providerTask, _sessionTask, _cancelToken)
         }
-        
+
         linkedTask?.cancel()
         if let providerTask {
             providerTask.cancel()
