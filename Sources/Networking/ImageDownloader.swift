@@ -196,26 +196,25 @@ public final class DownloadTask: @unchecked Sendable {
         sessionTask.cancel(token: cancelToken)
     }
 
+    // Priority changes are forwarded while `propertyQueue` is held, so they cannot interleave with the replay in
+    // `linkToTask(_:)` and apply out of order. This is safe because the forwarding only takes the linked task's
+    // queue and the session task's lock, and it runs no callbacks.
     func setPriority(_ priority: Float) {
-        let (sessionTask, cancelToken, linkedTask) = propertyQueue.sync {
-            () -> (SessionDataTask?, SessionDataTask.CancelToken?, DownloadTask?) in
+        propertyQueue.sync {
             _priority = priority
-            return (_sessionTask, _cancelToken, _linkedTask)
+            _linkedTask?.setPriority(priority)
+            guard let sessionTask = _sessionTask, let cancelToken = _cancelToken else { return }
+            sessionTask.setPriority(priority, for: cancelToken)
         }
-        linkedTask?.setPriority(priority)
-        guard let sessionTask, let cancelToken else { return }
-        sessionTask.setPriority(priority, for: cancelToken)
     }
 
     func resetPriority() {
-        let (sessionTask, cancelToken, linkedTask) = propertyQueue.sync {
-            () -> (SessionDataTask?, SessionDataTask.CancelToken?, DownloadTask?) in
+        propertyQueue.sync {
             _priority = nil
-            return (_sessionTask, _cancelToken, _linkedTask)
+            _linkedTask?.resetPriority()
+            guard let sessionTask = _sessionTask, let cancelToken = _cancelToken else { return }
+            sessionTask.resetPriority(for: cancelToken)
         }
-        linkedTask?.resetPriority()
-        guard let sessionTask, let cancelToken else { return }
-        sessionTask.resetPriority(for: cancelToken)
     }
     
     public var isInitialized: Bool {
@@ -227,14 +226,15 @@ public final class DownloadTask: @unchecked Sendable {
     }
     
     func linkToTask(_ task: DownloadTask) {
-        let (shouldCancel, pendingPriority) = propertyQueue.sync {
-            () -> (Bool, Float?) in
+        let shouldCancel = propertyQueue.sync {
             _linkedTask = task
-            return (_isCancelled, _priority)
+            if let priority = _priority {
+                task.setPriority(priority)
+            }
+            return _isCancelled
         }
-        if let priority = pendingPriority {
-            task.setPriority(priority)
-        }
+        // Cancellation is replayed outside of `propertyQueue`: it can call completion handlers synchronously, and
+        // they may access this task again.
         if shouldCancel {
             task.cancel()
         }
