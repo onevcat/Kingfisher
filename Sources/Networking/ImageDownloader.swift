@@ -120,6 +120,15 @@ public final class DownloadTask: @unchecked Sendable {
     }
 
     private var _linkedTask: DownloadTask? = nil
+    private var _isCancelled = false
+    private var _priority: Float? = nil
+
+    /// Whether ``cancel()`` has been called on this task handle or its linked task chain.
+    var isCancelled: Bool {
+        propertyQueue.sync {
+            _isCancelled || (_linkedTask?.isCancelled ?? false)
+        }
+    }
 
     private var _providerTask: Task<Void, Never>? = nil
 
@@ -156,7 +165,8 @@ public final class DownloadTask: @unchecked Sendable {
 
     /// Cancel this single download task if it is running.
     ///
-    /// This method will do nothing if this task is not running.
+    /// If this task has not been linked to an underlying download yet (for example, while an async cache check or
+    /// request modifier is in flight), the cancellation is recorded and replayed once the underlying task is linked.
     ///
     /// In Kingfisher, there is an optimization to prevent starting another download task if the target URL is currently
     /// being downloaded. However, even when internally no new session task is created, a ``DownloadTask`` will still
@@ -171,6 +181,13 @@ public final class DownloadTask: @unchecked Sendable {
     /// ``ImageDownloader/cancel(url:)``. If you need to cancel all downloading tasks of an ``ImageDownloader``, 
     /// use ``ImageDownloader/cancelAll()``.
     public func cancel() {
+        let (linkedTask, providerTask, sessionTask, cancelToken) = propertyQueue.sync {
+            () -> (DownloadTask?, Task<Void, Never>?, SessionDataTask?, SessionDataTask.CancelToken?) in
+            _isCancelled = true
+            return (_linkedTask, _providerTask, _sessionTask, _cancelToken)
+        }
+
+        linkedTask?.cancel()
         if let providerTask {
             providerTask.cancel()
             return
@@ -179,14 +196,25 @@ public final class DownloadTask: @unchecked Sendable {
         sessionTask.cancel(token: cancelToken)
     }
 
+    // Priority changes are forwarded while `propertyQueue` is held, so they cannot interleave with the replay in
+    // `linkToTask(_:)` and apply out of order. This is safe because the forwarding only takes the linked task's
+    // queue and the session task's lock, and it runs no callbacks.
     func setPriority(_ priority: Float) {
-        guard let sessionTask, let cancelToken else { return }
-        sessionTask.setPriority(priority, for: cancelToken)
+        propertyQueue.sync {
+            _priority = priority
+            _linkedTask?.setPriority(priority)
+            guard let sessionTask = _sessionTask, let cancelToken = _cancelToken else { return }
+            sessionTask.setPriority(priority, for: cancelToken)
+        }
     }
 
     func resetPriority() {
-        guard let sessionTask, let cancelToken else { return }
-        sessionTask.resetPriority(for: cancelToken)
+        propertyQueue.sync {
+            _priority = nil
+            _linkedTask?.resetPriority()
+            guard let sessionTask = _sessionTask, let cancelToken = _cancelToken else { return }
+            sessionTask.resetPriority(for: cancelToken)
+        }
     }
     
     public var isInitialized: Bool {
@@ -198,8 +226,17 @@ public final class DownloadTask: @unchecked Sendable {
     }
     
     func linkToTask(_ task: DownloadTask) {
-        propertyQueue.sync {
+        let shouldCancel = propertyQueue.sync {
             _linkedTask = task
+            if let priority = _priority {
+                task.setPriority(priority)
+            }
+            return _isCancelled
+        }
+        // Cancellation is replayed outside of `propertyQueue`: it can call completion handlers synchronously, and
+        // they may access this task again.
+        if shouldCancel {
+            task.cancel()
         }
     }
 }

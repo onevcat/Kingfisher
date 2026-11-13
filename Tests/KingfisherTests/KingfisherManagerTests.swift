@@ -2481,6 +2481,61 @@ class KingfisherManagerTests: XCTestCase {
         wait(for: [completionExp], timeout: 2)
     }
 
+    func testRetrieveImageWithAsyncCacheTypeCheckCancelsImmediately() {
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let task = manager.retrieveImage(
+            with: url,
+            options: [.asyncCacheTypeCheck]
+        ) { result in
+            guard let error = result.error else {
+                XCTFail("cancelling the shell immediately should cancel the load, but got success: \(String(describing: result.value))")
+                completionExp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled, "Expected isTaskCancelled error but got: \(error)")
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        task?.cancel()
+
+        wait(for: [completionExp], timeout: 3)
+    }
+
+    // The manager shell is linked to the downloader shell, which is linked to the session task later. A cancellation
+    // before any link happens must reach the session task through both shells.
+    func testRetrieveImageWithAsyncCacheTypeCheckAndAsyncModifierCancelsImmediately() {
+        let completionExp = expectation(description: "\(#function) completion")
+        let requestHeld = expectation(description: "\(#function) request held")
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let modifier = GatedRequestModifier(onFirstRequestHeld: { requestHeld.fulfill() })
+        let task = manager.retrieveImage(
+            with: url,
+            options: [.asyncCacheTypeCheck, .requestModifier(modifier)]
+        ) { result in
+            guard let error = result.error else {
+                XCTFail("cancelling nested shells before they are linked should cancel the load, but got success")
+                completionExp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled, "Expected isTaskCancelled error but got: \(error)")
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        wait(for: [requestHeld], timeout: 3)
+        XCTAssertFalse(task?.isInitialized ?? true)
+        task?.cancel()
+        modifier.release()
+
+        wait(for: [completionExp], timeout: 3)
+    }
+
     // A finished download must release its session task while the manager and its downloader stay alive. The
     // `onTaskDone` handler used to keep the download context, whose request modifier leads back to the task.
     func testRetrieveImageWithAsyncCacheTypeCheckReleasesSessionTaskAfterDownload() {

@@ -72,6 +72,11 @@ extension KFImage {
         var downloadTask: DownloadTask?
         private var loading = false
 
+        /// Identifies the current loading. Each `start(context:)` changes it, so a result that arrives after the binder
+        /// was restarted (for example, the late cancellation of a loading whose async request modifier was pending)
+        /// cannot change the state of the later loading.
+        private var loadingGeneration = 0
+
         var loadingOrSucceeded: Bool {
             return loading || loadedImage != nil
         }
@@ -157,7 +162,9 @@ extension KFImage {
             }
 
             loading = true
-            
+            loadingGeneration &+= 1
+            let generation = loadingGeneration
+
             progress = .init()
             downloadTask = KingfisherManager.shared
                 .retrieveImage(
@@ -170,13 +177,13 @@ extension KFImage {
                     },
                     progressiveImageSetter: { [weak self] image in
                         CallbackQueueMain.currentOrAsync { [weak self] in
-                            guard let self else { return }
+                            guard let self, self.loadingGeneration == generation else { return }
                             self.markLoaded(sendChangeEvent: true)
                             self.setLoadedImage(image)
                         }
                     },
                     completionHandler: { [weak self] result in
-                        guard let self else {
+                        @Sendable func forwardResultOnly() {
                             CallbackQueueMain.async {
                                 switch result {
                                 case .success(let value):
@@ -185,17 +192,25 @@ extension KFImage {
                                     context.onFailureDelegate.call(error)
                                 }
                             }
+                        }
+
+                        guard let self else {
+                            forwardResultOnly()
                             return
                         }
 
                         CallbackQueueMain.currentOrAsync {
+                            // A loading replaced by a restart still reports its result to the delegates, but the binder
+                            // state now belongs to the later loading.
+                            guard self.loadingGeneration == generation else {
+                                forwardResultOnly()
+                                return
+                            }
                             self.downloadTask = nil
                             self.loading = false
-                        }
-                        
-                        switch result {
-                        case .success(let value):
-                            CallbackQueueMain.currentOrAsync {
+
+                            switch result {
+                            case .success(let value):
                                 if context.swiftUITransition != nil,
                                    context.shouldApplyFade(cacheType: value.cacheType) {
                                     // Apply SwiftUI loadTransition with custom animation (higher priority than fade)
@@ -231,19 +246,17 @@ extension KFImage {
                                         context.onSuccessDelegate.call(value)
                                     }
                                 }
-                            }
-                        case .failure(let error):
-                            CallbackQueueMain.currentOrAsync {
+                            case .failure(let error):
                                 if let view = context.failureView {
                                     self.failureView = view
                                 } else if let image = context.options.onFailureImage {
                                     self.setLoadedImage(image, isFailureImage: true)
                                 }
                                 self.markLoaded(sendChangeEvent: false)
-                            }
-                            
-                            CallbackQueueMain.async {
-                                context.onFailureDelegate.call(error)
+
+                                CallbackQueueMain.async {
+                                    context.onFailureDelegate.call(error)
+                                }
                             }
                         }
                 })

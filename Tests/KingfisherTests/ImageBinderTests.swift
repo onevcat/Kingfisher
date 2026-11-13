@@ -271,6 +271,56 @@ class ImageBinderTests: XCTestCase {
             "A retrieved image must carry its own provenance instead of inheriting the stale one."
         )
     }
+
+    // With `asyncCacheTypeCheck`, a request cancelled while its async request modifier is pending reports the
+    // cancellation only when the modifier finishes. If the binder was restarted and the new loading already succeeded,
+    // that late failure must not replace the retrieved image or touch the binder's loading state.
+    @MainActor
+    @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
+    func testCancelledLoadingDoesNotOverrideRestartedLoadingThatSucceeded() async {
+        LSNocilla.sharedInstance().start()
+        defer {
+            LSNocilla.sharedInstance().clearStubs()
+            LSNocilla.sharedInstance().stop()
+        }
+        let url = URL(string: "https://example.com/binder-stale-cancellation-\(UUID().uuidString).png")!
+        stub(url, data: testImagePNGData)
+        let cache = ImageCache(name: "com.onevcat.KingfisherTests.ImageBinder.\(UUID().uuidString)")
+        defer { clearCaches([cache]) }
+
+        let firstRequestHeld = expectation(description: "The first request waits in the request modifier")
+        let modifier = GatedRequestModifier(onFirstRequestHeld: { firstRequestHeld.fulfill() })
+        let context = KFImage.Context<Image>(source: .network(url))
+        context.options.requestModifier = modifier
+        context.options.asyncCacheTypeCheck = true
+        context.options.targetCache = cache
+        context.options.onFailureImage = .some(testImage)
+
+        let success = expectation(description: "The restarted loading succeeds")
+        let failure = expectation(description: "The cancelled loading reports its failure")
+        context.onSuccessDelegate.delegate(on: self) { _, _ in success.fulfill() }
+        context.onFailureDelegate.delegate(on: self) { _, error in
+            XCTAssertTrue(error.isTaskCancelled, "Expected the cancellation of the first loading, got: \(error)")
+            failure.fulfill()
+        }
+
+        let binder = KFImage.ImageBinder()
+        binder.start(context: context)
+        await fulfillment(of: [firstRequestHeld], timeout: 3)
+        binder.cancel()
+
+        binder.start(context: context)
+        await fulfillment(of: [success], timeout: 3)
+        XCTAssertNotNil(binder.loadedImage)
+        XCTAssertFalse(binder.usesFailureImage)
+
+        modifier.release()
+        await fulfillment(of: [failure], timeout: 3)
+
+        XCTAssertNotNil(binder.loadedImage)
+        XCTAssertFalse(binder.usesFailureImage, "The late cancellation must not install the fallback image.")
+        XCTAssertTrue(binder.loadingOrSucceeded)
+    }
 }
 
 #endif

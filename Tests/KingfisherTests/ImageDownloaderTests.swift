@@ -246,6 +246,108 @@ class ImageDownloaderTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testDownloadWithAsyncModifyingRequestCancelsImmediately() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let requestHeld = expectation(description: "The request waits in the request modifier")
+        let modifier = GatedRequestModifier(onFirstRequestHeld: { requestHeld.fulfill() })
+        let task = downloader.downloadImage(with: url, options: [.requestModifier(modifier)]) { result in
+            guard let error = result.error else {
+                XCTFail("cancelling the task immediately should cancel the download, but got success")
+                exp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled)
+            exp.fulfill()
+        }
+        wait(for: [requestHeld], timeout: 3)
+        XCTAssertFalse(task.isInitialized)
+        XCTAssertFalse(task.isCancelled)
+        task.cancel()
+        XCTAssertTrue(task.isCancelled)
+        modifier.release()
+
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testDownloadTaskShellReplaysCancellationWhenLinked() {
+        let shell = DownloadTask()
+        XCTAssertFalse(shell.isCancelled)
+        XCTAssertFalse(shell.isInitialized)
+
+        shell.cancel()
+        XCTAssertTrue(shell.isCancelled)
+
+        let exp = expectation(description: "work cancelled")
+        let work = Task<Void, Never> {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+            }
+            exp.fulfill()
+        }
+
+        let innerTask = DownloadTask(cancelling: work)
+        XCTAssertFalse(innerTask.isCancelled)
+
+        shell.linkToTask(innerTask)
+        XCTAssertTrue(innerTask.isCancelled)
+
+        wait(for: [exp], timeout: 2)
+    }
+
+    func testDownloadTaskShellReplaysPriorityWhenLinked() {
+        let requestHeld = expectation(description: "\(#function) request held")
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let completed = expectation(description: "\(#function) completed")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData)
+
+        let modifier = GatedRequestModifier(
+            onFirstRequestHeld: { requestHeld.fulfill() },
+            onDownloadTaskStarted: { _ in downloadStarted.fulfill() }
+        )
+        let task = downloader.downloadImage(with: url, options: [.requestModifier(modifier)]) { _ in
+            completed.fulfill()
+        }
+        wait(for: [requestHeld], timeout: 3)
+        XCTAssertFalse(task.isInitialized)
+        task.setPriority(URLSessionTask.lowPriority)
+        modifier.release()
+
+        wait(for: [downloadStarted], timeout: 3)
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        task.resetPriority()
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.defaultPriority)
+
+        _ = delayedResponse.go()
+        wait(for: [completed], timeout: 3)
+    }
+
+    func testDownloadTaskShellCancelsLinkedTask() {
+        let shell = DownloadTask()
+        let exp = expectation(description: "work cancelled")
+        let work = Task<Void, Never> {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 10_000_000)
+            }
+            exp.fulfill()
+        }
+
+        let innerTask = DownloadTask(cancelling: work)
+        shell.linkToTask(innerTask)
+        XCTAssertFalse(shell.isCancelled)
+        XCTAssertFalse(innerTask.isCancelled)
+
+        shell.cancel()
+        XCTAssertTrue(shell.isCancelled)
+        XCTAssertTrue(innerTask.isCancelled)
+
+        wait(for: [exp], timeout: 2)
+    }
+
     func testDownloadWithModifyingRequestToNil() {
         let nilModifier = AnyModifier { _ in
             return nil
@@ -1100,6 +1202,57 @@ final class URLModifier: ImageDownloadRequestModifier {
         var r = request
         r.url = url
         return r
+    }
+}
+
+/// Holds the first request in `modified(for:)` until `release()` is called. Later requests pass through.
+///
+/// Use it to keep a download task unlinked for as long as a test needs, instead of relying on a short delay.
+final class GatedRequestModifier: AsyncImageDownloadRequestModifier, @unchecked Sendable {
+    let onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
+    private let lock = NSLock()
+    private var isFirstRequest = true
+    private var isReleased = false
+    private var continuation: CheckedContinuation<Void, Never>?
+    private let onFirstRequestHeld: @Sendable () -> Void
+
+    init(
+        onFirstRequestHeld: @escaping @Sendable () -> Void,
+        onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? = nil
+    ) {
+        self.onFirstRequestHeld = onFirstRequestHeld
+        self.onDownloadTaskStarted = onDownloadTaskStarted
+    }
+
+    func modified(for request: URLRequest) async -> URLRequest? {
+        let shouldHold = lock.withLock {
+            defer { isFirstRequest = false }
+            return isFirstRequest
+        }
+
+        if shouldHold {
+            await withCheckedContinuation { continuation in
+                let isReleased = lock.withLock {
+                    if !self.isReleased { self.continuation = continuation }
+                    return self.isReleased
+                }
+                if isReleased {
+                    continuation.resume()
+                } else {
+                    onFirstRequestHeld()
+                }
+            }
+        }
+        return request
+    }
+
+    func release() {
+        let continuation = lock.withLock {
+            isReleased = true
+            defer { self.continuation = nil }
+            return self.continuation
+        }
+        continuation?.resume()
     }
 }
 
