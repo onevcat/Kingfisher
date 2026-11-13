@@ -4,7 +4,7 @@ Below is a code snippet designed to address the most commonly encountered tasks.
 this snippet into your upcoming projects.
 
 @Metadata {
-    @PageImage(purpose: card, source: "common-tasks-card"))
+    @PageImage(purpose: card, source: "common-tasks-card")
     @PageColor(blue)
 }
 

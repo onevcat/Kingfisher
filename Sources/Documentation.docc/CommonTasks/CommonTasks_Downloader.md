@@ -68,27 +68,24 @@ If an asynchronous operation is required before modifying the request, create a 
 ``AsyncImageDownloadRequestModifier``:
 
 ```swift
-class AsyncModifier: AsyncImageDownloadRequestModifier {
-    var onDownloadTaskStarted: ((DownloadTask?) -> Void)?
+struct AsyncModifier: AsyncImageDownloadRequestModifier {
+    var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
 
-    func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
+    func modified(for request: URLRequest) async -> URLRequest? {
         var r = request
-        someAsyncOperation { result in
-            r.someProperty = result.property
-            reportModified(r)
-        }
+        let token = await someAsyncOperation()
+        r.setValue(token, forHTTPHeaderField: "Access-Token")
+        return r
     }
 }
 ```
 
-Similarly, use the ``KingfisherOptionsInfoItem/requestModifier(_:)`` to apply this modifier. In such scenarios, the
-``KingfisherWrapper/setImage(with:placeholder:options:progressBlock:completionHandler:)-8lmr3`` or
-``ImageDownloader/downloadImage(with:options:completionHandler:)-2ztyq`` method will no longer return a ``DownloadTask``
-directly, as the download task isn't initiated instantly. To reference the task, monitor the
+Similarly, use the ``KingfisherOptionsInfoItem/requestModifier(_:)`` to apply this modifier. In such scenarios, view extension methods such as
+``KingfisherWrapper/setImage(with:placeholder:options:progressBlock:completionHandler:)-8lmr3`` will return `nil` instead of a valid ``DownloadTask`` directly, as the download task isn't initiated instantly. To reference the task, monitor the
 ``AsyncImageDownloadRequestModifier/onDownloadTaskStarted`` callback.
 
 ```swift
-let modifier = AsyncModifier()
+var modifier = AsyncModifier()
 modifier.onDownloadTaskStarted = { task in
     if let task = task {
         print("A download task started: \(task)")
@@ -104,15 +101,16 @@ download task.
 
 ```swift
 let task = downloader.downloadImage(with: url) { result in
-    // ...
+    switch result {
+    case .success(let value):
+        print(value.image)
     case .failure(let error):
         print(error.isTaskCancelled) // true
     }
-
 }
 
 // After some time, but before the download task completes.
-task?.cancel()
+task.cancel()
 ```
 
 If you call ``DownloadTask/cancel()`` after the task has already finished, no action will be taken.
@@ -121,7 +119,7 @@ Likewise, the view extension methods return a ``DownloadTask`` as well. This all
 if needed:
 
 ```swift
-let task = imageView.kf.set(with: url)
+let task = imageView.kf.setImage(with: url)
 task?.cancel()
 ```
 
@@ -129,8 +127,8 @@ Alternatively, you can invoke ``KingfisherWrapper/cancelDownloadTask()-2gg15`` o
 **current downloading task**.
 
 ```swift
-let task1 = imageView.kf.set(with: url1)
-let task2 = imageView.kf.set(with: url2)
+let task1 = imageView.kf.setImage(with: url1)
+let task2 = imageView.kf.setImage(with: url2)
 
 imageView.kf.cancelDownloadTask()
 // `task2` will be cancelled, but `task1` is still running. 
@@ -146,28 +144,26 @@ credentials, configure an ``ImageDownloader/authenticationChallengeResponder``:
 // In ViewController
 ImageDownloader.default.authenticationChallengeResponder = self
 
-extension ViewController: AuthenticationChallengeResponsable {
+extension ViewController: AuthenticationChallengeResponsible {
 
     var disposition: URLSession.AuthChallengeDisposition { /* */ }
-    let credential: URLCredential? { /* */ }
+    var credential: URLCredential? { /* */ }
 
     func downloader(
         _ downloader: ImageDownloader,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         // Provide your `AuthChallengeDisposition` and `URLCredential`
-        completionHandler(disposition, credential)
+        (disposition, credential)
     }
 
     func downloader(
         _ downloader: ImageDownloader,
         task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         // Provide your `AuthChallengeDisposition` and `URLCredential`
-        completionHandler(disposition, credential)
+        (disposition, credential)
     }
 }
 ```

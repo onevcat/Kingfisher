@@ -50,7 +50,7 @@ resources.forEach { resource in
 
 Important notes:
 - This is a basic example showing how to retrieve data from a live photo asset.
-- Use [`PHAssetResource.type`]((https://developer.apple.com/documentation/photokit/phassetresource/1623987-type)) to get more information about each live photo resource. Typically, resources with `.photo` and `.pairedVideo` types are necessary for a minimal Live Photo.
+- Use [`PHAssetResource.type`](https://developer.apple.com/documentation/photokit/phassetresource/1623987-type) to get more information about each live photo resource. Typically, resources with `.photo` and `.pairedVideo` types are necessary for a minimal Live Photo.
 - Do not modify the metadata or actual data of the resources, as this may cause problems when loading in Kingfisher later.
 - When serving the files, it's recommended to include the file extensions (`.heic` for the still image, and `.mov` for the video) in the URL. While not mandatory, this helps Kingfisher identify the file type more accurately.
 - You can use [`PHAssetResource.originalFilename`](https://developer.apple.com/documentation/photokit/phassetresource/1623985-originalfilename) to get and preserve the original file extension.

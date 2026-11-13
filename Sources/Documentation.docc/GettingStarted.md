@@ -1,7 +1,7 @@
 # Getting Started
 
 @Metadata {
-    @PageImage(purpose: card, source: "getting-started-card"))
+    @PageImage(purpose: card, source: "getting-started-card")
     @PageColor(blue)
 }
 
