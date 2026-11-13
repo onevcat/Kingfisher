@@ -2482,17 +2482,17 @@ class KingfisherManagerTests: XCTestCase {
     // before any link happens must reach the session task through both shells.
     func testRetrieveImageWithAsyncCacheTypeCheckAndAsyncModifierCancelsImmediately() {
         let completionExp = expectation(description: "\(#function) completion")
+        let requestHeld = expectation(description: "\(#function) request held")
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: nil)
-        let rewrittenURL = URL(string: "https://example.com/nested-shell-cancel-immediately")!
+        let modifier = GatedRequestModifier(onFirstRequestHeld: { requestHeld.fulfill() })
         let task = manager.retrieveImage(
-            with: rewrittenURL,
-            options: [.asyncCacheTypeCheck, .requestModifier(asyncModifier)]
+            with: url,
+            options: [.asyncCacheTypeCheck, .requestModifier(modifier)]
         ) { result in
             guard let error = result.error else {
-                XCTFail("cancelling nested shells immediately should cancel the load, but got success")
+                XCTFail("cancelling nested shells before they are linked should cancel the load, but got success")
                 completionExp.fulfill()
                 return
             }
@@ -2501,8 +2501,10 @@ class KingfisherManagerTests: XCTestCase {
         }
 
         XCTAssertNotNil(task)
+        wait(for: [requestHeld], timeout: 3)
         XCTAssertFalse(task?.isInitialized ?? true)
         task?.cancel()
+        modifier.release()
 
         wait(for: [completionExp], timeout: 3)
     }
