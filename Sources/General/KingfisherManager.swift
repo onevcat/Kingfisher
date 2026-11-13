@@ -707,6 +707,7 @@ public class KingfisherManager: @unchecked Sendable {
                     originalCache.removeImage(
                         forKey: source.cacheKey,
                         processorIdentifier: DefaultImageProcessor.default.identifier,
+                        forcedExtension: options.forcedExtension,
                         callbackQueue: options.callbackQueue)
                     {
                         coordinator.apply(.cachingImage) {
@@ -735,6 +736,7 @@ public class KingfisherManager: @unchecked Sendable {
                         value.originalData,
                         forKey: source.cacheKey,
                         processorIdentifier: DefaultImageProcessor.default.identifier,
+                        forcedExtension: options.forcedExtension,
                         expiration: originalDiskExpiration,
                         callbackQueue: options.callbackQueue)
                     {
