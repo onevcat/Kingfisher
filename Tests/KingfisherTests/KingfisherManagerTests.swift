@@ -2478,6 +2478,35 @@ class KingfisherManagerTests: XCTestCase {
         wait(for: [completionExp], timeout: 3)
     }
 
+    // The manager shell is linked to the downloader shell, which is linked to the session task later. A cancellation
+    // before any link happens must reach the session task through both shells.
+    func testRetrieveImageWithAsyncCacheTypeCheckAndAsyncModifierCancelsImmediately() {
+        let completionExp = expectation(description: "\(#function) completion")
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: nil)
+        let rewrittenURL = URL(string: "https://example.com/nested-shell-cancel-immediately")!
+        let task = manager.retrieveImage(
+            with: rewrittenURL,
+            options: [.asyncCacheTypeCheck, .requestModifier(asyncModifier)]
+        ) { result in
+            guard let error = result.error else {
+                XCTFail("cancelling nested shells immediately should cancel the load, but got success")
+                completionExp.fulfill()
+                return
+            }
+            XCTAssertTrue(error.isTaskCancelled, "Expected isTaskCancelled error but got: \(error)")
+            completionExp.fulfill()
+        }
+
+        XCTAssertNotNil(task)
+        XCTAssertFalse(task?.isInitialized ?? true)
+        task?.cancel()
+
+        wait(for: [completionExp], timeout: 3)
+    }
+
     // A finished download must release its session task while the manager and its downloader stay alive. The
     // `onTaskDone` handler used to keep the download context, whose request modifier leads back to the task.
     func testRetrieveImageWithAsyncCacheTypeCheckReleasesSessionTaskAfterDownload() {

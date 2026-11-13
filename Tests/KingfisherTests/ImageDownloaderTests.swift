@@ -296,6 +296,30 @@ class ImageDownloaderTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
+    func testDownloadTaskShellReplaysPriorityWhenLinked() {
+        let downloadStarted = expectation(description: "\(#function) download started")
+        let completed = expectation(description: "\(#function) completed")
+        let url = testURLs[0]
+        let delayedResponse = delayedStub(url, data: testImageData)
+
+        let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { _ in downloadStarted.fulfill() })
+        let someURL = URL(string: "https://example.com/test-async-priority-replay")!
+        let task = downloader.downloadImage(with: someURL, options: [.requestModifier(asyncModifier)]) { _ in
+            completed.fulfill()
+        }
+        XCTAssertFalse(task.isInitialized)
+        task.setPriority(URLSessionTask.lowPriority)
+
+        wait(for: [downloadStarted], timeout: 3)
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.lowPriority)
+
+        task.resetPriority()
+        XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.defaultPriority)
+
+        _ = delayedResponse.go()
+        wait(for: [completed], timeout: 3)
+    }
+
     func testDownloadTaskShellCancelsLinkedTask() {
         let shell = DownloadTask()
         let exp = expectation(description: "work cancelled")
