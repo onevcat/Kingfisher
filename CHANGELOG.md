@@ -2,6 +2,21 @@
 
 -----
 
+## [8.16.0 - Extension Cord](https://github.com/onevcat/Kingfisher/releases/tag/8.16.0) (2026-11-14)
+
+#### Add
+* Add `asyncCacheTypeCheck(_:)` and `forcedCacheFileExtension(_:)` to `KFOptionSetter`, and move `onlyLoadFirstFrame(_:)` there from `KF.Builder`, so both `KF.Builder` and `KFImage` can set these options without the `options` array. [#2614](https://github.com/onevcat/Kingfisher/pull/2614) @shubhransh-gupta
+
+#### Fix
+* {"Make a `nil` returned by an `ImageDownloadRequestModifier` interrupt the download with `.requestError(reason"=>".emptyRequest)` again for downloads through `KingfisherManager`, such as `kf.setImage`, `KFImage` and `ImagePrefetcher`. Since 8.11.0, these downloads ignored the `nil` and sent the original request. [#2623](https://github.com/onevcat/Kingfisher/pull/2623) @unaltolga"}
+* Keep `cancel()` and priority changes on a `DownloadTask` that is returned before the real task starts, for example with `.asyncCacheTypeCheck` or an `AsyncImageDownloadRequestModifier`. The calls are applied when the real task is linked, so a `KFImage` that disappears quickly no longer finishes its download. [#2619](https://github.com/onevcat/Kingfisher/pull/2619) [#2618](https://github.com/onevcat/Kingfisher/pull/2618) @shubhransh-gupta
+* Store the original image under the forced cache file extension when `.cacheOriginalImage` and `.forcedCacheFileExtension(_:)` are used with a processor, so the original is found again and not downloaded again. [#2612](https://github.com/onevcat/Kingfisher/pull/2612) @unaltolga
+* Make `ImagePrefetcher` use the forced cache file extension when it checks the disk cache, so an image that is already cached is not downloaded again. [#2617](https://github.com/onevcat/Kingfisher/pull/2617) @shubhransh-gupta
+* Call the completion handler of `cleanExpiredDiskCache(completion:)` when cleaning fails, so the async `cleanExpiredDiskCache()` and `cleanExpiredCache()` return. [#2621](https://github.com/onevcat/Kingfisher/pull/2621) @unaltolga
+* Fix code examples in the DocC articles that did not compile, including the `CacheSerializer`, `ImageProcessor`, `AsyncImageDownloadRequestModifier` and `AuthenticationChallengeResponsible` examples. [#2613](https://github.com/onevcat/Kingfisher/pull/2613) [#2616](https://github.com/onevcat/Kingfisher/pull/2616) @ZainnQureshii @shubhransh-gupta
+
+---
+
 ## [8.15.0 - Control Freak](https://github.com/onevcat/Kingfisher/releases/tag/8.15.0) (2026-11-03)
 
 #### Add
