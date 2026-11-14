@@ -414,20 +414,6 @@ extension KF.Builder {
         options.keepCurrentImageWhileLoading = enabled
         return self
     }
-
-    /// Sets whether only the first frame from an animated image file should be loaded as a single image.
-    /// - Parameter enabled: Whether the only the first frame should be loaded.
-    /// - Returns: A ``KF/Builder`` with changes applied.
-    ///
-    /// Loading an animated images may take too much memory. It will be useful when you want to display a
-    /// static preview of the first frame from an animated image.
-    ///
-    /// This option will be ignored if the target image is not animated image data.
-    ///
-    public func onlyLoadFirstFrame(_ enabled: Bool = true) -> Self {
-        options.onlyLoadFirstFrame = enabled
-        return self
-    }
 }
 
 // MARK: - Deprecated

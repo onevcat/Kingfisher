@@ -208,6 +208,29 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(KF.url(url).respectCacheControl(false).options.respectCacheControl)
         XCTAssertTrue(KFImage(url).respectCacheControl().context.options.respectCacheControl)
     }
+
+    @MainActor
+    func testAdditionalOptionModifiers() {
+        let url = URL(string: "https://example.com/image.png")!
+
+        // asyncCacheTypeCheck
+        XCTAssertFalse(KF.url(url).options.asyncCacheTypeCheck)
+        XCTAssertTrue(KF.url(url).asyncCacheTypeCheck().options.asyncCacheTypeCheck)
+        XCTAssertFalse(KF.url(url).asyncCacheTypeCheck(false).options.asyncCacheTypeCheck)
+        XCTAssertTrue(KFImage(url).asyncCacheTypeCheck().context.options.asyncCacheTypeCheck)
+
+        // onlyLoadFirstFrame
+        XCTAssertFalse(KF.url(url).options.onlyLoadFirstFrame)
+        XCTAssertTrue(KF.url(url).onlyLoadFirstFrame().options.onlyLoadFirstFrame)
+        XCTAssertFalse(KF.url(url).onlyLoadFirstFrame(false).options.onlyLoadFirstFrame)
+        XCTAssertTrue(KFImage(url).onlyLoadFirstFrame().context.options.onlyLoadFirstFrame)
+
+        // forcedCacheFileExtension
+        XCTAssertNil(KF.url(url).options.forcedExtension)
+        XCTAssertEqual(KF.url(url).forcedCacheFileExtension("png").options.forcedExtension, "png")
+        XCTAssertNil(KF.url(url).forcedCacheFileExtension(nil).options.forcedExtension)
+        XCTAssertEqual(KFImage(url).forcedCacheFileExtension("jpg").context.options.forcedExtension, "jpg")
+    }
     
     @MainActor
     func testKFImageCallbackModifiersDoNotShareDelegateState() {

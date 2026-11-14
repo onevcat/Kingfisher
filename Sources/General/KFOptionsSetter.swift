@@ -309,6 +309,21 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Sets whether only the first frame from an animated image file should be loaded as a single image.
+    ///
+    /// - Parameter enabled: Whether only the first frame should be loaded.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// Loading animated images may take too much memory. It will be useful when you want to display a
+    /// static preview of the first frame from an animated image.
+    ///
+    /// See ``KingfisherOptionsInfoItem/onlyLoadFirstFrame`` for details.
+    public func onlyLoadFirstFrame(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.onlyLoadFirstFrame = enabled
+        return result
+    }
+
     /// Sets whether the `Cache-Control` header of the HTTP response is honored when the downloaded image is stored.
     ///
     /// - Parameter enabled: Whether to honor the response's `Cache-Control` header.
@@ -358,6 +373,24 @@ extension KFOptionSetter {
     public func loadDiskFileSynchronously(_ enabled: Bool = true) -> Self {
         let result = copyForMutation()
         result.options.loadDiskFileSynchronously = enabled
+        return result
+    }
+
+    /// Sets whether the existence check for cached images is dispatched to the background I/O queue instead of
+    /// blocking the calling thread.
+    ///
+    /// - Parameter enabled: Whether to check the cache type asynchronously.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// See ``KingfisherOptionsInfoItem/asyncCacheTypeCheck`` for details.
+    ///
+    /// - Note: When enabled, disk cache hits are delivered asynchronously, even if `loadDiskFileSynchronously` is set.
+    ///   `KFImage` enables `loadDiskFileSynchronously` by default to avoid flickering, so with this option a
+    ///   disk-cached image may briefly show the placeholder. Memory cache hits are not affected. The `DownloadTask`
+    ///   returned by `KF.Builder.set(to:)` is always non-nil when this option is enabled.
+    public func asyncCacheTypeCheck(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.asyncCacheTypeCheck = enabled
         return result
     }
 
@@ -445,6 +478,18 @@ extension KFOptionSetter {
     public func lowDataModeSource(_ source: Source?) -> Self {
         let result = copyForMutation()
         result.options.lowDataModeSource = source
+        return result
+    }
+
+    /// Sets a file extension to be appended to the cached file on disk.
+    ///
+    /// - Parameter ext: The file extension (without leading dot), or `nil` to clear it.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// See ``KingfisherOptionsInfoItem/forcedCacheFileExtension(_:)`` for details.
+    public func forcedCacheFileExtension(_ ext: String?) -> Self {
+        let result = copyForMutation()
+        result.options.forcedExtension = ext
         return result
     }
 
