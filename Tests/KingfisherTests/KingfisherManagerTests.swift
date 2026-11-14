@@ -2338,6 +2338,25 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    // A request modifier that returns `nil` interrupts the download with `.emptyRequest`, as it does when the
+    // downloader is used directly (`ImageDownloaderTests.testDownloadWithModifyingRequestToNil`).
+    func testRetrieveImageWithModifyingRequestToNil() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let nilModifier = AnyModifier { _ in nil }
+        manager.retrieveImage(with: url, options: [.requestModifier(nilModifier)]) { result in
+            XCTAssertNil(result.value, "The download should not start when the modifier returns nil.")
+            if case .requestError(reason: .emptyRequest) = result.error {
+            } else {
+                XCTFail("Expected an emptyRequest error, got \(result)")
+            }
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3)
+    }
+
     func testRetrieveImageWithAsyncCacheTypeCheckReturnsCancellableShellOnMiss() {
         let completionExp = expectation(description: "\(#function) completion")
         let downloadStartedExp = expectation(description: "\(#function) download started")
