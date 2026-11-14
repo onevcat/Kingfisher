@@ -4,13 +4,12 @@
 
 ## Overview
 
-Kingfisher uses a dual build system approach supporting both Swift Package Manager and Fastlane/CocoaPods for maximum flexibility and distribution options.
+Kingfisher uses Swift Package Manager for distribution and Fastlane for test, build and release automation. CocoaPods is no longer supported: 8.16.0 is the last version on CocoaPods.
 
 ### Primary Build Tools
 
 - **Swift Package Manager** (`Package.swift`) - Modern dependency management and building
 - **Fastlane** (`fastlane/Fastfile`) - Automated testing, building, and release workflows
-- **CocoaPods** (`Kingfisher.podspec`) - Legacy distribution and integration
 - **GitHub Actions** (`.github/workflows/`) - Continuous integration and testing
 
 ### Key Configuration Files
@@ -18,8 +17,7 @@ Kingfisher uses a dual build system approach supporting both Swift Package Manag
 ```
 .
 ├── Package.swift                    # Swift Package Manager configuration
-├── Kingfisher.podspec              # CocoaPods specification
-├── Gemfile                         # Ruby dependencies for Fastlane/CocoaPods
+├── Gemfile                         # Ruby dependencies for Fastlane
 ├── fastlane/
 │   ├── Fastfile                    # Fastlane automation workflows
 │   └── actions/                    # Custom Fastlane actions
@@ -71,7 +69,7 @@ DESTINATION="platform=macOS" bundle exec fastlane test_ci
 # Build specific platform
 bundle exec fastlane build destination:"platform=iOS Simulator,name=iPhone 15"
 
-# Lint both CocoaPods and SPM
+# Lint the Swift package
 bundle exec fastlane lint
 ```
 
@@ -80,7 +78,7 @@ bundle exec fastlane lint
 The release workflow automates versioning, tagging, and distribution:
 
 ```bash
-# Full release (tests, lint, version bump, GitHub release, CocoaPods push)
+# Full release (tests, lint, version bump, GitHub release)
 bundle exec fastlane release version:X.X.X
 
 # Skip tests during release
@@ -93,13 +91,12 @@ bundle exec fastlane xcframework version:X.X.X
 Release steps performed:
 1. Ensures clean git state and correct branch
 2. Runs all tests (unless skipped)
-3. Lints CocoaPods spec and SPM package
+3. Lints the Swift package
 4. Updates version in all configuration files
 5. Extracts and updates changelog
 6. Creates signed git tag
 7. Builds XCFramework for all platforms
 8. Creates GitHub release with assets
-9. Pushes to CocoaPods trunk
 
 ## Platform-specific Setup
 
@@ -111,7 +108,7 @@ modes are separate settings; `SWIFT_VERSION` selects the language mode.
 
 ### Supported Platforms
 
-From `Package.swift` and `Kingfisher.podspec`:
+From `Package.swift`:
 - **iOS**: 15.0+
 - **macOS**: 12.0+
 - **tvOS**: 15.0+
@@ -159,7 +156,7 @@ Available lanes in `fastlane/Fastfile`:
 | `build` | Build for specific platform | `destination` |
 | `test_ci` | CI test lane (builds watchOS) | Uses `ENV["DESTINATION"]` |
 | `build_ci` | CI build lane | Uses `ENV["DESTINATION"]` |
-| `lint` | Lint CocoaPods spec and SPM | None |
+| `lint` | Lint the Swift package | None |
 | `release` | Full release workflow | `version`, `skip_tests` (optional) |
 | `xcframework` | Build XCFramework | `version`, `swift_version`, `xcode_version` |
 
@@ -209,16 +206,7 @@ Located in `fastlane/actions/`:
    # Update destination string accordingly
    ```
 
-4. **CocoaPods push fails**
-   ```bash
-   # Verify pod spec locally first
-   pod lib lint Kingfisher.podspec
-   
-   # Register session if needed
-   pod trunk register email@example.com
-   ```
-
-5. **Swift version issues**
+4. **Swift version issues**
    ```bash
    # Use Swift 6 language mode
    bundle exec fastlane build xcargs:"SWIFT_VERSION=6.0"

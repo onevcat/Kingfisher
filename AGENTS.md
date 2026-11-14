@@ -26,13 +26,13 @@ bundle exec fastlane test destination:"platform=iOS Simulator,name=iPhone 16"
 # Build for specific platform
 bundle exec fastlane build destination:"platform=iOS Simulator,name=iPhone 16"
 
-# Lint CocoaPods spec and Swift Package Manager
+# Lint the Swift package
 bundle exec fastlane lint
 ```
 
 ### Release Process
 ```bash
-# Full release workflow (tests, linting, versioning, GitHub release, CocoaPods push)
+# Full release workflow (tests, linting, versioning, GitHub release)
 bundle exec fastlane release version:X.X.X
 ```
 

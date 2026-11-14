@@ -38,7 +38,6 @@ bundle exec fastlane release version:X.X.X
 
 **Configuration Files:**
 - `Package.swift` - Swift Package Manager manifest
-- `Kingfisher.podspec` - CocoaPods specification  
 - `fastlane/Fastfile` - Build automation
 - `Sources/Documentation.docc/` - DocC documentation
 

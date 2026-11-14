@@ -25,7 +25,7 @@
         @ContentAndMedia {
             After creating your SwiftUI app, the first step is to install Kingfisher. For this, we use Swift Package Manager. 
             
-            > There are also other way to add Kingfisher to your project, such as CocoaPods or manually. Check the related documentation for more information.
+            > There are also other way to add Kingfisher to your project, such as the pre-built framework. Check the related documentation for more information.
             
             @Image(source: create-project-swiftui.png, alt: "")
             
