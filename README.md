@@ -5,7 +5,7 @@
 <p align="center">
 <a href="https://github.com/onevcat/Kingfisher/actions?query=workflow%3Abuild"><img src="https://github.com/onevcat/kingfisher/workflows/build/badge.svg?branch=master"></a>
 <a href="https://swiftpackageindex.com/onevcat/Kingfisher/master/documentation/kingfisher"><img src="https://img.shields.io/badge/Swift-Doc-DE5C43.svg?style=flat"></a>
-<a href="https://cocoapods.org/pods/Kingfisher"><img src="https://img.shields.io/github/v/tag/onevcat/Kingfisher.svg?color=blue&include_prereleases=&sort=semver"></a>
+<a href="https://github.com/onevcat/Kingfisher/releases"><img src="https://img.shields.io/github/v/tag/onevcat/Kingfisher.svg?color=blue&include_prereleases=&sort=semver"></a>
 <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 <a href="https://raw.githubusercontent.com/onevcat/Kingfisher/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-black"></a>
 </p>
@@ -186,10 +186,16 @@ Alternatively, you can follow either of the methods below.
 - Add `https://github.com/onevcat/Kingfisher.git`
 - Select "Up to Next Major" with "8.0.0"
 
+#### Pre-built Framework
+
+1. Open the release page, download the latest version of Kingfisher from the assets section. 
+2. Drag the `Kingfisher.xcframework` into your project and add it to the target (usually the app target).
+3. Select your target, in the "General" Tab, find the "Frameworks, Libraries, and Embedded Content" section, set the `Embed Without Signing` to Kingfisher.
+
 #### CocoaPods
 
 > [!IMPORTANT]
-> CocoaPods trunk becomes read-only on December 2, 2026 ([announcement](https://blog.cocoapods.org/CocoaPods-Specs-Repo/)). After that date, new Kingfisher versions cannot be published to CocoaPods. The versions that are already published keep resolving, but you will not get updates or security fixes through CocoaPods. Migrate to Swift Package Manager or the pre-built framework to stay on supported releases.
+> Kingfisher is no longer published to CocoaPods. CocoaPods trunk becomes read-only on December 2, 2026 ([announcement](https://blog.cocoapods.org/CocoaPods-Specs-Repo/)), and 8.16.0 is the last version on CocoaPods. The published versions keep resolving, but they do not get updates or security fixes. Migrate to Swift Package Manager or the pre-built framework to get new releases.
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
@@ -200,12 +206,6 @@ target 'MyApp' do
   pod 'Kingfisher', '~> 8.0'
 end
 ```
-
-#### Pre-built Framework
-
-1. Open the release page, download the latest version of Kingfisher from the assets section. 
-2. Drag the `Kingfisher.xcframework` into your project and add it to the target (usually the app target).
-3. Select your target, in the "General" Tab, find the "Frameworks, Libraries, and Embedded Content" section, set the `Embed Without Signing` to Kingfisher.
 
 ## Documentation
 

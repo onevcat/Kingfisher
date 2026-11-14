@@ -12,7 +12,6 @@ The framework follows a modular architecture with clear separation of concerns, 
 
 ### Core Configuration
 - **Package.swift** - Swift Package Manager manifest defining library targets and platform requirements
-- **Kingfisher.podspec** - CocoaPods specification (version 8.3.2)
 - **Sources/General/Kingfisher.swift** - Core type definitions and protocol declarations
 - **Sources/General/KingfisherManager.swift** - Central coordinator managing download and cache operations
 

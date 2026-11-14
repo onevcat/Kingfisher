@@ -8,30 +8,15 @@ This document provides comprehensive guidance for deploying Kingfisher across di
 
 Kingfisher supports multiple deployment strategies:
 
-- **CocoaPods**: Traditional CocoaPods spec deployment
 - **Swift Package Manager**: Native Swift package distribution
 - **XCFramework**: Pre-built universal frameworks
 - **GitHub Releases**: Automated release management
 
+CocoaPods is no longer supported. CocoaPods trunk becomes read-only on December 2, 2026, and 8.16.0 is the last version on CocoaPods. New releases do not include a podspec.
+
 The deployment process is fully automated using Fastlane with comprehensive platform coverage across iOS, macOS, tvOS, watchOS, and visionOS.
 
 ## Package Types
-
-### CocoaPods Distribution
-
-**Configuration File**: `/Users/onevcat/Sync/github/Kingfisher/Kingfisher.podspec`
-
-**Build Targets**:
-- iOS 15.0+
-- macOS 12.0+
-- tvOS 15.0+
-- watchOS 9.0+
-- visionOS 1.0+
-
-**Key Features**:
-- Module stability enabled (`BUILD_LIBRARY_FOR_DISTRIBUTION`)
-- Privacy manifest included (`PrivacyInfo.xcprivacy`)
-- Required frameworks (CFNetwork, Accelerate)
 
 ### Swift Package Manager
 
@@ -138,16 +123,6 @@ bundle exec fastlane lint
 bundle exec fastlane build_ci
 ```
 
-### CocoaPods Deployment
-
-```bash
-# Lint podspec
-pod lib lint Kingfisher.podspec
-
-# Push to CocoaPods trunk (automated in release)
-pod trunk push Kingfisher.podspec
-```
-
 ### Swift Package Manager
 
 ```bash
@@ -194,12 +169,11 @@ The release process handles:
    - Git branch verification
    - Clean git status check
    - Comprehensive testing across platforms
-   - Podspec and SPM linting
+   - SPM linting
 
 2. **Version Management**:
    - Build number synchronization
    - Version number increment
-   - Podspec version update
    - Changelog extraction
 
 3. **Build Artifacts**:
@@ -211,7 +185,6 @@ The release process handles:
    - Git tag creation with signing
    - GitHub release creation
    - Asset upload (both full and iOS-only XCFrameworks)
-   - CocoaPods trunk push
 
 ### Changelog Management
 
@@ -248,7 +221,6 @@ add:
 
 | Package Type | Location |
 |-------------|----------|
-| CocoaPods | Published to CocoaPods trunk |
 | Swift Package Manager | Git repository tags |
 | XCFramework (All) | `build/Kingfisher-{version}.xcframework.zip` |
 | XCFramework (iOS) | `build/Kingfisher-iOS-{version}.xcframework.zip` |
@@ -277,7 +249,6 @@ add:
 
 **Ruby Environment**:
 - **Fastlane**: Latest version
-- **CocoaPods**: Latest version  
 - **xcodes**: For Xcode version management
 
 This deployment system ensures reliable, automated distribution across all supported Apple platforms with comprehensive testing and validation at each step.
