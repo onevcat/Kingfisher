@@ -966,11 +966,12 @@ open class ImageCache: @unchecked Sendable {
                             userInfo: [KingfisherDiskCacheCleanedHashKey: cleanedHashes])
                     }
                 }
-
-                if let handler = handler {
-                    DispatchQueue.main.async { handler() }
-                }
             } catch {}
+
+            // Like `clearDiskCache`, the handler runs on every path: the async variants wait on it.
+            if let handler = handler {
+                DispatchQueue.main.async { handler() }
+            }
         }
     }
 
