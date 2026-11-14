@@ -51,13 +51,13 @@ jobs:
             cache-key: xcode-27.2-macos
           - xcode: '27.2'
             runner: xcode-27
-            destination: 'platform=iOS Simulator,name=iPhone 17,OS=27.0'
-            label: 'iOS 27.0'
+            destination: 'platform=iOS Simulator,name=iPhone 17,OS=27.2'
+            label: 'iOS 27.2'
             cache-key: xcode-27.2-ios
           - xcode: '27.2'
             runner: xcode-27
-            destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=27.0'
-            label: 'tvOS 27.0'
+            destination: 'platform=tvOS Simulator,name=Apple TV 4K (4th generation),OS=27.2'
+            label: 'tvOS 27.2'
             cache-key: xcode-27.2-tvos
           - xcode: '27.2'
             runner: xcode-27
