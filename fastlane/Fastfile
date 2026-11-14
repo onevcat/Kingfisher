@@ -1,5 +1,7 @@
 fastlane_version "1.37.0"
 
+require_relative "simulator_destination"
+
 default_platform :ios
 
 platform :ios do
@@ -10,6 +12,23 @@ platform :ios do
     xcode = ENV["XCODE_VERSION"] || "default-xcode"
     destination_key = destination.to_s.gsub(/[^A-Za-z0-9_.-]/, "_")
     File.expand_path("../build/DerivedData/#{run_id}-#{xcode}-#{destination_key}", __dir__)
+  end
+
+  # Replaces a simulator destination with an available device. See `SimulatorDestination` for why and how.
+  def resolve_destination(destination)
+    return destination unless destination.to_s.include?(" Simulator")
+
+    devices =JSON.parse(sh("xcrun simctl list devices available --json", log: false))["devices"]
+    resolution = SimulatorDestination.resolve(destination, devices)
+    return destination if resolution.nil?
+
+    description = "#{resolution.device_name} (#{resolution.os}), #{resolution.destination}"
+    if resolution.exact
+      UI.message("Destination '#{destination}' resolved to #{description}.")
+    else
+      UI.important("Destination '#{destination}' is not available. Using #{description} instead.")
+    end
+    resolution.destination
   end
 
   desc "Runs all the tests"
@@ -45,7 +64,7 @@ platform :ios do
       clean: true,
       derived_data_path: derived_data_path(options[:destination]),
       xcargs: "SWIFT_VERSION=5.0",
-      destination: options[:destination],
+      destination: resolve_destination(options[:destination]),
       # CI runner VMs occasionally stall for tens of seconds, blowing async
       # expectation budgets. Retry failed tests instead of inflating timeouts;
       # a real regression still fails all attempts.
@@ -67,7 +86,7 @@ platform :ios do
     }
 
     if options[:sdk].to_s.empty?
-      build_options[:destination] = options[:destination]
+      build_options[:destination] = resolve_destination(options[:destination])
     else
       build_options[:sdk] = options[:sdk]
     end
