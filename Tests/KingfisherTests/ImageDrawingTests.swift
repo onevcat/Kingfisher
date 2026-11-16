@@ -56,7 +56,7 @@ class ImageDrawingTests: XCTestCase {
     }
 
     func testImageOverlayingWithZeroFractionIsSolidColor() {
-        // A `fraction` of 0.0 means a solid overlay color, and 1.0 leaves the image as it is.
+        // A `fraction` of 0.0 means a solid overlay color, and 1.0 leaves opaque pixels as they are.
         // Transparent pixels stay transparent in both cases.
         let red: [UInt8] = [255, 0, 0, 255]
         let blue: [UInt8] = [0, 0, 255, 255]
