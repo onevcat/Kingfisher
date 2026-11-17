@@ -450,3 +450,71 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         }
     }
 }
+
+// MARK: - Swift Concurrency
+extension ImagePrefetcher {
+
+    /// Starts downloading the resources and caching them asynchronously using Swift concurrency.
+    ///
+    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` resources.
+    @discardableResult
+    public func start() async -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) {
+        await withCheckedContinuation { continuation in
+            let existingHandler = self.completionHandler
+            self.completionHandler = { skipped, failed, completed in
+                existingHandler?(skipped, failed, completed)
+                continuation.resume(returning: (skipped, failed, completed))
+            }
+            self.start()
+        }
+    }
+
+    /// Starts downloading the sources and caching them asynchronously using Swift concurrency.
+    ///
+    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` sources.
+    @discardableResult
+    public func startPrefetchingSources() async -> (skipped: [Source], failed: [Source], completed: [Source]) {
+        await withCheckedContinuation { continuation in
+            let existingHandler = self.completionSourceHandler
+            self.completionSourceHandler = { skipped, failed, completed in
+                existingHandler?(skipped, failed, completed)
+                continuation.resume(returning: (skipped, failed, completed))
+            }
+            self.start()
+        }
+    }
+
+    /// Prefetches an array of URLs and caches them asynchronously using Swift concurrency.
+    ///
+    /// - Parameters:
+    ///   - urls: The URLs to prefetch.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`.
+    ///   - progressBlock: Optional progress callback. Default is `nil`.
+    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` resources.
+    @discardableResult
+    public static func prefetch(
+        urls: [URL],
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: PrefetcherProgressBlock? = nil
+    ) async -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) {
+        let prefetcher = ImagePrefetcher(urls: urls, options: options, progressBlock: progressBlock)
+        return await prefetcher.start()
+    }
+
+    /// Prefetches an array of sources and caches them asynchronously using Swift concurrency.
+    ///
+    /// - Parameters:
+    ///   - sources: The sources to prefetch.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`.
+    ///   - progressBlock: Optional progress callback. Default is `nil`.
+    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` sources.
+    @discardableResult
+    public static func prefetch(
+        sources: [Source],
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: PrefetcherSourceProgressBlock? = nil
+    ) async -> (skipped: [Source], failed: [Source], completed: [Source]) {
+        let prefetcher = ImagePrefetcher(sources: sources, options: options, progressBlock: progressBlock)
+        return await prefetcher.startPrefetchingSources()
+    }
+}

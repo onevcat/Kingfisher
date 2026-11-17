@@ -615,6 +615,33 @@ class ImagePrefetcherTests: XCTestCase {
         prefetcher.start()
         wait(for: [completed], timeout: 3)
     }
+
+    func testAsyncPrefetchUrls() async throws {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let result = await ImagePrefetcher.prefetch(urls: [url], options: [.targetCache(cache)])
+        XCTAssertEqual(result.completed.count, 1)
+        XCTAssertEqual(result.skipped.count, 0)
+        XCTAssertEqual(result.failed.count, 0)
+        XCTAssertTrue(cache.isCached(forKey: url.cacheKey))
+    }
+
+    func testAsyncPrefetchSources() async throws {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let prefetcher = ImagePrefetcher(sources: [.network(url)], options: [.targetCache(cache)])
+        let result = await prefetcher.startPrefetchingSources()
+        XCTAssertEqual(result.completed.count, 1)
+        XCTAssertEqual(result.skipped.count, 0)
+        XCTAssertEqual(result.failed.count, 0)
+        XCTAssertTrue(cache.isCached(forKey: url.cacheKey))
+    }
 }
 
 private struct PrefetchCancellationProbe: ImageDataProvider {
