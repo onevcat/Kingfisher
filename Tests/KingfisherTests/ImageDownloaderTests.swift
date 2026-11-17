@@ -365,6 +365,39 @@ class ImageDownloaderTests: XCTestCase {
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
+
+    func testDownloadWithAsyncAnyModifier() async throws {
+        let modifier = AsyncAnyModifier { request in
+            var r = request
+            r.addValue("Bearer test-token", forHTTPHeaderField: "Authorization")
+            return r
+        }
+
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+
+        let modifiedRequest: URLRequest? = await modifier.modified(for: URLRequest(url: url))
+        XCTAssertEqual(modifiedRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer test-token")
+
+        let result = try await downloader.downloadImage(with: url, options: [.requestModifier(modifier)])
+        XCTAssertNotNil(result.image)
+    }
+
+    func testDownloadWithAsyncAnyModifierReturningNilInterruptsDownload() async {
+        let nilModifier = AsyncAnyModifier { _ in nil }
+        let someURL = URL(string: "https://example.com/async_nil_url")!
+        do {
+            _ = try await downloader.downloadImage(with: someURL, options: [.requestModifier(nilModifier)])
+            XCTFail("Should fail with emptyRequest error")
+        } catch let error as KingfisherError {
+            guard case .requestError(reason: .emptyRequest) = error else {
+                XCTFail("Unexpected error reason: \(error)")
+                return
+            }
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
     
     func testServerInvalidStatusCode() {
         let exp = expectation(description: #function)

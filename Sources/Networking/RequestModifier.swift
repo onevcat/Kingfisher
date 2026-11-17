@@ -140,3 +140,30 @@ public struct AnyModifier: ImageDownloadRequestModifier {
         block = modify
     }
 }
+
+/// A wrapper for creating an ``AsyncImageDownloadRequestModifier`` instance more easily.
+///
+/// This type conforms to ``AsyncImageDownloadRequestModifier`` and wraps an asynchronous image modification block.
+public struct AsyncAnyModifier: AsyncImageDownloadRequestModifier {
+
+    let block: @Sendable (URLRequest) async -> URLRequest?
+
+    public var onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)?
+
+    public func modified(for request: URLRequest) async -> URLRequest? {
+        await block(request)
+    }
+
+    /// Creates a value of ``AsyncImageDownloadRequestModifier`` that runs the asynchronous `modify` block.
+    ///
+    /// - Parameters:
+    ///   - onDownloadTaskStarted: A block called when the download task starts. Default is `nil`.
+    ///   - modify: The asynchronous request modifying block runs when a request modifying task comes.
+    public init(
+        onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? = nil,
+        modify: @escaping @Sendable (URLRequest) async -> URLRequest?
+    ) {
+        self.onDownloadTaskStarted = onDownloadTaskStarted
+        self.block = modify
+    }
+}
