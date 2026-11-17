@@ -284,6 +284,20 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertNotNil(withFailureImage.context.options.onFailureImage ?? nil)
     }
     #endif
+
+    @MainActor
+    func testBorderOptionSetter() {
+        let builder = KF.url(URL(string: "https://example.com/test.png")!)
+            .border(color: .red, lineWidth: 2.0)
+        XCTAssertTrue(builder.options.processor.identifier.contains("BorderImageProcessor"))
+    }
+
+    @MainActor
+    func testColorControlsOptionSetter() {
+        let builder = KF.url(URL(string: "https://example.com/test.png")!)
+            .colorControls(brightness: 0.1, contrast: 1.2, saturation: 1.0, inputEV: 0.0)
+        XCTAssertTrue(builder.options.processor.identifier.contains("ColorControlsProcessor"))
+    }
 }
 
 final class TestModifier: ImageDownloadRequestModifier {
