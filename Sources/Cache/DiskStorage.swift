@@ -365,6 +365,9 @@ public enum DiskStorage {
         }
 
         func removeAll(skipCreatingDirectory: Bool) throws {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
             try config.fileManager.removeItem(at: directoryURL)
             if !skipCreatingDirectory {
                 try prepareDirectory()
@@ -410,6 +413,9 @@ public enum DiskStorage {
         }
 
         func allFileURLs(for propertyKeys: [URLResourceKey]) throws -> [URL] {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
             let fileManager = config.fileManager
 
             guard let directoryEnumerator = fileManager.enumerator(

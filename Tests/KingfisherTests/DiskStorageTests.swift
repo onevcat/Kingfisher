@@ -559,6 +559,20 @@ class DiskStorageTests: XCTestCase {
                 return
             }
         }
+
+        XCTAssertThrowsError(try storage.totalSize()) { error in
+            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                XCTFail("Expected diskStorageIsNotReady for totalSize, but got \(error)")
+                return
+            }
+        }
+
+        XCTAssertThrowsError(try storage.removeAll()) { error in
+            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                XCTFail("Expected diskStorageIsNotReady for removeAll, but got \(error)")
+                return
+            }
+        }
     }
 
     func testFileMetaOrder() {
