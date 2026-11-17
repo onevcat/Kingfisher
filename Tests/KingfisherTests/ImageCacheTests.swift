@@ -988,6 +988,16 @@ class ImageCacheTests: XCTestCase {
         XCTAssertTrue(result.absoluteString.hasSuffix(".myExt"))
     }
 
+    func testStoreToDiskWithWriteOptions() async throws {
+        let key = "test-store-write-options-\(UUID().uuidString)"
+        try await cache.storeToDisk(
+            testImageData,
+            forKey: key,
+            writeOptions: .atomic
+        )
+        XCTAssertTrue(cache.isCached(forKey: key))
+    }
+
 #if !os(macOS) && !os(watchOS)
     func testKingfisherWrapperUIApplicationSharedReturnsNilInUnitTest() {
         // UIApplication.shared is not available in some Unit Tests contexts.

@@ -453,6 +453,7 @@ open class ImageCache: @unchecked Sendable {
     ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
     ///   disk storage configuration instead.
     ///   - expiration: The expiration policy used by this storage action.
+    ///   - writeOptions: Options used when writing the data to disk. Default is `[]`.
     ///   - callbackQueue: The callback queue on which the `completionHandler` is invoked. The default is
     ///   ``CallbackQueue/untouch``. Under this default ``CallbackQueue/untouch`` queue, if `toDisk` is `false`, it
     ///   means the `completionHandler` will be invoked from the caller queue of this method; if `toDisk` is `true`,
@@ -465,6 +466,7 @@ open class ImageCache: @unchecked Sendable {
         processorIdentifier identifier: String = "",
         forcedExtension: String? = nil,
         expiration: StorageExpiration? = nil,
+        writeOptions: Data.WritingOptions = [],
         callbackQueue: CallbackQueue = .untouch,
         completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil)
     {
@@ -476,6 +478,7 @@ open class ImageCache: @unchecked Sendable {
                 processorIdentifier: identifier,
                 callbackQueue: callbackQueue,
                 expiration: expiration,
+                writeOptions: writeOptions,
                 completionHandler: completionHandler
             )
         }
@@ -1334,7 +1337,8 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         processorIdentifier identifier: String = "",
         forcedExtension: String? = nil,
-        expiration: StorageExpiration? = nil
+        expiration: StorageExpiration? = nil,
+        writeOptions: Data.WritingOptions = []
     ) async throws
     {
         try await withCheckedThrowingContinuation { continuation in
@@ -1343,7 +1347,8 @@ open class ImageCache: @unchecked Sendable {
                 forKey: key,
                 processorIdentifier: identifier,
                 forcedExtension: forcedExtension,
-                expiration: expiration) {
+                expiration: expiration,
+                writeOptions: writeOptions) {
                     // Only `diskCacheResult` can fail
                     continuation.resume(with: $0.diskCacheResult)
                 }
