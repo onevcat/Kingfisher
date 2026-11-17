@@ -402,18 +402,6 @@ extension KF.Builder {
         return self
     }
     #endif
-
-    /// Sets whether keeping the existing image of image view while setting another image to it.
-    /// - Parameter enabled: Whether the existing image should be kept.
-    /// - Returns: A ``KF/Builder`` with changes applied.
-    ///
-    /// By setting this option, the placeholder image parameter of image view extension method
-    /// will be ignored and the current image will be kept while loading or downloading the new image.
-    ///
-    public func keepCurrentImageWhileLoading(_ enabled: Bool = true) -> Self {
-        options.keepCurrentImageWhileLoading = enabled
-        return self
-    }
 }
 
 // MARK: - Deprecated

@@ -324,6 +324,52 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Sets whether to preload all animation data when preparing an animated image.
+    ///
+    /// - Parameter enabled: Whether all animation data should be preloaded.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// Loading animated images may take significant memory. By default, Kingfisher decodes animation frames
+    /// on demand. Setting this option loads all animation frames into memory upfront, providing smoother playback
+    /// at the expense of higher initial memory usage.
+    ///
+    /// See ``KingfisherOptionsInfoItem/preloadAllAnimationData`` for details.
+    public func preloadAllAnimationData(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.preloadAllAnimationData = enabled
+        return result
+    }
+
+    /// Sets whether keeping the existing image of image view while setting another image to it.
+    ///
+    /// - Parameter enabled: Whether the existing image should be kept.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// By setting this option, the placeholder image parameter of image view extension method
+    /// will be ignored and the current image will be kept while loading or downloading the new image.
+    ///
+    /// See ``KingfisherOptionsInfoItem/keepCurrentImageWhileLoading`` for details.
+    public func keepCurrentImageWhileLoading(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.keepCurrentImageWhileLoading = enabled
+        return result
+    }
+
+    /// Sets whether images should be prefetched into the memory cache in addition to the disk cache.
+    ///
+    /// - Parameter enabled: Whether to prefetch images into the memory cache.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// By default, the prefetcher only saves images to disk cache to avoid excessive memory consumption.
+    /// When enabled, prefetched images will also be stored in the memory cache for immediate display.
+    ///
+    /// See ``KingfisherOptionsInfoItem/alsoPrefetchToMemory`` for details.
+    public func alsoPrefetchToMemory(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.alsoPrefetchToMemory = enabled
+        return result
+    }
+
     /// Sets whether the `Cache-Control` header of the HTTP response is honored when the downloaded image is stored.
     ///
     /// - Parameter enabled: Whether to honor the response's `Cache-Control` header.

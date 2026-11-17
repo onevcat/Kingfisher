@@ -230,6 +230,24 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertEqual(KF.url(url).forcedCacheFileExtension("png").options.forcedExtension, "png")
         XCTAssertNil(KF.url(url).forcedCacheFileExtension(nil).options.forcedExtension)
         XCTAssertEqual(KFImage(url).forcedCacheFileExtension("jpg").context.options.forcedExtension, "jpg")
+
+        // preloadAllAnimationData
+        XCTAssertFalse(KF.url(url).options.preloadAllAnimationData)
+        XCTAssertTrue(KF.url(url).preloadAllAnimationData().options.preloadAllAnimationData)
+        XCTAssertFalse(KF.url(url).preloadAllAnimationData(false).options.preloadAllAnimationData)
+        XCTAssertTrue(KFImage(url).preloadAllAnimationData().context.options.preloadAllAnimationData)
+
+        // keepCurrentImageWhileLoading
+        XCTAssertFalse(KF.url(url).options.keepCurrentImageWhileLoading)
+        XCTAssertTrue(KF.url(url).keepCurrentImageWhileLoading().options.keepCurrentImageWhileLoading)
+        XCTAssertFalse(KF.url(url).keepCurrentImageWhileLoading(false).options.keepCurrentImageWhileLoading)
+        XCTAssertTrue(KFImage(url).keepCurrentImageWhileLoading().context.options.keepCurrentImageWhileLoading)
+
+        // alsoPrefetchToMemory
+        XCTAssertFalse(KF.url(url).options.alsoPrefetchToMemory)
+        XCTAssertTrue(KF.url(url).alsoPrefetchToMemory().options.alsoPrefetchToMemory)
+        XCTAssertFalse(KF.url(url).alsoPrefetchToMemory(false).options.alsoPrefetchToMemory)
+        XCTAssertTrue(KFImage(url).alsoPrefetchToMemory().context.options.alsoPrefetchToMemory)
     }
     
     @MainActor
