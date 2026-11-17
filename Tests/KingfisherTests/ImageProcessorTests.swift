@@ -82,6 +82,14 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(result.kf.scale, testImage.kf.scale)
     }
 
+    func testBorderImageProcessorIdentifier() {
+        let border = Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: .all)
+        let processor = BorderImageProcessor(border: border)
+        XCTAssertTrue(processor.identifier.hasPrefix("com.onevcat.Kingfisher.BorderImageProcessor("))
+        XCTAssertTrue(processor.identifier.hasSuffix(")"))
+        XCTAssertTrue(processor.identifier.contains(border.identifier))
+    }
+
     func testRoundCornerProcessorUsesInputSizeBeforeScaling() throws {
         let options = KingfisherParsedOptionsInfo([.scaleFactor(2)])
         let processor = RoundCornerImageProcessor(cornerRadius: 5)
