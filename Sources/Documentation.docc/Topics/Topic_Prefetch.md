@@ -26,6 +26,19 @@ imageView.kf.setImage(with: urls[0])
 anotherImageView.kf.setImage(with: urls[1])
 ```
 
+### Prefetch images asynchronously with Swift Concurrency
+
+You can also prefetch and cache images asynchronously using Swift Concurrency:
+
+```swift
+do {
+    let (skipped, failed, completed) = try await ImagePrefetcher.prefetch(urls: urls)
+    print("Completed: \(completed.count), Failed: \(failed.count)")
+} catch is CancellationError {
+    print("Prefetch task was cancelled.")
+}
+```
+
 ### Prefetch images for table view or collection view
 
 Starting with iOS 10, Apple introduced cell prefetching behavior, which can seamlessly integrate with Kingfisher's 

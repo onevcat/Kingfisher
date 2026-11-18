@@ -616,31 +616,97 @@ class ImagePrefetcherTests: XCTestCase {
         wait(for: [completed], timeout: 3)
     }
 
-    func testAsyncPrefetchUrls() async throws {
+    func testAsyncPrefetchURLsSuccess() async throws {
         let cache = ImageCache(name: UUID().uuidString)
         defer { clearCaches([cache]) }
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        let result = await ImagePrefetcher.prefetch(urls: [url], options: [.targetCache(cache)])
+        let result = try await ImagePrefetcher.prefetch(urls: [url], options: [.targetCache(cache)])
         XCTAssertEqual(result.completed.count, 1)
         XCTAssertEqual(result.skipped.count, 0)
         XCTAssertEqual(result.failed.count, 0)
         XCTAssertTrue(cache.isCached(forKey: url.cacheKey))
     }
 
-    func testAsyncPrefetchSources() async throws {
+    func testAsyncPrefetchResourcesSuccess() async throws {
         let cache = ImageCache(name: UUID().uuidString)
         defer { clearCaches([cache]) }
         let url = testURLs[0]
         stub(url, data: testImageData)
 
-        let prefetcher = ImagePrefetcher(sources: [.network(url)], options: [.targetCache(cache)])
-        let result = await prefetcher.startPrefetchingSources()
+        let result = try await ImagePrefetcher.prefetch(resources: [url as any Resource], options: [.targetCache(cache)])
         XCTAssertEqual(result.completed.count, 1)
         XCTAssertEqual(result.skipped.count, 0)
         XCTAssertEqual(result.failed.count, 0)
         XCTAssertTrue(cache.isCached(forKey: url.cacheKey))
+    }
+
+    func testAsyncPrefetchSourcesWithProvider() async throws {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        let provider = RawImageDataProvider(data: testImageData, cacheKey: UUID().uuidString)
+
+        let result = try await ImagePrefetcher.prefetch(
+            sources: [.network(url), .provider(provider)],
+            options: [.targetCache(cache)]
+        )
+        XCTAssertEqual(result.completed.count, 2)
+        XCTAssertEqual(result.skipped.count, 0)
+        XCTAssertEqual(result.failed.count, 0)
+        XCTAssertTrue(cache.isCached(forKey: url.cacheKey))
+        XCTAssertTrue(cache.isCached(forKey: provider.cacheKey))
+    }
+
+    func testAsyncPrefetchFailure() async throws {
+        let cache = ImageCache(name: UUID().uuidString)
+        defer { clearCaches([cache]) }
+        let url = testURLs[0]
+        stub(url, errorCode: 404)
+
+        let result = try await ImagePrefetcher.prefetch(urls: [url], options: [.targetCache(cache)])
+        XCTAssertEqual(result.completed.count, 0)
+        XCTAssertEqual(result.failed.count, 1)
+        XCTAssertEqual(result.skipped.count, 0)
+    }
+
+    func testAsyncPrefetchCancelledOnEntry() async {
+        let task = Task { () -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) in
+            withUnsafeCurrentTask { $0?.cancel() }
+            return try await ImagePrefetcher.prefetch(urls: [testURLs[0]])
+        }
+        do {
+            _ = try await task.value
+            XCTFail("Expected CancellationError")
+        } catch is CancellationError {
+            // Success
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    func testAsyncPrefetchCancelledInFlight() async {
+        let entered = expectation(description: "Modifier entered")
+        let modifier = PrefetchGatedRequestModifier(entered: entered)
+        stub(testURLs[0], data: testImageData)
+
+        let task = Task {
+            try await ImagePrefetcher.prefetch(urls: [testURLs[0]], options: [.requestModifier(modifier)])
+        }
+        await fulfillment(of: [entered], timeout: 3)
+        task.cancel()
+        modifier.resume()
+
+        do {
+            _ = try await task.value
+            XCTFail("Expected CancellationError")
+        } catch is CancellationError {
+            // Success
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
     }
 }
 
