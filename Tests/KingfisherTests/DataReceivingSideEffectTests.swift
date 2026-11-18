@@ -109,14 +109,14 @@ class DataReceivingSideEffectTests: XCTestCase {
         super.tearDown()
     }
 
-    func xtestDataReceivingSideEffectBlockCanBeCalled() {
+    func testDataReceivingSideEffectBlockCanBeCalled() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
 
         let receiver = DataReceivingStub()
 
-        let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
+        let options: KingfisherOptionsInfo = [.onDataReceived([receiver]), .waitForCache]
         KingfisherManager.shared.retrieveImage(with: url, options: options) {
             result in
             XCTAssertTrue(receiver.called.value)
@@ -125,14 +125,14 @@ class DataReceivingSideEffectTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func xtestDataReceivingSideEffectBlockCanBeCalledButNotApply() {
+    func testDataReceivingSideEffectBlockCanBeCalledButNotApply() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
 
         let receiver = DataReceivingNotApplyStub()
 
-        let options: KingfisherOptionsInfo = [/*.onDataReceived([receiver]),*/ .waitForCache]
+        let options: KingfisherOptionsInfo = [.onDataReceived([receiver]), .waitForCache]
         KingfisherManager.shared.retrieveImage(with: url, options: options) {
             result in
             XCTAssertTrue(receiver.called.value)
@@ -140,6 +140,72 @@ class DataReceivingSideEffectTests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testAnyDataReceivingSideEffectClosureInvocation() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, length: 123)
+
+        let invoked = LockIsolated(false)
+        let receivedData = LockIsolated(Data())
+
+        let effect = AnyDataReceivingSideEffect { session, task, data in
+            invoked.setValue(true)
+            receivedData.withValue { $0.append(data) }
+        }
+
+        let options: KingfisherOptionsInfo = [.onDataReceived([effect]), .waitForCache]
+        KingfisherManager.shared.retrieveImage(with: url, options: options) { result in
+            XCTAssertTrue(invoked.value)
+            XCTAssertEqual(receivedData.value.count, testImageData.count)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testMultipleDataReceivingSideEffectsConcatenate() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, length: 123)
+
+        let receiver1 = DataReceivingStub()
+        let receiver2 = DataReceivingStub()
+
+        let options: KingfisherOptionsInfo = [
+            .onDataReceived([receiver1]),
+            .onDataReceived([receiver2]),
+            .waitForCache
+        ]
+        KingfisherManager.shared.retrieveImage(with: url, options: options) { result in
+            XCTAssertTrue(receiver1.called.value)
+            XCTAssertTrue(receiver2.called.value)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    @MainActor
+    func testKFOptionSetterOnDataReceivedFluentBuilders() {
+        let url = testURLs[0]
+        let receiver1 = DataReceivingStub()
+        let receiver2 = DataReceivingStub()
+
+        // Setting array
+        let builder1 = KF.url(url).onDataReceived([receiver1])
+        XCTAssertEqual(builder1.options.onDataReceived?.count, 1)
+
+        // Appending single side effect
+        let builder2 = builder1.onDataReceived(receiver2)
+        XCTAssertEqual(builder2.options.onDataReceived?.count, 2)
+
+        // Appending closure
+        let builder3 = builder2.onDataReceived { session, task, data in }
+        XCTAssertEqual(builder3.options.onDataReceived?.count, 3)
+
+        // Resetting to nil
+        let builder4 = builder3.onDataReceived(nil)
+        XCTAssertNil(builder4.options.onDataReceived)
     }
 }
 

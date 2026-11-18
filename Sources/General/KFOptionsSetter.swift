@@ -431,6 +431,35 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Sets the data receiving side effects to be notified as data chunks arrive from the network.
+    ///
+    /// - Parameter sideEffects: An array of ``DataReceivingSideEffect`` objects.
+    /// - Returns: A `Self` value with the changes applied.
+    public func onDataReceived(_ sideEffects: [any DataReceivingSideEffect]?) -> Self {
+        let result = copyForMutation()
+        result.options.onDataReceived = sideEffects
+        return result
+    }
+
+    /// Appends a data receiving side effect to be notified as data chunks arrive from the network.
+    ///
+    /// - Parameter sideEffect: A ``DataReceivingSideEffect`` object.
+    /// - Returns: A `Self` value with the changes applied.
+    public func onDataReceived(_ sideEffect: any DataReceivingSideEffect) -> Self {
+        let result = copyForMutation()
+        let current = result.options.onDataReceived ?? []
+        result.options.onDataReceived = current + [sideEffect]
+        return result
+    }
+
+    /// Appends a closure-based data receiving side effect called as data chunks arrive from the network.
+    ///
+    /// - Parameter block: A closure invoked with the URLSession, session data task, and newly received data.
+    /// - Returns: A `Self` value with the changes applied.
+    public func onDataReceived(_ block: @escaping @Sendable (URLSession, SessionDataTask, Data) -> Void) -> Self {
+        return onDataReceived(AnyDataReceivingSideEffect(block))
+    }
+
     /// Sets a retry strategy to be used when issues arise during image retrieval.
     ///
     /// - Parameter strategy: The provided strategy that defines how retry attempts should occur.

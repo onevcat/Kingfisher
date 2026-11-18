@@ -187,3 +187,25 @@ let modifier = AnyModifier { request in
 }
 downloader.downloadImage(with: url, options: [.requestModifier(modifier)])
 ```
+
+### Inspect received data chunks with data receiving side effects
+
+To observe raw data chunks as they arrive from the network without altering the download flow (such as calculating checksums or streaming processing), provide ``KingfisherOptionsInfoItem/onDataReceived(_:)`` side effects:
+
+```swift
+let effect = AnyDataReceivingSideEffect { session, task, data in
+    print("Received \(data.count) bytes for \(task.task.originalRequest?.url?.absoluteString ?? "")")
+}
+
+imageView.kf.setImage(with: url, options: [.onDataReceived([effect])])
+```
+
+Or when using the fluent builder syntax:
+
+```swift
+KF.url(url)
+    .onDataReceived { session, task, data in
+        print("Received chunk: \(data.count) bytes")
+    }
+    .set(to: imageView)
+```

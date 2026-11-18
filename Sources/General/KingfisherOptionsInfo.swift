@@ -414,6 +414,12 @@ public enum KingfisherOptionsInfoItem: Sendable {
     /// - Note: This option only affects how a downloaded image is stored. It does not apply to images loaded from
     ///   an ``ImageDataProvider``, which have no HTTP response.
     case respectCacheControl
+
+    /// An array of ``DataReceivingSideEffect`` instances that are called whenever new data is received from the network.
+    ///
+    /// Use this option to inspect, stream, or process raw data chunks during image download without intercepting
+    /// or altering the downloaded image itself.
+    case onDataReceived([any DataReceivingSideEffect])
 }
 
 // MARK: - KingfisherParsedOptionsInfo
@@ -468,7 +474,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var forcedExtension: String? = nil
     public var respectCacheControl = false
 
-    var onDataReceived: [any DataReceivingSideEffect]? = nil
+    public var onDataReceived: [any DataReceivingSideEffect]? = nil
     var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
     var isSourceTaskStale: Bool { sourceTaskIdentifierChecker.map { !$0() } ?? false }
 
@@ -515,6 +521,9 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .lowDataMode(let source): lowDataModeSource = source
             case .forcedCacheFileExtension(let ext): forcedExtension = ext
             case .respectCacheControl: respectCacheControl = true
+            case .onDataReceived(let value):
+                let current = onDataReceived ?? []
+                onDataReceived = current + value
             }
         }
 
@@ -534,9 +543,34 @@ extension KingfisherParsedOptionsInfo {
     }
 }
 
-protocol DataReceivingSideEffect: AnyObject, Sendable {
+/// An element that can be used to handle data receiving side effects during image download.
+public protocol DataReceivingSideEffect: AnyObject, Sendable {
     var onShouldApply: () -> Bool { get set }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
+}
+
+/// A wrapper for creating a ``DataReceivingSideEffect`` instance using a closure.
+public final class AnyDataReceivingSideEffect: DataReceivingSideEffect, @unchecked Sendable {
+
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.AnyDataReceivingSideEffectPropertyQueue")
+
+    private var _onShouldApply: () -> Bool = { return true }
+
+    public var onShouldApply: () -> Bool {
+        get { propertyQueue.sync { _onShouldApply } }
+        set { propertyQueue.sync { _onShouldApply = newValue } }
+    }
+
+    public let block: @Sendable (URLSession, SessionDataTask, Data) -> Void
+
+    public init(_ block: @escaping @Sendable (URLSession, SessionDataTask, Data) -> Void) {
+        self.block = block
+    }
+
+    public func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+        guard onShouldApply() else { return }
+        block(session, task, data)
+    }
 }
 
 class ImageLoadingProgressSideEffect: DataReceivingSideEffect, @unchecked Sendable {
