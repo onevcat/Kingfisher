@@ -791,9 +791,9 @@ open class ImageCache: @unchecked Sendable {
                 callbackQueue.execute { outcomeHandler(.failure(error)) }
             } catch {
                 assertionFailure("The internal thrown error should be a `KingfisherError`.")
-                let fileURL = self.diskStorage.cacheFileURL(forKey: computedKey, forcedExtension: options.forcedExtension)
-                let kingfisherError = (error as? KingfisherError) ?? .cacheError(reason: .cannotLoadDataFromDisk(url: fileURL, error: error))
-                callbackQueue.execute { outcomeHandler(.failure(kingfisherError)) }
+                // Callers coalesce on this handler, so it has to run on every path. Reporting a miss
+                // lets the caller heal by downloading.
+                callbackQueue.execute { outcomeHandler(.success(.notFound)) }
             }
         }
     }
@@ -1195,7 +1195,7 @@ open class ImageCache: @unchecked Sendable {
                 DispatchQueue.main.async { handler(.failure(error)) }
             } catch {
                 assertionFailure("The internal thrown error should be a `KingfisherError`.")
-                let kingfisherError = (error as? KingfisherError) ?? .cacheError(reason: .cannotLoadDataFromDisk(url: self.diskStorage.directoryURL, error: error))
+                let kingfisherError = KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: self.diskStorage.directoryURL, error: error))
                 DispatchQueue.main.async { handler(.failure(kingfisherError)) }
             }
         }

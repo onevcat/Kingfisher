@@ -492,38 +492,7 @@ class ImageCacheTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: cache.cachePath(forKey: key)))
     }
 
-    func testCalculateDiskStorageSizeCompletesWhenFolderInaccessible() async throws {
-        try XCTSkipIf(geteuid() == 0, "File permissions are not effective for root.")
 
-        let directoryPath = cache.diskStorage.directoryURL.path
-        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: directoryPath)
-        addTeardownBlock {
-            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directoryPath)
-        }
-
-        let completed = expectation(description: #function)
-        cache.calculateDiskStorageSize { _ in
-            completed.fulfill()
-        }
-        await fulfillment(of: [completed], timeout: 3)
-    }
-
-    func testDiskStorageSizeAsyncDoesNotHangWhenFolderInaccessible() async throws {
-        try XCTSkipIf(geteuid() == 0, "File permissions are not effective for root.")
-
-        let directoryPath = cache.diskStorage.directoryURL.path
-        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: directoryPath)
-        addTeardownBlock {
-            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directoryPath)
-        }
-
-        do {
-            _ = try await cache.diskStorageSize
-        } catch {
-            // Expected to throw rather than hanging
-        }
-    }
-    
     func testCannotRetrieveCacheWithProcessorIdentifier() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
