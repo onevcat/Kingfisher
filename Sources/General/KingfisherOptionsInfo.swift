@@ -415,11 +415,17 @@ public enum KingfisherOptionsInfoItem: Sendable {
     ///   an ``ImageDataProvider``, which have no HTTP response.
     case respectCacheControl
 
-    /// An array of ``DataReceivingSideEffect`` instances that are called whenever new data is received from the network.
+    /// A closure called whenever new data is received from the network for a download task.
     ///
-    /// Use this option to inspect, stream, or process raw data chunks during image download without intercepting
-    /// or altering the downloaded image itself.
-    case onDataReceived([any DataReceivingSideEffect])
+    /// Use this option to observe raw data chunks as they arrive from the network without altering the download flow.
+    ///
+    /// - Note:
+    ///   - The closure is called on the `URLSession` delegate queue, not on the main queue. If you need to update UI,
+    ///     dispatch to the main queue.
+    ///   - Requests for the same URL share a single download. A request that joins an existing running download receives
+    ///     only the chunks that arrive after it joins. Therefore, this cannot be used for tasks requiring all bytes from
+    ///     the beginning of the file (such as full image checksum calculation).
+    case onDataReceived(@Sendable (_ task: SessionDataTask, _ data: Data) -> Void)
 }
 
 // MARK: - KingfisherParsedOptionsInfo
@@ -474,7 +480,8 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var forcedExtension: String? = nil
     public var respectCacheControl = false
 
-    public var onDataReceived: [any DataReceivingSideEffect]? = nil
+    var onDataReceived: [any DataReceivingSideEffect]? = nil
+    var onDataReceivedSideEffects: [@Sendable (SessionDataTask, Data) -> Void] = []
     var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
     var isSourceTaskStale: Bool { sourceTaskIdentifierChecker.map { !$0() } ?? false }
 
@@ -522,8 +529,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .forcedCacheFileExtension(let ext): forcedExtension = ext
             case .respectCacheControl: respectCacheControl = true
             case .onDataReceived(let value):
-                let current = onDataReceived ?? []
-                onDataReceived = current + value
+                onDataReceivedSideEffects.append(value)
             }
         }
 
@@ -543,33 +549,35 @@ extension KingfisherParsedOptionsInfo {
     }
 }
 
-/// An element that can be used to handle data receiving side effects during image download.
-public protocol DataReceivingSideEffect: AnyObject, Sendable {
+protocol DataReceivingSideEffect: AnyObject, Sendable {
     var onShouldApply: () -> Bool { get set }
     func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data)
 }
 
-/// A wrapper for creating a ``DataReceivingSideEffect`` instance using a closure.
-public final class AnyDataReceivingSideEffect: DataReceivingSideEffect, @unchecked Sendable {
+final class CallbackDataReceivingSideEffect: DataReceivingSideEffect, @unchecked Sendable {
 
-    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.AnyDataReceivingSideEffectPropertyQueue")
+    private let propertyQueue = DispatchQueue(label: "com.onevcat.Kingfisher.CallbackDataReceivingSideEffectPropertyQueue")
 
-    private var _onShouldApply: () -> Bool = { return true }
+    private var _onShouldApply: () -> Bool
 
-    public var onShouldApply: () -> Bool {
+    var onShouldApply: () -> Bool {
         get { propertyQueue.sync { _onShouldApply } }
         set { propertyQueue.sync { _onShouldApply = newValue } }
     }
 
-    public let block: @Sendable (URLSession, SessionDataTask, Data) -> Void
+    let block: @Sendable (SessionDataTask, Data) -> Void
 
-    public init(_ block: @escaping @Sendable (URLSession, SessionDataTask, Data) -> Void) {
+    init(
+        onShouldApply: @escaping @Sendable () -> Bool = { true },
+        block: @escaping @Sendable (SessionDataTask, Data) -> Void
+    ) {
+        self._onShouldApply = onShouldApply
         self.block = block
     }
 
-    public func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
+    func onDataReceived(_ session: URLSession, task: SessionDataTask, data: Data) {
         guard onShouldApply() else { return }
-        block(session, task, data)
+        block(task, data)
     }
 }
 

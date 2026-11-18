@@ -188,24 +188,31 @@ let modifier = AnyModifier { request in
 downloader.downloadImage(with: url, options: [.requestModifier(modifier)])
 ```
 
-### Inspect received data chunks with data receiving side effects
+### Inspect received data chunks
 
-To observe raw data chunks as they arrive from the network without altering the download flow (such as calculating checksums or streaming processing), provide ``KingfisherOptionsInfoItem/onDataReceived(_:)`` side effects:
+To observe raw data chunks as they arrive from the network without altering the download flow (such as logging transfer activity, sampling network streams, or monitoring throughput), use the ``KingfisherOptionsInfoItem/onDataReceived(_:)`` option:
 
 ```swift
-let effect = AnyDataReceivingSideEffect { session, task, data in
-    print("Received \(data.count) bytes for \(task.task.originalRequest?.url?.absoluteString ?? "")")
-}
-
-imageView.kf.setImage(with: url, options: [.onDataReceived([effect])])
+imageView.kf.setImage(
+    with: url,
+    options: [
+        .onDataReceived { task, data in
+            print("Received \(data.count) bytes for \(task.task.originalRequest?.url?.absoluteString ?? "")")
+        }
+    ]
+)
 ```
 
 Or when using the fluent builder syntax:
 
 ```swift
 KF.url(url)
-    .onDataReceived { session, task, data in
+    .onDataReceived { task, data in
         print("Received chunk: \(data.count) bytes")
     }
     .set(to: imageView)
 ```
+
+> Note:
+> - The closure is executed on the `URLSession` delegate queue, not on the main queue. Dispatch to the main thread if updating UI components.
+> - Multiple requests for the same URL share a single download task. A request that joins an existing in-flight download only receives the chunks that arrive after it joins. Because of this, calculating a full checksum or hash of the complete image data across shared downloads is not supported.

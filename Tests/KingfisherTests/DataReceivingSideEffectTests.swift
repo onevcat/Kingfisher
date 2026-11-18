@@ -114,49 +114,17 @@ class DataReceivingSideEffectTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
 
-        let receiver = DataReceivingStub()
-
-        let options: KingfisherOptionsInfo = [.onDataReceived([receiver]), .waitForCache]
-        KingfisherManager.shared.retrieveImage(with: url, options: options) {
-            result in
-            XCTAssertTrue(receiver.called.value)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-
-    func testDataReceivingSideEffectBlockCanBeCalledButNotApply() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        stub(url, data: testImageData, length: 123)
-
-        let receiver = DataReceivingNotApplyStub()
-
-        let options: KingfisherOptionsInfo = [.onDataReceived([receiver]), .waitForCache]
-        KingfisherManager.shared.retrieveImage(with: url, options: options) {
-            result in
-            XCTAssertTrue(receiver.called.value)
-            XCTAssertFalse(receiver.applied.value)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
-    }
-
-    func testAnyDataReceivingSideEffectClosureInvocation() {
-        let exp = expectation(description: #function)
-        let url = testURLs[0]
-        stub(url, data: testImageData, length: 123)
-
         let invoked = LockIsolated(false)
         let receivedData = LockIsolated(Data())
 
-        let effect = AnyDataReceivingSideEffect { session, task, data in
-            invoked.setValue(true)
-            receivedData.withValue { $0.append(data) }
-        }
-
-        let options: KingfisherOptionsInfo = [.onDataReceived([effect]), .waitForCache]
-        KingfisherManager.shared.retrieveImage(with: url, options: options) { result in
+        let options: KingfisherOptionsInfo = [
+            .onDataReceived { task, data in
+                invoked.setValue(true)
+                receivedData.withValue { $0.append(data) }
+            },
+            .waitForCache
+        ]
+        manager.retrieveImage(with: url, options: options) { result in
             XCTAssertTrue(invoked.value)
             XCTAssertEqual(receivedData.value.count, testImageData.count)
             exp.fulfill()
@@ -164,48 +132,146 @@ class DataReceivingSideEffectTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    func testMultipleDataReceivingSideEffectsConcatenate() {
+    func testDataReceivingSideEffectNotAppliedWhenStale() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, length: 123)
 
-        let receiver1 = DataReceivingStub()
-        let receiver2 = DataReceivingStub()
+        let invoked = LockIsolated(false)
 
         let options: KingfisherOptionsInfo = [
-            .onDataReceived([receiver1]),
-            .onDataReceived([receiver2]),
+            .onDataReceived { task, data in
+                invoked.setValue(true)
+            },
             .waitForCache
         ]
-        KingfisherManager.shared.retrieveImage(with: url, options: options) { result in
-            XCTAssertTrue(receiver1.called.value)
-            XCTAssertTrue(receiver2.called.value)
+        manager.retrieveImage(
+            with: .network(url),
+            options: KingfisherParsedOptionsInfo(options),
+            referenceTaskIdentifierChecker: { false }
+        ) { result in
+            XCTAssertFalse(invoked.value)
             exp.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
 
+    func testTwoRequestsSharingOneClosureWhenOneRequestBecomesStale() {
+        let exp1 = expectation(description: "request 1 completed")
+        let exp2 = expectation(description: "request 2 completed")
+        let url = testURLs[0]
+        stub(url, data: testImageData, length: 123)
+
+        let callCount = LockIsolated(0)
+        let sharedHandler: @Sendable (SessionDataTask, Data) -> Void = { task, data in
+            callCount.withValue { $0 += 1 }
+        }
+
+        let options1 = KingfisherParsedOptionsInfo([
+            .onDataReceived(sharedHandler),
+            .forceRefresh
+        ])
+        let options2 = KingfisherParsedOptionsInfo([
+            .onDataReceived(sharedHandler),
+            .forceRefresh
+        ])
+
+        // Request 1 is valid (checker returns true)
+        manager.retrieveImage(
+            with: .network(url),
+            options: options1,
+            referenceTaskIdentifierChecker: { true }
+        ) { _ in
+            exp1.fulfill()
+        }
+
+        // Request 2 shares the download for the same URL but is stale (checker returns false)
+        manager.retrieveImage(
+            with: .network(url),
+            options: options2,
+            referenceTaskIdentifierChecker: { false }
+        ) { _ in
+            exp2.fulfill()
+        }
+
+        waitForExpectations(timeout: 3, handler: nil)
+
+        // Request 1 must receive its data chunk(s), while Request 2 is skipped.
+        // In the shared side effect object design, Request 2's checker would overwrite Request 1's checker
+        // resulting in 0 calls. With per-request side effects, Request 1 safely receives callbacks.
+        XCTAssertGreaterThan(callCount.value, 0)
+    }
+
+    func testMultipleOnDataReceivedHandlersConcatenate() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, length: 123)
+
+        let invoked1 = LockIsolated(false)
+        let invoked2 = LockIsolated(false)
+
+        let options: KingfisherOptionsInfo = [
+            .onDataReceived { _, _ in invoked1.setValue(true) },
+            .onDataReceived { _, _ in invoked2.setValue(true) },
+            .waitForCache
+        ]
+        manager.retrieveImage(with: url, options: options) { result in
+            XCTAssertTrue(invoked1.value)
+            XCTAssertTrue(invoked2.value)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
+    }
+
+    func testCallbackDataReceivingSideEffectDirectInvocation() {
+        let called = LockIsolated(false)
+        let effect = CallbackDataReceivingSideEffect(onShouldApply: { true }) { task, data in
+            called.setValue(true)
+        }
+        let url = URL(string: "https://example.com/image.png")!
+        let urlTask = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let task = SessionDataTask(task: urlTask)
+        effect.onDataReceived(URLSession.shared, task: task, data: Data([0x01]))
+        XCTAssertTrue(called.value)
+    }
+
+    func testCallbackDataReceivingSideEffectSkipsWhenStale() {
+        let called = LockIsolated(false)
+        let effect = CallbackDataReceivingSideEffect(onShouldApply: { false }) { task, data in
+            called.setValue(true)
+        }
+        let url = URL(string: "https://example.com/image.png")!
+        let urlTask = URLSession(configuration: .ephemeral).dataTask(with: url)
+        let task = SessionDataTask(task: urlTask)
+        effect.onDataReceived(URLSession.shared, task: task, data: Data([0x01]))
+        XCTAssertFalse(called.value)
+    }
+
     @MainActor
     func testKFOptionSetterOnDataReceivedFluentBuilders() {
         let url = testURLs[0]
-        let receiver1 = DataReceivingStub()
-        let receiver2 = DataReceivingStub()
 
-        // Setting array
-        let builder1 = KF.url(url).onDataReceived([receiver1])
-        XCTAssertEqual(builder1.options.onDataReceived?.count, 1)
+        let builder1 = KF.url(url).onDataReceived { task, data in }
+        XCTAssertEqual(builder1.options.onDataReceivedSideEffects.count, 1)
 
-        // Appending single side effect
-        let builder2 = builder1.onDataReceived(receiver2)
-        XCTAssertEqual(builder2.options.onDataReceived?.count, 2)
+        let builder2 = builder1.onDataReceived { task, data in }
+        XCTAssertEqual(builder2.options.onDataReceivedSideEffects.count, 2)
+    }
 
-        // Appending closure
-        let builder3 = builder2.onDataReceived { session, task, data in }
-        XCTAssertEqual(builder3.options.onDataReceived?.count, 3)
+    func testInternalDataReceivingSideEffectStubCanBeCalled() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        stub(url, data: testImageData, length: 123)
 
-        // Resetting to nil
-        let builder4 = builder3.onDataReceived(nil)
-        XCTAssertNil(builder4.options.onDataReceived)
+        let receiver = DataReceivingStub()
+
+        var options = KingfisherParsedOptionsInfo([.waitForCache])
+        options.onDataReceived = [receiver]
+        manager.downloader.downloadImage(with: url, options: options) { result in
+            XCTAssertTrue(receiver.called.value)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 3, handler: nil)
     }
 }
 

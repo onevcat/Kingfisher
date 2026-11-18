@@ -105,6 +105,7 @@ extension KingfisherManager {
             checkedOptions.onDataReceived?.forEach {
                 $0.onShouldApply = checker
             }
+            checkedOptions.sourceTaskIdentifierChecker = checker
         }
         
         // TODO. We ignore the retry of live photo and the progress now to suppress the complexity.

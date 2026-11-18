@@ -58,7 +58,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.cacheOriginalImage)
         XCTAssertEqual(options.diskStoreWriteOptions, [])
         XCTAssertFalse(options.respectCacheControl)
-        XCTAssertNil(options.onDataReceived)
+        XCTAssertTrue(options.onDataReceivedSideEffects.isEmpty)
     }
     
     func testSetOptionsShouldParseCorrectly() {
@@ -100,7 +100,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .diskStoreWriteOptions([.atomic]),
             .alternativeSources([alternativeSource]),
             .retryStrategy(DelayRetryStrategy(maxRetryCount: 10)),
-            .onDataReceived([AnyDataReceivingSideEffect { _, _, _ in }])
+            .onDataReceived { _, _ in }
         ])
         
         XCTAssertTrue(options.targetCache === cache)
@@ -144,7 +144,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let retry = options.retryStrategy as? DelayRetryStrategy
         XCTAssertNotNil(retry)
         XCTAssertEqual(retry?.maxRetryCount, 10)
-        XCTAssertEqual(options.onDataReceived?.count, 1)
+        XCTAssertEqual(options.onDataReceivedSideEffects.count, 1)
     }
     
     func testOptionCouldBeOverwritten() {

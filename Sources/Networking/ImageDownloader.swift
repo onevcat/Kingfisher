@@ -628,12 +628,25 @@ open class ImageDownloader: @unchecked Sendable {
         options: KingfisherParsedOptionsInfo,
         completionHandler: (@Sendable (Result<ImageLoadingResult, KingfisherError>) -> Void)? = nil) -> DownloadTask
     {
+        let parsedOptions: KingfisherParsedOptionsInfo
+        if !options.onDataReceivedSideEffects.isEmpty {
+            var mutated = options
+            let checker = options.sourceTaskIdentifierChecker ?? { true }
+            let sideEffects = options.onDataReceivedSideEffects.map { block in
+                CallbackDataReceivingSideEffect(onShouldApply: checker, block: block)
+            }
+            mutated.onDataReceived = (mutated.onDataReceived ?? []) + sideEffects
+            parsedOptions = mutated
+        } else {
+            parsedOptions = options
+        }
+
         let downloadTask = DownloadTask()
-        createDownloadContext(with: url, options: options) { result in
+        createDownloadContext(with: url, options: parsedOptions) { result in
             switch result {
             case .success(let context):
-                let taskCallback = self.createTaskCallback(completionHandler, options: options)
-                if let modifier = options.requestModifier {
+                let taskCallback = self.createTaskCallback(completionHandler, options: parsedOptions)
+                if let modifier = parsedOptions.requestModifier {
                     _ = self.startDownloadTask(context: context, callback: taskCallback, beforeTaskResume: { actualDownloadTask in
                         downloadTask.linkToTask(actualDownloadTask)
                         modifier.onDownloadTaskStarted?(downloadTask)
@@ -643,7 +656,7 @@ open class ImageDownloader: @unchecked Sendable {
                     downloadTask.linkToTask(actualDownloadTask)
                 }
             case .failure(let error):
-                options.callbackQueue.execute {
+                parsedOptions.callbackQueue.execute {
                     completionHandler?(.failure(error))
                 }
             }

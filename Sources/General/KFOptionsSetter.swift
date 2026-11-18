@@ -431,33 +431,21 @@ extension KFOptionSetter {
         return result
     }
 
-    /// Sets the data receiving side effects to be notified as data chunks arrive from the network.
+    /// Appends a closure to be called whenever new data is received from the network for this download task.
     ///
-    /// - Parameter sideEffects: An array of ``DataReceivingSideEffect`` objects.
+    /// - Parameter handler: A closure invoked with the session data task and newly received data chunk.
     /// - Returns: A `Self` value with the changes applied.
-    public func onDataReceived(_ sideEffects: [any DataReceivingSideEffect]?) -> Self {
+    ///
+    /// - Note:
+    ///   - The closure is called on the `URLSession` delegate queue, not on the main queue. If you need to update UI,
+    ///     dispatch to the main queue.
+    ///   - Requests for the same URL share a single download. A request that joins an existing running download receives
+    ///     only the chunks that arrive after it joins. Therefore, this cannot be used for tasks requiring all bytes from
+    ///     the beginning of the file (such as full image checksum calculation).
+    public func onDataReceived(_ handler: @escaping @Sendable (SessionDataTask, Data) -> Void) -> Self {
         let result = copyForMutation()
-        result.options.onDataReceived = sideEffects
+        result.options.onDataReceivedSideEffects.append(handler)
         return result
-    }
-
-    /// Appends a data receiving side effect to be notified as data chunks arrive from the network.
-    ///
-    /// - Parameter sideEffect: A ``DataReceivingSideEffect`` object.
-    /// - Returns: A `Self` value with the changes applied.
-    public func onDataReceived(_ sideEffect: any DataReceivingSideEffect) -> Self {
-        let result = copyForMutation()
-        let current = result.options.onDataReceived ?? []
-        result.options.onDataReceived = current + [sideEffect]
-        return result
-    }
-
-    /// Appends a closure-based data receiving side effect called as data chunks arrive from the network.
-    ///
-    /// - Parameter block: A closure invoked with the URLSession, session data task, and newly received data.
-    /// - Returns: A `Self` value with the changes applied.
-    public func onDataReceived(_ block: @escaping @Sendable (URLSession, SessionDataTask, Data) -> Void) -> Self {
-        return onDataReceived(AnyDataReceivingSideEffect(block))
     }
 
     /// Sets a retry strategy to be used when issues arise during image retrieval.
