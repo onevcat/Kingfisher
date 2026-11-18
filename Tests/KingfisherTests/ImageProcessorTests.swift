@@ -104,21 +104,18 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(processor.identifier, pDuplicate.identifier)
 
         // Differing alpha produces distinct identifiers
-        #if os(macOS)
         let opaqueColor = KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 1.0)
         let translucentColor = KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-        #else
-        let opaqueColor = KFCrossPlatformColor(white: 0, alpha: 1.0)
-        let translucentColor = KFCrossPlatformColor(white: 0, alpha: 0.5)
-        #endif
         let pOpaque = BorderImageProcessor(border: Border(color: opaqueColor, lineWidth: 2, radius: .point(5)))
         let pTranslucent = BorderImageProcessor(border: Border(color: translucentColor, lineWidth: 2, radius: .point(5)))
         XCTAssertNotEqual(pOpaque.identifier, pTranslucent.identifier)
 
         #if os(iOS) || os(tvOS) || os(visionOS)
         // Separately constructed equivalent dynamic colors produce identical identifiers
-        let dynamicBorder1 = Border(color: .systemBlue, lineWidth: 2, radius: .point(5))
-        let dynamicBorder2 = Border(color: .systemBlue, lineWidth: 2, radius: .point(5))
+        let c1 = UIColor { $0.userInterfaceStyle == .dark ? .white : .black }
+        let c2 = UIColor { $0.userInterfaceStyle == .dark ? .white : .black }
+        let dynamicBorder1 = Border(color: c1, lineWidth: 2, radius: .point(5))
+        let dynamicBorder2 = Border(color: c2, lineWidth: 2, radius: .point(5))
         let dynamicProcessor1 = BorderImageProcessor(border: dynamicBorder1)
         let dynamicProcessor2 = BorderImageProcessor(border: dynamicBorder2)
         XCTAssertEqual(dynamicProcessor1.identifier, dynamicProcessor2.identifier)
