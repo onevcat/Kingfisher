@@ -348,8 +348,11 @@ public enum DiskStorage {
         /// - Parameters:
         ///   - key: The cache key of the value.
         ///   - forcedExtension: The file extension, if exists.
-        /// - Throws: An error during the removal of the value.
+        /// - Throws: An error during the removal of the value, or if the storage is not ready.
         public func remove(forKey key: String, forcedExtension: String? = nil) throws {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
             let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
             try removeFile(at: fileURL)
         }
@@ -359,12 +362,15 @@ public enum DiskStorage {
         }
 
         /// Removes all values in this storage.
-        /// - Throws: An error during the removal of the values.
+        /// - Throws: An error during the removal of the values, or if the storage is not ready.
         public func removeAll() throws {
             try removeAll(skipCreatingDirectory: false)
         }
 
         func removeAll(skipCreatingDirectory: Bool) throws {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
             try config.fileManager.removeItem(at: directoryURL)
             if !skipCreatingDirectory {
                 try prepareDirectory()
@@ -410,6 +416,9 @@ public enum DiskStorage {
         }
 
         func allFileURLs(for propertyKeys: [URLResourceKey]) throws -> [URL] {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
             let fileManager = config.fileManager
 
             guard let directoryEnumerator = fileManager.enumerator(
@@ -425,7 +434,7 @@ public enum DiskStorage {
         }
 
         /// Removes all expired values from this storage.
-        /// - Throws: A file manager error during the removal of the file.
+        /// - Throws: A file manager error during the removal of the file, or if the storage is not ready.
         /// - Returns: The URLs for the removed files.
         public func removeExpiredValues() throws -> [URL] {
             return try removeExpiredValues(referenceDate: Date())
@@ -457,7 +466,7 @@ public enum DiskStorage {
         }
 
         /// Removes all size-exceeded values from this storage.
-        /// - Throws: A file manager error during the removal of the file.
+        /// - Throws: A file manager error during the removal of the file, or if the storage is not ready.
         /// - Returns: The URLs for the removed files.
         ///
         /// This method checks ``DiskStorage/Config/sizeLimit`` and removes cached files in an LRU
@@ -497,6 +506,7 @@ public enum DiskStorage {
         }
 
         /// Gets the total file size of the cache folder in bytes.
+        /// - Throws: An error during enumerating the storage directory, or if the storage is not ready.
         public func totalSize() throws -> UInt {
             let propertyKeys: [URLResourceKey] = [.fileSizeKey]
             let urls = try allFileURLs(for: propertyKeys)
