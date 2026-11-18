@@ -870,16 +870,33 @@ extension KFCrossPlatformColor {
         var a: CGFloat = 0
 
         #if os(macOS)
-        (usingColorSpace(.extendedSRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        if let srgb = usingColorSpace(.extendedSRGB) {
+            srgb.getRed(&r, green: &g, blue: &b, alpha: &a)
+        }
         #else
-        getRed(&r, green: &g, blue: &b, alpha: &a)
+        _ = getRed(&r, green: &g, blue: &b, alpha: &a)
         #endif
         
         return (r, g, b, a)
     }
     
     var rgbaDescription: String {
-        let components = self.rgba
-        return String(format: "(%.2f,%.2f,%.2f,%.2f)", components.r, components.g, components.b, components.a)
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+
+        #if os(macOS)
+        guard let srgb = usingColorSpace(.extendedSRGB) else {
+            return String(describing: self)
+        }
+        srgb.getRed(&r, green: &g, blue: &b, alpha: &a)
+        #else
+        guard getRed(&r, green: &g, blue: &b, alpha: &a) else {
+            return String(describing: self)
+        }
+        #endif
+
+        return "(\(Double(r)),\(Double(g)),\(Double(b)),\(Double(a)))"
     }
 }

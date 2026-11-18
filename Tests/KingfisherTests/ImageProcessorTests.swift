@@ -87,7 +87,7 @@ class ImageProcessorTests: XCTestCase {
         let processor = BorderImageProcessor(border: border)
         XCTAssertEqual(
             processor.identifier,
-            "com.onevcat.Kingfisher.BorderImageProcessor((1.00,0.00,0.00,1.00)_2.0_5.0_)"
+            "com.onevcat.Kingfisher.BorderImageProcessor((1.0,0.0,0.0,1.0)_2.0_5.0_)"
         )
 
         // Distinct inputs give distinct identifiers
@@ -109,6 +109,19 @@ class ImageProcessorTests: XCTestCase {
         let pOpaque = BorderImageProcessor(border: Border(color: opaqueColor, lineWidth: 2, radius: .point(5)))
         let pTranslucent = BorderImageProcessor(border: Border(color: translucentColor, lineWidth: 2, radius: .point(5)))
         XCTAssertNotEqual(pOpaque.identifier, pTranslucent.identifier)
+
+        // Colors differing by less than 0.01 produce distinct identifiers without key collisions
+        let colorCloseA = KFCrossPlatformColor(red: 0.101, green: 0.5, blue: 0.5, alpha: 1.0)
+        let colorCloseB = KFCrossPlatformColor(red: 0.104, green: 0.5, blue: 0.5, alpha: 1.0)
+        let pCloseA = BorderImageProcessor(border: Border(color: colorCloseA, lineWidth: 2, radius: .point(5)))
+        let pCloseB = BorderImageProcessor(border: Border(color: colorCloseB, lineWidth: 2, radius: .point(5)))
+        XCTAssertNotEqual(pCloseA.identifier, pCloseB.identifier)
+
+        // Colors without RGB components (such as pattern colors) do not crash and produce an identifier
+        let patternColor = KFCrossPlatformColor(patternImage: testImage)
+        let pPattern = BorderImageProcessor(border: Border(color: patternColor, lineWidth: 2, radius: .point(5)))
+        XCTAssertFalse(pPattern.identifier.isEmpty)
+        XCTAssertTrue(pPattern.identifier.contains(String(describing: patternColor)))
 
         #if os(iOS) || os(tvOS) || os(visionOS)
         // Separately constructed equivalent dynamic colors produce identical identifiers
