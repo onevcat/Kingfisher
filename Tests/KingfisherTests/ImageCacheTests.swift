@@ -491,8 +491,7 @@ class ImageCacheTests: XCTestCase {
         await fulfillment(of: [cleaned], timeout: 3)
         XCTAssertTrue(FileManager.default.fileExists(atPath: cache.cachePath(forKey: key)))
     }
-
-
+    
     func testCannotRetrieveCacheWithProcessorIdentifier() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
