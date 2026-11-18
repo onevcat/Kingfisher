@@ -799,6 +799,9 @@ extension KFOptionSetter {
 
     /// Appends a ``BorderImageProcessor`` to the current set of processors.
     ///
+    /// - Note: This draws the border directly into the decoded image pixels and caches the bordered image.
+    ///   To add an overlay border on the view itself in SwiftUI, use SwiftUI's view modifier `border(_:width:)` instead.
+    ///
     /// - Parameter border: The border to be added to the image.
     /// - Returns: A `Self` value with the changes applied.
     public func border(_ border: Border) -> Self {
@@ -807,15 +810,18 @@ extension KFOptionSetter {
 
     /// Appends a ``BorderImageProcessor`` to the current set of processors with border parameters.
     ///
+    /// - Note: This draws the border directly into the decoded image pixels and caches the bordered image.
+    ///   To add an overlay border on the view itself in SwiftUI, use SwiftUI's view modifier `border(_:width:)` instead.
+    ///
     /// - Parameters:
     ///   - color: The color of the border to create.
-    ///   - lineWidth: The line width of the border to create. Default is 1.0.
+    ///   - lineWidth: The line width of the border to create. Default is 4.
     ///   - radius: The radius to be applied during processing. Default is `.point(0)`.
     ///   - roundingCorners: The target corners which will be applied rounding. Default is `.all`.
     /// - Returns: A `Self` value with the changes applied.
     public func border(
         color: KFCrossPlatformColor,
-        lineWidth: CGFloat = 1.0,
+        lineWidth: CGFloat = 4,
         radius: Radius = .point(0),
         roundingCorners: RectCorner = .all
     ) -> Self {
