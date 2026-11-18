@@ -85,9 +85,36 @@ class ImageProcessorTests: XCTestCase {
     func testBorderImageProcessorIdentifier() {
         let border = Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: .all)
         let processor = BorderImageProcessor(border: border)
-        XCTAssertTrue(processor.identifier.hasPrefix("com.onevcat.Kingfisher.BorderImageProcessor("))
-        XCTAssertTrue(processor.identifier.hasSuffix(")"))
-        XCTAssertTrue(processor.identifier.contains(border.identifier))
+        XCTAssertEqual(
+            processor.identifier,
+            "com.onevcat.Kingfisher.BorderImageProcessor((1.00,0.00,0.00,1.00)_2.0_5.0_)"
+        )
+
+        // Distinct inputs give distinct identifiers
+        let pColor = BorderImageProcessor(border: Border(color: .blue, lineWidth: 2, radius: .point(5)))
+        let pWidth = BorderImageProcessor(border: Border(color: .red, lineWidth: 4, radius: .point(5)))
+        let pRadius = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .widthFraction(0.5)))
+        let pCorners = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: [.topLeft]))
+
+        let allProcessors = [processor, pColor, pWidth, pRadius, pCorners]
+        XCTAssertEqual(Set(allProcessors.map(\.identifier)).count, allProcessors.count)
+
+        // Equal border configurations produce equal identifiers
+        let pDuplicate = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: .all))
+        XCTAssertEqual(processor.identifier, pDuplicate.identifier)
+
+        #if !os(macOS)
+        // Trait independence: identifier is computed at init time and does not fluctuate across trait changes
+        let dynamicBorder = Border(color: .systemBlue, lineWidth: 2, radius: .point(5))
+        let dynamicProcessor = BorderImageProcessor(border: dynamicBorder)
+        let initialIdentifier = dynamicProcessor.identifier
+        UITraitCollection(userInterfaceStyle: .dark).performAsCurrent {
+            XCTAssertEqual(dynamicProcessor.identifier, initialIdentifier)
+        }
+        UITraitCollection(userInterfaceStyle: .light).performAsCurrent {
+            XCTAssertEqual(dynamicProcessor.identifier, initialIdentifier)
+        }
+        #endif
     }
 
     func testRoundCornerProcessorUsesInputSizeBeforeScaling() throws {

@@ -475,7 +475,7 @@ public struct Border: Sendable {
 /// Processor for creating bordered images.
 public struct BorderImageProcessor: ImageProcessor {
     
-    public var identifier: String { "com.onevcat.Kingfisher.BorderImageProcessor(\(border.identifier))" }
+    public let identifier: String
     
     /// The border to be added to the image.
     public let border: Border
@@ -485,6 +485,7 @@ public struct BorderImageProcessor: ImageProcessor {
     /// - Parameter border: The border to be added to the image.
     public init(border: Border) {
         self.border = border
+        self.identifier = "com.onevcat.Kingfisher.BorderImageProcessor(\(border.identifier))"
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
