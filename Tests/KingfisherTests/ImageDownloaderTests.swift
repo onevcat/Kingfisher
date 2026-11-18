@@ -374,10 +374,10 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         let url = testURLs[0]
-        stub(url, data: testImageData)
-
-        let modifiedRequest: URLRequest? = await modifier.modified(for: URLRequest(url: url))
-        XCTAssertEqual(modifiedRequest?.value(forHTTPHeaderField: "Authorization"), "Bearer test-token")
+        _ = stubRequest("GET", url.absoluteString as NSString)
+            .withHeader("Authorization", "Bearer test-token")?
+            .andReturn(200)?
+            .withBody(testImageData as NSData)
 
         let result = try await downloader.downloadImage(with: url, options: [.requestModifier(modifier)])
         XCTAssertNotNil(result.image)
