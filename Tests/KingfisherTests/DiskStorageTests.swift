@@ -559,10 +559,43 @@ class DiskStorageTests: XCTestCase {
                 return
             }
         }
+    }
+
+    func testEnumerationAndRemovalOnNotReadyStorageThrow() {
+        let fileManager = FileManager.default
+        let fileBlockingDirectory = URL(
+            fileURLWithPath: NSTemporaryDirectory()
+        ).appendingPathComponent(UUID().uuidString)
+        fileManager.createFile(atPath: fileBlockingDirectory.path, contents: Data())
+        defer { try? fileManager.removeItem(at: fileBlockingDirectory) }
+
+        let config = DiskStorage.Config(name: "test", sizeLimit: 5, directory: fileBlockingDirectory)
+        let storage = DiskStorage.Backend<String>(noThrowConfig: config, creatingDirectory: true)
 
         XCTAssertThrowsError(try storage.totalSize()) { error in
             guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
                 XCTFail("Expected diskStorageIsNotReady for totalSize, but got \(error)")
+                return
+            }
+        }
+
+        XCTAssertThrowsError(try storage.removeExpiredValues()) { error in
+            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                XCTFail("Expected diskStorageIsNotReady for removeExpiredValues, but got \(error)")
+                return
+            }
+        }
+
+        XCTAssertThrowsError(try storage.removeSizeExceededValues()) { error in
+            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                XCTFail("Expected diskStorageIsNotReady for removeSizeExceededValues, but got \(error)")
+                return
+            }
+        }
+
+        XCTAssertThrowsError(try storage.remove(forKey: "1")) { error in
+            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                XCTFail("Expected diskStorageIsNotReady for remove, but got \(error)")
                 return
             }
         }

@@ -350,6 +350,9 @@ public enum DiskStorage {
         ///   - forcedExtension: The file extension, if exists.
         /// - Throws: An error during the removal of the value.
         public func remove(forKey key: String, forcedExtension: String? = nil) throws {
+            guard storageReady else {
+                throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
+            }
             let fileURL = cacheFileURL(forKey: key, forcedExtension: forcedExtension)
             try removeFile(at: fileURL)
         }
@@ -503,6 +506,7 @@ public enum DiskStorage {
         }
 
         /// Gets the total file size of the cache folder in bytes.
+        /// - Throws: An error during enumerating the storage directory, or if the storage is not ready.
         public func totalSize() throws -> UInt {
             let propertyKeys: [URLResourceKey] = [.fileSizeKey]
             let urls = try allFileURLs(for: propertyKeys)
