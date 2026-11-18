@@ -348,7 +348,7 @@ public enum DiskStorage {
         /// - Parameters:
         ///   - key: The cache key of the value.
         ///   - forcedExtension: The file extension, if exists.
-        /// - Throws: An error during the removal of the value.
+        /// - Throws: An error during the removal of the value, or if the storage is not ready.
         public func remove(forKey key: String, forcedExtension: String? = nil) throws {
             guard storageReady else {
                 throw KingfisherError.cacheError(reason: .diskStorageIsNotReady(cacheURL: directoryURL))
@@ -362,7 +362,7 @@ public enum DiskStorage {
         }
 
         /// Removes all values in this storage.
-        /// - Throws: An error during the removal of the values.
+        /// - Throws: An error during the removal of the values, or if the storage is not ready.
         public func removeAll() throws {
             try removeAll(skipCreatingDirectory: false)
         }
@@ -434,7 +434,7 @@ public enum DiskStorage {
         }
 
         /// Removes all expired values from this storage.
-        /// - Throws: A file manager error during the removal of the file.
+        /// - Throws: A file manager error during the removal of the file, or if the storage is not ready.
         /// - Returns: The URLs for the removed files.
         public func removeExpiredValues() throws -> [URL] {
             return try removeExpiredValues(referenceDate: Date())
@@ -466,7 +466,7 @@ public enum DiskStorage {
         }
 
         /// Removes all size-exceeded values from this storage.
-        /// - Throws: A file manager error during the removal of the file.
+        /// - Throws: A file manager error during the removal of the file, or if the storage is not ready.
         /// - Returns: The URLs for the removed files.
         ///
         /// This method checks ``DiskStorage/Config/sizeLimit`` and removes cached files in an LRU

@@ -540,6 +540,9 @@ class DiskStorageTests: XCTestCase {
         }
     }
 
+    /// Sets up a storage instance where `directory` points to a pre-existing regular file.
+    /// Because `FileManager.createDirectory` fails when a non-directory file exists at the
+    /// destination path, `prepareDirectory()` fails and leaves `storageReady == false`.
     private func withNotReadyStorage(
         sizeLimit: UInt = 0,
         block: (DiskStorage.Backend<String>) throws -> Void
