@@ -103,16 +103,33 @@ class ImageProcessorTests: XCTestCase {
         let pDuplicate = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: .all))
         XCTAssertEqual(processor.identifier, pDuplicate.identifier)
 
-        #if !os(macOS)
+        // Differing alpha produces distinct identifiers
+        #if os(macOS)
+        let opaqueColor = KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        let translucentColor = KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        #else
+        let opaqueColor = KFCrossPlatformColor(white: 0, alpha: 1.0)
+        let translucentColor = KFCrossPlatformColor(white: 0, alpha: 0.5)
+        #endif
+        let pOpaque = BorderImageProcessor(border: Border(color: opaqueColor, lineWidth: 2, radius: .point(5)))
+        let pTranslucent = BorderImageProcessor(border: Border(color: translucentColor, lineWidth: 2, radius: .point(5)))
+        XCTAssertNotEqual(pOpaque.identifier, pTranslucent.identifier)
+
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        // Separately constructed equivalent dynamic colors produce identical identifiers
+        let dynamicBorder1 = Border(color: .systemBlue, lineWidth: 2, radius: .point(5))
+        let dynamicBorder2 = Border(color: .systemBlue, lineWidth: 2, radius: .point(5))
+        let dynamicProcessor1 = BorderImageProcessor(border: dynamicBorder1)
+        let dynamicProcessor2 = BorderImageProcessor(border: dynamicBorder2)
+        XCTAssertEqual(dynamicProcessor1.identifier, dynamicProcessor2.identifier)
+
         // Trait independence: identifier is computed at init time and does not fluctuate across trait changes
-        let dynamicBorder = Border(color: .systemBlue, lineWidth: 2, radius: .point(5))
-        let dynamicProcessor = BorderImageProcessor(border: dynamicBorder)
-        let initialIdentifier = dynamicProcessor.identifier
+        let initialIdentifier = dynamicProcessor1.identifier
         UITraitCollection(userInterfaceStyle: .dark).performAsCurrent {
-            XCTAssertEqual(dynamicProcessor.identifier, initialIdentifier)
+            XCTAssertEqual(dynamicProcessor1.identifier, initialIdentifier)
         }
         UITraitCollection(userInterfaceStyle: .light).performAsCurrent {
-            XCTAssertEqual(dynamicProcessor.identifier, initialIdentifier)
+            XCTAssertEqual(dynamicProcessor1.identifier, initialIdentifier)
         }
         #endif
     }
