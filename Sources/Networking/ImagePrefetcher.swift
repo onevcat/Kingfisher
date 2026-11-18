@@ -451,6 +451,24 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
     }
 }
 
+/// Represents the result of an asynchronous prefetch operation.
+public struct ImagePrefetchResult<Element: Sendable>: Sendable {
+    /// The elements that were already cached and skipped from downloading.
+    public let skipped: [Element]
+
+    /// The elements that failed to download or cache.
+    public let failed: [Element]
+
+    /// The elements that were successfully downloaded and cached.
+    public let completed: [Element]
+
+    public init(skipped: [Element] = [], failed: [Element] = [], completed: [Element] = []) {
+        self.skipped = skipped
+        self.failed = failed
+        self.completed = completed
+    }
+}
+
 // MARK: - Swift Concurrency
 extension ImagePrefetcher {
 
@@ -462,14 +480,14 @@ extension ImagePrefetcher {
     ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
     ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
     ///   - progressBlock: Optional progress callback. Default is `nil`.
-    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` resources.
+    /// - Returns: An ``ImagePrefetchResult`` containing arrays of `skipped`, `failed`, and `completed` resources.
     /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
     @discardableResult
     public static func prefetch(
         urls: [URL],
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherProgressBlock? = nil
-    ) async throws -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) {
+    ) async throws -> ImagePrefetchResult<any Resource> {
         let resources: [any Resource] = urls
         return try await prefetch(resources: resources, options: options, progressBlock: progressBlock)
     }
@@ -482,18 +500,18 @@ extension ImagePrefetcher {
     ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
     ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
     ///   - progressBlock: Optional progress callback. Default is `nil`.
-    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` resources.
+    /// - Returns: An ``ImagePrefetchResult`` containing arrays of `skipped`, `failed`, and `completed` resources.
     /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
     @discardableResult
     public static func prefetch(
         resources: [any Resource],
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherProgressBlock? = nil
-    ) async throws -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) {
+    ) async throws -> ImagePrefetchResult<any Resource> {
         let prefetcher = ImagePrefetcher(resources: resources, options: options, progressBlock: progressBlock)
         return try await runPrefetch(prefetcher: prefetcher) { handler in
             prefetcher.completionHandler = { skipped, failed, completed in
-                handler((skipped, failed, completed))
+                handler(ImagePrefetchResult(skipped: skipped, failed: failed, completed: completed))
             }
         }
     }
@@ -506,23 +524,23 @@ extension ImagePrefetcher {
     ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
     ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
     ///   - progressBlock: Optional progress callback. Default is `nil`.
-    /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` sources.
+    /// - Returns: An ``ImagePrefetchResult`` containing arrays of `skipped`, `failed`, and `completed` sources.
     /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
     @discardableResult
     public static func prefetch(
         sources: [Source],
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherSourceProgressBlock? = nil
-    ) async throws -> (skipped: [Source], failed: [Source], completed: [Source]) {
+    ) async throws -> ImagePrefetchResult<Source> {
         let prefetcher = ImagePrefetcher(sources: sources, options: options, progressBlock: progressBlock)
         return try await runPrefetch(prefetcher: prefetcher) { handler in
             prefetcher.completionSourceHandler = { skipped, failed, completed in
-                handler((skipped, failed, completed))
+                handler(ImagePrefetchResult(skipped: skipped, failed: failed, completed: completed))
             }
         }
     }
 
-    private static func runPrefetch<T>(
+    private static func runPrefetch<T: Sendable>(
         prefetcher: ImagePrefetcher,
         setCompletion: @escaping (@escaping @Sendable (T) -> Void) -> Void
     ) async throws -> T {

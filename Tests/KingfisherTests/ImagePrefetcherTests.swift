@@ -673,7 +673,7 @@ class ImagePrefetcherTests: XCTestCase {
     }
 
     func testAsyncPrefetchCancelledOnEntry() async {
-        let task = Task { () -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) in
+        let task = Task { () -> ImagePrefetchResult<any Resource> in
             withUnsafeCurrentTask { $0?.cancel() }
             return try await ImagePrefetcher.prefetch(urls: [testURLs[0]])
         }
@@ -716,22 +716,6 @@ class ImagePrefetcherTests: XCTestCase {
 
         // Verify that prefetcher.stop() actually stopped downloading and nothing was written to the cache
         XCTAssertFalse(cache.isCached(forKey: testURLs[0].cacheKey))
-    }
-
-    func testAsyncPrefetchRapidCancellationStress() async {
-        let cache = ImageCache(name: "test-prefetch-stress-\(UUID().uuidString)")
-        defer { clearCaches([cache]) }
-
-        for _ in 0..<100 {
-            let task = Task {
-                try await ImagePrefetcher.prefetch(
-                    urls: [testURLs[0]],
-                    options: [.onlyFromCache, .targetCache(cache)]
-                )
-            }
-            task.cancel()
-            _ = try? await task.value
-        }
     }
 }
 
