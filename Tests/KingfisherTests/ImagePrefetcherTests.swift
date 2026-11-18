@@ -692,8 +692,14 @@ class ImagePrefetcherTests: XCTestCase {
         let modifier = PrefetchGatedRequestModifier(entered: entered)
         stub(testURLs[0], data: testImageData)
 
+        let cache = ImageCache(name: "test-prefetch-cancel-\(UUID().uuidString)")
+        defer { clearCaches([cache]) }
+
         let task = Task {
-            try await ImagePrefetcher.prefetch(urls: [testURLs[0]], options: [.requestModifier(modifier)])
+            try await ImagePrefetcher.prefetch(
+                urls: [testURLs[0]],
+                options: [.requestModifier(modifier), .targetCache(cache)]
+            )
         }
         await fulfillment(of: [entered], timeout: 3)
         task.cancel()
@@ -706,6 +712,25 @@ class ImagePrefetcherTests: XCTestCase {
             // Success
         } catch {
             XCTFail("Unexpected error: \(error)")
+        }
+
+        // Verify that prefetcher.stop() actually stopped downloading and nothing was written to the cache
+        XCTAssertFalse(cache.isCached(forKey: testURLs[0].cacheKey))
+    }
+
+    func testAsyncPrefetchRapidCancellationStress() async {
+        let cache = ImageCache(name: "test-prefetch-stress-\(UUID().uuidString)")
+        defer { clearCaches([cache]) }
+
+        for _ in 0..<100 {
+            let task = Task {
+                try await ImagePrefetcher.prefetch(
+                    urls: [testURLs[0]],
+                    options: [.onlyFromCache, .targetCache(cache)]
+                )
+            }
+            task.cancel()
+            _ = try? await task.value
         }
     }
 }

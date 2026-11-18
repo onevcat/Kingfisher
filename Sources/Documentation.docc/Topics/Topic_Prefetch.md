@@ -32,10 +32,12 @@ You can also prefetch and cache images asynchronously using Swift Concurrency:
 
 ```swift
 do {
-    let (skipped, failed, completed) = try await ImagePrefetcher.prefetch(urls: urls)
+    let (_, failed, completed) = try await ImagePrefetcher.prefetch(urls: urls)
     print("Completed: \(completed.count), Failed: \(failed.count)")
 } catch is CancellationError {
     print("Prefetch task was cancelled.")
+} catch {
+    print("Prefetching failed: \(error)")
 }
 ```
 

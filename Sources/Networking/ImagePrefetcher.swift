@@ -458,7 +458,9 @@ extension ImagePrefetcher {
     ///
     /// - Parameters:
     ///   - urls: The URLs to prefetch.
-    ///   - options: Options controlling prefetching behavior. Default is `nil`.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`. Note that `options.callbackQueue`
+    ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
+    ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
     ///   - progressBlock: Optional progress callback. Default is `nil`.
     /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` resources.
     /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
@@ -476,7 +478,9 @@ extension ImagePrefetcher {
     ///
     /// - Parameters:
     ///   - resources: The resources to prefetch.
-    ///   - options: Options controlling prefetching behavior. Default is `nil`.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`. Note that `options.callbackQueue`
+    ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
+    ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
     ///   - progressBlock: Optional progress callback. Default is `nil`.
     /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` resources.
     /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
@@ -486,30 +490,11 @@ extension ImagePrefetcher {
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherProgressBlock? = nil
     ) async throws -> (skipped: [any Resource], failed: [any Resource], completed: [any Resource]) {
-        guard !Task.isCancelled else {
-            throw CancellationError()
-        }
-
         let prefetcher = ImagePrefetcher(resources: resources, options: options, progressBlock: progressBlock)
-        let token = CancellationToken()
-        return try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation { continuation in
-                guard !Task.isCancelled && !token.isCancelled else {
-                    continuation.resume(throwing: CancellationError())
-                    return
-                }
-                prefetcher.completionHandler = { skipped, failed, completed in
-                    if token.isCancelled {
-                        continuation.resume(throwing: CancellationError())
-                    } else {
-                        continuation.resume(returning: (skipped, failed, completed))
-                    }
-                }
-                prefetcher.start()
+        return try await runPrefetch(prefetcher: prefetcher) { handler in
+            prefetcher.completionHandler = { skipped, failed, completed in
+                handler((skipped, failed, completed))
             }
-        } onCancel: {
-            token.cancel()
-            prefetcher.stop()
         }
     }
 
@@ -517,7 +502,9 @@ extension ImagePrefetcher {
     ///
     /// - Parameters:
     ///   - sources: The sources to prefetch.
-    ///   - options: Options controlling prefetching behavior. Default is `nil`.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`. Note that `options.callbackQueue`
+    ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
+    ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
     ///   - progressBlock: Optional progress callback. Default is `nil`.
     /// - Returns: A tuple containing arrays of `skipped`, `failed`, and `completed` sources.
     /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
@@ -527,30 +514,48 @@ extension ImagePrefetcher {
         options: KingfisherOptionsInfo? = nil,
         progressBlock: PrefetcherSourceProgressBlock? = nil
     ) async throws -> (skipped: [Source], failed: [Source], completed: [Source]) {
+        let prefetcher = ImagePrefetcher(sources: sources, options: options, progressBlock: progressBlock)
+        return try await runPrefetch(prefetcher: prefetcher) { handler in
+            prefetcher.completionSourceHandler = { skipped, failed, completed in
+                handler((skipped, failed, completed))
+            }
+        }
+    }
+
+    private static func runPrefetch<T>(
+        prefetcher: ImagePrefetcher,
+        setCompletion: @escaping (@escaping @Sendable (T) -> Void) -> Void
+    ) async throws -> T {
         guard !Task.isCancelled else {
             throw CancellationError()
         }
 
-        let prefetcher = ImagePrefetcher(sources: sources, options: options, progressBlock: progressBlock)
         let token = CancellationToken()
+        let lock = NSLock()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
+                lock.lock()
                 guard !Task.isCancelled && !token.isCancelled else {
+                    lock.unlock()
                     continuation.resume(throwing: CancellationError())
                     return
                 }
-                prefetcher.completionSourceHandler = { skipped, failed, completed in
+
+                setCompletion { result in
                     if token.isCancelled {
                         continuation.resume(throwing: CancellationError())
                     } else {
-                        continuation.resume(returning: (skipped, failed, completed))
+                        continuation.resume(returning: result)
                     }
                 }
                 prefetcher.start()
+                lock.unlock()
             }
         } onCancel: {
+            lock.lock()
             token.cancel()
             prefetcher.stop()
+            lock.unlock()
         }
     }
 }
