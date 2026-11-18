@@ -96,7 +96,6 @@ platform :ios do
 
   desc "Lint"
   lane :lint do
-    pod_lib_lint
     spm
   end
 
@@ -115,7 +114,6 @@ platform :ios do
 
     sync_build_number_to_git
     increment_version_number(version_number: target_version)
-    version_bump_podspec(path: "Kingfisher.podspec", version_number: target_version)
 
     log = extract_current_change_log(version: target_version)
     release_log = update_change_log(log: log)
@@ -138,8 +136,6 @@ platform :ios do
         "build/Kingfisher-iOS-#{target_version}.xcframework.zip"
       ]
     )
-
-    pod_push
   end
 
   lane :xcframework do |options|
