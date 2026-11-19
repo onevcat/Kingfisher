@@ -187,3 +187,35 @@ let modifier = AnyModifier { request in
 }
 downloader.downloadImage(with: url, options: [.requestModifier(modifier)])
 ```
+
+### Inspect received data chunks
+
+To observe raw data chunks as they arrive from the network without altering the download flow (such as logging transfer activity, sampling network streams, or monitoring throughput), use the ``KingfisherOptionsInfoItem/onDataReceived(_:)`` option:
+
+```swift
+imageView.kf.setImage(
+    with: url,
+    options: [
+        .onDataReceived { task, data in
+            print("Received \(data.count) bytes for \(task.task.originalRequest?.url?.absoluteString ?? "")")
+        }
+    ]
+)
+```
+
+Or when using the fluent builder syntax:
+
+```swift
+KF.url(url)
+    .onDataReceived { task, data in
+        print("Received chunk: \(data.count) bytes")
+    }
+    .set(to: imageView)
+```
+
+> Note:
+> - The closure is called on the `URLSession` delegate queue, not on the main queue. Dispatch to the main queue to update UI.
+> - Handlers add up. All `onDataReceived` handlers are called, including the ones in ``KingfisherManager/defaultOptions``.
+> - Requests for the same URL share a single download. A request that joins a running download receives only the chunks that arrive after it joins, so you cannot use this to compute a checksum of the full image.
+> - When a request becomes outdated (for example, a reused image view starts to load another URL), its handler is no longer called.
+> - The handler is not called for an image from the cache or for a ``Source/provider(_:)`` source.
