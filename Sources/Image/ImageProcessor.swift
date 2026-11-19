@@ -863,40 +863,34 @@ public func |>(left: any ImageProcessor, right: any ImageProcessor) -> any Image
 
 extension KFCrossPlatformColor {
     
-    var rgba: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+    /// The components in the extended sRGB color space, or `nil` if the color has no RGB components (for example, a
+    /// pattern color).
+    var rgbaComponents: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat)? {
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
 
         #if os(macOS)
-        if let srgb = usingColorSpace(.extendedSRGB) {
-            srgb.getRed(&r, green: &g, blue: &b, alpha: &a)
-        }
-        #else
-        _ = getRed(&r, green: &g, blue: &b, alpha: &a)
-        #endif
-        
-        return (r, g, b, a)
-    }
-    
-    var rgbaDescription: String {
-        var r: CGFloat = 0
-        var g: CGFloat = 0
-        var b: CGFloat = 0
-        var a: CGFloat = 0
-
-        #if os(macOS)
-        guard let srgb = usingColorSpace(.extendedSRGB) else {
-            return String(describing: self)
-        }
+        // `getRed` raises an exception for a color that cannot convert to RGB, so convert it first.
+        guard let srgb = usingColorSpace(.extendedSRGB) else { return nil }
         srgb.getRed(&r, green: &g, blue: &b, alpha: &a)
         #else
-        guard getRed(&r, green: &g, blue: &b, alpha: &a) else {
-            return String(describing: self)
-        }
+        guard getRed(&r, green: &g, blue: &b, alpha: &a) else { return nil }
         #endif
 
+        return (r, g, b, a)
+    }
+
+    var rgbaDescription: String {
+        guard let components = rgbaComponents else {
+            // The description of a color without RGB components contains memory addresses. A different color can
+            // reuse an address later, so the description alone can match the wrong cached image. Make the value
+            // unique, so that the worst case is a cache miss. Processors keep their identifier from `init`, so the
+            // lookup and the store of one processor still use the same key.
+            return "\(String(describing: self))#\(UUID().uuidString)"
+        }
+        let (r, g, b, a) = components
         return "(\(Double(r)),\(Double(g)),\(Double(b)),\(Double(a)))"
     }
 }
