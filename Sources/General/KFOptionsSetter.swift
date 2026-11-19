@@ -555,6 +555,24 @@ extension KFOptionSetter {
         }
         return result
     }
+
+    /// Sets an async block to modify the image download request before it is sent.
+    ///
+    /// - Parameters:
+    ///   - onDownloadTaskStarted: A block that will be called when the download task starts. Default is `nil`.
+    ///   - modifyBlock: The async modifying block that will be called to change the request before it is sent.
+    /// - Returns: A `Self` value with the changes applied.
+    public func requestModifier(
+        onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? = nil,
+        _ modifyBlock: @escaping @Sendable (URLRequest) async -> URLRequest?
+    ) -> Self {
+        let result = copyForMutation()
+        result.options.requestModifier = AsyncAnyModifier(
+            onDownloadTaskStarted: onDownloadTaskStarted,
+            modify: modifyBlock
+        )
+        return result
+    }
 }
 
 // MARK: - Redirect Handler
