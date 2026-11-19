@@ -431,20 +431,16 @@ extension KFOptionSetter {
         return result
     }
 
-    /// Appends a closure to be called whenever new data is received from the network for this download task.
+    /// Adds a closure that is called each time a chunk of image data is received from the network.
     ///
-    /// - Parameter handler: A closure invoked with the session data task and newly received data chunk.
+    /// - Parameter handler: A closure that receives the session data task and the new chunk of data.
     /// - Returns: A `Self` value with the changes applied.
     ///
-    /// - Note:
-    ///   - The closure is called on the `URLSession` delegate queue, not on the main queue. If you need to update UI,
-    ///     dispatch to the main queue.
-    ///   - Requests for the same URL share a single download. A request that joins an existing running download receives
-    ///     only the chunks that arrive after it joins. Therefore, this cannot be used for tasks requiring all bytes from
-    ///     the beginning of the file (such as full image checksum calculation).
+    /// Each call adds a handler; it does not replace the handlers that were added before. For the threading and the
+    /// cases in which the handler is not called, see ``KingfisherOptionsInfoItem/onDataReceived(_:)``.
     public func onDataReceived(_ handler: @escaping @Sendable (SessionDataTask, Data) -> Void) -> Self {
         let result = copyForMutation()
-        result.options.onDataReceivedSideEffects.append(handler)
+        result.options.onDataReceivedHandlers.append(handler)
         return result
     }
 

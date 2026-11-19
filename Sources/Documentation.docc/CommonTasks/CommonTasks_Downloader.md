@@ -214,5 +214,8 @@ KF.url(url)
 ```
 
 > Note:
-> - The closure is executed on the `URLSession` delegate queue, not on the main queue. Dispatch to the main thread if updating UI components.
-> - Multiple requests for the same URL share a single download task. A request that joins an existing in-flight download only receives the chunks that arrive after it joins. Because of this, calculating a full checksum or hash of the complete image data across shared downloads is not supported.
+> - The closure is called on the `URLSession` delegate queue, not on the main queue. Dispatch to the main queue to update UI.
+> - Handlers add up. All `onDataReceived` handlers are called, including the ones in ``KingfisherManager/defaultOptions``.
+> - Requests for the same URL share a single download. A request that joins a running download receives only the chunks that arrive after it joins, so you cannot use this to compute a checksum of the full image.
+> - When a request becomes outdated (for example, a reused image view starts to load another URL), its handler is no longer called.
+> - The handler is not called for an image from the cache or for a ``Source/provider(_:)`` source.

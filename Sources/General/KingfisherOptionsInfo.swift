@@ -415,16 +415,25 @@ public enum KingfisherOptionsInfoItem: Sendable {
     ///   an ``ImageDataProvider``, which have no HTTP response.
     case respectCacheControl
 
-    /// A closure called whenever new data is received from the network for a download task.
+    /// A closure called each time a chunk of image data is received from the network.
     ///
-    /// Use this option to observe raw data chunks as they arrive from the network without altering the download flow.
+    /// Use this option to observe the raw data as it arrives, for example to log the transfer or measure throughput.
+    /// It does not change the download.
     ///
     /// - Note:
     ///   - The closure is called on the `URLSession` delegate queue, not on the main queue. If you need to update UI,
     ///     dispatch to the main queue.
-    ///   - Requests for the same URL share a single download. A request that joins an existing running download receives
-    ///     only the chunks that arrive after it joins. Therefore, this cannot be used for tasks requiring all bytes from
-    ///     the beginning of the file (such as full image checksum calculation).
+    ///   - Handlers add up. Unlike most options, a later `.onDataReceived` item does not replace an earlier one. All
+    ///     of them are called, including the ones in ``KingfisherManager/defaultOptions``. A handler in the default
+    ///     options cannot be removed for a single request.
+    ///   - Requests for the same URL share a single download. A request that joins a running download receives only
+    ///     the chunks that arrive after it joins. So this option cannot be used for work that needs all the bytes of
+    ///     the file, such as a checksum of the full image.
+    ///   - When a request becomes outdated (for example, a reused image view starts to load another URL), its handler
+    ///     is no longer called.
+    ///   - The handler is called only for data that ``ImageDownloader`` downloads. It is not called for an image from
+    ///     the cache, for a ``Source/provider(_:)`` source, or when a subclass of ``ImageDownloader`` overrides
+    ///     `downloadImage(with:options:completionHandler:)` and does not call `super`.
     case onDataReceived(@Sendable (_ task: SessionDataTask, _ data: Data) -> Void)
 }
 
@@ -481,7 +490,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var respectCacheControl = false
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
-    var onDataReceivedSideEffects: [@Sendable (SessionDataTask, Data) -> Void] = []
+    var onDataReceivedHandlers: [@Sendable (SessionDataTask, Data) -> Void] = []
     var sourceTaskIdentifierChecker: (@Sendable () -> Bool)? = nil
     var isSourceTaskStale: Bool { sourceTaskIdentifierChecker.map { !$0() } ?? false }
 
@@ -529,7 +538,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .forcedCacheFileExtension(let ext): forcedExtension = ext
             case .respectCacheControl: respectCacheControl = true
             case .onDataReceived(let value):
-                onDataReceivedSideEffects.append(value)
+                onDataReceivedHandlers.append(value)
             }
         }
 
