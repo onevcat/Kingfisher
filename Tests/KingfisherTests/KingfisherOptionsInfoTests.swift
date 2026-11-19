@@ -63,7 +63,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
     
     func testSetOptionsShouldParseCorrectly() {
         let cache = ImageCache(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
-        let downloader = ImageDownloader(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
+        let downloader = ImageDownloader.stubbed(name: "com.onevcat.Kingfisher.KingfisherOptionsInfoTests")
         
         let queue = DispatchQueue.global(qos: .default)
         let testModifier = TestModifier()

@@ -148,8 +148,9 @@ The project supports multiple platforms (iOS, macOS, tvOS, watchOS, visionOS) an
 
 ### Test Infrastructure
 - **`Tests/KingfisherTests/KingfisherTestHelper.swift`** - Shared testing utilities and mocks
+- **`Tests/KingfisherTests/Utils/NetworkStub.swift`** - `URLProtocol` based HTTP stub (`NetworkStub`, `StubURLProtocol`)
 - **`Tests/KingfisherTests/Utils/StubHelpers.swift`** - HTTP stubbing helpers for network tests
-- **`Tests/Dependency/Nocilla/`** - HTTP mocking framework for isolated testing
+- **`Tests/KingfisherTests/Utils/KingfisherTestObserver.swift`** - Test bundle principal class that routes all requests to the stub and resets the stubs after each test
 
 ### Documentation System
 - **`Sources/Documentation.docc/`** - DocC documentation bundle
@@ -178,7 +179,7 @@ The project supports multiple platforms (iOS, macOS, tvOS, watchOS, visionOS) an
 - **Core Dependencies**: Foundation, UIKit/AppKit conditionally imported
 - **SwiftUI Module**: Depends on core modules but isolated for optional usage
 - **Extensions**: Depend on core but platform-specific
-- **Test Dependencies**: Isolated with Nocilla for HTTP mocking
+- **Test Dependencies**: None. HTTP mocking uses a small `URLProtocol` stub in the test target
 - **Build Dependencies**: Fastlane for automation, Ruby gems for tooling
 
 ### Key Integration Points

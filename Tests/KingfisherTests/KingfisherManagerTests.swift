@@ -34,7 +34,7 @@ actor CallingChecker {
     }
     
     func checkCancelBehavior(
-        stub: LSStubResponseDSL,
+        stub: NetworkStub,
         block: @escaping () async throws -> Void
     ) async throws {
         let task = Task {
@@ -56,9 +56,9 @@ actor CallingChecker {
                 }
             }
         }
-        try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+        await stub.waitForRequest()
         task.cancel()
-        _ = stub.go()
+        await stub.waitForStoppedRequest()
         await task.value
         XCTAssertTrue(called)
     }
@@ -68,21 +68,11 @@ class KingfisherManagerTests: XCTestCase {
     
     var manager: KingfisherManager!
     
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-    
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let uuid = UUID()
-        let downloader = ImageDownloader(name: "test.manager.\(uuid.uuidString)")
+        let downloader = ImageDownloader.stubbed(name: "test.manager.\(uuid.uuidString)")
         let cache = ImageCache(name: "test.cache.\(uuid.uuidString)")
         
         manager = KingfisherManager(downloader: downloader, cache: cache)
@@ -262,7 +252,7 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveImageCancel() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         let task = manager.retrieveImage(with: url) {
             result in
@@ -273,13 +263,13 @@ class KingfisherManagerTests: XCTestCase {
 
         XCTAssertNotNil(task)
         task?.cancel()
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testRetrieveImageCancelAsync() async throws {
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         let checker = CallingChecker()
         try await checker.checkCancelBehavior(stub: stub) {
@@ -295,7 +285,7 @@ class KingfisherManagerTests: XCTestCase {
     /// This confirms the existence of a race condition in the async retrieveImage implementation.
     func testRetrieveImageContinuationMisuseReproduction() async throws {
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
         
         // Create multiple concurrent tasks that are cancelled quickly
         // This should reproduce the continuation leak scenario
@@ -334,7 +324,7 @@ class KingfisherManagerTests: XCTestCase {
         try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10) // 100ms
         
         // Complete the stub to allow any pending operations to finish
-        _ = stub.go()
+        stub.release()
         
         // Wait for all tasks to complete
         for task in tasks {
@@ -351,7 +341,7 @@ class KingfisherManagerTests: XCTestCase {
     /// NOTE: Like the previous test, run this repeatedly to increase chances of reproducing the issue.
     func testRetrieveImageRaceConditionSpecific() async throws {
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 5000) // Longer delay
+        let stub = heldStub(url, data: testImageData, length: 5000) // Longer delay
         
         // This creates the specific race condition:
         // 1. Task starts
@@ -384,7 +374,7 @@ class KingfisherManagerTests: XCTestCase {
         task.cancel()
         
         // Now trigger the network response
-        _ = stub.go()
+        stub.release()
         
         // Wait for the task to complete
         await task.value
@@ -531,7 +521,11 @@ class KingfisherManagerTests: XCTestCase {
 
             XCTAssertEqual(imageCached, .memory)
 
-            delay(0.3) {
+            let disk = manager.cache.diskStorage
+            poll(until: {
+                disk.isCached(forKey: url.cacheKey) &&
+                disk.isCached(forKey: url.cacheKey.computedKey(with: p.identifier))
+            }) {
                 manager.cache.clearMemoryCache()
                 
                 imageCached = manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier)
@@ -598,18 +592,14 @@ class KingfisherManagerTests: XCTestCase {
         }
 
         let stored = expectation(description: "Processed image stored")
-        func waitForProcessedStore() {
-            guard manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier) == .memory
-            else {
-                delay(0.02) { waitForProcessedStore() }
-                return
-            }
+        poll(until: {
+            manager.cache.imageCachedType(forKey: url.cacheKey, processorIdentifier: p.identifier) == .memory
+        }) {
             // The store completion is already queued on the callback queue. Drain it before the I/O queue
             // is released.
             callbackQueue.sync { }
             stored.fulfill()
         }
-        waitForProcessedStore()
         wait(for: [stored], timeout: 3)
 
         blocker.signal()
@@ -880,9 +870,8 @@ class KingfisherManagerTests: XCTestCase {
             
             // Clear the memory cache.
             self.manager.cache.clearMemoryCache()
-            // After some time, the disk cache should be done.
-            delay(0.5) {
-                XCTAssertEqual(self.manager.cache.imageCachedType(forKey: url.cacheKey), .disk)
+            // The disk cache write finishes later.
+            poll(until: { self.manager.cache.imageCachedType(forKey: url.cacheKey) == .disk }) {
                 exp.fulfill()
             }
         }
@@ -1379,7 +1368,7 @@ class KingfisherManagerTests: XCTestCase {
         stub(url, data: testImageData)
 
         let brokenURL = URL(string: "https://kingfisher.test/manager-alternative-cancelled")!
-        let brokenStub = delayedStub(brokenURL, data: Data())
+        let brokenStub = heldStub(brokenURL, data: Data())
 
         let task = manager.retrieveImage(
             with: .network(brokenURL),
@@ -1392,7 +1381,7 @@ class KingfisherManagerTests: XCTestCase {
             exp.fulfill()
         }
         task?.cancel()
-        _ = brokenStub.go()
+        brokenStub.release()
 
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -1403,7 +1392,7 @@ class KingfisherManagerTests: XCTestCase {
         let extraCompletionExp = expectation(description: "\(#function) extra completion")
         extraCompletionExp.isInverted = true
         let url = testURLs[0]
-        let dataStub = delayedStub(url, data: testImageData)
+        let dataStub = heldStub(url, data: testImageData)
         
         let called = LockIsolated(false)
         let completionCount = LockIsolated(0)
@@ -1445,7 +1434,7 @@ class KingfisherManagerTests: XCTestCase {
 
         wait(for: [updatedExp], timeout: 3)
         XCTAssertTrue(called.value)
-        _ = dataStub.go()
+        dataStub.release()
         wait(for: [completionExp], timeout: 3)
         wait(for: [extraCompletionExp], timeout: 0.3)
     }
@@ -2224,7 +2213,7 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertEqual(result.cacheType, .none)
 
         manager.cache.clearMemoryCache()
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
 
         result = try await manager.retrieveImage(with: url, options: options)
         XCTAssertEqual(result.cacheType, .disk)
@@ -2247,7 +2236,7 @@ class KingfisherManagerTests: XCTestCase {
         )
         originalCache.clearMemoryCache()
         manager.cache.clearMemoryCache()
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
 
         let processor = RoundCornerImageProcessor(cornerRadius: 20)
         let result = try await manager.retrieveImage(
@@ -2283,7 +2272,7 @@ class KingfisherManagerTests: XCTestCase {
 
         // Another processor is then served from the cached original, without downloading again.
         manager.cache.clearMemoryCache()
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         let second = RoundCornerImageProcessor(cornerRadius: 40)
         result = try await manager.retrieveImage(with: url, options: options + [.processor(second)])
         XCTAssertEqual(result.cacheType, .none)
@@ -2386,7 +2375,7 @@ class KingfisherManagerTests: XCTestCase {
         let completionExp = expectation(description: "\(#function) completion")
         let downloadStartedExp = expectation(description: "\(#function) download started")
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
         let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
             XCTAssertNotNil(task)
             downloadStartedExp.fulfill()
@@ -2405,7 +2394,7 @@ class KingfisherManagerTests: XCTestCase {
 
         wait(for: [downloadStartedExp], timeout: 2)
         task?.cancel()
-        _ = stub.go()
+        stub.release()
         wait(for: [completionExp], timeout: 5)
     }
 
@@ -2497,7 +2486,7 @@ class KingfisherManagerTests: XCTestCase {
         let downloadStarted = expectation(description: "\(#function) download started")
         let completionExp = expectation(description: "\(#function) completion")
         let url = testURLs[0]
-        let delayedResponse = delayedStub(url, data: testImageData, length: 123)
+        let heldResponse = heldStub(url, data: testImageData, length: 123)
 
         let asyncModifier = AsyncURLModifier(url: url, onDownloadTaskStarted: { task in
             XCTAssertNotNil(task)
@@ -2521,7 +2510,7 @@ class KingfisherManagerTests: XCTestCase {
         XCTAssertNotNil(task, "asyncCacheTypeCheck should always return a shell synchronously.")
         wait(for: [downloadStarted], timeout: 2)
         task?.cancel()
-        _ = delayedResponse.go()
+        heldResponse.release()
         wait(for: [completionExp], timeout: 2)
     }
 
@@ -2530,7 +2519,7 @@ class KingfisherManagerTests: XCTestCase {
         let url = testURLs[0]
         // The async cache check runs on a background queue and can reach the download before `cancel()` below.
         // Hold the response until after cancelling, so the download cannot finish first on a slow runner.
-        let delayedResponse = delayedStub(url, data: testImageData)
+        let heldResponse = heldStub(url, data: testImageData)
 
         let task = manager.retrieveImage(
             with: url,
@@ -2547,7 +2536,7 @@ class KingfisherManagerTests: XCTestCase {
 
         XCTAssertNotNil(task)
         task?.cancel()
-        _ = delayedResponse.go()
+        heldResponse.release()
 
         wait(for: [completionExp], timeout: 3)
     }
@@ -2589,7 +2578,7 @@ class KingfisherManagerTests: XCTestCase {
         let downloadStarted = expectation(description: "\(#function) download started")
         let completionExp = expectation(description: "\(#function) completion")
         let url = testURLs[0]
-        let delayedResponse = delayedStub(url, data: testImageData)
+        let heldResponse = heldStub(url, data: testImageData)
         let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
         manager.downloader.delegate = delegate
 
@@ -2601,7 +2590,7 @@ class KingfisherManagerTests: XCTestCase {
 
         wait(for: [downloadStarted], timeout: 2)
         XCTAssertNotNil(delegate.sessionTask)
-        _ = delayedResponse.go()
+        heldResponse.release()
         wait(for: [completionExp], timeout: 3)
         XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A finished download should release its session task.")
     }
@@ -2610,7 +2599,7 @@ class KingfisherManagerTests: XCTestCase {
         let downloadStarted = expectation(description: "\(#function) download started")
         let completionExp = expectation(description: "\(#function) completion")
         let url = testURLs[0]
-        let delayedResponse = delayedStub(url, data: testImageData, statusCode: 404)
+        let heldResponse = heldStub(url, data: testImageData, statusCode: 404)
         let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
         manager.downloader.delegate = delegate
 
@@ -2621,7 +2610,7 @@ class KingfisherManagerTests: XCTestCase {
 
         wait(for: [downloadStarted], timeout: 2)
         XCTAssertNotNil(delegate.sessionTask)
-        _ = delayedResponse.go()
+        heldResponse.release()
         wait(for: [completionExp], timeout: 3)
         XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A failed download should release its session task.")
     }
@@ -2631,7 +2620,7 @@ class KingfisherManagerTests: XCTestCase {
         let cancelledExp = expectation(description: "\(#function) cancelled")
         let completionExp = expectation(description: "\(#function) completion")
         let url = testURLs[0]
-        let delayedResponse = delayedStub(url, data: testImageData)
+        let heldResponse = heldStub(url, data: testImageData)
         let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
         manager.downloader.delegate = delegate
 
@@ -2654,7 +2643,7 @@ class KingfisherManagerTests: XCTestCase {
         wait(for: [cancelledExp], timeout: 3)
         XCTAssertNotNil(delegate.sessionTask, "The other request should keep the shared download running.")
 
-        _ = delayedResponse.go()
+        heldResponse.release()
         wait(for: [completionExp], timeout: 3)
         XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "The shared session task should be released.")
     }
@@ -2772,7 +2761,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(result.value!.cacheType, .none)
 
         // A later response without the header lifts the restriction again.
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         stub(url, data: testImageData)
         manager.retrieveImage(
             with: url, options: [.respectCacheControl, .forceRefresh]
@@ -2820,7 +2809,7 @@ class KingfisherManagerTests: XCTestCase {
 
         // The server switches to `no-store`. A copy cached under the earlier permissive response
         // must not be served anymore.
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
         // `waitForCache` also waits for the removal, so the cache can be checked right away.
         manager.retrieveImage(
@@ -2848,7 +2837,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(result.value!.cacheType, .none)
 
         // The disk file was stored under the forced extension; the removal has to target the same file.
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
         manager.retrieveImage(with: url, options: options + [.forceRefresh, .waitForCache]) { result in
             XCTAssertNotNil(result.value?.image)
@@ -2875,7 +2864,7 @@ class KingfisherManagerTests: XCTestCase {
             XCTAssertEqual(manager.cache.imageCachedType(forKey: url.cacheKey, forcedExtension: "jpg"), .disk)
 
         // The original was stored under the forced extension; the `no-store` removal has to target the same file.
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         stub(url, data: testImageData, headers: ["Cache-Control": "no-store"])
         manager.retrieveImage(
             with: url, options: options + [.processor(first), .forceRefresh, .waitForCache]
@@ -2949,7 +2938,7 @@ class KingfisherManagerTests: XCTestCase {
 
         // The next response already spent its whole `max-age` in a downstream cache, so nothing is left to
         // store. The copy cached under the earlier response is removed, and the next request downloads again.
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600", "Age": "3600"])
         manager.retrieveImage(
             with: url, options: [.respectCacheControl, .forceRefresh, .waitForCache]
@@ -2975,7 +2964,7 @@ class KingfisherManagerTests: XCTestCase {
 
         // The server stops allowing caching. A refresh with no budget left must not keep the copy cached
         // under the earlier response, in memory or on disk.
-        LSNocilla.sharedInstance().clearStubs()
+        NetworkStubRegistry.reset()
         stub(url, data: testImageData, headers: ["Cache-Control": "max-age=0"])
         manager.retrieveImage(
             with: url, options: [.respectCacheControl, .forceRefresh, .waitForCache]

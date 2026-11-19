@@ -33,21 +33,11 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
     var button: NSButton!
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-
     override func setUp() {
         super.setUp()
         
         button = NSButton()
-        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
+        KingfisherManager.shared.downloader = ImageDownloader.stubbed(name: "testDownloader")
         KingfisherManager.shared.defaultOptions = [.waitForCache]
         
         cleanDefaultCache()
@@ -112,7 +102,7 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
     func testButtonNotRetainedByInFlightImageDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakButton: NSButton?
         autoreleasepool {
@@ -127,7 +117,7 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
         XCTAssertNil(weakButton, "A button should be released while its image download is still in flight.")
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -136,7 +126,7 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
     func testButtonNotRetainedByInFlightAlternateImageDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakButton: NSButton?
         autoreleasepool {
@@ -151,7 +141,7 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
         XCTAssertNil(weakButton, "A button should be released while its alternate image download is still in flight.")
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -160,16 +150,16 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
     func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         
         button.kf.setImage(with: url, completionHandler: { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
-            delay(0.1) { exp.fulfill() }
+            exp.fulfill()
         })
         
         self.button.kf.cancelImageDownloadTask()
-        _ = stub.go()
+        stub.release()
 
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -178,16 +168,16 @@ class NSButtonExtensionTests: XCTestCase, @unchecked Sendable {
     func testCancelAlternateImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         
         button.kf.setAlternateImage(with: url, completionHandler: { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
-            delay(0.1) { exp.fulfill() }
+            exp.fulfill()
         })
         
         self.button.kf.cancelAlternateImageDownloadTask()
-        _ = stub.go()
+        stub.release()
         
         waitForExpectations(timeout: 3, handler: nil)
     }

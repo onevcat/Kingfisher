@@ -33,20 +33,10 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
     var button: UIButton!
     
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-    
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-    
     override func setUp() {
         super.setUp()
         button = UIButton()
-        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
+        KingfisherManager.shared.downloader = ImageDownloader.stubbed(name: "testDownloader")
         KingfisherManager.shared.defaultOptions = [.waitForCache]
         
         cleanDefaultCache()
@@ -113,7 +103,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testButtonNotRetainedByInFlightImageDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakButton: UIButton?
         autoreleasepool {
@@ -128,7 +118,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
         XCTAssertNil(weakButton, "A button should be released while its image download is still in flight.")
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -136,7 +126,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testButtonNotRetainedByInFlightBackgroundImageDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakButton: UIButton?
         autoreleasepool {
@@ -151,7 +141,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
 
         XCTAssertNil(weakButton, "A button should be released while its background image download is still in flight.")
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -159,17 +149,17 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         KF.url(url)
             .onFailure { error in
                 XCTAssertTrue(error.isTaskCancelled)
-                delay(0.1) { exp.fulfill() }
+                exp.fulfill()
             }
             .set(to: button, for: .highlighted)
         
         self.button.kf.cancelImageDownloadTask()
-        _ = stub.go()
+        stub.release()
 
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -177,17 +167,17 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testCancelBackgroundImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         KF.url(url)
             .onFailure { error in
                 XCTAssertTrue(error.isTaskCancelled)
-                delay(0.1) { exp.fulfill() }
+                exp.fulfill()
             }
             .setBackground(to: button, for: .highlighted)
         
         self.button.kf.cancelBackgroundImageDownloadTask()
-        _ = stub.go()
+        stub.release()
         
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -268,7 +258,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testLoadingWithoutPlaceholderClearsPreviousConfigurationImage() {
         let exp = expectation(description: #function)
         stub(testURLs[0], data: testImageData)
-        let delayed = delayedStub(testURLs[1], data: testImageData)
+        let held = heldStub(testURLs[1], data: testImageData)
         button = UIButton(configuration: .plain())
 
         button.kf.setImage(with: testURLs[0], for: .normal, completionHandler: { _ in
@@ -284,7 +274,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
             self.button.layoutIfNeeded()
             XCTAssertNil(self.button.configuration?.image)
 
-            _ = delayed.go()
+            held.release()
         })
 
         waitForExpectations(timeout: 3, handler: nil)
@@ -293,7 +283,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testKeepCurrentImageWhileLoadingKeepsConfigurationImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let delayed = delayedStub(url, data: testImageData)
+        let held = heldStub(url, data: testImageData)
         let icon = UIImage(systemName: "star")!
         var configuration = UIButton.Configuration.plain()
         configuration.image = icon
@@ -311,14 +301,14 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
         button.layoutIfNeeded()
         XCTAssertIdentical(button.configuration?.image, icon)
 
-        _ = delayed.go()
+        held.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
 
     @MainActor func testLoadingNonNormalStateKeepsConfigurationImage() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let delayed = delayedStub(url, data: testImageData)
+        let held = heldStub(url, data: testImageData)
         let icon = UIImage(systemName: "star")!
         var configuration = UIButton.Configuration.plain()
         configuration.image = icon
@@ -331,7 +321,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
         button.layoutIfNeeded()
         XCTAssertIdentical(button.configuration?.image, icon)
 
-        _ = delayed.go()
+        held.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -491,7 +481,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testConfigurationBackgroundImageShowsPlaceholderWhileLoading() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         button = UIButton(configuration: .filled())
         let placeholder = UIImage()
 
@@ -502,7 +492,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
         })
         XCTAssertIdentical(button.configuration?.background.image, placeholder)
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -560,7 +550,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testButtonNotRetainedByInFlightConfigurationBackgroundImageDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakButton: UIButton?
         autoreleasepool {
@@ -578,7 +568,7 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
             "A button should be released while its configuration background image download is still in flight."
         )
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -586,18 +576,18 @@ class UIButtonExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testCancelConfigurationBackgroundImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         button = UIButton(configuration: .filled())
 
         KF.url(url)
             .onFailure { error in
                 XCTAssertTrue(error.isTaskCancelled)
-                delay(0.1) { exp.fulfill() }
+                exp.fulfill()
             }
             .setConfigurationBackground(to: button)
 
         button.kf.cancelConfigurationBackgroundImageDownloadTask()
-        _ = stub.go()
+        stub.release()
 
         waitForExpectations(timeout: 3, handler: nil)
     }

@@ -208,20 +208,10 @@ class RetryStrategyStaleCacheTests: XCTestCase {
 
     var manager: KingfisherManager!
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-
     override func setUp() {
         super.setUp()
         let uuid = UUID()
-        let downloader = ImageDownloader(name: "test.retry.stale.\(uuid.uuidString)")
+        let downloader = ImageDownloader.stubbed(name: "test.retry.stale.\(uuid.uuidString)")
         let cache = ImageCache(name: "test.retry.stale.cache.\(uuid.uuidString)")
         manager = KingfisherManager(downloader: downloader, cache: cache)
         manager.defaultOptions = [.waitForCache]
@@ -312,20 +302,10 @@ class KingfisherManagerStaleCacheTests: XCTestCase {
 
     var manager: KingfisherManager!
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-
     override func setUp() {
         super.setUp()
         let uuid = UUID()
-        let downloader = ImageDownloader(name: "test.manager.stale.\(uuid.uuidString)")
+        let downloader = ImageDownloader.stubbed(name: "test.manager.stale.\(uuid.uuidString)")
         let cache = ImageCache(name: "test.manager.stale.cache.\(uuid.uuidString)")
         manager = KingfisherManager(downloader: downloader, cache: cache)
         manager.defaultOptions = [.waitForCache]
@@ -530,20 +510,10 @@ class ImageViewExtensionStaleCacheTests: XCTestCase, @unchecked Sendable {
 
     var imageView: KFCrossPlatformImageView!
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-
     override func setUp() {
         super.setUp()
         imageView = KFCrossPlatformImageView()
-        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader.stale")
+        KingfisherManager.shared.downloader = ImageDownloader.stubbed(name: "testDownloader.stale")
         KingfisherManager.shared.defaultOptions = [.waitForCache]
         cleanDefaultCache()
     }

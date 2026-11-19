@@ -4,14 +4,15 @@
 
 ## Overview
 
-Kingfisher's test suite is located in the `Tests/KingfisherTests/` directory and provides comprehensive coverage for all major components of the library. The test suite uses XCTest framework with custom helper utilities and the Nocilla dependency for HTTP request stubbing.
+Kingfisher's test suite is located in the `Tests/KingfisherTests/` directory and provides comprehensive coverage for all major components of the library. The test suite uses XCTest framework with custom helper utilities. It has no third-party dependency: HTTP requests are stubbed by a small `URLProtocol` subclass in the test target.
 
 ### Test Infrastructure
 
 - **Test Framework**: XCTest
-- **Network Mocking**: Nocilla (located at `Tests/Dependency/Nocilla/`)
+- **Network Mocking**: `StubURLProtocol` and `NetworkStub` (`Tests/KingfisherTests/Utils/NetworkStub.swift`)
 - **Test Helper**: `Tests/KingfisherTests/KingfisherTestHelper.swift`
 - **Stub Utilities**: `Tests/KingfisherTests/Utils/StubHelpers.swift`
+- **Test Observer**: `Tests/KingfisherTests/Utils/KingfisherTestObserver.swift` (the `NSPrincipalClass` of the test bundle)
 - **Test Assets**: 
   - `Tests/KingfisherTests/dancing-banana.gif` - Animated GIF for testing
   - `Tests/KingfisherTests/single-frame.gif` - Single frame GIF for testing
@@ -108,23 +109,12 @@ xcodebuild test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destinatio
 ### Directory Structure
 ```
 Tests/
-├── Dependency/
-│   └── Nocilla/              # HTTP stubbing framework
-│       ├── LICENSE
-│       ├── README.md
-│       └── Nocilla/          # Nocilla source files
-│           ├── Categories/   # NSData and NSString extensions
-│           ├── DSL/          # Domain-specific language for stubbing
-│           ├── Diff/         # Request diff utilities
-│           ├── Hooks/        # HTTP client hooks (NSURLSession, etc.)
-│           ├── Matchers/     # Request matching logic
-│           ├── Model/        # HTTP request/response models
-│           └── Stubs/        # Stub implementation
 └── KingfisherTests/
-    ├── Info.plist
-    ├── KingfisherTestHelper.swift      # Main test helper utilities
-    ├── KingfisherTests-Bridging-Header.h  # Objective-C bridging
+    ├── Info.plist                      # Sets KingfisherTestObserver as NSPrincipalClass
+    ├── KingfisherTestHelper.swift      # Main test helper utilities (poll, ...)
     ├── Utils/
+    │   ├── KingfisherTestObserver.swift  # Bundle-level setup and per-test reset
+    │   ├── NetworkStub.swift           # URLProtocol based HTTP stub
     │   └── StubHelpers.swift           # Network stubbing helpers
     ├── dancing-banana.gif              # Animated test image
     ├── single-frame.gif                # Static test image
@@ -157,10 +147,29 @@ The `KingfisherTestHelper.swift` provides:
 - Test URLs and keys for stubbing
 - Cache cleanup utilities (`cleanDefaultCache`, `clearCaches`)
 - Image comparison with tolerance (`renderEqual`)
-- Timing utilities (`delay`)
+- `poll(until:then:)` - Waits for an asynchronous side effect without a fixed delay
 - Platform-specific test helpers
 
 The `StubHelpers.swift` provides:
-- `stub()` - Create HTTP response stubs with custom data and headers
-- `delayedStub()` - Create delayed response stubs for timing tests
-- Network error stubbing capabilities
+- `stub()` - Create HTTP response stubs with custom data and headers, optionally only for requests with given headers
+- `heldStub()` - Create a stub that holds its requests until `release()` is called
+- `stub(_:error:)` / `stub(_:errorCode:)` - Network error stubbing
+- `ImageDownloader.stubbed(name:)` - A downloader whose session uses the stub
+
+## Writing Network and Time-Dependent Tests
+
+Do not wait for a fixed time. A fixed delay is too short on a busy CI machine and too long everywhere else. Wait for the event that the test is about.
+
+### Network
+
+- Every request goes to `StubURLProtocol`. `KingfisherTestObserver` sets it up for `ImageDownloader.default` (which `KingfisherManager.shared` uses) and for `URLSession.shared`. A session with its own configuration does not use it automatically: create downloaders with `ImageDownloader.stubbed(name:)` and sessions with `URLSessionConfiguration.stubbed`.
+- A request without a matching stub fails with `UnexpectedRequestError`. Stub every URL that a test loads, also when the test only checks a failure.
+- `heldStub()` keeps requests open until `release()`. No thread is blocked while a request is held, and a request that is cancelled while held never gets the response.
+- To act after a request reached the network, wait for it: `await stub.waitForRequest()` or `wait(for: [stub.requestExpectation()])`.
+- To check that a cancellation stopped the network request, wait for `stub.waitForStoppedRequest()` or `stub.stoppedRequestExpectation()`.
+- Stubs are removed after each test. `clearStubs(afterCancelling:)` in `tearDown` also cancels the downloads of the test.
+
+### Other Asynchronous Work
+
+- Use `poll(until:then:)` to wait for a side effect that has no callback, for example a disk cache write when `.waitForCache` is not set.
+- A short fixed window is still acceptable when the test checks that something does *not* happen (for example, a completion handler called only once) and there is no event to wait for. Keep such a window short and explain it in a comment.

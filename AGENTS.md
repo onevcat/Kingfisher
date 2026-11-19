@@ -81,7 +81,7 @@ Sources/
 ### Test Structure
 - **Location**: `Tests/KingfisherTests/`
 - **Framework**: XCTest with custom `KingfisherTestHelper`
-- **Network mocking**: Uses Nocilla dependency for HTTP stubbing
+- **Network mocking**: `StubURLProtocol` in `Tests/KingfisherTests/Utils/NetworkStub.swift` (pure Swift, no dependency). See `docs/testing.md` for how to write network tests without fixed delays
 - **Test assets**: `dancing-banana.gif`, `single-frame.gif`
 
 ### Running Tests

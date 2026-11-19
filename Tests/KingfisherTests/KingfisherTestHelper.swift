@@ -111,6 +111,20 @@ func delay(_ time: Double, block: @escaping () -> Void) {
     DispatchQueue.main.asyncAfter(deadline: .now() + time) { block() }
 }
 
+/// Checks `condition` on the main queue until it is true, then runs `block` on the main queue.
+///
+/// Use it to wait for an asynchronous side effect (for example, a disk cache write) without a fixed delay. If the
+/// condition never becomes true, `block` never runs and the expectation that the test waits for times out.
+func poll(until condition: @escaping () -> Bool, then block: @escaping () -> Void) {
+    DispatchQueue.main.async {
+        if condition() {
+            block()
+        } else {
+            delay(0.01) { poll(until: condition, then: block) }
+        }
+    }
+}
+
 extension KFCrossPlatformImage {
     func renderEqual(to image: KFCrossPlatformImage, withinTolerance tolerance: UInt8 = 3) -> Bool {
         

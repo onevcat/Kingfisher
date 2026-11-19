@@ -35,16 +35,6 @@ import XCTest
 
 class ImagePrefetcherTests: XCTestCase {
     
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-    
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-    
     override func setUp() {
         super.setUp()
         cleanDefaultCache()
@@ -82,11 +72,11 @@ class ImagePrefetcherTests: XCTestCase {
     func testCancelPrefetching() {
         let completed = expectation(description: "Prefetch cancelled")
         let started = expectation(description: "Initial downloads started")
-        // Keep late URLProtocol requests from matching a later test's delayed stub.
+        // Keep late URLProtocol requests from matching a later test's held stub.
         let prefix = "https://kingfisher.test/prefetch-cancel/\(UUID().uuidString)"
         let urls = testURLs.indices.map { URL(string: "\(prefix)/\($0)")! }
-        let stubs = urls.map { delayedStub($0, data: testImageData) }
-        defer { stubs.forEach { _ = $0.go() } }
+        let stubs = urls.map { heldStub($0, data: testImageData) }
+        defer { stubs.forEach { $0.release() } }
 
         let maxConcurrentCount = 2
         started.expectedFulfillmentCount = maxConcurrentCount
@@ -528,8 +518,8 @@ class ImagePrefetcherTests: XCTestCase {
         let downloadStarted = expectation(description: "Download started")
         let completed = expectation(description: "Prefetch completed")
         let url = URL(string: "https://example.com/prefetch-session-task")!
-        let delayedResponse = delayedStub(url, data: testImageData)
-        let downloader = ImageDownloader(name: "test.prefetcher.\(UUID().uuidString)")
+        let heldResponse = heldStub(url, data: testImageData)
+        let downloader = ImageDownloader.stubbed(name: "test.prefetcher.\(UUID().uuidString)")
         let delegate = SessionTaskTrackingDelegate(started: downloadStarted)
         downloader.delegate = delegate
 
@@ -546,7 +536,7 @@ class ImagePrefetcherTests: XCTestCase {
 
         wait(for: [downloadStarted], timeout: 3)
         XCTAssertNotNil(delegate.sessionTask)
-        _ = delayedResponse.go()
+        heldResponse.release()
         wait(for: [completed], timeout: 3)
         XCTAssertTrue(delegate.waitUntilSessionTaskReleased(), "A finished prefetch should release its session task.")
         _ = prefetcher // keep the prefetcher, its manager and downloader alive for the duration of the test

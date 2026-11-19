@@ -1165,9 +1165,8 @@ final class AnimatedImageViewLayoutTests: XCTestCase {
         XCTAssertEqual(imageView.animator?.frameSizing, .pending)
 
         layout(imageView, size: CGSize(width: 40, height: 40))
-        let sized = expectation(for: NSPredicate { _, _ in
-            MainActor.runUnsafely { imageView.animator?.frameSizing != .pending }
-        }, evaluatedWith: nil)
+        let sized = expectation(description: "The frame sizing is resolved")
+        poll(until: { MainActor.runUnsafely { imageView.animator?.frameSizing != .pending } }) { sized.fulfill() }
         wait(for: [sized], timeout: 3)
     }
     #endif

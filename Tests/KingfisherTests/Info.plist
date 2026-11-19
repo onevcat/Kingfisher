@@ -20,5 +20,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>3578</string>
+	<key>NSPrincipalClass</key>
+	<string>KingfisherTests.KingfisherTestObserver</string>
 </dict>
 </plist>
