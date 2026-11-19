@@ -31,6 +31,92 @@ platform :ios do
     resolution.destination
   end
 
+  # Boots a resolved simulator destination and waits until it finishes booting, so a slow boot is not counted
+  # against launching the test runner.
+  def boot_simulator(destination)
+    udid = destination.to_s[/(?:^|,)id=([^,]+)/, 1]
+    return if udid.nil?
+
+    # `simctl boot` fails when the simulator is already booted, which is fine.
+    sh("xcrun", "simctl", "boot", udid, log: false, error_callback: ->(_) {})
+    sh("xcrun", "simctl", "bootstatus", udid, "-b")
+  end
+
+  def shutdown_simulator(destination)
+    udid = destination.to_s[/(?:^|,)id=([^,]+)/, 1]
+    return if udid.nil?
+
+    sh("xcrun", "simctl", "shutdown", udid, log: false, error_callback: ->(_) {})
+  end
+
+  # Runs the block while watching for a test runner left suspended on the simulator. `xcodebuild` launches `xctest`
+  # suspended and expects DTServiceHub to resume it. When that hand-off fails ("failed to bless service hub"), the
+  # runner stays stopped until the run fails with "The test runner hung before establishing connection". A runner
+  # that has been stopped for longer than `grace` seconds is resumed with SIGCONT, which lets the tests run.
+  def with_suspended_runner_watchdog(destination, grace: 60, interval: 5)
+    udid = destination.to_s[/(?:^|,)id=([^,]+)/, 1]
+    return yield if udid.nil?
+
+    finished = false
+    watchdog = Thread.new do
+      stopped_since = {}
+      until finished
+        sleep interval
+        now = Time.now
+        pids = suspended_runner_pids(udid)
+        stopped_since.select! { |pid, _| pids.include?(pid) }
+        pids.each do |pid|
+          stopped_since[pid] ||= now
+          next if now - stopped_since[pid] < grace
+
+          UI.important("Test runner #{pid} stayed suspended for #{grace}s. Resuming it with SIGCONT.")
+          Process.kill("CONT", pid) rescue nil
+          stopped_since.delete(pid)
+        end
+      end
+    end
+
+    begin
+      yield
+    ensure
+      finished = true
+      watchdog.join(interval + 5)
+    end
+  end
+
+  # Process IDs of stopped `xctest` processes started by the `launchd_sim` of the simulator with `udid`.
+  def suspended_runner_pids(udid)
+    processes = `ps -axo pid=,ppid=,stat=,command=`.lines.map do |line|
+      pid, ppid, stat, command = line.strip.split(/\s+/, 4)
+      { pid: pid.to_i, ppid: ppid.to_i, stat: stat.to_s, command: command.to_s }
+    end
+    launchd_pids = processes
+      .select { |p| p[:command].start_with?("launchd_sim ") && p[:command].include?(udid) }
+      .map { |p| p[:pid] }
+    processes
+      .select { |p| launchd_pids.include?(p[:ppid]) && p[:stat].start_with?("T") }
+      .select { |p| File.basename(p[:command].split(" ").first.to_s) == "xctest" }
+      .map { |p| p[:pid] }
+  end
+
+  # Whether a `scan` run that started at `started_at` failed because the test runner never started, rather than
+  # because of a test. `xcodebuild` writes this error to stderr, which does not reach the scan build log, so read
+  # the result bundle instead.
+  def test_runner_failed_to_start?(derived_data_path, started_at)
+    results = Dir.glob(File.join(derived_data_path, "Logs", "Test", "*.xcresult"))
+      .select { |path| File.mtime(path) >= started_at }
+    results.any? do |path|
+      output = sh("xcrun", "xcresulttool", "get", "test-results", "summary", "--path", path,
+                  log: false, error_callback: ->(_) {})
+      summary = JSON.parse(output.to_s.dup.force_encoding(Encoding::UTF_8)) rescue nil
+      next false if summary.nil? || summary["passedTests"].to_i > 0
+
+      (summary["testFailures"] || []).any? do |failure|
+        failure["failureText"].to_s.include?("The test runner hung before establishing connection")
+      end
+    end
+  end
+
   desc "Runs all the tests"
   lane :tests do
     test(destination: "platform=macOS")
@@ -59,17 +145,36 @@ platform :ios do
   end
 
   lane :test do |options|
-    scan(
-      scheme: "Kingfisher",
-      clean: true,
-      derived_data_path: derived_data_path(options[:destination]),
-      xcargs: "SWIFT_VERSION=5.0",
-      destination: resolve_destination(options[:destination]),
-      # CI runner VMs occasionally stall for tens of seconds, blowing async
-      # expectation budgets. Retry failed tests instead of inflating timeouts;
-      # a real regression still fails all attempts.
-      number_of_retries: 2
-    )
+    destination = resolve_destination(options[:destination])
+    derived_data = derived_data_path(options[:destination])
+    attempts = 0
+
+    begin
+      attempts += 1
+      started_at = Time.now - 1
+      boot_simulator(destination)
+      with_suspended_runner_watchdog(destination) do
+        scan(
+          scheme: "Kingfisher",
+          clean: true,
+          derived_data_path: derived_data,
+          xcargs: "SWIFT_VERSION=5.0",
+          destination: destination,
+          # CI runner VMs occasionally stall for tens of seconds, blowing async
+          # expectation budgets. Retry failed tests instead of inflating timeouts;
+          # a real regression still fails all attempts.
+          number_of_retries: 2
+        )
+      end
+    rescue => error
+      # A test runner that never connects runs no test at all, so starting over on a fresh boot is safe. Test
+      # failures are not retried here; `number_of_retries` already covers them.
+      raise error unless attempts < 2 && test_runner_failed_to_start?(derived_data, started_at)
+
+      UI.important("The test runner did not start. Rebooting the simulator and running the tests again.")
+      shutdown_simulator(destination)
+      retry
+    end
   end
 
   lane :build do |options|
