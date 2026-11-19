@@ -287,6 +287,22 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertNotNil(withFailureImage.context.options.onFailureImage ?? nil)
     }
     #endif
+
+    @MainActor
+    func testAsyncRequestModifierOptionSetter() async {
+        let builder = KF.url(URL(string: "https://example.com/test.png")!)
+            .requestModifier { request in
+                var r = request
+                r.addValue("Bearer async-token", forHTTPHeaderField: "Authorization")
+                return r
+            }
+        guard let modifier = builder.options.requestModifier else {
+            XCTFail("Modifier should be set")
+            return
+        }
+        let modified = await modifier.modified(for: URLRequest(url: URL(string: "https://example.com/test.png")!))
+        XCTAssertEqual(modified?.value(forHTTPHeaderField: "Authorization"), "Bearer async-token")
+    }
 }
 
 final class TestModifier: ImageDownloadRequestModifier {

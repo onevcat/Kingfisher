@@ -37,11 +37,50 @@ class ImageDrawingTests: XCTestCase {
         XCTAssertEqual(result.size, CGSize(width: 20, height: 20))
     }
     
+    func testImageBlurringRunsOneBoxBlurPassPerIteration() {
+        // A white dot on black. The blur runs one box blur pass for a radius below 0.5, two passes below 1.5
+        // and three passes above, all with the same box size.
+        let black: [UInt8] = [0, 0, 0, 255]
+        let white: [UInt8] = [255, 255, 255, 255]
+        let image = KFCrossPlatformImage.fromPixels((0..<32).map { y in
+            (0..<32).map { x in x == 16 && y == 16 ? white : black }
+        })
+        // The red channel of the row through the dot shows how far the blur spreads.
+        func dotRow(_ image: KFCrossPlatformImage) -> [UInt8]? {
+            image.pixelRows()?[16].map { $0[0] }
+        }
+        let onePass = image.kf.blurred(withRadius: 0.4)
+        let twoPasses = onePass.kf.blurred(withRadius: 0.4)
+        let threePasses = twoPasses.kf.blurred(withRadius: 0.4)
+
+        XCTAssertNotEqual(dotRow(image.kf.blurred(withRadius: 1.0)), dotRow(onePass))
+        XCTAssertEqual(dotRow(image.kf.blurred(withRadius: 1.0)), dotRow(twoPasses))
+        XCTAssertEqual(dotRow(image.kf.blurred(withRadius: 1.6)), dotRow(threePasses))
+    }
+
     func testImageCropping() {
         let result = testImage.kf.crop(to: CGSize(width: 20, height: 20), anchorOn: .zero)
         XCTAssertEqual(result.size, CGSize(width: 20, height: 20))
     }
     
+    func testImageAddingBorderAppliesColorAlphaOnce() throws {
+        let white: [UInt8] = [255, 255, 255, 255]
+        let image = KFCrossPlatformImage.fromPixels(Array(repeating: Array(repeating: white, count: 16), count: 16))
+
+        let opaque = image.kf.addingBorder(Border(color: KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 1), lineWidth: 4))
+        XCTAssertEqual(opaque.rgbaPixel(x: 1, y: 8), [0, 0, 0, 255])
+        XCTAssertEqual(opaque.rgbaPixel(x: 8, y: 8), white)
+
+        // Black at half alpha over white is a middle gray.
+        let translucent = image.kf.addingBorder(Border(color: KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 0.5), lineWidth: 4))
+        let edge = try XCTUnwrap(translucent.rgbaPixel(x: 1, y: 8))
+        XCTAssertEqual(Double(edge[0]), 127.5, accuracy: 2)
+        XCTAssertEqual(Double(edge[1]), 127.5, accuracy: 2)
+        XCTAssertEqual(Double(edge[2]), 127.5, accuracy: 2)
+        XCTAssertEqual(edge[3], 255)
+        XCTAssertEqual(translucent.rgbaPixel(x: 8, y: 8), white)
+    }
+
     func testImageScaling() {
         XCTAssertEqual(testImage.kf.scale, 1)
         let result = testImage.kf.scaled(to: 2.0)

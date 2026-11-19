@@ -200,7 +200,8 @@ extension KingfisherManager {
                         forKey: resource.cacheKey,
                         processorIdentifier: options.processor.identifier,
                         forcedExtension: fileExtension,
-                        expiration: options.diskCacheExpiration
+                        expiration: options.diskCacheExpiration,
+                        writeOptions: options.diskStoreWriteOptions
                     )
                     return downloadedResource
                 }
