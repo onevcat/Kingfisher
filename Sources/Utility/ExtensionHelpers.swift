@@ -101,7 +101,7 @@ extension RectCorner {
 
 extension Date {
     var isPast: Bool {
-        return isPast(referenceDate: Date())
+        return isPast(referenceDate: ExpirationClock.now)
     }
 
     func isPast(referenceDate: Date) -> Bool {

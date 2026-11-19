@@ -438,8 +438,9 @@ class ImageCacheTests: XCTestCase {
     func testCleanDiskCacheNotification() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
+        let clock = TestClock().install()
 
-        cache.diskStorage.config.expiration = .seconds(0.1)
+        cache.diskStorage.config.expiration = .seconds(1)
 
         let selfCache = self.cache
         cache.store(testImage, original: testImageData, forKey: key, toDisk: true) { _ in
@@ -463,9 +464,8 @@ class ImageCacheTests: XCTestCase {
                 exp.fulfill()
             }
 
-            delay(2) { // File writing in disk cache has an approximate (round) creating time. 1 second is not enough.
-                self.cache.cleanExpiredDiskCache()
-            }
+            clock.advance(by: 2)
+            self.cache.cleanExpiredDiskCache()
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
@@ -695,35 +695,36 @@ class ImageCacheTests: XCTestCase {
     func testStoreToMemoryWithExpiration() {
         let exp = expectation(description: #function)
         let key = testKeys[0]
+        let clock = TestClock().install()
         cache.store(
             testImage,
             original: testImageData,
             forKey: key,
-            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.5))]),
+            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(1))]),
             toDisk: true)
         {
             _ in
             XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
-            delay(1) {
-                XCTAssertEqual(self.cache.imageCachedType(forKey: key), .disk)
-                exp.fulfill()
-            }
+            clock.advance(by: 2)
+            XCTAssertEqual(self.cache.imageCachedType(forKey: key), .disk)
+            exp.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testStoreToMemoryWithExpirationAsync() async throws {
         let key = testKeys[0]
+        let clock = TestClock().install()
         try await cache.store(
             testImage,
             original: testImageData,
             forKey: key,
-            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(0.5))]),
+            options: KingfisherParsedOptionsInfo([.memoryCacheExpiration(.seconds(1))]),
             toDisk: true
         )
         XCTAssertEqual(self.cache.imageCachedType(forKey: key), .memory)
-        // After 1 sec, the cache only remains on disk.
-        try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+        // After the memory expiration, the cache only remains on disk.
+        clock.advance(by: 2)
         XCTAssertEqual(self.cache.imageCachedType(forKey: key), .disk)
     }
     

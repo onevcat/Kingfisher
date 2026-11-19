@@ -660,7 +660,7 @@ public class KingfisherManager: @unchecked Sendable {
                             ?? targetCache.memoryStorage.config.expiration
                         if !memoryExpiration.isExpired {
                             let lifetime = min(budget, memoryExpiration.timeInterval)
-                            storeOptions.memoryCacheExpiration = .date(Date().addingTimeInterval(lifetime))
+                            storeOptions.memoryCacheExpiration = .date(ExpirationClock.now.addingTimeInterval(lifetime))
                         }
                         // The disk expiration still slides on access; opt out with
                         // `.diskCacheAccessExtendingExpiration(.none)`. The target and the original cache

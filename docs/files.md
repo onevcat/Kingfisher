@@ -150,7 +150,7 @@ The project supports multiple platforms (iOS, macOS, tvOS, watchOS, visionOS) an
 - **`Tests/KingfisherTests/KingfisherTestHelper.swift`** - Shared testing utilities and mocks
 - **`Tests/KingfisherTests/Utils/NetworkStub.swift`** - `URLProtocol` based HTTP stub (`NetworkStub`, `StubURLProtocol`)
 - **`Tests/KingfisherTests/Utils/StubHelpers.swift`** - HTTP stubbing helpers for network tests
-- **`Tests/KingfisherTests/Utils/KingfisherTestObserver.swift`** - Test bundle principal class that routes all requests to the stub and resets the stubs after each test
+- **`Tests/KingfisherTests/Utils/KingfisherTestObserver.swift`** - Test bundle principal class that routes all requests to the stub and resets the stubs and the clock after each test
 
 ### Documentation System
 - **`Sources/Documentation.docc/`** - DocC documentation bundle

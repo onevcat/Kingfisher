@@ -2884,22 +2884,21 @@ class KingfisherManagerTests: XCTestCase {
         let exp = expectation(description: #function)
         let url = testURLs[0]
         stub(url, data: testImageData, headers: ["Cache-Control": "max-age=1"])
+        let clock = TestClock().install()
 
         let manager = self.manager!
         manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
             XCTAssertEqual(result.value!.cacheType, .none)
 
         // The memory cache default (300 s) would still serve the image, but `max-age` is an upper
-        // bound for both layers: once it elapses, the image downloads again. (The disk expiration is
-        // stored as a file attribute with one-second granularity, so wait a little past it.)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertEqual(result.value!.cacheType, .none)
-                exp.fulfill()
-            }
+        // bound for both layers: once it elapses, the image downloads again.
+        clock.advance(by: 2)
+        manager.retrieveImage(with: url, options: [.respectCacheControl]) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .none)
+            exp.fulfill()
         }}
-        waitForExpectations(timeout: 8, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRespectCacheControlMaxAgeDoesNotExtendConfiguredExpiration() {
@@ -2907,6 +2906,7 @@ class KingfisherManagerTests: XCTestCase {
         let url = testURLs[0]
         stub(url, data: testImageData, headers: ["Cache-Control": "max-age=3600"])
 
+        let clock = TestClock().install()
         let manager = self.manager!
         let options: KingfisherOptionsInfo = [
             .respectCacheControl, .memoryCacheExpiration(.seconds(1))
@@ -2917,14 +2917,13 @@ class KingfisherManagerTests: XCTestCase {
         // A generous `max-age` must not stretch the shorter per-request expiration: the memory
         // entry is gone after the configured one second, so the image comes from the disk cache
         // (whose own expiration is still valid) instead of the memory cache.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            manager.retrieveImage(with: url, options: options) { result in
-                XCTAssertNotNil(result.value?.image)
-                XCTAssertEqual(result.value!.cacheType, .disk)
-                exp.fulfill()
-            }
+        clock.advance(by: 1.5)
+        manager.retrieveImage(with: url, options: options) { result in
+            XCTAssertNotNil(result.value?.image)
+            XCTAssertEqual(result.value!.cacheType, .disk)
+            exp.fulfill()
         }}
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 3, handler: nil)
     }
 
     func testRespectCacheControlMaxAgeCountsResponseAge() {

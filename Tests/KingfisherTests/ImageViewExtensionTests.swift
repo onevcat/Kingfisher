@@ -875,6 +875,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     
     @MainActor func testMemoryImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
         
@@ -888,21 +889,20 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
             XCTAssertNotNil(expirationTime1)
             
-            delay(0.1, block: {
-                self.imageView.kf.setImage(with: url, options: options) { result in
-                    XCTAssertNotNil(result.value?.image)
-                    XCTAssertTrue(result.value!.cacheType == .memory)
-                    
-                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
-                    
-                    XCTAssertNotNil(expirationTime2)
-                    XCTAssertNotEqual(expirationTime1, expirationTime2)
-                    XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
-                    XCTAssertGreaterThan(expirationTime2!.timeIntervalSince(expirationTime1!), 10)
-                    
-                    exp.fulfill()
-                }
-            })
+            clock.advance(by: 0.5)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                
+                let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                
+                XCTAssertNotNil(expirationTime2)
+                XCTAssertNotEqual(expirationTime1, expirationTime2)
+                XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
+                XCTAssertGreaterThan(expirationTime2!.timeIntervalSince(expirationTime1!), 10)
+                
+                exp.fulfill()
+            }
         }
 
         waitForExpectations(timeout: 3, handler: nil)
@@ -910,6 +910,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     
     @MainActor func testMemoryImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
         
@@ -923,19 +924,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
             XCTAssertNotNil(expirationTime1)
             
-            delay(0.1, block: {
-                self.imageView.kf.setImage(with: url, options: options) { result in
-                    XCTAssertNotNil(result.value?.image)
-                    XCTAssertTrue(result.value!.cacheType == .memory)
-                    
-                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
-                    
-                    XCTAssertNotNil(expirationTime2)
-                    XCTAssertEqual(expirationTime1, expirationTime2)
-                    
-                    exp.fulfill()
-                }
-            })
+            clock.advance(by: 0.5)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                
+                let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                
+                XCTAssertNotNil(expirationTime2)
+                XCTAssertEqual(expirationTime1, expirationTime2)
+                
+                exp.fulfill()
+            }
         }
         
         waitForExpectations(timeout: 3, handler: nil)
@@ -943,6 +943,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     @MainActor func testDiskImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
 
@@ -954,20 +955,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             XCTAssertNotNil(result.value?.image)
             XCTAssertTrue(result.value!.cacheType == .none)
 
-            delay(1, block: {
+            clock.advance(by: 1)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .disk)
+                clock.advance(by: 2)
                 self.imageView.kf.setImage(with: url, options: options) { result in
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertTrue(result.value!.cacheType == .disk)
-                    delay(2, block: {
-                        self.imageView.kf.setImage(with: url, options: options) { result in
-                            XCTAssertNotNil(result.value?.image)
-                            XCTAssertTrue(result.value!.cacheType == .disk)
 
-                            exp.fulfill()
-                        }
-                    })
+                    exp.fulfill()
                 }
-            })
+            }
         }
 
         waitForExpectations(timeout: 5, handler: nil)
@@ -975,6 +974,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     @MainActor func testDiskImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
 
@@ -986,20 +986,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             XCTAssertNotNil(result.value?.image)
             XCTAssertTrue(result.value!.cacheType == .none)
 
-            delay(1, block: {
+            clock.advance(by: 1)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .disk)
+                clock.advance(by: 2)
                 self.imageView.kf.setImage(with: url, options: options) { result in
                     XCTAssertNotNil(result.value?.image)
-                    XCTAssertTrue(result.value!.cacheType == .disk)
-                    delay(2, block: {
-                        self.imageView.kf.setImage(with: url, options: options) { result in
-                            XCTAssertNotNil(result.value?.image)
-                            XCTAssertTrue(result.value!.cacheType == .none)
+                    XCTAssertTrue(result.value!.cacheType == .none)
 
-                            exp.fulfill()
-                        }
-                    })
+                    exp.fulfill()
                 }
-            })
+            }
         }
 
         waitForExpectations(timeout: 5, handler: nil)

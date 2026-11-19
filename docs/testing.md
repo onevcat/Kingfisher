@@ -111,7 +111,7 @@ xcodebuild test -workspace Kingfisher.xcworkspace -scheme Kingfisher -destinatio
 Tests/
 └── KingfisherTests/
     ├── Info.plist                      # Sets KingfisherTestObserver as NSPrincipalClass
-    ├── KingfisherTestHelper.swift      # Main test helper utilities (poll, ...)
+    ├── KingfisherTestHelper.swift      # Main test helper utilities (TestClock, poll, ...)
     ├── Utils/
     │   ├── KingfisherTestObserver.swift  # Bundle-level setup and per-test reset
     │   ├── NetworkStub.swift           # URLProtocol based HTTP stub
@@ -147,6 +147,7 @@ The `KingfisherTestHelper.swift` provides:
 - Test URLs and keys for stubbing
 - Cache cleanup utilities (`cleanDefaultCache`, `clearCaches`)
 - Image comparison with tolerance (`renderEqual`)
+- `TestClock` - A clock for cache expiration that a test moves forward by hand
 - `poll(until:then:)` - Waits for an asynchronous side effect without a fixed delay
 - Platform-specific test helpers
 
@@ -168,6 +169,11 @@ Do not wait for a fixed time. A fixed delay is too short on a busy CI machine an
 - To act after a request reached the network, wait for it: `await stub.waitForRequest()` or `wait(for: [stub.requestExpectation()])`.
 - To check that a cancellation stopped the network request, wait for `stub.waitForStoppedRequest()` or `stub.stoppedRequestExpectation()`.
 - Stubs are removed after each test. `clearStubs(afterCancelling:)` in `tearDown` also cancels the downloads of the test.
+
+### Cache Expiration
+
+- The cache reads the current date only through `ExpirationClock`. Use `TestClock().install()` and `clock.advance(by:)` instead of waiting for an expiration. The real clock is restored after each test.
+- A `TestClock` starts at a whole second. Disk cache dates are stored as file attributes rounded up to whole seconds, so check expiration with dates between whole seconds (for example, `start.addingTimeInterval(2.5)`).
 
 ### Other Asynchronous Work
 

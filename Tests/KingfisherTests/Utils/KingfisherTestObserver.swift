@@ -46,7 +46,8 @@ final class KingfisherTestObserver: NSObject, XCTestObservation {
     }
 
     func testCaseDidFinish(_ testCase: XCTestCase) {
-        // Stubs of one test must never affect the next one.
+        // Stubs and the clock of one test must never affect the next one.
         NetworkStubRegistry.reset()
+        TestClock.uninstall()
     }
 }
