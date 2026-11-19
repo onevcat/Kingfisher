@@ -82,6 +82,76 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(result.kf.scale, testImage.kf.scale)
     }
 
+    func testBorderImageProcessorIdentifier() {
+        let border = Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: .all)
+        let processor = BorderImageProcessor(border: border)
+        XCTAssertEqual(
+            processor.identifier,
+            "com.onevcat.Kingfisher.BorderImageProcessor((1.0,0.0,0.0,1.0)_2.0_5.0_)"
+        )
+
+        // Distinct inputs give distinct identifiers
+        let pColor = BorderImageProcessor(border: Border(color: .blue, lineWidth: 2, radius: .point(5)))
+        let pWidth = BorderImageProcessor(border: Border(color: .red, lineWidth: 4, radius: .point(5)))
+        let pRadius = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .widthFraction(0.5)))
+        let pCorners = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: [.topLeft]))
+
+        let allProcessors = [processor, pColor, pWidth, pRadius, pCorners]
+        XCTAssertEqual(Set(allProcessors.map(\.identifier)).count, allProcessors.count)
+
+        // Equal border configurations produce equal identifiers
+        let pDuplicate = BorderImageProcessor(border: Border(color: .red, lineWidth: 2, radius: .point(5), roundingCorners: .all))
+        XCTAssertEqual(processor.identifier, pDuplicate.identifier)
+
+        // Differing alpha produces distinct identifiers
+        let opaqueColor = KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        let translucentColor = KFCrossPlatformColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        let pOpaque = BorderImageProcessor(border: Border(color: opaqueColor, lineWidth: 2, radius: .point(5)))
+        let pTranslucent = BorderImageProcessor(border: Border(color: translucentColor, lineWidth: 2, radius: .point(5)))
+        XCTAssertNotEqual(pOpaque.identifier, pTranslucent.identifier)
+
+        // Colors differing by less than 0.01 produce distinct identifiers without key collisions
+        let colorCloseA = KFCrossPlatformColor(red: 0.101, green: 0.5, blue: 0.5, alpha: 1.0)
+        let colorCloseB = KFCrossPlatformColor(red: 0.104, green: 0.5, blue: 0.5, alpha: 1.0)
+        let pCloseA = BorderImageProcessor(border: Border(color: colorCloseA, lineWidth: 2, radius: .point(5)))
+        let pCloseB = BorderImageProcessor(border: Border(color: colorCloseB, lineWidth: 2, radius: .point(5)))
+        XCTAssertNotEqual(pCloseA.identifier, pCloseB.identifier)
+
+        // Colors without RGB components (such as pattern colors) do not crash. Their description contains only
+        // memory addresses, so two pattern colors must never share an identifier.
+        let red: [UInt8] = [255, 0, 0, 255]
+        let blue: [UInt8] = [0, 0, 255, 255]
+        let redPattern = KFCrossPlatformColor(patternImage: KFCrossPlatformImage.fromPixels([[red, red], [red, red]]))
+        let bluePattern = KFCrossPlatformColor(patternImage: KFCrossPlatformImage.fromPixels([[blue, blue], [blue, blue]]))
+        let pRedPattern = BorderImageProcessor(border: Border(color: redPattern, lineWidth: 2, radius: .point(5)))
+        let pBluePattern = BorderImageProcessor(border: Border(color: bluePattern, lineWidth: 2, radius: .point(5)))
+        let pRedPatternAgain = BorderImageProcessor(border: Border(color: redPattern, lineWidth: 2, radius: .point(5)))
+        XCTAssertNotEqual(pRedPattern.identifier, pBluePattern.identifier)
+        XCTAssertNotEqual(pRedPattern.identifier, pRedPatternAgain.identifier)
+        // One processor keeps one identifier, so its cache lookup and store use the same key.
+        XCTAssertEqual(pRedPattern.identifier, pRedPattern.identifier)
+
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        // Separately constructed equivalent dynamic colors produce identical identifiers
+        let c1 = UIColor { $0.userInterfaceStyle == .dark ? .white : .black }
+        let c2 = UIColor { $0.userInterfaceStyle == .dark ? .white : .black }
+        let dynamicBorder1 = Border(color: c1, lineWidth: 2, radius: .point(5))
+        let dynamicBorder2 = Border(color: c2, lineWidth: 2, radius: .point(5))
+        let dynamicProcessor1 = BorderImageProcessor(border: dynamicBorder1)
+        let dynamicProcessor2 = BorderImageProcessor(border: dynamicBorder2)
+        XCTAssertEqual(dynamicProcessor1.identifier, dynamicProcessor2.identifier)
+
+        // Trait independence: identifier is computed at init time and does not fluctuate across trait changes
+        let initialIdentifier = dynamicProcessor1.identifier
+        UITraitCollection(userInterfaceStyle: .dark).performAsCurrent {
+            XCTAssertEqual(dynamicProcessor1.identifier, initialIdentifier)
+        }
+        UITraitCollection(userInterfaceStyle: .light).performAsCurrent {
+            XCTAssertEqual(dynamicProcessor1.identifier, initialIdentifier)
+        }
+        #endif
+    }
+
     func testRoundCornerProcessorUsesInputSizeBeforeScaling() throws {
         let options = KingfisherParsedOptionsInfo([.scaleFactor(2)])
         let processor = RoundCornerImageProcessor(cornerRadius: 5)
@@ -185,16 +255,16 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertNotNil(three)
     }
     
-    func testParsingColorRGBA() {
+    func testParsingColorRGBA() throws {
         let sRGB = KFCrossPlatformColor(red: 0.5, green: 0.6, blue: 0.7, alpha: 0.8)
-        let rgba = sRGB.rgba
+        let rgba = try XCTUnwrap(sRGB.rgbaComponents)
         XCTAssertEqual(rgba.r, 0.5, accuracy: 0.01)
         XCTAssertEqual(rgba.g, 0.6, accuracy: 0.01)
         XCTAssertEqual(rgba.b, 0.7, accuracy: 0.01)
         XCTAssertEqual(rgba.a, 0.8, accuracy: 0.01)
         
         let extended = KFCrossPlatformColor(displayP3Red: 0, green: 1, blue: 0, alpha: 0.8)
-        let rgbaExt = extended.rgba
+        let rgbaExt = try XCTUnwrap(extended.rgbaComponents)
         // extended sRGB
         XCTAssertTrue(rgbaExt.r < 0)
         XCTAssertTrue(rgbaExt.g > 1)
@@ -202,11 +272,14 @@ class ImageProcessorTests: XCTestCase {
         XCTAssertEqual(rgbaExt.a, 0.8)
         
         let blackWhite = KFCrossPlatformColor(white: 0.3, alpha: 1.0)
-        let rgbaBlackWhite = blackWhite.rgba
+        let rgbaBlackWhite = try XCTUnwrap(blackWhite.rgbaComponents)
         XCTAssertEqual(rgbaBlackWhite.r, 0.3, accuracy: 0.01)
         XCTAssertEqual(rgbaBlackWhite.g, 0.3, accuracy: 0.01)
         XCTAssertEqual(rgbaBlackWhite.b, 0.3, accuracy: 0.01)
         XCTAssertEqual(rgbaBlackWhite.a, 1.0, accuracy: 0.01)
+
+        let pattern = KFCrossPlatformColor(patternImage: testImage)
+        XCTAssertNil(pattern.rgbaComponents)
     }
 
     func testFlippingProcessorIdentifier() {

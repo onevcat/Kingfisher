@@ -58,6 +58,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertFalse(options.cacheOriginalImage)
         XCTAssertEqual(options.diskStoreWriteOptions, [])
         XCTAssertFalse(options.respectCacheControl)
+        XCTAssertTrue(options.onDataReceivedHandlers.isEmpty)
     }
     
     func testSetOptionsShouldParseCorrectly() {
@@ -98,7 +99,8 @@ class KingfisherOptionsInfoTests: XCTestCase {
             .respectCacheControl,
             .diskStoreWriteOptions([.atomic]),
             .alternativeSources([alternativeSource]),
-            .retryStrategy(DelayRetryStrategy(maxRetryCount: 10))
+            .retryStrategy(DelayRetryStrategy(maxRetryCount: 10)),
+            .onDataReceived { _, _ in }
         ])
         
         XCTAssertTrue(options.targetCache === cache)
@@ -142,6 +144,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let retry = options.retryStrategy as? DelayRetryStrategy
         XCTAssertNotNil(retry)
         XCTAssertEqual(retry?.maxRetryCount, 10)
+        XCTAssertEqual(options.onDataReceivedHandlers.count, 1)
     }
     
     func testOptionCouldBeOverwritten() {
@@ -284,6 +287,22 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertNotNil(withFailureImage.context.options.onFailureImage ?? nil)
     }
     #endif
+
+    @MainActor
+    func testAsyncRequestModifierOptionSetter() async {
+        let builder = KF.url(URL(string: "https://example.com/test.png")!)
+            .requestModifier { request in
+                var r = request
+                r.addValue("Bearer async-token", forHTTPHeaderField: "Authorization")
+                return r
+            }
+        guard let modifier = builder.options.requestModifier else {
+            XCTFail("Modifier should be set")
+            return
+        }
+        let modified = await modifier.modified(for: URLRequest(url: URL(string: "https://example.com/test.png")!))
+        XCTAssertEqual(modified?.value(forHTTPHeaderField: "Authorization"), "Bearer async-token")
+    }
 
     @MainActor
     func testBorderOptionSetter() {

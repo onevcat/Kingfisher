@@ -2296,6 +2296,31 @@ class KingfisherManagerTests: XCTestCase {
         )
     }
 
+    func testCacheOriginalImagePassesDiskStoreWriteOptions() async throws {
+        let url = URL(string: "https://example.com/disk-store-write-options-original")!
+        stub(url, data: testImageData)
+
+        let initialData = "initial-pre-existing-content".data(using: .utf8)!
+        let originalKey = url.cacheKey
+        try await manager.cache.storeToDisk(
+            initialData,
+            forKey: originalKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier
+        )
+
+        let options: KingfisherOptionsInfo = [
+            .cacheOriginalImage,
+            .diskStoreWriteOptions(.withoutOverwriting),
+            .waitForCache
+        ]
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let result = try await manager.retrieveImage(with: url, options: options + [.processor(processor)])
+        XCTAssertEqual(result.cacheType, .none)
+
+        let cachedOriginalData = try manager.cache.diskStorage.value(forKey: originalKey)
+        XCTAssertEqual(cachedOriginalData, initialData)
+    }
+
     // MARK: - Async cache-type check (issue #2512)
 
     func testRetrieveImageWithAsyncCacheTypeCheckAcrossCacheStates() {
@@ -2503,7 +2528,9 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveImageWithAsyncCacheTypeCheckCancelsImmediately() {
         let completionExp = expectation(description: "\(#function) completion")
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        // The async cache check runs on a background queue and can reach the download before `cancel()` below.
+        // Hold the response until after cancelling, so the download cannot finish first on a slow runner.
+        let delayedResponse = delayedStub(url, data: testImageData)
 
         let task = manager.retrieveImage(
             with: url,
@@ -2520,6 +2547,7 @@ class KingfisherManagerTests: XCTestCase {
 
         XCTAssertNotNil(task)
         task?.cancel()
+        _ = delayedResponse.go()
 
         wait(for: [completionExp], timeout: 3)
     }

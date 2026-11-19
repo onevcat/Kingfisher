@@ -431,6 +431,19 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Adds a closure that is called each time a chunk of image data is received from the network.
+    ///
+    /// - Parameter handler: A closure that receives the session data task and the new chunk of data.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// Each call adds a handler; it does not replace the handlers that were added before. For the threading and the
+    /// cases in which the handler is not called, see ``KingfisherOptionsInfoItem/onDataReceived(_:)``.
+    public func onDataReceived(_ handler: @escaping @Sendable (SessionDataTask, Data) -> Void) -> Self {
+        let result = copyForMutation()
+        result.options.onDataReceivedHandlers.append(handler)
+        return result
+    }
+
     /// Sets a retry strategy to be used when issues arise during image retrieval.
     ///
     /// - Parameter strategy: The provided strategy that defines how retry attempts should occur.
@@ -553,6 +566,24 @@ extension KFOptionSetter {
             modifyBlock(&request)
             return request
         }
+        return result
+    }
+
+    /// Sets an async block to modify the image download request before it is sent.
+    ///
+    /// - Parameters:
+    ///   - onDownloadTaskStarted: A block that will be called when the download task starts. Default is `nil`.
+    ///   - modifyBlock: The async modifying block that will be called to change the request before it is sent.
+    /// - Returns: A `Self` value with the changes applied.
+    public func requestModifier(
+        onDownloadTaskStarted: (@Sendable (DownloadTask?) -> Void)? = nil,
+        _ modifyBlock: @escaping @Sendable (URLRequest) async -> URLRequest?
+    ) -> Self {
+        let result = copyForMutation()
+        result.options.requestModifier = AsyncAnyModifier(
+            onDownloadTaskStarted: onDownloadTaskStarted,
+            modify: modifyBlock
+        )
         return result
     }
 }

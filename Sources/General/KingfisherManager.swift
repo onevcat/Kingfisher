@@ -738,6 +738,7 @@ public class KingfisherManager: @unchecked Sendable {
                         processorIdentifier: DefaultImageProcessor.default.identifier,
                         forcedExtension: options.forcedExtension,
                         expiration: originalDiskExpiration,
+                        writeOptions: options.diskStoreWriteOptions,
                         callbackQueue: options.callbackQueue)
                     {
                         _ in

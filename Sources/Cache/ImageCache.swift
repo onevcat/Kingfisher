@@ -480,6 +480,57 @@ open class ImageCache: @unchecked Sendable {
             )
         }
     }
+
+    /// Stores a data to disk cache with custom disk writing options.
+    ///
+    /// - Parameters:
+    ///   - data: The data to be stored.
+    ///   - key: The key used for caching the data.
+    ///   - identifier: The identifier of the processor being used for caching. If you are using a processor for the
+    ///   image, pass the identifier of the processor to this parameter.
+    ///   - forcedExtension: The expected extension of the file. If `nil`, the file extension will be determined by the
+    ///   disk storage configuration instead.
+    ///   - expiration: The expiration policy used by this storage action.
+    ///   - writeOptions: Options used when writing the data to disk.
+    ///   - callbackQueue: The callback queue on which the `completionHandler` is invoked. The default is
+    ///   ``CallbackQueue/untouch``.
+    ///   - completionHandler: A closure that is invoked when the cache operation finishes.
+    open func storeToDisk(
+        _ data: Data,
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
+        expiration: StorageExpiration? = nil,
+        writeOptions: Data.WritingOptions,
+        callbackQueue: CallbackQueue = .untouch,
+        completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil)
+    {
+        if writeOptions.isEmpty {
+            storeToDisk(
+                data,
+                forKey: key,
+                processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
+                expiration: expiration,
+                callbackQueue: callbackQueue,
+                completionHandler: completionHandler
+            )
+            return
+        }
+
+        ioQueue.async {
+            self.syncStoreToDisk(
+                data,
+                forKey: key,
+                forcedExtension: forcedExtension,
+                processorIdentifier: identifier,
+                callbackQueue: callbackQueue,
+                expiration: expiration,
+                writeOptions: writeOptions,
+                completionHandler: completionHandler
+            )
+        }
+    }
     
     private func syncStoreToDisk(
         _ data: Data,
@@ -791,6 +842,9 @@ open class ImageCache: @unchecked Sendable {
                 callbackQueue.execute { outcomeHandler(.failure(error)) }
             } catch {
                 assertionFailure("The internal thrown error should be a `KingfisherError`.")
+                // Callers coalesce on this handler, so it has to run on every path. Reporting a miss
+                // lets the caller heal by downloading.
+                callbackQueue.execute { outcomeHandler(.success(.notFound)) }
             }
         }
     }
@@ -1192,6 +1246,8 @@ open class ImageCache: @unchecked Sendable {
                 DispatchQueue.main.async { handler(.failure(error)) }
             } catch {
                 assertionFailure("The internal thrown error should be a `KingfisherError`.")
+                let kingfisherError = KingfisherError.cacheError(reason: .cannotLoadDataFromDisk(url: self.diskStorage.directoryURL, error: error))
+                DispatchQueue.main.async { handler(.failure(kingfisherError)) }
             }
         }
     }
@@ -1344,6 +1400,40 @@ open class ImageCache: @unchecked Sendable {
                 processorIdentifier: identifier,
                 forcedExtension: forcedExtension,
                 expiration: expiration) {
+                    // Only `diskCacheResult` can fail
+                    continuation.resume(with: $0.diskCacheResult)
+                }
+        }
+    }
+
+    open func storeToDisk(
+        _ data: Data,
+        forKey key: String,
+        processorIdentifier identifier: String = "",
+        forcedExtension: String? = nil,
+        expiration: StorageExpiration? = nil,
+        writeOptions: Data.WritingOptions
+    ) async throws
+    {
+        if writeOptions.isEmpty {
+            try await storeToDisk(
+                data,
+                forKey: key,
+                processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
+                expiration: expiration
+            )
+            return
+        }
+
+        try await withCheckedThrowingContinuation { continuation in
+            storeToDisk(
+                data,
+                forKey: key,
+                processorIdentifier: identifier,
+                forcedExtension: forcedExtension,
+                expiration: expiration,
+                writeOptions: writeOptions) {
                     // Only `diskCacheResult` can fail
                     continuation.resume(with: $0.diskCacheResult)
                 }

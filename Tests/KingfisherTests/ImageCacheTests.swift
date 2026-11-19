@@ -988,6 +988,31 @@ class ImageCacheTests: XCTestCase {
         XCTAssertTrue(result.absoluteString.hasSuffix(".myExt"))
     }
 
+    func testStoreToDiskWithWriteOptions() async throws {
+        let key = "test-store-write-options-\(UUID().uuidString)"
+        let initialData = "initial-data".data(using: .utf8)!
+        let updatedData = "updated-data".data(using: .utf8)!
+
+        try await cache.storeToDisk(initialData, forKey: key)
+        XCTAssertEqual(try cache.diskStorage.value(forKey: key), initialData)
+
+        do {
+            try await cache.storeToDisk(
+                updatedData,
+                forKey: key,
+                writeOptions: .withoutOverwriting
+            )
+            XCTFail("Expected cannotCreateCacheFile error")
+        } catch let error as KingfisherError {
+            guard case .cacheError(reason: .cannotCreateCacheFile) = error else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
+        }
+
+        XCTAssertEqual(try cache.diskStorage.value(forKey: key), initialData)
+    }
+
 #if !os(macOS) && !os(watchOS)
     func testKingfisherWrapperUIApplicationSharedReturnsNilInUnitTest() {
         // UIApplication.shared is not available in some Unit Tests contexts.
