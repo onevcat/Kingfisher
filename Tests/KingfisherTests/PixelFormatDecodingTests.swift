@@ -75,6 +75,45 @@ final class PixelFormatDecodingTests: XCTestCase {
         XCTAssertEqual(resized.rgbaPixel(x: 3, y: 3), clear)
     }
 
+    func testDrawingExtendedSRGBImage() throws {
+        // HDR and float images use an extended-range color space, which `CGBitmapContext` does not support as a
+        // destination at any bit depth, so the redraw falls back to device RGB.
+        let source = try halfFloatExtendedSRGBImage()
+        XCTAssertEqual(source.colorSpace?.name, CGColorSpace.extendedSRGB)
+        let image = KFCrossPlatformImage(cgImage: source, size: CGSize(width: 8, height: 8))
+
+        let white: [UInt8] = [255, 255, 255, 255]
+        let clear: [UInt8] = [0, 0, 0, 0]
+        let decoded = image.kf.decoded
+        XCTAssertNotIdentical(decoded, image, "Decoding should redraw the image")
+        let decodedCGImage = try XCTUnwrap(decoded.kf.cgImage)
+        XCTAssertEqual(decodedCGImage.bitsPerComponent, 16)
+        XCTAssertEqual(decoded.pixelRows(), (0..<8).map { y in Array(repeating: y < 4 ? white : clear, count: 8) })
+    }
+
+    // An 8x8 image in extended sRGB with half-float components: opaque white in the top half, transparent below.
+    private func halfFloatExtendedSRGBImage() throws -> CGImage {
+        let width = 8, height = 8
+        let one: [UInt8] = [0x00, 0x3C] // 1.0 as a little-endian half float
+        let zero: [UInt8] = [0x00, 0x00]
+        let bytes: [UInt8] = (0..<height).flatMap { y in
+            Array(repeating: Array(repeating: y < height / 2 ? one : zero, count: 4).flatMap { $0 }, count: width).flatMap { $0 }
+        }
+        return try XCTUnwrap(CGImage(
+            width: width,
+            height: height,
+            bitsPerComponent: 16,
+            bitsPerPixel: 64,
+            bytesPerRow: width * 8,
+            space: try XCTUnwrap(CGColorSpace(name: CGColorSpace.extendedSRGB)),
+            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue | CGBitmapInfo.floatComponents.rawValue | CGBitmapInfo.byteOrder16Little.rawValue),
+            provider: try XCTUnwrap(CGDataProvider(data: Data(bytes) as CFData)),
+            decode: nil,
+            shouldInterpolate: false,
+            intent: .defaultIntent
+        ))
+    }
+
     // An 8x8 PNG in 16-bit gray with alpha: opaque white in the top half, transparent in the bottom half.
     private func sixteenBitGrayPNGWithAlpha() throws -> Data {
         let width = 8, height = 8

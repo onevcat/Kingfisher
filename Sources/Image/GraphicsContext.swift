@@ -95,10 +95,16 @@ private struct BitmapContextDescriptor {
     init(size: CGSize, cgImage: CGImage?) {
         width = max(Int(size.width.rounded(.down)), 1)
         height = max(Int(size.height.rounded(.down)), 1)
-        colorSpace = BitmapContextDescriptor.resolveColorSpace(from: cgImage)
         bitsPerComponent = BitmapContextDescriptor.supportedBitsPerComponent(from: cgImage)
-        let componentCount = colorSpace.numberOfComponents
         let hasAlpha = BitmapContextDescriptor.containsAlpha(from: cgImage)
+        let resolved = BitmapContextDescriptor.resolveColorSpace(from: cgImage)
+        // A gray context with alpha exists only at 8 bits per component, so 16-bit gray with alpha is drawn in RGB.
+        if resolved.model == .monochrome && hasAlpha && bitsPerComponent == 16 {
+            colorSpace = CGColorSpaceCreateDeviceRGB()
+        } else {
+            colorSpace = resolved
+        }
+        let componentCount = colorSpace.numberOfComponents
         bitmapInfo = BitmapContextDescriptor.bitmapInfo(componentCount: componentCount, hasAlpha: hasAlpha)
         let channelsPerPixel = BitmapContextDescriptor.channelsPerPixel(componentCount: componentCount, hasAlpha: hasAlpha)
         let bitsPerPixel = channelsPerPixel * bitsPerComponent
@@ -117,8 +123,8 @@ private struct BitmapContextDescriptor {
         ) {
             return context
         }
-        // Some source formats cannot be a bitmap context destination, for example a gray color space with alpha
-        // at 16 bits per component. Fall back to RGBA in device RGB, which is supported at 8 and 16 bits.
+        // Some source color spaces cannot be a bitmap context destination, for example the extended-range, Lab and
+        // XYZ ones. Fall back to RGBA in device RGB, which is supported at 8 and 16 bits.
         return CGContext(
             data: nil,
             width: width,
