@@ -2296,6 +2296,31 @@ class KingfisherManagerTests: XCTestCase {
         )
     }
 
+    func testCacheOriginalImagePassesDiskStoreWriteOptions() async throws {
+        let url = URL(string: "https://example.com/disk-store-write-options-original")!
+        stub(url, data: testImageData)
+
+        let initialData = "initial-pre-existing-content".data(using: .utf8)!
+        let originalKey = url.cacheKey
+        try await manager.cache.storeToDisk(
+            initialData,
+            forKey: originalKey,
+            processorIdentifier: DefaultImageProcessor.default.identifier
+        )
+
+        let options: KingfisherOptionsInfo = [
+            .cacheOriginalImage,
+            .diskStoreWriteOptions(.withoutOverwriting),
+            .waitForCache
+        ]
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let result = try await manager.retrieveImage(with: url, options: options + [.processor(processor)])
+        XCTAssertEqual(result.cacheType, .none)
+
+        let cachedOriginalData = try manager.cache.diskStorage.value(forKey: originalKey)
+        XCTAssertEqual(cachedOriginalData, initialData)
+    }
+
     // MARK: - Async cache-type check (issue #2512)
 
     func testRetrieveImageWithAsyncCacheTypeCheckAcrossCacheStates() {
