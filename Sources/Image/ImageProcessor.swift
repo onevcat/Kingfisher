@@ -475,7 +475,7 @@ public struct Border: Sendable {
 /// Processor for creating bordered images.
 public struct BorderImageProcessor: ImageProcessor {
     
-    public var identifier: String { "com.onevcat.Kingfisher.BorderImageProcessor(\(border)" }
+    public let identifier: String
     
     /// The border to be added to the image.
     public let border: Border
@@ -485,6 +485,7 @@ public struct BorderImageProcessor: ImageProcessor {
     /// - Parameter border: The border to be added to the image.
     public init(border: Border) {
         self.border = border
+        self.identifier = "com.onevcat.Kingfisher.BorderImageProcessor(\(border.identifier))"
     }
     
     public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
@@ -862,23 +863,34 @@ public func |>(left: any ImageProcessor, right: any ImageProcessor) -> any Image
 
 extension KFCrossPlatformColor {
     
-    var rgba: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+    /// The components in the extended sRGB color space, or `nil` if the color has no RGB components (for example, a
+    /// pattern color).
+    var rgbaComponents: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat)? {
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
 
         #if os(macOS)
-        (usingColorSpace(.extendedSRGB) ?? self).getRed(&r, green: &g, blue: &b, alpha: &a)
+        // `getRed` raises an exception for a color that cannot convert to RGB, so convert it first.
+        guard let srgb = usingColorSpace(.extendedSRGB) else { return nil }
+        srgb.getRed(&r, green: &g, blue: &b, alpha: &a)
         #else
-        getRed(&r, green: &g, blue: &b, alpha: &a)
+        guard getRed(&r, green: &g, blue: &b, alpha: &a) else { return nil }
         #endif
-        
+
         return (r, g, b, a)
     }
-    
+
     var rgbaDescription: String {
-        let components = self.rgba
-        return String(format: "(%.2f,%.2f,%.2f,%.2f)", components.r, components.g, components.b, components.a)
+        guard let components = rgbaComponents else {
+            // The description of a color without RGB components contains memory addresses. A different color can
+            // reuse an address later, so the description alone can match the wrong cached image. Make the value
+            // unique, so that the worst case is a cache miss. Processors keep their identifier from `init`, so the
+            // lookup and the store of one processor still use the same key.
+            return "\(String(describing: self))#\(UUID().uuidString)"
+        }
+        let (r, g, b, a) = components
+        return "(\(Double(r)),\(Double(g)),\(Double(b)),\(Double(a)))"
     }
 }
