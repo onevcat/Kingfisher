@@ -540,7 +540,13 @@ class DiskStorageTests: XCTestCase {
         }
     }
 
-    func testValueOnNotReadyStorageThrows() {
+    /// Sets up a storage instance where `directory` points to a pre-existing regular file.
+    /// Because `FileManager.createDirectory` fails when a non-directory file exists at the
+    /// destination path, `prepareDirectory()` fails and leaves `storageReady == false`.
+    private func withNotReadyStorage(
+        sizeLimit: UInt = 0,
+        block: (DiskStorage.Backend<String>) throws -> Void
+    ) rethrows {
         let fileManager = FileManager.default
         let fileBlockingDirectory = URL(
             fileURLWithPath: NSTemporaryDirectory()
@@ -548,15 +554,63 @@ class DiskStorageTests: XCTestCase {
         fileManager.createFile(atPath: fileBlockingDirectory.path, contents: Data())
         defer { try? fileManager.removeItem(at: fileBlockingDirectory) }
 
-        // Creating the storage folder under a regular file fails, which marks the storage as not ready.
-        let config = DiskStorage.Config(name: "test", sizeLimit: 5, directory: fileBlockingDirectory)
+        let config = DiskStorage.Config(name: "test", sizeLimit: sizeLimit, directory: fileBlockingDirectory)
         let storage = DiskStorage.Backend<String>(noThrowConfig: config, creatingDirectory: true)
+        try block(storage)
+    }
 
-        XCTAssertFalse(storage.isCached(forKey: "1"))
-        XCTAssertThrowsError(try storage.value(forKey: "1")) { error in
-            guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
-                XCTFail("Expected diskStorageIsNotReady, but got \(error)")
-                return
+    func testValueOnNotReadyStorageThrows() throws {
+        try withNotReadyStorage { storage in
+            XCTAssertFalse(storage.isCached(forKey: "1"))
+            XCTAssertThrowsError(try storage.value(forKey: "1")) { error in
+                guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                    XCTFail("Expected diskStorageIsNotReady, but got \(error)")
+                    return
+                }
+            }
+        }
+    }
+
+    func testEnumerationAndRemovalOnNotReadyStorageThrow() throws {
+        // When sizeLimit == 0 (default), removeSizeExceededValues returns early without enumerating
+        try withNotReadyStorage(sizeLimit: 0) { storage in
+            XCTAssertEqual(try storage.removeSizeExceededValues(), [])
+        }
+
+        try withNotReadyStorage(sizeLimit: 5) { storage in
+            XCTAssertThrowsError(try storage.totalSize()) { error in
+                guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                    XCTFail("Expected diskStorageIsNotReady for totalSize, but got \(error)")
+                    return
+                }
+            }
+
+            XCTAssertThrowsError(try storage.removeExpiredValues()) { error in
+                guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                    XCTFail("Expected diskStorageIsNotReady for removeExpiredValues, but got \(error)")
+                    return
+                }
+            }
+
+            XCTAssertThrowsError(try storage.removeSizeExceededValues()) { error in
+                guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                    XCTFail("Expected diskStorageIsNotReady for removeSizeExceededValues, but got \(error)")
+                    return
+                }
+            }
+
+            XCTAssertThrowsError(try storage.remove(forKey: "1")) { error in
+                guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                    XCTFail("Expected diskStorageIsNotReady for remove, but got \(error)")
+                    return
+                }
+            }
+
+            XCTAssertThrowsError(try storage.removeAll()) { error in
+                guard case KingfisherError.cacheError(reason: .diskStorageIsNotReady) = error else {
+                    XCTFail("Expected diskStorageIsNotReady for removeAll, but got \(error)")
+                    return
+                }
             }
         }
     }

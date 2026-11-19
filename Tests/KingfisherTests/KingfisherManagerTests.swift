@@ -2503,7 +2503,9 @@ class KingfisherManagerTests: XCTestCase {
     func testRetrieveImageWithAsyncCacheTypeCheckCancelsImmediately() {
         let completionExp = expectation(description: "\(#function) completion")
         let url = testURLs[0]
-        stub(url, data: testImageData)
+        // The async cache check runs on a background queue and can reach the download before `cancel()` below.
+        // Hold the response until after cancelling, so the download cannot finish first on a slow runner.
+        let delayedResponse = delayedStub(url, data: testImageData)
 
         let task = manager.retrieveImage(
             with: url,
@@ -2520,6 +2522,7 @@ class KingfisherManagerTests: XCTestCase {
 
         XCTAssertNotNil(task)
         task?.cancel()
+        _ = delayedResponse.go()
 
         wait(for: [completionExp], timeout: 3)
     }

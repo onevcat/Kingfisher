@@ -450,3 +450,130 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         }
     }
 }
+
+/// Represents the result of an asynchronous prefetch operation.
+public struct ImagePrefetchResult<Element: Sendable>: Sendable {
+    /// The elements that were already cached and skipped from downloading.
+    public let skipped: [Element]
+
+    /// The elements that failed to download or cache.
+    public let failed: [Element]
+
+    /// The elements that were successfully downloaded and cached.
+    public let completed: [Element]
+
+    public init(skipped: [Element] = [], failed: [Element] = [], completed: [Element] = []) {
+        self.skipped = skipped
+        self.failed = failed
+        self.completed = completed
+    }
+}
+
+// MARK: - Swift Concurrency
+extension ImagePrefetcher {
+
+    /// Prefetches an array of URLs and caches them asynchronously using Swift concurrency.
+    ///
+    /// - Parameters:
+    ///   - urls: The URLs to prefetch.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`. Note that `options.callbackQueue`
+    ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
+    ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
+    ///   - progressBlock: Optional progress callback. Default is `nil`.
+    /// - Returns: An ``ImagePrefetchResult`` containing arrays of `skipped`, `failed`, and `completed` resources.
+    /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
+    @discardableResult
+    public static func prefetch(
+        urls: [URL],
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: PrefetcherProgressBlock? = nil
+    ) async throws -> ImagePrefetchResult<any Resource> {
+        let resources: [any Resource] = urls
+        return try await prefetch(resources: resources, options: options, progressBlock: progressBlock)
+    }
+
+    /// Prefetches an array of resources and caches them asynchronously using Swift concurrency.
+    ///
+    /// - Parameters:
+    ///   - resources: The resources to prefetch.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`. Note that `options.callbackQueue`
+    ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
+    ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
+    ///   - progressBlock: Optional progress callback. Default is `nil`.
+    /// - Returns: An ``ImagePrefetchResult`` containing arrays of `skipped`, `failed`, and `completed` resources.
+    /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
+    @discardableResult
+    public static func prefetch(
+        resources: [any Resource],
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: PrefetcherProgressBlock? = nil
+    ) async throws -> ImagePrefetchResult<any Resource> {
+        let prefetcher = ImagePrefetcher(resources: resources, options: options, progressBlock: progressBlock)
+        return try await runPrefetch(prefetcher: prefetcher) { handler in
+            prefetcher.completionHandler = { skipped, failed, completed in
+                handler(ImagePrefetchResult(skipped: skipped, failed: failed, completed: completed))
+            }
+        }
+    }
+
+    /// Prefetches an array of sources and caches them asynchronously using Swift concurrency.
+    ///
+    /// - Parameters:
+    ///   - sources: The sources to prefetch.
+    ///   - options: Options controlling prefetching behavior. Default is `nil`. Note that `options.callbackQueue`
+    ///     is ignored; progress callbacks and completion are always delivered on the main thread, and concurrent
+    ///     downloads are limited to ``maxConcurrentDownloads`` (default 5).
+    ///   - progressBlock: Optional progress callback. Default is `nil`.
+    /// - Returns: An ``ImagePrefetchResult`` containing arrays of `skipped`, `failed`, and `completed` sources.
+    /// - Throws: `CancellationError` if the task is cancelled before or during prefetching.
+    @discardableResult
+    public static func prefetch(
+        sources: [Source],
+        options: KingfisherOptionsInfo? = nil,
+        progressBlock: PrefetcherSourceProgressBlock? = nil
+    ) async throws -> ImagePrefetchResult<Source> {
+        let prefetcher = ImagePrefetcher(sources: sources, options: options, progressBlock: progressBlock)
+        return try await runPrefetch(prefetcher: prefetcher) { handler in
+            prefetcher.completionSourceHandler = { skipped, failed, completed in
+                handler(ImagePrefetchResult(skipped: skipped, failed: failed, completed: completed))
+            }
+        }
+    }
+
+    private static func runPrefetch<T: Sendable>(
+        prefetcher: ImagePrefetcher,
+        setCompletion: @escaping (@escaping @Sendable (T) -> Void) -> Void
+    ) async throws -> T {
+        guard !Task.isCancelled else {
+            throw CancellationError()
+        }
+
+        let token = CancellationToken()
+        let lock = NSLock()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                lock.lock()
+                guard !Task.isCancelled && !token.isCancelled else {
+                    lock.unlock()
+                    continuation.resume(throwing: CancellationError())
+                    return
+                }
+
+                setCompletion { result in
+                    if token.isCancelled {
+                        continuation.resume(throwing: CancellationError())
+                    } else {
+                        continuation.resume(returning: result)
+                    }
+                }
+                prefetcher.start()
+                lock.unlock()
+            }
+        } onCancel: {
+            lock.lock()
+            token.cancel()
+            prefetcher.stop()
+            lock.unlock()
+        }
+    }
+}
