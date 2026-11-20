@@ -135,7 +135,7 @@ class DataReceivingSideEffectTests: XCTestCase {
             },
             .waitForCache
         ]
-        manager.retrieveImage(
+        _ = manager.retrieveImage(
             with: .network(url),
             options: KingfisherParsedOptionsInfo(options),
             referenceTaskIdentifierChecker: { false }
@@ -159,12 +159,12 @@ class DataReceivingSideEffectTests: XCTestCase {
         let options = KingfisherParsedOptionsInfo([.onDataReceived(sharedHandler), .forceRefresh])
 
         // Both requests use the same options and handler, and join one download.
-        manager.retrieveImage(
+        _ = manager.retrieveImage(
             with: .network(url),
             options: options,
             referenceTaskIdentifierChecker: { true }
         ) { _ in exp1.fulfill() }
-        manager.retrieveImage(
+        _ = manager.retrieveImage(
             with: .network(url),
             options: options,
             referenceTaskIdentifierChecker: { false }
