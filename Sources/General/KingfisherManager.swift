@@ -789,7 +789,12 @@ public class KingfisherManager: @unchecked Sendable {
             )
             taskCreatedReporter.report(task)
 
-            if task.isInitialized {
+            // An async request modifier prepares the request later, so the download task is linked to its session
+            // task only after this method returns. Return the task anyway, so that the caller can cancel the load.
+            // In other cases, a task that is not initialized now never starts (for example, the modifier returned
+            // `nil`).
+            let isPreparingRequest = options.requestModifier.map { !($0 is any ImageDownloadRequestModifier) } ?? false
+            if task.isInitialized || isPreparingRequest {
                 return .download(task)
             } else {
                 return nil

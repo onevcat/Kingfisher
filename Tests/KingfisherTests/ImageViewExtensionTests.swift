@@ -473,6 +473,25 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    @MainActor func testCancelImageTaskWithAsyncRequestModifier() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = heldStub(url, data: testImageData)
+
+        let task = imageView.kf.setImage(with: url, options: [.requestModifier(AsyncAnyModifier { $0 })]) { result in
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false, "Expected a cancellation, got: \(result)")
+            exp.fulfill()
+        }
+        XCTAssertNotNil(task)
+
+        wait(for: [stub.requestExpectation()], timeout: 3)
+        imageView.kf.cancelDownloadTask()
+        wait(for: [exp, stub.stoppedRequestExpectation()], timeout: 3)
+
+        stub.release()
+        XCTAssertNil(imageView.image, "A cancelled loading must not set the image.")
+    }
+
     @MainActor func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]

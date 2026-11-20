@@ -267,6 +267,43 @@ class KingfisherManagerTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    // With an async request modifier, the download starts only after the modifier returns. The returned task must
+    // still cancel it.
+    func testRetrieveImageWithAsyncRequestModifierCanBeCancelled() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = heldStub(url, data: testImageData)
+
+        let task = manager.retrieveImage(with: url, options: [.requestModifier(AsyncAnyModifier { $0 })]) { result in
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false, "Expected a cancellation, got: \(result)")
+            exp.fulfill()
+        }
+        XCTAssertNotNil(task)
+
+        wait(for: [stub.requestExpectation()], timeout: 3)
+        task?.cancel()
+        wait(for: [exp, stub.stoppedRequestExpectation()], timeout: 3)
+    }
+
+    func testRetrieveImageWithAsyncRequestModifierCanBeCancelledBeforeRequestStarts() {
+        let exp = expectation(description: #function)
+        let requestHeld = expectation(description: "The request waits in the request modifier")
+        let url = testURLs[0]
+        stub(url, data: testImageData)
+        let modifier = GatedRequestModifier(onFirstRequestHeld: { requestHeld.fulfill() })
+
+        let task = manager.retrieveImage(with: url, options: [.requestModifier(modifier)]) { result in
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false, "Expected a cancellation, got: \(result)")
+            exp.fulfill()
+        }
+        XCTAssertNotNil(task)
+
+        wait(for: [requestHeld], timeout: 3)
+        task?.cancel()
+        modifier.release()
+        wait(for: [exp], timeout: 3)
+    }
+
     func testRetrieveImageCancelAsync() async throws {
         let url = testURLs[0]
         let stub = heldStub(url, data: testImageData, length: 123)
