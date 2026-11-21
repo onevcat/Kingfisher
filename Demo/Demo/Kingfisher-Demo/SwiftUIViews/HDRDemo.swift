@@ -25,9 +25,9 @@
 import Kingfisher
 import SwiftUI
 
-/// Shows the same image as SDR and in several HDR formats. Use an HDR display (a recent iPhone or iPad) at a high
-/// brightness: with "Prefer HDR" on and "Display" set to "High", the bright parts of the HDR images are brighter than
-/// the SDR reference. The pattern has patches at 1x, 2x, 4x and 8x of the SDR white.
+/// Shows the same image as SDR and in several HDR formats, optionally through a processor. Use an HDR display (a
+/// recent iPhone or iPad) at a high brightness: with "Prefer HDR" on and "Display" set to "High", the bright parts of
+/// the HDR images are brighter than the SDR reference. The pattern has patches at 1x, 2x, 4x and 8x of the SDR white.
 @available(iOS 17.0, *)
 struct HDRDemo: View {
 
@@ -52,10 +52,28 @@ struct HDRDemo: View {
         }
     }
 
+    enum Processing: String, CaseIterable, Identifiable {
+        case none = "None"
+        case downsample = "Downsample"
+        case resize = "Resize"
+        case roundCorner = "Round"
+        case blur = "Blur"
+        var id: String { rawValue }
+        var processor: any ImageProcessor {
+            switch self {
+            case .none: return DefaultImageProcessor.default
+            case .downsample: return DownsamplingImageProcessor(size: CGSize(width: 400, height: 400))
+            case .resize: return ResizingImageProcessor(referenceSize: CGSize(width: 400, height: 267))
+            case .roundCorner: return RoundCornerImageProcessor(cornerRadius: 60)
+            case .blur: return BlurImageProcessor(blurRadius: 8)
+            }
+        }
+    }
+
     @State private var subject = Subject.photo
     @State private var preferHDR = true
     @State private var displayRange = DisplayRange.high
-    @State private var downsample = false
+    @State private var processing = Processing.none
     @State private var backgroundDecode = false
     @State private var reloadToken = 0
 
@@ -68,7 +86,7 @@ struct HDRDemo: View {
                         url: ImageLoader.hdrImageURL(subject.rawValue, format: format),
                         title: format.title,
                         preferHDR: preferHDR,
-                        downsample: downsample,
+                        processor: processing.processor,
                         backgroundDecode: backgroundDecode,
                         displayRange: displayRange.value
                     )
@@ -87,7 +105,10 @@ struct HDRDemo: View {
             }
             .pickerStyle(.segmented)
             Toggle("Prefer HDR", isOn: $preferHDR)
-            Toggle("Downsample", isOn: $downsample)
+            Picker("Processor", selection: $processing) {
+                ForEach(Processing.allCases) { Text($0.rawValue).tag($0) }
+            }
+            .pickerStyle(.segmented)
             Toggle("Background Decode", isOn: $backgroundDecode)
             Picker("Display", selection: $displayRange) {
                 ForEach(DisplayRange.allCases) { Text($0.rawValue).tag($0) }
@@ -108,7 +129,7 @@ private struct HDRImageCard: View {
     let url: URL
     let title: String
     let preferHDR: Bool
-    let downsample: Bool
+    let processor: any ImageProcessor
     let backgroundDecode: Bool
     let displayRange: Image.DynamicRange
 
@@ -120,11 +141,7 @@ private struct HDRImageCard: View {
             KFImage(url)
                 .preferHighDynamicRange(preferHDR)
                 .backgroundDecode(backgroundDecode)
-                .setProcessor(
-                    downsample
-                        ? DownsamplingImageProcessor(size: CGSize(width: 400, height: 400))
-                        : DefaultImageProcessor.default
-                )
+                .setProcessor(processor)
                 .onSuccess { result in
                     info = Self.describe(result)
                 }

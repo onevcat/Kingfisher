@@ -526,17 +526,8 @@ final class HighDynamicRangeOptionTests: XCTestCase {
         return image
     }
 
-    /// The image keeps the HDR transfer function and has pixels brighter than the SDR white.
     private func assertHDRContent(of image: UIImage, file: StaticString = #filePath, line: UInt = #line) throws {
-        let cgImage = try XCTUnwrap(image.kf.cgImage, file: file, line: line)
-        XCTAssertTrue(cgImage.usesHighDynamicRangeTransferFunction, "Not HDR: \(cgImage)", file: file, line: line)
-        var brightest: Float = 0
-        for y in 0..<cgImage.height {
-            for x in 0..<cgImage.width {
-                brightest = max(brightest, try HDRTestImage.linearPixel(of: cgImage, x: x, y: y)[0])
-            }
-        }
-        XCTAssertGreaterThan(brightest, 2, "No pixel is brighter than the SDR white", file: file, line: line)
+        try HDRTestImage.assertHDRContent(of: image, file: file, line: line)
     }
     #endif
 
@@ -680,6 +671,262 @@ final class HighDynamicRangeOptionTests: XCTestCase {
         let hdr = try await manager.retrieveImage(with: url, options: [.preferHighDynamicRange, .processor(processor)])
 
         XCTAssertEqual(hdr.cacheType, .none, "The SDR original must not be processed for an HDR request")
+    }
+}
+
+final class HighDynamicRangeProcessorTests: XCTestCase {
+
+    private var processors: [any ImageProcessor] {
+        var processors: [any ImageProcessor] = [
+            ResizingImageProcessor(referenceSize: CGSize(width: 8, height: 8)),
+            RoundCornerImageProcessor(cornerRadius: 2),
+            BorderImageProcessor(border: .init(color: .red, lineWidth: 1)),
+            OverlayImageProcessor(overlay: .red, fraction: 1),
+            CroppingImageProcessor(size: CGSize(width: 12, height: 12)),
+            BlurImageProcessor(blurRadius: 1),
+            TintImageProcessor(tint: .clear),
+            ColorControlsProcessor(brightness: 0, contrast: 1, saturation: 1, inputEV: 0),
+            BlackWhiteProcessor(),
+        ]
+        #if !os(macOS)
+        processors.append(BlendImageProcessor(blendMode: .normal))
+        #else
+        processors.append(CompositingImageProcessor(compositingOperation: .copy))
+        #endif
+        return processors
+    }
+
+    func testProcessorsKeepHDRContentOfMarkedImage() throws {
+        let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+        for processor in processors {
+            let image = try HDRTestImage.hdrImage()
+            image.kf.prefersHighDynamicRange = true
+
+            let result = try XCTUnwrap(processor.process(item: .image(image), options: options), processor.identifier)
+
+            XCTAssertTrue(result.kf.prefersHighDynamicRange, processor.identifier)
+            try HDRTestImage.assertHDRContent(of: result, processor.identifier)
+        }
+    }
+
+    func testFlippingKeepsHDRContentOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+
+        let result = image.kf.flipped(horizontal: true, vertical: false)
+
+        XCTAssertTrue(result.kf.prefersHighDynamicRange)
+        try HDRTestImage.assertHDRContent(of: result)
+        // The bright half moves to the right.
+        let cgImage = try XCTUnwrap(result.kf.cgImage)
+        let right = try HDRTestImage.linearPixel(of: cgImage, x: cgImage.width - 2, y: cgImage.height / 2)
+        XCTAssertGreaterThan(right[0], 2)
+    }
+
+    func testProcessorsKeepSizeAndScaleOfMarkedImage() throws {
+        #if os(macOS)
+        let scale: CGFloat = 1
+        #else
+        let scale: CGFloat = 2
+        #endif
+        let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 16)
+        let image = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: cgImage, scale: scale, refImage: nil)
+        image.kf.prefersHighDynamicRange = true
+        let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange, .scaleFactor(scale)])
+
+        let resized = try XCTUnwrap(
+            ResizingImageProcessor(referenceSize: CGSize(width: 4, height: 6), mode: .none)
+                .process(item: .image(image), options: options)
+        )
+
+        XCTAssertEqual(resized.size, CGSize(width: 4, height: 6))
+        XCTAssertEqual(resized.kf.cgImage?.width, Int(4 * scale))
+        XCTAssertEqual(resized.kf.cgImage?.height, Int(6 * scale))
+    }
+
+    func testProcessorsAreUnchangedForUnmarkedImage() throws {
+        let options = KingfisherParsedOptionsInfo(nil)
+        for processor in processors {
+            let image = try HDRTestImage.hdrImage()
+
+            let result = try XCTUnwrap(processor.process(item: .image(image), options: options), processor.identifier)
+
+            XCTAssertFalse(result.kf.prefersHighDynamicRange, processor.identifier)
+        }
+    }
+
+    // A result without transparency drops its alpha channel, so that it can be stored with a gain map.
+    func testOpaqueResultsOfMarkedOpaqueImageHaveNoAlpha() throws {
+        let opaqueProcessors: [any ImageProcessor] = [
+            ResizingImageProcessor(referenceSize: CGSize(width: 8, height: 8)),
+            BorderImageProcessor(border: .init(color: .red, lineWidth: 1)),
+            BlurImageProcessor(blurRadius: 1),
+            TintImageProcessor(tint: .clear),
+            ColorControlsProcessor(brightness: 0, contrast: 1, saturation: 1, inputEV: 0),
+        ]
+        let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+        for processor in opaqueProcessors {
+            let image = try HDRTestImage.hdrImage()
+            image.kf.prefersHighDynamicRange = true
+
+            let result = try XCTUnwrap(processor.process(item: .image(image), options: options), processor.identifier)
+
+            let cgImage = try XCTUnwrap(result.kf.cgImage)
+            XCTAssertTrue(cgImage.isSupportedByGainMapEncoder, "\(processor.identifier): \(cgImage)")
+            try HDRTestImage.assertHDRContent(of: result, processor.identifier)
+        }
+    }
+
+    func testResultOfMarkedTranslucentImageKeepsAlpha() throws {
+        let image = try HDRTestImage.hdrImage(layout: .littleEndianTranslucent)
+        image.kf.prefersHighDynamicRange = true
+
+        let result = image.kf.resize(to: CGSize(width: 8, height: 8))
+
+        XCTAssertEqual(result.kf.cgImage?.alphaInfo, .premultipliedLast)
+    }
+
+    func testResizedMarkedImageIsStoredWithGainMap() throws {
+        try XCTSkipUnless(HDRTestImage.canEncodeGainMap(type: .jpeg), "Gain map encoding is not available.")
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+        let resized = image.kf.resize(to: CGSize(width: 8, height: 8))
+
+        let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: resized, original: Data(fileName: "hdr-gainmap.jpg")))
+
+        XCTAssertTrue(HDRTestImage.containsGainMap(data))
+    }
+
+    // Drawing an image into a bitmap with a lower headroom tone maps it. An image with a high headroom (here, 8x the
+    // SDR white after an exposure boost) must keep its range through drawing and background decoding.
+    func testDrawingKeepsRangeOfHighHeadroomImage() throws {
+        let base = try HDRTestImage.hdrImage()
+        base.kf.prefersHighDynamicRange = true
+        let boosted = base.kf.adjusted(brightness: 0, contrast: 1, saturation: 1, inputEV: 1)
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: boosted), 7)
+
+        let results: [(String, KFCrossPlatformImage)] = [
+            ("resize", boosted.kf.resize(to: CGSize(width: 8, height: 8))),
+            ("round corner", boosted.kf.image(withRoundRadius: 2, fit: boosted.kf.size)),
+            ("decoded", boosted.kf.decoded),
+            ("blur", boosted.kf.blurred(withRadius: 1)),
+        ]
+        for (name, result) in results {
+            XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: result), 6, name)
+        }
+    }
+
+    func testOverlayWithTranslucentColorKeepsAlphaOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+        let unmarked = try HDRTestImage.hdrImage()
+
+        let result = image.kf.overlaying(with: KFCrossPlatformColor.black.withAlphaComponent(0.3), fraction: 0.5)
+        let reference = unmarked.kf.overlaying(with: KFCrossPlatformColor.black.withAlphaComponent(0.3), fraction: 0.5)
+
+        let opaqueAlphaInfos: [CGImageAlphaInfo] = [.none, .noneSkipFirst, .noneSkipLast]
+        let referenceIsOpaque = opaqueAlphaInfos.contains(try XCTUnwrap(reference.kf.cgImage?.alphaInfo))
+        let resultIsOpaque = opaqueAlphaInfos.contains(try XCTUnwrap(result.kf.cgImage?.alphaInfo))
+        XCTAssertEqual(resultIsOpaque, referenceIsOpaque, "The HDR result has the same opacity as the SDR one")
+        XCTAssertEqual(result.kf.cgImage?.usesHighDynamicRangeTransferFunction, true)
+    }
+
+    // On UIKit, the bitmap of a size that is not a whole number of pixels is rounded up, so the edge pixels are partly
+    // covered. They must keep their partial alpha, as in the regular renderer, and not be mixed with the black of an
+    // opaque bitmap.
+    #if !os(macOS)
+    func testResizingToFractionalSizeKeepsEdgeAlphaOfMarkedImage() throws {
+        for scale: CGFloat in [1, 3] {
+            let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 16)
+            let image = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: cgImage, scale: scale, refImage: nil)
+            image.kf.prefersHighDynamicRange = true
+
+            let resized = image.kf.resize(to: CGSize(width: 7.2, height: 4.2))
+
+            let result = try XCTUnwrap(resized.kf.cgImage)
+            XCTAssertEqual(result.alphaInfo, .premultipliedLast, "scale \(scale): the edge pixels are partly covered")
+            let edge = try HDRTestImage.linearPixel(of: result, x: result.width - 1, y: result.height / 2)
+            XCTAssertGreaterThan(edge[0], 0.2, "scale \(scale): the edge pixel is dark: \(edge)")
+        }
+    }
+    #else
+    // On macOS, the bitmap of such a size is rounded down, so the drawing covers it completely and it stays opaque.
+    func testResizingToFractionalSizeCoversBitmapOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage(width: 16, height: 16)
+        image.kf.prefersHighDynamicRange = true
+
+        let resized = image.kf.resize(to: CGSize(width: 7.2, height: 4.2))
+
+        let result = try XCTUnwrap(resized.kf.cgImage)
+        XCTAssertEqual(result.width, 7)
+        XCTAssertEqual(result.height, 4)
+        XCTAssertTrue(result.isSupportedByGainMapEncoder, "\(result)")
+    }
+
+    // A size below one pixel is raised to one pixel, which the drawing does not cover.
+    func testResizingBelowOnePixelKeepsAlphaOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage(width: 16, height: 16)
+        image.kf.prefersHighDynamicRange = true
+
+        let resized = image.kf.resize(to: CGSize(width: 0.5, height: 4))
+
+        XCTAssertEqual(resized.kf.cgImage?.alphaInfo, .premultipliedLast)
+    }
+    #endif
+
+    func testResizingToWholePixelSizeHasNoAlphaForMarkedOpaqueImage() throws {
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+
+        let resized = image.kf.resize(to: CGSize(width: 7, height: 5))
+
+        XCTAssertEqual(resized.kf.cgImage?.alphaInfo, .noneSkipLast)
+    }
+
+    func testOpaqueImageWithNoneAlphaInfoIsOpaque() throws {
+        let opaque = try HDRTestImage.hdrCGImage()
+        // The same pixels, with `CGImageAlphaInfo.none` (three channels are not used for 16-bit, so read them as RGBX).
+        let image = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: opaque, scale: 1, refImage: nil)
+        XCTAssertTrue(image.kf.isOpaque)
+        XCTAssertFalse(KFCrossPlatformImage().kf.isOpaque, "An image without a CGImage is not opaque")
+        let rgb = try HDRTestImage.hdrImage(layout: .floatRGB)
+        XCTAssertEqual(rgb.kf.cgImage?.alphaInfo, CGImageAlphaInfo.none)
+        XCTAssertTrue(rgb.kf.isOpaque)
+    }
+
+    #if os(macOS)
+    // On macOS, the result of a filter has the size of the image, also when the filter changes the extent.
+    func testFilterThatChangesExtentKeepsSizeOfMarkedImage() throws {
+        let filters: [Filter] = [
+            Filter { $0.applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 2]) },
+            Filter { $0.cropped(to: CGRect(x: 0, y: 0, width: 8, height: 4)) },
+        ]
+        for filter in filters {
+            let marked = try HDRTestImage.hdrImage(width: 16, height: 8)
+            marked.kf.prefersHighDynamicRange = true
+            let unmarked = try HDRTestImage.hdrImage(width: 16, height: 8)
+
+            let result = marked.kf.apply(filter)
+            let reference = unmarked.kf.apply(filter)
+
+            XCTAssertEqual(result.size, reference.size)
+            XCTAssertEqual(result.kf.cgImage?.width, reference.kf.cgImage?.width)
+            XCTAssertEqual(result.kf.cgImage?.height, reference.kf.cgImage?.height)
+            XCTAssertEqual(result.kf.cgImage?.usesHighDynamicRangeTransferFunction, true)
+        }
+    }
+    #endif
+
+    func testRoundCornerKeepsTransparencyOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+
+        let result = image.kf.image(withRoundRadius: 8, fit: image.size)
+
+        let cgImage = try XCTUnwrap(result.kf.cgImage)
+        XCTAssertNotEqual(cgImage.alphaInfo, .noneSkipLast)
+        let corner = try HDRTestImage.linearPixel(of: cgImage, x: 0, y: 0)
+        XCTAssertEqual(corner, [0, 0, 0], "The corner is transparent")
     }
 }
 
@@ -841,6 +1088,21 @@ enum HDRTestImage {
             shouldInterpolate: true,
             intent: .defaultIntent
         ))
+    }
+
+    /// Checks that an image keeps the HDR transfer function and has pixels brighter than the SDR white.
+    static func assertHDRContent(
+        of image: KFCrossPlatformImage, _ message: String = "", file: StaticString = #filePath, line: UInt = #line
+    ) throws {
+        let cgImage = try XCTUnwrap(image.kf.cgImage, file: file, line: line)
+        XCTAssertTrue(cgImage.usesHighDynamicRangeTransferFunction, "Not HDR: \(cgImage) \(message)", file: file, line: line)
+        var brightest: Float = 0
+        for y in 0..<cgImage.height {
+            for x in 0..<cgImage.width {
+                brightest = max(brightest, try linearPixel(of: cgImage, x: x, y: y)[0])
+            }
+        }
+        XCTAssertGreaterThan(brightest, 2, "No pixel is brighter than the SDR white. \(message)", file: file, line: line)
     }
 
     /// The largest red value of an image in extended linear Display P3.

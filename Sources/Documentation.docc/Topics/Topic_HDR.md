@@ -35,6 +35,9 @@ With ``KingfisherOptionsInfoItem/preferHighDynamicRange``:
 - An image with a gain map is decoded with the gain map applied (iOS 17, tvOS 17 or visionOS 1 or later). On a system
   that cannot apply gain maps, such as the simulators, the image is decoded as usual.
 - ``DownsamplingImageProcessor`` creates HDR thumbnails.
+- The built-in processors that draw or filter the image, such as ``ResizingImageProcessor``,
+  ``RoundCornerImageProcessor``, ``BlurImageProcessor`` and the Core Image based ones, keep the HDR content. They draw
+  in the color space of the image with 16 bits per component.
 - ``KingfisherOptionsInfoItem/backgroundDecode`` keeps the image HDR.
 - ``DefaultCacheSerializer`` stores the image with a gain map when the original file has one (iOS 18, tvOS 18,
   visionOS 2 or later), so it is HDR again when it is loaded from the disk cache. When that is not possible, an HDR
