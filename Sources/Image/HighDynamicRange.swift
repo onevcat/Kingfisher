@@ -356,9 +356,13 @@ extension CGContext {
     /// most of its range.
     func keepRange(of image: CGImage) {
         if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
-            _ = setEDRTargetHeadroom(max(image.contentHeadroom, kCGDefaultHDRImageContentHeadroom))
+            _ = setEDRTargetHeadroom(max(image.contentHeadroom, Self.defaultHighDynamicRangeHeadroom))
         }
     }
+
+    /// The value of `kCGDefaultHDRImageContentHeadroom`: 1000 nits for a reference white of 203 nits. The constant
+    /// is a mutable global, which Swift 6 does not allow to read from a nonisolated context.
+    static let defaultHighDynamicRangeHeadroom: Float = 1000 / 203
 }
 
 #if !os(macOS)
