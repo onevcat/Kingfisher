@@ -42,21 +42,27 @@ extension CGImage {
 
     /// Whether the ISO gain map encoder reads the pixels of this HDR image correctly.
     ///
-    /// The encoder misreads some layouts and still writes data with a gain map, so the result cannot be checked
-    /// after encoding. On macOS 27, it misreads 16-bit components in the default (big-endian) order of a
-    /// `CGContext`, which Kingfisher's own drawing produces, and it loses the colors of an image with alpha. Only
-    /// opaque images with an explicit little-endian order are accepted, such as the 10-bit images that ImageIO
-    /// decodes from a gain map file.
+    /// The encoder misreads some pixel formats and still writes data with a gain map, so the result cannot be
+    /// checked after encoding. On macOS 27, for example, it misreads 16-bit components in the default (big-endian)
+    /// order of a `CGContext`, which Kingfisher's own drawing produces, three 32-bit float components per pixel, and
+    /// any image with alpha. So only complete pixel formats that were verified are accepted:
+    ///
+    /// - 10-bit components packed in 32 bits (`RGB101010`, little-endian, unused bits first), as ImageIO decodes a
+    ///   gain map file.
+    /// - Four 16-bit components, integer or float, in little-endian order, with the last one skipped.
     var isSupportedByGainMapEncoder: Bool {
         guard usesHighDynamicRangeTransferFunction else { return false }
-        switch alphaInfo {
-        case .none, .noneSkipFirst, .noneSkipLast:
-            break
+        let byteOrder = bitmapInfo.intersection(.byteOrderMask)
+        switch pixelFormatInfo {
+        case .RGB101010:
+            return bitsPerComponent == 10 && bitsPerPixel == 32 &&
+                alphaInfo == .noneSkipFirst && byteOrder == .byteOrder32Little
+        case .packed:
+            return bitsPerComponent == 16 && bitsPerPixel == 64 &&
+                alphaInfo == .noneSkipLast && byteOrder == .byteOrder16Little
         default:
             return false
         }
-        let byteOrder = bitmapInfo.intersection(.byteOrderMask)
-        return byteOrder == .byteOrder16Little || byteOrder == .byteOrder32Little
     }
 }
 

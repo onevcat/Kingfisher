@@ -106,6 +106,34 @@ final class HighDynamicRangeTests: XCTestCase {
         XCTAssertEqual(data, decoded.kf.data(format: .unknown))
     }
 
+    // The gain map encoder misreads three 32-bit float components per pixel.
+    func testSerializerKeepsDefaultEncodingForHDRImageWithFloatRGBComponents() throws {
+        let image = try HDRTestImage.hdrImage(layout: .floatRGB)
+        XCTAssertEqual(image.kf.cgImage?.bitsPerPixel, 96)
+
+        let jpegOriginal = Data(fileName: "hdr-gainmap.jpg")
+        XCTAssertEqual(
+            DefaultCacheSerializer.default.data(with: image, original: jpegOriginal),
+            image.kf.jpegRepresentation(compressionQuality: 1.0)
+        )
+        let heicOriginal = Data(fileName: "hdr-gainmap.heic")
+        XCTAssertEqual(
+            DefaultCacheSerializer.default.data(with: image, original: heicOriginal),
+            image.kf.data(format: .unknown)
+        )
+    }
+
+    func testSerializerKeepsPixelsOfHDRImageWith16BitFloatComponents() throws {
+        try skipIfGainMapEncodingUnavailable(type: .heic)
+        let original = Data(fileName: "hdr-gainmap.heic")
+        let image = try HDRTestImage.hdrImage(layout: .littleEndianFloatOpaque)
+
+        let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: image, original: original))
+
+        XCTAssertTrue(HDRTestImage.containsGainMap(data))
+        try assertDecodesToHDRTestImage(data)
+    }
+
     // The gain map encoder loses the colors of an image with alpha.
     func testSerializerKeepsDefaultEncodingForHDRImageWithAlpha() throws {
         let original = Data(fileName: "hdr-gainmap.heic")
@@ -244,6 +272,10 @@ enum HDRTestImage {
         case defaultOrderOpaque
         /// Little-endian components, premultiplied alpha. The alpha is 0.5.
         case littleEndianTranslucent
+        /// Little-endian 16-bit float components, no alpha.
+        case littleEndianFloatOpaque
+        /// Three little-endian 32-bit float components per pixel (96 bits), no alpha.
+        case floatRGB
     }
 
     /// The pixel values of ``hdrCGImage(width:height:noise:layout:)`` in extended linear Display P3, without alpha
@@ -258,6 +290,9 @@ enum HDRTestImage {
         let alpha: Float = layout == .littleEndianTranslucent ? 0.5 : 1.0
         let linear = try extendedLinearCGImage(width: width, height: height, noise: noise, alpha: alpha)
         let space = try XCTUnwrap(CGColorSpace(name: CGColorSpace.itur_2100_PQ))
+        if layout == .floatRGB {
+            return try floatRGBCGImage(from: linear, space: space)
+        }
         let bitmapInfo: UInt32
         switch layout {
         case .littleEndianOpaque:
@@ -266,6 +301,12 @@ enum HDRTestImage {
             bitmapInfo = CGImageAlphaInfo.noneSkipLast.rawValue
         case .littleEndianTranslucent:
             bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder16Little.rawValue
+        case .littleEndianFloatOpaque:
+            bitmapInfo = CGImageAlphaInfo.noneSkipLast.rawValue |
+                CGBitmapInfo.floatComponents.rawValue |
+                CGBitmapInfo.byteOrder16Little.rawValue
+        case .floatRGB:
+            preconditionFailure("Handled above.")
         }
         let context = try XCTUnwrap(CGContext(
             data: nil,
@@ -285,6 +326,48 @@ enum HDRTestImage {
     ) throws -> KFCrossPlatformImage {
         let cgImage = try hdrCGImage(width: width, height: height, noise: noise, layout: layout)
         return KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: cgImage, scale: 1, refImage: nil)
+    }
+
+    // A bitmap context cannot have three channels, so draw into four 32-bit float channels and drop the fourth.
+    private static func floatRGBCGImage(from image: CGImage, space: CGColorSpace) throws -> CGImage {
+        let width = image.width, height = image.height
+        let context = try XCTUnwrap(CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 32,
+            bytesPerRow: width * 16,
+            space: space,
+            bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue |
+                CGBitmapInfo.floatComponents.rawValue |
+                CGBitmapInfo.byteOrder32Little.rawValue
+        ))
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let rgba = try XCTUnwrap(context.data).bindMemory(to: Float.self, capacity: width * height * 4)
+        var rgb = [Float](repeating: 0, count: width * height * 3)
+        for pixel in 0..<(width * height) {
+            for channel in 0..<3 {
+                rgb[pixel * 3 + channel] = rgba[pixel * 4 + channel]
+            }
+        }
+        let data = rgb.withUnsafeBufferPointer { Data(buffer: $0) }
+        return try XCTUnwrap(CGImage(
+            width: width,
+            height: height,
+            bitsPerComponent: 32,
+            bitsPerPixel: 96,
+            bytesPerRow: width * 12,
+            space: space,
+            bitmapInfo: CGBitmapInfo(rawValue:
+                CGImageAlphaInfo.none.rawValue |
+                CGBitmapInfo.floatComponents.rawValue |
+                CGBitmapInfo.byteOrder32Little.rawValue
+            ),
+            provider: try XCTUnwrap(CGDataProvider(data: data as CFData)),
+            decode: nil,
+            shouldInterpolate: false,
+            intent: .defaultIntent
+        ))
     }
 
     /// The RGB values of a pixel in extended linear Display P3, without alpha premultiplication.
