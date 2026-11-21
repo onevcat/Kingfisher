@@ -141,8 +141,8 @@ public struct CacheSerializationMemoryPolicy: Sendable {
 
 /// Represents a basic and default `CacheSerializer` used in the Kingfisher disk cache system.
 ///
-/// It can serialize and deserialize images in PNG, JPEG, and GIF formats. For images other than these formats, a 
-/// normalized ``KingfisherWrapper/pngRepresentation()`` will be used.
+/// It can serialize and deserialize images in PNG, JPEG, and GIF formats, and HDR images in HEIC (see below). For
+/// images other than these formats, a normalized ``KingfisherWrapper/pngRepresentation()`` will be used.
 ///
 /// When converting an `image` to the data, it will only be converted to the corresponding data type when `original`
 /// contains valid PNG, JPEG, and GIF format data. If the `original` is provided but not valid, or if `original` is
@@ -152,11 +152,16 @@ public struct CacheSerializationMemoryPolicy: Sendable {
 /// created from GIF data), the serializer will prefer the embedded GIF data and store it as GIF instead of falling
 /// back to PNG.
 ///
+/// On macOS, when the image is HDR (it uses the PQ or HLG transfer function) and `original` is JPEG or HEIC data with
+/// a gain map, the image is encoded in that format with an ISO gain map, so that the cached data keeps the HDR
+/// content. `NSImage(data:)` applies the gain map when the data is read again. This needs macOS 15. In all other
+/// cases, the encoding above is used.
+///
 /// > Tip: If you create a new image instance from an animated image in a custom processor, use
 /// > ``KingfisherWrapper/copyKingfisherState(to:)`` to propagate the embedded animated data to the new image.
 public struct DefaultCacheSerializer: CacheSerializer {
 
-    /// Writes PNG, JPEG or GIF, so the cached bytes can be decoded directly.
+    /// Writes PNG, JPEG, GIF or HEIC, so the cached bytes can be decoded directly.
     public var producesDecodableImageData: Bool { true }
     
     /// The default general cache serializer utilized throughout Kingfisher's caching mechanism.
@@ -201,6 +206,11 @@ public struct DefaultCacheSerializer: CacheSerializer {
         }
 
         if format != .GIF, !memoryPolicy.allowsSerialization(of: image) { return nil }
+        if format != .GIF, let original,
+           let data = image.kf.highDynamicRangeData(matching: original, compressionQuality: compressionQuality)
+        {
+            return data
+        }
         return image.kf.data(format: format, compressionQuality: compressionQuality)
     }
     
