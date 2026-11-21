@@ -17,15 +17,18 @@
 		2F6023D252BE169414B01D8B /* CancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAE088D96F2BF3FACCBD355 /* CancellationToken.swift */; };
 		388F37382B4D9CDB0089705C /* DisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388F37372B4D9CDB0089705C /* DisplayLink.swift */; };
 		38D5D3A32C5C757E00BF1D01 /* PixelFormatDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D5D3A42C5C757E00BF1D01 /* PixelFormatDecodingTests.swift */; };
+		ECADA26734B70FC35D9D8173 /* HighDynamicRangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67288D95A410EF79085EA5B /* HighDynamicRangeTests.swift */; };
 		38D5D3C12C5C7A1800BF1D01 /* gradient-8b-srgb-opaque.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AC2C5C784700BF1D01 /* gradient-8b-srgb-opaque.png */; };
 		38D5D3C22C5C7A1800BF1D01 /* gradient-8b-srgb-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */; };
 		38D5D3C32C5C7A1800BF1D01 /* gradient-8b-displayp3-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */; };
 		38D5D3C42C5C7A1800BF1D01 /* gradient-8b-gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3AF2C5C784700BF1D01 /* gradient-8b-gray.png */; };
 		38D5D3C52C5C7A1800BF1D01 /* gradient-10b-srgb-opaque.heic in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B02C5C784700BF1D01 /* gradient-10b-srgb-opaque.heic */; };
+		524BDC23BBDCBCD10C5B9463 /* hdr-gainmap.heic in Resources */ = {isa = PBXBuildFile; fileRef = 7FE33794EEE3949AC94CF626 /* hdr-gainmap.heic */; };
 		38D5D3C62C5C7A1800BF1D01 /* gradient-10b-srgb-alpha.heic in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B12C5C784700BF1D01 /* gradient-10b-srgb-alpha.heic */; };
 		38D5D3C72C5C7A1800BF1D01 /* gradient-10b-displayp3-alpha.heic in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B22C5C784700BF1D01 /* gradient-10b-displayp3-alpha.heic */; };
 		38D5D3C82C5C7A1800BF1D01 /* gradient-16b-srgb-alpha.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B32C5C784700BF1D01 /* gradient-16b-srgb-alpha.png */; };
 		38D5D3C92C5C7A1800BF1D01 /* gradient-16b-gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 38D5D3B42C5C784700BF1D01 /* gradient-16b-gray.png */; };
+		01B5A02272EE4D8D9CB90320 /* hdr-gainmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ECEBCB9856021E9B409DB48E /* hdr-gainmap.jpg */; };
 		38D5D4A12C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */; };
 		3ADE9AF92A73CD69009A86CA /* String+SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ADE9AF82A73CD69009A86CA /* String+SHA256.swift */; };
 		4B0C35B22FFF5F4C00BBDEA1 /* KFImageRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0C35B12FFF5F4C00BBDEA1 /* KFImageRendererTests.swift */; };
@@ -102,6 +105,7 @@
 		D1A1CC9F21A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */; };
 		D1A37BDE215D34E8009B39B7 /* ImageDrawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BDD215D34E8009B39B7 /* ImageDrawing.swift */; };
 		D1A37BE3215D359F009B39B7 /* ImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE2215D359F009B39B7 /* ImageFormat.swift */; };
+		1DB74CDFE479BD74954E9D46 /* HighDynamicRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85088032975D3E13F669012 /* HighDynamicRange.swift */; };
 		D1A37BE8215D365A009B39B7 /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */; };
 		D1A37BF2215D3850009B39B7 /* SizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A37BF1215D3850009B39B7 /* SizeExtensions.swift */; };
 		D1AEB09425890DE7008556DF /* ImageBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F7607523097532000C5269 /* ImageBinder.swift */; };
@@ -157,15 +161,18 @@
 		22FDCE0D2700078B0044D11E /* CPListItem+Kingfisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPListItem+Kingfisher.swift"; sourceTree = "<group>"; };
 		388F37372B4D9CDB0089705C /* DisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayLink.swift; sourceTree = "<group>"; };
 		38D5D3A42C5C757E00BF1D01 /* PixelFormatDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelFormatDecodingTests.swift; sourceTree = "<group>"; };
+		A67288D95A410EF79085EA5B /* HighDynamicRangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighDynamicRangeTests.swift; sourceTree = "<group>"; };
 		38D5D3AC2C5C784700BF1D01 /* gradient-8b-srgb-opaque.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-srgb-opaque.png"; sourceTree = "<group>"; };
 		38D5D3AD2C5C784700BF1D01 /* gradient-8b-srgb-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-srgb-alpha.png"; sourceTree = "<group>"; };
 		38D5D3AE2C5C784700BF1D01 /* gradient-8b-displayp3-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-displayp3-alpha.png"; sourceTree = "<group>"; };
 		38D5D3AF2C5C784700BF1D01 /* gradient-8b-gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-8b-gray.png"; sourceTree = "<group>"; };
 		38D5D3B02C5C784700BF1D01 /* gradient-10b-srgb-opaque.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gradient-10b-srgb-opaque.heic"; sourceTree = "<group>"; };
+		7FE33794EEE3949AC94CF626 /* hdr-gainmap.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hdr-gainmap.heic"; sourceTree = "<group>"; };
 		38D5D3B12C5C784700BF1D01 /* gradient-10b-srgb-alpha.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gradient-10b-srgb-alpha.heic"; sourceTree = "<group>"; };
 		38D5D3B22C5C784700BF1D01 /* gradient-10b-displayp3-alpha.heic */ = {isa = PBXFileReference; lastKnownFileType = file; path = "gradient-10b-displayp3-alpha.heic"; sourceTree = "<group>"; };
 		38D5D3B32C5C784700BF1D01 /* gradient-16b-srgb-alpha.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-16b-srgb-alpha.png"; sourceTree = "<group>"; };
 		38D5D3B42C5C784700BF1D01 /* gradient-16b-gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gradient-16b-gray.png"; sourceTree = "<group>"; };
+		ECEBCB9856021E9B409DB48E /* hdr-gainmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "hdr-gainmap.jpg"; sourceTree = "<group>"; };
 		38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderCancellationTests.swift; sourceTree = "<group>"; };
 		3ADE9AF82A73CD69009A86CA /* String+SHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+SHA256.swift"; sourceTree = "<group>"; };
 		4B0C35B12FFF5F4C00BBDEA1 /* KFImageRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KFImageRendererTests.swift; sourceTree = "<group>"; };
@@ -248,6 +255,7 @@
 		D1A1CC9E21A0F98600263AD8 /* ImageDataProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataProviderTests.swift; sourceTree = "<group>"; };
 		D1A37BDD215D34E8009B39B7 /* ImageDrawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDrawing.swift; sourceTree = "<group>"; };
 		D1A37BE2215D359F009B39B7 /* ImageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFormat.swift; sourceTree = "<group>"; };
+		E85088032975D3E13F669012 /* HighDynamicRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighDynamicRange.swift; sourceTree = "<group>"; };
 		D1A37BE7215D365A009B39B7 /* ExtensionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionHelpers.swift; sourceTree = "<group>"; };
 		D1A37BF1215D3850009B39B7 /* SizeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeExtensions.swift; sourceTree = "<group>"; };
 		D1BA781C2174D07800C69D7B /* CallbackQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackQueue.swift; sourceTree = "<group>"; };
@@ -300,10 +308,12 @@
 				38D5D3AF2C5C784700BF1D01 /* gradient-8b-gray.png */,
 				5B961EF75D5B87CED8EF5951 /* gradient-8b-indexed.png */,
 				38D5D3B02C5C784700BF1D01 /* gradient-10b-srgb-opaque.heic */,
+				7FE33794EEE3949AC94CF626 /* hdr-gainmap.heic */,
 				38D5D3B12C5C784700BF1D01 /* gradient-10b-srgb-alpha.heic */,
 				38D5D3B22C5C784700BF1D01 /* gradient-10b-displayp3-alpha.heic */,
 				38D5D3B32C5C784700BF1D01 /* gradient-16b-srgb-alpha.png */,
 				38D5D3B42C5C784700BF1D01 /* gradient-16b-gray.png */,
+				ECEBCB9856021E9B409DB48E /* hdr-gainmap.jpg */,
 			);
 			path = PixelFormats;
 			sourceTree = "<group>";
@@ -373,6 +383,7 @@
 				D12AB6A3215D2BB50013BA68 /* Image.swift */,
 				D1A37BDD215D34E8009B39B7 /* ImageDrawing.swift */,
 				D1A37BE2215D359F009B39B7 /* ImageFormat.swift */,
+				E85088032975D3E13F669012 /* HighDynamicRange.swift */,
 				D12AB6A4215D2BB50013BA68 /* ImageTransition.swift */,
 				D12AB6A5215D2BB50013BA68 /* ImageProcessor.swift */,
 				C9286406228584EB00257182 /* ImageProgressive.swift */,
@@ -466,6 +477,7 @@
 				D12E0C461C47F23500AC98AD /* ImageDownloaderTests.swift */,
 				D12E0C471C47F23500AC98AD /* ImageExtensionTests.swift */,
 				38D5D3A42C5C757E00BF1D01 /* PixelFormatDecodingTests.swift */,
+				A67288D95A410EF79085EA5B /* HighDynamicRangeTests.swift */,
 				38D5D4A22C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift */,
 				D186696C21834261002B502E /* ImageDrawingTests.swift */,
 				D9638BA41C7DC71F0046523D /* ImagePrefetcherTests.swift */,
@@ -651,10 +663,12 @@
 				38D5D3C42C5C7A1800BF1D01 /* gradient-8b-gray.png in Resources */,
 				6F62C780F5433101ADA3A9E4 /* gradient-8b-indexed.png in Resources */,
 				38D5D3C52C5C7A1800BF1D01 /* gradient-10b-srgb-opaque.heic in Resources */,
+				524BDC23BBDCBCD10C5B9463 /* hdr-gainmap.heic in Resources */,
 				38D5D3C62C5C7A1800BF1D01 /* gradient-10b-srgb-alpha.heic in Resources */,
 				38D5D3C72C5C7A1800BF1D01 /* gradient-10b-displayp3-alpha.heic in Resources */,
 				38D5D3C82C5C7A1800BF1D01 /* gradient-16b-srgb-alpha.png in Resources */,
 				38D5D3C92C5C7A1800BF1D01 /* gradient-16b-gray.png in Resources */,
+				01B5A02272EE4D8D9CB90320 /* hdr-gainmap.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +720,7 @@
 				D8CC0001A1B2C3D4000000AA /* ResponseCacheControlPolicy.swift in Sources */,
 				D11D9B72245FA6F700C5A0AE /* RetryStrategy.swift in Sources */,
 				D1A37BE3215D359F009B39B7 /* ImageFormat.swift in Sources */,
+				1DB74CDFE479BD74954E9D46 /* HighDynamicRange.swift in Sources */,
 				D12EB83C24DD8EFC00329EE1 /* NSTextAttachment+Kingfisher.swift in Sources */,
 				D1889534258F7649003B73BE /* KFImageOptions.swift in Sources */,
 				D12AB714215D2BB50013BA68 /* ImageCache.swift in Sources */,
@@ -759,6 +774,7 @@
 				D12E0C531C47F23500AC98AD /* ImageViewExtensionTests.swift in Sources */,
 				D186696D21834261002B502E /* ImageDrawingTests.swift in Sources */,
 				38D5D3A32C5C757E00BF1D01 /* PixelFormatDecodingTests.swift in Sources */,
+				ECADA26734B70FC35D9D8173 /* HighDynamicRangeTests.swift in Sources */,
 				38D5D4A12C5C757E00BF1D01 /* ImageDataProviderCancellationTests.swift in Sources */,
 				4BCFF7AA219932390055AAC4 /* DiskStorageTests.swift in Sources */,
 				D1A1CC9F21A0F98600263AD8 /* ImageDataProviderTests.swift in Sources */,
