@@ -425,6 +425,79 @@ final class HighDynamicRangeOptionTests: XCTestCase {
         #endif
     }
 
+    #if !os(macOS)
+    // `normalized` redraws an oriented image. For a marked HDR image, it must keep the HDR content.
+    func testNormalizedKeepsHDRContentOfOrientedMarkedImage() throws {
+        for layout in [HDRTestImage.Layout.littleEndianOpaque, .littleEndianTranslucent] {
+            let image = try orientedMarkedHDRImage(layout: layout)
+
+            let normalized = image.kf.normalized
+
+            XCTAssertEqual(normalized.imageOrientation, .up)
+            XCTAssertEqual(normalized.size, image.size)
+            XCTAssertEqual(normalized.scale, image.scale)
+            XCTAssertTrue(normalized.kf.prefersHighDynamicRange)
+            try assertHDRContent(of: normalized)
+        }
+    }
+
+    func testSerializerKeepsHDRContentOfOrientedMarkedImage() throws {
+        for layout in [HDRTestImage.Layout.littleEndianOpaque, .littleEndianTranslucent] {
+            let image = try orientedMarkedHDRImage(layout: layout)
+            for original in [Data(fileName: "hdr-gainmap.jpg"), nil] {
+                let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: image, original: original))
+                var options = ImageCreatingOptions(scale: image.scale)
+                options.prefersHighDynamicRange = true
+                let decoded = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options))
+
+                XCTAssertEqual(decoded.size, image.size)
+                try assertHDRContent(of: decoded)
+            }
+        }
+    }
+
+    func testDownsamplingImageKeepsHDRContentOfOrientedMarkedImage() throws {
+        let image = try orientedMarkedHDRImage(layout: .littleEndianOpaque)
+        let processor = DownsamplingImageProcessor(size: CGSize(width: 4, height: 8))
+
+        let result = try XCTUnwrap(processor.process(item: .image(image), options: .init([.preferHighDynamicRange])))
+
+        XCTAssertGreaterThan(result.size.height, result.size.width, "The orientation is applied")
+        try assertHDRContent(of: result)
+    }
+
+    func testNormalizedIsUnchangedForUnmarkedOrientedImage() throws {
+        let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 8)
+        let image = UIImage(cgImage: cgImage, scale: 2, orientation: .right)
+
+        let normalized = image.kf.normalized
+
+        XCTAssertFalse(normalized.kf.prefersHighDynamicRange)
+        XCTAssertEqual(normalized.imageOrientation, .up)
+    }
+
+    private func orientedMarkedHDRImage(layout: HDRTestImage.Layout) throws -> UIImage {
+        let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 8, layout: layout)
+        let image = UIImage(cgImage: cgImage, scale: 2, orientation: .right)
+        image.kf.prefersHighDynamicRange = true
+        XCTAssertEqual(image.size, CGSize(width: 4, height: 8))
+        return image
+    }
+
+    /// The image keeps the HDR transfer function and has pixels brighter than the SDR white.
+    private func assertHDRContent(of image: UIImage, file: StaticString = #filePath, line: UInt = #line) throws {
+        let cgImage = try XCTUnwrap(image.kf.cgImage, file: file, line: line)
+        XCTAssertTrue(cgImage.usesHighDynamicRangeTransferFunction, "Not HDR: \(cgImage)", file: file, line: line)
+        var brightest: Float = 0
+        for y in 0..<cgImage.height {
+            for x in 0..<cgImage.width {
+                brightest = max(brightest, try HDRTestImage.linearPixel(of: cgImage, x: x, y: y)[0])
+            }
+        }
+        XCTAssertGreaterThan(brightest, 2, "No pixel is brighter than the SDR white", file: file, line: line)
+    }
+    #endif
+
     func testDecodedIsUnchangedForUnmarkedImage() throws {
         let image = try HDRTestImage.hdrImage(layout: .defaultOrderOpaque)
 

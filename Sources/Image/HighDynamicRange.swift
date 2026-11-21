@@ -205,6 +205,47 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return image
     }
 
+    #if !os(macOS)
+    /// Applies the orientation of a marked HDR image, in a bitmap that keeps its HDR content.
+    ///
+    /// The regular ``normalized`` image is drawn by `UIGraphicsImageRenderer`, which is SDR. The bitmap here is the
+    /// same as the one of ``highDynamicRangeDecoded(scale:)``.
+    ///
+    /// - Returns: The image with the `.up` orientation, marked with ``prefersHighDynamicRange``, or `nil` if the image
+    ///   is not a marked HDR image or the bitmap cannot be created.
+    func highDynamicRangeNormalized() -> KFCrossPlatformImage? {
+        guard prefersHighDynamicRange, let cgImage, cgImage.usesHighDynamicRangeTransferFunction,
+              let colorSpace = cgImage.colorSpace else
+        {
+            return nil
+        }
+        let scale = base.scale
+        let alphaInfo: CGImageAlphaInfo
+        switch cgImage.alphaInfo {
+        case .none, .noneSkipFirst, .noneSkipLast: alphaInfo = .noneSkipLast
+        default: alphaInfo = .premultipliedLast
+        }
+        guard let context = CGContext(
+            data: nil,
+            width: Int((size.width * scale).rounded()),
+            height: Int((size.height * scale).rounded()),
+            bitsPerComponent: 16,
+            bytesPerRow: 0,
+            space: colorSpace,
+            bitmapInfo: alphaInfo.rawValue | CGBitmapInfo.byteOrder16Little.rawValue
+        ) else {
+            return nil
+        }
+        // A `CGContext` has its origin at the bottom left, as `fixOrientation(in:)` expects.
+        context.scaleBy(x: scale, y: scale)
+        fixOrientation(in: context)
+        guard let normalized = context.makeImage() else { return nil }
+        let image = KFCrossPlatformImage(cgImage: normalized, scale: scale, orientation: .up)
+        image.kf.prefersHighDynamicRange = true
+        return image
+    }
+    #endif
+
     /// The format to use for a gain map encoding that matches `original`: JPEG or HEIC, and only when `original`
     /// has a gain map.
     @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
