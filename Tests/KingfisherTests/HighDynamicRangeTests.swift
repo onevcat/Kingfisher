@@ -540,6 +540,13 @@ final class HighDynamicRangeOptionTests: XCTestCase {
     }
     #endif
 
+    func testDefaultHeadroomMatchesCoreGraphics() throws {
+        guard #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) else {
+            throw XCTSkip("The constant needs iOS 18 or macOS 15.")
+        }
+        XCTAssertEqual(CGContext.defaultHighDynamicRangeHeadroom, kCGDefaultHDRImageContentHeadroom, accuracy: 0.0001)
+    }
+
     // Drawing into a bitmap tone maps an image to the headroom of the bitmap. An image with a headroom above the
     // default of a PQ bitmap must keep its range.
     func testDecodedKeepsRangeOfHighHeadroomImage() throws {
