@@ -145,7 +145,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// > Important: Only CG-based images are supported. If an error occurs during transformation,
     /// ``KingfisherWrapper/base`` will be returned.
     public func apply(_ filter: Filter) -> KFCrossPlatformImage {
-        
+        apply(filter, keepsOpacity: false)
+    }
+
+    /// Applies a filter.
+    ///
+    /// - Parameter keepsOpacity: Whether the filter keeps an opaque image opaque. It is used only to keep HDR content.
+    func apply(_ filter: Filter, keepsOpacity: Bool) -> KFCrossPlatformImage {
         guard let cgImage = cgImage else {
             assertionFailure("[Kingfisher] Tint image only works for CG-based image.")
             return base
@@ -156,15 +162,51 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return base
         }
 
-        guard let result = ciContext.value.createCGImage(outputImage, from: outputImage.extent) else {
+        guard let image = render(outputImage, keepsOpacity: keepsOpacity) else {
             assertionFailure("[Kingfisher] Can not make an tint image within context.")
             return base
         }
+        return image
+    }
+
+    /// Renders the output of a filter applied to this image, or returns `nil` if it fails.
+    ///
+    /// An image that ``drawsInHighDynamicRange`` is rendered in its own color space with 16 bits per component. If
+    /// that fails, the output is rendered as before.
+    func render(_ outputImage: CIImage, keepsOpacity: Bool) -> KFCrossPlatformImage? {
+        var result: CGImage?
+        var highDynamicRange = false
+        if drawsInHighDynamicRange, let colorSpace = cgImage?.colorSpace {
+            // Keep the HDR content: the default output is 8-bit in the working color space.
+            result = ciContext.value.createCGImage(
+                outputImage, from: outputImage.extent, format: .RGBA16, colorSpace: colorSpace
+            )
+            highDynamicRange = result != nil
+            // Without alpha, an HDR result can be stored with a gain map.
+            if highDynamicRange, keepsOpacity, isOpaque, let opaqueImage = result?.withoutAlphaChannel {
+                result = opaqueImage
+            }
+        }
+        if result == nil {
+            result = ciContext.value.createCGImage(outputImage, from: outputImage.extent)
+        }
+        guard let result else {
+            return nil
+        }
         
         #if os(macOS)
+            if highDynamicRange {
+                // Drawing the result again would tone map it to the headroom of the new bitmap. The bitmap
+                // representation of `image(cgImage:scale:refImage:)` keeps the pixel size without drawing.
+                let image = KingfisherWrapper.image(cgImage: result, scale: scale, refImage: base)
+                image.kf.prefersHighDynamicRange = true
+                return image
+            }
             return fixedForRetinaPixel(cgImage: result, to: size)
         #else
-            return KFCrossPlatformImage(cgImage: result, scale: base.scale, orientation: base.imageOrientation)
+            let image = KFCrossPlatformImage(cgImage: result, scale: base.scale, orientation: base.imageOrientation)
+            if highDynamicRange { image.kf.prefersHighDynamicRange = true }
+            return image
         #endif
     }
 

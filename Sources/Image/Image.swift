@@ -219,11 +219,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         // No need to do anything if already up
         guard base.imageOrientation != .up else { return base.copy() as! KFCrossPlatformImage }
 
-        if let image = highDynamicRangeNormalized() {
-            return image
-        }
-
-        return draw(to: size, inverting: true, refImage: KFCrossPlatformImage()) {
+        return draw(to: size, inverting: true, refImage: KFCrossPlatformImage(), keepsOpacity: true) {
             fixOrientation(in: $0)
             return true
         }

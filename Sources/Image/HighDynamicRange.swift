@@ -66,6 +66,37 @@ extension CGImage {
     }
 }
 
+extension CGImage {
+    /// The same pixels, with the alpha channel marked as unused. The pixels are not copied.
+    ///
+    /// Core Image creates HDR images with premultiplied alpha, four little-endian 16-bit components. The gain map
+    /// encoder accepts only opaque images, and a gain map file is much smaller than the 16-bit PNG file of an image
+    /// with alpha. Use it only when every pixel is known to be opaque: then the premultiplied colors are the colors.
+    ///
+    /// - Returns: The image, or `nil` if the image does not have that layout.
+    var withoutAlphaChannel: CGImage? {
+        guard alphaInfo == .premultipliedLast, bitsPerComponent == 16, bitsPerPixel == 64,
+              !bitmapInfo.contains(.floatComponents), bitmapInfo.intersection(.byteOrderMask) == .byteOrder16Little,
+              let provider = dataProvider else
+        {
+            return nil
+        }
+        return CGImage(
+            width: width,
+            height: height,
+            bitsPerComponent: 16,
+            bitsPerPixel: 64,
+            bytesPerRow: bytesPerRow,
+            space: colorSpace ?? CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder16Little.rawValue),
+            provider: provider,
+            decode: nil,
+            shouldInterpolate: shouldInterpolate,
+            intent: renderingIntent
+        )
+    }
+}
+
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// Whether the image holds HDR content that a plain SDR encoding would lose.
     var isHighDynamicRange: Bool {
@@ -170,27 +201,24 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
     }
 
-    /// Draws an HDR image into a bitmap that keeps its HDR content, and returns the result.
+    /// Whether drawing should keep the HDR content of this image: it was created with
+    /// ``ImageCreatingOptions/prefersHighDynamicRange``, and it is HDR.
+    var drawsInHighDynamicRange: Bool {
+        prefersHighDynamicRange && isHighDynamicRange
+    }
+
+    /// A bitmap that keeps the HDR content of this image: the color space of the image and four little-endian 16-bit
+    /// components.
     ///
-    /// `UIImage.preparingForDisplay()` returns the SDR version of an image decoded from a gain map, and the default
-    /// drawing contexts are SDR or use a pixel format that the gain map encoder misreads. This bitmap uses the color
-    /// space of the image and four little-endian 16-bit components. See ``CGImage/isSupportedByGainMapEncoder``.
-    ///
-    /// - Returns: The decoded image, marked with ``prefersHighDynamicRange``, or `nil` if the image is not HDR or
-    ///   the bitmap cannot be created.
-    func highDynamicRangeDecoded(scale: CGFloat) -> KFCrossPlatformImage? {
-        guard let cgImage, cgImage.usesHighDynamicRangeTransferFunction, let colorSpace = cgImage.colorSpace else {
-            return nil
-        }
-        let alphaInfo: CGImageAlphaInfo
-        switch cgImage.alphaInfo {
-        case .none, .noneSkipFirst, .noneSkipLast: alphaInfo = .noneSkipLast
-        default: alphaInfo = .premultipliedLast
-        }
+    /// The default drawing contexts are SDR, or use a pixel format that the gain map encoder misreads. This layout is
+    /// one that it reads correctly when the bitmap is opaque. See ``CGImage/isSupportedByGainMapEncoder``.
+    func highDynamicRangeContext(width: Int, height: Int, opaque: Bool) -> CGContext? {
+        guard let cgImage, let colorSpace = cgImage.colorSpace, width > 0, height > 0 else { return nil }
+        let alphaInfo: CGImageAlphaInfo = opaque ? .noneSkipLast : .premultipliedLast
         guard let context = CGContext(
             data: nil,
-            width: cgImage.width,
-            height: cgImage.height,
+            width: width,
+            height: height,
             bitsPerComponent: 16,
             bytesPerRow: 0,
             space: colorSpace,
@@ -199,6 +227,30 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             return nil
         }
         context.keepRange(of: cgImage)
+        return context
+    }
+
+    /// Whether the image has no alpha channel.
+    var isOpaque: Bool {
+        switch cgImage?.alphaInfo {
+        case .none, .noneSkipFirst, .noneSkipLast: return true
+        default: return false
+        }
+    }
+
+    /// Draws an HDR image into a bitmap that keeps its HDR content, and returns the result.
+    ///
+    /// `UIImage.preparingForDisplay()` returns the SDR version of an image decoded from a gain map, so background
+    /// decoding draws the image itself.
+    ///
+    /// - Returns: The decoded image, marked with ``prefersHighDynamicRange``, or `nil` if the image is not HDR or
+    ///   the bitmap cannot be created.
+    func highDynamicRangeDecoded(scale: CGFloat) -> KFCrossPlatformImage? {
+        guard let cgImage, cgImage.usesHighDynamicRangeTransferFunction,
+              let context = highDynamicRangeContext(width: cgImage.width, height: cgImage.height, opaque: isOpaque) else
+        {
+            return nil
+        }
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
         guard let decoded = context.makeImage() else { return nil }
         let image = KingfisherWrapper.image(cgImage: decoded, scale: scale, refImage: base)
@@ -206,47 +258,60 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         return image
     }
 
-    #if !os(macOS)
-    /// Applies the orientation of a marked HDR image, in a bitmap that keeps its HDR content.
+    /// The HDR version of ``draw(to:inverting:scale:refImage:keepsOpacity:draw:)``, for an image that
+    /// ``drawsInHighDynamicRange``.
     ///
-    /// The regular ``normalized`` image is drawn by `UIGraphicsImageRenderer`, which is SDR. The bitmap here is the
-    /// same as the one of ``highDynamicRangeDecoded(scale:)``.
+    /// The drawing happens in ``highDynamicRangeContext(width:height:opaque:)``, set up like the context of the regular
+    /// version: it is the current UIKit or AppKit context, in points, with the same coordinate system. Pass `opaque` when
+    /// the drawing covers the whole bitmap with opaque content: an opaque result can be stored with a gain map.
     ///
-    /// - Returns: The image with the `.up` orientation, marked with ``prefersHighDynamicRange``, or `nil` if the image
-    ///   is not a marked HDR image or the bitmap cannot be created.
-    func highDynamicRangeNormalized() -> KFCrossPlatformImage? {
-        guard prefersHighDynamicRange, let cgImage, cgImage.usesHighDynamicRangeTransferFunction,
-              let colorSpace = cgImage.colorSpace else
-        {
-            return nil
-        }
-        let scale = base.scale
-        let alphaInfo: CGImageAlphaInfo
-        switch cgImage.alphaInfo {
-        case .none, .noneSkipFirst, .noneSkipLast: alphaInfo = .noneSkipLast
-        default: alphaInfo = .premultipliedLast
-        }
-        guard let context = CGContext(
-            data: nil,
-            width: Int((size.width * scale).rounded()),
-            height: Int((size.height * scale).rounded()),
-            bitsPerComponent: 16,
-            bytesPerRow: 0,
-            space: colorSpace,
-            bitmapInfo: alphaInfo.rawValue | CGBitmapInfo.byteOrder16Little.rawValue
-        ) else {
-            return nil
-        }
-        context.keepRange(of: cgImage)
-        // A `CGContext` has its origin at the bottom left, as `fixOrientation(in:)` expects.
+    /// - Returns: The drawn image, marked with ``prefersHighDynamicRange``, or `nil` if the bitmap cannot be created.
+    func highDynamicRangeDraw(
+        to size: CGSize,
+        inverting: Bool,
+        scale: CGFloat,
+        refImage: KFCrossPlatformImage?,
+        opaque: Bool = false,
+        draw: (CGContext) -> Bool
+    ) -> KFCrossPlatformImage? {
+        // The same pixel size as the regular version.
+        #if os(macOS)
+        let width = max(Int((size.width * scale).rounded(.down)), 1)
+        let height = max(Int((size.height * scale).rounded(.down)), 1)
+        #else
+        let width = Int((size.width * scale).rounded(.up))
+        let height = Int((size.height * scale).rounded(.up))
+        #endif
+        guard let context = highDynamicRangeContext(width: width, height: height, opaque: opaque) else { return nil }
+
+        #if os(macOS)
+        NSGraphicsContext.saveGraphicsState()
+        defer { NSGraphicsContext.restoreGraphicsState() }
+        let graphicsContext = NSGraphicsContext(cgContext: context, flipped: false)
+        graphicsContext.imageInterpolation = .high
+        NSGraphicsContext.current = graphicsContext
         context.scaleBy(x: scale, y: scale)
-        fixOrientation(in: context)
-        guard let normalized = context.makeImage() else { return nil }
-        let image = KFCrossPlatformImage(cgImage: normalized, scale: scale, orientation: .up)
+        #else
+        // UIKit draws with the origin at the top left.
+        context.translateBy(x: 0, y: CGFloat(height))
+        context.scaleBy(x: scale, y: -scale)
+        if inverting { // If drawing a CGImage, we need to make context flipped.
+            context.scaleBy(x: 1.0, y: -1.0)
+            context.translateBy(x: 0, y: -size.height)
+        }
+        context.interpolationQuality = .high
+        UIGraphicsPushContext(context)
+        defer { UIGraphicsPopContext() }
+        #endif
+
+        let useRefImage = draw(context)
+        guard let cgImage = context.makeImage() else { return nil }
+        let image = KingfisherWrapper.image(
+            cgImage: cgImage, scale: scale, refImage: useRefImage ? (refImage ?? base) : nil
+        )
         image.kf.prefersHighDynamicRange = true
         return image
     }
-    #endif
 
     /// The format to use for a gain map encoding that matches `original`: JPEG or HEIC, and only when `original`
     /// has a gain map.

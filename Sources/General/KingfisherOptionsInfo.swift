@@ -445,6 +445,8 @@ public enum KingfisherOptionsInfoItem: Sendable {
     /// The option also keeps the HDR content in the other steps of loading an image:
     ///
     /// - ``DownsamplingImageProcessor`` creates an HDR thumbnail.
+    /// - The built-in processors that draw or filter the image, such as ``ResizingImageProcessor``,
+    ///   ``RoundCornerImageProcessor`` and ``BlurImageProcessor``, keep the HDR content.
     /// - ``backgroundDecode`` keeps the image HDR.
     /// - When the image comes from a JPEG or HEIC file with a gain map, ``DefaultCacheSerializer`` stores it with a
     ///   gain map too (on iOS 18, tvOS 18 and visionOS 2 or later), so it is HDR again when it is loaded from the disk

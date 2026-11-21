@@ -239,7 +239,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: size)
-        return draw(to: size, inverting: false) { _ in
+        return draw(to: size, inverting: false, keepsOpacity: true) { _ in
             #if os(macOS)
             base.draw(in: rect, from: .zero, operation: .copy, fraction: 1.0)
             #else
@@ -312,6 +312,18 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
         // if d is odd, use three box-blurs of size 'd', centered on the output pixel.
         let s = max(radius, 2.0)
+
+        #if !os(watchOS)
+        // The box blur below works on 8-bit components. Blur an HDR image with Core Image, which keeps its range:
+        // the same Gaussian, with the edge pixels extended.
+        if drawsInHighDynamicRange {
+            let input = CIImage(cgImage: cgImage)
+            let output = input.clampedToExtent().applyingGaussianBlur(sigma: Double(s)).cropped(to: input.extent)
+            if let image = render(output, keepsOpacity: true) {
+                return image
+            }
+        }
+        #endif
         
         // We will do blur on a resized image (*0.5), so the blur radius could be half as well.
         // Fix the slow compiling time for Swift 3.
@@ -394,7 +406,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(origin: .zero, size: size)
-        return draw(to: rect.size, inverting: false) { context in
+        return draw(to: rect.size, inverting: false, keepsOpacity: true) { context in
             
             #if os(macOS)
             base.draw(in: rect)
@@ -439,7 +451,14 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        return draw(to: rect.size, inverting: false) { context in
+        #if os(macOS)
+        // `sourceAtop` keeps the alpha of the image.
+        let keepsOpacity = true
+        #else
+        // The result has the alpha of the color.
+        let keepsOpacity = color.cgColor.alpha >= 1
+        #endif
+        return draw(to: rect.size, inverting: false, keepsOpacity: keepsOpacity) { context in
             #if os(macOS)
             base.draw(in: rect)
             if fraction < 1 {
@@ -471,7 +490,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 #if os(watchOS)
         return base
 #else
-        return apply(.tint(color))
+        return apply(.tint(color), keepsOpacity: true)
 #endif
     }
     
@@ -496,7 +515,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
 
         let rect = CGRect(origin: .zero, size: size)
-        return draw(to: rect.size, inverting: false) { context in
+        return draw(to: rect.size, inverting: false, keepsOpacity: true) { context in
             context.translateBy(x: horizontal ? rect.width : 0, y: vertical ? rect.height : 0)
             context.scaleBy(x: horizontal ? -1 : 1, y: vertical ? -1 : 1)
             base.draw(in: rect)
@@ -526,7 +545,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             saturation: saturation,
             inputEV: inputEV
         )
-        return apply(.colorControl(colorElement))
+        return apply(.colorControl(colorElement), keepsOpacity: true)
 #endif
     }
     
@@ -662,14 +681,28 @@ extension CGImage {
 }
 
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
+    /// - Parameter keepsOpacity: Whether the drawing covers the whole size with the image or other opaque content,
+    ///   so that the result of an opaque image is opaque. It is used only to keep HDR content.
     func draw(
         to size: CGSize,
         inverting: Bool,
         scale: CGFloat? = nil,
         refImage: KFCrossPlatformImage? = nil,
+        keepsOpacity: Bool = false,
         draw: (CGContext) -> Bool // Whether use the refImage (`true`) or ignore image orientation (`false`)
     ) -> KFCrossPlatformImage
     {
+        if drawsInHighDynamicRange, let image = highDynamicRangeDraw(
+            to: size,
+            inverting: inverting,
+            scale: scale ?? self.scale,
+            refImage: refImage,
+            opaque: keepsOpacity && isOpaque,
+            draw: draw
+        ) {
+            return image
+        }
+
         #if os(macOS) || os(watchOS)
         let targetScale = scale ?? self.scale
         GraphicsContext.begin(size: size, scale: targetScale)
