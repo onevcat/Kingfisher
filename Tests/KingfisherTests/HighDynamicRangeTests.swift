@@ -831,30 +831,48 @@ final class HighDynamicRangeProcessorTests: XCTestCase {
         XCTAssertEqual(result.kf.cgImage?.usesHighDynamicRangeTransferFunction, true)
     }
 
-    // A size that is not a whole number of pixels leaves the edge pixels partly covered. They must keep their
-    // partial alpha, as in the regular renderer, and not be mixed with the black of an opaque bitmap.
+    // On UIKit, the bitmap of a size that is not a whole number of pixels is rounded up, so the edge pixels are partly
+    // covered. They must keep their partial alpha, as in the regular renderer, and not be mixed with the black of an
+    // opaque bitmap.
+    #if !os(macOS)
     func testResizingToFractionalSizeKeepsEdgeAlphaOfMarkedImage() throws {
-        #if os(macOS)
-        let scales: [CGFloat] = [1]
-        #else
-        let scales: [CGFloat] = [1, 3]
-        #endif
-        for scale in scales {
+        for scale: CGFloat in [1, 3] {
             let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 16)
             let image = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: cgImage, scale: scale, refImage: nil)
             image.kf.prefersHighDynamicRange = true
-            let target = CGSize(width: 7.2, height: 4.2)
 
-            let resized = image.kf.resize(to: target)
+            let resized = image.kf.resize(to: CGSize(width: 7.2, height: 4.2))
 
             let result = try XCTUnwrap(resized.kf.cgImage)
-            XCTAssertNotEqual(result.alphaInfo, .noneSkipLast, "scale \(scale): the edge pixels are partly covered")
-            #if !os(macOS)
+            XCTAssertEqual(result.alphaInfo, .premultipliedLast, "scale \(scale): the edge pixels are partly covered")
             let edge = try HDRTestImage.linearPixel(of: result, x: result.width - 1, y: result.height / 2)
             XCTAssertGreaterThan(edge[0], 0.2, "scale \(scale): the edge pixel is dark: \(edge)")
-            #endif
         }
     }
+    #else
+    // On macOS, the bitmap of such a size is rounded down, so the drawing covers it completely and it stays opaque.
+    func testResizingToFractionalSizeCoversBitmapOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage(width: 16, height: 16)
+        image.kf.prefersHighDynamicRange = true
+
+        let resized = image.kf.resize(to: CGSize(width: 7.2, height: 4.2))
+
+        let result = try XCTUnwrap(resized.kf.cgImage)
+        XCTAssertEqual(result.width, 7)
+        XCTAssertEqual(result.height, 4)
+        XCTAssertTrue(result.isSupportedByGainMapEncoder, "\(result)")
+    }
+
+    // A size below one pixel is raised to one pixel, which the drawing does not cover.
+    func testResizingBelowOnePixelKeepsAlphaOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage(width: 16, height: 16)
+        image.kf.prefersHighDynamicRange = true
+
+        let resized = image.kf.resize(to: CGSize(width: 0.5, height: 4))
+
+        XCTAssertEqual(resized.kf.cgImage?.alphaInfo, .premultipliedLast)
+    }
+    #endif
 
     func testResizingToWholePixelSizeHasNoAlphaForMarkedOpaqueImage() throws {
         let image = try HDRTestImage.hdrImage()

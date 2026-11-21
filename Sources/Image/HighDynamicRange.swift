@@ -265,7 +265,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// The drawing happens in ``highDynamicRangeContext(width:height:opaque:)``, set up like the context of the regular
     /// version: it is the current UIKit or AppKit context, in points, with the same coordinate system. Pass `opaque` when
     /// the drawing covers the whole size with opaque content: an opaque result can be stored with a gain map. The
-    /// bitmap is opaque only if the size is also a whole number of pixels.
+    /// bitmap is opaque only if that size also covers all its pixels after rounding.
     ///
     /// - Returns: The drawn image, marked with ``prefersHighDynamicRange``, or `nil` if the bitmap cannot be created.
     func highDynamicRangeDraw(
@@ -284,10 +284,11 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let width = Int((size.width * scale).rounded(.up))
         let height = Int((size.height * scale).rounded(.up))
         #endif
-        // When the size is not a whole number of pixels, the drawing does not cover the edge pixels completely. They
-        // need alpha, or they would be mixed with the black of an opaque bitmap.
-        let coversBitmap = abs(size.width * scale - CGFloat(width)) < 0.001
-            && abs(size.height * scale - CGFloat(height)) < 0.001
+        // The drawing covers the bitmap only if it is at least as large. A bitmap rounded up (UIKit, or the minimum of
+        // one pixel on macOS) has edge pixels that are partly covered. They need alpha, or they would be mixed with the
+        // black of an opaque bitmap.
+        let coversBitmap = size.width * scale >= CGFloat(width) - 0.001
+            && size.height * scale >= CGFloat(height) - 0.001
         guard let context = highDynamicRangeContext(width: width, height: height, opaque: opaque && coversBitmap) else {
             return nil
         }
