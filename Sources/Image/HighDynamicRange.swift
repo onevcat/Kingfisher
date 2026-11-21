@@ -39,6 +39,25 @@ extension CGImage {
         guard let colorSpace else { return false }
         return CGColorSpaceUsesITUR_2100TF(colorSpace)
     }
+
+    /// Whether the ISO gain map encoder reads the pixels of this HDR image correctly.
+    ///
+    /// The encoder misreads some layouts and still writes data with a gain map, so the result cannot be checked
+    /// after encoding. On macOS 27, it misreads 16-bit components in the default (big-endian) order of a
+    /// `CGContext`, which Kingfisher's own drawing produces, and it loses the colors of an image with alpha. Only
+    /// opaque images with an explicit little-endian order are accepted, such as the 10-bit images that ImageIO
+    /// decodes from a gain map file.
+    var isSupportedByGainMapEncoder: Bool {
+        guard usesHighDynamicRangeTransferFunction else { return false }
+        switch alphaInfo {
+        case .none, .noneSkipFirst, .noneSkipLast:
+            break
+        default:
+            return false
+        }
+        let byteOrder = bitmapInfo.intersection(.byteOrderMask)
+        return byteOrder == .byteOrder16Little || byteOrder == .byteOrder32Little
+    }
 }
 
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
@@ -58,12 +77,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// - `original` has a gain map too. When `original` is HDR without a gain map (PQ or HLG), decoders that ignore
     ///   gain maps read it as HDR, and a gain map encoding would make it SDR for them.
     /// - The decoding applies the gain map. `NSImage(data:)` does. `UIImage(data:)` reads only the SDR base image.
+    /// - The encoder reads the pixels of the image correctly. See ``CGImage/isSupportedByGainMapEncoder``.
     ///
     /// - Returns: The encoded data, or `nil` when one of the conditions above is not met, the image is not HDR, or
     ///   the system cannot encode gain maps. In that case, use the regular encoding.
     func highDynamicRangeData(matching original: Data, compressionQuality: CGFloat) -> Data? {
         guard #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) else { return nil }
-        guard decodingAppliesGainMap, isHighDynamicRange, let cgImage else { return nil }
+        guard decodingAppliesGainMap, let cgImage, cgImage.isSupportedByGainMapEncoder else { return nil }
         guard let type = Self.gainMapEncodingType(of: original) else { return nil }
 
         var properties: [CFString: Any] = [

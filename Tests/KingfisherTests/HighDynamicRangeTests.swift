@@ -42,7 +42,7 @@ final class HighDynamicRangeTests: XCTestCase {
 
         XCTAssertEqual(HDRTestImage.typeIdentifier(of: data), UTType.jpeg.identifier)
         XCTAssertTrue(HDRTestImage.containsGainMap(data), "HDR image should be stored with a gain map")
-        try assertDecodesToHDR(data)
+        try assertDecodesToHDRTestImage(data)
     }
 
     func testSerializerKeepsGainMapForHDRImageFromGainMapHEIC() throws {
@@ -54,7 +54,7 @@ final class HighDynamicRangeTests: XCTestCase {
 
         XCTAssertEqual(HDRTestImage.typeIdentifier(of: data), UTType.heic.identifier)
         XCTAssertTrue(HDRTestImage.containsGainMap(data), "HDR image should be stored with a gain map")
-        try assertDecodesToHDR(data)
+        try assertDecodesToHDRTestImage(data)
     }
 
     func testSerializerStoresDataThatDecodesBackToHDR() throws {
@@ -82,6 +82,38 @@ final class HighDynamicRangeTests: XCTestCase {
 
         XCTAssertTrue(HDRTestImage.containsGainMap(lowData))
         XCTAssertLessThan(lowData.count, highData.count)
+    }
+
+    // The gain map encoder misreads 16-bit components in the default (big-endian) order, but still writes a gain
+    // map. Kingfisher's own drawing on macOS, such as `kf.decoded`, produces this layout.
+    func testSerializerKeepsDefaultEncodingForHDRImageWithBigEndianComponents() throws {
+        let original = Data(fileName: "hdr-gainmap.jpg")
+        let image = try HDRTestImage.hdrImage(layout: .defaultOrderOpaque)
+
+        let data = DefaultCacheSerializer.default.data(with: image, original: original)
+
+        XCTAssertEqual(data, image.kf.jpegRepresentation(compressionQuality: 1.0))
+    }
+
+    func testSerializerKeepsDefaultEncodingForDecodedHDRImage() throws {
+        let original = Data(fileName: "hdr-gainmap.heic")
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: original, options: .init()))
+        let decoded = image.kf.decoded
+        XCTAssertTrue(decoded.kf.isHighDynamicRange)
+
+        let data = DefaultCacheSerializer.default.data(with: decoded, original: original)
+
+        XCTAssertEqual(data, decoded.kf.data(format: .unknown))
+    }
+
+    // The gain map encoder loses the colors of an image with alpha.
+    func testSerializerKeepsDefaultEncodingForHDRImageWithAlpha() throws {
+        let original = Data(fileName: "hdr-gainmap.heic")
+        let image = try HDRTestImage.hdrImage(layout: .littleEndianTranslucent)
+
+        let data = DefaultCacheSerializer.default.data(with: image, original: original)
+
+        XCTAssertEqual(data, image.kf.data(format: .unknown))
     }
     #else
     func testSerializerKeepsDefaultEncodingForHDRImageFromGainMapJPEG() throws {
@@ -183,24 +215,58 @@ final class HighDynamicRangeTests: XCTestCase {
         }
     }
 
-    private func assertDecodesToHDR(_ data: Data, file: StaticString = #filePath, line: UInt = #line) throws {
-        let source = try XCTUnwrap(CGImageSourceCreateWithData(data as CFData, nil), file: file, line: line)
-        let options = [kCGImageSourceDecodeRequest: kCGImageSourceDecodeToHDR] as CFDictionary
-        let cgImage = try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, options), file: file, line: line)
+    /// Checks that `data` decodes to an HDR image with the pixel values of ``HDRTestImage/hdrCGImage``.
+    private func assertDecodesToHDRTestImage(_ data: Data, file: StaticString = #filePath, line: UInt = #line) throws {
+        let cgImage = try HDRTestImage.decodeToHDR(data)
         let colorSpace = try XCTUnwrap(cgImage.colorSpace, file: file, line: line)
         XCTAssertTrue(CGColorSpaceUsesITUR_2100TF(colorSpace), "Expected an HDR image after decoding", file: file, line: line)
+        let left = try HDRTestImage.linearPixel(of: cgImage, x: 2, y: cgImage.height / 2)
+        let right = try HDRTestImage.linearPixel(of: cgImage, x: cgImage.width - 3, y: cgImage.height / 2)
+        assertClose(left, HDRTestImage.leftPixel, file: file, line: line)
+        assertClose(right, HDRTestImage.rightPixel, file: file, line: line)
+    }
+
+    private func assertClose(_ actual: [Float], _ expected: [Float], file: StaticString = #filePath, line: UInt = #line) {
+        for (a, e) in zip(actual, expected) {
+            XCTAssertEqual(a, e, accuracy: e * 0.1 + 0.02, "\(actual) is not close to \(expected)", file: file, line: line)
+        }
     }
 }
 
 /// Builds HDR test images in code. Only gain map images, which the simulators cannot encode, are fixture files.
 enum HDRTestImage {
 
+    /// The pixel layout of an HDR test image, all with 16 bits per component.
+    enum Layout {
+        /// Little-endian components, no alpha.
+        case littleEndianOpaque
+        /// The default component order of a `CGContext` (big-endian), no alpha. Kingfisher draws into such a context.
+        case defaultOrderOpaque
+        /// Little-endian components, premultiplied alpha. The alpha is 0.5.
+        case littleEndianTranslucent
+    }
+
+    /// The pixel values of ``hdrCGImage(width:height:noise:layout:)`` in extended linear Display P3, without alpha
+    /// premultiplication: the left half is 4x the SDR white, the right half is in the SDR range.
+    static let leftPixel: [Float] = [4.0, 3.2, 2.4]
+    static let rightPixel: [Float] = [0.5, 0.4, 0.3]
+
     /// An image with an HDR color space (PQ), 16 bits per component.
-    ///
-    /// The left half is 4x the SDR white. The right half is in the SDR range.
-    static func hdrCGImage(width: Int = 16, height: Int = 16, noise: Bool = false) throws -> CGImage {
-        let linear = try extendedLinearCGImage(width: width, height: height, noise: noise)
+    static func hdrCGImage(
+        width: Int = 16, height: Int = 16, noise: Bool = false, layout: Layout = .littleEndianOpaque
+    ) throws -> CGImage {
+        let alpha: Float = layout == .littleEndianTranslucent ? 0.5 : 1.0
+        let linear = try extendedLinearCGImage(width: width, height: height, noise: noise, alpha: alpha)
         let space = try XCTUnwrap(CGColorSpace(name: CGColorSpace.itur_2100_PQ))
+        let bitmapInfo: UInt32
+        switch layout {
+        case .littleEndianOpaque:
+            bitmapInfo = CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder16Little.rawValue
+        case .defaultOrderOpaque:
+            bitmapInfo = CGImageAlphaInfo.noneSkipLast.rawValue
+        case .littleEndianTranslucent:
+            bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder16Little.rawValue
+        }
         let context = try XCTUnwrap(CGContext(
             data: nil,
             width: width,
@@ -208,15 +274,46 @@ enum HDRTestImage {
             bitsPerComponent: 16,
             bytesPerRow: 0,
             space: space,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            bitmapInfo: bitmapInfo
         ))
         context.draw(linear, in: CGRect(x: 0, y: 0, width: width, height: height))
         return try XCTUnwrap(context.makeImage())
     }
 
-    static func hdrImage(width: Int = 16, height: Int = 16, noise: Bool = false) throws -> KFCrossPlatformImage {
-        let cgImage = try hdrCGImage(width: width, height: height, noise: noise)
+    static func hdrImage(
+        width: Int = 16, height: Int = 16, noise: Bool = false, layout: Layout = .littleEndianOpaque
+    ) throws -> KFCrossPlatformImage {
+        let cgImage = try hdrCGImage(width: width, height: height, noise: noise, layout: layout)
         return KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: cgImage, scale: 1, refImage: nil)
+    }
+
+    /// The RGB values of a pixel in extended linear Display P3, without alpha premultiplication.
+    static func linearPixel(of image: CGImage, x: Int, y: Int) throws -> [Float] {
+        let width = image.width, height = image.height
+        let context = try XCTUnwrap(CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 32,
+            bytesPerRow: width * 16,
+            space: try XCTUnwrap(CGColorSpace(name: CGColorSpace.extendedLinearDisplayP3)),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue |
+                CGBitmapInfo.floatComponents.rawValue |
+                CGBitmapInfo.byteOrder32Little.rawValue
+        ))
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let pixels = try XCTUnwrap(context.data).bindMemory(to: Float.self, capacity: width * height * 4)
+        let index = ((height - 1 - y) * width + x) * 4
+        let alpha = pixels[index + 3]
+        guard alpha > 0 else { return [0, 0, 0] }
+        return (0..<3).map { pixels[index + $0] / alpha }
+    }
+
+    /// Decodes `data` as HDR, applying a gain map if there is one.
+    static func decodeToHDR(_ data: Data) throws -> CGImage {
+        let source = try XCTUnwrap(CGImageSourceCreateWithData(data as CFData, nil))
+        let options = [kCGImageSourceDecodeRequest: kCGImageSourceDecodeToHDR] as CFDictionary
+        return try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, options))
     }
 
     /// Whether the system can encode an HDR image with an ISO gain map as `type`.
@@ -266,7 +363,7 @@ enum HDRTestImage {
     }
 
     // RGBA, 32-bit float, extended linear Display P3. `Float16` is not available on Intel Macs.
-    private static func extendedLinearCGImage(width: Int, height: Int, noise: Bool) throws -> CGImage {
+    private static func extendedLinearCGImage(width: Int, height: Int, noise: Bool, alpha: Float = 1) throws -> CGImage {
         var generator = SystemRandomNumberGenerator()
         var pixels = [Float](repeating: 0, count: width * height * 4)
         for y in 0..<height {
@@ -274,10 +371,10 @@ enum HDRTestImage {
                 var value: Float = x < width / 2 ? 4.0 : 0.5
                 if noise { value *= Float.random(in: 0.5...1.0, using: &generator) }
                 let index = (y * width + x) * 4
-                pixels[index] = value
-                pixels[index + 1] = value * 0.8
-                pixels[index + 2] = value * 0.6
-                pixels[index + 3] = 1
+                pixels[index] = value * alpha
+                pixels[index + 1] = value * 0.8 * alpha
+                pixels[index + 2] = value * 0.6 * alpha
+                pixels[index + 3] = alpha
             }
         }
         let data = pixels.withUnsafeBufferPointer { Data(buffer: $0) }
