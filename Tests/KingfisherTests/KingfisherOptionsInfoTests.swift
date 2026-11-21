@@ -303,6 +303,37 @@ class KingfisherOptionsInfoTests: XCTestCase {
         let modified = await modifier.modified(for: URLRequest(url: URL(string: "https://example.com/test.png")!))
         XCTAssertEqual(modified?.value(forHTTPHeaderField: "Authorization"), "Bearer async-token")
     }
+
+    @MainActor
+    func testBorderOptionSetter() {
+        let border = Border(color: .red, lineWidth: 2.0, radius: .point(5), roundingCorners: .all)
+        let builder = KF.url(URL(string: "https://example.com/test.png")!)
+            .border(border)
+        let expectedProcessor = DefaultImageProcessor.default.append(another: BorderImageProcessor(border: border))
+        XCTAssertEqual(builder.options.processor.identifier, expectedProcessor.identifier)
+
+        let builderConvenience = KF.url(URL(string: "https://example.com/test.png")!)
+            .border(color: .red, lineWidth: 2.0, radius: .point(5), roundingCorners: .all)
+        XCTAssertEqual(builderConvenience.options.processor.identifier, expectedProcessor.identifier)
+
+        let builderDefault = KF.url(URL(string: "https://example.com/test.png")!)
+            .border(color: .red)
+        let expectedDefault = DefaultImageProcessor.default.append(another: BorderImageProcessor(border: Border(color: .red)))
+        XCTAssertEqual(builderDefault.options.processor.identifier, expectedDefault.identifier)
+    }
+
+    @MainActor
+    func testColorControlsOptionSetter() {
+        let builder = KF.url(URL(string: "https://example.com/test.png")!)
+            .colorControls(brightness: 0.1, contrast: 1.2, saturation: 1.0, inputEV: 0.0)
+        let expected = DefaultImageProcessor.default.append(another: ColorControlsProcessor(
+            brightness: 0.1,
+            contrast: 1.2,
+            saturation: 1.0,
+            inputEV: 0.0
+        ))
+        XCTAssertEqual(builder.options.processor.identifier, expected.identifier)
+    }
 }
 
 final class TestModifier: ImageDownloadRequestModifier {
