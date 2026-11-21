@@ -198,6 +198,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         ) else {
             return nil
         }
+        context.keepRange(of: cgImage)
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
         guard let decoded = context.makeImage() else { return nil }
         let image = KingfisherWrapper.image(cgImage: decoded, scale: scale, refImage: base)
@@ -236,6 +237,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         ) else {
             return nil
         }
+        context.keepRange(of: cgImage)
         // A `CGContext` has its origin at the bottom left, as `fixOrientation(in:)` expects.
         context.scaleBy(x: scale, y: scale)
         fixOrientation(in: context)
@@ -278,6 +280,19 @@ extension CGImageSource {
             return true
         }
         return CGImageSourceCopyAuxiliaryDataInfoAtIndex(self, 0, kCGImageAuxiliaryDataTypeHDRGainMap) != nil
+    }
+}
+
+extension CGContext {
+    /// Sets the headroom of this bitmap so that drawing `image` into it keeps the range of `image`.
+    ///
+    /// Core Graphics tone maps an image to the headroom of the bitmap it is drawn into. The default headroom of an HDR
+    /// color space is lower than the one of a bright image, such as one with a raised exposure, which would then lose
+    /// most of its range.
+    func keepRange(of image: CGImage) {
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
+            _ = setEDRTargetHeadroom(max(image.contentHeadroom, kCGDefaultHDRImageContentHeadroom))
+        }
     }
 }
 

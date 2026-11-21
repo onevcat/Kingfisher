@@ -540,6 +540,26 @@ final class HighDynamicRangeOptionTests: XCTestCase {
     }
     #endif
 
+    // Drawing into a bitmap tone maps an image to the headroom of the bitmap. An image with a headroom above the
+    // default of a PQ bitmap must keep its range.
+    func testDecodedKeepsRangeOfHighHeadroomImage() throws {
+        guard #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) else {
+            throw XCTSkip("Content headroom needs iOS 18 or macOS 15.")
+        }
+        let image = KingfisherWrapper<KFCrossPlatformImage>.image(
+            cgImage: try HDRTestImage.highHeadroomCGImage(), scale: 1, refImage: nil
+        )
+        image.kf.prefersHighDynamicRange = true
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: image), 7)
+
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: image.kf.decoded), 7)
+        #if !os(macOS)
+        let oriented = UIImage(cgImage: try HDRTestImage.highHeadroomCGImage(), scale: 1, orientation: .right)
+        oriented.kf.prefersHighDynamicRange = true
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: oriented.kf.normalized), 7)
+        #endif
+    }
+
     func testDecodedIsUnchangedForUnmarkedImage() throws {
         let image = try HDRTestImage.hdrImage(layout: .defaultOrderOpaque)
 
@@ -680,10 +700,10 @@ enum HDRTestImage {
 
     /// An image with an HDR color space (PQ), 16 bits per component.
     static func hdrCGImage(
-        width: Int = 16, height: Int = 16, noise: Bool = false, layout: Layout = .littleEndianOpaque
+        width: Int = 16, height: Int = 16, noise: Bool = false, layout: Layout = .littleEndianOpaque, peak: Float = 4
     ) throws -> CGImage {
         let alpha: Float = layout == .littleEndianTranslucent ? 0.5 : 1.0
-        let linear = try extendedLinearCGImage(width: width, height: height, noise: noise, alpha: alpha)
+        let linear = try extendedLinearCGImage(width: width, height: height, noise: noise, alpha: alpha, peak: peak)
         let space = try XCTUnwrap(CGColorSpace(name: CGColorSpace.itur_2100_PQ))
         if layout == .floatRGB {
             return try floatRGBCGImage(from: linear, space: space)
@@ -796,6 +816,38 @@ enum HDRTestImage {
         XCTAssertGreaterThan(pixel[0], 0.1, "The image is empty: \(pixel)", file: file, line: line)
     }
 
+    /// An image whose left half is 8x the SDR white, with a content headroom of 10, above the default of a PQ bitmap.
+    @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+    static func highHeadroomCGImage(width: Int = 16, height: Int = 16) throws -> CGImage {
+        let image = try hdrCGImage(width: width, height: height, peak: 8)
+        return try XCTUnwrap(CGImage(
+            headroom: 10,
+            width: image.width,
+            height: image.height,
+            bitsPerComponent: image.bitsPerComponent,
+            bitsPerPixel: image.bitsPerPixel,
+            bytesPerRow: image.bytesPerRow,
+            space: try XCTUnwrap(image.colorSpace),
+            bitmapInfo: image.bitmapInfo,
+            provider: try XCTUnwrap(image.dataProvider),
+            decode: nil,
+            shouldInterpolate: true,
+            intent: .defaultIntent
+        ))
+    }
+
+    /// The largest red value of an image in extended linear Display P3.
+    static func brightestRed(of image: KFCrossPlatformImage) throws -> Float {
+        let cgImage = try XCTUnwrap(image.kf.cgImage)
+        var brightest: Float = 0
+        for y in 0..<cgImage.height {
+            for x in 0..<cgImage.width {
+                brightest = max(brightest, try linearPixel(of: cgImage, x: x, y: y)[0])
+            }
+        }
+        return brightest
+    }
+
     /// Decodes `data` as HDR, applying a gain map if there is one.
     static func decodeToHDR(_ data: Data) throws -> CGImage {
         let source = try XCTUnwrap(CGImageSourceCreateWithData(data as CFData, nil))
@@ -856,12 +908,14 @@ enum HDRTestImage {
     }
 
     // RGBA, 32-bit float, extended linear Display P3. `Float16` is not available on Intel Macs.
-    private static func extendedLinearCGImage(width: Int, height: Int, noise: Bool, alpha: Float = 1) throws -> CGImage {
+    private static func extendedLinearCGImage(
+        width: Int, height: Int, noise: Bool, alpha: Float = 1, peak: Float = 4
+    ) throws -> CGImage {
         var generator = SystemRandomNumberGenerator()
         var pixels = [Float](repeating: 0, count: width * height * 4)
         for y in 0..<height {
             for x in 0..<width {
-                var value: Float = x < width / 2 ? 4.0 : 0.5
+                var value: Float = x < width / 2 ? peak : 0.5
                 if noise { value *= Float.random(in: 0.5...1.0, using: &generator) }
                 let index = (y * width + x) * 4
                 pixels[index] = value * alpha
