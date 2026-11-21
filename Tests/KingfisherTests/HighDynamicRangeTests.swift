@@ -466,6 +466,48 @@ final class HighDynamicRangeOptionTests: XCTestCase {
         try assertHDRContent(of: result)
     }
 
+    // Changing only the scale must keep the mark, so that the later steps still keep HDR.
+    func testScalingKeepsMarkOfHDRImage() throws {
+        let image = try orientedMarkedHDRImage(layout: .littleEndianOpaque)
+        let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange, .scaleFactor(3)])
+
+        let scaled = try XCTUnwrap(DefaultImageProcessor.default.process(item: .image(image), options: options))
+
+        XCTAssertEqual(scaled.scale, 3)
+        XCTAssertTrue(scaled.kf.prefersHighDynamicRange)
+        let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: scaled, original: nil))
+        var creatingOptions = ImageCreatingOptions(scale: 3)
+        creatingOptions.prefersHighDynamicRange = true
+        try assertHDRContent(of: try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: creatingOptions)))
+        let thumbnail = try XCTUnwrap(
+            DownsamplingImageProcessor(size: CGSize(width: 2, height: 4)).process(item: .image(scaled), options: options)
+        )
+        try assertHDRContent(of: thumbnail)
+    }
+
+    func testOriginalMemoryCacheHitWithOtherScaleKeepsHDRInDiskCache() async throws {
+        let uuid = UUID().uuidString
+        let originalCache = ImageCache(name: "test.hdr.original.\(uuid)")
+        let targetCache = ImageCache(name: "test.hdr.target.\(uuid)")
+        defer { clearCaches([originalCache, targetCache]) }
+        let image = try orientedMarkedHDRImage(layout: .littleEndianOpaque)
+        // Loading the empty data would fail, so the result must come from the original cache.
+        let provider = RawImageDataProvider(data: Data(), cacheKey: "hdr-original-\(uuid)")
+        let originalOptions = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+        try await originalCache.store(image, forKey: provider.cacheKey, options: originalOptions, toDisk: false)
+        let options: KingfisherOptionsInfo = [
+            .preferHighDynamicRange, .scaleFactor(3), .originalCache(originalCache), .targetCache(targetCache), .waitForCache
+        ]
+
+        let first = try await manager.retrieveImage(with: .provider(provider), options: options)
+        XCTAssertEqual(first.image.scale, 3)
+        targetCache.clearMemoryCache()
+        let fromDisk = try await manager.retrieveImage(with: .provider(provider), options: options)
+
+        XCTAssertEqual(fromDisk.cacheType, .disk)
+        try assertHDRContent(of: fromDisk.image)
+    }
+
     func testNormalizedIsUnchangedForUnmarkedOrientedImage() throws {
         let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 8)
         let image = UIImage(cgImage: cgImage, scale: 2, orientation: .right)

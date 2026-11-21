@@ -173,6 +173,14 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
 // MARK: - Image Conversion
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
+    /// An image made from `refImage`, for example with another scale, keeps its HDR preference, so that the following
+    /// steps keep its HDR content too.
+    private static func keepHighDynamicRangePreference(of refImage: KFCrossPlatformImage?, in image: KFCrossPlatformImage) {
+        if refImage?.kf.prefersHighDynamicRange == true {
+            image.kf.prefersHighDynamicRange = true
+        }
+    }
+
     #if os(macOS)
     static func image(cgImage: CGImage, scale: CGFloat, refImage: KFCrossPlatformImage?) -> KFCrossPlatformImage {
         // `NSImage(cgImage:size:)` reports its pixel size in screen backing pixels (2x on Retina), which makes
@@ -180,6 +188,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let rep = NSBitmapImageRep(cgImage: cgImage)
         let image = KFCrossPlatformImage(size: rep.size)
         image.addRepresentation(rep)
+        keepHighDynamicRangePreference(of: refImage, in: image)
         return image
     }
     
@@ -196,7 +205,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///   - refImage: The ref image which is used to determine the image orientation.
     /// - Returns: The created image object.
     static func image(cgImage: CGImage, scale: CGFloat, refImage: KFCrossPlatformImage?) -> KFCrossPlatformImage {
-        return KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
+        let image = KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
+        keepHighDynamicRangePreference(of: refImage, in: image)
+        return image
     }
     
     /// The normalized image for the current `base` image.
