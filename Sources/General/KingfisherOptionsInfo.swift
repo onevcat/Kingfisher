@@ -435,6 +435,40 @@ public enum KingfisherOptionsInfoItem: Sendable {
     ///     the cache, for a ``Source/provider(_:)`` source, or when a subclass of ``ImageDownloader`` overrides
     ///     `downloadImage(with:options:completionHandler:)` and does not call `super`.
     case onDataReceived(@Sendable (_ task: SessionDataTask, _ data: Data) -> Void)
+
+    /// When set, an image that has an HDR version is decoded as HDR.
+    ///
+    /// An image with a gain map, such as a photo from a recent iPhone or an Ultra HDR JPEG, has an SDR base image and
+    /// the information to restore its HDR version. By default, Kingfisher creates an image with `UIImage(data:)`,
+    /// which reads only the SDR base image. With this option, the gain map is applied, and the image is HDR.
+    ///
+    /// The option also keeps the HDR content in the other steps of loading an image:
+    ///
+    /// - ``DownsamplingImageProcessor`` creates an HDR thumbnail.
+    /// - ``backgroundDecode`` keeps the image HDR.
+    /// - When the image comes from a JPEG or HEIC file with a gain map, ``DefaultCacheSerializer`` stores it with a
+    ///   gain map too (on iOS 18, tvOS 18 and visionOS 2 or later), so it is HDR again when it is loaded from the disk
+    ///   cache.
+    ///
+    /// The cache keys of an image loaded with this option are different from the ones of the same image loaded
+    /// without it, so an HDR image is never used for a request that does not ask for HDR, and the reverse.
+    ///
+    /// An HDR image needs more memory: usually 8 bytes per pixel instead of 4. An image without an HDR version, and
+    /// an HDR image without a gain map (in the PQ or HLG format), are decoded as before. An HDR image that cannot be
+    /// stored with a gain map is stored as a 16-bit PNG file, instead of an 8-bit JPEG file.
+    ///
+    /// To show the HDR content, the view must allow it too. A `UIImageView` or an `NSImageView` shows HDR content
+    /// within a limited range by default. Set its `preferredImageDynamicRange` to `.high` for the full range. For
+    /// ``KFImage``, use the `allowedDynamicRange(_:)` modifier of SwiftUI.
+    ///
+    /// The option is part of the cache keys. To check or remove the cache entry of an image loaded with it, use
+    /// ``KingfisherParsedOptionsInfo/cacheProcessorIdentifier`` as the processor identifier.
+    ///
+    /// - Note: Decoding an image with a gain map as HDR needs iOS 17, tvOS 17 or visionOS 1. A system that cannot
+    ///   apply gain maps, such as the simulators, decodes the image as usual. On macOS, `NSImage` decodes such an
+    ///   image as HDR already, and the option changes the thumbnails of ``DownsamplingImageProcessor``, background
+    ///   decoding and the cache keys. On watchOS, the option has no effect.
+    case preferHighDynamicRange
 }
 
 // MARK: - KingfisherParsedOptionsInfo
@@ -488,6 +522,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
     public var lowDataModeSource: Source? = nil
     public var forcedExtension: String? = nil
     public var respectCacheControl = false
+    public var preferHighDynamicRange = false
 
     var onDataReceived: [any DataReceivingSideEffect]? = nil
     var onDataReceivedHandlers: [@Sendable (SessionDataTask, Data) -> Void] = []
@@ -537,6 +572,7 @@ public struct KingfisherParsedOptionsInfo: Sendable {
             case .lowDataMode(let source): lowDataModeSource = source
             case .forcedCacheFileExtension(let ext): forcedExtension = ext
             case .respectCacheControl: respectCacheControl = true
+            case .preferHighDynamicRange: preferHighDynamicRange = true
             case .onDataReceived(let value):
                 onDataReceivedHandlers.append(value)
             }
@@ -550,11 +586,36 @@ public struct KingfisherParsedOptionsInfo: Sendable {
 
 extension KingfisherParsedOptionsInfo {
     var imageCreatingOptions: ImageCreatingOptions {
-        return ImageCreatingOptions(
+        var options = ImageCreatingOptions(
             scale: scaleFactor,
             duration: 0.0,
             preloadAll: preloadAllAnimationData,
             onlyFirstFrame: onlyLoadFirstFrame)
+        options.prefersHighDynamicRange = preferHighDynamicRange
+        return options
+    }
+
+    /// The processor identifier that Kingfisher uses in cache keys for these options.
+    ///
+    /// It is the identifier of ``processor``, marked when ``preferHighDynamicRange`` is set: an image decoded as HDR
+    /// is cached separately from the same image decoded without the option. Pass this value as the
+    /// `processorIdentifier` of the ``ImageCache`` methods to check or remove such an entry:
+    ///
+    /// ```swift
+    /// let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+    /// cache.removeImage(forKey: url.cacheKey, processorIdentifier: options.cacheProcessorIdentifier)
+    /// ```
+    ///
+    /// Without ``preferHighDynamicRange``, this is the same as `processor.identifier`.
+    public var cacheProcessorIdentifier: String {
+        cacheProcessorIdentifier(for: processor.identifier)
+    }
+
+    /// The identifier of a processor with the given identifier, as it is used in cache keys for these options.
+    func cacheProcessorIdentifier(for identifier: String) -> String {
+        guard preferHighDynamicRange else { return identifier }
+        let mark = "com.onevcat.Kingfisher.HighDynamicRange"
+        return identifier.isEmpty ? mark : "\(identifier)|\(mark)"
     }
 }
 

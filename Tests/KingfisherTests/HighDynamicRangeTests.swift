@@ -261,6 +261,428 @@ final class HighDynamicRangeTests: XCTestCase {
     }
 }
 
+final class HighDynamicRangeOptionTests: XCTestCase {
+
+    var manager: KingfisherManager!
+
+    override func setUp() {
+        super.setUp()
+        let uuid = UUID()
+        manager = KingfisherManager(
+            downloader: ImageDownloader.stubbed(name: "test.hdr.\(uuid.uuidString)"),
+            cache: ImageCache(name: "test.hdr.\(uuid.uuidString)")
+        )
+        manager.defaultOptions = [.waitForCache]
+    }
+
+    override func tearDown() {
+        clearStubs(afterCancelling: manager)
+        clearCaches([manager.cache])
+        manager = nil
+        super.tearDown()
+    }
+
+    // MARK: - Options
+
+    @MainActor
+    func testParsingOption() {
+        XCTAssertFalse(KingfisherParsedOptionsInfo(nil).preferHighDynamicRange)
+        XCTAssertFalse(KingfisherParsedOptionsInfo(nil).imageCreatingOptions.prefersHighDynamicRange)
+
+        let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+        XCTAssertTrue(options.preferHighDynamicRange)
+        XCTAssertTrue(options.imageCreatingOptions.prefersHighDynamicRange)
+
+        XCTAssertTrue(KF.url(testURLs[0]).preferHighDynamicRange().options.preferHighDynamicRange)
+        XCTAssertFalse(KF.url(testURLs[0]).preferHighDynamicRange().preferHighDynamicRange(false).options.preferHighDynamicRange)
+    }
+
+    func testCacheIdentifierIsUnchangedWithoutOption() {
+        var options = KingfisherParsedOptionsInfo(nil)
+        XCTAssertEqual(options.cacheProcessorIdentifier, "")
+        options.processor = RoundCornerImageProcessor(cornerRadius: 4)
+        XCTAssertEqual(options.cacheProcessorIdentifier, options.processor.identifier)
+        XCTAssertEqual(options.cacheProcessorIdentifier(for: ""), "")
+    }
+
+    func testCacheIdentifierIsMarkedWithOption() {
+        var options = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+        let defaultIdentifier = options.cacheProcessorIdentifier
+        XCTAssertFalse(defaultIdentifier.isEmpty)
+        options.processor = RoundCornerImageProcessor(cornerRadius: 4)
+        XCTAssertNotEqual(options.cacheProcessorIdentifier, options.processor.identifier)
+        XCTAssertNotEqual(options.cacheProcessorIdentifier, defaultIdentifier)
+        XCTAssertTrue(options.cacheProcessorIdentifier.hasPrefix(options.processor.identifier))
+    }
+
+    // MARK: - Decoding
+
+    func testDecodingWithoutOptionIsNotMarked() throws {
+        let data = Data(fileName: "hdr-gainmap.jpg")
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: .init()))
+        XCTAssertFalse(image.kf.prefersHighDynamicRange)
+    }
+
+    func testDecodingGainMapImageWithOption() throws {
+        let data = Data(fileName: "hdr-gainmap.jpg")
+        var options = ImageCreatingOptions(scale: 2)
+        options.prefersHighDynamicRange = true
+
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options))
+
+        XCTAssertTrue(image.kf.prefersHighDynamicRange)
+        #if !os(macOS)
+        XCTAssertEqual(image.scale, 2)
+        #endif
+        if HDRTestImage.canDecodeGainMapToHDR {
+            XCTAssertTrue(image.kf.isHighDynamicRange)
+        }
+    }
+
+    // A system that cannot apply gain maps, such as the simulators, must still give the regular image, not an
+    // empty one.
+    func testDecodingGainMapImageWithOptionHasPixels() throws {
+        let data = Data(fileName: "hdr-gainmap.jpg")
+        var options = ImageCreatingOptions(scale: 3)
+        options.prefersHighDynamicRange = true
+
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options))
+
+        try HDRTestImage.assertHasRightPixel(of: image)
+    }
+
+    func testDownsamplingGainMapImageWithOptionHasPixels() throws {
+        let data = Data(fileName: "hdr-gainmap.heic")
+        let processor = DownsamplingImageProcessor(size: CGSize(width: 8, height: 8))
+
+        let image = try XCTUnwrap(processor.process(item: .data(data), options: .init([.preferHighDynamicRange])))
+
+        try HDRTestImage.assertHasRightPixel(of: image)
+    }
+
+    func testDecodingNativeHDRImageWithOption() throws {
+        let data = try XCTUnwrap(try HDRTestImage.hdrImage().kf.pngRepresentation())
+        var options = ImageCreatingOptions()
+        options.prefersHighDynamicRange = true
+
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options))
+
+        XCTAssertTrue(image.kf.isHighDynamicRange)
+        XCTAssertTrue(image.kf.prefersHighDynamicRange)
+    }
+
+    func testDecodingGIFWithOptionKeepsAnimatedImage() throws {
+        var options = ImageCreatingOptions()
+        options.prefersHighDynamicRange = true
+        let image = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: testImageGIFData, options: options))
+        XCTAssertEqual(image.kf.gifRepresentation(), testImageGIFData)
+    }
+
+    func testDownsamplingWithOption() throws {
+        try XCTSkipUnless(HDRTestImage.canDecodeGainMapToHDR, "This platform cannot apply gain maps.")
+        let data = Data(fileName: "hdr-gainmap.heic")
+        let processor = DownsamplingImageProcessor(size: CGSize(width: 8, height: 8))
+
+        let sdr = try XCTUnwrap(processor.process(item: .data(data), options: .init(nil)))
+        let hdr = try XCTUnwrap(processor.process(item: .data(data), options: .init([.preferHighDynamicRange])))
+
+        XCTAssertFalse(sdr.kf.isHighDynamicRange)
+        XCTAssertFalse(sdr.kf.prefersHighDynamicRange)
+        XCTAssertTrue(hdr.kf.isHighDynamicRange)
+        XCTAssertTrue(hdr.kf.prefersHighDynamicRange)
+        XCTAssertEqual(hdr.kf.cgImage?.width, 8)
+    }
+
+    // MARK: - Decoded
+
+    func testDecodedKeepsHDRContentOfMarkedImage() throws {
+        let image = try HDRTestImage.hdrImage(layout: .defaultOrderOpaque)
+        image.kf.prefersHighDynamicRange = true
+
+        let decoded = image.kf.decoded
+
+        XCTAssertTrue(decoded.kf.prefersHighDynamicRange)
+        let cgImage = try XCTUnwrap(decoded.kf.cgImage)
+        XCTAssertTrue(cgImage.usesHighDynamicRangeTransferFunction)
+        XCTAssertTrue(cgImage.isSupportedByGainMapEncoder, "The decoded image can be stored with a gain map")
+        let left = try HDRTestImage.linearPixel(of: cgImage, x: 2, y: 8)
+        XCTAssertEqual(left[0], HDRTestImage.leftPixel[0], accuracy: 0.1)
+    }
+
+    func testDecodedKeepsOrientationOfMarkedImage() throws {
+        #if os(macOS)
+        throw XCTSkip("Orientation is a UIKit property.")
+        #else
+        let cgImage = try HDRTestImage.hdrCGImage(width: 8, height: 4)
+        let image = UIImage(cgImage: cgImage, scale: 2, orientation: .right)
+        image.kf.prefersHighDynamicRange = true
+
+        let decoded = image.kf.decoded
+
+        XCTAssertEqual(decoded.imageOrientation, .right)
+        XCTAssertEqual(decoded.scale, 2)
+        XCTAssertEqual(decoded.size, image.size)
+        #endif
+    }
+
+    #if !os(macOS)
+    // `normalized` redraws an oriented image. For a marked HDR image, it must keep the HDR content.
+    func testNormalizedKeepsHDRContentOfOrientedMarkedImage() throws {
+        for layout in [HDRTestImage.Layout.littleEndianOpaque, .littleEndianTranslucent] {
+            let image = try orientedMarkedHDRImage(layout: layout)
+
+            let normalized = image.kf.normalized
+
+            XCTAssertEqual(normalized.imageOrientation, .up)
+            XCTAssertEqual(normalized.size, image.size)
+            XCTAssertEqual(normalized.scale, image.scale)
+            XCTAssertTrue(normalized.kf.prefersHighDynamicRange)
+            try assertHDRContent(of: normalized)
+        }
+    }
+
+    func testSerializerKeepsHDRContentOfOrientedMarkedImage() throws {
+        for layout in [HDRTestImage.Layout.littleEndianOpaque, .littleEndianTranslucent] {
+            let image = try orientedMarkedHDRImage(layout: layout)
+            for original in [Data(fileName: "hdr-gainmap.jpg"), nil] {
+                let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: image, original: original))
+                var options = ImageCreatingOptions(scale: image.scale)
+                options.prefersHighDynamicRange = true
+                let decoded = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: options))
+
+                XCTAssertEqual(decoded.size, image.size)
+                try assertHDRContent(of: decoded)
+            }
+        }
+    }
+
+    func testDownsamplingImageKeepsHDRContentOfOrientedMarkedImage() throws {
+        let image = try orientedMarkedHDRImage(layout: .littleEndianOpaque)
+        let processor = DownsamplingImageProcessor(size: CGSize(width: 4, height: 8))
+
+        let result = try XCTUnwrap(processor.process(item: .image(image), options: .init([.preferHighDynamicRange])))
+
+        XCTAssertGreaterThan(result.size.height, result.size.width, "The orientation is applied")
+        try assertHDRContent(of: result)
+    }
+
+    // Changing only the scale must keep the mark, so that the later steps still keep HDR.
+    func testScalingKeepsMarkOfHDRImage() throws {
+        let image = try orientedMarkedHDRImage(layout: .littleEndianOpaque)
+        let options = KingfisherParsedOptionsInfo([.preferHighDynamicRange, .scaleFactor(3)])
+
+        let scaled = try XCTUnwrap(DefaultImageProcessor.default.process(item: .image(image), options: options))
+
+        XCTAssertEqual(scaled.scale, 3)
+        XCTAssertTrue(scaled.kf.prefersHighDynamicRange)
+        let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: scaled, original: nil))
+        var creatingOptions = ImageCreatingOptions(scale: 3)
+        creatingOptions.prefersHighDynamicRange = true
+        try assertHDRContent(of: try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: creatingOptions)))
+        let thumbnail = try XCTUnwrap(
+            DownsamplingImageProcessor(size: CGSize(width: 2, height: 4)).process(item: .image(scaled), options: options)
+        )
+        try assertHDRContent(of: thumbnail)
+    }
+
+    func testOriginalMemoryCacheHitWithOtherScaleKeepsHDRInDiskCache() async throws {
+        let uuid = UUID().uuidString
+        let originalCache = ImageCache(name: "test.hdr.original.\(uuid)")
+        let targetCache = ImageCache(name: "test.hdr.target.\(uuid)")
+        defer { clearCaches([originalCache, targetCache]) }
+        let image = try orientedMarkedHDRImage(layout: .littleEndianOpaque)
+        // Loading the empty data would fail, so the result must come from the original cache.
+        let provider = RawImageDataProvider(data: Data(), cacheKey: "hdr-original-\(uuid)")
+        let originalOptions = KingfisherParsedOptionsInfo([.preferHighDynamicRange])
+        try await originalCache.store(image, forKey: provider.cacheKey, options: originalOptions, toDisk: false)
+        let options: KingfisherOptionsInfo = [
+            .preferHighDynamicRange, .scaleFactor(3), .originalCache(originalCache), .targetCache(targetCache), .waitForCache
+        ]
+
+        let first = try await manager.retrieveImage(with: .provider(provider), options: options)
+        XCTAssertEqual(first.image.scale, 3)
+        targetCache.clearMemoryCache()
+        let fromDisk = try await manager.retrieveImage(with: .provider(provider), options: options)
+
+        XCTAssertEqual(fromDisk.cacheType, .disk)
+        try assertHDRContent(of: fromDisk.image)
+    }
+
+    func testNormalizedIsUnchangedForUnmarkedOrientedImage() throws {
+        let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 8)
+        let image = UIImage(cgImage: cgImage, scale: 2, orientation: .right)
+
+        let normalized = image.kf.normalized
+
+        XCTAssertFalse(normalized.kf.prefersHighDynamicRange)
+        XCTAssertEqual(normalized.imageOrientation, .up)
+    }
+
+    private func orientedMarkedHDRImage(layout: HDRTestImage.Layout) throws -> UIImage {
+        let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 8, layout: layout)
+        let image = UIImage(cgImage: cgImage, scale: 2, orientation: .right)
+        image.kf.prefersHighDynamicRange = true
+        XCTAssertEqual(image.size, CGSize(width: 4, height: 8))
+        return image
+    }
+
+    /// The image keeps the HDR transfer function and has pixels brighter than the SDR white.
+    private func assertHDRContent(of image: UIImage, file: StaticString = #filePath, line: UInt = #line) throws {
+        let cgImage = try XCTUnwrap(image.kf.cgImage, file: file, line: line)
+        XCTAssertTrue(cgImage.usesHighDynamicRangeTransferFunction, "Not HDR: \(cgImage)", file: file, line: line)
+        var brightest: Float = 0
+        for y in 0..<cgImage.height {
+            for x in 0..<cgImage.width {
+                brightest = max(brightest, try HDRTestImage.linearPixel(of: cgImage, x: x, y: y)[0])
+            }
+        }
+        XCTAssertGreaterThan(brightest, 2, "No pixel is brighter than the SDR white", file: file, line: line)
+    }
+    #endif
+
+    func testDefaultHeadroomMatchesCoreGraphics() throws {
+        guard #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) else {
+            throw XCTSkip("The constant needs iOS 18 or macOS 15.")
+        }
+        XCTAssertEqual(CGContext.defaultHighDynamicRangeHeadroom, kCGDefaultHDRImageContentHeadroom, accuracy: 0.0001)
+    }
+
+    // Drawing into a bitmap tone maps an image to the headroom of the bitmap. An image with a headroom above the
+    // default of a PQ bitmap must keep its range.
+    func testDecodedKeepsRangeOfHighHeadroomImage() throws {
+        guard #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) else {
+            throw XCTSkip("Content headroom needs iOS 18 or macOS 15.")
+        }
+        let image = KingfisherWrapper<KFCrossPlatformImage>.image(
+            cgImage: try HDRTestImage.highHeadroomCGImage(), scale: 1, refImage: nil
+        )
+        image.kf.prefersHighDynamicRange = true
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: image), 7)
+
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: image.kf.decoded), 7)
+        #if !os(macOS)
+        let oriented = UIImage(cgImage: try HDRTestImage.highHeadroomCGImage(), scale: 1, orientation: .right)
+        oriented.kf.prefersHighDynamicRange = true
+        XCTAssertGreaterThan(try HDRTestImage.brightestRed(of: oriented.kf.normalized), 7)
+        #endif
+    }
+
+    func testDecodedIsUnchangedForUnmarkedImage() throws {
+        let image = try HDRTestImage.hdrImage(layout: .defaultOrderOpaque)
+
+        let decoded = image.kf.decoded
+
+        XCTAssertFalse(decoded.kf.prefersHighDynamicRange)
+    }
+
+    // MARK: - Cache
+
+    func testSerializerUsesGainMapForMarkedImage() throws {
+        try XCTSkipUnless(HDRTestImage.canEncodeGainMap(type: .heic), "Gain map encoding is not available.")
+        let original = Data(fileName: "hdr-gainmap.heic")
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+
+        let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: image, original: original))
+
+        XCTAssertTrue(HDRTestImage.containsGainMap(data))
+    }
+
+    // An 8-bit JPEG would band an HDR image. A marked HDR image that cannot get a gain map is stored as 16-bit PNG.
+    func testSerializerUsesPNGForMarkedHDRImageWithoutGainMapEncoding() throws {
+        let original = Data(fileName: "hdr-gainmap.jpg")
+        let image = try HDRTestImage.hdrImage(layout: .littleEndianTranslucent)
+        image.kf.prefersHighDynamicRange = true
+
+        let data = try XCTUnwrap(DefaultCacheSerializer.default.data(with: image, original: original))
+
+        XCTAssertEqual(HDRTestImage.typeIdentifier(of: data), UTType.png.identifier)
+        let decoded = try XCTUnwrap(KingfisherWrapper<KFCrossPlatformImage>.image(data: data, options: .init()))
+        XCTAssertTrue(decoded.kf.isHighDynamicRange)
+        XCTAssertEqual(decoded.kf.cgImage?.bitsPerComponent, 16)
+    }
+
+    func testSerializerKeepsJPEGForMarkedSDRImage() throws {
+        let original = try HDRTestImage.sdrData(type: .jpeg)
+        let image = try HDRTestImage.sdrImage()
+        image.kf.prefersHighDynamicRange = true
+
+        let data = DefaultCacheSerializer.default.data(with: image, original: original)
+
+        XCTAssertEqual(data, image.kf.jpegRepresentation(compressionQuality: 1.0))
+    }
+
+    func testCacheProcessorIdentifierRemovesHDREntry() async throws {
+        let url = testURLs[0]
+        stub(url, data: Data(fileName: "hdr-gainmap.jpg"))
+        _ = try await manager.retrieveImage(with: url, options: [.preferHighDynamicRange])
+        let identifier = KingfisherParsedOptionsInfo([.preferHighDynamicRange]).cacheProcessorIdentifier
+        XCTAssertTrue(manager.cache.isCached(forKey: url.cacheKey, processorIdentifier: identifier))
+        XCTAssertFalse(manager.cache.isCached(forKey: url.cacheKey))
+
+        await withCheckedContinuation { continuation in
+            manager.cache.removeImage(forKey: url.cacheKey, processorIdentifier: identifier) {
+                continuation.resume()
+            }
+        }
+
+        XCTAssertFalse(manager.cache.isCached(forKey: url.cacheKey, processorIdentifier: identifier))
+    }
+
+    func testOptionUsesSeparateCacheEntries() async throws {
+        let url = testURLs[0]
+        let stub = stub(url, data: Data(fileName: "hdr-gainmap.jpg"))
+
+        let sdr = try await manager.retrieveImage(with: url)
+        XCTAssertEqual(sdr.cacheType, .none)
+        XCTAssertFalse(sdr.image.kf.prefersHighDynamicRange)
+
+        let hdr = try await manager.retrieveImage(with: url, options: [.preferHighDynamicRange])
+        XCTAssertEqual(hdr.cacheType, .none, "An SDR image in the cache must not be used for an HDR request")
+        XCTAssertTrue(hdr.image.kf.prefersHighDynamicRange)
+        XCTAssertEqual(stub.requestCount, 2)
+
+        let hdrAgain = try await manager.retrieveImage(with: url, options: [.preferHighDynamicRange])
+        XCTAssertEqual(hdrAgain.cacheType, .memory)
+        XCTAssertTrue(hdrAgain.image.kf.prefersHighDynamicRange)
+
+        manager.cache.clearMemoryCache()
+        let sdrFromDisk = try await manager.retrieveImage(with: url)
+        XCTAssertEqual(sdrFromDisk.cacheType, .disk)
+        XCTAssertFalse(sdrFromDisk.image.kf.prefersHighDynamicRange)
+        let hdrFromDisk = try await manager.retrieveImage(with: url, options: [.preferHighDynamicRange])
+        XCTAssertEqual(hdrFromDisk.cacheType, .disk)
+        XCTAssertTrue(hdrFromDisk.image.kf.prefersHighDynamicRange)
+    }
+
+    func testOptionUsesSeparateImagesForSharedDownload() async throws {
+        let url = testURLs[0]
+        let stub = heldStub(url, data: Data(fileName: "hdr-gainmap.jpg"))
+        let manager = self.manager!
+
+        async let sdr = manager.retrieveImage(with: url)
+        async let hdr = manager.retrieveImage(with: url, options: [.preferHighDynamicRange])
+        await stub.waitForRequest()
+        stub.release()
+
+        let (sdrResult, hdrResult) = try await (sdr, hdr)
+        XCTAssertEqual(stub.requestCount, 1, "Both requests share one download")
+        XCTAssertFalse(sdrResult.image.kf.prefersHighDynamicRange)
+        XCTAssertTrue(hdrResult.image.kf.prefersHighDynamicRange)
+    }
+
+    func testOptionUsesSeparateOriginalCacheEntries() async throws {
+        let url = testURLs[0]
+        stub(url, data: Data(fileName: "hdr-gainmap.jpg"))
+        let processor = RoundCornerImageProcessor(cornerRadius: 2)
+
+        _ = try await manager.retrieveImage(with: url)
+        let hdr = try await manager.retrieveImage(with: url, options: [.preferHighDynamicRange, .processor(processor)])
+
+        XCTAssertEqual(hdr.cacheType, .none, "The SDR original must not be processed for an HDR request")
+    }
+}
+
 /// Builds HDR test images in code. Only gain map images, which the simulators cannot encode, are fixture files.
 enum HDRTestImage {
 
@@ -285,10 +707,10 @@ enum HDRTestImage {
 
     /// An image with an HDR color space (PQ), 16 bits per component.
     static func hdrCGImage(
-        width: Int = 16, height: Int = 16, noise: Bool = false, layout: Layout = .littleEndianOpaque
+        width: Int = 16, height: Int = 16, noise: Bool = false, layout: Layout = .littleEndianOpaque, peak: Float = 4
     ) throws -> CGImage {
         let alpha: Float = layout == .littleEndianTranslucent ? 0.5 : 1.0
-        let linear = try extendedLinearCGImage(width: width, height: height, noise: noise, alpha: alpha)
+        let linear = try extendedLinearCGImage(width: width, height: height, noise: noise, alpha: alpha, peak: peak)
         let space = try XCTUnwrap(CGColorSpace(name: CGColorSpace.itur_2100_PQ))
         if layout == .floatRGB {
             return try floatRGBCGImage(from: linear, space: space)
@@ -392,11 +814,58 @@ enum HDRTestImage {
         return (0..<3).map { pixels[index + $0] / alpha }
     }
 
+    /// Checks that the right half of an image made from ``hdrCGImage`` or the gain map fixtures is not empty.
+    ///
+    /// The values are compared loosely: an SDR image from a gain map file has its own tone mapping.
+    static func assertHasRightPixel(of image: KFCrossPlatformImage, file: StaticString = #filePath, line: UInt = #line) throws {
+        let cgImage = try XCTUnwrap(image.kf.cgImage, file: file, line: line)
+        let pixel = try linearPixel(of: cgImage, x: cgImage.width * 3 / 4, y: cgImage.height / 2)
+        XCTAssertGreaterThan(pixel[0], 0.1, "The image is empty: \(pixel)", file: file, line: line)
+    }
+
+    /// An image whose left half is 8x the SDR white, with a content headroom of 10, above the default of a PQ bitmap.
+    @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+    static func highHeadroomCGImage(width: Int = 16, height: Int = 16) throws -> CGImage {
+        let image = try hdrCGImage(width: width, height: height, peak: 8)
+        return try XCTUnwrap(CGImage(
+            headroom: 10,
+            width: image.width,
+            height: image.height,
+            bitsPerComponent: image.bitsPerComponent,
+            bitsPerPixel: image.bitsPerPixel,
+            bytesPerRow: image.bytesPerRow,
+            space: try XCTUnwrap(image.colorSpace),
+            bitmapInfo: image.bitmapInfo,
+            provider: try XCTUnwrap(image.dataProvider),
+            decode: nil,
+            shouldInterpolate: true,
+            intent: .defaultIntent
+        ))
+    }
+
+    /// The largest red value of an image in extended linear Display P3.
+    static func brightestRed(of image: KFCrossPlatformImage) throws -> Float {
+        let cgImage = try XCTUnwrap(image.kf.cgImage)
+        var brightest: Float = 0
+        for y in 0..<cgImage.height {
+            for x in 0..<cgImage.width {
+                brightest = max(brightest, try linearPixel(of: cgImage, x: x, y: y)[0])
+            }
+        }
+        return brightest
+    }
+
     /// Decodes `data` as HDR, applying a gain map if there is one.
     static func decodeToHDR(_ data: Data) throws -> CGImage {
         let source = try XCTUnwrap(CGImageSourceCreateWithData(data as CFData, nil))
         let options = [kCGImageSourceDecodeRequest: kCGImageSourceDecodeToHDR] as CFDictionary
         return try XCTUnwrap(CGImageSourceCreateImageAtIndex(source, 0, options))
+    }
+
+    /// Whether the system applies gain maps when it decodes an image. The simulators do not.
+    static var canDecodeGainMapToHDR: Bool {
+        guard let image = try? decodeToHDR(Data(fileName: "hdr-gainmap.heic")) else { return false }
+        return image.usesHighDynamicRangeTransferFunction
     }
 
     /// Whether the system can encode an HDR image with an ISO gain map as `type`.
@@ -446,12 +915,14 @@ enum HDRTestImage {
     }
 
     // RGBA, 32-bit float, extended linear Display P3. `Float16` is not available on Intel Macs.
-    private static func extendedLinearCGImage(width: Int, height: Int, noise: Bool, alpha: Float = 1) throws -> CGImage {
+    private static func extendedLinearCGImage(
+        width: Int, height: Int, noise: Bool, alpha: Float = 1, peak: Float = 4
+    ) throws -> CGImage {
         var generator = SystemRandomNumberGenerator()
         var pixels = [Float](repeating: 0, count: width * height * 4)
         for y in 0..<height {
             for x in 0..<width {
-                var value: Float = x < width / 2 ? 4.0 : 0.5
+                var value: Float = x < width / 2 ? peak : 0.5
                 if noise { value *= Float.random(in: 0.5...1.0, using: &generator) }
                 let index = (y * width + x) * 4
                 pixels[index] = value * alpha

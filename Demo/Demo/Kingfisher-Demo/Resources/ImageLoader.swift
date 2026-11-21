@@ -52,6 +52,30 @@ struct ImageLoader {
         return URL(string: "\(prefix)/progressive.jpg")!
     }()
     
+    /// The formats of the images in `DemoAppImage/HDR`.
+    enum HDRImage: String, CaseIterable, Identifiable {
+        case sdr = "sdr.jpg"
+        case gainMapJPEG = "gainmap.jpg"
+        case gainMapHEIC = "gainmap.heic"
+        case pqHEIC = "pq.heic"
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .sdr: return "SDR JPEG (reference)"
+            case .gainMapJPEG: return "Gain map JPEG"
+            case .gainMapHEIC: return "Gain map HEIC"
+            case .pqHEIC: return "PQ HEIC (no gain map)"
+            }
+        }
+    }
+
+    static func hdrImageURL(_ name: String, format: HDRImage) -> URL {
+        let prefix = "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/master/DemoAppImage/HDR"
+        return URL(string: "\(prefix)/\(name)-\(format.rawValue)")!
+    }
+
     static func roseImage(index: Int) -> URL {
         return URL(string: "https://github.com/onevcat/Flower-Data-Set/raw/master/rose/rose-\(index).jpg")!
     }

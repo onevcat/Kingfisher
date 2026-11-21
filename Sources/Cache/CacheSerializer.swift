@@ -152,10 +152,12 @@ public struct CacheSerializationMemoryPolicy: Sendable {
 /// created from GIF data), the serializer will prefer the embedded GIF data and store it as GIF instead of falling
 /// back to PNG.
 ///
-/// On macOS, when the image is HDR (it uses the PQ or HLG transfer function) and `original` is JPEG or HEIC data with
-/// a gain map, the image is encoded in that format with an ISO gain map, so that the cached data keeps the HDR
-/// content. `NSImage(data:)` applies the gain map when the data is read again. This needs macOS 15. In all other
-/// cases, the encoding above is used.
+/// When the image is HDR (it uses the PQ or HLG transfer function) and `original` is JPEG or HEIC data with a gain
+/// map, the image is encoded in that format with an ISO gain map, so that the cached data keeps the HDR content. This
+/// is done only when decoding the data again applies the gain map: always on macOS 15 or later, and on iOS 18, tvOS 18
+/// or visionOS 2 or later for an image loaded with ``KingfisherOptionsInfoItem/preferHighDynamicRange``. When such
+/// an image cannot be encoded with a gain map, it is encoded as PNG instead of JPEG, to keep 16 bits per component.
+/// In all other cases, the encoding above is used.
 ///
 /// > Tip: If you create a new image instance from an animated image in a custom processor, use
 /// > ``KingfisherWrapper/copyKingfisherState(to:)`` to propagate the embedded animated data to the new image.
@@ -210,6 +212,10 @@ public struct DefaultCacheSerializer: CacheSerializer {
            let data = image.kf.highDynamicRangeData(matching: original, compressionQuality: compressionQuality)
         {
             return data
+        }
+        // An 8-bit JPEG bands an HDR image that was decoded for its HDR content.
+        if format == .JPEG, image.kf.prefersHighDynamicRange, image.kf.isHighDynamicRange {
+            return image.kf.data(format: .unknown, compressionQuality: compressionQuality)
         }
         return image.kf.data(format: format, compressionQuality: compressionQuality)
     }

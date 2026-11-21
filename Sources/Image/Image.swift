@@ -44,6 +44,7 @@ nonisolated(unsafe) private let animatedImageDataKey = malloc(1)!
 nonisolated(unsafe) private let imageFrameCountKey = malloc(1)!
 nonisolated(unsafe) private let imageSourceKey = malloc(1)!
 nonisolated(unsafe) private let imageCreatingOptionsKey = malloc(1)!
+nonisolated(unsafe) private let prefersHighDynamicRangeKey = malloc(1)!
 #if os(macOS)
 nonisolated(unsafe) private let imagesKey = malloc(1)!
 nonisolated(unsafe) private let durationKey = malloc(1)!
@@ -64,6 +65,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     public var imageFrameCount: Int? {
         get { return getAssociatedObject(base, imageFrameCountKey) }
         set { setRetainedAssociatedObject(base, imageFrameCountKey, newValue) }
+    }
+
+    /// Whether the image was created with ``ImageCreatingOptions/prefersHighDynamicRange``, so that the steps after
+    /// decoding should keep its HDR content too.
+    var prefersHighDynamicRange: Bool {
+        get { return getAssociatedObject(base, prefersHighDynamicRangeKey) ?? false }
+        nonmutating set { setRetainedAssociatedObject(base, prefersHighDynamicRangeKey, newValue) }
     }
     
     #if os(macOS)
@@ -138,6 +146,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         target.kf.imageFrameCount = imageFrameCount
         target.kf.frameSource = frameSource
         target.kf.imageCreatingOptions = imageCreatingOptions
+        if prefersHighDynamicRange { target.kf.prefersHighDynamicRange = true }
         #if os(macOS)
         target.kf.images = images
         target.kf.duration = duration
@@ -164,6 +173,14 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
 // MARK: - Image Conversion
 extension KingfisherWrapper where Base: KFCrossPlatformImage {
+    /// An image made from `refImage`, for example with another scale, keeps its HDR preference, so that the following
+    /// steps keep its HDR content too.
+    private static func keepHighDynamicRangePreference(of refImage: KFCrossPlatformImage?, in image: KFCrossPlatformImage) {
+        if refImage?.kf.prefersHighDynamicRange == true {
+            image.kf.prefersHighDynamicRange = true
+        }
+    }
+
     #if os(macOS)
     static func image(cgImage: CGImage, scale: CGFloat, refImage: KFCrossPlatformImage?) -> KFCrossPlatformImage {
         // `NSImage(cgImage:size:)` reports its pixel size in screen backing pixels (2x on Retina), which makes
@@ -171,6 +188,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         let rep = NSBitmapImageRep(cgImage: cgImage)
         let image = KFCrossPlatformImage(size: rep.size)
         image.addRepresentation(rep)
+        keepHighDynamicRangePreference(of: refImage, in: image)
         return image
     }
     
@@ -187,7 +205,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     ///   - refImage: The ref image which is used to determine the image orientation.
     /// - Returns: The created image object.
     static func image(cgImage: CGImage, scale: CGFloat, refImage: KFCrossPlatformImage?) -> KFCrossPlatformImage {
-        return KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
+        let image = KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: refImage?.imageOrientation ?? .up)
+        keepHighDynamicRangePreference(of: refImage, in: image)
+        return image
     }
     
     /// The normalized image for the current `base` image.
@@ -198,6 +218,10 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         guard images == nil else { return base.copy() as! KFCrossPlatformImage }
         // No need to do anything if already up
         guard base.imageOrientation != .up else { return base.copy() as! KFCrossPlatformImage }
+
+        if let image = highDynamicRangeNormalized() {
+            return image
+        }
 
         return draw(to: size, inverting: true, refImage: KFCrossPlatformImage()) {
             fixOrientation(in: $0)
@@ -422,6 +446,9 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// - Returns: An `Image` object representing the image if successfully created. If the `data` is invalid or 
     /// unsupported, `nil` will be returned.
     public static func image(data: Data, options: ImageCreatingOptions) -> KFCrossPlatformImage? {
+        if options.prefersHighDynamicRange, data.kf.imageFormat != .GIF {
+            return highDynamicRangeImage(data: data, scale: options.scale)
+        }
         var image: KFCrossPlatformImage?
         switch data.kf.imageFormat {
         case .JPEG:
@@ -451,6 +478,16 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     /// > Important: The `pointSize` should be smaller than the size of the input image. If it is larger than the original image
     /// > size, the resulting image will have the same dimensions as the input without downsampling.
     public static func downsampledImage(data: Data, to pointSize: CGSize, scale: CGFloat) -> KFCrossPlatformImage? {
+        downsampledImage(data: data, to: pointSize, scale: scale, prefersHighDynamicRange: false)
+    }
+
+    /// Creates a downsampled image, as HDR when `prefersHighDynamicRange` is `true` and the image has an HDR version.
+    static func downsampledImage(
+        data: Data,
+        to pointSize: CGSize,
+        scale: CGFloat,
+        prefersHighDynamicRange: Bool
+    ) -> KFCrossPlatformImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
             return nil
@@ -463,9 +500,28 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
         ]
-        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions as CFDictionary) else {
+        #if os(watchOS)
+        // An image is not shown as HDR on watchOS.
+        let prefersHighDynamicRange = false
+        #endif
+        var thumbnail: CGImage?
+        // Only data with a gain map needs the request. Other HDR images get an HDR thumbnail anyway.
+        if prefersHighDynamicRange, imageSource.containsGainMap {
+            var hdrOptions = downsampleOptions
+            addHighDynamicRangeDecodeRequest(to: &hdrOptions)
+            thumbnail = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, hdrOptions as CFDictionary)
+            // A system that cannot apply gain maps, such as the simulators, returns empty pixels.
+            if let result = thumbnail, !result.usesHighDynamicRangeTransferFunction {
+                thumbnail = nil
+            }
+        }
+        guard let downsampledImage = thumbnail ??
+                CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions as CFDictionary) else
+        {
             return nil
         }
-        return KingfisherWrapper.image(cgImage: downsampledImage, scale: scale, refImage: nil)
+        let image = KingfisherWrapper.image(cgImage: downsampledImage, scale: scale, refImage: nil)
+        if prefersHighDynamicRange { image.kf.prefersHighDynamicRange = true }
+        return image
     }
 }

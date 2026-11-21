@@ -184,12 +184,12 @@ extension ImageTransition {
 extension KFImage.Context: Hashable {
     public static func == (lhs: KFImage.Context<HoldingView>, rhs: KFImage.Context<HoldingView>) -> Bool {
         lhs.source == rhs.source &&
-        lhs.options.processor.identifier == rhs.options.processor.identifier
+        lhs.options.cacheProcessorIdentifier == rhs.options.cacheProcessorIdentifier
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(source)
-        hasher.combine(options.processor.identifier)
+        hasher.combine(options.cacheProcessorIdentifier)
     }
 }
 

@@ -694,7 +694,7 @@ public class KingfisherManager: @unchecked Sendable {
                 // waits for it.
                 targetCache.removeImage(
                     forKey: source.cacheKey,
-                    processorIdentifier: options.processor.identifier,
+                    processorIdentifier: options.cacheProcessorIdentifier,
                     forcedExtension: options.forcedExtension,
                     callbackQueue: options.callbackQueue)
                 {
@@ -706,7 +706,7 @@ public class KingfisherManager: @unchecked Sendable {
                     }
                     originalCache.removeImage(
                         forKey: source.cacheKey,
-                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        processorIdentifier: options.cacheProcessorIdentifier(for: DefaultImageProcessor.default.identifier),
                         forcedExtension: options.forcedExtension,
                         callbackQueue: options.callbackQueue)
                     {
@@ -735,7 +735,7 @@ public class KingfisherManager: @unchecked Sendable {
                     originalCache.storeToDisk(
                         value.originalData,
                         forKey: source.cacheKey,
-                        processorIdentifier: DefaultImageProcessor.default.identifier,
+                        processorIdentifier: options.cacheProcessorIdentifier(for: DefaultImageProcessor.default.identifier),
                         forcedExtension: options.forcedExtension,
                         expiration: originalDiskExpiration,
                         writeOptions: options.diskStoreWriteOptions,
@@ -842,7 +842,7 @@ public class KingfisherManager: @unchecked Sendable {
         let key = source.cacheKey
         let targetImageCached = targetCache.imageCachedType(
             forKey: key,
-            processorIdentifier: options.processor.identifier,
+            processorIdentifier: options.cacheProcessorIdentifier,
             forcedExtension: options.forcedExtension
         )
 
@@ -869,7 +869,7 @@ public class KingfisherManager: @unchecked Sendable {
         // Check whether the unprocessed image existing or not.
         let originalImageCacheType = originalCache.imageCachedType(
             forKey: key,
-            processorIdentifier: DefaultImageProcessor.default.identifier,
+            processorIdentifier: options.cacheProcessorIdentifier(for: DefaultImageProcessor.default.identifier),
             forcedExtension: options.forcedExtension
         )
         let canAcceptDiskCache = !options.fromMemoryCacheOrRefresh
@@ -922,7 +922,7 @@ public class KingfisherManager: @unchecked Sendable {
 
         targetCache.imageCachedTypeAsync(
             forKey: key,
-            processorIdentifier: options.processor.identifier,
+            processorIdentifier: options.cacheProcessorIdentifier,
             forcedExtension: options.forcedExtension,
             callbackQueue: .untouch
         ) { [weak self] targetImageCached in
@@ -949,7 +949,7 @@ public class KingfisherManager: @unchecked Sendable {
 
             originalCache.imageCachedTypeAsync(
                 forKey: key,
-                processorIdentifier: DefaultImageProcessor.default.identifier,
+                processorIdentifier: options.cacheProcessorIdentifier(for: DefaultImageProcessor.default.identifier),
                 forcedExtension: options.forcedExtension,
                 callbackQueue: .untouch
             ) { [self] originalImageCacheType in
@@ -1603,7 +1603,7 @@ struct OriginalProcessingIdentity: Hashable {
     init(cache: ImageCache, key: String, options: KingfisherParsedOptionsInfo) {
         self.cache = ObjectIdentifier(cache)
         self.key = key
-        self.processorIdentifier = options.processor.identifier
+        self.processorIdentifier = options.cacheProcessorIdentifier
         self.scale = Double(options.scaleFactor).bitPattern
         self.forcedExtension = options.forcedExtension
         self.preloadAllAnimationData = options.preloadAllAnimationData

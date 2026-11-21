@@ -338,6 +338,21 @@ extension KFOptionSetter {
         return result
     }
 
+    /// Sets whether an image that has an HDR version, such as an image with a gain map, is decoded as HDR.
+    ///
+    /// - Parameter enabled: Whether to decode the image as HDR when it has an HDR version.
+    /// - Returns: A `Self` value with the changes applied.
+    ///
+    /// To show the HDR content, the view must allow it too, for example with `preferredImageDynamicRange` of an
+    /// image view, or the `allowedDynamicRange(_:)` modifier of SwiftUI.
+    ///
+    /// See ``KingfisherOptionsInfoItem/preferHighDynamicRange`` for details.
+    public func preferHighDynamicRange(_ enabled: Bool = true) -> Self {
+        let result = copyForMutation()
+        result.options.preferHighDynamicRange = enabled
+        return result
+    }
+
     /// Sets writing options for an original image on its initial write to disk storage.
     ///
     /// - Parameter writingOptions: Options that control the data writing operation to disk storage.
