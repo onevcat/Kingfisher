@@ -195,11 +195,7 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
         }
         
         #if os(macOS)
-            if highDynamicRange {
-                // Drawing the result again would tone map it to the headroom of the new bitmap. The bitmap
-                // representation of `image(cgImage:scale:refImage:)` keeps the pixel size without drawing.
-                let image = KingfisherWrapper.image(cgImage: result, scale: scale, refImage: base)
-                image.kf.prefersHighDynamicRange = true
+            if highDynamicRange, let image = highDynamicRangeImage(fitting: result) {
                 return image
             }
             return fixedForRetinaPixel(cgImage: result, to: size)

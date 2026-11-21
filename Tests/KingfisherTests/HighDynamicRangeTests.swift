@@ -824,11 +824,80 @@ final class HighDynamicRangeProcessorTests: XCTestCase {
         let result = image.kf.overlaying(with: KFCrossPlatformColor.black.withAlphaComponent(0.3), fraction: 0.5)
         let reference = unmarked.kf.overlaying(with: KFCrossPlatformColor.black.withAlphaComponent(0.3), fraction: 0.5)
 
-        let referenceIsOpaque = [.none, .noneSkipFirst, .noneSkipLast].contains(reference.kf.cgImage?.alphaInfo)
-        let resultIsOpaque = [.none, .noneSkipFirst, .noneSkipLast].contains(result.kf.cgImage?.alphaInfo)
+        let opaqueAlphaInfos: [CGImageAlphaInfo] = [.none, .noneSkipFirst, .noneSkipLast]
+        let referenceIsOpaque = opaqueAlphaInfos.contains(try XCTUnwrap(reference.kf.cgImage?.alphaInfo))
+        let resultIsOpaque = opaqueAlphaInfos.contains(try XCTUnwrap(result.kf.cgImage?.alphaInfo))
         XCTAssertEqual(resultIsOpaque, referenceIsOpaque, "The HDR result has the same opacity as the SDR one")
         XCTAssertEqual(result.kf.cgImage?.usesHighDynamicRangeTransferFunction, true)
     }
+
+    // A size that is not a whole number of pixels leaves the edge pixels partly covered. They must keep their
+    // partial alpha, as in the regular renderer, and not be mixed with the black of an opaque bitmap.
+    func testResizingToFractionalSizeKeepsEdgeAlphaOfMarkedImage() throws {
+        #if os(macOS)
+        let scales: [CGFloat] = [1]
+        #else
+        let scales: [CGFloat] = [1, 3]
+        #endif
+        for scale in scales {
+            let cgImage = try HDRTestImage.hdrCGImage(width: 16, height: 16)
+            let image = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: cgImage, scale: scale, refImage: nil)
+            image.kf.prefersHighDynamicRange = true
+            let target = CGSize(width: 7.2, height: 4.2)
+
+            let resized = image.kf.resize(to: target)
+
+            let result = try XCTUnwrap(resized.kf.cgImage)
+            XCTAssertNotEqual(result.alphaInfo, .noneSkipLast, "scale \(scale): the edge pixels are partly covered")
+            #if !os(macOS)
+            let edge = try HDRTestImage.linearPixel(of: result, x: result.width - 1, y: result.height / 2)
+            XCTAssertGreaterThan(edge[0], 0.2, "scale \(scale): the edge pixel is dark: \(edge)")
+            #endif
+        }
+    }
+
+    func testResizingToWholePixelSizeHasNoAlphaForMarkedOpaqueImage() throws {
+        let image = try HDRTestImage.hdrImage()
+        image.kf.prefersHighDynamicRange = true
+
+        let resized = image.kf.resize(to: CGSize(width: 7, height: 5))
+
+        XCTAssertEqual(resized.kf.cgImage?.alphaInfo, .noneSkipLast)
+    }
+
+    func testOpaqueImageWithNoneAlphaInfoIsOpaque() throws {
+        let opaque = try HDRTestImage.hdrCGImage()
+        // The same pixels, with `CGImageAlphaInfo.none` (three channels are not used for 16-bit, so read them as RGBX).
+        let image = KingfisherWrapper<KFCrossPlatformImage>.image(cgImage: opaque, scale: 1, refImage: nil)
+        XCTAssertTrue(image.kf.isOpaque)
+        XCTAssertFalse(KFCrossPlatformImage().kf.isOpaque, "An image without a CGImage is not opaque")
+        let rgb = try HDRTestImage.hdrImage(layout: .floatRGB)
+        XCTAssertEqual(rgb.kf.cgImage?.alphaInfo, CGImageAlphaInfo.none)
+        XCTAssertTrue(rgb.kf.isOpaque)
+    }
+
+    #if os(macOS)
+    // On macOS, the result of a filter has the size of the image, also when the filter changes the extent.
+    func testFilterThatChangesExtentKeepsSizeOfMarkedImage() throws {
+        let filters: [Filter] = [
+            Filter { $0.applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: 2]) },
+            Filter { $0.cropped(to: CGRect(x: 0, y: 0, width: 8, height: 4)) },
+        ]
+        for filter in filters {
+            let marked = try HDRTestImage.hdrImage(width: 16, height: 8)
+            marked.kf.prefersHighDynamicRange = true
+            let unmarked = try HDRTestImage.hdrImage(width: 16, height: 8)
+
+            let result = marked.kf.apply(filter)
+            let reference = unmarked.kf.apply(filter)
+
+            XCTAssertEqual(result.size, reference.size)
+            XCTAssertEqual(result.kf.cgImage?.width, reference.kf.cgImage?.width)
+            XCTAssertEqual(result.kf.cgImage?.height, reference.kf.cgImage?.height)
+            XCTAssertEqual(result.kf.cgImage?.usesHighDynamicRangeTransferFunction, true)
+        }
+    }
+    #endif
 
     func testRoundCornerKeepsTransparencyOfMarkedImage() throws {
         let image = try HDRTestImage.hdrImage()
