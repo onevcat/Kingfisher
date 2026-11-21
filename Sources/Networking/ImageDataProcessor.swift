@@ -55,10 +55,12 @@ final class ImageDataProcessor: Sendable {
         var processedImages = [String: KFCrossPlatformImage]()
         for callback in callbacks {
             let processor = callback.options.processor
-            var image = processedImages[processor.identifier]
+            // The cache identifier also tells whether the image is decoded as HDR.
+            let identifier = callback.options.cacheProcessorIdentifier
+            var image = processedImages[identifier]
             if image == nil {
                 image = processor.process(item: .data(data), options: callback.options)
-                processedImages[processor.identifier] = image
+                processedImages[identifier] = image
             }
 
             let result: Result<KFCrossPlatformImage, KingfisherError>

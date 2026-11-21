@@ -115,12 +115,94 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
     }
 
     /// Whether ``KingfisherWrapper/image(data:options:)`` applies the gain map when it decodes this image again.
+    ///
+    /// `NSImage(data:)` always applies it. On the other platforms, only an image created with
+    /// ``ImageCreatingOptions/prefersHighDynamicRange`` is decoded with the gain map applied. Its cache entries are
+    /// read only with that option, because the option is part of the cache key.
     private var decodingAppliesGainMap: Bool {
         #if os(macOS)
         return true
         #else
-        return false
+        return prefersHighDynamicRange
         #endif
+    }
+
+    /// Decodes `data` with the gain map applied, if it has one.
+    ///
+    /// The result is marked with ``prefersHighDynamicRange``, so that the following steps keep the HDR content.
+    static func highDynamicRangeImage(data: Data, scale: CGFloat) -> KFCrossPlatformImage? {
+        #if os(watchOS)
+        // An image is not shown as HDR on watchOS.
+        return KFCrossPlatformImage(data: data, scale: scale)
+        #else
+        var image: KFCrossPlatformImage?
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        // Only data with a gain map needs another decoder. `UIImage(data:)` reads other HDR images as HDR.
+        if #available(iOS 17.0, tvOS 17.0, visionOS 1.0, *),
+           let source = CGImageSourceCreateWithData(data as CFData, nil), source.containsGainMap
+        {
+            var configuration = UIImageReader.Configuration()
+            configuration.prefersHighDynamicRange = true
+            // A system that cannot apply gain maps, such as the simulators, returns an SDR image with empty pixels.
+            // Use the result only when it is HDR. Otherwise, decode as usual.
+            if let read = UIImageReader(configuration: configuration).image(data: data),
+               read.cgImage?.usesHighDynamicRangeTransferFunction == true
+            {
+                if read.scale == scale {
+                    image = read
+                } else if let cgImage = read.cgImage {
+                    image = KFCrossPlatformImage(cgImage: cgImage, scale: scale, orientation: read.imageOrientation)
+                }
+            }
+        }
+        #endif
+        // `NSImage(data:)` applies a gain map already.
+        let result = image ?? KFCrossPlatformImage(data: data, scale: scale)
+        result?.kf.prefersHighDynamicRange = true
+        return result
+        #endif
+    }
+
+    /// Adds the request to apply a gain map to the options of a `CGImageSource` decoding.
+    static func addHighDynamicRangeDecodeRequest(to options: inout [CFString: Any]) {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *) {
+            options[kCGImageSourceDecodeRequest] = kCGImageSourceDecodeToHDR
+        }
+    }
+
+    /// Draws an HDR image into a bitmap that keeps its HDR content, and returns the result.
+    ///
+    /// `UIImage.preparingForDisplay()` returns the SDR version of an image decoded from a gain map, and the default
+    /// drawing contexts are SDR or use a pixel format that the gain map encoder misreads. This bitmap uses the color
+    /// space of the image and four little-endian 16-bit components. See ``CGImage/isSupportedByGainMapEncoder``.
+    ///
+    /// - Returns: The decoded image, marked with ``prefersHighDynamicRange``, or `nil` if the image is not HDR or
+    ///   the bitmap cannot be created.
+    func highDynamicRangeDecoded(scale: CGFloat) -> KFCrossPlatformImage? {
+        guard let cgImage, cgImage.usesHighDynamicRangeTransferFunction, let colorSpace = cgImage.colorSpace else {
+            return nil
+        }
+        let alphaInfo: CGImageAlphaInfo
+        switch cgImage.alphaInfo {
+        case .none, .noneSkipFirst, .noneSkipLast: alphaInfo = .noneSkipLast
+        default: alphaInfo = .premultipliedLast
+        }
+        guard let context = CGContext(
+            data: nil,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: 16,
+            bytesPerRow: 0,
+            space: colorSpace,
+            bitmapInfo: alphaInfo.rawValue | CGBitmapInfo.byteOrder16Little.rawValue
+        ) else {
+            return nil
+        }
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+        guard let decoded = context.makeImage() else { return nil }
+        let image = KingfisherWrapper.image(cgImage: decoded, scale: scale, refImage: base)
+        image.kf.prefersHighDynamicRange = true
+        return image
     }
 
     /// The format to use for a gain map encoding that matches `original`: JPEG or HEIC, and only when `original`
@@ -148,10 +230,13 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
 
 extension CGImageSource {
     /// Whether the first image has an ISO gain map or an Apple HDR gain map.
-    @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
     var containsGainMap: Bool {
-        CGImageSourceCopyAuxiliaryDataInfoAtIndex(self, 0, kCGImageAuxiliaryDataTypeISOGainMap) != nil
-            || CGImageSourceCopyAuxiliaryDataInfoAtIndex(self, 0, kCGImageAuxiliaryDataTypeHDRGainMap) != nil
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *),
+           CGImageSourceCopyAuxiliaryDataInfoAtIndex(self, 0, kCGImageAuxiliaryDataTypeISOGainMap) != nil
+        {
+            return true
+        }
+        return CGImageSourceCopyAuxiliaryDataInfoAtIndex(self, 0, kCGImageAuxiliaryDataTypeHDRGainMap) != nil
     }
 }
 

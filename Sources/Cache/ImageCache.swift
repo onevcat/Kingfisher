@@ -344,7 +344,7 @@ open class ImageCache: @unchecked Sendable {
         completionHandler: (@Sendable (CacheStoreResult) -> Void)? = nil
     )
     {
-        let identifier = options.processor.identifier
+        let identifier = options.cacheProcessorIdentifier
         let callbackQueue = options.callbackQueue
         
         let computedKey = key.computedKey(with: identifier)
@@ -754,7 +754,7 @@ open class ImageCache: @unchecked Sendable {
         forKey key: String,
         options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage?
     {
-        let computedKey = key.computedKey(with: options.processor.identifier)
+        let computedKey = key.computedKey(with: options.cacheProcessorIdentifier)
         return memoryStorage.value(
             forKey: computedKey,
             extendingExpiration: options.memoryCacheAccessExtendingExpiration
@@ -800,7 +800,7 @@ open class ImageCache: @unchecked Sendable {
         callbackQueue: CallbackQueue = .untouch,
         outcomeHandler: @escaping @Sendable (Result<DiskRetrievalOutcome, KingfisherError>) -> Void)
     {
-        let computedKey = key.computedKey(with: options.processor.identifier)
+        let computedKey = key.computedKey(with: options.cacheProcessorIdentifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
         loadingQueue.execute {
             // CHECK 1: For blocks queued on the serial ioQueue, the task is likely
@@ -882,7 +882,7 @@ open class ImageCache: @unchecked Sendable {
         callbackQueue: CallbackQueue = .untouch,
         outcomeHandler: @escaping @Sendable (Result<DiskDataRetrievalOutcome, KingfisherError>) -> Void)
     {
-        let computedKey = key.computedKey(with: options.processor.identifier)
+        let computedKey = key.computedKey(with: options.cacheProcessorIdentifier)
         let loadingQueue: CallbackQueue = options.loadDiskFileSynchronously ? .untouch : .dispatch(ioQueue)
         loadingQueue.execute {
             // CHECK 1: The task is likely already stale by the time a block queued on the serial

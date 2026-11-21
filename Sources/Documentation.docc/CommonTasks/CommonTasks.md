@@ -33,6 +33,7 @@ subsequent documentation:
     - <doc:Topic_Indicator>
     - <doc:Topic_Retry>
     - <doc:Topic_LowDataMode> 
+    - <doc:Topic_HDR>
     - <doc:Topic_PerformanceTips>
 }
 

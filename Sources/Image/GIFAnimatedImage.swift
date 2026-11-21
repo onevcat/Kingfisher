@@ -42,6 +42,11 @@ public struct ImageCreatingOptions: Equatable {
     /// For an animated image, indicates whether only the first image should be
     /// loaded as a static image. It is useful for previewing an animated image.
     public var onlyFirstFrame: Bool
+
+    /// Whether an image that has an HDR version, such as an image with a gain map, is decoded as HDR.
+    ///
+    /// Default is `false`. See ``KingfisherOptionsInfoItem/preferHighDynamicRange`` for details.
+    public var prefersHighDynamicRange: Bool = false
     
     /// Creates an `ImageCreatingOptions` object.
     ///

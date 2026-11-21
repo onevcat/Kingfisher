@@ -586,6 +586,11 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             assertionFailure("[Kingfisher] Decoding only works for CG-based image.")
             return base
         }
+
+        // `preparingForDisplay()` returns the SDR version of an image decoded from a gain map.
+        if prefersHighDynamicRange, let image = highDynamicRangeDecoded(scale: scale) {
+            return image
+        }
         
         #if !os(watchOS) && !os(macOS)
         if base.scale == scale, let image = base.preparingForDisplay() {

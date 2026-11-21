@@ -339,7 +339,7 @@ public class ImagePrefetcher: CustomStringConvertible, @unchecked Sendable {
         
         let cacheType = manager.cache.imageCachedType(
             forKey: source.cacheKey,
-            processorIdentifier: optionsInfo.processor.identifier,
+            processorIdentifier: optionsInfo.cacheProcessorIdentifier,
             forcedExtension: optionsInfo.forcedExtension
         )
         switch cacheType {

@@ -55,6 +55,9 @@ struct MainView: View {
                 NavigationLink(destination: ProgressiveJPEGDemo()) { Text("Progressive JPEG") }
                 NavigationLink(destination: LoadingFailureDemo()) { Text("Loading Failure") }
                 NavigationLink(destination: PhotosPickerDemo()) { Text("Photos Picker") }
+                if #available(iOS 17.0, *) {
+                    NavigationLink(destination: HDRDemo()) { Text("HDR") }
+                }
             }
             
             Section(header: Text("Regression Cases")) {
