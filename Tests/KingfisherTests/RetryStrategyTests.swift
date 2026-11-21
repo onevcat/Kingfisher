@@ -31,20 +31,10 @@ class RetryStrategyTests: XCTestCase {
 
     var manager: KingfisherManager!
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-
     override func setUpWithError() throws {
         try super.setUpWithError()
         let uuid = UUID()
-        let downloader = ImageDownloader(name: "test.manager.\(uuid.uuidString)")
+        let downloader = ImageDownloader.stubbed(name: "test.manager.\(uuid.uuidString)")
         let cache = ImageCache(name: "test.cache.\(uuid.uuidString)")
 
         manager = KingfisherManager(downloader: downloader, cache: cache)
@@ -408,10 +398,8 @@ class RetryStrategyTests: XCTestCase {
             exp.fulfill()
         }
 
-        // Simulate network reconnection after a short delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            networkMonitor.simulateNetworkChange(isConnected: true)
-        }
+        // `retry` registers its observer synchronously, so the reconnection can be simulated right away.
+        networkMonitor.simulateNetworkChange(isConnected: true)
 
         waitForExpectations(timeout: 10, handler: nil)
     }
@@ -447,27 +435,28 @@ class RetryStrategyTests: XCTestCase {
         }
 
         // Simulate network reconnection
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            networkMonitor.simulateNetworkChange(isConnected: true)
-        }
+        networkMonitor.simulateNetworkChange(isConnected: true)
 
         waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testNetworkObserverDoesNotNotifyAfterCancel() {
-        let exp = expectation(description: #function)
-        exp.isInverted = true
-
+        let called = LockIsolated(false)
         let observer = NetworkObserverImpl(
             timeoutInterval: nil,
-            callback: { _ in exp.fulfill() },
+            callback: { _ in called.setValue(true) },
             monitor: .default
         )
 
         observer.cancel()
         observer.notify(isConnected: true)
 
-        waitForExpectations(timeout: 1, handler: nil)
+        // A notification is delivered with `DispatchQueue.main.async`. When a block queued after it has run, every
+        // callback queued by `notify` has run too.
+        let drained = expectation(description: "Main queue drained")
+        DispatchQueue.main.async { drained.fulfill() }
+        wait(for: [drained], timeout: 3)
+        XCTAssertFalse(called.value)
     }
 
     func testNetworkObserverNotifiesOnlyOnce() {

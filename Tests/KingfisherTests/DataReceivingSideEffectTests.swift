@@ -81,21 +81,11 @@ class DataReceivingSideEffectTests: XCTestCase {
         }
     }
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         let uuid = UUID()
-        let downloader = ImageDownloader(name: "test.manager.\(uuid.uuidString)")
+        let downloader = ImageDownloader.stubbed(name: "test.manager.\(uuid.uuidString)")
         let cache = ImageCache(name: "test.cache.\(uuid.uuidString)")
 
         manager = KingfisherManager(downloader: downloader, cache: cache)
@@ -145,7 +135,7 @@ class DataReceivingSideEffectTests: XCTestCase {
             },
             .waitForCache
         ]
-        manager.retrieveImage(
+        _ = manager.retrieveImage(
             with: .network(url),
             options: KingfisherParsedOptionsInfo(options),
             referenceTaskIdentifierChecker: { false }
@@ -160,7 +150,7 @@ class DataReceivingSideEffectTests: XCTestCase {
         let exp1 = expectation(description: "request 1 completed")
         let exp2 = expectation(description: "request 2 completed")
         let url = testURLs[0]
-        let delayedResponse = delayedStub(url, data: testImageData, length: 123)
+        let heldResponse = heldStub(url, data: testImageData, length: 123)
 
         let received = LockIsolated(Data())
         let sharedHandler: @Sendable (SessionDataTask, Data) -> Void = { _, data in
@@ -169,19 +159,19 @@ class DataReceivingSideEffectTests: XCTestCase {
         let options = KingfisherParsedOptionsInfo([.onDataReceived(sharedHandler), .forceRefresh])
 
         // Both requests use the same options and handler, and join one download.
-        manager.retrieveImage(
+        _ = manager.retrieveImage(
             with: .network(url),
             options: options,
             referenceTaskIdentifierChecker: { true }
         ) { _ in exp1.fulfill() }
-        manager.retrieveImage(
+        _ = manager.retrieveImage(
             with: .network(url),
             options: options,
             referenceTaskIdentifierChecker: { false }
         ) { _ in exp2.fulfill() }
 
         XCTAssertEqual(manager.downloader.sessionDelegate.task(for: url)?.callbacks.count, 2)
-        _ = delayedResponse.go()
+        heldResponse.release()
         waitForExpectations(timeout: 3, handler: nil)
 
         // Only the live request gets the data, exactly once. If the stale check were ignored, the data would be

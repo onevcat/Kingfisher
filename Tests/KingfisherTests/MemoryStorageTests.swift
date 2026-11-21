@@ -115,156 +115,121 @@ class MemoryStorageTests: XCTestCase {
     }
 
     func testStoreWithExpiration() {
-        let exp = expectation(description: #function)
+        let clock = TestClock().install()
 
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
         XCTAssertFalse(storage.isCached(forKey: "2"))
         storage.store(value: 2, forKey: "2")
         XCTAssertTrue(storage.isCached(forKey: "2"))
 
-        delay(0.2) {
-            XCTAssertFalse(self.storage.isCached(forKey: "1"))
-            XCTAssertTrue(self.storage.isCached(forKey: "2"))
+        clock.advance(by: 2)
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        XCTAssertTrue(storage.isCached(forKey: "2"))
 
-            // But the object is still in underlying cache.
-            let obj = self.storage.storage.object(forKey: "1")
-            XCTAssertNotNil(obj)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        // But the object is still in underlying cache.
+        XCTAssertNotNil(storage.storage.object(forKey: "1"))
     }
 
     func testStoreWithConfigExpiration() {
-        let exp = expectation(description: #function)
-
-        storage.config.expiration = .seconds(0.1)
+        let clock = TestClock().install()
+        storage.config.expiration = .seconds(1)
 
         XCTAssertFalse(storage.isCached(forKey: "1"))
         storage.store(value: 1, forKey: "1")
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
-        delay(0.2) {
-            XCTAssertFalse(self.storage.isCached(forKey: "1"))
-            // But the object is still in underlying cache.
-            let obj = self.storage.storage.object(forKey: "1")
-            XCTAssertNotNil(obj)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        clock.advance(by: 2)
+        XCTAssertFalse(storage.isCached(forKey: "1"))
+        // But the object is still in underlying cache.
+        XCTAssertNotNil(storage.storage.object(forKey: "1"))
     }
     
     func testStoreWithExpirationExtending() {
-        let exp = expectation(description: #function)
-        
+        let clock = TestClock().install()
+
         XCTAssertFalse(storage.isCached(forKey: "1"))
         storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
-        
-        delay(0.1) {
-            let expirationDate1 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
-            XCTAssertNotNil(expirationDate1)
-            
-            // Request for the object to extend it's expiration date
-            let obj = self.storage.value(forKey: "1", extendingExpiration: .expirationTime(.seconds(5)))
-            XCTAssertNotNil(obj)
-            
-            let expirationDate2 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
-            XCTAssertNotNil(expirationDate2)
-            
-            XCTAssertNotEqual(expirationDate1!, expirationDate2!)
-            XCTAssert(expirationDate1!.isPast(referenceDate: expirationDate2!))
-            exp.fulfill()
-        }
-        
-        waitForExpectations(timeout: 3, handler: nil)
+
+        clock.advance(by: 0.5)
+        let expirationDate1 = storage.storage.object(forKey: "1")?.estimatedExpiration
+        XCTAssertNotNil(expirationDate1)
+
+        // Request for the object to extend it's expiration date
+        let obj = storage.value(forKey: "1", extendingExpiration: .expirationTime(.seconds(5)))
+        XCTAssertNotNil(obj)
+
+        let expirationDate2 = storage.storage.object(forKey: "1")?.estimatedExpiration
+        XCTAssertEqual(expirationDate1, clock.now.addingTimeInterval(0.5))
+        XCTAssertEqual(expirationDate2, clock.now.addingTimeInterval(5))
     }
     
     func testStoreWithExpirationNotExtending() {
-        let exp = expectation(description: #function)
-        
+        let clock = TestClock().install()
+
         XCTAssertFalse(storage.isCached(forKey: "1"))
         storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
-        
-        delay(0.1) {
-            let expirationDate1 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
-            XCTAssertNotNil(expirationDate1)
-            
-            // Request for the object to extend it's expiration date
-            let obj = self.storage.value(forKey: "1", extendingExpiration: .none)
-            XCTAssertNotNil(obj)
-            
-            let expirationDate2 = self.storage.storage.object(forKey: "1")?.estimatedExpiration
-            XCTAssertNotNil(expirationDate2)
-            
-            XCTAssertEqual(expirationDate1, expirationDate2)
-            exp.fulfill()
-        }
-        
-        waitForExpectations(timeout: 3, handler: nil)
+
+        clock.advance(by: 0.5)
+        let expirationDate1 = storage.storage.object(forKey: "1")?.estimatedExpiration
+        XCTAssertNotNil(expirationDate1)
+
+        // Request for the object without extending it's expiration date
+        let obj = storage.value(forKey: "1", extendingExpiration: .none)
+        XCTAssertNotNil(obj)
+
+        let expirationDate2 = storage.storage.object(forKey: "1")?.estimatedExpiration
+        XCTAssertEqual(expirationDate1, expirationDate2)
     }
 
     func testRemoveExpired() {
-        let exp = expectation(description: #function)
+        let clock = TestClock().install()
 
         XCTAssertFalse(storage.isCached(forKey: "1"))
-        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
 
-        delay(0.2) {
-            XCTAssertFalse(self.storage.isCached(forKey: "1"))
+        clock.advance(by: 2)
+        XCTAssertFalse(storage.isCached(forKey: "1"))
 
-            // But the object is still in underlying cache.
-            XCTAssertNotNil(self.storage.storage.object(forKey: "1"))
-            self.storage.removeExpired()
+        // But the object is still in underlying cache.
+        XCTAssertNotNil(storage.storage.object(forKey: "1"))
+        storage.removeExpired()
 
-            // It should be removed now.
-            XCTAssertNil(self.storage.storage.object(forKey: "1"))
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        // It should be removed now.
+        XCTAssertNil(storage.storage.object(forKey: "1"))
     }
 
     func testTotalCacheCostIncludesExpiredValues() {
-        let exp = expectation(description: #function)
+        let clock = TestClock().install()
 
-        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         storage.store(value: 2, forKey: "2")
 
-        delay(0.2) {
-            XCTAssertEqual(self.storage.totalCacheCost(), 2)
-            XCTAssertNotNil(self.storage.storage.object(forKey: "1"))
-            exp.fulfill()
-        }
-
-        waitForExpectations(timeout: 3, handler: nil)
+        clock.advance(by: 2)
+        XCTAssertEqual(storage.totalCacheCost(), 2)
+        XCTAssertNotNil(storage.storage.object(forKey: "1"))
     }
 
     func testExtendExpirationByAccessing() {
-        let exp = expectation(description: #function)
+        let clock = TestClock().install()
 
-        let expiration = StorageExpiration.seconds(0.5)
-        storage.store(value: 1, forKey: "1", expiration: expiration)
+        storage.store(value: 1, forKey: "1", expiration: .seconds(5))
 
-        delay(0.3) {
-            // This should extend the expiration to (0.3 + 0.5) from initially created.
-            let v = self.storage.value(forKey: "1")
-            XCTAssertEqual(v, 1)
-        }
+        clock.advance(by: 3)
+        // This extends the expiration to (3 + 5) from initially created.
+        XCTAssertEqual(storage.value(forKey: "1"), 1)
 
-        delay(0.6) {
-            // Accessing `isCached` does not extend expiration
-            XCTAssertTrue(self.storage.isCached(forKey: "1"))
-        }
-        
-        delay(1) {
-            XCTAssertFalse(self.storage.isCached(forKey: "1"))
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        clock.advance(by: 3)
+        // Accessing `isCached` does not extend expiration
+        XCTAssertTrue(storage.isCached(forKey: "1"))
+
+        clock.advance(by: 3)
+        XCTAssertFalse(storage.isCached(forKey: "1"))
     }
 
     func testTotalCacheCostExcludesEvictedValues() {
@@ -281,17 +246,19 @@ class MemoryStorageTests: XCTestCase {
 
     func testAutoCleanExpiredMemory() {
         let exp = expectation(description: #function)
-        let config = MemoryStorage.Config(totalCostLimit: 3, cleanInterval: 0.1)
+        let clock = TestClock().install()
+        let config = MemoryStorage.Config(totalCostLimit: 3, cleanInterval: 0.05)
         storage = MemoryStorage.Backend(config: config)
 
-        storage.store(value: 1, forKey: "1", expiration: .seconds(0.1))
+        storage.store(value: 1, forKey: "1", expiration: .seconds(1))
         XCTAssertTrue(storage.isCached(forKey: "1"))
         XCTAssertEqual(self.storage.keys.count, 1)
-        
-        delay(0.2) {
+
+        clock.advance(by: 2)
+        // The clean timer runs on real time. Wait for it to remove the expired value.
+        poll(until: { self.storage.keys.isEmpty }) {
             XCTAssertFalse(self.storage.isCached(forKey: "1"))
             XCTAssertNil(self.storage.storage.object(forKey: "1"))
-            XCTAssertEqual(self.storage.keys.count, 0)
             exp.fulfill()
         }
 
@@ -299,24 +266,14 @@ class MemoryStorageTests: XCTestCase {
     }
 
     func testStorageObject() {
-        let now = Date()
+        let clock = TestClock().install()
+        let start = clock.now
         let obj = MemoryStorage.StorageObject(1, expiration: .seconds(1))
         XCTAssertEqual(obj.value, 1)
+        XCTAssertEqual(obj.estimatedExpiration, start.addingTimeInterval(1))
 
-        XCTAssertEqual(
-            obj.estimatedExpiration.timeIntervalSince1970,
-            now.addingTimeInterval(1).timeIntervalSince1970,
-            accuracy: 0.3)
-
-        let exp = expectation(description: #function)
-        delay(0.5) {
-            obj.extendExpiration()
-            XCTAssertEqual(
-                obj.estimatedExpiration.timeIntervalSince1970,
-                now.addingTimeInterval(1.5).timeIntervalSince1970,
-                accuracy: 0.3)
-            exp.fulfill()
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        clock.advance(by: 0.5)
+        obj.extendExpiration()
+        XCTAssertEqual(obj.estimatedExpiration, start.addingTimeInterval(1.5))
     }
 }

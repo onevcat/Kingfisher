@@ -196,7 +196,7 @@ public enum DiskStorage {
                 }
             }
 
-            let now = Date()
+            let now = ExpirationClock.now
             let attributes: [FileAttributeKey : Any] = [
                 // The last access date.
                 .creationDate: now.fileAttributeDate,
@@ -238,7 +238,7 @@ public enum DiskStorage {
         ) throws -> T? {
             try value(
                 forKey: key,
-                referenceDate: Date(),
+                referenceDate: ExpirationClock.now,
                 actuallyLoad: true,
                 extendingExpiration: extendingExpiration,
                 forcedExtension: forcedExtension
@@ -314,7 +314,7 @@ public enum DiskStorage {
         /// value by checking the nullability of the
         /// ``DiskStorage/Backend/value(forKey:forcedExtension:extendingExpiration:)`` method.
         public func isCached(forKey key: String, forcedExtension: String? = nil) -> Bool {
-            return isCached(forKey: key, referenceDate: Date(), forcedExtension: forcedExtension)
+            return isCached(forKey: key, referenceDate: ExpirationClock.now, forcedExtension: forcedExtension)
         }
 
         /// Determines whether there is valid cached data under a given key and a reference date.
@@ -437,7 +437,7 @@ public enum DiskStorage {
         /// - Throws: A file manager error during the removal of the file, or if the storage is not ready.
         /// - Returns: The URLs for the removed files.
         public func removeExpiredValues() throws -> [URL] {
-            return try removeExpiredValues(referenceDate: Date())
+            return try removeExpiredValues(referenceDate: ExpirationClock.now)
         }
 
         func removeExpiredValues(referenceDate: Date) throws -> [URL] {
@@ -656,12 +656,12 @@ extension DiskStorage {
                 let originalExpiration: StorageExpiration =
                     .seconds(lastEstimatedExpiration.timeIntervalSince(lastAccessDate))
                 attributes = [
-                    .creationDate: Date().fileAttributeDate,
+                    .creationDate: ExpirationClock.now.fileAttributeDate,
                     .modificationDate: originalExpiration.estimatedExpirationSinceNow.fileAttributeDate
                 ]
             case .expirationTime(let expirationTime):
                 attributes = [
-                    .creationDate: Date().fileAttributeDate,
+                    .creationDate: ExpirationClock.now.fileAttributeDate,
                     .modificationDate: expirationTime.estimatedExpirationSinceNow.fileAttributeDate
                 ]
             }

@@ -27,31 +27,32 @@
 import Foundation
 @testable import Kingfisher
 
+/// Stubs `url` with a successful HTTP response.
+///
+/// - Parameters:
+///   - length: The value of the `Content-Length` header, if it should differ from the body size.
+///   - requiredHeaders: Header values a request must have to match this stub.
 @discardableResult
 func stub(_ url: URL,
           data: Data,
           statusCode: Int = 200,
           length: Int? = nil,
-          headers: [String: String] = [:]
-) -> LSStubResponseDSL {
-    var stubResult = stubRequest("GET", url.absoluteString as NSString)
-        .andReturn(statusCode)?
-        .withHeaders(headers)?
-        .withBody(data as NSData)
-    if let length = length {
-        stubResult = stubResult?.withHeader("Content-Length", "\(length)")
-    }
-    return stubResult!
+          headers: [String: String] = [:],
+          requiredHeaders: [String: String]? = nil
+) -> NetworkStub {
+    makeStub(url, data: data, statusCode: statusCode, length: length, headers: headers,
+             requiredHeaders: requiredHeaders, held: false)
 }
 
-func delayedStub(_ url: URL,
-                 data: Data,
-                 statusCode: Int = 200,
-                 length: Int? = nil,
-                 headers: [String: String] = [:]
-) -> LSStubResponseDSL {
-    let result = stub(url, data: data, statusCode: statusCode, length: length, headers: headers)
-    return result.delay()!
+/// Stubs `url` with a successful HTTP response that is held until `release()` is called on the returned stub.
+func heldStub(_ url: URL,
+              data: Data,
+              statusCode: Int = 200,
+              length: Int? = nil,
+              headers: [String: String] = [:]
+) -> NetworkStub {
+    makeStub(url, data: data, statusCode: statusCode, length: length, headers: headers,
+             requiredHeaders: nil, held: true)
 }
 
 func stub(_ url: URL, errorCode: Int) {
@@ -59,17 +60,52 @@ func stub(_ url: URL, errorCode: Int) {
     stub(url, error: error)
 }
 
-func stub(_ url: URL, error: any Error) {
-    return stubRequest("GET", url.absoluteString as NSString).andFailWithError(error)
+@discardableResult
+func stub(_ url: URL, error: any Error) -> NetworkStub {
+    let stub = NetworkStub(url: url, response: .failure(error), requiredHeaders: nil, held: false)
+    NetworkStubRegistry.add(stub)
+    return stub
+}
+
+private func makeStub(
+    _ url: URL,
+    data: Data,
+    statusCode: Int,
+    length: Int?,
+    headers: [String: String],
+    requiredHeaders: [String: String]?,
+    held: Bool
+) -> NetworkStub {
+    var headers = headers
+    if let length {
+        headers["Content-Length"] = "\(length)"
+    }
+    let stub = NetworkStub(
+        url: url,
+        response: .success(statusCode: statusCode, headers: headers, body: data),
+        requiredHeaders: requiredHeaders,
+        held: held
+    )
+    NetworkStubRegistry.add(stub)
+    return stub
 }
 
 func clearStubs(afterCancelling downloader: ImageDownloader?) {
     downloader?.cancelAll()
-    LSNocilla.sharedInstance().clearStubs()
+    NetworkStubRegistry.reset()
 }
 
 func clearStubs(afterCancelling manager: KingfisherManager?) {
     clearStubs(afterCancelling: manager?.downloader)
+}
+
+extension ImageDownloader {
+    /// Creates a downloader whose session sends all requests to `StubURLProtocol`.
+    static func stubbed(name: String) -> ImageDownloader {
+        let downloader = ImageDownloader(name: name)
+        downloader.sessionConfiguration = .stubbed
+        return downloader
+    }
 }
 
 struct DownloadStartObserver: ImageDownloadRequestModifier {

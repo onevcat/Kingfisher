@@ -32,19 +32,9 @@ class ImageDownloaderTests: XCTestCase {
 
     var downloader: ImageDownloader!
 
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-    
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-    
     override func setUp() {
         super.setUp()
-        downloader = ImageDownloader(name: "test")
+        downloader = ImageDownloader.stubbed(name: "test")
     }
     
     override func tearDown() {
@@ -302,7 +292,7 @@ class ImageDownloaderTests: XCTestCase {
         let downloadStarted = expectation(description: "\(#function) download started")
         let completed = expectation(description: "\(#function) completed")
         let url = testURLs[0]
-        let delayedResponse = delayedStub(url, data: testImageData)
+        let heldResponse = heldStub(url, data: testImageData)
 
         let modifier = GatedRequestModifier(
             onFirstRequestHeld: { requestHeld.fulfill() },
@@ -322,7 +312,7 @@ class ImageDownloaderTests: XCTestCase {
         task.resetPriority()
         XCTAssertEqual(task.sessionTask?.task.priority, URLSessionTask.defaultPriority)
 
-        _ = delayedResponse.go()
+        heldResponse.release()
         wait(for: [completed], timeout: 3)
     }
 
@@ -374,10 +364,7 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         let url = testURLs[0]
-        _ = stubRequest("GET", url.absoluteString as NSString)
-            .withHeader("Authorization", "Bearer test-token")?
-            .andReturn(200)?
-            .withBody(testImageData as NSData)
+        stub(url, data: testImageData, requiredHeaders: ["Authorization": "Bearer test-token"])
 
         let result = try await downloader.downloadImage(with: url, options: [.requestModifier(modifier)])
         XCTAssertNotNil(result.image)
@@ -423,7 +410,7 @@ class ImageDownloaderTests: XCTestCase {
         downloader.downloadImage(with: url) { result in
             XCTAssertNotNil(result.error)
             
-            LSNocilla.sharedInstance().clearStubs()
+            NetworkStubRegistry.reset()
 
             stub(url, data: testImageData)
             // Retry the download
@@ -468,7 +455,7 @@ class ImageDownloaderTests: XCTestCase {
     func testCancelDownloadTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
         
         let task = downloader.downloadImage(
             with: url,
@@ -477,20 +464,20 @@ class ImageDownloaderTests: XCTestCase {
             result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
-            delay(0.1) { exp.fulfill() }
+            exp.fulfill()
         }
         
         XCTAssertTrue(task.isInitialized)
         task.cancel()
 
-        _ = stub.go()
+        stub.release()
         
         waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testCancelDownloadTaskAsync() async throws {
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
         
         let checker = CallingChecker()
         try await checker.checkCancelBehavior(stub: stub) {
@@ -501,7 +488,7 @@ class ImageDownloaderTests: XCTestCase {
     func testCancelOneDownloadTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         let group = DispatchGroup()
 
@@ -518,21 +505,20 @@ class ImageDownloaderTests: XCTestCase {
         }
 
         task1.cancel()
-        delay(0.1) { _ = stub.go() }
-        group.notify(queue: .main) {
-            delay(0.1) { exp.fulfill() }
-        }
+        stub.release()
+        group.notify(queue: .main) { exp.fulfill() }
         waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertEqual(stub.stoppedRequestCount, 0, "The shared request must go on for the remaining task.")
     }
     
     func testCancelAllDownloadTasks() {
         let exp = expectation(description: #function)
 
         let url1 = testURLs[0]
-        let stub1 = delayedStub(url1, data: testImageData)
+        let stub1 = heldStub(url1, data: testImageData)
 
         let url2 = testURLs[1]
-        let stub2 = delayedStub(url2, data: testImageData)
+        let stub2 = heldStub(url2, data: testImageData)
 
         let group = DispatchGroup()
 
@@ -546,25 +532,20 @@ class ImageDownloaderTests: XCTestCase {
             }
         }
 
-        delay(0.1) {
-            self.downloader.cancelAll()
-            _ = stub1.go()
-            _ = stub2.go()
-        }
-        group.notify(queue: .main) {
-            delay(0.1) { exp.fulfill() }
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+        wait(for: [stub1.requestExpectation(), stub2.requestExpectation()], timeout: 3)
+        downloader.cancelAll()
+        group.notify(queue: .main) { exp.fulfill() }
+        wait(for: [exp, stub1.stoppedRequestExpectation(), stub2.stoppedRequestExpectation()], timeout: 3)
     }
     
     func testCancelDownloadTaskForURL() {
         let exp = expectation(description: #function)
         
         let url1 = testURLs[0]
-        let stub1 = delayedStub(url1, data: testImageData)
+        let stub1 = heldStub(url1, data: testImageData)
         
         let url2 = testURLs[1]
-        let stub2 = delayedStub(url2, data: testImageData)
+        let stub2 = heldStub(url2, data: testImageData)
         
         let group = DispatchGroup()
         
@@ -588,16 +569,14 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
         
-        delay(0.1) {
-            self.downloader.cancel(url: url1)
-            _ = stub1.go()
-            _ = stub2.go()
-        }
-        
-        group.notify(queue: .main) {
-            delay(0.1) { exp.fulfill() }
-        }
+        wait(for: [stub1.requestExpectation(), stub2.requestExpectation()], timeout: 3)
+        downloader.cancel(url: url1)
+        wait(for: [stub1.stoppedRequestExpectation()], timeout: 3)
+        stub2.release()
+
+        group.notify(queue: .main) { exp.fulfill() }
         waitForExpectations(timeout: 3, handler: nil)
+        XCTAssertEqual(stub2.stoppedRequestCount, 0)
     }
     
     // Regression test for a data race in `SessionDataTask.forceCancel()`.
@@ -647,10 +626,12 @@ class ImageDownloaderTests: XCTestCase {
         let url = URL(string: "https://example.com/concurrent-access")!
         // `resume()` resumes the underlying URLSessionDataTask; stub the URL so no real request leaves.
         stub(url, data: Data())
+        let session = URLSession(configuration: .stubbed)
+        defer { session.invalidateAndCancel() }
         let options = KingfisherParsedOptionsInfo(nil)
 
         for _ in 0..<50 {
-            let task = SessionDataTask(task: URLSession.shared.dataTask(with: url))
+            let task = SessionDataTask(task: session.dataTask(with: url))
             let group = DispatchGroup()
 
             func hammer(_ body: @escaping () -> Void) {
@@ -683,7 +664,7 @@ class ImageDownloaderTests: XCTestCase {
         let exp = expectation(description: #function)
         
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         let group = DispatchGroup()
         
@@ -700,7 +681,7 @@ class ImageDownloaderTests: XCTestCase {
         
         XCTAssertTrue(downloadTask.isInitialized)
         downloadTask.cancel()
-        _ = stub.go()
+        stub.release()
         
         group.enter()
         downloader.downloadImage(with: url) {
@@ -712,9 +693,7 @@ class ImageDownloaderTests: XCTestCase {
             group.leave()
         }
         
-        group.notify(queue: .main) {
-            delay(0.1) { exp.fulfill() }
-        }
+        group.notify(queue: .main) { exp.fulfill() }
         waitForExpectations(timeout: 3, handler: nil)
     }
     
@@ -748,7 +727,7 @@ class ImageDownloaderTests: XCTestCase {
     func testDownloadWithDifferentProcessors() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         let p1 = RoundCornerImageProcessor(cornerRadius: 40)
         let roundCornered = testImage.kf.image(withRoundRadius: 40, fit: testImage.kf.size)
@@ -773,7 +752,7 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertNotNil(task1)
         XCTAssertEqual(task1.sessionTask?.task, task2.sessionTask?.task)
 
-        _ = stub.go()
+        stub.release()
         
         group.notify(queue: .main, execute: exp.fulfill)
         waitForExpectations(timeout: 3, handler: nil)
@@ -869,7 +848,7 @@ class ImageDownloaderTests: XCTestCase {
         exp.expectedFulfillmentCount = 2
 
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         let lowPriorityTask = downloader.downloadImage(
             with: url,
             options: [.downloadPriority(URLSessionTask.lowPriority)]
@@ -888,7 +867,7 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertTrue(lowPriorityTask.sessionTask === highPriorityTask.sessionTask)
         XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -897,7 +876,7 @@ class ImageDownloaderTests: XCTestCase {
         exp.expectedFulfillmentCount = 2
 
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         let highPriorityTask = downloader.downloadImage(
             with: url,
             options: [.downloadPriority(URLSessionTask.highPriority)]
@@ -914,7 +893,7 @@ class ImageDownloaderTests: XCTestCase {
         XCTAssertTrue(highPriorityTask.sessionTask === lowPriorityTask.sessionTask)
         XCTAssertEqual(highPriorityTask.sessionTask?.task.priority, URLSessionTask.highPriority)
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -923,7 +902,7 @@ class ImageDownloaderTests: XCTestCase {
         exp.expectedFulfillmentCount = 2
 
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
         let lowPriorityTask = downloader.downloadImage(
             with: url,
             options: [.downloadPriority(URLSessionTask.lowPriority)]
@@ -945,7 +924,7 @@ class ImageDownloaderTests: XCTestCase {
         highPriorityTask.setPriority(URLSessionTask.highPriority)
         XCTAssertEqual(lowPriorityTask.sessionTask?.task.priority, URLSessionTask.lowPriority)
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
     

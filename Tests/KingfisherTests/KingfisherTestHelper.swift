@@ -111,6 +111,50 @@ func delay(_ time: Double, block: @escaping () -> Void) {
     DispatchQueue.main.asyncAfter(deadline: .now() + time) { block() }
 }
 
+/// A clock that a test moves forward by hand, instead of waiting for real time to pass.
+///
+/// `install()` makes the cache read its current date from this clock. `KingfisherTestObserver` restores the real
+/// clock after each test.
+final class TestClock: @unchecked Sendable {
+    private let lock = NSLock()
+    private var current: Date
+
+    /// Creates a clock that starts at a whole second, so dates stored as file attributes are not rounded.
+    init(start: Date = Date(timeIntervalSince1970: ceil(Date().timeIntervalSince1970))) {
+        current = start
+    }
+
+    var now: Date { lock.withLock { current } }
+
+    func advance(by seconds: TimeInterval) {
+        lock.withLock { current.addTimeInterval(seconds) }
+    }
+
+    @discardableResult
+    func install() -> TestClock {
+        ExpirationClock.provider = { self.now }
+        return self
+    }
+
+    static func uninstall() {
+        ExpirationClock.provider = { Date() }
+    }
+}
+
+/// Checks `condition` on the main queue until it is true, then runs `block` on the main queue.
+///
+/// Use it to wait for an asynchronous side effect (for example, a disk cache write) without a fixed delay. If the
+/// condition never becomes true, `block` never runs and the expectation that the test waits for times out.
+func poll(until condition: @escaping () -> Bool, then block: @escaping () -> Void) {
+    DispatchQueue.main.async {
+        if condition() {
+            block()
+        } else {
+            delay(0.01) { poll(until: condition, then: block) }
+        }
+    }
+}
+
 extension KFCrossPlatformImage {
     func renderEqual(to image: KFCrossPlatformImage, withinTolerance tolerance: UInt8 = 3) -> Bool {
         

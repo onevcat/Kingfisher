@@ -660,7 +660,7 @@ public class KingfisherManager: @unchecked Sendable {
                             ?? targetCache.memoryStorage.config.expiration
                         if !memoryExpiration.isExpired {
                             let lifetime = min(budget, memoryExpiration.timeInterval)
-                            storeOptions.memoryCacheExpiration = .date(Date().addingTimeInterval(lifetime))
+                            storeOptions.memoryCacheExpiration = .date(ExpirationClock.now.addingTimeInterval(lifetime))
                         }
                         // The disk expiration still slides on access; opt out with
                         // `.diskCacheAccessExtendingExpiration(.none)`. The target and the original cache
@@ -789,7 +789,12 @@ public class KingfisherManager: @unchecked Sendable {
             )
             taskCreatedReporter.report(task)
 
-            if task.isInitialized {
+            // An async request modifier prepares the request later, so the download task is linked to its session
+            // task only after this method returns. Return the task anyway, so that the caller can cancel the load.
+            // In other cases, a task that is not initialized now never starts (for example, the modifier returned
+            // `nil`).
+            let isPreparingRequest = options.requestModifier.map { !($0 is any ImageDownloadRequestModifier) } ?? false
+            if task.isInitialized || isPreparingRequest {
                 return .download(task)
             } else {
                 return nil

@@ -39,7 +39,7 @@ The framework follows a modular architecture with clear separation of concerns, 
 
 ### Build & Testing
 - **Fastlane**: `fastlane/Fastfile` - Primary build automation
-- **Test Suite**: `Tests/KingfisherTests/` - XCTest-based unit tests with Nocilla HTTP stubbing
+- **Test Suite**: `Tests/KingfisherTests/` - XCTest-based unit tests with a pure Swift `URLProtocol` HTTP stub
 - **Documentation**: `Sources/Documentation.docc/` - DocC integrated documentation
 
 ## Platform Support

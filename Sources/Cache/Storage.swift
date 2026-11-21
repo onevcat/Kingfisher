@@ -32,6 +32,30 @@ struct TimeConstants {
     static let secondsInOneDay = 86_400
 }
 
+/// The source of the current date for cache expiration.
+///
+/// The cache reads the current date only from `now`. Tests replace `provider` to control the time, so they do not
+/// need to wait for real time to pass.
+enum ExpirationClock {
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var _provider: @Sendable () -> Date = { Date() }
+
+    static var provider: @Sendable () -> Date {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _provider
+        }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            _provider = newValue
+        }
+    }
+
+    static var now: Date { provider() }
+}
+
 /// Represents the expiration strategy utilized in storage.
 public enum StorageExpiration: Hashable, Sendable {
     
@@ -70,7 +94,7 @@ public enum StorageExpiration: Hashable, Sendable {
     }
     
     var estimatedExpirationSinceNow: Date {
-        estimatedExpirationSince(Date())
+        estimatedExpirationSince(ExpirationClock.now)
     }
     
     var isExpired: Bool {
@@ -82,7 +106,7 @@ public enum StorageExpiration: Hashable, Sendable {
         case .never: return .infinity
         case .seconds(let seconds): return seconds
         case .days(let days): return TimeInterval(TimeConstants.secondsInOneDay * days)
-        case .date(let ref): return ref.timeIntervalSinceNow
+        case .date(let ref): return ref.timeIntervalSince(ExpirationClock.now)
         case .expired: return -(.infinity)
         }
     }

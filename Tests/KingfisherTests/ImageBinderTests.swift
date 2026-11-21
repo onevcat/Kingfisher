@@ -278,11 +278,7 @@ class ImageBinderTests: XCTestCase {
     @MainActor
     @available(*, deprecated) // Silences the deprecation warning for `onFailureImage` under test.
     func testCancelledLoadingDoesNotOverrideRestartedLoadingThatSucceeded() async {
-        LSNocilla.sharedInstance().start()
-        defer {
-            LSNocilla.sharedInstance().clearStubs()
-            LSNocilla.sharedInstance().stop()
-        }
+        defer { NetworkStubRegistry.reset() }
         let url = URL(string: "https://example.com/binder-stale-cancellation-\(UUID().uuidString).png")!
         stub(url, data: testImagePNGData)
         let cache = ImageCache(name: "com.onevcat.KingfisherTests.ImageBinder.\(UUID().uuidString)")

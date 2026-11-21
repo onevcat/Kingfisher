@@ -40,21 +40,11 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     var imageView: KFCrossPlatformImageView!
     
-    override class func setUp() {
-        super.setUp()
-        LSNocilla.sharedInstance().start()
-    }
-    
-    override class func tearDown() {
-        LSNocilla.sharedInstance().stop()
-        super.tearDown()
-    }
-    
     override func setUp() {
         super.setUp()
 
         imageView = KFCrossPlatformImageView()
-        KingfisherManager.shared.downloader = ImageDownloader(name: "testDownloader")
+        KingfisherManager.shared.downloader = ImageDownloader.stubbed(name: "testDownloader")
         KingfisherManager.shared.defaultOptions = [.waitForCache]
         
         cleanDefaultCache()
@@ -148,7 +138,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testImageDownloadCancelForImageView() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         let task = imageView.kf.setImage(
             with: url,
@@ -156,12 +146,12 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         {
             result in
             XCTAssertNotNil(result.error)
-            delay(0.1) { exp.fulfill() }
+            exp.fulfill()
         }
 
         XCTAssertNotNil(task)
         task?.cancel()
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
     }
 
@@ -172,7 +162,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         // until the download finishes.
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakImageView: KFCrossPlatformImageView?
         autoreleasepool {
@@ -183,14 +173,14 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
                 XCTAssertTrue(Thread.isMainThread)
                 completion.fulfill()
             }
-            // The stubbed response is delayed, so the download is still in flight at this point.
+            // The stubbed response is held, so the download is still in flight at this point.
         }
 
         // The image view has no other owner, so the pending download must not keep it alive.
         XCTAssertNil(weakImageView, "The image view should be released while its download is still in flight.")
 
         // The download itself should keep running, call the completion handler, and populate the cache.
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
 
@@ -199,7 +189,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testImageSettableObjectNotRetainedByInFlightDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakTarget: TestImageComponent?
         autoreleasepool {
@@ -214,7 +204,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
         XCTAssertNil(weakTarget, "An image-settable object should be released while its download is still in flight.")
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -222,7 +212,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testTextAttachmentAndAttributedViewNotRetainedByInFlightDownload() {
         let completion = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData, length: 123)
+        let stub = heldStub(url, data: testImageData, length: 123)
 
         weak var weakAttachment: NSTextAttachment?
         weak var weakAttributedView: KFCrossPlatformView?
@@ -241,7 +231,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(weakAttachment, "A text attachment should be released while its download is still in flight.")
         XCTAssertNil(weakAttributedView, "An attributed view should not be retained by an attachment download.")
 
-        _ = stub.go()
+        stub.release()
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssertTrue(KingfisherManager.shared.cache.imageCachedType(forKey: url.cacheKey).cached)
     }
@@ -250,8 +240,8 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testLivePhotoViewNotRetainedByInFlightDownload() {
         let completion = expectation(description: #function)
         let stubs = [
-            delayedStub(LivePhotoURL.heic, data: testImageData),
-            delayedStub(LivePhotoURL.mov, data: testImageData)
+            heldStub(LivePhotoURL.heic, data: testImageData),
+            heldStub(LivePhotoURL.mov, data: testImageData)
         ]
 
         weak var weakView: PHLivePhotoView?
@@ -269,7 +259,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
         XCTAssertNil(weakView, "A live photo view should be released while its downloads are still in flight.")
 
-        stubs.forEach { _ = $0.go() }
+        stubs.forEach { $0.release() }
         waitForExpectations(timeout: 5, handler: nil)
 
         let cache = KingfisherManager.shared.cache
@@ -293,7 +283,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testImageDownloadCancelPartialTaskBeforeRequest() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         let group = DispatchGroup()
         
@@ -314,18 +304,16 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             .set(to: anotherImageView)
         
         task1?.cancel()
-        _ = stub.go()
+        stub.release()
         
-        group.notify(queue: .main) {
-            delay(0.1) { exp.fulfill() }
-        }
+        group.notify(queue: .main) { exp.fulfill() }
         waitForExpectations(timeout: 3, handler: nil)
     }
     
     @MainActor func testImageDownloadCancelAllTasksAfterRequestStarted() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         let group = DispatchGroup()
         
@@ -350,11 +338,9 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         task1?.cancel()
         task2?.cancel()
         task3?.cancel()
-        _ = stub.go()
+        stub.release()
         
-        group.notify(queue: .main) {
-            delay(0.1) { exp.fulfill() }
-        }
+        group.notify(queue: .main) { exp.fulfill() }
         waitForExpectations(timeout: 3, handler: nil)
     }
     
@@ -487,19 +473,38 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 3, handler: nil)
     }
     
+    @MainActor func testCancelImageTaskWithAsyncRequestModifier() {
+        let exp = expectation(description: #function)
+        let url = testURLs[0]
+        let stub = heldStub(url, data: testImageData)
+
+        let task = imageView.kf.setImage(with: url, options: [.requestModifier(AsyncAnyModifier { $0 })]) { result in
+            XCTAssertTrue(result.error?.isTaskCancelled ?? false, "Expected a cancellation, got: \(result)")
+            exp.fulfill()
+        }
+        XCTAssertNotNil(task)
+
+        wait(for: [stub.requestExpectation()], timeout: 3)
+        imageView.kf.cancelDownloadTask()
+        wait(for: [exp, stub.stoppedRequestExpectation()], timeout: 3)
+
+        stub.release()
+        XCTAssertNil(imageView.image, "A cancelled loading must not set the image.")
+    }
+
     @MainActor func testCancelImageTask() {
         let exp = expectation(description: #function)
         let url = testURLs[0]
-        let stub = delayedStub(url, data: testImageData)
+        let stub = heldStub(url, data: testImageData)
 
         imageView.kf.setImage(with: url, progressBlock: { _, _ in XCTFail() }) { result in
             XCTAssertNotNil(result.error)
             XCTAssertTrue(result.error!.isTaskCancelled)
-            delay(0.1) { exp.fulfill() }
+            exp.fulfill()
         }
 
         self.imageView.kf.cancelDownloadTask()
-        _ = stub.go()
+        stub.release()
 
         waitForExpectations(timeout: 3, handler: nil)
     }
@@ -581,6 +586,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
         
         // While current image is nil, set placeholder
         let url = testURLs[0]
+        stub(url, data: testImageData)
         imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading]) { result in
             exp.fulfill()
         }
@@ -888,6 +894,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     
     @MainActor func testMemoryImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
         
@@ -901,21 +908,20 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
             XCTAssertNotNil(expirationTime1)
             
-            delay(0.1, block: {
-                self.imageView.kf.setImage(with: url, options: options) { result in
-                    XCTAssertNotNil(result.value?.image)
-                    XCTAssertTrue(result.value!.cacheType == .memory)
-                    
-                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
-                    
-                    XCTAssertNotNil(expirationTime2)
-                    XCTAssertNotEqual(expirationTime1, expirationTime2)
-                    XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
-                    XCTAssertGreaterThan(expirationTime2!.timeIntervalSince(expirationTime1!), 10)
-                    
-                    exp.fulfill()
-                }
-            })
+            clock.advance(by: 0.5)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                
+                let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                
+                XCTAssertNotNil(expirationTime2)
+                XCTAssertNotEqual(expirationTime1, expirationTime2)
+                XCTAssert(expirationTime1!.isPast(referenceDate: expirationTime2!))
+                XCTAssertGreaterThan(expirationTime2!.timeIntervalSince(expirationTime1!), 10)
+                
+                exp.fulfill()
+            }
         }
 
         waitForExpectations(timeout: 3, handler: nil)
@@ -923,6 +929,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     
     @MainActor func testMemoryImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
         
@@ -936,19 +943,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             let expirationTime1 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
             XCTAssertNotNil(expirationTime1)
             
-            delay(0.1, block: {
-                self.imageView.kf.setImage(with: url, options: options) { result in
-                    XCTAssertNotNil(result.value?.image)
-                    XCTAssertTrue(result.value!.cacheType == .memory)
-                    
-                    let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
-                    
-                    XCTAssertNotNil(expirationTime2)
-                    XCTAssertEqual(expirationTime1, expirationTime2)
-                    
-                    exp.fulfill()
-                }
-            })
+            clock.advance(by: 0.5)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .memory)
+                
+                let expirationTime2 = ImageCache.default.memoryStorage.storage.object(forKey: cacheKey)?.estimatedExpiration
+                
+                XCTAssertNotNil(expirationTime2)
+                XCTAssertEqual(expirationTime1, expirationTime2)
+                
+                exp.fulfill()
+            }
         }
         
         waitForExpectations(timeout: 3, handler: nil)
@@ -956,6 +962,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     @MainActor func testDiskImageCacheExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
 
@@ -967,20 +974,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             XCTAssertNotNil(result.value?.image)
             XCTAssertTrue(result.value!.cacheType == .none)
 
-            delay(1, block: {
+            clock.advance(by: 1)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .disk)
+                clock.advance(by: 2)
                 self.imageView.kf.setImage(with: url, options: options) { result in
                     XCTAssertNotNil(result.value?.image)
                     XCTAssertTrue(result.value!.cacheType == .disk)
-                    delay(2, block: {
-                        self.imageView.kf.setImage(with: url, options: options) { result in
-                            XCTAssertNotNil(result.value?.image)
-                            XCTAssertTrue(result.value!.cacheType == .disk)
 
-                            exp.fulfill()
-                        }
-                    })
+                    exp.fulfill()
                 }
-            })
+            }
         }
 
         waitForExpectations(timeout: 5, handler: nil)
@@ -988,6 +993,7 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
 
     @MainActor func testDiskImageCacheNotExtendingExpirationTask() {
         let exp = expectation(description: #function)
+        let clock = TestClock().install()
         let url = testURLs[0]
         stub(url, data: testImageData)
 
@@ -999,20 +1005,18 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
             XCTAssertNotNil(result.value?.image)
             XCTAssertTrue(result.value!.cacheType == .none)
 
-            delay(1, block: {
+            clock.advance(by: 1)
+            self.imageView.kf.setImage(with: url, options: options) { result in
+                XCTAssertNotNil(result.value?.image)
+                XCTAssertTrue(result.value!.cacheType == .disk)
+                clock.advance(by: 2)
                 self.imageView.kf.setImage(with: url, options: options) { result in
                     XCTAssertNotNil(result.value?.image)
-                    XCTAssertTrue(result.value!.cacheType == .disk)
-                    delay(2, block: {
-                        self.imageView.kf.setImage(with: url, options: options) { result in
-                            XCTAssertNotNil(result.value?.image)
-                            XCTAssertTrue(result.value!.cacheType == .none)
+                    XCTAssertTrue(result.value!.cacheType == .none)
 
-                            exp.fulfill()
-                        }
-                    })
+                    exp.fulfill()
                 }
-            })
+            }
         }
 
         waitForExpectations(timeout: 5, handler: nil)
@@ -1041,10 +1045,10 @@ class ImageViewExtensionTests: XCTestCase, @unchecked Sendable {
     @MainActor func testImageSettingCanCancelAlternativeSource() {
         let completed = expectation(description: "Alternative source cancelled")
         let started = expectation(description: "Alternative download started")
-        // A cancelled URLProtocol can start late. Do not let it match the next test's delayed stub.
+        // A cancelled URLProtocol can start late. Do not let it match the next test's held stub.
         let url = URL(string: "https://kingfisher.test/alternative-cancel/\(UUID().uuidString)")!
-        let dataStub = delayedStub(url, data: testImageData)
-        defer { _ = dataStub.go() }
+        let dataStub = heldStub(url, data: testImageData)
+        defer { dataStub.release() }
 
         let brokenURL = URL(string: "https://kingfisher.test/original-cancel/\(UUID().uuidString)")!
         stub(brokenURL, data: Data())
